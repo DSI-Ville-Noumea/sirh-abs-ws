@@ -3,13 +3,13 @@
 
 package nc.noumea.mairie.abs.domain;
 
-import nc.noumea.mairie.abs.domain.CompteRecup;
+import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-privileged aspect CompteRecup_Roo_ToString {
+privileged aspect AgentWeekRecup_Roo_ToString {
     
-    public String CompteRecup.toString() {
+    public String AgentWeekRecup.toString() {
         return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
     

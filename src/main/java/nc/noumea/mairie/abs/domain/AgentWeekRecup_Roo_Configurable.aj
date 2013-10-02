@@ -3,11 +3,11 @@
 
 package nc.noumea.mairie.abs.domain;
 
-import nc.noumea.mairie.abs.domain.CompteRecup;
+import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import org.springframework.beans.factory.annotation.Configurable;
 
-privileged aspect CompteRecup_Roo_Configurable {
+privileged aspect AgentWeekRecup_Roo_Configurable {
     
-    declare @type: CompteRecup: @Configurable;
+    declare @type: AgentWeekRecup: @Configurable;
     
 }

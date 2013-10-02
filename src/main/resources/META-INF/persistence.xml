@@ -3,7 +3,9 @@
 
 	<persistence-unit name="absPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-      	<exclude-unlisted-classes>true</exclude-unlisted-classes>
+      	<class>nc.noumea.mairie.abs.domain.AgentRecupCount</class>
+      	<class>nc.noumea.mairie.abs.domain.AgentWeekRecup</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
             <!-- value="create" to build a new database on each run; value="update" to modify an existing database; value="create-drop" means the same as "create" but also drops tables when Hibernate closes; value="validate" makes no changes to the database -->
