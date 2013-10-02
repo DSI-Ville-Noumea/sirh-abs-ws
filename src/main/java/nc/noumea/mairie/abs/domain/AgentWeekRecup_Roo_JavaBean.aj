@@ -16,11 +16,11 @@ privileged aspect AgentWeekRecup_Roo_JavaBean {
         this.idAgent = idAgent;
     }
     
-    public Integer AgentWeekRecup.getMinutesRecup() {
+    public int AgentWeekRecup.getMinutesRecup() {
         return this.minutesRecup;
     }
     
-    public void AgentWeekRecup.setMinutesRecup(Integer minutesRecup) {
+    public void AgentWeekRecup.setMinutesRecup(int minutesRecup) {
         this.minutesRecup = minutesRecup;
     }
     

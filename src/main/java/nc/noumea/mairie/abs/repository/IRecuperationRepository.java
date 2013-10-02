@@ -10,5 +10,6 @@ public interface IRecuperationRepository {
 	AgentRecupCount getAgentRecupCount(Integer idAgent);
 	
 	AgentWeekRecup getWeekRecupForAgentAndDate(Integer idAgent, Date dateMonday);
-	
+
+	void persistEntity(Object entity);
 }

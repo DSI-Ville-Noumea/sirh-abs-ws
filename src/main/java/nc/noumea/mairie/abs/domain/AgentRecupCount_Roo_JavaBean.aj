@@ -16,11 +16,11 @@ privileged aspect AgentRecupCount_Roo_JavaBean {
         this.idAgent = idAgent;
     }
     
-    public Integer AgentRecupCount.getTotalMinutes() {
+    public int AgentRecupCount.getTotalMinutes() {
         return this.totalMinutes;
     }
     
-    public void AgentRecupCount.setTotalMinutes(Integer totalMinutes) {
+    public void AgentRecupCount.setTotalMinutes(int totalMinutes) {
         this.totalMinutes = totalMinutes;
     }
     

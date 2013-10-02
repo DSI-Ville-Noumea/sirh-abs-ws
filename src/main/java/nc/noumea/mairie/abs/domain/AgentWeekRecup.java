@@ -22,7 +22,7 @@ public class AgentWeekRecup {
 	
 	@NotNull
 	@Column(name = "MINUTES_RECUP")
-	private Integer minutesRecup;
+	private int minutesRecup;
 	
 	@Column(name = "DATE_MONDAY")
 	@Temporal(TemporalType.DATE)

@@ -21,7 +21,7 @@ public class AgentRecupCount {
 	
 	@NotNull
 	@Column(name = "TOTAL_MINUTES")
-	private Integer totalMinutes;
+	private int totalMinutes;
 	
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)

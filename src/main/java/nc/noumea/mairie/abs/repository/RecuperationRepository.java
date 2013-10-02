@@ -28,4 +28,9 @@ public class RecuperationRepository implements IRecuperationRepository {
 		return null;
 	}
 	
+	@Override
+	public void persistEntity(Object entity) {
+		absEntityManager.persist(entity);
+	}
+	
 }
