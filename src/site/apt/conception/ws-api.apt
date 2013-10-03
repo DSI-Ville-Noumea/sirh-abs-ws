@@ -30,6 +30,6 @@ SIRH-ABS-WS API et définition des services
 
 +-------------------------+
 HTTP Code 200 : OK
-HTTP Code 300 : Bad Request + message explicatif
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas ou si la date ne correspond pas à un lundi)
 +-------------------------+
 
