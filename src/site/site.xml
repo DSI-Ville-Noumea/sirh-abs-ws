@@ -32,7 +32,7 @@
         	<item name="WebApp Context" href="exploitation/context.html"/>
         </menu>
 		<menu name="Conception">
-        	<item name="SIRH API Doc" href="conception/sirh-api.html"/>
+        	<item name="WS API Doc" href="conception/ws-api.html"/>
 		</menu>
         <menu ref="reports"/>
     </body>

@@ -27,13 +27,13 @@ public class RecuperationController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> addRecuperationForAgent(
+	public ResponseEntity<String> addRecuperationForAgentAndWeek(
 			@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("dateLundi") @DateTimeFormat(pattern = "YYYYMMdd") Date dateMonday,
 			@RequestParam("minutes") int minutes) {
 
 		logger.debug(
-				"entered GET [recuperations/add] => addRecuperationForAgent with parameters idAgent = {}, dateMonday = {} and minutes = {}",
+				"entered GET [recuperations/add] => addRecuperationForAgentAndWeek with parameters idAgent = {}, dateMonday = {} and minutes = {}",
 				idAgent, dateMonday, minutes);
 		
 		recuperationService.addRecuperationToAgent(idAgent, dateMonday, minutes);
