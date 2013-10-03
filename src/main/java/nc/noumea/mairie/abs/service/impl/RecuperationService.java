@@ -7,8 +7,8 @@ import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
-import nc.noumea.mairie.abs.service.HelperService;
 import nc.noumea.mairie.abs.service.IRecuperationService;
+import nc.noumea.mairie.abs.service.NotAMondayException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,29 +37,38 @@ public class RecuperationService implements IRecuperationService {
 			throw new AgentNotFoundException();
 		}
 		
+		if (!helperService.isDateAMonday(dateMonday)) {
+			logger.error("Given monday date [{}] is not a Monday. Impossible to update recuperation counters.", dateMonday);
+			throw new NotAMondayException();
+		}
+		
 		AgentWeekRecup awr = recuperationRepository.getWeekRecupForAgentAndDate(idAgent, dateMonday);
 		
 		if (awr == null) {
 			awr = new AgentWeekRecup();
 			awr.setIdAgent(idAgent);
 			awr.setDateMonday(dateMonday);
-			awr.setLastModification(helperService.getCurrentDate());
-			recuperationRepository.persistEntity(awr);
 		}
 		
 		int minutesBeforeUpdate = awr.getMinutesRecup();
 		awr.setMinutesRecup(minutes);
+		awr.setLastModification(helperService.getCurrentDate());
 		
 		AgentRecupCount arc = recuperationRepository.getAgentRecupCount(idAgent);
 		
 		if (arc == null) {
 			arc = new AgentRecupCount();
 			arc.setIdAgent(idAgent);
-			arc.setLastModification(helperService.getCurrentDate());
-			recuperationRepository.persistEntity(arc);
 		}
 		
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutes - minutesBeforeUpdate);
+		arc.setLastModification(helperService.getCurrentDate());
+		
+		if (awr.getIdAgentWeekRecup() == null)
+			recuperationRepository.persistEntity(awr);
+		
+		if (arc.getIdAgentRecupCount() == null)
+			recuperationRepository.persistEntity(arc);
 		
 		return arc.getTotalMinutes();
 	}	

@@ -3,6 +3,8 @@ package nc.noumea.mairie.abs.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -14,6 +16,9 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", identifierColumn = "ID_AGENT_WEEK_RECUP", identifierField = "idAgentWeekRecup", identifierType = Integer.class, table = "ABS_AGENT_WEEK_RECUP", sequenceName = "ABS_S_AGENT_WEEK_RECUP")
+@NamedQueries({
+	@NamedQuery(name = "findAgentWeekRecupByIdAgentAndDateMonday", query = "select awr from AgentWeekRecup awr where awr.idAgent = :idAgent and awr.dateMonday = :dateMonday")
+})
 public class AgentWeekRecup {
 
 	@NotNull

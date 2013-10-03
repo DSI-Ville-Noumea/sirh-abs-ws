@@ -10,7 +10,7 @@ import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
-import nc.noumea.mairie.abs.service.HelperService;
+import nc.noumea.mairie.abs.service.NotAMondayException;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
@@ -45,6 +45,33 @@ public class RecuperationServiceTest {
 	}
 	
 	@Test
+	public void addRecuperationToAgent_DateIsNotAMonday_ThrowDateIsNotAMondayException() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		Date dateMonday = new LocalDate(2013, 9, 29).toDate();
+		
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(false);
+		
+		RecuperationService service = new RecuperationService();
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		try {
+			service.addRecuperationToAgent(idAgent, dateMonday, 90);
+		} catch (NotAMondayException ex) {
+			return;
+		}
+		
+		fail("Should have thrown an NotAMondayException");
+	}
+	
+	@Test
 	public void addRecuperationToAgent_AgentHasNoRecupForThatWeek_AgentHasNoAccount_CreateItemsAndAddQteToAccount() {
 		
 		// Given
@@ -60,6 +87,7 @@ public class RecuperationServiceTest {
 		
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 		
 		RecuperationService service = new RecuperationService();
 		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
@@ -94,9 +122,13 @@ public class RecuperationServiceTest {
 		arc.setTotalMinutes(10);
 		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(arc);
 		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
+		
 		RecuperationService service = new RecuperationService();
 		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
 		int result = service.addRecuperationToAgent(idAgent, dateMonday, 90);
@@ -125,9 +157,13 @@ public class RecuperationServiceTest {
 		arc.setTotalMinutes(10);
 		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(arc);
 		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
+		
 		RecuperationService service = new RecuperationService();
 		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
 		int result = service.addRecuperationToAgent(idAgent, dateMonday, 70);

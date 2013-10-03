@@ -3,7 +3,7 @@ package nc.noumea.mairie.abs.service;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
+@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Agent does not exists")
 public class AgentNotFoundException extends RuntimeException {
 
 	/**
