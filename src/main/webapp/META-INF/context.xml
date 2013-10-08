@@ -25,7 +25,7 @@
 
 	<Resource name="jdbc/ABS_WS_DS1" auth="Container" type="javax.sql.DataSource"
 		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1 from dual"
-		maxWait="10000" initialSize="1" username="EAE_NICO" password="EAE_NICO"
+		maxWait="10000" initialSize="1" username="ABS" password="ABS"
 		driverClassName="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@DVLP:1521:ORADEV"
 		poolPreparedStatements="true" />
 		<!-- RECETTE -->
