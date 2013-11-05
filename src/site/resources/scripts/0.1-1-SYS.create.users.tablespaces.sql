@@ -8,7 +8,6 @@ create role R_ABS_USR;
 create role R_ABS_READ;
 
 grant connect, create session, create table, create sequence, create public synonym to R_ABS_ADM;
-grant unlimited tablespace to R_ABS_ADM;
 grant connect, create session to R_ABS_USR;
 grant connect, create session to R_ABS_READ;
 
@@ -20,6 +19,7 @@ grant R_ABS_ADM to ABS_ADM;
 grant R_ABS_USR to ABS_USR;
 grant R_ABS_READ to ABS_READ;
 
+grant unlimited tablespace to ABS_ADM;
 
 ----------------------------------------------------------------
 -- Creation des tablespaces
