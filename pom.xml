@@ -243,14 +243,9 @@
 
         <!-- DB drivers -->
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc</artifactId>
-            <version>6</version>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.2-1003-jdbc4</version>
+            <version>9.3-1100-jdbc41</version>
         </dependency>
         <dependency>
             <groupId>net.sf.jt400</groupId>
