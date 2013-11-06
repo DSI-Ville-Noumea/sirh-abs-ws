@@ -2,6 +2,9 @@ package nc.noumea.mairie.abs.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
@@ -14,12 +17,17 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", identifierColumn = "ID_AGENT_RECUP_COUNT", identifierField = "idAgentRecupCount", identifierType = Integer.class, table = "ABS_AGENT_RECUP_COUNT", sequenceName = "ABS_S_AGENT_RECUP_COUNT")
+@RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_AGENT_RECUP_COUNT")
 @NamedQueries({
 		@NamedQuery(name = "findAgentRecupCountByIdAgent", query = "select arc from AgentRecupCount arc where arc.idAgent = :idAgent")
 })
 public class AgentRecupCount {
 
+	@Id
+	@Column(name = "ID_AGENT_RECUP_COUNT")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idAgentRecupCount;
+	
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="rayni84" id="1a364fe2-4666-11e3-86ae-ce3f5508acd9-1">
+        <createSequence sequenceName="ABS_S_AGENT_RECUP_COUNT"/>
+    </changeSet>
+    
+    <changeSet author="rayni84" id="1a364fe2-4666-11e3-86ae-ce3f5508acd9-2">
+        <createTable tableName="ABS_AGENT_RECUP_COUNT">
+            <column name="ID_AGENT_RECUP_COUNT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_MODIFICATION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TOTAL_MINUTES" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet author="rayni84" id="1a364fe2-4666-11e3-86ae-ce3f5508acd9-3">
+        <addPrimaryKey columnNames="ID_AGENT_RECUP_COUNT" constraintName="PK_ABS_AGENT_RECUP_COUNT" tableName="ABS_AGENT_RECUP_COUNT"/>
+        <addDefaultValue tableName="ABS_AGENT_RECUP_COUNT" columnName="ID_AGENT_RECUP_COUNT" defaultValueSequenceNext="ABS_S_AGENT_RECUP_COUNT" />
+    </changeSet>
+    
+    <changeSet author="rayni84" id="1a364fe2-4666-11e3-86ae-ce3f5508acd9-4">
+        <createSequence sequenceName="ABS_S_AGENT_WEEK_RECUP"/>
+    </changeSet>
+    
+    <changeSet author="rayni84" id="1a364fe2-4666-11e3-86ae-ce3f5508acd9-5">
+        <createTable tableName="ABS_AGENT_WEEK_RECUP">
+            <column name="ID_AGENT_WEEK_RECUP" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_MONDAY" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_MODIFICATION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MINUTES_RECUP" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rayni84" id="1a364fe2-4666-11e3-86ae-ce3f5508acd9-6">
+        <addPrimaryKey columnNames="ID_AGENT_WEEK_RECUP" constraintName="PK_ABS_AGENT_WEEK_RECUP" tableName="ABS_AGENT_WEEK_RECUP"/>
+        <addDefaultValue tableName="ABS_AGENT_WEEK_RECUP" columnName="ID_AGENT_WEEK_RECUP" defaultValueSequenceNext="ABS_S_AGENT_WEEK_RECUP" />
+        <addUniqueConstraint 
+            columnNames="ID_AGENT, DATE_MONDAY"
+            constraintName="ABS_AGENT_WEEK_RECUP_UQ"
+            tableName="ABS_AGENT_WEEK_RECUP"/>
+    </changeSet>
+    
+</databaseChangeLog>

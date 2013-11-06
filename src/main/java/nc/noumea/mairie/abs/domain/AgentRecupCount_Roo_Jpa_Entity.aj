@@ -5,10 +5,6 @@ package nc.noumea.mairie.abs.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
@@ -19,23 +15,9 @@ privileged aspect AgentRecupCount_Roo_Jpa_Entity {
     
     declare @type: AgentRecupCount: @Table(name = "ABS_AGENT_RECUP_COUNT");
     
-    @Id
-    @SequenceGenerator(name = "agentRecupCountGen", sequenceName = "ABS_S_AGENT_RECUP_COUNT")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "agentRecupCountGen")
-    @Column(name = "ID_AGENT_RECUP_COUNT")
-    private Integer AgentRecupCount.idAgentRecupCount;
-    
     @Version
     @Column(name = "version")
     private Integer AgentRecupCount.version;
-    
-    public Integer AgentRecupCount.getIdAgentRecupCount() {
-        return this.idAgentRecupCount;
-    }
-    
-    public void AgentRecupCount.setIdAgentRecupCount(Integer id) {
-        this.idAgentRecupCount = id;
-    }
     
     public Integer AgentRecupCount.getVersion() {
         return this.version;

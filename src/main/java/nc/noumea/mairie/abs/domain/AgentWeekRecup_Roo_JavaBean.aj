@@ -8,6 +8,14 @@ import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 
 privileged aspect AgentWeekRecup_Roo_JavaBean {
     
+    public Integer AgentWeekRecup.getIdAgentWeekRecup() {
+        return this.idAgentWeekRecup;
+    }
+    
+    public void AgentWeekRecup.setIdAgentWeekRecup(Integer idAgentWeekRecup) {
+        this.idAgentWeekRecup = idAgentWeekRecup;
+    }
+    
     public Integer AgentWeekRecup.getIdAgent() {
         return this.idAgent;
     }

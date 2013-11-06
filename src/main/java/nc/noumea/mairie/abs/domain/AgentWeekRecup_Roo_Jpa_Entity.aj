@@ -5,10 +5,6 @@ package nc.noumea.mairie.abs.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
@@ -19,23 +15,9 @@ privileged aspect AgentWeekRecup_Roo_Jpa_Entity {
     
     declare @type: AgentWeekRecup: @Table(name = "ABS_AGENT_WEEK_RECUP");
     
-    @Id
-    @SequenceGenerator(name = "agentWeekRecupGen", sequenceName = "ABS_S_AGENT_WEEK_RECUP")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "agentWeekRecupGen")
-    @Column(name = "ID_AGENT_WEEK_RECUP")
-    private Integer AgentWeekRecup.idAgentWeekRecup;
-    
     @Version
     @Column(name = "version")
     private Integer AgentWeekRecup.version;
-    
-    public Integer AgentWeekRecup.getIdAgentWeekRecup() {
-        return this.idAgentWeekRecup;
-    }
-    
-    public void AgentWeekRecup.setIdAgentWeekRecup(Integer id) {
-        this.idAgentWeekRecup = id;
-    }
     
     public Integer AgentWeekRecup.getVersion() {
         return this.version;

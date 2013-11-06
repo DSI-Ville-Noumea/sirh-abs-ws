@@ -8,6 +8,14 @@ import nc.noumea.mairie.abs.domain.AgentRecupCount;
 
 privileged aspect AgentRecupCount_Roo_JavaBean {
     
+    public Integer AgentRecupCount.getIdAgentRecupCount() {
+        return this.idAgentRecupCount;
+    }
+    
+    public void AgentRecupCount.setIdAgentRecupCount(Integer idAgentRecupCount) {
+        this.idAgentRecupCount = idAgentRecupCount;
+    }
+    
     public Integer AgentRecupCount.getIdAgent() {
         return this.idAgent;
     }
