@@ -6,6 +6,10 @@
 
 SIRH-ABS-WS API et définition des services
 
+* Droits
+  
+ {{{../conception/ws-droits-api.html}ws-droits-api.html}}
+
 * Recupérations
 
 ** Mise à jour des récupérations d'un agent pour une semaine donnée

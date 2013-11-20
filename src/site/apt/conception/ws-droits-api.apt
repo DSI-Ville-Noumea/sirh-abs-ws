@@ -1,0 +1,46 @@
+            ------
+            SIRH-ABS-WS API WS doc
+            ------
+
+
+
+SIRH-ABS-WS API et définition des services concernant les droits
+
+* Gestion des droits d'accès
+
+ <<URL>> : /droits/listeDroitsAgent
+ 
+ <<Accepted Methods>> : GET
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant au module de pointage via le Kiosque (au format 900xxxx ou 90xxxx).
+
+ []
+
+ <<Content>>
+
++-------------------------+
+    {
+       "annuler": false,
+       "approuverModif": true,
+       "approuverVisu": false,
+       "droitAcces": true,
+       "impression": false,
+       "majSolde": false,
+       "modification": false,
+       "saisie": false,
+       "suppression": false,
+       "viserModif": false,
+       "viserVisu": true,
+       "visuSolde": true
+    }
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant)
+HTTP Code 404 : Not Found (si l'agent n'existe pas)
++-------------------------+
