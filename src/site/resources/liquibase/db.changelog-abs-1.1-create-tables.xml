@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-1">
+        <createSequence sequenceName="ABS_S_AGENT_RECUP_COUNT"/>
+    </changeSet>
+    
+    <changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-2">
+        <createTable tableName="ABS_PROFIL">
+            <column name="ID_PROFIL" type="INT4">
+                <constraints nullable="false"/>
+            </column>		
+            <column name="LIBELLE" type="NVARCHAR2(50)">
+                <constraints nullable="false"/>				
+            </column>	
+            <column name="SAISIE" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>				
+            </column>		
+            <column name="MODIFICATION" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>		
+            <column name="SUPPRESSION" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>		
+            <column name="IMPRESSION" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>		
+            <column name="VISER_VISU" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>	
+            <column name="VISER_MODIF" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>	
+            <column name="APPROUVER_VISU" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>	
+            <column name="APPROUVER_MODIF" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>	
+            <column name="ANNULER" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>	
+            <column name="VISU_SOLDE" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>		
+            <column name="MAJ_SOLDE" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>		
+            <column name="DROIT_ACCES" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="ID_PROFIL" constraintName="PK_ABS_PROFIL" tableName="ABS_PROFIL"/>
+        <addDefaultValue columnName="ID_PROFIL" tableName="ABS_PROFIL" defaultValueSequenceNext="ABS_S_PROFIL" />
+    </changeSet>
+    
+</databaseChangeLog>

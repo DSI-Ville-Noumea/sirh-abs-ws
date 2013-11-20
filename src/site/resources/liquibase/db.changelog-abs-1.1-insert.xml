@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    
+    <changeSet author="nicno85" id="c4095c70-519d-11e3-8f96-0800200c9a66-1">
+        <insert tableName="ABS_PROFIL"><column name="LIBELLE" value="OPERATEUR"/><column name="SAISIE" value="1"/><column name="MODIFICATION" value="1"/><column name="SUPPRESSION" value="1"/><column name="IMPRESSION" value="1"/><column name="ANNULER" value="1"/><column name="VISU_SOLDE" value="1"/><column name="MAJ_SOLDE" value="1"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="ABS_PROFIL"><column name="LIBELLE" value="VISEUR"/><column name="VISER_MODIF" value="1"/><column name="APPROUVER_VISU" value="1"/><column name="VISU_SOLDE" value="1"/><column name="VERSION" value="0"/></insert>
+		<insert tableName="ABS_PROFIL"><column name="LIBELLE" value="APPROBATEUR"/><column name="VISER_VISU" value="1"/><column name="APPROUVER_MODIF" value="1"/><column name="VISU_SOLDE" value="1"/><column name="DROIT_ACCES" value="1"/><column name="VERSION" value="0"/></insert>
+		<insert tableName="ABS_PROFIL"><column name="LIBELLE" value="DELEGATAIRE"/><column name="VISER_VISU" value="1"/><column name="APPROUVER_MODIF" value="1"/><column name="VISU_SOLDE" value="1"/><column name="VERSION" value="0"/></insert>		 
+    </changeSet>
+    
+</databaseChangeLog>
