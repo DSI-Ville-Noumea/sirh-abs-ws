@@ -67,4 +67,16 @@
 	<echo>Fichiers de conf prêts pour les opérations liquibase.</echo>
 </target>
 
+<target name="prepare-integration" description="Prepare le fichier de conf liquibase qui sera utilisé pour deployer en integration">
+    <antcall target="prepare">
+        <param name="db.properties" value="db.integration.properties"/>
+    </antcall>
+</target>
+
+<target name="prepare-dev" description="Prepare le fichier de conf liquibase qui sera utilisé pour deployer en dev">
+    <antcall target="prepare">
+        <param name="db.properties" value="db.dev.properties"/>
+    </antcall>
+</target>
+
 </project>
