@@ -4,5 +4,7 @@
 
     <!-- Create tables  -->
     <include file="db.changelog-abs-1.0-create-tables.xml"/>
+    <include file="db.changelog-abs-1.1-create-tables.xml"/>
+    <include file="db.changelog-abs-1.1-insert.xml"/>
     
 </databaseChangeLog>

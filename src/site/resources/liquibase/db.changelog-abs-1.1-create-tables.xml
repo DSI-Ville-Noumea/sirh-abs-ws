@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-1">
-        <createSequence sequenceName="ABS_S_AGENT_RECUP_COUNT"/>
+        <createSequence sequenceName="ABS_S_PROFIL"/>
     </changeSet>
     
     <changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-2">
@@ -57,5 +57,97 @@
         <addPrimaryKey columnNames="ID_PROFIL" constraintName="PK_ABS_PROFIL" tableName="ABS_PROFIL"/>
         <addDefaultValue columnName="ID_PROFIL" tableName="ABS_PROFIL" defaultValueSequenceNext="ABS_S_PROFIL" />
     </changeSet>
-    
+    <changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-3">
+		<createSequence sequenceName="ABS_S_DROIT"/>
+	 
+        <createTable tableName="ABS_DROIT">
+            <column name="ID_DROIT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_MODIFICATION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT_DELEGATAIRE" type="INT4"/>
+            <column name="ID_DROIT_APPROBATEUR" type="INT4"/>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		<addPrimaryKey columnNames="ID_DROIT" constraintName="PK_ABS_DROIT" tableName="ABS_DROIT"/>
+		<addDefaultValue columnName="ID_DROIT" tableName="ABS_DROIT" defaultValueSequenceNext="ABS_S_DROIT" />
+		
+    </changeSet>
+	
+    <changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-4">
+		<createSequence sequenceName="ABS_S_DROITS_AGENT"/>
+	
+        <createTable tableName="ABS_DROITS_AGENT">
+            <column name="ID_DROITS_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4"/>
+            <column name="CODE_SERVICE" type="VARCHAR2(10)"/>
+            <column name="LIBELLE_SERVICE" type="VARCHAR2(50)"/>
+            <column name="DATE_MODIFICATION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		<addPrimaryKey columnNames="ID_DROITS_AGENT" constraintName="PK_ABS_DROITS_AGENT" tableName="ABS_DROITS_AGENT"/>
+		<addDefaultValue columnName="ID_DROITS_AGENT" tableName="ABS_DROITS_AGENT" defaultValueSequenceNext="ABS_S_DROITS_AGENT" />
+		
+    </changeSet>
+	
+	<changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-5">
+        <createTable tableName="ABS_DROIT_DROITS_AGENT">
+            <column name="ID_DROIT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_DROITS_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		<addPrimaryKey columnNames="ID_DROIT, ID_DROITS_AGENT" constraintName="PK_DROIT_DROITS_AGENT" tableName="ABS_DROIT_DROITS_AGENT"/>
+		
+		<addForeignKeyConstraint 
+            constraintName="FK_ABS_DROIT_DROITS_AGENT_DROIT"
+            baseColumnNames="ID_DROIT" baseTableName="ABS_DROIT_DROITS_AGENT" 
+            referencedColumnNames="ID_DROIT" referencedTableName="ABS_DROIT"/>
+		<addForeignKeyConstraint 
+            constraintName="FK_ABS_DROIT_DROITS_AGENT_DROITS_AGENT"
+            baseColumnNames="ID_DROITS_AGENT" baseTableName="ABS_DROIT_DROITS_AGENT" 
+            referencedColumnNames="ID_DROITS_AGENT" referencedTableName="ABS_DROITS_AGENT"/>
+			
+    </changeSet>
+	
+	<changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-6">
+        <createTable tableName="ABS_DROIT_PROFIL">
+            <column name="ID_DROIT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_PROFIL" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		<addPrimaryKey columnNames="ID_DROIT, ID_PROFIL" constraintName="PK_DROIT_PROFIL" tableName="ABS_DROIT_PROFIL"/>
+		
+		<addForeignKeyConstraint 
+            constraintName="FK_ABS_DROIT_PROFIL"
+            baseColumnNames="ID_DROIT" baseTableName="ABS_DROIT_PROFIL" 
+            referencedColumnNames="ID_DROIT" referencedTableName="ABS_DROIT"/>
+		<addForeignKeyConstraint 
+            constraintName="FK_ABS_DROIT_PROFIL_DROIT"
+            baseColumnNames="ID_PROFIL" baseTableName="ABS_DROIT_PROFIL" 
+            referencedColumnNames="ID_PROFIL" referencedTableName="ABS_PROFIL"/>
+			
+    </changeSet>
 </databaseChangeLog>
