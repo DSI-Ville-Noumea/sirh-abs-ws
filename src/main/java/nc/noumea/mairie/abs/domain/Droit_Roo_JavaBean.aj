@@ -35,46 +35,6 @@ privileged aspect Droit_Roo_JavaBean {
         this.dateModification = dateModification;
     }
     
-    public Integer Droit.getIdAgentDelegataire() {
-        return this.idAgentDelegataire;
-    }
-    
-    public void Droit.setIdAgentDelegataire(Integer idAgentDelegataire) {
-        this.idAgentDelegataire = idAgentDelegataire;
-    }
-    
-    public Droit Droit.getDroitApprobateur() {
-        return this.droitApprobateur;
-    }
-    
-    public void Droit.setDroitApprobateur(Droit droitApprobateur) {
-        this.droitApprobateur = droitApprobateur;
-    }
-    
-    public Set<Droit> Droit.getOperateurs() {
-        return this.operateurs;
-    }
-    
-    public void Droit.setOperateurs(Set<Droit> operateurs) {
-        this.operateurs = operateurs;
-    }
-    
-    public Droit Droit.getDroitViseur() {
-        return this.droitViseur;
-    }
-    
-    public void Droit.setDroitViseur(Droit droitViseur) {
-        this.droitViseur = droitViseur;
-    }
-    
-    public Set<Droit> Droit.getViseurs() {
-        return this.viseurs;
-    }
-    
-    public void Droit.setViseurs(Set<Droit> viseurs) {
-        this.viseurs = viseurs;
-    }
-    
     public Set<DroitsAgent> Droit.getAgents() {
         return this.agents;
     }

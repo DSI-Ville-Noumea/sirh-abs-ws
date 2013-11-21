@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,10 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -28,7 +25,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_DROIT")
 @NamedQueries({
-		@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
+		@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent"),
 		@NamedQuery(name = "getAgentsApprobateurs", query = "select d from Droit d inner join d.profils p where p.libelle = 'APPROBATEUR'"),
 		@NamedQuery(name = "getDroitByProfilAndAgent", query = "select d from Droit d inner join d.profils p where p.libelle = :libelle and d.idAgent= :idAgent") })
 public class Droit {
@@ -45,23 +42,6 @@ public class Droit {
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
-
-	@Column(name = "ID_AGENT_DELEGATAIRE")
-	private Integer idAgentDelegataire;
-
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_DROIT_APPROBATEUR", referencedColumnName = "ID_DROIT")
-	private Droit droitApprobateur;
-
-	@OneToMany(mappedBy = "droitApprobateur", orphanRemoval = true, cascade = CascadeType.ALL)
-	private Set<Droit> operateurs = new HashSet<Droit>();
-
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "ID_DROIT_VISEUR", referencedColumnName = "ID_DROIT")
-	private Droit droitViseur;
-
-	@OneToMany(mappedBy = "droitViseur", orphanRemoval = true, cascade = CascadeType.ALL)
-	private Set<Droit> viseurs = new HashSet<Droit>();
 
 	@ManyToMany
 	@JoinTable(name = "ABS_DROIT_DROITS_AGENT", joinColumns = @JoinColumn(name = "ID_DROIT"), inverseJoinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
