@@ -27,7 +27,10 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_DROIT")
-@NamedQueries({ @NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent") })
+@NamedQueries({
+		@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
+		@NamedQuery(name = "getAgentsApprobateurs", query = "select d from Droit d inner join d.profils p where p.libelle = 'APPROBATEUR'"),
+		@NamedQuery(name = "getDroitByProfilAndAgent", query = "select d from Droit d inner join d.profils p where p.libelle = :libelle and d.idAgent= :idAgent") })
 public class Droit {
 
 	@Id
