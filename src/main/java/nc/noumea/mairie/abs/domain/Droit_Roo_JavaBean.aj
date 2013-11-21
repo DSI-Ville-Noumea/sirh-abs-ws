@@ -59,6 +59,22 @@ privileged aspect Droit_Roo_JavaBean {
         this.operateurs = operateurs;
     }
     
+    public Droit Droit.getDroitViseur() {
+        return this.droitViseur;
+    }
+    
+    public void Droit.setDroitViseur(Droit droitViseur) {
+        this.droitViseur = droitViseur;
+    }
+    
+    public Set<Droit> Droit.getViseurs() {
+        return this.viseurs;
+    }
+    
+    public void Droit.setViseurs(Set<Droit> viseurs) {
+        this.viseurs = viseurs;
+    }
+    
     public Set<DroitsAgent> Droit.getAgents() {
         return this.agents;
     }

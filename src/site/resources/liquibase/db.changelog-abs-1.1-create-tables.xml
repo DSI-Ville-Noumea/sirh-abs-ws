@@ -72,6 +72,7 @@
             </column>
             <column name="ID_AGENT_DELEGATAIRE" type="INT4"/>
             <column name="ID_DROIT_APPROBATEUR" type="INT4"/>
+            <column name="ID_DROIT_VISEUR" type="INT4"/>
             <column name="VERSION" type="INT4">
                 <constraints nullable="false"/>
             </column>

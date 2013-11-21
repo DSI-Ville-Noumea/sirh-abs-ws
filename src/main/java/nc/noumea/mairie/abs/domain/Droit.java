@@ -53,6 +53,13 @@ public class Droit {
 	@OneToMany(mappedBy = "droitApprobateur", orphanRemoval = true, cascade = CascadeType.ALL)
 	private Set<Droit> operateurs = new HashSet<Droit>();
 
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "ID_DROIT_VISEUR", referencedColumnName = "ID_DROIT")
+	private Droit droitViseur;
+
+	@OneToMany(mappedBy = "droitViseur", orphanRemoval = true, cascade = CascadeType.ALL)
+	private Set<Droit> viseurs = new HashSet<Droit>();
+
 	@ManyToMany
 	@JoinTable(name = "ABS_DROIT_DROITS_AGENT", joinColumns = @JoinColumn(name = "ID_DROIT"), inverseJoinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
 	private Set<DroitsAgent> agents = new HashSet<DroitsAgent>();
