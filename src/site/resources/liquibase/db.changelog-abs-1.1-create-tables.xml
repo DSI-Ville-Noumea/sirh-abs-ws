@@ -156,6 +156,9 @@
             <column name="ID_DROIT_APPROBATEUR" type="INT4">
                 <constraints nullable="false"/>
             </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 		
 		

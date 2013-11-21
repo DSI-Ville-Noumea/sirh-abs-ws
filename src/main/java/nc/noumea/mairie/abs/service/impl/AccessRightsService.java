@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
@@ -40,7 +41,8 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (Droit da : accessRightsRepository.getAgentAccessRights(idAgent)) {
 
-			for (Profil pr : da.getProfils()) {
+			for (DroitProfil dpr : da.getDroitProfils()) {
+				Profil pr = dpr.getProfil();
 				result.setSaisie(result.isSaisie() || pr.isSaisie());
 				result.setModification(result.isModification() || pr.isModification());
 				result.setSuppression(result.isSuppression() || pr.isSuppression());
@@ -53,6 +55,7 @@ public class AccessRightsService implements IAccessRightsService {
 				result.setVisuSolde(result.isVisuSolde() || pr.isVisuSolde());
 				result.setMajSolde(result.isMajSolde() || pr.isMajSolde());
 				result.setDroitAcces(result.isDroitAcces() || pr.isDroitAcces());
+
 			}
 		}
 
@@ -101,7 +104,11 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 
 			d = new Droit();
-			d.getProfils().add(accessRightsRepository.getProfilByName("APPROBATEUR"));
+			DroitProfil dp = new DroitProfil();
+			dp.setDroit(d);
+			dp.setDroitApprobateur(d);
+			dp.setProfil(accessRightsRepository.getProfilByName("APPROBATEUR"));
+			d.getDroitProfils().add(dp);
 			d.setDateModification(helperService.getCurrentDate());
 			d.setIdAgent(agentDto.getIdAgent());
 			accessRightsRepository.persisEntity(d);

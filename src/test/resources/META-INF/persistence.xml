@@ -9,6 +9,7 @@
         <class>nc.noumea.mairie.abs.domain.AgentRecupCount</class>
       	<class>nc.noumea.mairie.abs.domain.AgentWeekRecup</class>
       	<class>nc.noumea.mairie.abs.domain.Droit</class>
+      	<class>nc.noumea.mairie.abs.domain.DroitProfil</class>
       	<class>nc.noumea.mairie.abs.domain.DroitsAgent</class>
       	<class>nc.noumea.mairie.abs.domain.Profil</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -71,9 +72,12 @@ public class AccessRightsServiceTest {
 		pr.setMajSolde(true);
 		pr.setDroitAcces(false);
 
+		DroitProfil dpr = new DroitProfil();
+		dpr.setProfil(pr);
+
 		Droit da = new Droit();
 		da.setIdAgent(idAgent);
-		da.getProfils().add(pr);
+		da.getDroitProfils().add(dpr);
 
 		List<Droit> droits = Arrays.asList(da);
 
@@ -121,9 +125,12 @@ public class AccessRightsServiceTest {
 		pr.setMajSolde(true);
 		pr.setDroitAcces(false);
 
+		DroitProfil dpr = new DroitProfil();
+		dpr.setProfil(pr);
+
 		Droit da = new Droit();
 		da.setIdAgent(900);
-		da.getProfils().add(pr);
+		da.getDroitProfils().add(dpr);
 
 		Profil pr2 = new Profil();
 		pr2.setSaisie(true);
@@ -139,9 +146,12 @@ public class AccessRightsServiceTest {
 		pr2.setMajSolde(true);
 		pr2.setDroitAcces(false);
 
+		DroitProfil dpr2 = new DroitProfil();
+		dpr2.setProfil(pr2);
+
 		Droit da2 = new Droit();
 		da2.setIdAgent(idAgent);
-		da2.getProfils().add(pr2);
+		da2.getDroitProfils().add(dpr2);
 		List<Droit> droits = Arrays.asList(da, da2);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);

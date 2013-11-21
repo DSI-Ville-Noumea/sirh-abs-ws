@@ -25,29 +25,27 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_DROITS_AGENT")
 public class DroitsAgent {
 
-	@Id 
+	@Id
 	@Column(name = "ID_DROITS_AGENT")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idDroitsAgent;
-	
+
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
-	
+
 	@Column(name = "CODE_SERVICE")
 	private String codeService;
-	
+
 	@Column(name = "LIBELLE_SERVICE")
 	private String libelleService;
-	
+
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
-	
+
 	@ManyToMany(cascade = CascadeType.PERSIST)
-	@JoinTable(
-			name = "ABS_DROIT_DROITS_AGENT", 
-			inverseJoinColumns = @JoinColumn(name = "ID_DROIT"), 
-			joinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
+	@JoinTable(name = "ABS_DROIT_DROITS_AGENT", inverseJoinColumns = @JoinColumn(name = "ID_DROIT"), joinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
 	private Set<Droit> droits = new HashSet<Droit>();
+	
 }

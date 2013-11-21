@@ -4,18 +4,16 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Droit;
-import nc.noumea.mairie.abs.domain.DroitsAgent;
+import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.Profil;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -48,7 +46,6 @@ public class AccessRightsRepositoryTest {
 
 		Profil pr = new Profil();
 		pr.setLibelle("libelle test");
-		;
 		pr.setSaisie(true);
 		pr.setModification(true);
 		pr.setSuppression(true);
@@ -63,11 +60,15 @@ public class AccessRightsRepositoryTest {
 		pr.setDroitAcces(false);
 		absEntityManager.persist(pr);
 
+		DroitProfil dpr = new DroitProfil();
+		dpr.setProfil(pr);
+		absEntityManager.persist(dpr);
+
 		Droit droit = new Droit();
 		droit.setDateModification(new Date());
 		droit.setIdAgent(9008767);
 		droit.setIdDroit(1);
-		droit.getProfils().add(pr);
+		droit.getDroitProfils().add(dpr);
 		absEntityManager.persist(droit);
 
 		// When
@@ -76,7 +77,7 @@ public class AccessRightsRepositoryTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals("9008767", result.get(0).getIdAgent().toString());
-		assertEquals(1, result.get(0).getProfils().size());
+		assertEquals(1, result.get(0).getDroitProfils().size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

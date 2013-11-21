@@ -4,10 +4,11 @@
 package nc.noumea.mairie.abs.domain;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
-import nc.noumea.mairie.abs.domain.Profil;
 
 privileged aspect Droit_Roo_JavaBean {
     
@@ -35,20 +36,28 @@ privileged aspect Droit_Roo_JavaBean {
         this.dateModification = dateModification;
     }
     
+    public List<DroitProfil> Droit.getDroitProfils() {
+        return this.droitProfils;
+    }
+    
+    public void Droit.setDroitProfils(List<DroitProfil> droitProfils) {
+        this.droitProfils = droitProfils;
+    }
+    
+    public List<DroitProfil> Droit.getDroitProfilsApprobateur() {
+        return this.droitProfilsApprobateur;
+    }
+    
+    public void Droit.setDroitProfilsApprobateur(List<DroitProfil> droitProfilsApprobateur) {
+        this.droitProfilsApprobateur = droitProfilsApprobateur;
+    }
+    
     public Set<DroitsAgent> Droit.getAgents() {
         return this.agents;
     }
     
     public void Droit.setAgents(Set<DroitsAgent> agents) {
         this.agents = agents;
-    }
-    
-    public Set<Profil> Droit.getProfils() {
-        return this.profils;
-    }
-    
-    public void Droit.setProfils(Set<Profil> profils) {
-        this.profils = profils;
     }
     
 }
