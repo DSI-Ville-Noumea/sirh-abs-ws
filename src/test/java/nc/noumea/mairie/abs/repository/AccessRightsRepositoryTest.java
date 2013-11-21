@@ -4,12 +4,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
+import nc.noumea.mairie.abs.domain.Profil;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,18 +46,28 @@ public class AccessRightsRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void getAgentAccessRights_ReturnResult() {
 
-		DroitsAgent agent = new DroitsAgent();
-		agent.setIdAgent(9008767);
-		agent.setIdDroitsAgent(1);
-		agent.setCodeService("DEAB");
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
-		agent.setDateModification(new Date());
-		absEntityManager.persist(agent);
+		Profil pr = new Profil();
+		pr.setLibelle("libelle test");
+		;
+		pr.setSaisie(true);
+		pr.setModification(true);
+		pr.setSuppression(true);
+		pr.setImpression(true);
+		pr.setViserVisu(false);
+		pr.setViserModif(false);
+		pr.setApprouverVisu(false);
+		pr.setApprouverModif(false);
+		pr.setAnnuler(true);
+		pr.setVisuSolde(true);
+		pr.setMajSolde(true);
+		pr.setDroitAcces(false);
+		absEntityManager.persist(pr);
 
 		Droit droit = new Droit();
 		droit.setDateModification(new Date());
 		droit.setIdAgent(9008767);
 		droit.setIdDroit(1);
+		droit.getProfils().add(pr);
 		absEntityManager.persist(droit);
 
 		// When
@@ -64,6 +76,7 @@ public class AccessRightsRepositoryTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals("9008767", result.get(0).getIdAgent().toString());
+		assertEquals(1, result.get(0).getProfils().size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
