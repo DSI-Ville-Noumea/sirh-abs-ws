@@ -2,7 +2,9 @@ package nc.noumea.mairie.abs.repository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -86,4 +88,49 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getAgentsApprobateurs_noResult() {
+		List<Droit> result = repository.getAgentsApprobateurs();
+
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getAgentsApprobateurs_result() {
+		Profil p = new Profil();
+		p.setLibelle("APPROBATEUR");
+		absEntityManager.persist(p);
+		
+		Droit droitApprobateur1 = new Droit();
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitApprobateur1);
+		dp1.setDroitApprobateur(droitApprobateur1);
+		dp1.setProfil(p);		
+		droitApprobateur1.setIdAgent(9008767);
+		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		absEntityManager.persist(droitApprobateur1);
+
+		Droit droitApprobateur2 = new Droit();
+		DroitProfil dp2 = new DroitProfil();
+		dp2.setDroit(droitApprobateur2);
+		dp2.setDroitApprobateur(droitApprobateur2);
+		dp2.setProfil(p);		
+		droitApprobateur2.setIdAgent(9008767);
+		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		absEntityManager.persist(droitApprobateur2);
+
+		List<Droit> listDroits = repository.getAgentsApprobateurs();
+
+		assertEquals(2, listDroits.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
 }
