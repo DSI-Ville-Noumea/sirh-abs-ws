@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
@@ -16,11 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 
 @Controller
@@ -64,30 +67,24 @@ public class AccessRightsController {
 		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
 	}
 
-	/*
-	 * @ResponseBody
-	 * 
-	 * @RequestMapping(value = "approbateurs", produces =
-	 * "application/json;charset=utf-8", method = RequestMethod.POST)
-	 * 
-	 * @Transactional(value = "absTransactionManager") public
-	 * ResponseEntity<String> setApprobateur(@RequestBody String agentsDtoJson)
-	 * { logger.debug(
-	 * "entered POST [droits/approbateurs] => setApprobateur --> for SIRH ");
-	 * 
-	 * List<AgentWithServiceDto> agDtos = new
-	 * JSONDeserializer<List<AgentWithServiceDto>>().use(null, ArrayList.class)
-	 * .use("values", AgentWithServiceDto.class).deserialize(agentsDtoJson);
-	 * List<AgentWithServiceDto> agentErreur = new
-	 * ArrayList<AgentWithServiceDto>(); try { agentErreur =
-	 * accessRightService.setApprobateurs(agDtos); } catch (Exception e) {
-	 * logger.debug("erreur : " + e); return new
-	 * ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT); }
-	 * 
-	 * return new ResponseEntity<String>(new
-	 * JSONSerializer().exclude("*.class").serialize(agentErreur),
-	 * HttpStatus.OK); }
-	 */
+	@ResponseBody
+	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> setApprobateur(@RequestBody String agentsDtoJson) {
+		logger.debug("entered POST [droits/approbateurs] => setApprobateur --> for SIRH ");
+
+		List<AgentWithServiceDto> agDtos = new JSONDeserializer<List<AgentWithServiceDto>>().use(null, ArrayList.class)
+				.use("values", AgentWithServiceDto.class).deserialize(agentsDtoJson);
+
+		List<AgentWithServiceDto> agentErreur = new ArrayList<AgentWithServiceDto>();
+		try {
+			agentErreur = accessRightService.setApprobateurs(agDtos);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+		}
+
+		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(agentErreur), HttpStatus.OK);
+	}
 
 	@ResponseBody
 	@RequestMapping(value = "inputter", produces = "application/json;charset=utf-8", method = RequestMethod.GET)

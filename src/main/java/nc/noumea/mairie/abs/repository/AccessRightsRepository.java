@@ -9,6 +9,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.Profil;
+import nc.noumea.mairie.abs.domain.ProfilEnum;
 
 import org.springframework.stereotype.Repository;
 
@@ -41,7 +42,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
 
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("libelle", "OPERATEUR");
+		q.setParameter("libelle", ProfilEnum.OPERATEUR.toString());
 
 		Boolean result = null;
 		if (null != q.getResultList() && 0 < q.getResultList().size()) {
@@ -62,7 +63,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
 
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("libelle", "VISEUR");
+		q.setParameter("libelle", ProfilEnum.VISEUR.toString());
 
 		Boolean result = null;
 		if (null != q.getResultList() && 0 < q.getResultList().size()) {
@@ -78,7 +79,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
 
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("libelle", "APPROBATEUR");
+		q.setParameter("libelle", ProfilEnum.APPROBATEUR.toString());
 
 		Boolean result = null;
 		if (null != q.getResultList() && 0 < q.getResultList().size()) {
@@ -94,7 +95,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
 
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("libelle", "DELEGATAIRE");
+		q.setParameter("libelle", ProfilEnum.DELEGATAIRE.toString());
 
 		Boolean result = null;
 		if (null != q.getResultList() && 0 < q.getResultList().size()) {

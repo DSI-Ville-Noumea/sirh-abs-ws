@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
+import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
@@ -92,12 +92,12 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> listeDto) {
 
 		List<AgentWithServiceDto> listeAgentErreur = new ArrayList<AgentWithServiceDto>();
-		/*List<Droit> listeAgentAppro = accessRightsRepository.getAgentsApprobateurs();
+		List<Droit> listeAgentAppro = accessRightsRepository.getAgentsApprobateurs();
 
 		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);
 
 		for (AgentWithServiceDto agentDto : listeDto) {
-			if (accessRightsRepository.isUserOperator(agentDto.getIdAgent())
+			if (accessRightsRepository.isUserOperateur(agentDto.getIdAgent())
 					|| accessRightsRepository.isUserViseur(agentDto.getIdAgent())) {
 				listeAgentErreur.add(agentDto);
 				continue;
@@ -121,7 +121,7 @@ public class AccessRightsService implements IAccessRightsService {
 			DroitProfil dp = new DroitProfil();
 			dp.setDroit(d);
 			dp.setDroitApprobateur(d);
-			dp.setProfil(accessRightsRepository.getProfilByName("APPROBATEUR"));
+			dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.APPROBATEUR.toString()));
 			d.getDroitProfils().add(dp);
 			d.setDateModification(helperService.getCurrentDate());
 			d.setIdAgent(agentDto.getIdAgent());
@@ -145,7 +145,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 			// Then we delete the approbateur
 			droitToDelete.remove();
-		}*/
+		}
 
 		return listeAgentErreur;
 
@@ -200,42 +200,36 @@ public class AccessRightsService implements IAccessRightsService {
 	public ReturnMessageDto setInputter(Integer idAgent, InputterDto dto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		/*Droit appro = accessRightsRepository.getAgentAccessRights(idAgent);
-
-		List<Droit> droitApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgent);
-
-		List<Droit> originalOperateurs = new ArrayList<Droit>();
-		for (Droit droits : droitApprobateur) {
-			for (DroitProfil dp : droits.getDroitProfils()) {
-				if (accessRightsRepository.isUserOperator(dp.getDroit().getIdAgent())) {
-					originalOperateurs.add(dp.getDroit());
-				}
-			}
-		}
-
-		if (dto.getDelegataire() != null) {
-			// Check that the new delegataire is not an operator
-			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
-				Agent ag = sirhRepository.getAgent(dto.getDelegataire().getIdAgent());
-				result.getErrors().add(
-						String.format(
-								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-			} else {
-				Droit d = new Droit();
-				DroitProfil dp = new DroitProfil();
-
-				d.setIdAgent(dto.getDelegataire().getIdAgent());
-				d.setDateModification(helperService.getCurrentDate());
-				d.setDroitProfils(Arrays.asList(dp));
-				dp.setDroit(d);
-				dp.setProfil(accessRightsRepository.getProfilByName("DELEGATAIRE"));
-				dp.setDroitApprobateur(appro);
-				accessRightsRepository.persisEntity(d);
-			}
-		} else {
-			// droitApprobateur.setIdAgentDelegataire(null);
-		}*/
+		/*
+		 * Droit appro = accessRightsRepository.getAgentAccessRights(idAgent);
+		 * 
+		 * List<Droit> droitApprobateur =
+		 * accessRightsRepository.getDroitSousApprobateur(idAgent);
+		 * 
+		 * List<Droit> originalOperateurs = new ArrayList<Droit>(); for (Droit
+		 * droits : droitApprobateur) { for (DroitProfil dp :
+		 * droits.getDroitProfils()) { if
+		 * (accessRightsRepository.isUserOperator(dp.getDroit().getIdAgent())) {
+		 * originalOperateurs.add(dp.getDroit()); } } }
+		 * 
+		 * if (dto.getDelegataire() != null) { // Check that the new delegataire
+		 * is not an operator if
+		 * (accessRightsRepository.isUserOperator(dto.getDelegataire
+		 * ().getIdAgent())) { Agent ag =
+		 * sirhRepository.getAgent(dto.getDelegataire().getIdAgent());
+		 * result.getErrors().add( String.format(
+		 * "L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur."
+		 * , ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent())); }
+		 * else { Droit d = new Droit(); DroitProfil dp = new DroitProfil();
+		 * 
+		 * d.setIdAgent(dto.getDelegataire().getIdAgent());
+		 * d.setDateModification(helperService.getCurrentDate());
+		 * d.setDroitProfils(Arrays.asList(dp)); dp.setDroit(d);
+		 * dp.setProfil(accessRightsRepository.getProfilByName("DELEGATAIRE"));
+		 * dp.setDroitApprobateur(appro);
+		 * accessRightsRepository.persisEntity(d); } } else { //
+		 * droitApprobateur.setIdAgentDelegataire(null); }
+		 */
 
 		/*
 		 * for (AgentDto operateurDto : dto.getSaisisseurs()) {
