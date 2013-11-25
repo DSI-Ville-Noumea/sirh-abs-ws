@@ -1,6 +1,8 @@
 package nc.noumea.mairie.abs.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -106,12 +108,12 @@ public class AccessRightsRepositoryTest {
 		Profil p = new Profil();
 		p.setLibelle("APPROBATEUR");
 		absEntityManager.persist(p);
-		
+
 		Droit droitApprobateur1 = new Droit();
 		DroitProfil dp1 = new DroitProfil();
 		dp1.setDroit(droitApprobateur1);
 		dp1.setDroitApprobateur(droitApprobateur1);
-		dp1.setProfil(p);		
+		dp1.setProfil(p);
 		droitApprobateur1.setIdAgent(9008767);
 		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
 		absEntityManager.persist(droitApprobateur1);
@@ -120,14 +122,158 @@ public class AccessRightsRepositoryTest {
 		DroitProfil dp2 = new DroitProfil();
 		dp2.setDroit(droitApprobateur2);
 		dp2.setDroitApprobateur(droitApprobateur2);
-		dp2.setProfil(p);		
-		droitApprobateur2.setIdAgent(9008767);
+		dp2.setProfil(p);
+		droitApprobateur2.setIdAgent(9008768);
 		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
 		absEntityManager.persist(droitApprobateur2);
 
 		List<Droit> listDroits = repository.getAgentsApprobateurs();
 
 		assertEquals(2, listDroits.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void isUserOperateur() {
+		Profil p1 = new Profil();
+		p1.setLibelle("OPERATEUR");
+		absEntityManager.persist(p1);
+		Profil p2 = new Profil();
+		p2.setLibelle("APPROBATEUR");
+		absEntityManager.persist(p2);
+
+		Droit droitApprobateur1 = new Droit();
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitApprobateur1);
+		dp1.setDroitApprobateur(droitApprobateur1);
+		dp1.setProfil(p1);
+		droitApprobateur1.setIdAgent(9008767);
+		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		absEntityManager.persist(droitApprobateur1);
+
+		Droit droitApprobateur2 = new Droit();
+		DroitProfil dp2 = new DroitProfil();
+		dp2.setDroit(droitApprobateur2);
+		dp2.setDroitApprobateur(droitApprobateur2);
+		dp2.setProfil(p2);
+		droitApprobateur2.setIdAgent(9008768);
+		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		absEntityManager.persist(droitApprobateur2);
+
+		// When
+		assertTrue(repository.isUserOperateur(9008767));
+		assertFalse(repository.isUserOperateur(9008768));
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void isUserViseur() {
+		Profil p1 = new Profil();
+		p1.setLibelle("VISEUR");
+		absEntityManager.persist(p1);
+		Profil p2 = new Profil();
+		p2.setLibelle("APPROBATEUR");
+		absEntityManager.persist(p2);
+
+		Droit droitApprobateur1 = new Droit();
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitApprobateur1);
+		dp1.setDroitApprobateur(droitApprobateur1);
+		dp1.setProfil(p1);
+		droitApprobateur1.setIdAgent(9008767);
+		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		absEntityManager.persist(droitApprobateur1);
+
+		Droit droitApprobateur2 = new Droit();
+		DroitProfil dp2 = new DroitProfil();
+		dp2.setDroit(droitApprobateur2);
+		dp2.setDroitApprobateur(droitApprobateur2);
+		dp2.setProfil(p2);
+		droitApprobateur2.setIdAgent(9008768);
+		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		absEntityManager.persist(droitApprobateur2);
+
+		// When
+		assertTrue(repository.isUserViseur(9008767));
+		assertFalse(repository.isUserViseur(9008768));
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void isUserApprobateur() {
+		Profil p1 = new Profil();
+		p1.setLibelle("VISEUR");
+		absEntityManager.persist(p1);
+		Profil p2 = new Profil();
+		p2.setLibelle("APPROBATEUR");
+		absEntityManager.persist(p2);
+
+		Droit droitApprobateur1 = new Droit();
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitApprobateur1);
+		dp1.setDroitApprobateur(droitApprobateur1);
+		dp1.setProfil(p1);
+		droitApprobateur1.setIdAgent(9008767);
+		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		absEntityManager.persist(droitApprobateur1);
+
+		Droit droitApprobateur2 = new Droit();
+		DroitProfil dp2 = new DroitProfil();
+		dp2.setDroit(droitApprobateur2);
+		dp2.setDroitApprobateur(droitApprobateur2);
+		dp2.setProfil(p2);
+		droitApprobateur2.setIdAgent(9008768);
+		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		absEntityManager.persist(droitApprobateur2);
+
+		// When
+		assertFalse(repository.isUserApprobateur(9008767));
+		assertTrue(repository.isUserApprobateur(9008768));
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void isUserDelagtaire() {
+		Profil p1 = new Profil();
+		p1.setLibelle("DELEGATAIRE");
+		absEntityManager.persist(p1);
+		Profil p2 = new Profil();
+		p2.setLibelle("APPROBATEUR");
+		absEntityManager.persist(p2);
+
+		Droit droitApprobateur1 = new Droit();
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitApprobateur1);
+		dp1.setDroitApprobateur(droitApprobateur1);
+		dp1.setProfil(p1);
+		droitApprobateur1.setIdAgent(9008767);
+		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		absEntityManager.persist(droitApprobateur1);
+
+		Droit droitApprobateur2 = new Droit();
+		DroitProfil dp2 = new DroitProfil();
+		dp2.setDroit(droitApprobateur2);
+		dp2.setDroitApprobateur(droitApprobateur2);
+		dp2.setProfil(p2);
+		droitApprobateur2.setIdAgent(9008768);
+		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		absEntityManager.persist(droitApprobateur2);
+
+		// When
+		assertTrue(repository.isUserDelegataire(9008767));
+		assertFalse(repository.isUserDelegataire(9008768));
 
 		absEntityManager.flush();
 		absEntityManager.clear();

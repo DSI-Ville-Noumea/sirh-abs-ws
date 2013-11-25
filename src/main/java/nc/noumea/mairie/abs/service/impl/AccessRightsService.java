@@ -153,7 +153,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	public boolean canUserAccessAccessRights(Integer idAgent) {
-		return accessRightsRepository.isUserApprobator(idAgent);
+		return accessRightsRepository.isUserApprobateur(idAgent);
 	}
 
 	@Override
@@ -177,7 +177,7 @@ public class AccessRightsService implements IAccessRightsService {
 					else
 						result.setDelegataire(new AgentDto(delegataire));
 
-				} else if (accessRightsRepository.isUserOperator(dp.getDroit().getIdAgent())) {
+				} else if (accessRightsRepository.isUserOperateur(dp.getDroit().getIdAgent())) {
 					Agent ope = sirhRepository.getAgent(dp.getDroit().getIdAgent());
 					if (ope == null)
 						logger.warn("L'agent opérateur {} n'existe pas.", dp.getDroit().getIdAgent());

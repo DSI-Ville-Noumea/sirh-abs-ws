@@ -36,7 +36,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public boolean isUserOperator(Integer idAgent) {
+	public boolean isUserOperateur(Integer idAgent) {
 
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
 
@@ -73,18 +73,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public Profil getProfilByName(String profilName) {
-		TypedQuery<Profil> q = absEntityManager
-				.createQuery("from Profil p where p.libelle = :profilName", Profil.class);
-		q.setParameter("profilName", profilName);
-
-		Profil p = q.getSingleResult();
-
-		return p;
-	}
-
-	@Override
-	public boolean isUserApprobator(Integer idAgent) {
+	public boolean isUserApprobateur(Integer idAgent) {
 
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
 
@@ -113,6 +102,17 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		}
 
 		return (result != null && result);
+	}
+
+	@Override
+	public Profil getProfilByName(String profilName) {
+		TypedQuery<Profil> q = absEntityManager
+				.createQuery("from Profil p where p.libelle = :profilName", Profil.class);
+		q.setParameter("profilName", profilName);
+
+		Profil p = q.getSingleResult();
+
+		return p;
 	}
 
 	@Override

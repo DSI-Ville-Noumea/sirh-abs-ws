@@ -11,9 +11,9 @@ public interface IAccessRightsRepository {
 
 	List<Droit> getAgentsApprobateurs();
 
-	boolean isUserApprobator(Integer idAgent);
+	boolean isUserApprobateur(Integer idAgent);
 
-	boolean isUserOperator(Integer idAgent);
+	boolean isUserOperateur(Integer idAgent);
 
 	boolean isUserViseur(Integer idAgent);
 

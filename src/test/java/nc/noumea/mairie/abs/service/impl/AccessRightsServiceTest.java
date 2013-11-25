@@ -509,7 +509,7 @@ public class AccessRightsServiceTest {
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getDroitSousApprobateur(idAgent)).thenReturn(Arrays.asList(droitOperateur));
-		Mockito.when(arRepo.isUserOperator(idAgentOperateur)).thenReturn(true);
+		Mockito.when(arRepo.isUserOperateur(idAgentOperateur)).thenReturn(true);
 
 		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepo.getAgent(idAgentOperateur)).thenReturn(agentOperateur);
