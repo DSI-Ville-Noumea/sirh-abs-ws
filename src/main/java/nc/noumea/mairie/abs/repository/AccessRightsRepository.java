@@ -119,7 +119,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur) {
 		TypedQuery<Droit> q = absEntityManager
 				.createQuery(
-						"from Droit d LEFT JOIN FETCH d.droitProfils dp LEFT JOIN FETCH dp.profil p where dp.droitApprobateur.idAgent = :idAgent",
+						"from Droit d LEFT JOIN FETCH d.droitProfils dp where dp.droitApprobateur.idAgent = :idAgent and dp.droitApprobateur.idAgent != dp.droit.idAgent ",
 						Droit.class);
 		q.setParameter("idAgent", idAgentApprobateur);
 

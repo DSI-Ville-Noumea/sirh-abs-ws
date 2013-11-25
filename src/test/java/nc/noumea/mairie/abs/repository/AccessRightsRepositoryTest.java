@@ -245,7 +245,7 @@ public class AccessRightsRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void isUserDelagtaire() {
+	public void isUserDelegataire() {
 		Profil p1 = new Profil();
 		p1.setLibelle("DELEGATAIRE");
 		absEntityManager.persist(p1);
@@ -274,6 +274,63 @@ public class AccessRightsRepositoryTest {
 		// When
 		assertTrue(repository.isUserDelegataire(9008767));
 		assertFalse(repository.isUserDelegataire(9008768));
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getProfilByName() {
+		Profil p1 = new Profil();
+		p1.setLibelle("DELEGATAIRE");
+		absEntityManager.persist(p1);
+
+		Profil result = repository.getProfilByName("DELEGATAIRE");
+
+		// When
+		assertEquals("DELEGATAIRE", result.getLibelle());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getDroitSousApprobateur() {
+		Profil p1 = new Profil();
+		p1.setLibelle("APPROBATEUR");
+		absEntityManager.persist(p1);
+		Profil p2 = new Profil();
+		p2.setLibelle("VISEUR");
+		absEntityManager.persist(p2);
+
+		Droit droitApprobateur1 = new Droit();
+		Droit droitViseur = new Droit();
+
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitApprobateur1);
+		dp1.setDroitApprobateur(droitApprobateur1);
+		dp1.setProfil(p1);
+		DroitProfil dp2 = new DroitProfil();
+		dp2.setDroit(droitViseur);
+		dp2.setDroitApprobateur(droitApprobateur1);
+		dp2.setProfil(p2);
+
+		droitApprobateur1.setIdAgent(9005138);
+		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		droitViseur.setIdAgent(9005131);
+		droitViseur.setDroitProfils(Arrays.asList(dp2));
+		
+		absEntityManager.persist(droitApprobateur1);
+		absEntityManager.persist(droitViseur);
+		absEntityManager.persist(dp1);
+		absEntityManager.persist(dp2);
+
+		List<Droit> result = repository.getDroitSousApprobateur(9005138);
+
+		// When
+		assertEquals(1, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
