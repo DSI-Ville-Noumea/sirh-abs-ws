@@ -44,14 +44,6 @@ privileged aspect Droit_Roo_JavaBean {
         this.droitProfils = droitProfils;
     }
     
-    public List<DroitProfil> Droit.getDroitProfilsApprobateur() {
-        return this.droitProfilsApprobateur;
-    }
-    
-    public void Droit.setDroitProfilsApprobateur(List<DroitProfil> droitProfilsApprobateur) {
-        this.droitProfilsApprobateur = droitProfilsApprobateur;
-    }
-    
     public Set<DroitsAgent> Droit.getAgents() {
         return this.agents;
     }

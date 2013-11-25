@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.repository;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
@@ -18,12 +19,12 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	private EntityManager absEntityManager;
 
 	@Override
-	public List<Droit> getAgentAccessRights(int idAgent) {
+	public Droit getAgentAccessRights(int idAgent) throws NoResultException {
 
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getAgentAccessRights", Droit.class);
 		q.setParameter("idAgent", idAgent);
 
-		return q.getResultList();
+		return q.getSingleResult();
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public boolean isUserOperator(Integer idAgent) {
 
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
-		
+
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("libelle", "OPERATEUR");
 
@@ -59,7 +60,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public boolean isUserViseur(Integer idAgent) {
 
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
-		
+
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("libelle", "VISEUR");
 
@@ -80,6 +81,54 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		Profil p = q.getSingleResult();
 
 		return p;
+	}
+
+	@Override
+	public boolean isUserApprobator(Integer idAgent) {
+
+		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("libelle", "APPROBATEUR");
+
+		Boolean result = null;
+		if (null != q.getResultList() && 0 < q.getResultList().size()) {
+			result = true;
+		}
+
+		return (result != null && result);
+	}
+
+	@Override
+	public boolean isUserDelegataire(Integer idAgent) {
+
+		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("libelle", "DELEGATAIRE");
+
+		Boolean result = null;
+		if (null != q.getResultList() && 0 < q.getResultList().size()) {
+			result = true;
+		}
+
+		return (result != null && result);
+	}
+
+	@Override
+	public List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur) {
+		TypedQuery<Droit> q = absEntityManager
+				.createQuery(
+						"from Droit d LEFT JOIN FETCH d.droitProfils dp LEFT JOIN FETCH dp.profil p where dp.droitApprobateur.idAgent = :idAgent",
+						Droit.class);
+		q.setParameter("idAgent", idAgentApprobateur);
+
+		List<Droit> r = q.getResultList();
+
+		if (r.size() == 0)
+			return null;
+
+		return r;
 	}
 
 }

@@ -1,10 +1,10 @@
 package nc.noumea.mairie.abs.web;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -16,13 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 
 @Controller
@@ -62,26 +60,80 @@ public class AccessRightsController {
 
 		logger.debug("entered GET [droits/approbateurs] => listApprobateurs with no parameter --> for SIRH ");
 
-		List<AgentWithServiceDto> result = accessRightService.listAgentsApprobateurs();
-
+		List<AgentWithServiceDto> result = accessRightService.getApprobateurs();
 		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
 	}
 
+	/*
+	 * @ResponseBody
+	 * 
+	 * @RequestMapping(value = "approbateurs", produces =
+	 * "application/json;charset=utf-8", method = RequestMethod.POST)
+	 * 
+	 * @Transactional(value = "absTransactionManager") public
+	 * ResponseEntity<String> setApprobateur(@RequestBody String agentsDtoJson)
+	 * { logger.debug(
+	 * "entered POST [droits/approbateurs] => setApprobateur --> for SIRH ");
+	 * 
+	 * List<AgentWithServiceDto> agDtos = new
+	 * JSONDeserializer<List<AgentWithServiceDto>>().use(null, ArrayList.class)
+	 * .use("values", AgentWithServiceDto.class).deserialize(agentsDtoJson);
+	 * List<AgentWithServiceDto> agentErreur = new
+	 * ArrayList<AgentWithServiceDto>(); try { agentErreur =
+	 * accessRightService.setApprobateurs(agDtos); } catch (Exception e) {
+	 * logger.debug("erreur : " + e); return new
+	 * ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT); }
+	 * 
+	 * return new ResponseEntity<String>(new
+	 * JSONSerializer().exclude("*.class").serialize(agentErreur),
+	 * HttpStatus.OK); }
+	 */
+
 	@ResponseBody
-	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> setApprobateur(@RequestBody String agentsDtoJson) {
-		logger.debug("entered POST [droits/approbateurs] => setApprobateur --> for SIRH ");
+	@RequestMapping(value = "inputter", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getInputter(@RequestParam("idAgent") Integer idAgent) {
+		logger.debug("entered GET [droits/inputter] => getInputter with parameter idAgent = {}", idAgent);
 
-		List<AgentWithServiceDto> agDtos = new JSONDeserializer<List<AgentWithServiceDto>>().use(null, ArrayList.class)
-				.use("values", AgentWithServiceDto.class).deserialize(agentsDtoJson);
-		List<AgentWithServiceDto> agentErreur = new ArrayList<AgentWithServiceDto>();
-		try {
-			agentErreur = accessRightService.setApprobateurs(agDtos);
-		} catch (Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
-		}
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(agentErreur), HttpStatus.OK);
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		InputterDto result = accessRightService.getInputter(convertedIdAgent);
+
+		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}
+
+	/*
+	 * @ResponseBody
+	 * 
+	 * @RequestMapping(value = "inputter", produces =
+	 * "application/json;charset=utf-8", method = RequestMethod.POST)
+	 * 
+	 * @Transactional(value = "absTransactionManager") public
+	 * ResponseEntity<String> setInputter(@RequestParam("idAgent") Integer
+	 * idAgent,
+	 * 
+	 * @RequestBody String inputterDtoJson) { logger.debug(
+	 * "entered POST [droits/delegataireOperateurs] => setInputter with parameter idAgent = {}"
+	 * , idAgent);
+	 * 
+	 * int convertedIdAgent =
+	 * converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+	 * 
+	 * if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+	 * throw new AccessForbiddenException();
+	 * 
+	 * ReturnMessageDto result =
+	 * accessRightService.setInputter(convertedIdAgent, new
+	 * InputterDto().deserializeFromJSON(inputterDtoJson));
+	 * 
+	 * String jsonResult = new
+	 * JSONSerializer().exclude("*.class").deepSerialize(result);
+	 * 
+	 * if (result.getErrors().size() != 0) return new
+	 * ResponseEntity<String>(jsonResult, HttpStatus.CONFLICT); else return new
+	 * ResponseEntity<String>(jsonResult, HttpStatus.OK); }
+	 */
 }

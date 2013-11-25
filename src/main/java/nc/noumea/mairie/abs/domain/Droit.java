@@ -48,11 +48,8 @@ public class Droit {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
 
-	@OneToMany(mappedBy = "droit", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<DroitProfil> droitProfils = new ArrayList<DroitProfil>();
-
-	@OneToMany(mappedBy = "droitApprobateur", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<DroitProfil> droitProfilsApprobateur = new ArrayList<DroitProfil>();
 
 	@ManyToMany
 	@JoinTable(name = "ABS_DROIT_DROITS_AGENT", joinColumns = @JoinColumn(name = "ID_DROIT"), inverseJoinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))

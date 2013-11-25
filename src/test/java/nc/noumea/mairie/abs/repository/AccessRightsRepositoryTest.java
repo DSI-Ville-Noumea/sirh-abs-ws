@@ -3,7 +3,6 @@ package nc.noumea.mairie.abs.repository;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +14,7 @@ import nc.noumea.mairie.abs.domain.Profil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +34,15 @@ public class AccessRightsRepositoryTest {
 	public void getAgentAccessRights_ReturnNull() {
 
 		// When
-		List<Droit> result = repository.getAgentAccessRights(9005138);
+		Droit result = new Droit();
+		try {
+			result = repository.getAgentAccessRights(9005138);
+		} catch (EmptyResultDataAccessException e) {
+			result = null;
+		}
 
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(null, result);
 	}
 
 	@Test
@@ -72,12 +77,11 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 
 		// When
-		List<Droit> result = repository.getAgentAccessRights(9008767);
+		Droit result = repository.getAgentAccessRights(9008767);
 
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("9008767", result.get(0).getIdAgent().toString());
-		assertEquals(1, result.get(0).getDroitProfils().size());
+		assertEquals("9008767", result.getIdAgent().toString());
+		assertEquals(1, result.getDroitProfils().size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

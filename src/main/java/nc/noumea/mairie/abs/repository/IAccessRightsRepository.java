@@ -7,15 +7,21 @@ import nc.noumea.mairie.abs.domain.Profil;
 
 public interface IAccessRightsRepository {
 
-	List<Droit> getAgentAccessRights(int idAgent);
+	Droit getAgentAccessRights(int idAgent);
 
 	List<Droit> getAgentsApprobateurs();
+
+	boolean isUserApprobator(Integer idAgent);
 
 	boolean isUserOperator(Integer idAgent);
 
 	boolean isUserViseur(Integer idAgent);
 
+	boolean isUserDelegataire(Integer idAgent);
+
 	void persisEntity(Object obj);
 
 	Profil getProfilByName(String profilName);
+
+	List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur);
 }

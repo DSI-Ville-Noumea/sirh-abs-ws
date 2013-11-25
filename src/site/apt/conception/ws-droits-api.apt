@@ -44,3 +44,75 @@ HTTP Code 200 : OK
 HTTP Code 400 : Bad Request (si un des paramètres est manquant)
 HTTP Code 404 : Not Found (si l'agent n'existe pas)
 +-------------------------+
+
+* Gestion des approbateurs
+
+ <<URL>> : /droits/approbateurs
+ 
+ <<Accepted Methods>> : GET
+
+ <<Content>>
+
++-------------------------+
+    [
+       {
+           "codeService": "DCCA",
+           "idAgent": 9005138,
+           "nom": "CHARVET",
+           "prenom": "TATIANA",
+           "service": "DSI Service Etudes et Développement",
+           "statut": null
+       },
+       {
+           "codeService": "DCCB",
+           "idAgent": 9003041,
+           "nom": "QUINQUIS",
+           "prenom": "CHRISTINE",
+           "service": "SED Département Maintenance et Développement",
+           "statut": null
+       }
+    ]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request 
++-------------------------+
+
+* Gestion des inputter
+
+ <<URL>> : /droits/inputter
+ 
+ <<Accepted Methods>> : GET
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant au module de pointage via le Kiosque (au format 900xxxx ou 90xxxx).
+
+ <<Content>>
+
++-------------------------+
+    {
+       "delegataire": null,
+       "operateurs":
+       [
+           {
+               "idAgent": 9005131,
+               "nom": "SALES",
+               "prenom": "ADRIEN"
+           }
+       ],
+	   "viseurs":
+	   [
+	   ]
+    }
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request 
++-------------------------+
