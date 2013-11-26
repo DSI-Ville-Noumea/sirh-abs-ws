@@ -129,6 +129,11 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		for (Droit droitToDelete : droitsToDelete) {
+			// on remove tous les sous droits des approbateurs
+			// ie : suppression opérateurs,viseurs,delegataire et tous les
+			// agents liés à ces droits.
+			// removeDroitAndSousDroit(droitToDelete);
+
 			// First, we remove all the agents this approbateur was approving
 			// this will also delete all the agents its operateurs were filling
 			// in for
@@ -267,5 +272,32 @@ public class AccessRightsService implements IAccessRightsService {
 		 */
 
 		return result;
+	}
+
+	@Override
+	public List<AgentDto> getAgentsToApproveOrInput(int idAgent) {
+		return getAgentsToApproveOrInput(idAgent, null);
+	}
+
+	/**
+	 * Retrieves the agent an approbator is set to Approve or an Operator is set
+	 * to Input. This service also filters by service
+	 */
+	@Override
+	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService) {
+
+		List<AgentDto> result = new ArrayList<AgentDto>();
+
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
+			AgentDto agDto = new AgentDto();
+			Agent ag = sirhRepository.getAgent(da.getIdAgent());
+			agDto.setIdAgent(da.getIdAgent());
+			agDto.setNom(ag.getDisplayNom());
+			agDto.setPrenom(ag.getDisplayPrenom());
+			result.add(agDto);
+		}
+
+		return result;
+
 	}
 }

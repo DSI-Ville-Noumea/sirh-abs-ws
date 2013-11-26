@@ -6,14 +6,18 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.DroitProfil;
+import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
+import nc.noumea.mairie.abs.domain.ProfilEnum;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -211,7 +215,7 @@ public class AccessRightsRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void isUserApprobateur() {
 		Profil p1 = new Profil();
-		p1.setLibelle("VISEUR");
+		p1.setLibelle(ProfilEnum.VISEUR.toString());
 		absEntityManager.persist(p1);
 		Profil p2 = new Profil();
 		p2.setLibelle("APPROBATEUR");
@@ -321,7 +325,7 @@ public class AccessRightsRepositoryTest {
 		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
 		droitViseur.setIdAgent(9005131);
 		droitViseur.setDroitProfils(Arrays.asList(dp2));
-		
+
 		absEntityManager.persist(droitApprobateur1);
 		absEntityManager.persist(droitViseur);
 		absEntityManager.persist(dp1);
@@ -331,6 +335,37 @@ public class AccessRightsRepositoryTest {
 
 		// When
 		assertEquals(1, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListOfAgentsToInputOrApproveByService() {
+
+		Droit droit = new Droit();
+		droit.setDateModification(new Date());
+		droit.setIdAgent(9008767);
+		droit.setIdDroit(1);
+		absEntityManager.persist(droit);
+
+		Set<Droit> droits = new HashSet<Droit>();
+		droits.add(droit);
+
+		DroitsAgent agent = new DroitsAgent();
+		agent.setIdAgent(9008767);
+		agent.setIdDroitsAgent(1);
+		agent.setCodeService("DEAB");
+		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+		agent.setDateModification(new Date());
+		agent.setDroits(droits);
+		absEntityManager.persist(agent);
+
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008767, "DEAB");
+
+		assertEquals(1, result.size());
+		assertEquals("9008767", result.get(0).getIdAgent().toString());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

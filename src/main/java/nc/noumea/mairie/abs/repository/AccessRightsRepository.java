@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 
@@ -130,6 +131,21 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			return null;
 
 		return r;
+	}
+
+	@Override
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService) {
+
+		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
+				codeService == null ? "getListOfAgentsToInputOrApprove" : "getListOfAgentsToInputOrApproveByService",
+				DroitsAgent.class);
+
+		q.setParameter("idAgent", idAgent);
+
+		if (codeService != null)
+			q.setParameter("codeService", codeService);
+
+		return q.getResultList();
 	}
 
 }

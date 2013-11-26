@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
+import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
@@ -133,4 +134,26 @@ public class AccessRightsController {
 	 * ResponseEntity<String>(jsonResult, HttpStatus.CONFLICT); else return new
 	 * ResponseEntity<String>(jsonResult, HttpStatus.OK); }
 	 */
+
+	@ResponseBody
+	@RequestMapping(value = "agentsApprouves", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getApprovedAgents(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered GET [droits/agentsApprouves] => getApprovedAgents with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		List<AgentDto> result = accessRightService.getAgentsToApproveOrInput(convertedIdAgent);
+
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+
+		String response = new JSONSerializer().exclude("*.class").serialize(result);
+
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
 }

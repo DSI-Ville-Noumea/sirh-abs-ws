@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.repository;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 
 public interface IAccessRightsRepository {
@@ -24,4 +25,6 @@ public interface IAccessRightsRepository {
 	Profil getProfilByName(String profilName);
 
 	List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur);
+
+	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
 }

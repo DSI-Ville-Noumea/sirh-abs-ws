@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.service;
 import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
+import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -20,5 +21,9 @@ public interface IAccessRightsService {
 	InputterDto getInputter(int idAgent);
 
 	ReturnMessageDto setInputter(Integer idAgent, InputterDto dto);
+
+	List<AgentDto> getAgentsToApproveOrInput(int idAgent);
+	
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService);
 
 }
