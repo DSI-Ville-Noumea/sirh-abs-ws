@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Droit;
@@ -131,6 +132,21 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			return null;
 
 		return r;
+	}
+	
+	@Override
+	public void deleteDroitProfilByIdDroitAndIdProfil(Integer idDroitProfil) {
+		
+		Query q = absEntityManager.createQuery("delete from DroitProfil where idDroitProfil = :idDroitProfil ");
+		q.setParameter("idDroitProfil", idDroitProfil);
+		
+		q.executeUpdate();
+		absEntityManager.flush();
+	}
+	
+	@Override
+	public void removeEntity(Object obj) {
+		absEntityManager.remove(obj);
 	}
 
 	@Override
