@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -322,11 +323,8 @@ public class AccessRightsService implements IAccessRightsService {
 			dp.setDroitApprobateur(droitApprobateur);
 			dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.OPERATEUR.toString()));
 			
-			List<DroitProfil> droitProfils = new ArrayList<DroitProfil>();
-			droitProfils.add(dp);
-			
 			existingOperateur.setDateModification(helperService.getCurrentDate());
-			existingOperateur.setDroitProfils(droitProfils);
+			existingOperateur.setDroitProfils(Arrays.asList(dp));
 			existingOperateur.setIdAgent(operateurDto.getIdAgent());
 			
 			accessRightsRepository.persisEntity(existingOperateur);
@@ -388,11 +386,8 @@ public class AccessRightsService implements IAccessRightsService {
 			dp.setDroitApprobateur(droitApprobateur);
 			dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.VISEUR.toString()));
 			
-			List<DroitProfil> droitProfils = new ArrayList<DroitProfil>();
-			droitProfils.add(dp);
-			
 			existingViseur.setDateModification(helperService.getCurrentDate());
-			existingViseur.setDroitProfils(droitProfils);
+			existingViseur.setDroitProfils(Arrays.asList(dp));
 			existingViseur.setIdAgent(viseurDto.getIdAgent());
 			
 			accessRightsRepository.persisEntity(existingViseur);
