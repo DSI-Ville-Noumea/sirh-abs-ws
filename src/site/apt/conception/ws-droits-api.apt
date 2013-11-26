@@ -116,3 +116,34 @@ HTTP Code 400 : Bad Request
 HTTP Code 200 : OK
 HTTP Code 400 : Bad Request 
 +-------------------------+
+
+* Gestion des agents approuvés par l'approbateur
+
+ <<URL>> : /droits/agentsApprouves
+ 
+ <<Accepted Methods>> : GET
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant au module de pointage via le Kiosque (au format 900xxxx ou 90xxxx).
+
+ <<Content>>
+
++-------------------------+
+    [
+       {
+           "idAgent": 9002990,
+           "nom": "DEPLANQUE",
+           "prenom": "RICHARD"
+       }
+    ]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 204 : No Content (si l'agent approbateur n'a pas d'agents à approuver)
+HTTP Code 400 : Bad Request 
+HTTP Code 403 : Forbidden (l'agent n'est pas approbateur )
++-------------------------+
