@@ -285,8 +285,6 @@ public class AccessRightsService implements IAccessRightsService {
 		// /////////////////// DELEGATAIRE /////////////////////////////////////
 		// on traite le delegataire
 		if (dto.getDelegataire() != null) {
-
-			if (null != delegataire && !delegataire.getDroit().getIdAgent().equals(dto.getDelegataire().getIdAgent())) {
 				Agent ag = sirhRepository.getAgent(dto.getDelegataire().getIdAgent());
 				// on verifie que l idAgent existe
 				if (null == ag) {
@@ -317,7 +315,6 @@ public class AccessRightsService implements IAccessRightsService {
 					dp.setDroitApprobateur(droitApprobateur);
 					accessRightsRepository.persisEntity(d);
 				}
-			}
 		} else if (null != delegataire) {
 			deleteDroitProfil(delegataire);
 		}

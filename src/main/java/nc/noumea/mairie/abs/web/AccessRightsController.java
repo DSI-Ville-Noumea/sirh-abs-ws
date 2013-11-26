@@ -110,7 +110,7 @@ public class AccessRightsController {
 	@Transactional(value = "absTransactionManager") 
 	public ResponseEntity<String> setInputter(@RequestParam("idAgent") Integer idAgent, @RequestBody String inputterDtoJson) { 
 	 
-		logger.debug("entered POST [droits/delegataireOperateurs] => setInputter with parameter idAgent = {}", idAgent);
+		logger.debug("entered POST [droits/inputter] => setInputter with parameter idAgent = {}", idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
