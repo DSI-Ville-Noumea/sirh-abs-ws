@@ -22,7 +22,6 @@ import nc.noumea.mairie.abs.domain.ProfilEnum;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,15 +41,10 @@ public class AccessRightsRepositoryTest {
 	public void getAgentAccessRights_ReturnNull() {
 
 		// When
-		Droit result = new Droit();
-		try {
-			result = repository.getAgentAccessRights(9005138);
-		} catch (EmptyResultDataAccessException e) {
-			result = null;
-		}
+		Droit result = repository.getAgentAccessRights(9005138);
 
 		// Then
-		assertEquals(null, result);
+		assertEquals(null, result.getIdDroit());
 	}
 
 	@Test
@@ -119,7 +113,7 @@ public class AccessRightsRepositoryTest {
 		dp1.setDroitApprobateur(droitApprobateur1);
 		dp1.setProfil(p);
 		droitApprobateur1.setIdAgent(9008767);
-		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		droitApprobateur1.getDroitProfils().add(dp1);
 		absEntityManager.persist(droitApprobateur1);
 
 		Droit droitApprobateur2 = new Droit();
@@ -128,7 +122,7 @@ public class AccessRightsRepositoryTest {
 		dp2.setDroitApprobateur(droitApprobateur2);
 		dp2.setProfil(p);
 		droitApprobateur2.setIdAgent(9008768);
-		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		droitApprobateur2.getDroitProfils().add(dp2);
 		absEntityManager.persist(droitApprobateur2);
 
 		List<Droit> listDroits = repository.getAgentsApprobateurs();
@@ -155,7 +149,7 @@ public class AccessRightsRepositoryTest {
 		dp1.setDroitApprobateur(droitApprobateur1);
 		dp1.setProfil(p1);
 		droitApprobateur1.setIdAgent(9008767);
-		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		droitApprobateur1.getDroitProfils().add(dp1);
 		absEntityManager.persist(droitApprobateur1);
 
 		Droit droitApprobateur2 = new Droit();
@@ -164,7 +158,7 @@ public class AccessRightsRepositoryTest {
 		dp2.setDroitApprobateur(droitApprobateur2);
 		dp2.setProfil(p2);
 		droitApprobateur2.setIdAgent(9008768);
-		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		droitApprobateur2.getDroitProfils().add(dp2);
 		absEntityManager.persist(droitApprobateur2);
 
 		// When
@@ -191,7 +185,7 @@ public class AccessRightsRepositoryTest {
 		dp1.setDroitApprobateur(droitApprobateur1);
 		dp1.setProfil(p1);
 		droitApprobateur1.setIdAgent(9008767);
-		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		droitApprobateur1.getDroitProfils().add(dp1);
 		absEntityManager.persist(droitApprobateur1);
 
 		Droit droitApprobateur2 = new Droit();
@@ -200,7 +194,7 @@ public class AccessRightsRepositoryTest {
 		dp2.setDroitApprobateur(droitApprobateur2);
 		dp2.setProfil(p2);
 		droitApprobateur2.setIdAgent(9008768);
-		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		droitApprobateur2.getDroitProfils().add(dp2);
 		absEntityManager.persist(droitApprobateur2);
 
 		// When
@@ -227,7 +221,7 @@ public class AccessRightsRepositoryTest {
 		dp1.setDroitApprobateur(droitApprobateur1);
 		dp1.setProfil(p1);
 		droitApprobateur1.setIdAgent(9008767);
-		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		droitApprobateur1.getDroitProfils().add(dp1);
 		absEntityManager.persist(droitApprobateur1);
 
 		Droit droitApprobateur2 = new Droit();
@@ -236,7 +230,7 @@ public class AccessRightsRepositoryTest {
 		dp2.setDroitApprobateur(droitApprobateur2);
 		dp2.setProfil(p2);
 		droitApprobateur2.setIdAgent(9008768);
-		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		droitApprobateur2.getDroitProfils().add(dp2);
 		absEntityManager.persist(droitApprobateur2);
 
 		// When
@@ -263,7 +257,7 @@ public class AccessRightsRepositoryTest {
 		dp1.setDroitApprobateur(droitApprobateur1);
 		dp1.setProfil(p1);
 		droitApprobateur1.setIdAgent(9008767);
-		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		droitApprobateur1.getDroitProfils().add(dp1);
 		absEntityManager.persist(droitApprobateur1);
 
 		Droit droitApprobateur2 = new Droit();
@@ -272,7 +266,7 @@ public class AccessRightsRepositoryTest {
 		dp2.setDroitApprobateur(droitApprobateur2);
 		dp2.setProfil(p2);
 		droitApprobateur2.setIdAgent(9008768);
-		droitApprobateur2.setDroitProfils(Arrays.asList(dp2));
+		droitApprobateur2.getDroitProfils().add(dp2);
 		absEntityManager.persist(droitApprobateur2);
 
 		// When
@@ -290,7 +284,7 @@ public class AccessRightsRepositoryTest {
 		p1.setLibelle("DELEGATAIRE");
 		absEntityManager.persist(p1);
 
-		Profil result = repository.getProfilByName("DELEGATAIRE");
+		Profil result = repository.getProfilByName(ProfilEnum.DELEGATAIRE.toString());
 
 		// When
 		assertEquals("DELEGATAIRE", result.getLibelle());
@@ -322,9 +316,9 @@ public class AccessRightsRepositoryTest {
 		dp2.setProfil(p2);
 
 		droitApprobateur1.setIdAgent(9005138);
-		droitApprobateur1.setDroitProfils(Arrays.asList(dp1));
+		droitApprobateur1.getDroitProfils().add(dp1);
 		droitViseur.setIdAgent(9005131);
-		droitViseur.setDroitProfils(Arrays.asList(dp2));
+		droitViseur.getDroitProfils().add(dp2);
 
 		absEntityManager.persist(droitApprobateur1);
 		absEntityManager.persist(droitViseur);

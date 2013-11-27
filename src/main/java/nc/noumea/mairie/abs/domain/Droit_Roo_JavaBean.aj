@@ -4,7 +4,6 @@
 package nc.noumea.mairie.abs.domain;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.DroitProfil;
@@ -36,11 +35,11 @@ privileged aspect Droit_Roo_JavaBean {
         this.dateModification = dateModification;
     }
     
-    public List<DroitProfil> Droit.getDroitProfils() {
+    public Set<DroitProfil> Droit.getDroitProfils() {
         return this.droitProfils;
     }
     
-    public void Droit.setDroitProfils(List<DroitProfil> droitProfils) {
+    public void Droit.setDroitProfils(Set<DroitProfil> droitProfils) {
         this.droitProfils = droitProfils;
     }
     

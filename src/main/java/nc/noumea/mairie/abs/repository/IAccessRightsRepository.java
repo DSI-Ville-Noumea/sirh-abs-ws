@@ -8,7 +8,7 @@ import nc.noumea.mairie.abs.domain.Profil;
 
 public interface IAccessRightsRepository {
 
-	Droit getAgentAccessRights(int idAgent);
+	Droit getAgentAccessRights(Integer idAgent);
 
 	List<Droit> getAgentsApprobateurs();
 
@@ -27,8 +27,8 @@ public interface IAccessRightsRepository {
 	List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur);
 
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
-	
+
 	void deleteDroitProfilByIdDroitAndIdProfil(Integer idDroitProfil);
-	
+
 	void removeEntity(Object obj);
 }

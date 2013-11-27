@@ -13,6 +13,7 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,12 +23,18 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	private EntityManager absEntityManager;
 
 	@Override
-	public Droit getAgentAccessRights(int idAgent) throws NoResultException {
+	public Droit getAgentAccessRights(Integer idAgent) throws NoResultException {
 
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getAgentAccessRights", Droit.class);
 		q.setParameter("idAgent", idAgent);
+		Droit d = new Droit();
+		try {
+			d = q.getSingleResult();
+		} catch (NoResultException e) {
+		} catch (EmptyResultDataAccessException e) {
+		}
 
-		return q.getSingleResult();
+		return d;
 	}
 
 	@Override
@@ -133,17 +140,17 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 		return r;
 	}
-	
+
 	@Override
 	public void deleteDroitProfilByIdDroitAndIdProfil(Integer idDroitProfil) {
-		
+
 		Query q = absEntityManager.createQuery("delete from DroitProfil where idDroitProfil = :idDroitProfil ");
 		q.setParameter("idDroitProfil", idDroitProfil);
-		
+
 		q.executeUpdate();
 		absEntityManager.flush();
 	}
-	
+
 	@Override
 	public void removeEntity(Object obj) {
 		absEntityManager.remove(obj);

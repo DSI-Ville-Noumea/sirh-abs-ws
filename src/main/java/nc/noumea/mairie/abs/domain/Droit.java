@@ -49,7 +49,7 @@ public class Droit {
 	private Date dateModification;
 
 	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<DroitProfil> droitProfils = new ArrayList<DroitProfil>();
+	private Set<DroitProfil> droitProfils = new HashSet<DroitProfil>();
 
 	@ManyToMany
 	@JoinTable(name = "ABS_DROIT_DROITS_AGENT", joinColumns = @JoinColumn(name = "ID_DROIT"), inverseJoinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
