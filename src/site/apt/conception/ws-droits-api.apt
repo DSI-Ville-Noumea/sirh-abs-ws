@@ -49,7 +49,7 @@ HTTP Code 404 : Not Found (si l'agent n'existe pas)
 
  <<URL>> : /droits/approbateurs
  
- <<Accepted Methods>> : GET
+ <<Accepted Methods>> : GET / POST
 
  <<Content>>
 
@@ -85,7 +85,7 @@ HTTP Code 400 : Bad Request
 
  <<URL>> : /droits/inputter
  
- <<Accepted Methods>> : GET
+ <<Accepted Methods>> : GET /POST
  
   <<Parameters>>
  
@@ -121,7 +121,7 @@ HTTP Code 400 : Bad Request
 
  <<URL>> : /droits/agentsApprouves
  
- <<Accepted Methods>> : GET
+ <<Accepted Methods>> : GET / POST
  
   <<Parameters>>
  
@@ -146,4 +146,78 @@ HTTP Code 200 : OK
 HTTP Code 204 : No Content (si l'agent approbateur n'a pas d'agents à approuver)
 HTTP Code 400 : Bad Request 
 HTTP Code 403 : Forbidden (l'agent n'est pas approbateur )
++-------------------------+
+
+* Liste des agents hiérarchiquement en dessous de l'approbateur
+
+ <<URL SIRH-WS>> : /agents/agentsSubordonnes
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant au module de pointage via le Kiosque (au format 900xxxx ou 90xxxx).
+ 
+ * <<nom>> : paramètre de recherche parmi les agents subordonnés. Paramètre optionnel : sans lui le service retournera la liste complète. Ce paramètre sera utilisé de la manière suivante : AGENT.NOM commence par {nom}
+ 
+ <<Content>>
+
++-------------------------+
+[
+	{
+		"nom" : "dupont2",
+		"prenom" : "michel",
+		"idAgent" : 9004568
+	},
+	{
+		"nom" : "dupont3",
+		"prenom" : "michel",
+		"idAgent" : 9004569
+	}
+]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 204 : No Content (si l'agent approbateur n'a pas de sous agents)
+HTTP Code 400 : Bad Request 
+HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents mairie)
++-------------------------+
+
+* Liste des agents mairie en activité
+
+ <<URL SIRH-WS>> : /agents/listeAgentsMairie
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<codeService>> : paramètre de recherche parmi les agents mairie. Paramètre optionnel : sans lui le service retournera la liste complète. Ce paramètre sera utilisé de la manière suivante : AGENT.CODE_SERVICE = {codeService}
+ 
+ * <<nom>> : paramètre de recherche parmi les agents mairie. Paramètre optionnel : sans lui le service retournera la liste complète. Ce paramètre sera utilisé de la manière suivante : AGENT.NOM commence par {nom}
+ 
+ <<Content>>
+
++-------------------------+
+[
+	{
+		"nom" : "dupont2",
+		"prenom" : "michel",
+		"idAgent" : 9004568
+	},
+	{
+		"nom" : "dupont3",
+		"prenom" : "michel",
+		"idAgent" : 9004569
+	}
+]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request 
 +-------------------------+
