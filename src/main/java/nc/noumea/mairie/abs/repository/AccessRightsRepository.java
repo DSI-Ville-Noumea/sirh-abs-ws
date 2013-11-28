@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -136,7 +137,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		List<Droit> r = q.getResultList();
 
 		if (r.size() == 0)
-			return null;
+			return new ArrayList<Droit>();
 
 		return r;
 	}

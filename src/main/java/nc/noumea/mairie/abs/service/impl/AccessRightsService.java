@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +26,6 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -136,28 +134,9 @@ public class AccessRightsService implements IAccessRightsService {
 					.getIdAgent());
 
 			// on trie la liste des sous agents
-			List<Droit> originalOperateurs = new ArrayList<Droit>();
-			List<Droit> originalViseurs = new ArrayList<Droit>();
-			DroitProfil delegataire = null;
-			if (null != droitSousAgentsByApprobateur) {
-				for (Droit droits : droitSousAgentsByApprobateur) {
-					for (DroitProfil dp : droits.getDroitProfils()) {
-						switch (dp.getProfil().getLibelle()) {
-							case "OPERATEUR":
-								originalOperateurs.add(dp.getDroit());
-								continue;
-							case "VISEUR":
-								originalViseurs.add(dp.getDroit());
-								continue;
-							case "DELEGATAIRE":
-								delegataire = dp;
-								continue;
-							default:
-								break;
-						}
-					}
-				}
-			}
+			List<Droit> originalOperateurs = getOperateursApprobateur(droitSousAgentsByApprobateur);
+			List<Droit> originalViseurs = getViseursApprobateur(droitSousAgentsByApprobateur);
+			DroitProfil delegataire = getDelegataireApprobateur(droitSousAgentsByApprobateur);
 
 			// on supprime le delagatire
 			if (null != delegataire) {
@@ -205,6 +184,45 @@ public class AccessRightsService implements IAccessRightsService {
 
 		return listeAgentErreur;
 
+	}
+
+	private DroitProfil getDelegataireApprobateur(List<Droit> droitSousAgentsByApprobateur) {
+
+		DroitProfil droitProfil = null;
+		for (Droit droits : droitSousAgentsByApprobateur) {
+			for (DroitProfil dp : droits.getDroitProfils()) {
+				if (dp.getProfil().getLibelle().equals(ProfilEnum.DELEGATAIRE.toString())) {
+					droitProfil = dp;
+				}
+			}
+		}
+		return droitProfil;
+	}
+
+	private List<Droit> getViseursApprobateur(List<Droit> droitSousAgentsByApprobateur) {
+		List<Droit> result = new ArrayList<Droit>();
+		for (Droit droits : droitSousAgentsByApprobateur) {
+			for (DroitProfil dp : droits.getDroitProfils()) {
+				if (dp.getProfil().getLibelle().equals(ProfilEnum.VISEUR.toString())) {
+					result.add(dp.getDroit());
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private List<Droit> getOperateursApprobateur(List<Droit> droitSousAgentsByApprobateur) {
+		List<Droit> result = new ArrayList<Droit>();
+		for (Droit droits : droitSousAgentsByApprobateur) {
+			for (DroitProfil dp : droits.getDroitProfils()) {
+				if (dp.getProfil().getLibelle().equals(ProfilEnum.OPERATEUR.toString())) {
+					result.add(dp.getDroit());
+				}
+			}
+		}
+
+		return result;
 	}
 
 	@Override
@@ -262,70 +280,101 @@ public class AccessRightsService implements IAccessRightsService {
 		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgent);
 
 		// on trie la liste des sous agents
-		List<Droit> originalOperateurs = new ArrayList<Droit>();
-		List<Droit> originalViseurs = new ArrayList<Droit>();
-		DroitProfil delegataire = null;
-		if (null != droitSousAgentsByApprobateur) {
-			for (Droit droits : droitSousAgentsByApprobateur) {
-				for (DroitProfil dp : droits.getDroitProfils()) {
-					switch (dp.getProfil().getLibelle()) {
-						case "OPERATEUR":
-							originalOperateurs.add(dp.getDroit());
-							continue;
-						case "VISEUR":
-							originalViseurs.add(dp.getDroit());
-							continue;
-						case "DELEGATAIRE":
-							delegataire = dp;
-							continue;
-						default:
-							break;
-					}
-				}
-			}
-		}
+		List<Droit> originalOperateurs = getOperateursApprobateur(droitSousAgentsByApprobateur);
+		List<Droit> originalViseurs = getViseursApprobateur(droitSousAgentsByApprobateur);
+		DroitProfil delegataire = getDelegataireApprobateur(droitSousAgentsByApprobateur);
 
 		// /////////////////// DELEGATAIRE /////////////////////////////////////
 		// on traite le delegataire
-		if (dto.getDelegataire() != null) {
-			Agent ag = sirhRepository.getAgent(dto.getDelegataire().getIdAgent());
-			// on verifie que l idAgent existe
-			if (null == ag) {
-				logger.warn("L'agent délégataire {} n'existe pas.", dto.getDelegataire().getIdAgent());
-				result.getErrors().add(
-						String.format("L'agent délégataire [%d] n'existe pas.", dto.getDelegataire().getIdAgent()));
-				// Check that the new delegataire is not an operator
-			} else if (accessRightsRepository.isUserOperateur(dto.getDelegataire().getIdAgent())) {
-				result.getErrors().add(
-						String.format(
-								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-			} else {
+		traiteDelegataire(dto, delegataire, droitApprobateur, result);
 
-				// on supprime d abord le delegataire precedent
-				if (null != delegataire) {
-					deleteDroitProfil(delegataire);
-				}
-
-				// on regarde si le droit existe deja pour cette personne
-				Droit d = accessRightsRepository.getAgentAccessRights(dto.getDelegataire().getIdAgent());
-
-				DroitProfil dp = new DroitProfil();
-				d.setIdAgent(dto.getDelegataire().getIdAgent());
-				d.setDateModification(helperService.getCurrentDate());
-				dp.setDroit(d);
-				dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.DELEGATAIRE.toString()));
-				dp.setDroitApprobateur(droitApprobateur);
-				d.getDroitProfils().add(dp);
-				accessRightsRepository.persisEntity(d);
-			}
-		} else if (null != delegataire) {
-			deleteDroitProfil(delegataire);
-		}
 		// //////////////////// FIN DELEGATAIRE ///////////////////////////////
 
 		// ////////////////////// OPERATEURS //////////////////////////////////
 		// on traite les operateurs
+		traiteOperateurs(dto, originalOperateurs, idAgent, droitApprobateur, result);
+
+		// //////////////////// FIN OPERATEURS
+		// //////////////////////////////////
+
+		// ////////////////////// VISEURS //////////////////////////////////
+		// on traite les viseurs
+		traiteViseurs(dto, originalViseurs, idAgent, droitApprobateur, result);
+
+		// //////////////////// FIN VISEURS //////////////////////////////////
+
+		return result;
+	}
+
+	private void traiteViseurs(InputterDto dto, List<Droit> originalViseurs, Integer idAgent, Droit droitApprobateur,
+			ReturnMessageDto result) {
+		for (AgentDto viseurDto : dto.getViseurs()) {
+
+			Droit existingViseur = null;
+
+			// on verifie si le viseur existe deja ou non
+			for (Droit viseur : originalViseurs) {
+				if (viseur.getIdAgent().equals(viseurDto.getIdAgent())) {
+					existingViseur = viseur;
+					originalViseurs.remove(existingViseur);
+					break;
+				}
+			}
+
+			if (existingViseur != null)
+				continue;
+
+			Agent ag = sirhRepository.getAgent(viseurDto.getIdAgent());
+			// on verifie que l idAgent existe
+			if (null == ag) {
+				logger.warn("L'agent viseur {} n'existe pas.", viseurDto.getIdAgent());
+				result.getErrors().add(String.format("L'agent viseur [%d] n'existe pas.", viseurDto.getIdAgent()));
+				continue;
+			}
+			// Check that the new viseur is not already approbateur or viseur
+			if (accessRightsRepository.isUserApprobateur(viseurDto.getIdAgent())) {
+				result.getErrors().add(
+						String.format(
+								"L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
+								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+				continue;
+			}
+			if (accessRightsRepository.isUserViseur(viseurDto.getIdAgent())) {
+				result.getErrors().add(
+						String.format("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà viseur.",
+								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+				continue;
+			}
+
+			// on regarde si le droit existe deja pour cette personne
+			existingViseur = accessRightsRepository.getAgentAccessRights(viseurDto.getIdAgent());
+
+			DroitProfil dp = new DroitProfil();
+			dp.setDroit(existingViseur);
+			dp.setDroitApprobateur(droitApprobateur);
+			dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.VISEUR.toString()));
+
+			existingViseur.setDateModification(helperService.getCurrentDate());
+			existingViseur.getDroitProfils().add(dp);
+			existingViseur.setIdAgent(viseurDto.getIdAgent());
+
+			accessRightsRepository.persisEntity(existingViseur);
+		}
+
+		// on supprime les operateurs en trop
+		for (Droit droitViseurToDelete : originalViseurs) {
+			for (DroitProfil droitProfilViseur : droitViseurToDelete.getDroitProfils()) {
+				if (null != droitProfilViseur.getDroitApprobateur()
+						&& idAgent.equals(droitProfilViseur.getDroitApprobateur().getIdAgent())) {
+					deleteDroitProfil(droitProfilViseur);
+				}
+			}
+		}
+
+	}
+
+	private void traiteOperateurs(InputterDto dto, List<Droit> originalOperateurs, Integer idAgent,
+			Droit droitApprobateur, ReturnMessageDto result) {
 		for (AgentDto operateurDto : dto.getOperateurs()) {
 
 			Droit existingOperateur = null;
@@ -398,76 +447,46 @@ public class AccessRightsService implements IAccessRightsService {
 				}
 			}
 		}
-		// //////////////////// FIN OPERATEURS
-		// //////////////////////////////////
 
-		// ////////////////////// VISEURS //////////////////////////////////
-		// on traite les viseurs
-		for (AgentDto viseurDto : dto.getViseurs()) {
+	}
 
-			Droit existingViseur = null;
-
-			// on verifie si le viseur existe deja ou non
-			for (Droit viseur : originalViseurs) {
-				if (viseur.getIdAgent().equals(viseurDto.getIdAgent())) {
-					existingViseur = viseur;
-					originalViseurs.remove(existingViseur);
-					break;
-				}
-			}
-
-			if (existingViseur != null)
-				continue;
-
-			Agent ag = sirhRepository.getAgent(viseurDto.getIdAgent());
+	private void traiteDelegataire(InputterDto dto, DroitProfil delegataire, Droit droitApprobateur,
+			ReturnMessageDto result) {
+		if (dto.getDelegataire() != null) {
+			Agent ag = sirhRepository.getAgent(dto.getDelegataire().getIdAgent());
 			// on verifie que l idAgent existe
 			if (null == ag) {
-				logger.warn("L'agent viseur {} n'existe pas.", viseurDto.getIdAgent());
-				result.getErrors().add(String.format("L'agent viseur [%d] n'existe pas.", viseurDto.getIdAgent()));
-				continue;
-			}
-			// Check that the new viseur is not already approbateur or viseur
-			if (accessRightsRepository.isUserApprobateur(viseurDto.getIdAgent())) {
+				logger.warn("L'agent délégataire {} n'existe pas.", dto.getDelegataire().getIdAgent());
+				result.getErrors().add(
+						String.format("L'agent délégataire [%d] n'existe pas.", dto.getDelegataire().getIdAgent()));
+				// Check that the new delegataire is not an operator
+			} else if (accessRightsRepository.isUserOperateur(dto.getDelegataire().getIdAgent())) {
 				result.getErrors().add(
 						String.format(
-								"L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
+								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
 								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-				continue;
-			}
-			if (accessRightsRepository.isUserViseur(viseurDto.getIdAgent())) {
-				result.getErrors().add(
-						String.format("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà viseur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-				continue;
-			}
+			} else {
 
-			// on regarde si le droit existe deja pour cette personne
-			existingViseur = accessRightsRepository.getAgentAccessRights(viseurDto.getIdAgent());
-
-			DroitProfil dp = new DroitProfil();
-			dp.setDroit(existingViseur);
-			dp.setDroitApprobateur(droitApprobateur);
-			dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.VISEUR.toString()));
-
-			existingViseur.setDateModification(helperService.getCurrentDate());
-			existingViseur.getDroitProfils().add(dp);
-			existingViseur.setIdAgent(viseurDto.getIdAgent());
-
-			accessRightsRepository.persisEntity(existingViseur);
-		}
-
-		// on supprime les operateurs en trop
-		for (Droit droitViseurToDelete : originalViseurs) {
-			for (DroitProfil droitProfilViseur : droitViseurToDelete.getDroitProfils()) {
-				if (null != droitProfilViseur.getDroitApprobateur()
-						&& idAgent.equals(droitProfilViseur.getDroitApprobateur().getIdAgent())) {
-					deleteDroitProfil(droitProfilViseur);
+				// on supprime d abord le delegataire precedent
+				if (null != delegataire) {
+					deleteDroitProfil(delegataire);
 				}
-			}
-		}
-		// //////////////////// FIN VISEURS //////////////////////////////////
 
-		return result;
+				// on regarde si le droit existe deja pour cette personne
+				Droit d = accessRightsRepository.getAgentAccessRights(dto.getDelegataire().getIdAgent());
+
+				DroitProfil dp = new DroitProfil();
+				d.setIdAgent(dto.getDelegataire().getIdAgent());
+				d.setDateModification(helperService.getCurrentDate());
+				dp.setDroit(d);
+				dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.DELEGATAIRE.toString()));
+				dp.setDroitApprobateur(droitApprobateur);
+				d.getDroitProfils().add(dp);
+				accessRightsRepository.persisEntity(d);
+			}
+		} else if (null != delegataire) {
+			deleteDroitProfil(delegataire);
+		}
 	}
 
 	@Override
