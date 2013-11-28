@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.NoResultException;
 
@@ -287,20 +288,16 @@ public class AccessRightsService implements IAccessRightsService {
 		// /////////////////// DELEGATAIRE /////////////////////////////////////
 		// on traite le delegataire
 		traiteDelegataire(dto, delegataire, droitApprobateur, result);
-
 		// //////////////////// FIN DELEGATAIRE ///////////////////////////////
 
 		// ////////////////////// OPERATEURS //////////////////////////////////
 		// on traite les operateurs
 		traiteOperateurs(dto, originalOperateurs, idAgent, droitApprobateur, result);
-
-		// //////////////////// FIN OPERATEURS
-		// //////////////////////////////////
+		// //////////////////// FIN OPERATEURS /////////////////////////
 
 		// ////////////////////// VISEURS //////////////////////////////////
 		// on traite les viseurs
 		traiteViseurs(dto, originalViseurs, idAgent, droitApprobateur, result);
-
 		// //////////////////// FIN VISEURS //////////////////////////////////
 
 		return result;
@@ -520,15 +517,21 @@ public class AccessRightsService implements IAccessRightsService {
 
 		// on supprime le profil
 		Droit droit = droitProfil.getDroit();
+		Set<DroitProfil> t = droit.getDroitProfils();
+		logger.debug("Taille des droitsProfil" + t.size());
+		for (DroitProfil dp : t) {
+			logger.debug(dp.getIdDroitProfil().toString());
+		}
+
 		droit.getDroitProfils().remove(droitProfil);
 		accessRightsRepository.removeEntity(droitProfil);
 
-		// accessRightsRepository.deleteDroitProfilByIdDroitAndIdProfil(droitProfil.getIdDroitProfil());
 
 		// on verifie que l agent n a pas d autre profil, si non on supprime son
 		// droit
-		if (droitProfil.getDroit().getDroitProfils().size() == 0) {
+		// TODO
+		/*if (droit.getDroitProfils().size() == 0) {
 			accessRightsRepository.removeEntity(droit);
-		}
+		}*/
 	}
 }

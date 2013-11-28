@@ -336,6 +336,7 @@ public class AccessRightsServiceTest {
 		d.setIdAgent(9005138);
 
 		DroitProfil dp = new DroitProfil();
+		dp.setIdDroitProfil(1);
 		dp.setDroit(d);
 		dp.setProfil(p);
 
@@ -369,6 +370,7 @@ public class AccessRightsServiceTest {
 		d.setIdAgent(9005138);
 
 		DroitProfil dp = new DroitProfil();
+		dp.setIdDroitProfil(1);
 		dp.setDroit(d);
 		dp.setProfil(p);
 		dp.setDroitApprobateur(d);
