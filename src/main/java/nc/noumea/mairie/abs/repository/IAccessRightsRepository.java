@@ -28,7 +28,5 @@ public interface IAccessRightsRepository {
 
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
 
-	void deleteDroitProfilByIdDroitAndIdProfil(Integer idDroitProfil);
-
 	void removeEntity(Object obj);
 }

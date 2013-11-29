@@ -330,7 +330,8 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			// Check that the new viseur is not already approbateur or viseur
 			if (accessRightsRepository.isUserApprobateur(viseurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.", ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
+						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
 				result.getErrors().add(
 						String.format(
 								"L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
@@ -338,7 +339,8 @@ public class AccessRightsService implements IAccessRightsService {
 				continue;
 			}
 			if (accessRightsRepository.isUserOperateur(viseurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.", ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
+						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
 				result.getErrors().add(
 						String.format("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
 								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
@@ -401,7 +403,8 @@ public class AccessRightsService implements IAccessRightsService {
 			// Check that the new operateur is not already delegataire or
 			// approbateur or viseur
 			if (accessRightsRepository.isUserApprobateur(operateurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.", ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
+						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
 				result.getErrors().add(
 						String.format(
 								"L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
@@ -409,14 +412,16 @@ public class AccessRightsService implements IAccessRightsService {
 				continue;
 			}
 			if (accessRightsRepository.isUserViseur(operateurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.", ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
+						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
 				result.getErrors().add(
 						String.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
 								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
 				continue;
 			}
 			if (accessRightsRepository.isUserDelegataire(operateurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.", ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
+						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
 				result.getErrors().add(
 						String.format(
 								"L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
@@ -463,7 +468,8 @@ public class AccessRightsService implements IAccessRightsService {
 						String.format("L'agent délégataire [%d] n'existe pas.", dto.getDelegataire().getIdAgent()));
 				// Check that the new delegataire is not an operator
 			} else if (accessRightsRepository.isUserOperateur(dto.getDelegataire().getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.", ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+				logger.warn("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
 				result.getErrors().add(
 						String.format(
 								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
@@ -532,12 +538,10 @@ public class AccessRightsService implements IAccessRightsService {
 		droit.getDroitProfils().remove(droitProfil);
 		accessRightsRepository.removeEntity(droitProfil);
 
-
 		// on verifie que l agent n a pas d autre profil, si non on supprime son
 		// droit
-		// TODO
-		/*if (droit.getDroitProfils().size() == 0) {
+		if (droit.getDroitProfils().size() == 0) {
 			accessRightsRepository.removeEntity(droit);
-		}*/
+		}
 	}
 }

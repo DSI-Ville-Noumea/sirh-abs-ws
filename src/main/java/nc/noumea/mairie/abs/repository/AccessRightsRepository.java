@@ -1,12 +1,10 @@
 package nc.noumea.mairie.abs.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Droit;
@@ -130,26 +128,13 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur) {
 		TypedQuery<Droit> q = absEntityManager
 				.createQuery(
-						"from Droit d LEFT JOIN FETCH d.droitProfils dp where dp.droitApprobateur.idAgent = :idAgent and dp.droitApprobateur.idAgent != dp.droit.idAgent ",
+						"select dp.droit from DroitProfil dp where dp.droitApprobateur.idDroit in (select idDroit from Droit where idAgent = :idAgentApprobateur) and dp.droit.idAgent != :idAgentApprobateur",
 						Droit.class);
-		q.setParameter("idAgent", idAgentApprobateur);
+		q.setParameter("idAgentApprobateur", idAgentApprobateur);
 
-		List<Droit> r = q.getResultList();
+		List<Droit> listeFinale = q.getResultList();
 
-		if (r.size() == 0)
-			return new ArrayList<Droit>();
-
-		return r;
-	}
-
-	@Override
-	public void deleteDroitProfilByIdDroitAndIdProfil(Integer idDroitProfil) {
-
-		Query q = absEntityManager.createQuery("delete from DroitProfil where idDroitProfil = :idDroitProfil ");
-		q.setParameter("idDroitProfil", idDroitProfil);
-
-		q.executeUpdate();
-		absEntityManager.flush();
+		return listeFinale;
 	}
 
 	@Override

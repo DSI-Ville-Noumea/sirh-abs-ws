@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -329,6 +328,103 @@ public class AccessRightsRepositoryTest {
 
 		// When
 		assertEquals(1, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getDroitSousApprobateur_AgentAutreProfil() {
+		Profil p1 = new Profil();
+		p1.setLibelle("APPROBATEUR");
+		absEntityManager.persist(p1);
+		Profil p2 = new Profil();
+		p2.setLibelle("DELEGATAIRE");
+		absEntityManager.persist(p2);
+
+		//appro1		
+		Droit droitApprobateur1 = new Droit();
+		droitApprobateur1.setIdDroit(1);
+		droitApprobateur1.setIdAgent(9005138);
+		
+		//appro2
+		Droit droitApprobateur2 = new Droit();
+		droitApprobateur2.setIdAgent(9003041);
+		droitApprobateur2.setIdDroit(3);
+		
+		//appro3
+		Droit droitApprobateur3 = new Droit();
+		droitApprobateur3.setIdAgent(9002990);
+		droitApprobateur3.setIdDroit(4);
+		
+		//delegataire		
+		Droit droitDelegataire = new Droit();
+		droitDelegataire.setIdAgent(9005131);
+		droitDelegataire.setIdDroit(2);
+		
+		//on cree un profil a l'appro 1
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitApprobateur1);
+		dp1.setDroitApprobateur(droitApprobateur1);
+		dp1.setProfil(p1);
+		droitApprobateur1.getDroitProfils().add(dp1);
+		
+		//on cree un profil a l'appro 2		
+		DroitProfil dp2 = new DroitProfil();
+		dp2.setDroit(droitApprobateur2);
+		dp2.setDroitApprobateur(droitApprobateur2);
+		dp2.setProfil(p1);
+		droitApprobateur2.getDroitProfils().add(dp2);
+		
+		//on cree un profil a l'appro 3
+		DroitProfil dp3 = new DroitProfil();
+		dp3.setDroit(droitApprobateur3);
+		dp3.setDroitApprobateur(droitApprobateur3);
+		dp3.setProfil(p1);
+		droitApprobateur3.getDroitProfils().add(dp3);
+		
+		//on cree un profil au delegataire pour l'appro 1
+		DroitProfil dp4 = new DroitProfil();
+		dp4.setDroit(droitDelegataire);
+		dp4.setDroitApprobateur(droitApprobateur1);
+		dp4.setProfil(p2);
+		droitDelegataire.getDroitProfils().add(dp4);
+		
+		//on cree un profil au delegataire pour l'appro 2
+		DroitProfil dp5 = new DroitProfil();
+		dp5.setDroit(droitDelegataire);
+		dp5.setDroitApprobateur(droitApprobateur2);
+		dp5.setProfil(p2);
+		droitDelegataire.getDroitProfils().add(dp5);
+		
+		//on cree un profil au delegataire pour l'appro 3
+		DroitProfil dp6 = new DroitProfil();
+		dp6.setDroit(droitDelegataire);
+		dp6.setDroitApprobateur(droitApprobateur3);
+		dp6.setProfil(p2);
+		droitDelegataire.getDroitProfils().add(dp6);
+
+
+		absEntityManager.persist(droitApprobateur1);
+		absEntityManager.persist(droitApprobateur2);
+		absEntityManager.persist(droitApprobateur3);
+		absEntityManager.persist(droitDelegataire);
+		absEntityManager.persist(dp1);
+		absEntityManager.persist(dp2);
+		absEntityManager.persist(dp3);
+		absEntityManager.persist(dp4);
+		absEntityManager.persist(dp5);
+		absEntityManager.persist(dp6);
+
+		List<Droit> result = repository.getDroitSousApprobateur(9005138);
+		
+		// When
+		assertEquals(1, result.size());
+		assertEquals(3, result.get(0).getDroitProfils().size());
+		assertTrue(result.get(0).getDroitProfils().contains(dp4));
+		assertTrue(result.get(0).getDroitProfils().contains(dp5));
+		assertTrue(result.get(0).getDroitProfils().contains(dp6));
 
 		absEntityManager.flush();
 		absEntityManager.clear();
