@@ -16,6 +16,8 @@ import nc.noumea.mairie.abs.domain.ProfilEnum;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
+import ch.qos.logback.classic.Logger;
+
 @Repository
 public class AccessRightsRepository implements IAccessRightsRepository {
 
@@ -160,7 +162,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 	@Override
 	public boolean isUserDelegataireOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
-
+		System.out.println("ici");
 		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
 				DroitProfil.class);
 
@@ -170,8 +172,10 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 		try {
 			q.getSingleResult();
+			System.out.println("ici try");
 			return true;
 		} catch (Exception e) {
+			System.out.println("ici catch");
 			return false;
 		}
 

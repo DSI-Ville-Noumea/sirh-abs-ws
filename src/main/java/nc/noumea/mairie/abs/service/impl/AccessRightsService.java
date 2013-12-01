@@ -243,29 +243,29 @@ public class AccessRightsService implements IAccessRightsService {
 			return result;
 		}
 		for (Droit d : droit) {
-			for (DroitProfil dp : d.getDroitProfils()) {
-				if (accessRightsRepository.isUserDelegataireOfApprobateur(idAgent,dp.getDroit().getIdAgent())) {
-					Agent delegataire = sirhRepository.getAgent(dp.getDroit().getIdAgent());
+			logger.debug("Droit profil : " + d.getIdAgent());
+			if (accessRightsRepository.isUserDelegataireOfApprobateur(idAgent, d.getIdAgent())) {
+				Agent delegataire = sirhRepository.getAgent(d.getIdAgent());
 
-					if (delegataire == null)
-						logger.warn("L'agent délégataire {} n'existe pas.", dp.getDroit().getIdAgent());
-					else
-						result.setDelegataire(new AgentDto(delegataire));
+				if (delegataire == null)
+					logger.warn("L'agent délégataire {} n'existe pas.", d.getIdAgent());
+				else
+					result.setDelegataire(new AgentDto(delegataire));
 
-				} else if (accessRightsRepository.isUserOperateurOfApprobateur(idAgent,dp.getDroit().getIdAgent())) {
-					Agent ope = sirhRepository.getAgent(dp.getDroit().getIdAgent());
-					if (ope == null)
-						logger.warn("L'agent opérateur {} n'existe pas.", dp.getDroit().getIdAgent());
-					else
-						result.getOperateurs().add(new AgentDto(ope));
-				} else if (accessRightsRepository.isUserViseurOfApprobateur(idAgent,dp.getDroit().getIdAgent())) {
-					Agent ope = sirhRepository.getAgent(dp.getDroit().getIdAgent());
-					if (ope == null)
-						logger.warn("L'agent viseur {} n'existe pas.", dp.getDroit().getIdAgent());
-					else
-						result.getViseurs().add(new AgentDto(ope));
-				}
+			} else if (accessRightsRepository.isUserOperateurOfApprobateur(idAgent, d.getIdAgent())) {
+				Agent ope = sirhRepository.getAgent(d.getIdAgent());
+				if (ope == null)
+					logger.warn("L'agent opérateur {} n'existe pas.", d.getIdAgent());
+				else
+					result.getOperateurs().add(new AgentDto(ope));
+			} else if (accessRightsRepository.isUserViseurOfApprobateur(idAgent, d.getIdAgent())) {
+				Agent ope = sirhRepository.getAgent(d.getIdAgent());
+				if (ope == null)
+					logger.warn("L'agent viseur {} n'existe pas.", d.getIdAgent());
+				else
+					result.getViseurs().add(new AgentDto(ope));
 			}
+
 		}
 
 		return result;
