@@ -243,7 +243,6 @@ public class AccessRightsService implements IAccessRightsService {
 			return result;
 		}
 		for (Droit d : droit) {
-			logger.debug("Droit profil : " + d.getIdAgent());
 			if (accessRightsRepository.isUserDelegataireOfApprobateur(idAgent, d.getIdAgent())) {
 				Agent delegataire = sirhRepository.getAgent(d.getIdAgent());
 
