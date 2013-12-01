@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
@@ -155,6 +156,61 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			q.setParameter("codeService", codeService);
 
 		return q.getResultList();
+	}
+
+	@Override
+	public boolean isUserDelegataireOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
+
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
+				DroitProfil.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("idAgentApprobateur", idAgentApprobateur);
+		q.setParameter("libelle", ProfilEnum.DELEGATAIRE.toString());
+
+		try {
+			q.getSingleResult();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+
+	}
+
+	@Override
+	public boolean isUserOperateurOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
+
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
+				DroitProfil.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("idAgentApprobateur", idAgentApprobateur);
+		q.setParameter("libelle", ProfilEnum.OPERATEUR.toString());
+
+		try {
+			q.getSingleResult();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isUserViseurOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
+
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
+				DroitProfil.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("idAgentApprobateur", idAgentApprobateur);
+		q.setParameter("libelle", ProfilEnum.VISEUR.toString());
+
+		try {
+			q.getSingleResult();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }

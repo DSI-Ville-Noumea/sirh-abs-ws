@@ -244,7 +244,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		for (Droit d : droit) {
 			for (DroitProfil dp : d.getDroitProfils()) {
-				if (accessRightsRepository.isUserDelegataire(dp.getDroit().getIdAgent())) {
+				if (accessRightsRepository.isUserDelegataireOfApprobateur(idAgent,dp.getDroit().getIdAgent())) {
 					Agent delegataire = sirhRepository.getAgent(dp.getDroit().getIdAgent());
 
 					if (delegataire == null)
@@ -252,13 +252,13 @@ public class AccessRightsService implements IAccessRightsService {
 					else
 						result.setDelegataire(new AgentDto(delegataire));
 
-				} else if (accessRightsRepository.isUserOperateur(dp.getDroit().getIdAgent())) {
+				} else if (accessRightsRepository.isUserOperateurOfApprobateur(idAgent,dp.getDroit().getIdAgent())) {
 					Agent ope = sirhRepository.getAgent(dp.getDroit().getIdAgent());
 					if (ope == null)
 						logger.warn("L'agent opérateur {} n'existe pas.", dp.getDroit().getIdAgent());
 					else
 						result.getOperateurs().add(new AgentDto(ope));
-				} else if (accessRightsRepository.isUserViseur(dp.getDroit().getIdAgent())) {
+				} else if (accessRightsRepository.isUserViseurOfApprobateur(idAgent,dp.getDroit().getIdAgent())) {
 					Agent ope = sirhRepository.getAgent(dp.getDroit().getIdAgent());
 					if (ope == null)
 						logger.warn("L'agent viseur {} n'existe pas.", dp.getDroit().getIdAgent());

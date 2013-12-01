@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -14,6 +16,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_DROIT_PROFIL")
+@NamedQueries({ @NamedQuery(name = "getInputterDroitProfilOfApprobateurByLibelle", query = "select dp from DroitProfil dp where dp.droitApprobateur.idAgent= :idAgentApprobateur and dp.droit.idAgent= :idAgent and dp.droit.idAgent!= :idAgentApprobateur and dp.profil.libelle= :libelle ") })
 public class DroitProfil {
 
 	@Id

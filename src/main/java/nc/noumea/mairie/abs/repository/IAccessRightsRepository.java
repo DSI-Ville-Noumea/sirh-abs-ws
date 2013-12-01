@@ -29,4 +29,10 @@ public interface IAccessRightsRepository {
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
 
 	void removeEntity(Object obj);
+
+	boolean isUserDelegataireOfApprobateur(Integer idAgentApprobateur, Integer idAgent);
+
+	boolean isUserOperateurOfApprobateur(Integer idAgentApprobateur, Integer idAgent);
+
+	boolean isUserViseurOfApprobateur(Integer idAgentApprobateur, Integer idAgent);
 }
