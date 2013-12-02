@@ -4,7 +4,7 @@
     <groupId>nc.noumea.mairie</groupId>
     <artifactId>sirh-abs-ws</artifactId>
     <packaging>war</packaging>
-    <version>0.2-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <name>sirh-abs-ws</name>
     <properties>
         <aspectj.version>1.7.2</aspectj.version>
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.3.173</version>
+            <version>1.3.174</version>
             <scope>test</scope>
         </dependency>            
 
@@ -282,12 +282,12 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.2</version>
+            <version>2.3</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>1.17.1</version>
+            <version>1.18</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
