@@ -3,7 +3,6 @@ package nc.noumea.mairie.abs.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.NoResultException;
 
@@ -130,45 +129,8 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		for (Droit droitToDelete : droitsToDelete) {
-			// on recupere la liste des inputters de l'approbateurs
-			List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(droitToDelete
-					.getIdAgent());
-
-			// on trie la liste des sous agents
-			List<Droit> originalOperateurs = getOperateursApprobateur(droitSousAgentsByApprobateur);
-			List<Droit> originalViseurs = getViseursApprobateur(droitSousAgentsByApprobateur);
-			DroitProfil delegataire = getDelegataireApprobateur(droitSousAgentsByApprobateur);
-
-			// on supprime le delagatire
-			if (null != delegataire) {
-				deleteDroitProfil(delegataire);
-			}
-
-			// on supprime les operateurs
-			for (Droit droitOperateurToDelete : originalOperateurs) {
-				for (DroitsAgent agentSaisiToDelete : droitOperateurToDelete.getAgents()) {
-					agentSaisiToDelete.getDroits().clear();
-					agentSaisiToDelete.remove();
-				}
-				for (DroitProfil droitProfilOperateur : droitOperateurToDelete.getDroitProfils()) {
-					if (null != droitProfilOperateur.getDroitApprobateur()) {
-						deleteDroitProfil(droitProfilOperateur);
-					}
-				}
-			}
-
-			// on supprime les viseurs
-			for (Droit droitViseurToDelete : originalViseurs) {
-				for (DroitsAgent agentSaisiToDelete : droitViseurToDelete.getAgents()) {
-					agentSaisiToDelete.getDroits().clear();
-					agentSaisiToDelete.remove();
-				}
-				for (DroitProfil droitProfilOperateur : droitViseurToDelete.getDroitProfils()) {
-					if (null != droitProfilOperateur.getDroitApprobateur()) {
-						deleteDroitProfil(droitProfilOperateur);
-					}
-				}
-			}
+			// on supprime tous les inputters (et sous agents) de l'approbateur
+			setInputter(droitToDelete.getIdAgent(), new InputterDto());
 
 			// enfin on supprime l'approbateur
 			// First, we remove all the agents this approbateur was approving
@@ -187,39 +149,38 @@ public class AccessRightsService implements IAccessRightsService {
 
 	}
 
-	private DroitProfil getDelegataireApprobateur(List<Droit> droitSousAgentsByApprobateur) {
+	private DroitProfil getDelegataireApprobateur(Integer idAgentApprobateur, List<Droit> droitSousAgentsByApprobateur) {
 
 		DroitProfil droitProfil = null;
-		for (Droit droits : droitSousAgentsByApprobateur) {
-			for (DroitProfil dp : droits.getDroitProfils()) {
-				if (dp.getProfil().getLibelle().equals(ProfilEnum.DELEGATAIRE.toString())) {
-					droitProfil = dp;
+		for (Droit droit : droitSousAgentsByApprobateur) {
+			if (accessRightsRepository.isUserDelegataireOfApprobateur(idAgentApprobateur, droit.getIdAgent())) {
+				for (DroitProfil dp : droit.getDroitProfils()) {
+					if (dp.getDroitApprobateur().getIdAgent().equals(idAgentApprobateur)) {
+						droitProfil = dp;
+					}
 				}
 			}
 		}
 		return droitProfil;
 	}
 
-	private List<Droit> getViseursApprobateur(List<Droit> droitSousAgentsByApprobateur) {
-		List<Droit> result = new ArrayList<Droit>();
-		for (Droit droits : droitSousAgentsByApprobateur) {
-			for (DroitProfil dp : droits.getDroitProfils()) {
-				if (dp.getProfil().getLibelle().equals(ProfilEnum.VISEUR.toString())) {
-					result.add(dp.getDroit());
-				}
+	private ArrayList<Droit> getViseursApprobateur(Integer idAgentApprobateur, List<Droit> droitSousAgentsByApprobateur) {
+		ArrayList<Droit> result = new ArrayList<Droit>();
+		for (Droit droit : droitSousAgentsByApprobateur) {
+			if (accessRightsRepository.isUserViseurOfApprobateur(idAgentApprobateur, droit.getIdAgent())) {
+				result.add(droit);
 			}
 		}
 
 		return result;
 	}
 
-	private List<Droit> getOperateursApprobateur(List<Droit> droitSousAgentsByApprobateur) {
-		List<Droit> result = new ArrayList<Droit>();
-		for (Droit droits : droitSousAgentsByApprobateur) {
-			for (DroitProfil dp : droits.getDroitProfils()) {
-				if (dp.getProfil().getLibelle().equals(ProfilEnum.OPERATEUR.toString())) {
-					result.add(dp.getDroit());
-				}
+	private ArrayList<Droit> getOperateursApprobateur(Integer idAgentApprobateur,
+			List<Droit> droitSousAgentsByApprobateur) {
+		ArrayList<Droit> result = new ArrayList<Droit>();
+		for (Droit droit : droitSousAgentsByApprobateur) {
+			if (accessRightsRepository.isUserOperateurOfApprobateur(idAgentApprobateur, droit.getIdAgent())) {
+				result.add(droit);
 			}
 		}
 
@@ -271,18 +232,18 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public ReturnMessageDto setInputter(Integer idAgent, InputterDto dto) {
+	public ReturnMessageDto setInputter(Integer idAgentAppro, InputterDto dto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgent);
+		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentAppro);
 
 		// on recupere la liste des
-		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgent);
+		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgentAppro);
 
 		// on trie la liste des sous agents
-		List<Droit> originalOperateurs = getOperateursApprobateur(droitSousAgentsByApprobateur);
-		List<Droit> originalViseurs = getViseursApprobateur(droitSousAgentsByApprobateur);
-		DroitProfil delegataire = getDelegataireApprobateur(droitSousAgentsByApprobateur);
+		ArrayList<Droit> originalOperateurs = getOperateursApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
+		ArrayList<Droit> originalViseurs = getViseursApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
+		DroitProfil delegataire = getDelegataireApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
 
 		// /////////////////// DELEGATAIRE /////////////////////////////////////
 		// on traite le delegataire
@@ -291,26 +252,26 @@ public class AccessRightsService implements IAccessRightsService {
 
 		// ////////////////////// OPERATEURS //////////////////////////////////
 		// on traite les operateurs
-		traiteOperateurs(dto, originalOperateurs, idAgent, droitApprobateur, result);
+		traiteOperateurs(dto, originalOperateurs, idAgentAppro, droitApprobateur, result);
 		// //////////////////// FIN OPERATEURS /////////////////////////
 
 		// ////////////////////// VISEURS //////////////////////////////////
 		// on traite les viseurs
-		traiteViseurs(dto, originalViseurs, idAgent, droitApprobateur, result);
+		traiteViseurs(dto, originalViseurs, idAgentAppro, droitApprobateur, result);
 		// //////////////////// FIN VISEURS //////////////////////////////////
 
 		return result;
 	}
 
-	private void traiteViseurs(InputterDto dto, List<Droit> originalViseurs, Integer idAgent, Droit droitApprobateur,
-			ReturnMessageDto result) {
+	private void traiteViseurs(InputterDto dto, ArrayList<Droit> originalViseurs, Integer idAgentAppro,
+			Droit droitApprobateur, ReturnMessageDto result) {
 		for (AgentDto viseurDto : dto.getViseurs()) {
 
 			Droit existingViseur = null;
 
 			// on verifie si le viseur existe deja ou non
 			for (Droit viseur : originalViseurs) {
-				if (viseur.getIdAgent().equals(viseurDto.getIdAgent())) {
+				if (accessRightsRepository.isUserViseurOfApprobateur(idAgentAppro, viseurDto.getIdAgent())) {
 					existingViseur = viseur;
 					originalViseurs.remove(existingViseur);
 					break;
@@ -361,19 +322,25 @@ public class AccessRightsService implements IAccessRightsService {
 			accessRightsRepository.persisEntity(existingViseur);
 		}
 
-		// on supprime les operateurs en trop
+		// on supprime les viseurs en trop
+		ArrayList<DroitProfil> dpASupp = new ArrayList<>();
+		Droit droitAppro = accessRightsRepository.getAgentAccessRights(idAgentAppro);
 		for (Droit droitViseurToDelete : originalViseurs) {
 			for (DroitProfil droitProfilViseur : droitViseurToDelete.getDroitProfils()) {
-				if (null != droitProfilViseur.getDroitApprobateur()
-						&& idAgent.equals(droitProfilViseur.getDroitApprobateur().getIdAgent())) {
-					deleteDroitProfil(droitProfilViseur);
+				if (droitProfilViseur.getDroitApprobateur().getIdDroit().equals(droitAppro.getIdDroit())) {
+					if (!dpASupp.contains(droitProfilViseur)) {
+						dpASupp.add(droitProfilViseur);
+					}
 				}
 			}
+		}
+		for (DroitProfil dp : dpASupp) {
+			deleteDroitProfil(dp);
 		}
 
 	}
 
-	private void traiteOperateurs(InputterDto dto, List<Droit> originalOperateurs, Integer idAgent,
+	private void traiteOperateurs(InputterDto dto, ArrayList<Droit> originalOperateurs, Integer idAgentAppro,
 			Droit droitApprobateur, ReturnMessageDto result) {
 		for (AgentDto operateurDto : dto.getOperateurs()) {
 
@@ -381,7 +348,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 			// on verifie si l operateur existe deja ou non
 			for (Droit operateur : originalOperateurs) {
-				if (operateur.getIdAgent().equals(operateurDto.getIdAgent())) {
+				if (accessRightsRepository.isUserOperateurOfApprobateur(idAgentAppro, operateurDto.getIdAgent())) {
 					existingOperateur = operateur;
 					originalOperateurs.remove(existingOperateur);
 					break;
@@ -445,13 +412,19 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		// on supprime les operateurs en trop
+		ArrayList<DroitProfil> dpASupp = new ArrayList<>();
+		Droit droitAppro = accessRightsRepository.getAgentAccessRights(idAgentAppro);
 		for (Droit droitOperateurToDelete : originalOperateurs) {
 			for (DroitProfil droitProfilOperateur : droitOperateurToDelete.getDroitProfils()) {
-				if (null != droitProfilOperateur.getDroitApprobateur()
-						&& idAgent.equals(droitProfilOperateur.getDroitApprobateur().getIdAgent())) {
-					deleteDroitProfil(droitProfilOperateur);
+				if (droitProfilOperateur.getDroitApprobateur().getIdDroit().equals(droitAppro.getIdDroit())) {
+					if (!dpASupp.contains(droitProfilOperateur)) {
+						dpASupp.add(droitProfilOperateur);
+					}
 				}
 			}
+		}
+		for (DroitProfil dp : dpASupp) {
+			deleteDroitProfil(dp);
 		}
 
 	}
@@ -472,6 +445,13 @@ public class AccessRightsService implements IAccessRightsService {
 				result.getErrors().add(
 						String.format(
 								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+			} else if (accessRightsRepository.isUserApprobateur(dto.getDelegataire().getIdAgent())) {
+				logger.warn("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà approbateur.",
+						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+				result.getErrors().add(
+						String.format(
+								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà approbateur.",
 								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
 			} else {
 
@@ -528,12 +508,6 @@ public class AccessRightsService implements IAccessRightsService {
 
 		// on supprime le profil
 		Droit droit = droitProfil.getDroit();
-		Set<DroitProfil> t = droit.getDroitProfils();
-		logger.debug("Taille des droitsProfil" + t.size());
-		for (DroitProfil dp : t) {
-			logger.debug(dp.getIdDroitProfil().toString());
-		}
-
 		droit.getDroitProfils().remove(droitProfil);
 		accessRightsRepository.removeEntity(droitProfil);
 
