@@ -11,6 +11,7 @@
       	<class>nc.noumea.mairie.abs.domain.Droit</class>
       	<class>nc.noumea.mairie.abs.domain.DroitProfil</class>
       	<class>nc.noumea.mairie.abs.domain.DroitsAgent</class>
+      	<class>nc.noumea.mairie.abs.domain.DroitDroitsAgent</class>
       	<class>nc.noumea.mairie.abs.domain.Profil</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>

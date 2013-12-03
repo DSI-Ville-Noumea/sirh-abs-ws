@@ -104,44 +104,6 @@
     </changeSet>
 	
 	<changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-5">
-		<createSequence sequenceName="ABS_S_DROIT_DROITS_AGENT"/>
-        <createTable tableName="ABS_DROIT_DROITS_AGENT">
-            <column name="ID_DROIT_DROITS_AGENT" type="INT4">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ID_DROIT" type="INT4">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ID_DROITS_AGENT" type="INT4">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ID_PROFIL" type="INT4">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-		
-		
-		<addPrimaryKey columnNames="ID_DROIT_DROITS_AGENT" constraintName="PK_ABS_DROIT_DROITS_AGENT" tableName="ABS_DROIT_DROITS_AGENT"/>
-		<addDefaultValue columnName="ID_DROIT_DROITS_AGENT" tableName="ABS_DROIT_DROITS_AGENT" defaultValueSequenceNext="ABS_S_DROIT_DROITS_AGENT" />
-		
-		<addForeignKeyConstraint 
-            constraintName="FK_ABS_DROIT_DROITS_AGENT_DROIT"
-            baseColumnNames="ID_DROIT" baseTableName="ABS_DROIT_DROITS_AGENT" 
-            referencedColumnNames="ID_DROIT" referencedTableName="ABS_DROIT"/>
-		<addForeignKeyConstraint 
-            constraintName="FK_ABS_DROIT_DROITS_AGENT_DROITS_AGENT"
-            baseColumnNames="ID_DROITS_AGENT" baseTableName="ABS_DROIT_DROITS_AGENT" 
-            referencedColumnNames="ID_DROITS_AGENT" referencedTableName="ABS_DROITS_AGENT"/>
-		<addForeignKeyConstraint 
-            constraintName="FK_ABS_DROIT_DROITS_AGENT_PROFIL"
-            baseColumnNames="ID_PROFIL" baseTableName="ABS_DROIT_DROITS_AGENT" 
-            referencedColumnNames="ID_PROFIL" referencedTableName="ABS_PROFIL"/>
-
-        <addUniqueConstraint columnNames="ID_DROIT, ID_DROITS_AGENT,ID_PROFIL" constraintName="uq_id_droit_id_droits_agent_id_profil" tableName="ABS_DROIT_DROITS_AGENT" />
-			
-    </changeSet>
-	
-	<changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-6">
 		<createSequence sequenceName="ABS_S_DROIT_PROFIL"/>
         <createTable tableName="ABS_DROIT_PROFIL">
             <column name="ID_DROIT_PROFIL" type="INT4">
@@ -182,4 +144,47 @@
 		<addUniqueConstraint columnNames="ID_DROIT, ID_PROFIL,ID_DROIT_APPROBATEUR" constraintName="uq_id_droit_id_profil_id_droit_approbateur" tableName="ABS_DROIT_PROFIL" />
 		
     </changeSet>
+	
+	<changeSet author="nicno85" id="e8379610-5199-11e3-8f96-0800200c9a66-6">
+		<createSequence sequenceName="ABS_S_DROIT_DROITS_AGENT"/>
+        <createTable tableName="ABS_DROIT_DROITS_AGENT">
+            <column name="ID_DROIT_DROITS_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_DROIT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_DROITS_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_DROIT_PROFIL" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		
+		<addPrimaryKey columnNames="ID_DROIT_DROITS_AGENT" constraintName="PK_ABS_DROIT_DROITS_AGENT" tableName="ABS_DROIT_DROITS_AGENT"/>
+		<addDefaultValue columnName="ID_DROIT_DROITS_AGENT" tableName="ABS_DROIT_DROITS_AGENT" defaultValueSequenceNext="ABS_S_DROIT_DROITS_AGENT" />
+		
+		<addForeignKeyConstraint 
+            constraintName="FK_ABS_DROIT_DROITS_AGENT_DROIT"
+            baseColumnNames="ID_DROIT" baseTableName="ABS_DROIT_DROITS_AGENT" 
+            referencedColumnNames="ID_DROIT" referencedTableName="ABS_DROIT"/>
+		<addForeignKeyConstraint 
+            constraintName="FK_ABS_DROIT_DROITS_AGENT_DROITS_AGENT"
+            baseColumnNames="ID_DROITS_AGENT" baseTableName="ABS_DROIT_DROITS_AGENT" 
+            referencedColumnNames="ID_DROITS_AGENT" referencedTableName="ABS_DROITS_AGENT"/>
+		<addForeignKeyConstraint 
+            constraintName="FK_ABS_DROIT_DROITS_AGENT_DROIT_PROFIL"
+            baseColumnNames="ID_DROIT_PROFIL" baseTableName="ABS_DROIT_DROITS_AGENT" 
+            referencedColumnNames="ID_DROIT_PROFIL" referencedTableName="ABS_DROIT_PROFIL"/>
+
+        <addUniqueConstraint columnNames="ID_DROIT, ID_DROITS_AGENT,ID_DROIT_PROFIL" constraintName="uq_id_droit_id_droits_agent_id_droit_profil" tableName="ABS_DROIT_DROITS_AGENT" />
+			
+    </changeSet>
+	
+	
 </databaseChangeLog>

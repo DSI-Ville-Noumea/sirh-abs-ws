@@ -11,4 +11,10 @@ public class AccessForbiddenException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 2117783016541797346L;
 
+	 public AccessForbiddenException(){
+	 }
+			 
+	 public AccessForbiddenException(String message) {
+        super(message);
+    }
 }

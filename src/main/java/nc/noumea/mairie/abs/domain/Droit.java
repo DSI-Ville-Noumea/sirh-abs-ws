@@ -10,9 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -48,9 +45,8 @@ public class Droit {
 
 	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
 	private Set<DroitProfil> droitProfils = new HashSet<DroitProfil>();
-
-	@ManyToMany
-	@JoinTable(name = "ABS_DROIT_DROITS_AGENT", joinColumns = @JoinColumn(name = "ID_DROIT"), inverseJoinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
-	private Set<DroitsAgent> agents = new HashSet<DroitsAgent>();
+	
+	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 
 }

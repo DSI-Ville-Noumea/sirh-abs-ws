@@ -22,8 +22,10 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto setInputter(Integer idAgent, InputterDto dto);
 
-	List<AgentDto> getAgentsToApproveOrInput(int idAgent);
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent);
 	
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService);
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent, String codeService);
+	
+	void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents);	
 
 }

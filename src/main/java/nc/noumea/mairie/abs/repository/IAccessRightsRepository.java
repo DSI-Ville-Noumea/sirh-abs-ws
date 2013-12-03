@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.repository;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 
@@ -26,7 +27,7 @@ public interface IAccessRightsRepository {
 
 	List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur);
 
-	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
+	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService, Integer idDroitProfil);
 
 	void removeEntity(Object obj);
 
@@ -35,4 +36,8 @@ public interface IAccessRightsRepository {
 	boolean isUserOperateurOfApprobateur(Integer idAgentApprobateur, Integer idAgent);
 
 	boolean isUserViseurOfApprobateur(Integer idAgentApprobateur, Integer idAgent);
+	
+	Droit getAgentDroitFetchAgents(Integer idAgent);
+	
+	DroitProfil getDroitProfilByAgent(Integer idAgentApprobateur, Integer idAgent);
 }

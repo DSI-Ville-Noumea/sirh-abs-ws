@@ -90,4 +90,5 @@ public class Profil {
 	@Column(name = "DROIT_ACCES", nullable = false)
 	@Type(type = "boolean")
 	private boolean droitAcces;
+	
 }

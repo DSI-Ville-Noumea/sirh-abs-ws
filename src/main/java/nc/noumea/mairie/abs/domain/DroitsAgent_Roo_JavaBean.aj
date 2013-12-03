@@ -5,7 +5,7 @@ package nc.noumea.mairie.abs.domain;
 
 import java.util.Date;
 import java.util.Set;
-import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 
 privileged aspect DroitsAgent_Roo_JavaBean {
@@ -50,12 +50,12 @@ privileged aspect DroitsAgent_Roo_JavaBean {
         this.dateModification = dateModification;
     }
     
-    public Set<Droit> DroitsAgent.getDroits() {
-        return this.droits;
+    public Set<DroitDroitsAgent> DroitsAgent.getDroitDroitsAgent() {
+        return this.droitDroitsAgent;
     }
     
-    public void DroitsAgent.setDroits(Set<Droit> droits) {
-        this.droits = droits;
+    public void DroitsAgent.setDroitDroitsAgent(Set<DroitDroitsAgent> droitDroitsAgent) {
+        this.droitDroitsAgent = droitDroitsAgent;
     }
     
 }
