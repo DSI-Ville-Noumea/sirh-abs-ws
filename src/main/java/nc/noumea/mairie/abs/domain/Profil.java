@@ -1,15 +1,9 @@
 package nc.noumea.mairie.abs.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
@@ -90,5 +84,5 @@ public class Profil {
 	@Column(name = "DROIT_ACCES", nullable = false)
 	@Type(type = "boolean")
 	private boolean droitAcces;
-	
+
 }
