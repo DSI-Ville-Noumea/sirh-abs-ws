@@ -43,7 +43,7 @@ public class AccessRightsRepositoryTest {
 		Droit result = repository.getAgentAccessRights(9005138);
 
 		// Then
-		assertEquals(null, result.getIdDroit());
+		assertEquals(null, result);
 	}
 
 	@Test
@@ -214,23 +214,23 @@ public class AccessRightsRepositoryTest {
 		p2.setLibelle("APPROBATEUR");
 		absEntityManager.persist(p2);
 
-		Droit droitApprobateur1 = new Droit();
-		DroitProfil dp1 = new DroitProfil();
-		dp1.setDroit(droitApprobateur1);
-		dp1.setDroitApprobateur(droitApprobateur1);
-		dp1.setProfil(p1);
-		droitApprobateur1.setIdAgent(9008767);
-		droitApprobateur1.getDroitProfils().add(dp1);
-		absEntityManager.persist(droitApprobateur1);
-
-		Droit droitApprobateur2 = new Droit();
+		Droit droitApprobateur = new Droit();
 		DroitProfil dp2 = new DroitProfil();
-		dp2.setDroit(droitApprobateur2);
-		dp2.setDroitApprobateur(droitApprobateur2);
+		dp2.setDroit(droitApprobateur);
+		dp2.setDroitApprobateur(droitApprobateur);
 		dp2.setProfil(p2);
-		droitApprobateur2.setIdAgent(9008768);
-		droitApprobateur2.getDroitProfils().add(dp2);
-		absEntityManager.persist(droitApprobateur2);
+		droitApprobateur.setIdAgent(9008768);
+		droitApprobateur.getDroitProfils().add(dp2);
+		absEntityManager.persist(droitApprobateur);
+
+		Droit droitViseur = new Droit();
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitViseur);
+		dp1.setDroitApprobateur(droitApprobateur);
+		dp1.setProfil(p1);
+		droitViseur.setIdAgent(9008767);
+		droitViseur.getDroitProfils().add(dp1);
+		absEntityManager.persist(droitViseur);
 
 		// When
 		assertFalse(repository.isUserApprobateur(9008767));

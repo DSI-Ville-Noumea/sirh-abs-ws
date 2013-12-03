@@ -3,8 +3,6 @@
 
 package nc.noumea.mairie.abs.domain;
 
-import java.util.List;
-import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.Profil;
 
 privileged aspect Profil_Roo_JavaBean {
@@ -119,14 +117,6 @@ privileged aspect Profil_Roo_JavaBean {
     
     public void Profil.setDroitAcces(boolean droitAcces) {
         this.droitAcces = droitAcces;
-    }
-    
-    public List<DroitProfil> Profil.getDroitProfils() {
-        return this.droitProfils;
-    }
-    
-    public void Profil.setDroitProfils(List<DroitProfil> droitProfils) {
-        this.droitProfils = droitProfils;
     }
     
 }

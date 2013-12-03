@@ -90,7 +90,4 @@ public class Profil {
 	@Column(name = "DROIT_ACCES", nullable = false)
 	@Type(type = "boolean")
 	private boolean droitAcces;
-
-	@OneToMany(mappedBy = "profil", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<DroitProfil> droitProfils = new ArrayList<DroitProfil>();
 }

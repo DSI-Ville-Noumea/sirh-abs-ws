@@ -13,7 +13,6 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -27,14 +26,9 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getAgentAccessRights", Droit.class);
 		q.setParameter("idAgent", idAgent);
-		Droit d = new Droit();
-		try {
-			d = q.getSingleResult();
-		} catch (NoResultException e) {
-		} catch (EmptyResultDataAccessException e) {
-		}
+		List<Droit> ds = q.getResultList();
 
-		return d;
+		return ds.size() == 0 ? null : ds.get(0);
 	}
 
 	@Override

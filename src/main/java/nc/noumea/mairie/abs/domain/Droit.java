@@ -46,7 +46,7 @@ public class Droit {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
 
-	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
 	private Set<DroitProfil> droitProfils = new HashSet<DroitProfil>();
 
 	@ManyToMany
