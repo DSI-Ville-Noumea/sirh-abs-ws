@@ -139,13 +139,38 @@ HTTP Code 400 : Bad Request
     ]
 +-------------------------+
 
+* Gestion des agents saisie par l'operateur/viseur
+
+ <<URL>> : /droits/agentsSaisis
+ 
+ <<Accepted Methods>> : GET / POST
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l'approbateur connecté (au format 900xxxx ou 90xxxx).
+ 
+ * <<idOperateurOrViseur>> : identifiant de l'opérateur/viseur à qui on ajoute des agents (au format 900xxxx ou 90xxxx).
+
+ <<Content>>
+
++-------------------------+
+    [
+       {
+           "idAgent": 9002990,
+           "nom": "DEPLANQUE",
+           "prenom": "RICHARD"
+       }
+    ]
++-------------------------+
+
  <<Response>> : 
 
 +-------------------------+
 HTTP Code 200 : OK
-HTTP Code 204 : No Content (si l'agent approbateur n'a pas d'agents à approuver)
+HTTP Code 204 : No Content (si l'agent operateur/viseur n'a pas d'agents à approuver)
 HTTP Code 400 : Bad Request 
 HTTP Code 403 : Forbidden (l'agent n'est pas approbateur )
+HTTP Code 404 : Not Found (si l'agent operateur/viseur n'existe pas)
 +-------------------------+
 
 * Liste des agents hiérarchiquement en dessous de l'approbateur
