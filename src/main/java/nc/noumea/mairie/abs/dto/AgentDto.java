@@ -7,7 +7,7 @@ public class AgentDto {
 	private String nom;
 	private String prenom;
 	private Integer idAgent;
-	
+
 	public AgentDto() {
 
 	}
@@ -17,7 +17,7 @@ public class AgentDto {
 		prenom = agent.getDisplayPrenom();
 		idAgent = agent.getIdAgent();
 	}
-	
+
 	public String getNom() {
 		return nom;
 	}
@@ -40,5 +40,10 @@ public class AgentDto {
 
 	public void setIdAgent(Integer idAgent) {
 		this.idAgent = idAgent;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return idAgent.equals(((AgentDto) obj).getIdAgent());
 	}
 }

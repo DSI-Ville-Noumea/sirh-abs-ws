@@ -214,18 +214,24 @@ public class AccessRightsService implements IAccessRightsService {
 				else
 					result.setDelegataire(new AgentDto(delegataire));
 
-			} else if (accessRightsRepository.isUserOperateurOfApprobateur(idAgent, d.getIdAgent())) {
+			}
+			if (accessRightsRepository.isUserOperateurOfApprobateur(idAgent, d.getIdAgent())) {
 				Agent ope = sirhRepository.getAgent(d.getIdAgent());
 				if (ope == null)
 					logger.warn("L'agent opérateur {} n'existe pas.", d.getIdAgent());
-				else
-					result.getOperateurs().add(new AgentDto(ope));
-			} else if (accessRightsRepository.isUserViseurOfApprobateur(idAgent, d.getIdAgent())) {
-				Agent ope = sirhRepository.getAgent(d.getIdAgent());
-				if (ope == null)
+				else {
+					if (!result.getOperateurs().contains(new AgentDto(ope)))
+						result.getOperateurs().add(new AgentDto(ope));
+				}
+			}
+			if (accessRightsRepository.isUserViseurOfApprobateur(idAgent, d.getIdAgent())) {
+				Agent viseur = sirhRepository.getAgent(d.getIdAgent());
+				if (viseur == null)
 					logger.warn("L'agent viseur {} n'existe pas.", d.getIdAgent());
-				else
-					result.getViseurs().add(new AgentDto(ope));
+				else {
+					if (!result.getViseurs().contains(new AgentDto(viseur)))
+						result.getViseurs().add(new AgentDto(viseur));
+				}
 			}
 
 		}
@@ -254,14 +260,12 @@ public class AccessRightsService implements IAccessRightsService {
 
 		// ////////////////////// OPERATEURS //////////////////////////////////
 		// on traite les operateurs
-		 traiteOperateurs(dto, originalOperateurs, idAgentAppro,
-				 droitApprobateur, result);
+		traiteOperateurs(dto, originalOperateurs, idAgentAppro, droitApprobateur, result);
 		// //////////////////// FIN OPERATEURS /////////////////////////
 
 		// ////////////////////// VISEURS //////////////////////////////////
 		// on traite les viseurs
-		 traiteViseurs(dto, originalViseurs, idAgentAppro, droitApprobateur,
-				 result);
+		traiteViseurs(dto, originalViseurs, idAgentAppro, droitApprobateur, result);
 		// //////////////////// FIN VISEURS //////////////////////////////////
 
 		return result;
@@ -269,7 +273,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	private void traiteViseurs(InputterDto dto, ArrayList<Droit> originalViseurs, Integer idAgentAppro,
 			Droit droitApprobateur, ReturnMessageDto result) {
-		
+
 		for (AgentDto viseurDto : dto.getViseurs()) {
 
 			Droit newViseur = null;
@@ -302,7 +306,7 @@ public class AccessRightsService implements IAccessRightsService {
 								"L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
 								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
 				continue;
-			} 
+			}
 			if (accessRightsRepository.isUserOperateur(viseurDto.getIdAgent())) {
 				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
 						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
@@ -315,11 +319,11 @@ public class AccessRightsService implements IAccessRightsService {
 			// on regarde si le droit existe deja pour cette personne
 			newViseur = accessRightsRepository.getAgentAccessRights(viseurDto.getIdAgent());
 
-			if(newViseur == null) {
+			if (newViseur == null) {
 				newViseur = new Droit();
 				newViseur.setIdAgent(viseurDto.getIdAgent());
 			}
-			
+
 			DroitProfil dp = new DroitProfil();
 			newViseur.setDateModification(helperService.getCurrentDate());
 			dp.setDroit(newViseur);
@@ -351,7 +355,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	private void traiteOperateurs(InputterDto dto, ArrayList<Droit> originalOperateurs, Integer idAgentAppro,
 			Droit droitApprobateur, ReturnMessageDto result) {
-		
+
 		for (AgentDto operateurDto : dto.getOperateurs()) {
 
 			Droit newOperateur = null;
@@ -386,7 +390,7 @@ public class AccessRightsService implements IAccessRightsService {
 								"L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
 								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
 				continue;
-			} 
+			}
 			if (accessRightsRepository.isUserViseur(operateurDto.getIdAgent())) {
 				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
 						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
@@ -394,7 +398,7 @@ public class AccessRightsService implements IAccessRightsService {
 						String.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
 								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
 				continue;
-			} 
+			}
 			if (accessRightsRepository.isUserDelegataire(operateurDto.getIdAgent())) {
 				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
 						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
@@ -407,12 +411,12 @@ public class AccessRightsService implements IAccessRightsService {
 
 			// on regarde si le droit existe deja pour cette personne
 			newOperateur = accessRightsRepository.getAgentAccessRights(operateurDto.getIdAgent());
-			
-			if(newOperateur == null) {
+
+			if (newOperateur == null) {
 				newOperateur = new Droit();
 				newOperateur.setIdAgent(operateurDto.getIdAgent());
 			}
-			
+
 			DroitProfil dp = new DroitProfil();
 			newOperateur.setDateModification(helperService.getCurrentDate());
 			dp.setDroit(newOperateur);
@@ -516,10 +520,11 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent, String codeService) {
 
 		DroitProfil dp = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgent);
-		
+
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService, dp.getIdDroitProfil())) {
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService,
+				dp.getIdDroitProfil())) {
 			AgentDto agDto = new AgentDto();
 			Agent ag = sirhRepository.getAgent(da.getIdAgent());
 			agDto.setIdAgent(da.getIdAgent());
@@ -544,30 +549,36 @@ public class AccessRightsService implements IAccessRightsService {
 			accessRightsRepository.removeEntity(droit);
 		}
 	}
-	
+
 	@Override
 	public void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur, List<AgentDto> agents) {
 
 		Droit droitApprobateur = accessRightsRepository.getAgentDroitFetchAgents(idAgentApprobateur);
 		Droit droitOperateurOrViseur = accessRightsRepository.getAgentDroitFetchAgents(idAgentOperateurOrViseur);
-		DroitProfil droitProfilOperateurOrViseur = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgentOperateurOrViseur);
-		
+		DroitProfil droitProfilOperateurOrViseur = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur,
+				idAgentOperateurOrViseur);
+
 		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgentApprobateur);
-		
+
 		if (!droitSousAgentsByApprobateur.contains(droitOperateurOrViseur)) {
-			logger.warn("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseurs {} car il n'est pas un opérateur ou viseur de l'agent {}.",
+			logger.warn(
+					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseurs {} car il n'est pas un opérateur ou viseur de l'agent {}.",
 					idAgentApprobateur, idAgentOperateurOrViseur);
-			throw new AccessForbiddenException("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseurs car il n'est pas un opérateur ou viseur de l'agent");
+			throw new AccessForbiddenException(
+					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseurs car il n'est pas un opérateur ou viseur de l'agent");
 		} else {
-			if(!accessRightsRepository.isUserOperateur(idAgentOperateurOrViseur) 
+			if (!accessRightsRepository.isUserOperateur(idAgentOperateurOrViseur)
 					&& !accessRightsRepository.isUserViseur(idAgentOperateurOrViseur)) {
-				logger.warn("Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas ni opérateur, ni viseur {}.",
+				logger.warn(
+						"Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas ni opérateur, ni viseur {}.",
 						idAgentApprobateur, idAgentOperateurOrViseur);
-				throw new AccessForbiddenException("Impossible de modifier la liste des agents saisis de l'opérateur car il n'est pas ni opérateur, ni viseur");
+				throw new AccessForbiddenException(
+						"Impossible de modifier la liste des agents saisis de l'opérateur car il n'est pas ni opérateur, ni viseur");
 			}
 		}
 
-		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(droitOperateurOrViseur.getDroitDroitsAgent());
+		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(
+				droitOperateurOrViseur.getDroitDroitsAgent());
 
 		for (AgentDto ag : agents) {
 
@@ -584,13 +595,13 @@ public class AccessRightsService implements IAccessRightsService {
 					dda.setDroit(droitOperateurOrViseur);
 					dda.setDroitsAgent(ddaInAppro.getDroitsAgent());
 					dda.setDroitProfil(droitProfilOperateurOrViseur);
-					
+
 					droitOperateurOrViseur.getDroitDroitsAgent().add(dda);
 				}
-				
+
 				// remove this agent from the list of agents to be unlinked
 				agentsToUnlink.remove(ddaInAppro);
-				
+
 				// we're done with the list for now
 				break;
 			}
