@@ -46,7 +46,7 @@ public class Droit {
 	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
 	private Set<DroitProfil> droitProfils = new HashSet<DroitProfil>();
 	
-	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY)
 	private Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 
 }

@@ -3,7 +3,9 @@
 
 package nc.noumea.mairie.abs.domain;
 
+import java.util.Set;
 import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.Profil;
 
@@ -39,6 +41,14 @@ privileged aspect DroitProfil_Roo_JavaBean {
     
     public void DroitProfil.setDroitApprobateur(Droit droitApprobateur) {
         this.droitApprobateur = droitApprobateur;
+    }
+    
+    public Set<DroitDroitsAgent> DroitProfil.getDroitDroitsAgent() {
+        return this.droitDroitsAgent;
+    }
+    
+    public void DroitProfil.setDroitDroitsAgent(Set<DroitDroitsAgent> droitDroitsAgent) {
+        this.droitDroitsAgent = droitDroitsAgent;
     }
     
 }

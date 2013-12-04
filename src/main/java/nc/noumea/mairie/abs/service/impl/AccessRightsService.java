@@ -550,6 +550,11 @@ public class AccessRightsService implements IAccessRightsService {
 
 	private void deleteDroitProfil(DroitProfil droitProfil) {
 
+		// on supprime les droits agent associes au droit profil
+		for(DroitDroitsAgent agToDelete : droitProfil.getDroitDroitsAgent()) {
+			deleteDroitDroitsAgent(agToDelete);
+		}
+		
 		// on supprime le profil
 		Droit droit = droitProfil.getDroit();
 		droit.getDroitProfils().remove(droitProfil);
@@ -638,8 +643,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		for (DroitDroitsAgent agToUnlink : agentsToUnlink) {
-			droitOperateurOrViseur.getDroitDroitsAgent().remove(agToUnlink);
-			accessRightsRepository.removeEntity(agToUnlink);
+			deleteDroitDroitsAgent(agToUnlink);
 		}
 	}
 
@@ -694,16 +698,21 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		for (DroitDroitsAgent agToDelete : agentsToDelete) {
-			DroitsAgent droitAgent = agToDelete.getDroitsAgent();
-			droitAgent.getDroitDroitsAgent().remove(agToDelete);
-			accessRightsRepository.removeEntity(agToDelete);
-
-			// on verifie que l agent n a pas d autre droits, si non on supprime
-			// son droit
-			if (droitAgent.getDroitDroitsAgent().size() == 0) {
-				accessRightsRepository.removeEntity(droitAgent);
-			}
+			deleteDroitDroitsAgent(agToDelete);
 		}
 
+	}
+	
+	private void deleteDroitDroitsAgent(DroitDroitsAgent agToDelete) {
+
+		DroitsAgent droitAgent = agToDelete.getDroitsAgent();
+		droitAgent.getDroitDroitsAgent().remove(agToDelete);
+		accessRightsRepository.removeEntity(agToDelete);
+
+		// on verifie que l agent n a pas d autre droits, si non on supprime
+		// son droit
+		if (droitAgent.getDroitDroitsAgent().size() == 0) {
+			accessRightsRepository.removeEntity(droitAgent);
+		}
 	}
 }
