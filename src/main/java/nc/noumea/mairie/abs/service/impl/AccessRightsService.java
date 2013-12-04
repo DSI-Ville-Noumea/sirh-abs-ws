@@ -526,7 +526,8 @@ public class AccessRightsService implements IAccessRightsService {
 		DroitProfil dp = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgent);
 
 		if (dp == null) {
-			logger.warn("L'agent {} ne possède pas de DroitProfil associé à l'apporabteur {}.", idAgent, idAgentApprobateur);
+			logger.warn("L'agent {} ne possède pas de DroitProfil associé à l'approbateur {}.", idAgent,
+					idAgentApprobateur);
 			return result;
 		}
 
@@ -534,7 +535,7 @@ public class AccessRightsService implements IAccessRightsService {
 				dp.getIdDroitProfil())) {
 			AgentDto agDto = new AgentDto();
 			Agent ag = sirhRepository.getAgent(da.getIdAgent());
-			if(null == ag) {
+			if (null == ag) {
 				logger.warn("L'agent {} n'existe pas.", da.getIdAgent());
 				continue;
 			}
@@ -588,23 +589,24 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 		}
 
-		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(droitOperateurOrViseur.getDroitDroitsAgent());
+		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(
+				droitOperateurOrViseur.getDroitDroitsAgent());
 
 		for (AgentDto ag : agents) {
-			
+
 			// on verifie que l agent n est pas deja saisi
 			boolean IsAgentDejaSaisi = false;
-			for(DroitDroitsAgent ddaOperateurViseur : agentsToUnlink) {
-				if(ddaOperateurViseur.getDroitsAgent().getIdAgent().equals(ag.getIdAgent())) {
+			for (DroitDroitsAgent ddaOperateurViseur : agentsToUnlink) {
+				if (ddaOperateurViseur.getDroitsAgent().getIdAgent().equals(ag.getIdAgent())) {
 					IsAgentDejaSaisi = true;
 					agentsToUnlink.remove(ddaOperateurViseur);
 					break;
 				}
 			}
-			if(IsAgentDejaSaisi) {
+			if (IsAgentDejaSaisi) {
 				continue;
 			}
-			
+
 			for (DroitDroitsAgent ddaInAppro : droitApprobateur.getDroitDroitsAgent()) {
 
 				// if this is not the agent we're currently looking for,
@@ -620,10 +622,10 @@ public class AccessRightsService implements IAccessRightsService {
 					dda.setDroitProfil(droitProfilOperateurOrViseur);
 
 					droitOperateurOrViseur.getDroitDroitsAgent().add(dda);
-					
+
 					if (dda.getIdDroitDroitsAgent() == null)
 						accessRightsRepository.persisEntity(dda);
-					
+
 					continue;
 				}
 
