@@ -522,14 +522,22 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent, String codeService) {
 
+		List<AgentDto> result = new ArrayList<AgentDto>();
 		DroitProfil dp = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgent);
 
-		List<AgentDto> result = new ArrayList<AgentDto>();
+		if (dp == null) {
+			logger.warn("L'agent {} ne possède pas de DroitProfil associé à l'apporabteur {}.", idAgent, idAgentApprobateur);
+			return result;
+		}
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService,
 				dp.getIdDroitProfil())) {
 			AgentDto agDto = new AgentDto();
 			Agent ag = sirhRepository.getAgent(da.getIdAgent());
+			if(null == ag) {
+				logger.warn("L'agent {} n'existe pas.", da.getIdAgent());
+				continue;
+			}
 			agDto.setIdAgent(da.getIdAgent());
 			agDto.setNom(ag.getDisplayNom());
 			agDto.setPrenom(ag.getDisplayPrenom());
@@ -580,11 +588,23 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 		}
 
-		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(
-				droitOperateurOrViseur.getDroitDroitsAgent());
+		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(droitOperateurOrViseur.getDroitDroitsAgent());
 
 		for (AgentDto ag : agents) {
-
+			
+			// on verifie que l agent n est pas deja saisi
+			boolean IsAgentDejaSaisi = false;
+			for(DroitDroitsAgent ddaOperateurViseur : agentsToUnlink) {
+				if(ddaOperateurViseur.getDroitsAgent().getIdAgent().equals(ag.getIdAgent())) {
+					IsAgentDejaSaisi = true;
+					agentsToUnlink.remove(ddaOperateurViseur);
+					break;
+				}
+			}
+			if(IsAgentDejaSaisi) {
+				continue;
+			}
+			
 			for (DroitDroitsAgent ddaInAppro : droitApprobateur.getDroitDroitsAgent()) {
 
 				// if this is not the agent we're currently looking for,
@@ -600,8 +620,11 @@ public class AccessRightsService implements IAccessRightsService {
 					dda.setDroitProfil(droitProfilOperateurOrViseur);
 
 					droitOperateurOrViseur.getDroitDroitsAgent().add(dda);
-
-					accessRightsRepository.persisEntity(droitOperateurOrViseur);
+					
+					if (dda.getIdDroitDroitsAgent() == null)
+						accessRightsRepository.persisEntity(dda);
+					
+					continue;
 				}
 
 				// remove this agent from the list of agents to be unlinked
