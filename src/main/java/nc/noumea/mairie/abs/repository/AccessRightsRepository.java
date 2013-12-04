@@ -152,22 +152,22 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 		return q.getResultList();
 	}
-	
+
 	@Override
 	public Droit getAgentDroitFetchAgents(Integer idAgent) {
-		
+
 		TypedQuery<Droit> q = absEntityManager.createQuery(
 				"from Droit d LEFT JOIN FETCH d.droitDroitsAgent dda where d.idAgent = :idAgent ", Droit.class);
 		q.setParameter("idAgent", idAgent);
-		
+
 		List<Droit> r = q.getResultList();
-		
+
 		if (r.size() == 0)
 			return null;
-		
+
 		return r.get(0);
 	}
-	
+
 	@Override
 	public DroitProfil getDroitProfilByAgent(Integer idAgentApprobateur, Integer idAgent) {
 
@@ -177,10 +177,10 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		q.setParameter("idAgent", idAgent);
 
 		List<DroitProfil> r = q.getResultList();
-		
+
 		if (r.size() == 0)
 			return null;
-		
+
 		return r.get(0);
 	}
 
@@ -236,6 +236,30 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	@Override
+	public DroitsAgent getDroitsAgent(Integer idAgent) {
+
+		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery("getDroitsAgent", DroitsAgent.class);
+		q.setParameter("idAgent", idAgent);
+		List<DroitsAgent> ds = q.getResultList();
+
+		return ds.size() == 0 ? null : ds.get(0);
+	}
+
+	@Override
+	public DroitProfil getDroitProfilApprobateur(Integer idAgentApprobateur) {
+
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getDroitProfilApprobateur", DroitProfil.class);
+		q.setParameter("idAgentApprobateur", idAgentApprobateur);
+
+		List<DroitProfil> r = q.getResultList();
+
+		if (r.size() == 0)
+			return null;
+
+		return r.get(0);
 	}
 
 }

@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.NoResultException;
 
@@ -564,18 +565,18 @@ public class AccessRightsService implements IAccessRightsService {
 
 		if (!droitSousAgentsByApprobateur.contains(droitOperateurOrViseur)) {
 			logger.warn(
-					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseurs {} car il n'est pas un opérateur ou viseur de l'agent {}.",
+					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur {} car il n'est pas un opérateur ou viseur de l'agent {}.",
 					idAgentApprobateur, idAgentOperateurOrViseur);
 			throw new AccessForbiddenException(
-					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseurs car il n'est pas un opérateur ou viseur de l'agent");
+					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur car il n'est pas un opérateur ou viseur de l'agent");
 		} else {
 			if (!accessRightsRepository.isUserOperateur(idAgentOperateurOrViseur)
 					&& !accessRightsRepository.isUserViseur(idAgentOperateurOrViseur)) {
 				logger.warn(
-						"Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas ni opérateur, ni viseur {}.",
+						"Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est ni opérateur, ni viseur {}.",
 						idAgentApprobateur, idAgentOperateurOrViseur);
 				throw new AccessForbiddenException(
-						"Impossible de modifier la liste des agents saisis de l'opérateur car il n'est pas ni opérateur, ni viseur");
+						"Impossible de modifier la liste des agents saisis de l'opérateur car il n'est ni opérateur, ni viseur");
 			}
 		}
 
@@ -599,6 +600,8 @@ public class AccessRightsService implements IAccessRightsService {
 					dda.setDroitProfil(droitProfilOperateurOrViseur);
 
 					droitOperateurOrViseur.getDroitDroitsAgent().add(dda);
+
+					accessRightsRepository.persisEntity(droitOperateurOrViseur);
 				}
 
 				// remove this agent from the list of agents to be unlinked
@@ -611,6 +614,71 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (DroitDroitsAgent agToUnlink : agentsToUnlink) {
 			droitOperateurOrViseur.getDroitDroitsAgent().remove(agToUnlink);
+			accessRightsRepository.removeEntity(agToUnlink);
 		}
+	}
+
+	@Override
+	public void setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents) {
+
+		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentApprobateur);
+
+		Set<DroitDroitsAgent> agentsToDelete = droitApprobateur.getDroitDroitsAgent();
+
+		for (AgentDto ag : agents) {
+
+			DroitDroitsAgent existingAgent = null;
+
+			for (DroitDroitsAgent da : droitApprobateur.getDroitDroitsAgent()) {
+				if (da.getDroitsAgent().getIdAgent().equals(ag.getIdAgent())) {
+					existingAgent = da;
+					agentsToDelete.remove(existingAgent);
+					break;
+				}
+			}
+
+			if (existingAgent != null)
+				continue;
+
+			AgentWithServiceDto dto = sirhWSConsumer.getAgentService(ag.getIdAgent(), helperService.getCurrentDate());
+			if (dto == null)
+				continue;
+
+			// on regarde si le droit existe deja pour cette personne
+			DroitsAgent newDroitAgent = accessRightsRepository.getDroitsAgent(dto.getIdAgent());
+
+			if (newDroitAgent == null) {
+				newDroitAgent = new DroitsAgent();
+				newDroitAgent.setIdAgent(dto.getIdAgent());
+			}
+
+			newDroitAgent.setDateModification(helperService.getCurrentDate());
+			newDroitAgent.setLibelleService(dto.getService());
+			newDroitAgent.setCodeService(dto.getCodeService());
+
+			DroitProfil droitProfilApprobateur = accessRightsRepository.getDroitProfilApprobateur(idAgentApprobateur);
+
+			existingAgent = new DroitDroitsAgent();
+			existingAgent.setDroit(droitApprobateur);
+			existingAgent.setDroitProfil(droitProfilApprobateur);
+			existingAgent.setDroitsAgent(newDroitAgent);
+
+			newDroitAgent.getDroitDroitsAgent().add(existingAgent);
+
+			accessRightsRepository.persisEntity(newDroitAgent);
+		}
+
+		for (DroitDroitsAgent agToDelete : agentsToDelete) {
+			DroitsAgent droitAgent = agToDelete.getDroitsAgent();
+			droitAgent.getDroitDroitsAgent().remove(agToDelete);
+			accessRightsRepository.removeEntity(agToDelete);
+
+			// on verifie que l agent n a pas d autre droits, si non on supprime
+			// son droit
+			if (droitAgent.getDroitDroitsAgent().size() == 0) {
+				accessRightsRepository.removeEntity(droitAgent);
+			}
+		}
+
 	}
 }

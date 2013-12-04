@@ -1680,7 +1680,7 @@ public class AccessRightsServiceTest {
 		}
 		
 		assertNotNull(afe);
-		assertEquals("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseurs car il n'est pas un opérateur ou viseur de l'agent", afe.getMessage());
+		assertEquals("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur car il n'est pas un opérateur ou viseur de l'agent", afe.getMessage());
 	}
 	
 	@Test
@@ -1714,7 +1714,7 @@ public class AccessRightsServiceTest {
 		}
 		
 		assertNotNull(afe);
-		assertEquals("Impossible de modifier la liste des agents saisis de l'opérateur car il n'est pas ni opérateur, ni viseur", afe.getMessage());
+		assertEquals("Impossible de modifier la liste des agents saisis de l'opérateur car il n'est ni opérateur, ni viseur", afe.getMessage());
 	}
 	
 	@Test

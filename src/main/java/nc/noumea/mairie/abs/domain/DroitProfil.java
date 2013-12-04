@@ -16,9 +16,10 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_DROIT_PROFIL")
-@NamedQueries({ @NamedQuery(name = "getInputterDroitProfilOfApprobateurByLibelle", query = "select dp from DroitProfil dp where dp.droitApprobateur.idAgent= :idAgentApprobateur and dp.droit.idAgent= :idAgent and dp.droit.idAgent!= :idAgentApprobateur and dp.profil.libelle= :libelle "), 
-	@NamedQuery(name = "getDroitProfilByAgent", query = "from DroitProfil dp where dp.droitApprobateur.idAgent = :idAgentApprobateur and dp.droit.idAgent = :idAgent")
-})
+@NamedQueries({
+		@NamedQuery(name = "getInputterDroitProfilOfApprobateurByLibelle", query = "select dp from DroitProfil dp where dp.droitApprobateur.idAgent= :idAgentApprobateur and dp.droit.idAgent= :idAgent and dp.droit.idAgent!= :idAgentApprobateur and dp.profil.libelle= :libelle "),
+		@NamedQuery(name = "getDroitProfilByAgent", query = "from DroitProfil dp where dp.droitApprobateur.idAgent = :idAgentApprobateur and dp.droit.idAgent = :idAgent"),
+		@NamedQuery(name = "getDroitProfilApprobateur", query = "from DroitProfil dp where dp.droitApprobateur.idAgent = :idAgentApprobateur and dp.droit.idAgent = :idAgentApprobateur") })
 public class DroitProfil {
 
 	@Id
@@ -27,7 +28,7 @@ public class DroitProfil {
 	private Integer idDroitProfil;
 
 	@ManyToOne()
-	@JoinColumn(name = "ID_DROIT", referencedColumnName = "ID_DROIT" )
+	@JoinColumn(name = "ID_DROIT", referencedColumnName = "ID_DROIT")
 	private Droit droit;
 
 	@ManyToOne()
