@@ -170,7 +170,8 @@ public class AccessRightsService implements IAccessRightsService {
 		ArrayList<Droit> result = new ArrayList<Droit>();
 		for (Droit droit : droitSousAgentsByApprobateur) {
 			if (accessRightsRepository.isUserViseurOfApprobateur(idAgentApprobateur, droit.getIdAgent())) {
-				result.add(droit);
+				if (!result.contains(droit))
+					result.add(droit);
 			}
 		}
 
@@ -182,7 +183,8 @@ public class AccessRightsService implements IAccessRightsService {
 		ArrayList<Droit> result = new ArrayList<Droit>();
 		for (Droit droit : droitSousAgentsByApprobateur) {
 			if (accessRightsRepository.isUserOperateurOfApprobateur(idAgentApprobateur, droit.getIdAgent())) {
-				result.add(droit);
+				if (!result.contains(droit))
+					result.add(droit);
 			}
 		}
 
