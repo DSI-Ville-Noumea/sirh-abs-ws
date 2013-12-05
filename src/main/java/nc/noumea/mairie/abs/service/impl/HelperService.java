@@ -12,7 +12,7 @@ public class HelperService {
 	public Date getCurrentDate() {
 		return new Date();
 	}
-	
+
 	public boolean isDateAMonday(Date dateMonday) {
 		return new LocalDate(dateMonday).getDayOfWeek() == DateTimeConstants.MONDAY;
 	}

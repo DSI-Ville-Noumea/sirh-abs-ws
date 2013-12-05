@@ -3,11 +3,7 @@
 
 package nc.noumea.mairie.sirh.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import nc.noumea.mairie.sirh.domain.Agent;
 
@@ -16,18 +12,5 @@ privileged aspect Agent_Roo_Jpa_Entity {
     declare @type: Agent: @Entity;
     
     declare @type: Agent: @Table(name = "AGENT");
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID_AGENT")
-    private Integer Agent.idAgent;
-    
-    public Integer Agent.getIdAgent() {
-        return this.idAgent;
-    }
-    
-    public void Agent.setIdAgent(Integer id) {
-        this.idAgent = id;
-    }
     
 }

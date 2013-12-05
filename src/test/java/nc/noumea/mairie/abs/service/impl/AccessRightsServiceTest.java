@@ -215,6 +215,7 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(new ArrayList<Droit>());
 		Mockito.when(arRepo.isUserOperateur(9005138)).thenReturn(false);
+		Mockito.when(arRepo.isUserViseur(9005138)).thenReturn(false);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();

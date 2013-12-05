@@ -86,6 +86,9 @@ public class AccessRightsRepositoryTest {
 		// Then
 		assertEquals("9008767", result.getIdAgent().toString());
 		assertEquals(1, result.getDroitProfils().size());
+		for (DroitProfil dp : result.getDroitProfils()) {
+			assertTrue(dp.getProfil().isSaisie());
+		}
 
 		absEntityManager.flush();
 		absEntityManager.clear();

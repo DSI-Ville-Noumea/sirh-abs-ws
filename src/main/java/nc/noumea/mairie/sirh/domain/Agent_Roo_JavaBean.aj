@@ -8,6 +8,14 @@ import nc.noumea.mairie.sirh.domain.Agent;
 
 privileged aspect Agent_Roo_JavaBean {
     
+    public Integer Agent.getIdAgent() {
+        return this.idAgent;
+    }
+    
+    public void Agent.setIdAgent(Integer idAgent) {
+        this.idAgent = idAgent;
+    }
+    
     public Integer Agent.getNomatr() {
         return this.nomatr;
     }
