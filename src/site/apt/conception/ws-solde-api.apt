@@ -1,0 +1,34 @@
+            ------
+            SIRH-ABS-WS API WS doc
+            ------
+
+
+
+SIRH-ABS-WS API et définition des services concernant les soldes que l'agent peut voir
+
+* Solde des congés annuels
+
+ <<URL SIRH-WS>> : /agents/soldeConge
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la visualisation du solde des congés (au format 900xxxx ou 90xxxx).
+ 
+ <<Content>>
+
++-------------------------+
+    {
+       "soldeAnneeEnCours": 20.5,
+       "soldeAnneePrec": 0
+    }
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 204 : No Content (si l'agent n'a pas d'entrée dans la table SPSOLD)
+HTTP Code 400 : Bad Request 
++-------------------------+
