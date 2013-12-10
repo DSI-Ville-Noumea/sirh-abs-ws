@@ -1,0 +1,101 @@
+            ------
+            SIRH-ABS-WS API WS doc
+            ------
+
+
+
+SIRH-ABS-WS API et définition des services concernant les récupérations des agents
+
+* Mise à jour des récupérations d'un agent pour une semaine donnée
+
+ <<PROJET>> : SIRH-ABS-WS
+ 
+ <<URL>> : /recuperations/add
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : Le matricule de l'agent concerné par la mise à jour (au format 900xxxx).
+  
+  * <<dateLundi>> : La date de la semaine pour laquelle mettre à jour les récupérations (au format YYYYMMDD)
+
+  * <<minutes>> : Le nombre de minutes de récupérations pour la semaine donnée
+  
+ <<Content>> 
+ 
+ -
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas ou si la date ne correspond pas à un lundi)
++-------------------------+
+
+
+* saisie et modification d'une récupération
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /recuperations/recuperationSaisie
+ 
+ <<Accepted Methods>> : GET, POST 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la saisie des récupérations
+ 
+ <<Content>>
+ 
++-------------------------+
+{
+	"idRecuperation" : 1 (si création null, si modification reprendre l'identifiant de récupération envoyé),
+	"idRefType" : 1 (1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies),
+	"idAgent" : 9004568,
+	"dateDebut" : "/Date()/",
+    "duree" : 30 (en minutes),
+    "idRefEtat" : 0 (0:provisoire, 1:saisie(définitif))
+}
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
+HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
++-------------------------+
+
+* liste des types de demande d'absence
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /filtres/getTypes
+ 
+ <<Accepted Methods>> : GET
+ 
+  <<Parameters>>
+  
+  -
+  
+ <<Content>>
+ 
++-------------------------+
+[
+	{
+		"idRefType" : 1,
+		"libelle" : "Congé annuel"
+	},
+	{
+		"idRefType" : 2,
+		"libelle" : "Repos compensateur"
+	}
+]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
++-------------------------+
