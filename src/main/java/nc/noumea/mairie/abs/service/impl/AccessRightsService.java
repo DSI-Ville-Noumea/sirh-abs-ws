@@ -54,7 +54,12 @@ public class AccessRightsService implements IAccessRightsService {
 		AccessRightsDto result = new AccessRightsDto();
 		try {
 			Droit da = accessRightsRepository.getAgentAccessRights(idAgent);
-
+			
+			if(null == da) {
+				logger.debug("Aucun droit trouvé pour l'agent {}" + idAgent);
+				return result;
+			}
+			
 			for (DroitProfil dpr : da.getDroitProfils()) {
 				Profil pr = dpr.getProfil();
 				result.setSaisie(result.isSaisie() || pr.isSaisie());
