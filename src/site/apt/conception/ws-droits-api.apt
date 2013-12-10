@@ -8,6 +8,8 @@ SIRH-ABS-WS API et définition des services concernant les droits
 
 * Gestion des droits d'accès
 
+ <<PROJET>> : SIRH-ABS-WS
+
  <<URL>> : /droits/listeDroitsAgent
  
  <<Accepted Methods>> : GET
@@ -47,6 +49,8 @@ HTTP Code 404 : Not Found (si l'agent n'existe pas)
 
 * Gestion des approbateurs
 
+ <<PROJET>> : SIRH-ABS-WS
+
  <<URL>> : /droits/approbateurs
  
  <<Accepted Methods>> : GET / POST
@@ -82,6 +86,8 @@ HTTP Code 400 : Bad Request
 +-------------------------+
 
 * Gestion des inputter
+
+ <<PROJET>> : SIRH-ABS-WS
 
  <<URL>> : /droits/inputter
  
@@ -119,6 +125,8 @@ HTTP Code 400 : Bad Request
 
 * Gestion des agents approuvés par l'approbateur
 
+ <<PROJET>> : SIRH-ABS-WS
+
  <<URL>> : /droits/agentsApprouves
  
  <<Accepted Methods>> : GET / POST
@@ -140,6 +148,8 @@ HTTP Code 400 : Bad Request
 +-------------------------+
 
 * Gestion des agents saisie par l'operateur/viseur
+
+ <<PROJET>> : SIRH-ABS-WS
 
  <<URL>> : /droits/agentsSaisis
  
@@ -175,7 +185,9 @@ HTTP Code 404 : Not Found (si l'agent operateur/viseur n'existe pas)
 
 * Liste des agents hiérarchiquement en dessous de l'approbateur
 
- <<URL SIRH-WS>> : /agents/agentsSubordonnes
+ <<PROJET>> : SIRH-WS
+
+ <<URL>> : /agents/agentsSubordonnes
  
  <<Accepted Methods>> : GET 
  
@@ -213,7 +225,9 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
 
 * Liste des agents mairie en activité
 
- <<URL SIRH-WS>> : /agents/listeAgentsMairie
+ <<PROJET>> : SIRH-WS
+
+ <<URL>> : /agents/listeAgentsMairie
  
  <<Accepted Methods>> : GET 
  

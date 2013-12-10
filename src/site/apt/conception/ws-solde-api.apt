@@ -8,7 +8,9 @@ SIRH-ABS-WS API et définition des services concernant les soldes que l'agent pe
 
 * Solde des congés annuels
 
- <<URL SIRH-WS>> : /agents/soldeConge
+ <<PROJET>> : SIRH-WS
+
+ <<URL>> : /agents/soldeConge
  
  <<Accepted Methods>> : GET 
  
