@@ -190,7 +190,7 @@ public class RecuperationServiceTest {
 		// When
 		SoldeDto dto = service.getAgentSoldeRecuperation(idAgent);
 
-		assertEquals((Integer) 0, dto.getSoldeRecup());
+		assertEquals((Integer) 0, dto.getSolde());
 	}
 
 	@Test
@@ -211,6 +211,6 @@ public class RecuperationServiceTest {
 		// When
 		SoldeDto dto = service.getAgentSoldeRecuperation(idAgent);
 
-		assertEquals((Integer) 72, dto.getSoldeRecup());
+		assertEquals((Integer) 72, dto.getSolde());
 	}
 }

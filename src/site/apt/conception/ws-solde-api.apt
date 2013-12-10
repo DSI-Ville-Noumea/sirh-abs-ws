@@ -34,3 +34,31 @@ HTTP Code 200 : OK
 HTTP Code 204 : No Content (si l'agent n'a pas d'entrée dans la table SPSOLD)
 HTTP Code 400 : Bad Request 
 +-------------------------+
+
+* Solde des récupérations
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /recuperations/soldeRecup
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la visualisation du solde des récupérations (au format 900xxxx ou 90xxxx).
+ 
+ <<Content>>
+
++-------------------------+
+    {
+       "solde": 0
+    }
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request 
+HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents mairie)
++-------------------------+
