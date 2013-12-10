@@ -10,6 +10,8 @@
       	<class>nc.noumea.mairie.abs.domain.DroitsAgent</class>
       	<class>nc.noumea.mairie.abs.domain.DroitDroitsAgent</class>
       	<class>nc.noumea.mairie.abs.domain.Profil</class>
+      	<class>nc.noumea.mairie.abs.domain.RefEtat</class>
+      	<class>nc.noumea.mairie.abs.domain.RefTypeAbsence</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
