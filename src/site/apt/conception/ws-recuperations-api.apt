@@ -66,36 +66,3 @@ HTTP Code 200 : OK
 HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
 HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
 +-------------------------+
-
-* liste des types de demande d'absence
-
- <<PROJET>> : SIRH-ABS-WS
-
- <<URL>> : /filtres/getTypes
- 
- <<Accepted Methods>> : GET
- 
-  <<Parameters>>
-  
-  -
-  
- <<Content>>
- 
-+-------------------------+
-[
-	{
-		"idRefType" : 1,
-		"libelle" : "Congé annuel"
-	},
-	{
-		"idRefType" : 2,
-		"libelle" : "Repos compensateur"
-	}
-]
-+-------------------------+
-
- <<Response>> : 
-
-+-------------------------+
-HTTP Code 200 : OK
-+-------------------------+

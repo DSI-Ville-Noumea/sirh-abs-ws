@@ -1,0 +1,40 @@
+            ------
+            SIRH-ABS-WS API WS doc
+            ------
+
+
+
+SIRH-ABS-WS API et définition des services concernant les récupérations des agents
+
+* Liste des types de demande d'absence
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /filtres/getTypes
+ 
+ <<Accepted Methods>> : GET
+ 
+  <<Parameters>>
+  
+  -
+  
+ <<Content>>
+ 
++-------------------------+
+[
+	{
+		"idRefType" : 1,
+		"libelle" : "Congé annuel"
+	},
+	{
+		"idRefType" : 2,
+		"libelle" : "Repos compensateur"
+	}
+]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
++-------------------------+
