@@ -5,10 +5,13 @@
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
       	<class>nc.noumea.mairie.abs.domain.AgentRecupCount</class>
       	<class>nc.noumea.mairie.abs.domain.AgentWeekRecup</class>
+      	<class>nc.noumea.mairie.abs.domain.Demande</class>
+      	<class>nc.noumea.mairie.abs.domain.DemandeRecup</class>
       	<class>nc.noumea.mairie.abs.domain.Droit</class>
       	<class>nc.noumea.mairie.abs.domain.DroitProfil</class>
       	<class>nc.noumea.mairie.abs.domain.DroitsAgent</class>
       	<class>nc.noumea.mairie.abs.domain.DroitDroitsAgent</class>
+      	<class>nc.noumea.mairie.abs.domain.EtatDemande</class>
       	<class>nc.noumea.mairie.abs.domain.Profil</class>
       	<class>nc.noumea.mairie.abs.domain.RefEtat</class>
       	<class>nc.noumea.mairie.abs.domain.RefTypeAbsence</class>
