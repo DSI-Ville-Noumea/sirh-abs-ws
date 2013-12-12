@@ -18,6 +18,10 @@ SIRH-ABS-WS API et définition des services
   
  {{{../conception/ws-filtres-api.html}ws-filtres-api.html}}
 
+* Gestion des demandes d'absences
+  
+ {{{../conception/ws-filtres-api.html}ws-demandes-api.html}}
+
 * Recupérations
 
 ** Mise à jour des récupérations d'un agent pour une semaine donnée

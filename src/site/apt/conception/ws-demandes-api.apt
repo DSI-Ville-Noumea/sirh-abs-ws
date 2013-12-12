@@ -1,0 +1,80 @@
+            ------
+            SIRH-ABS-WS API WS doc
+            ------
+
+
+
+SIRH-ABS-WS API et définition des services concernant les récupérations des agents
+
+
+* saisie et modification d'une demande d'absence
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /demandes/setDemande
+ 
+ <<Accepted Methods>> : POST 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la saisie de la demande
+ 
+ <<Content>>
+ 
++-------------------------+
+{
+	"idDemande" : 1 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
+	"idAgent" : 9004568,
+	"idTypeDemande" : 1 (1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies),
+	"dateDebut" : "/Date()/",
+    "duree" : 30 (en minutes),
+    "idRefEtat" : 0 (0:provisoire, 1:saisie(définitif))
+}
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
+HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
++-------------------------+
+
+
+* recuperation d'une demande
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /demandes/getDemande
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent 
+ 
+ * <<idDemande>> : identifiant de la demande 
+ 
+ * <<idTypeDemande>> : type de la demande (type absence) 
+ 
+ <<Content>>
+ 
++-------------------------+
+{
+  "dateDebut": 1386766800000,
+  "duree": 30,
+  "idAgent": 9005138,
+  "idDemande": 1,
+  "idRefEtat": 0,
+  "idTypeDemande": 3
+}
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 204 : NO_CONTENT
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
+HTTP Code 403 : Accès non autorisé
++-------------------------+

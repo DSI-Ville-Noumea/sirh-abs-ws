@@ -6,7 +6,8 @@
 
 SIRH-ABS-WS API et définition des services concernant les récupérations des agents
 
-* Liste des types de demande d'absence
+
+* liste des types de demande d'absence
 
  <<PROJET>> : SIRH-ABS-WS
 
@@ -29,6 +30,40 @@ SIRH-ABS-WS API et définition des services concernant les récupérations des a
 	{
 		"idRefType" : 2,
 		"libelle" : "Repos compensateur"
+	}
+]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
++-------------------------+
+
+
+* liste des etats de demande d'absence
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /filtres/getEtats
+ 
+ <<Accepted Methods>> : GET
+ 
+  <<Parameters>>
+  
+  -
+  
+ <<Content>>
+ 
++-------------------------+
+[
+	{
+		"idRefEtat" : 0,
+		"libelle" : "Provisoire"
+	},
+	{
+		"idRefEtat" : 1,
+		"libelle" : "Saisie"
 	}
 ]
 +-------------------------+
