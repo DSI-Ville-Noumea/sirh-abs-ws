@@ -18,6 +18,7 @@ import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
@@ -54,12 +55,12 @@ public class AccessRightsService implements IAccessRightsService {
 		AccessRightsDto result = new AccessRightsDto();
 		try {
 			Droit da = accessRightsRepository.getAgentAccessRights(idAgent);
-			
-			if(null == da) {
+
+			if (null == da) {
 				logger.debug("Aucun droit trouvé pour l'agent {}" + idAgent);
 				return result;
 			}
-			
+
 			for (DroitProfil dpr : da.getDroitProfils()) {
 				Profil pr = dpr.getProfil();
 				result.setSaisie(result.isSaisie() || pr.isSaisie());
@@ -232,15 +233,6 @@ public class AccessRightsService implements IAccessRightsService {
 						result.getOperateurs().add(new AgentDto(ope));
 				}
 			}
-			if (accessRightsRepository.isUserViseurOfApprobateur(idAgent, d.getIdAgent())) {
-				Agent viseur = sirhRepository.getAgent(d.getIdAgent());
-				if (viseur == null)
-					logger.warn("L'agent viseur {} n'existe pas.", d.getIdAgent());
-				else {
-					if (!result.getViseurs().contains(new AgentDto(viseur)))
-						result.getViseurs().add(new AgentDto(viseur));
-				}
-			}
 
 		}
 
@@ -258,7 +250,6 @@ public class AccessRightsService implements IAccessRightsService {
 
 		// on trie la liste des sous agents
 		ArrayList<Droit> originalOperateurs = getOperateursApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
-		ArrayList<Droit> originalViseurs = getViseursApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
 		DroitProfil delegataire = getDelegataireApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
 
 		// /////////////////// DELEGATAIRE /////////////////////////////////////
@@ -271,15 +262,10 @@ public class AccessRightsService implements IAccessRightsService {
 		traiteOperateurs(dto, originalOperateurs, idAgentAppro, droitApprobateur, result);
 		// //////////////////// FIN OPERATEURS /////////////////////////
 
-		// ////////////////////// VISEURS //////////////////////////////////
-		// on traite les viseurs
-		traiteViseurs(dto, originalViseurs, idAgentAppro, droitApprobateur, result);
-		// //////////////////// FIN VISEURS //////////////////////////////////
-
 		return result;
 	}
 
-	private void traiteViseurs(InputterDto dto, ArrayList<Droit> originalViseurs, Integer idAgentAppro,
+	private void traiteViseurs(ViseursDto dto, ArrayList<Droit> originalViseurs, Integer idAgentAppro,
 			Droit droitApprobateur, ReturnMessageDto result) {
 
 		for (AgentDto viseurDto : dto.getViseurs()) {
@@ -556,10 +542,10 @@ public class AccessRightsService implements IAccessRightsService {
 	private void deleteDroitProfil(DroitProfil droitProfil) {
 
 		// on supprime les droits agent associes au droit profil
-		for(DroitDroitsAgent agToDelete : droitProfil.getDroitDroitsAgent()) {
+		for (DroitDroitsAgent agToDelete : droitProfil.getDroitDroitsAgent()) {
 			deleteDroitDroitsAgent(agToDelete);
 		}
-		
+
 		// on supprime le profil
 		Droit droit = droitProfil.getDroit();
 		droit.getDroitProfils().remove(droitProfil);
@@ -707,7 +693,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 	}
-	
+
 	private void deleteDroitDroitsAgent(DroitDroitsAgent agToDelete) {
 
 		DroitsAgent droitAgent = agToDelete.getDroitsAgent();
@@ -719,5 +705,52 @@ public class AccessRightsService implements IAccessRightsService {
 		if (droitAgent.getDroitDroitsAgent().size() == 0) {
 			accessRightsRepository.removeEntity(droitAgent);
 		}
+	}
+
+	@Override
+	public ViseursDto getViseurs(int idAgent) {
+
+		ViseursDto result = new ViseursDto();
+
+		List<Droit> droit = accessRightsRepository.getDroitSousApprobateur(idAgent);
+
+		if (droit == null) {
+			logger.warn("L'agent {} n'est pas approbateur.", idAgent);
+			return result;
+		}
+		for (Droit d : droit) {
+			if (accessRightsRepository.isUserViseurOfApprobateur(idAgent, d.getIdAgent())) {
+				Agent viseur = sirhRepository.getAgent(d.getIdAgent());
+				if (viseur == null)
+					logger.warn("L'agent viseur {} n'existe pas.", d.getIdAgent());
+				else {
+					if (!result.getViseurs().contains(new AgentDto(viseur)))
+						result.getViseurs().add(new AgentDto(viseur));
+				}
+			}
+
+		}
+
+		return result;
+	}
+
+	@Override
+	public ReturnMessageDto setViseurs(Integer idAgentAppro, ViseursDto dto) {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentAppro);
+
+		// on recupere la liste des
+		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgentAppro);
+
+		// on trie la liste des sous agents
+		ArrayList<Droit> originalViseurs = getViseursApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
+
+		// ////////////////////// VISEURS //////////////////////////////////
+		// on traite les viseurs
+		traiteViseurs(dto, originalViseurs, idAgentAppro, droitApprobateur, result);
+		// //////////////////// FIN VISEURS //////////////////////////////////
+
+		return result;
 	}
 }

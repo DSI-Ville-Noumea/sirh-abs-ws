@@ -85,7 +85,7 @@ HTTP Code 200 : OK
 HTTP Code 400 : Bad Request 
 +-------------------------+
 
-* Gestion des inputter
+* Gestion des inputter (operateurs et delegataire)
 
  <<PROJET>> : SIRH-ABS-WS
 
@@ -109,9 +109,40 @@ HTTP Code 400 : Bad Request
                "nom": "SALES",
                "prenom": "ADRIEN"
            }
-       ],
+       ]
+    }
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request 
++-------------------------+
+
+* Gestion des viseurs
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /droits/viseur
+ 
+ <<Accepted Methods>> : GET /POST
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant au module de pointage via le Kiosque (au format 900xxxx ou 90xxxx).
+
+ <<Content>>
+
++-------------------------+
+    {
 	   "viseurs":
 	   [
+			{
+               "idAgent": 9005131,
+               "nom": "SALES",
+               "prenom": "ADRIEN"
+           }
 	   ]
     }
 +-------------------------+
@@ -145,6 +176,15 @@ HTTP Code 400 : Bad Request
            "prenom": "RICHARD"
        }
     ]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK.
+HTTP Code 204 : No Content (si l'agent operateur/viseur n'a pas d'agents à approuver)
+HTTP Code 400 : Bad Request 
+HTTP Code 403 : Forbidden (l'agent n'est pas approbateur )
 +-------------------------+
 
 * Gestion des agents saisie par l'operateur/viseur

@@ -8,6 +8,7 @@ import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -119,6 +120,46 @@ public class AccessRightsController {
 
 		ReturnMessageDto result = accessRightService.setInputter(convertedIdAgent,
 				new InputterDto().deserializeFromJSON(inputterDtoJson));
+
+		String jsonResult = new JSONSerializer().exclude("*.class").deepSerialize(result);
+
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(jsonResult, HttpStatus.CONFLICT);
+		else
+			return new ResponseEntity<String>(jsonResult, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getViseurs(@RequestParam("idAgent") Integer idAgent) {
+		logger.debug("entered GET [droits/viseur] => getViseurs with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		ViseursDto result = accessRightService.getViseurs(convertedIdAgent);
+
+		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> setViseurs(@RequestParam("idAgent") Integer idAgent,
+			@RequestBody String inputterDtoJson) {
+
+		logger.debug("entered POST [droits/viseur] => setViseurs with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		ReturnMessageDto result = accessRightService.setViseurs(convertedIdAgent,
+				new ViseursDto().deserializeFromJSON(inputterDtoJson));
 
 		String jsonResult = new JSONSerializer().exclude("*.class").deepSerialize(result);
 

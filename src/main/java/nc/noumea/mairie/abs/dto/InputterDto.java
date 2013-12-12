@@ -10,17 +10,14 @@ public class InputterDto implements IJSONSerialize, IJSONDeserialize<InputterDto
 
 	private AgentDto delegataire;
 	private List<AgentDto> operateurs;
-	private List<AgentDto> viseurs;
 
 	public InputterDto() {
 		operateurs = new ArrayList<AgentDto>();
-		viseurs = new ArrayList<AgentDto>();
 	}
 
 	@Override
 	public String serializeInJSON() {
-		return new JSONSerializer().exclude("*.class").include("delegataire").include("operateurs.*")
-				.include("viseurs.*").serialize(this);
+		return new JSONSerializer().exclude("*.class").include("delegataire").include("operateurs.*").serialize(this);
 	}
 
 	@Override
@@ -42,13 +39,5 @@ public class InputterDto implements IJSONSerialize, IJSONDeserialize<InputterDto
 
 	public void setOperateurs(List<AgentDto> operateurs) {
 		this.operateurs = operateurs;
-	}
-
-	public List<AgentDto> getViseurs() {
-		return viseurs;
-	}
-
-	public void setViseurs(List<AgentDto> viseurs) {
-		this.viseurs = viseurs;
 	}
 }
