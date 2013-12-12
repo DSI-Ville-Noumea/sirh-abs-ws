@@ -6,11 +6,11 @@
 
 SIRH-ABS-WS API et définition des services concernant les soldes que l'agent peut voir
 
-* Solde des congés annuels
+* Solde des congés annuels de l'année
 
- <<PROJET>> : SIRH-WS
+ <<PROJET>> : SIRH-ABS-WS
 
- <<URL>> : /agents/soldeConge
+ <<URL>> : /solde/soldeCongeAnnee
  
  <<Accepted Methods>> : GET 
  
@@ -22,8 +22,35 @@ SIRH-ABS-WS API et définition des services concernant les soldes que l'agent pe
 
 +-------------------------+
     {
-       "soldeAnneeEnCours": 20.5,
-       "soldeAnneePrec": 0
+       "solde": 20.5
+    }
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 204 : No Content (si l'agent n'a pas d'entrée dans la table SPSOLD)
+HTTP Code 400 : Bad Request 
++-------------------------+
+
+* Solde des congés annuels de l'année précédente
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /solde/soldeCongeAnneePrec
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la visualisation du solde des congés (au format 900xxxx ou 90xxxx).
+ 
+ <<Content>>
+
++-------------------------+
+    {
+       "solde": 10.5
     }
 +-------------------------+
 
@@ -39,7 +66,7 @@ HTTP Code 400 : Bad Request
 
  <<PROJET>> : SIRH-ABS-WS
 
- <<URL>> : /recuperations/soldeRecup
+ <<URL>> : /solde/soldeRecup
  
  <<Accepted Methods>> : GET 
  
@@ -51,7 +78,7 @@ HTTP Code 400 : Bad Request
 
 +-------------------------+
     {
-       "solde": 0
+       "solde": 0.0
     }
 +-------------------------+
 

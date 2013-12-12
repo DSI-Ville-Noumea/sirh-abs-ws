@@ -4,18 +4,18 @@ import flexjson.JSONSerializer;
 
 public class SoldeDto implements IJSONSerialize {
 
-	private Integer solde;
+	private Double solde;
 
 	@Override
 	public String serializeInJSON() {
 		return new JSONSerializer().exclude("*.class").serialize(this);
 	}
 
-	public Integer getSolde() {
+	public Double getSolde() {
 		return solde;
 	}
 
-	public void setSolde(Integer solde) {
+	public void setSolde(Double solde) {
 		this.solde = solde;
 	}
 
