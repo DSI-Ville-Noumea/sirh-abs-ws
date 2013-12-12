@@ -16,7 +16,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne; 
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -53,4 +53,5 @@ public class Demande implements Serializable {
 	@OneToMany(mappedBy = "demande", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
 	@OrderBy("date desc")
 	private List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
+	
 }
