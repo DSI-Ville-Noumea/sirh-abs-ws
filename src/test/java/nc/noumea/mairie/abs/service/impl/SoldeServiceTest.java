@@ -14,7 +14,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class SoldeServiceTest {
 
 	@Test
-	public void getAgentSoldeRecuperation_AgentDoesNotExists() {
+	public void getAgentSolde_AgentDoesNotExists() {
 
 		// Given
 		Integer idAgent = 9008765;
@@ -22,113 +22,53 @@ public class SoldeServiceTest {
 		IRecuperationRepository rr = Mockito.mock(IRecuperationRepository.class);
 		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(null);
 
+		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(null);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 
 		// When
-		SoldeDto dto = service.getAgentSoldeRecuperation(idAgent);
+		SoldeDto dto = service.getAgentSolde(idAgent);
 
-		assertEquals("0.0", dto.getSolde().toString());
+		assertEquals("0.0", dto.getSoldeCongeAnnee().toString());
+		assertEquals("0.0", dto.getSoldeCongeAnneePrec().toString());
+		assertEquals("0.0", dto.getSoldeRecup().toString());
 	}
 
 	@Test
-	public void getAgentSoldeRecuperation_AgentExists() {
+	public void getAgentSolde_AgentExists() {
 
 		// Given
 		Integer idAgent = 9008765;
+		double cotaSoldeAnnee = 62.0;
+		double cotaSoldeAnneePrec = 25.5;
+
 		AgentRecupCount arc = new AgentRecupCount();
 		arc.setIdAgent(idAgent);
 		arc.setTotalMinutes(72);
 
+		SpSold solde = new SpSold();
+		solde.setNomatr(8765);
+		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
+		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+
 		IRecuperationRepository rr = Mockito.mock(IRecuperationRepository.class);
 		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(arc);
 
+		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 
 		// When
-		SoldeDto dto = service.getAgentSoldeRecuperation(idAgent);
+		SoldeDto dto = service.getAgentSolde(idAgent);
 
-		assertEquals("72.0", dto.getSolde().toString());
-	}
-
-	@Test
-	public void getAgentSoldeCongeAnnee_AgentDoesNotExists() {
-
-		// Given
-		Integer idAgent = 9008765;
-
-		ISirhRepository rr = Mockito.mock(ISirhRepository.class);
-		Mockito.when(rr.getSpsold(idAgent)).thenReturn(null);
-
-		SoldeService service = new SoldeService();
-		ReflectionTestUtils.setField(service, "sirhRepository", rr);
-
-		// When
-		SoldeDto dto = service.getAgentSoldeCongeAnnee(idAgent);
-
-		assertEquals("0.0", dto.getSolde().toString());
-	}
-
-	@Test
-	public void getAgentSoldeCongeAnnee_AgentExists() {
-		double solde = 72.0;
-
-		// Given
-		Integer idAgent = 9008765;
-		SpSold arc = new SpSold();
-		arc.setNomatr(8765);
-		arc.setSoldeAnneeEnCours(solde);
-
-		ISirhRepository rr = Mockito.mock(ISirhRepository.class);
-		Mockito.when(rr.getSpsold(idAgent)).thenReturn(arc);
-
-		SoldeService service = new SoldeService();
-		ReflectionTestUtils.setField(service, "sirhRepository", rr);
-
-		// When
-		SoldeDto dto = service.getAgentSoldeCongeAnnee(idAgent);
-
-		assertEquals("72.0", dto.getSolde().toString());
-	}
-
-	@Test
-	public void getAgentSoldeCongeAnneePrec_AgentDoesNotExists() {
-
-		// Given
-		Integer idAgent = 9008765;
-
-		ISirhRepository rr = Mockito.mock(ISirhRepository.class);
-		Mockito.when(rr.getSpsold(idAgent)).thenReturn(null);
-
-		SoldeService service = new SoldeService();
-		ReflectionTestUtils.setField(service, "sirhRepository", rr);
-
-		// When
-		SoldeDto dto = service.getAgentSoldeCongeAnneePrec(idAgent);
-
-		assertEquals("0.0", dto.getSolde().toString());
-	}
-
-	@Test
-	public void getAgentSoldeCongeAnneePrec_AgentExists() {
-		double solde = 72.0;
-
-		// Given
-		Integer idAgent = 9008765;
-		SpSold arc = new SpSold();
-		arc.setNomatr(8765);
-		arc.setSoldeAnneeEnCours(solde);
-
-		ISirhRepository rr = Mockito.mock(ISirhRepository.class);
-		Mockito.when(rr.getSpsold(idAgent)).thenReturn(arc);
-
-		SoldeService service = new SoldeService();
-		ReflectionTestUtils.setField(service, "sirhRepository", rr);
-
-		// When
-		SoldeDto dto = service.getAgentSoldeCongeAnneePrec(idAgent);
-
-		assertEquals("72.0", dto.getSolde().toString());
+		assertEquals("72.0", dto.getSoldeRecup().toString());
+		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
+		assertEquals("25.5", dto.getSoldeCongeAnneePrec().toString());
 	}
 }

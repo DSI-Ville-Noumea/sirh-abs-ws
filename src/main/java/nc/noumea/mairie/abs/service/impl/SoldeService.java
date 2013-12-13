@@ -24,26 +24,18 @@ public class SoldeService implements ISoldeService {
 	private IRecuperationRepository recuperationRepository;
 
 	@Override
-	public SoldeDto getAgentSoldeCongeAnnee(Integer idAgent) {
-		SpSold soldeCongeAnnee = sirhRepository.getSpsold(idAgent);
-		SoldeDto dto = new SoldeDto();
-		dto.setSolde(soldeCongeAnnee == null ? 0 : soldeCongeAnnee.getSoldeAnneeEnCours());
-		return dto;
-	}
+	public SoldeDto getAgentSolde(Integer idAgent) {
+		// on traite les congés
+		SpSold soldeConge = sirhRepository.getSpsold(idAgent);
 
-	@Override
-	public SoldeDto getAgentSoldeCongeAnneePrec(Integer idAgent) {
-		SpSold soldeCongeAnnePrece = sirhRepository.getSpsold(idAgent);
-		SoldeDto dto = new SoldeDto();
-		dto.setSolde(soldeCongeAnnePrece == null ? 0 : soldeCongeAnnePrece.getSoldeAnneeEnCours());
-		return dto;
-	}
-
-	@Override
-	public SoldeDto getAgentSoldeRecuperation(Integer idAgent) {
+		// on traite les recup
 		AgentRecupCount soldeRecup = recuperationRepository.getAgentRecupCount(idAgent);
+
+		// on alimente le DTO
 		SoldeDto dto = new SoldeDto();
-		dto.setSolde((double) (soldeRecup == null ? 0 : soldeRecup.getTotalMinutes()));
+		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getSoldeAnneeEnCours());
+		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getSoldeAnneePrec());
+		dto.setSoldeRecup((double) (soldeRecup == null ? 0 : soldeRecup.getTotalMinutes()));
 		return dto;
 	}
 

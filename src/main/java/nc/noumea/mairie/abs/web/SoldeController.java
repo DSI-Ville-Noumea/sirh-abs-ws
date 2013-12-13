@@ -34,54 +34,18 @@ public class SoldeController {
 	private ISoldeService soldeService;
 
 	@ResponseBody
-	@RequestMapping(value = "soldeRecup", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@RequestMapping(value = "soldeAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getSoldeRecuperation(@RequestParam(value = "idAgent", required = true) Integer idAgent) {
+	public ResponseEntity<String> getSoldeAgent(@RequestParam(value = "idAgent", required = true) Integer idAgent) {
 
-		logger.debug("entered GET [solde/soldeRecup] => getSoldeRecuperation with parameter idAgent = {}", idAgent);
+		logger.debug("entered GET [solde/soldeAgent] => getSoldeAgent with parameter idAgent = {}", idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		if (Agent.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		SoldeDto result = soldeService.getAgentSoldeRecuperation(convertedIdAgent);
-
-		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "soldeCongeAnnee", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ResponseEntity<String> getSoldeCongeAnnee(@RequestParam(value = "idAgent", required = true) Integer idAgent) {
-
-		logger.debug("entered GET [solde/soldeCongeAnnee] => getSoldeCongeAnnee with parameter idAgent = {}", idAgent);
-
-		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-
-		if (Agent.findAgent(convertedIdAgent) == null)
-			throw new NotFoundException();
-
-		SoldeDto result = soldeService.getAgentSoldeCongeAnnee(convertedIdAgent);
-
-		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "soldeCongeAnneePrec", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ResponseEntity<String> getSoldeCongeAnneePrec(
-			@RequestParam(value = "idAgent", required = true) Integer idAgent) {
-
-		logger.debug("entered GET [solde/soldeCongeAnneePrec] => getSoldeCongeAnneePrec with parameter idAgent = {}",
-				idAgent);
-
-		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-
-		if (Agent.findAgent(convertedIdAgent) == null)
-			throw new NotFoundException();
-
-		SoldeDto result = soldeService.getAgentSoldeCongeAnneePrec(convertedIdAgent);
+		SoldeDto result = soldeService.getAgentSolde(convertedIdAgent);
 
 		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}

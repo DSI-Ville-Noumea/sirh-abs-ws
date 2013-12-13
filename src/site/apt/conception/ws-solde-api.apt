@@ -6,17 +6,17 @@
 
 SIRH-ABS-WS API et définition des services concernant les soldes que l'agent peut voir
 
-* Solde des congés annuels de l'année
+* Solde de l'agent
 
  <<PROJET>> : SIRH-ABS-WS
 
- <<URL>> : /solde/soldeCongeAnnee
+ <<URL>> : /solde/soldeAgent
  
  <<Accepted Methods>> : GET 
  
   <<Parameters>>
  
- * <<idAgent>> : identifiant de l’agent accédant à la visualisation du solde des congés (au format 900xxxx ou 90xxxx).
+ * <<idAgent>> : identifiant de l’agent accédant à la visualisation du solde (au format 900xxxx ou 90xxxx).
  
  <<Content>>
 
@@ -32,60 +32,4 @@ SIRH-ABS-WS API et définition des services concernant les soldes que l'agent pe
 HTTP Code 200 : OK
 HTTP Code 204 : No Content (si l'agent n'a pas d'entrée dans la table SPSOLD)
 HTTP Code 400 : Bad Request 
-+-------------------------+
-
-* Solde des congés annuels de l'année précédente
-
- <<PROJET>> : SIRH-ABS-WS
-
- <<URL>> : /solde/soldeCongeAnneePrec
- 
- <<Accepted Methods>> : GET 
- 
-  <<Parameters>>
- 
- * <<idAgent>> : identifiant de l’agent accédant à la visualisation du solde des congés (au format 900xxxx ou 90xxxx).
- 
- <<Content>>
-
-+-------------------------+
-    {
-       "solde": 10.5
-    }
-+-------------------------+
-
- <<Response>> : 
-
-+-------------------------+
-HTTP Code 200 : OK
-HTTP Code 204 : No Content (si l'agent n'a pas d'entrée dans la table SPSOLD)
-HTTP Code 400 : Bad Request 
-+-------------------------+
-
-* Solde des récupérations
-
- <<PROJET>> : SIRH-ABS-WS
-
- <<URL>> : /solde/soldeRecup
- 
- <<Accepted Methods>> : GET 
- 
-  <<Parameters>>
- 
- * <<idAgent>> : identifiant de l’agent accédant à la visualisation du solde des récupérations (au format 900xxxx ou 90xxxx).
- 
- <<Content>>
-
-+-------------------------+
-    {
-       "solde": 0.0
-    }
-+-------------------------+
-
- <<Response>> : 
-
-+-------------------------+
-HTTP Code 200 : OK
-HTTP Code 400 : Bad Request 
-HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents mairie)
 +-------------------------+
