@@ -7,7 +7,6 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
-import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
@@ -173,44 +172,5 @@ public class RecuperationServiceTest {
 		assertEquals(0, result);
 		assertEquals(0, (int) arc.getTotalMinutes());
 		assertEquals(70, (int) awr.getMinutesRecup());
-	}
-
-	@Test
-	public void getAgentSoldeRecuperation_AgentDoesNotExists() {
-
-		// Given
-		Integer idAgent = 9008765;
-
-		IRecuperationRepository rr = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(null);
-
-		RecuperationService service = new RecuperationService();
-		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
-
-		// When
-		SoldeDto dto = service.getAgentSoldeRecuperation(idAgent);
-
-		assertEquals("0.0", dto.getSolde().toString());
-	}
-
-	@Test
-	public void getAgentSoldeRecuperation_AgentExists() {
-
-		// Given
-		Integer idAgent = 9008765;
-		AgentRecupCount arc = new AgentRecupCount();
-		arc.setIdAgent(idAgent);
-		arc.setTotalMinutes(72);
-
-		IRecuperationRepository rr = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(arc);
-
-		RecuperationService service = new RecuperationService();
-		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
-
-		// When
-		SoldeDto dto = service.getAgentSoldeRecuperation(idAgent);
-
-		assertEquals("72.0", dto.getSolde().toString());
 	}
 }

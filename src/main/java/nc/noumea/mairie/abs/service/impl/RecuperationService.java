@@ -75,12 +75,4 @@ public class RecuperationService implements IRecuperationService {
 		return arc.getTotalMinutes();
 	}
 
-	@Override
-	public SoldeDto getAgentSoldeRecuperation(Integer idAgent) {
-		AgentRecupCount soldeRecup = recuperationRepository.getAgentRecupCount(idAgent);
-		SoldeDto dto = new SoldeDto();
-		dto.setSolde((double) (soldeRecup == null ? 0 : soldeRecup.getTotalMinutes()));
-		return dto;
-	}
-
 }

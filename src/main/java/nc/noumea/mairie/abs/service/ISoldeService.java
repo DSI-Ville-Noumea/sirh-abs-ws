@@ -8,4 +8,6 @@ public interface ISoldeService {
 
 	SoldeDto getAgentSoldeCongeAnneePrec(Integer idAgent);
 
+	SoldeDto getAgentSoldeRecuperation(Integer idAgent);
+
 }

@@ -31,7 +31,7 @@ public class SoldeController {
 	private IAgentMatriculeConverterService converterService;
 
 	@Autowired
-	private ISoldeService soldeSrv;
+	private ISoldeService soldeService;
 
 	@ResponseBody
 	@RequestMapping(value = "soldeRecup", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -45,7 +45,7 @@ public class SoldeController {
 		if (Agent.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		SoldeDto result = recuperationService.getAgentSoldeRecuperation(convertedIdAgent);
+		SoldeDto result = soldeService.getAgentSoldeRecuperation(convertedIdAgent);
 
 		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}
@@ -62,7 +62,7 @@ public class SoldeController {
 		if (Agent.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		SoldeDto result = soldeSrv.getAgentSoldeCongeAnnee(convertedIdAgent);
+		SoldeDto result = soldeService.getAgentSoldeCongeAnnee(convertedIdAgent);
 
 		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}
@@ -81,7 +81,7 @@ public class SoldeController {
 		if (Agent.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		SoldeDto result = soldeSrv.getAgentSoldeCongeAnneePrec(convertedIdAgent);
+		SoldeDto result = soldeService.getAgentSoldeCongeAnneePrec(convertedIdAgent);
 
 		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}

@@ -7,6 +7,7 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.junit.Test;
@@ -59,6 +60,41 @@ public class SirhRepositoryTest {
 		// Then
 		assertEquals("9005138", result.getIdAgent().toString());
 		assertEquals("USAGE", result.getDisplayNom());
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getSpsold_ReturnNull() {
+
+		// When
+		SpSold result = repository.getSpsold(9005138);
+
+		// Then
+		assertEquals(null, result);
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getSpsold_ReturnResult() {
+
+		SpSold solde = new SpSold();
+		solde.setNomatr(5138);
+		solde.setSoldeAnneeEnCours(72.0);
+		solde.setSoldeAnneePrec(12.5);
+		sirhEntityManager.persist(solde);
+		
+		sirhEntityManager.flush();
+
+		// When
+		SpSold result = repository.getSpsold(9005138);
+
+		// Then
+		assertEquals("5138", result.getNomatr().toString());
+		assertEquals("72.0", result.getSoldeAnneeEnCours().toString());
+		assertEquals("12.5", result.getSoldeAnneePrec().toString());
 
 		sirhEntityManager.flush();
 		sirhEntityManager.clear();
