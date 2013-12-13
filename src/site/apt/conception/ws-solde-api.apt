@@ -22,7 +22,9 @@ SIRH-ABS-WS API et définition des services concernant les soldes que l'agent pe
 
 +-------------------------+
     {
-       "solde": 20.5
+       "soldeCongeAnnee": 20.5, --> double
+       "soldeCongeAnneePrec": 0, --> double
+       "soldeRecup": 72 --> double
     }
 +-------------------------+
 
@@ -30,6 +32,6 @@ SIRH-ABS-WS API et définition des services concernant les soldes que l'agent pe
 
 +-------------------------+
 HTTP Code 200 : OK
-HTTP Code 204 : No Content (si l'agent n'a pas d'entrée dans la table SPSOLD)
 HTTP Code 400 : Bad Request 
+HTTP Code 404 : Not Found (si l'agent n'existe pas)
 +-------------------------+
