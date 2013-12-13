@@ -29,7 +29,7 @@
 		<site>
             <id>sirhabsws.website.prod</id>
             <name>SIRH ABS Website Prod</name>
-            <url>file:\\cristal\dsi$\DSI\PROJETS\1 - EN COURS\2 - Métiers\SIRH\3-Techniques\Documentation_Agile\SIRH-ABS-WS\</url>
+            <url>file:\\cristal\dsi$\DSI\PROJETS\doxia\SIRH-ABS-WS\</url>
         </site>
     </distributionManagement>
     
