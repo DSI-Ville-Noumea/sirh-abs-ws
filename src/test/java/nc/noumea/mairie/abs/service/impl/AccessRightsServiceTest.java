@@ -1934,10 +1934,82 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// /////////// WHEN /////////////
-		service.setAgentsToApprove(idAgentApprobateur, agsDto);
+		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(DroitsAgent.class));
+		assertEquals(0, msgDto.getErrors().size());
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void setAgentsToApprove_addAgent_NoServiceExisting() {
+
+		Integer idAgentApprobateur = 9005138;
+
+		// //////// agents a creer //////////////
+		AgentDto ag = new AgentDto();
+		ag.setIdAgent(9008765);
+		List<AgentDto> agsDto = Arrays.asList(ag);
+
+		// //////////// agents de l approbateur ///////////////
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(1);
+		dda.setDroitsAgent(droitsAgent);
+
+		Set<DroitDroitsAgent> droitDroitsAgentAppro = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgentAppro.add(dda);
+
+		// APPROBATEUR///////////////////////
+		Profil pr = new Profil();
+		pr.setLibelle("APPROBATEUR");
+
+		DroitProfil dpr = new DroitProfil();
+		dpr.setProfil(pr);
+
+		Droit da = new Droit();
+		da.setIdAgent(idAgentApprobateur);
+		da.getDroitProfils().add(dpr);
+		da.setDroitDroitsAgent(droitDroitsAgentAppro);
+
+		Date currentDate = new DateTime(2013, 4, 9, 12, 9, 34).toDate();
+
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9008765);
+		agDto.setService("service");
+		agDto.setCodeService("CODE");
+
+		// ////////////// Mockito /////////////////////////
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentAccessRights(idAgentApprobateur)).thenReturn(da);
+		Mockito.when(arRepo.getDroitsAgent(1)).thenReturn(new DroitsAgent());
+		Mockito.when(arRepo.getDroitProfilApprobateur(idAgentApprobateur)).thenReturn(dpr);
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(arRepo).persisEntity(Mockito.any(DroitsAgent.class));
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentService(9008765, currentDate)).thenReturn(null);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		// /////////// WHEN /////////////
+		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
+
+		// //////////// THEN ///////////////
+		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitsAgent.class));
+		assertEquals(1, msgDto.getErrors().size());
+		assertEquals("L'agent [9008765] n'existe pas.", msgDto.getErrors().get(0));
 	}
 
 	@Test
@@ -2003,11 +2075,12 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// /////////// WHEN /////////////
-		service.setAgentsToApprove(idAgentApprobateur, agsDto);
+		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
 		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(DroitDroitsAgent.class));
+		assertEquals(0, msgDto.getErrors().size());
 	}
 
 	@Test
@@ -2161,7 +2234,7 @@ public class AccessRightsServiceTest {
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(dd);
-		
+
 		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepo.getAgent(viseur.getIdAgent())).thenReturn(null);
 

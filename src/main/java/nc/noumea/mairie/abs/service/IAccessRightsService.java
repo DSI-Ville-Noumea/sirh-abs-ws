@@ -33,6 +33,6 @@ public interface IAccessRightsService {
 
 	void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents);
 
-	void setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents);
+	ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents);
 
 }

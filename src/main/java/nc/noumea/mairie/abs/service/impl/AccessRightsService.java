@@ -591,15 +591,15 @@ public class AccessRightsService implements IAccessRightsService {
 		for (AgentDto ag : agents) {
 
 			// on verifie que l agent n est pas deja saisi
-			boolean IsAgentDejaSaisi = false;
+			boolean isAgentDejaSaisi = false;
 			for (DroitDroitsAgent ddaOperateurViseur : agentsToUnlink) {
 				if (ddaOperateurViseur.getDroitsAgent().getIdAgent().equals(ag.getIdAgent())) {
-					IsAgentDejaSaisi = true;
+					isAgentDejaSaisi = true;
 					agentsToUnlink.remove(ddaOperateurViseur);
 					break;
 				}
 			}
-			if (IsAgentDejaSaisi) {
+			if (isAgentDejaSaisi) {
 				continue;
 			}
 
@@ -639,7 +639,9 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public void setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents) {
+	public ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents) {
+
+		ReturnMessageDto result = new ReturnMessageDto();
 
 		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentApprobateur);
 
@@ -661,8 +663,11 @@ public class AccessRightsService implements IAccessRightsService {
 				continue;
 
 			AgentWithServiceDto dto = sirhWSConsumer.getAgentService(ag.getIdAgent(), helperService.getCurrentDate());
-			if (dto == null)
+			if (dto == null) {
+				logger.warn("L'agent {} n'existe pas.", ag.getIdAgent());
+				result.getErrors().add(String.format("L'agent [%d] n'existe pas.", ag.getIdAgent()));
 				continue;
+			}
 
 			// on regarde si le droit existe deja pour cette personne
 			DroitsAgent newDroitAgent = accessRightsRepository.getDroitsAgent(dto.getIdAgent());
@@ -692,6 +697,7 @@ public class AccessRightsService implements IAccessRightsService {
 			deleteDroitDroitsAgent(agToDelete);
 		}
 
+		return result;
 	}
 
 	private void deleteDroitDroitsAgent(DroitDroitsAgent agToDelete) {
