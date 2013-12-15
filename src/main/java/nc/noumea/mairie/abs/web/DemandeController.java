@@ -41,13 +41,13 @@ public class DemandeController {
 	private IAccessRightsService accessRightService;
 	
 	@ResponseBody
-	@RequestMapping(value = "/setDemande", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> setDemandeAbsence(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String demandeDto) {
 
 		logger.debug(
-				"entered POST [demandes/setDemande] => setDemandeAbsence for Kiosque with parameters idAgent = {}",
+				"entered POST [demandes/demande] => setDemandeAbsence for Kiosque with parameters idAgent = {}",
 				idAgent);
 
 		DemandeDto dto = new JSONDeserializer<DemandeDto>().use(Date.class, new MSDateTransformer())
@@ -66,14 +66,14 @@ public class DemandeController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/getDemande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getDemandeAbsence(@RequestParam("idAgent") int idAgent,
 			@RequestParam("idDemande") int idDemande,
 			@RequestParam("idTypeDemande") int idTypeDemande) {
 
 		logger.debug(
-				"entered GET [demandes/getDemande] => getDemandeAbsence for Kiosque with parameters idAgent = {} and idDemande = {}",
+				"entered GET [demandes/demande] => getDemandeAbsence for Kiosque with parameters idAgent = {} and idDemande = {}",
 				idAgent, idDemande);
 
 		DemandeDto result = absenceService.getDemande(idDemande, idTypeDemande);
