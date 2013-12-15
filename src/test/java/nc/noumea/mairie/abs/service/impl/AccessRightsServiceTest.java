@@ -2,7 +2,6 @@ package nc.noumea.mairie.abs.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -1413,17 +1412,14 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
-		AccessForbiddenException afe = null;
-		try {
-			service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
-		} catch (AccessForbiddenException e) {
-			afe = e;
-		}
+		// /////////// WHEN /////////////
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
 
-		assertNotNull(afe);
+		// Then
+		assertEquals(1, msgDto.getErrors().size());
 		assertEquals(
-				"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur car il n'est pas un opérateur ou viseur de l'agent",
-				afe.getMessage());
+				"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [9005139] car il n'est pas un opérateur ou viseur de l'agent [9005138].",
+				msgDto.getErrors().get(0));
 	}
 
 	@Test
@@ -1449,17 +1445,14 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
-		AccessForbiddenException afe = null;
-		try {
-			service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
-		} catch (AccessForbiddenException e) {
-			afe = e;
-		}
+		// /////////// WHEN /////////////
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
 
-		assertNotNull(afe);
+		// Then
+		assertEquals(1, msgDto.getErrors().size());
 		assertEquals(
-				"Impossible de modifier la liste des agents saisis de l'opérateur car il n'est ni opérateur, ni viseur",
-				afe.getMessage());
+				"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [9005139] car il n'est pas un opérateur ou viseur de l'agent [9005138].",
+				msgDto.getErrors().get(0));
 	}
 
 	@Test
@@ -1530,15 +1523,10 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		AccessForbiddenException afe = null;
-		try {
-			service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
-		} catch (AccessForbiddenException e) {
-			afe = e;
-		}
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
 
 		// //////////// THEN ///////////////
-		assertNull(afe);
+		assertEquals(0, msgDto.getErrors().size());
 		Mockito.verify(arRepo, Mockito.times(3)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
 		Mockito.verify(arRepo, Mockito.times(0)).removeEntity(Mockito.isA(DroitDroitsAgent.class));
 	}
@@ -1599,17 +1587,12 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		AccessForbiddenException afe = null;
-		try {
-			service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
-		} catch (AccessForbiddenException e) {
-			afe = e;
-		}
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
 
 		// //////////// THEN ///////////////
-		assertNull(afe);
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
 		Mockito.verify(arRepo, Mockito.times(3)).removeEntity(Mockito.isA(DroitDroitsAgent.class));
+		assertEquals(0, msgDto.getErrors().size());
 	}
 
 	@Test
@@ -1687,17 +1670,12 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		AccessForbiddenException afe = null;
-		try {
-			service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
-		} catch (AccessForbiddenException e) {
-			afe = e;
-		}
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
 
 		// //////////// THEN ///////////////
-		assertNull(afe);
 		Mockito.verify(arRepo, Mockito.times(2)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
 		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(DroitDroitsAgent.class));
+		assertEquals(0, msgDto.getErrors().size());
 	}
 
 	@Test
@@ -1781,17 +1759,12 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		AccessForbiddenException afe = null;
-		try {
-			service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
-		} catch (AccessForbiddenException e) {
-			afe = e;
-		}
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
 
 		// //////////// THEN ///////////////
-		assertNull(afe);
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
 		Mockito.verify(arRepo, Mockito.times(0)).removeEntity(Mockito.isA(DroitDroitsAgent.class));
+		assertEquals(0, msgDto.getErrors().size());
 	}
 
 	@Test
@@ -1858,17 +1831,12 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		AccessForbiddenException afe = null;
-		try {
-			service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
-		} catch (AccessForbiddenException e) {
-			afe = e;
-		}
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents);
 
 		// //////////// THEN ///////////////
-		assertNull(afe);
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
 		Mockito.verify(arRepo, Mockito.times(0)).removeEntity(Mockito.isA(DroitDroitsAgent.class));
+		assertEquals(0, msgDto.getErrors().size());
 	}
 
 	@Test

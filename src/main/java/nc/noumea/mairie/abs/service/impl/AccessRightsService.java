@@ -22,7 +22,6 @@ import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
-import nc.noumea.mairie.abs.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -559,7 +558,10 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur, List<AgentDto> agents) {
+	public ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur,
+			List<AgentDto> agents) {
+
+		ReturnMessageDto result = new ReturnMessageDto();
 
 		Droit droitApprobateur = accessRightsRepository.getAgentDroitFetchAgents(idAgentApprobateur);
 		Droit droitOperateurOrViseur = accessRightsRepository.getAgentDroitFetchAgents(idAgentOperateurOrViseur);
@@ -571,17 +573,21 @@ public class AccessRightsService implements IAccessRightsService {
 		if (!droitSousAgentsByApprobateur.contains(droitOperateurOrViseur)) {
 			logger.warn(
 					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur {} car il n'est pas un opérateur ou viseur de l'agent {}.",
-					idAgentApprobateur, idAgentOperateurOrViseur);
-			throw new AccessForbiddenException(
-					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur car il n'est pas un opérateur ou viseur de l'agent");
+					idAgentOperateurOrViseur, idAgentApprobateur);
+			result.getErrors()
+					.add(String
+							.format("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [%d] car il n'est pas un opérateur ou viseur de l'agent [%d].",
+									idAgentOperateurOrViseur, idAgentApprobateur));
 		} else {
 			if (!accessRightsRepository.isUserOperateur(idAgentOperateurOrViseur)
 					&& !accessRightsRepository.isUserViseur(idAgentOperateurOrViseur)) {
 				logger.warn(
-						"Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est ni opérateur, ni viseur {}.",
-						idAgentApprobateur, idAgentOperateurOrViseur);
-				throw new AccessForbiddenException(
-						"Impossible de modifier la liste des agents saisis de l'opérateur car il n'est ni opérateur, ni viseur");
+						"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur {} car il n'est pas un opérateur ou viseur de l'agent {}.",
+						idAgentOperateurOrViseur, idAgentApprobateur);
+				result.getErrors()
+						.add(String
+								.format("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [%d] car il n'est pas un opérateur ou viseur de l'agent [%d].",
+										idAgentOperateurOrViseur, idAgentApprobateur));
 			}
 		}
 
@@ -636,6 +642,7 @@ public class AccessRightsService implements IAccessRightsService {
 		for (DroitDroitsAgent agToUnlink : agentsToUnlink) {
 			deleteDroitDroitsAgent(agToUnlink);
 		}
+		return result;
 	}
 
 	@Override

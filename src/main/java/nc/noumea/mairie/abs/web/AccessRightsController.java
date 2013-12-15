@@ -268,8 +268,14 @@ public class AccessRightsController {
 		List<AgentDto> agDtos = new JSONDeserializer<List<AgentDto>>().use(null, ArrayList.class)
 				.use("values", AgentDto.class).deserialize(agentsApprouvesJson);
 
-		accessRightService.setAgentsToInput(convertedIdAgent, convertedIdOperateurOrViseur, agDtos);
+		ReturnMessageDto result = accessRightService.setAgentsToInput(convertedIdAgent, convertedIdOperateurOrViseur,
+				agDtos);
 
-		return new ResponseEntity<String>(HttpStatus.OK);
+		String jsonResult = new JSONSerializer().exclude("*.class").deepSerialize(result);
+
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(jsonResult, HttpStatus.CONFLICT);
+		else
+			return new ResponseEntity<String>(jsonResult, HttpStatus.OK);
 	}
 }
