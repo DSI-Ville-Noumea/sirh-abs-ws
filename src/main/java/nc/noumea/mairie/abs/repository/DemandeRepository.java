@@ -16,6 +16,7 @@ public class DemandeRepository implements IDemandeRepository {
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
 	
+	@Override
 	public void persisEntity(Object obj) {
 		absEntityManager.persist(obj);
 	}
@@ -28,7 +29,8 @@ public class DemandeRepository implements IDemandeRepository {
 	@Override
     public EtatDemande getLastEtatDemandeByIdDemande(Integer idDemande){
 		
-		TypedQuery<EtatDemande> q = absEntityManager.createQuery("select ed from EtatDemande ed inner join ed.demande d where d.idDemande = :idDemande and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idDemande = :idDemande ) ", 
+		TypedQuery<EtatDemande> q = absEntityManager.createQuery("select ed from EtatDemande ed inner join ed.demande d where d.idDemande = :idDemande "
+				+ "and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idDemande = :idDemande ) ", 
 				EtatDemande.class);
 		
 		q.setParameter("idDemande", idDemande);
@@ -40,4 +42,6 @@ public class DemandeRepository implements IDemandeRepository {
 
 		return r.get(0);
 	}
+	
+	
 }

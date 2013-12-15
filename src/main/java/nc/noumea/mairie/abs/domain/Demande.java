@@ -33,6 +33,11 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 public class Demande implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id 
 	@Column(name = "ID_DEMANDE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

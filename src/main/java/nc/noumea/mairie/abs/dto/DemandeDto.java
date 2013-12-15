@@ -12,7 +12,7 @@ public class DemandeDto {
 	private Integer idTypeDemande;
 	private Date dateDebut;
 	private Integer duree;
-	private Integer idRefEtat;
+	private boolean isEtatDefinitif;
 	
 	public Integer getIdDemande() {
 		return idDemande;
@@ -44,24 +44,27 @@ public class DemandeDto {
 	public void setDuree(Integer duree) {
 		this.duree = duree;
 	}
-	public Integer getIdRefEtat() {
-		return idRefEtat;
+	public boolean isEtatDefinitif() {
+		return isEtatDefinitif;
 	}
-	public void setIdRefEtat(Integer idRefEtat) {
-		this.idRefEtat = idRefEtat;
+	public void setEtatDefinitif(boolean isEtatDefinitif) {
+		this.isEtatDefinitif = isEtatDefinitif;
 	}
+	
 	
 	public DemandeDto(){
 	}
 	
 	public DemandeDto(Integer idDemande, Integer idAgent,
-			Integer idTypeDemande, Date dateDebut, Integer idRefEtat) {
+			Integer idTypeDemande, Date dateDebut, Integer etat) {
 		super();
 		this.idDemande = idDemande;
 		this.idAgent = idAgent;
 		this.idTypeDemande = idTypeDemande;
 		this.dateDebut = dateDebut;
-		this.idRefEtat = idRefEtat;
+		if(etat.equals(1)) {
+			isEtatDefinitif = true;
+		}
 	}
 	
 	

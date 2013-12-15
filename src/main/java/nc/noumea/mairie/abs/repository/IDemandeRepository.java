@@ -9,4 +9,5 @@ public interface IDemandeRepository {
 	<T> T getEntity(Class<T> Tclass, Object Id);
 	
 	EtatDemande getLastEtatDemandeByIdDemande(Integer idDemande);
+	
 }

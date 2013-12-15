@@ -9,6 +9,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 
 import org.springframework.stereotype.Repository;
 
@@ -45,4 +46,24 @@ public class RecuperationRepository implements IRecuperationRepository {
 		absEntityManager.persist(entity);
 	}
 	
+	@Override
+    public Integer getSommeDureeDemandeRecupEnCoursSaisieouVisee(Integer idAgent) {
+		
+		TypedQuery<Integer> q = absEntityManager.createQuery("select sum(dr.duree) from DemandeRecup dr inner join dr.etatsDemande ed where dr.idAgent = :idAgent "
+				+ "and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgent ) "
+				+ "and (ed.etat = :SAISIE or ed.etat = :VISEE_F ed.etat = :VISEE_D )", 
+				Integer.class);
+		
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat());
+		q.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		q.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+
+		List<Integer> r = q.getResultList();
+		
+		if (r.size() == 0)
+			return null;
+
+		return r.get(0);
+	}
 }

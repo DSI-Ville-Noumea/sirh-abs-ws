@@ -19,6 +19,7 @@ import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 
 import org.slf4j.Logger;
@@ -37,6 +38,9 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	private IAccessRightsRepository accessRightsRepository;
 
+	@Autowired
+	private IAbsenceDataConsistencyRules absDataCosistencyRules;
+	
 	@Override
 	public List<RefEtatDto> getRefEtats() {
 		List<RefEtatDto> res = new ArrayList<RefEtatDto>();
@@ -64,11 +68,11 @@ public class AbsenceService implements IAbsenceService {
 
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
-		Demande demande = demandeRepository.getEntity(Demande.class, demandeDto.getIdDemande());
-
 		// verification des droits
 		verifAccessRightSaveDemande(idAgent, demandeDto, returnDto);
 
+		Demande demande = demandeRepository.getEntity(Demande.class, demandeDto.getIdDemande());
+		
 		Date dateJour = new Date();
 
 		// on mappe le DTO dans la Demande generique
@@ -85,7 +89,6 @@ public class AbsenceService implements IAbsenceService {
 		EtatDemande etatDemande = new EtatDemande();
 		etatDemande.setDate(dateJour);
 		etatDemande.setDemande(demande);
-		etatDemande.setEtat(RefEtatEnum.valueOf(demandeDto.getIdRefEtat().toString()));
 		etatDemande.setIdAgent(idAgent);
 		demande.getEtatsDemande().add(etatDemande);
 
@@ -100,10 +103,9 @@ public class AbsenceService implements IAbsenceService {
 				// TODO
 				break;
 			case RECUP:
-				demande = new DemandeRecup();
 				DemandeRecup demandeRecup = (DemandeRecup) demande;
 				demandeRecup.setDuree(demandeDto.getDuree());
-				verifDonneesSaisiesSaveDemandeRecup(idAgent, demandeRecup);
+				absDataCosistencyRules.processDataConsistencyDemandeRecup(returnDto, idAgent, demandeRecup, dateLundi);
 				break;
 			case ASA:
 				// TODO
@@ -120,6 +122,12 @@ public class AbsenceService implements IAbsenceService {
 				return returnDto;
 		}
 
+		if(demandeDto.isEtatDefinitif()) {
+			etatDemande.setEtat(RefEtatEnum.SAISIE);
+		}else{
+			etatDemande.setEtat(RefEtatEnum.PROVISOIRE);
+		}
+		
 		demandeRepository.persisEntity(demande);
 
 		return returnDto;
@@ -141,23 +149,19 @@ public class AbsenceService implements IAbsenceService {
 					}
 				}
 				if (!trouve) {
-					logger.warn("Vous n'êtes pas opérateur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
+					logger.warn("Vous n'�tes pas op�rateur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
 							demandeDto.getIdAgent());
 					returnDto.getErrors().add(
 							String.format(
-									"Vous n'êtes pas opérateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
+									"Vous n'�tes pas op�rateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
 									demandeDto.getIdAgent()));
 				}
 			} else {
-				logger.warn("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.");
+				logger.warn("Vous n'�tes pas op�rateur. Vous ne pouvez pas saisir de demandes.");
 				returnDto.getErrors().add(
-						String.format("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes."));
+						String.format("Vous n'�tes pas op�rateur. Vous ne pouvez pas saisir de demandes."));
 			}
 		}
-
-	}
-
-	private void verifDonneesSaisiesSaveDemandeRecup(Integer idAgent, DemandeRecup demandeRecup) {
 
 	}
 
