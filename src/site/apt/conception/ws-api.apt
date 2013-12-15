@@ -6,6 +6,19 @@
 
 SIRH-ABS-WS API et définition des services
 
+* Toutes les methodes POST on pour retour le dto suivant : 
+
++-------------------------+
+    {
+       "errors":
+       ["blabl","ghjghj"
+       ],
+       "infos":
+       ["blabl","ghjghj"
+       ]
+    }
++-------------------------+
+
 * Droits
   
  {{{../conception/ws-droits-api.html}ws-droits-api.html}}
