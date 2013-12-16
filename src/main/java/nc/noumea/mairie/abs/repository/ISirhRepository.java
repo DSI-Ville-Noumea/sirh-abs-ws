@@ -3,8 +3,8 @@ package nc.noumea.mairie.abs.repository;
 import java.util.Date;
 
 import nc.noumea.mairie.domain.SpSold;
+import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.sirh.domain.Agent;
-import nc.noumea.mairie.sirh.domain.Spadmn;
 
 public interface ISirhRepository {
 

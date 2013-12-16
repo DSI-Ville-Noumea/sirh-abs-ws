@@ -8,8 +8,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.SpSold; 
+import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.sirh.domain.Agent;
-import nc.noumea.mairie.sirh.domain.Spadmn;
 
 import org.springframework.stereotype.Repository;
 

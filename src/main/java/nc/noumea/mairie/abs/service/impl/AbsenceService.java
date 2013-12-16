@@ -39,7 +39,7 @@ public class AbsenceService implements IAbsenceService {
 	private IAccessRightsRepository accessRightsRepository;
 
 	@Autowired
-	private IAbsenceDataConsistencyRules absDataCosistencyRules;
+	private IAbsenceDataConsistencyRules absDataConsistencyRules;
 
 	@Override
 	public List<RefEtatDto> getRefEtats() {
@@ -105,7 +105,7 @@ public class AbsenceService implements IAbsenceService {
 			case RECUP:
 				DemandeRecup demandeRecup = (DemandeRecup) demande;
 				demandeRecup.setDuree(demandeDto.getDuree());
-				absDataCosistencyRules.processDataConsistencyDemandeRecup(returnDto, idAgent, demandeRecup, dateLundi);
+				absDataConsistencyRules.processDataConsistencyDemandeRecup(returnDto, idAgent, demandeRecup, null);
 				break;
 			case ASA:
 				// TODO
@@ -149,17 +149,17 @@ public class AbsenceService implements IAbsenceService {
 					}
 				}
 				if (!trouve) {
-					logger.warn("Vous n'�tes pas op�rateur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
+					logger.warn("Vous n'êtes pas opérateur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
 							demandeDto.getIdAgent());
 					returnDto.getErrors().add(
 							String.format(
-									"Vous n'�tes pas op�rateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
+									"Vous n'êtes pas opérateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
 									demandeDto.getIdAgent()));
 				}
 			} else {
-				logger.warn("Vous n'�tes pas op�rateur. Vous ne pouvez pas saisir de demandes.");
+				logger.warn("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.");
 				returnDto.getErrors().add(
-						String.format("Vous n'�tes pas op�rateur. Vous ne pouvez pas saisir de demandes."));
+						String.format("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes."));
 			}
 		}
 
