@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -33,13 +34,10 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 public class Demande implements Serializable {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
-	@Id 
+	@Id
 	@Column(name = "ID_DEMANDE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idDemande;
@@ -64,4 +62,8 @@ public class Demande implements Serializable {
 	public EtatDemande getLatestEtatDemande() {
 		return etatsDemande.iterator().next();
 	}
+
+	@ManyToOne
+	@JoinColumn(name = "ID_DEMANDE", referencedColumnName = "ID_DEMANDE", insertable = false, updatable = false)
+	private DemandeRecup recup;
 }

@@ -6,6 +6,7 @@ package nc.noumea.mairie.abs.domain;
 import java.util.Date;
 import java.util.List;
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
@@ -49,6 +50,14 @@ privileged aspect Demande_Roo_JavaBean {
     
     public void Demande.setEtatsDemande(List<EtatDemande> etatsDemande) {
         this.etatsDemande = etatsDemande;
+    }
+    
+    public DemandeRecup Demande.getRecup() {
+        return this.recup;
+    }
+    
+    public void Demande.setRecup(DemandeRecup recup) {
+        this.recup = recup;
     }
     
 }

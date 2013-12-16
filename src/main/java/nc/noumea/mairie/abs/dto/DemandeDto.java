@@ -22,13 +22,16 @@ public class DemandeDto {
 
 	public DemandeDto(Demande d) {
 		super();
-		this.idDemande = d.getIdDemande();
+		this.idDemande = d.getIdDemande();		
 		this.idAgent = d.getIdAgent();
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
 		this.dateDebut = d.getDateDebut();
-		this.idRefEtat = d.getLatestEtatDemande().getIdEtatDemande();
-		if (d.getLatestEtatDemande().getIdEtatDemande() == 1) {
+		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
+		if (d.getLatestEtatDemande().getEtat().getCodeEtat() == 1) {
 			isEtatDefinitif = true;
+		}
+		if(d.getRecup()!=null){
+			this.duree = d.getRecup().getDuree();
 		}
 	}
 

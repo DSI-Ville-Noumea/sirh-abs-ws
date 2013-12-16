@@ -69,7 +69,9 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		// verification des droits
-		verifAccessRightSaveDemande(idAgent, demandeDto, returnDto);
+		if (!verifAccessRightSaveDemande(idAgent, demandeDto, returnDto)) {
+			return returnDto;
+		}
 
 		Demande demande = demandeRepository.getEntity(Demande.class, demandeDto.getIdDemande());
 
@@ -133,10 +135,11 @@ public class AbsenceService implements IAbsenceService {
 		return returnDto;
 	}
 
-	public void verifAccessRightSaveDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto) {
+	public boolean verifAccessRightSaveDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto) {
+		boolean result = true;
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits
 		// sur l'agent pour qui il effectue la demande
-		if (idAgent != demandeDto.getIdAgent()) {
+		if (!idAgent.equals(demandeDto.getIdAgent())) {
 			if (accessRightsRepository.isUserOperateur(idAgent)) {
 
 				// on recherche tous les sous agents de la personne
@@ -155,13 +158,16 @@ public class AbsenceService implements IAbsenceService {
 							String.format(
 									"Vous n'êtes pas opérateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
 									demandeDto.getIdAgent()));
+					result = false;
 				}
 			} else {
 				logger.warn("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.");
 				returnDto.getErrors().add(
 						String.format("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes."));
+				result = false;
 			}
 		}
+		return result;
 
 	}
 

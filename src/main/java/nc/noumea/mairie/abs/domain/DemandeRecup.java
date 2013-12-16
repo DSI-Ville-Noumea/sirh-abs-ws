@@ -13,12 +13,14 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @Entity
 @Table(name = "ABS_DEMANDE_RECUP")
-@PrimaryKeyJoinColumn(name="ID_DEMANDE")
-@OnDelete(action=OnDeleteAction.CASCADE)
+@PrimaryKeyJoinColumn(name = "ID_DEMANDE")
+@OnDelete(action = OnDeleteAction.CASCADE)
 @RooJavaBean
 @RooToString
 public class DemandeRecup extends Demande {
-	
+
+	private static final long serialVersionUID = 1L;
+
 	@NotNull
 	@Column(name = "DUREE")
 	private Integer duree;
