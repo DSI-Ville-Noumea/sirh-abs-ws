@@ -221,6 +221,7 @@ public class AbsenceService implements IAbsenceService {
 			case "TOUTES":
 				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, dateDemande,
 						idRefType);
+				etats = null;
 				break;
 		}
 
