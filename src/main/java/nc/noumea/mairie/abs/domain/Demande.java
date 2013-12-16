@@ -21,6 +21,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -28,7 +29,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @Entity
 @Table(name = "ABS_DEMANDE")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 @RooJavaBean
 @RooToString
 public class Demande implements Serializable {
@@ -42,21 +43,25 @@ public class Demande implements Serializable {
 	@Column(name = "ID_DEMANDE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idDemande;
-	
+
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
-	
+
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_TYPE_DEMANDE")
 	private RefTypeAbsence type;
-	
+
 	@Column(name = "DATE_DEBUT")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateDebut;
-	
+
 	@OneToMany(mappedBy = "demande", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-	@OrderBy("date desc")
+	@OrderBy("idEtatDemande desc")
 	private List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
-	
+
+	@Transient
+	public EtatDemande getLatestEtatDemande() {
+		return etatsDemande.iterator().next();
+	}
 }

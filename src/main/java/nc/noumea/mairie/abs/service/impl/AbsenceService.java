@@ -40,7 +40,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private IAbsenceDataConsistencyRules absDataCosistencyRules;
-	
+
 	@Override
 	public List<RefEtatDto> getRefEtats() {
 		List<RefEtatDto> res = new ArrayList<RefEtatDto>();
@@ -72,7 +72,7 @@ public class AbsenceService implements IAbsenceService {
 		verifAccessRightSaveDemande(idAgent, demandeDto, returnDto);
 
 		Demande demande = demandeRepository.getEntity(Demande.class, demandeDto.getIdDemande());
-		
+
 		Date dateJour = new Date();
 
 		// on mappe le DTO dans la Demande generique
@@ -122,12 +122,12 @@ public class AbsenceService implements IAbsenceService {
 				return returnDto;
 		}
 
-		if(demandeDto.isEtatDefinitif()) {
+		if (demandeDto.isEtatDefinitif()) {
 			etatDemande.setEtat(RefEtatEnum.SAISIE);
-		}else{
+		} else {
 			etatDemande.setEtat(RefEtatEnum.PROVISOIRE);
 		}
-		
+
 		demandeRepository.persisEntity(demande);
 
 		return returnDto;
@@ -181,11 +181,8 @@ public class AbsenceService implements IAbsenceService {
 				if (null == demandeRecup) {
 					return demandeDto;
 				}
-				EtatDemande lastEtatDemande = demandeRepository.getLastEtatDemandeByIdDemande(idDemande);
 
-				demandeDto = new DemandeDto(demandeRecup.getIdDemande(), demandeRecup.getIdAgent(), demandeRecup
-						.getType().getIdRefTypeAbsence(), demandeRecup.getDateDebut(), lastEtatDemande.getEtat()
-						.getCodeEtat());
+				demandeDto = new DemandeDto(demandeRecup);
 				demandeDto.setDuree(demandeRecup.getDuree());
 				break;
 			case ASA:
@@ -202,5 +199,40 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		return demandeDto;
+	}
+
+	@Override
+	public List<DemandeDto> getListeDemandesAgent(Integer idAgentConnecte, String ongletDemande, Date fromDate,
+			Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
+		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
+		switch (ongletDemande) {
+			case "NON_PRISES":
+				List<Demande> listeDemandeNonPrises = demandeRepository.listeDemandesAgentNonPrises(idAgentConnecte,
+						fromDate, toDate, dateDemande, idRefEtat, idRefType);
+				for (Demande d : listeDemandeNonPrises) {
+					DemandeDto dto = new DemandeDto(d);
+					listeDemandeDto.add(dto);
+				}
+				break;
+			case "EN_COURS":
+				/*
+				 * listeDemandeDto =
+				 * demandeRepository.listeDemandesAgentEnCours(idAgentConnecte,
+				 * fromDate, toDate, dateDemande, idRefEtat, idRefType);
+				 */
+				break;
+			case "TOUTES":
+				/*
+				 * listeDemandeDto =
+				 * demandeRepository.listeDemandesAgent(idAgentConnecte,
+				 * fromDate, toDate, dateDemande, idRefEtat, idRefType);
+				 */
+				break;
+
+			default:
+				return listeDemandeDto;
+		}
+
+		return listeDemandeDto;
 	}
 }

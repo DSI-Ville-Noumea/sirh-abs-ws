@@ -28,7 +28,8 @@ SIRH-ABS-WS API et définition des services concernant les demandes d'absences d
 	"idTypeDemande" : 1 (1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies),
 	"dateDebut" : "/Date()/",
     "duree" : 30 (en minutes),
-    "idRefEtat" : 0 (0:provisoire, 1:saisie(définitif))
+    "idRefEtat" : 0 (0:provisoire, 1:saisie(définitif)),
+    "isEtatDefinitif" : true 
 }
 +-------------------------+
 
@@ -66,7 +67,8 @@ HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
   "idAgent": 9005138,
   "idDemande": 1,
   "idRefEtat": 0,
-  "idTypeDemande": 3
+  "idTypeDemande": 3,
+  "isEtatDefinitif" : true 
 }
 +-------------------------+
 
