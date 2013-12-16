@@ -29,12 +29,14 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-    public EtatDemande getLastEtatDemandeByIdDemande(Integer idDemande){
-		
-		TypedQuery<EtatDemande> q = absEntityManager.createQuery("select ed from EtatDemande ed inner join ed.demande d where d.idDemande = :idDemande "
-				+ "and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idDemande = :idDemande ) ", 
-				EtatDemande.class);
-		
+	public EtatDemande getLastEtatDemandeByIdDemande(Integer idDemande) {
+
+		TypedQuery<EtatDemande> q = absEntityManager
+				.createQuery(
+						"select ed from EtatDemande ed inner join ed.demande d where d.idDemande = :idDemande "
+								+ "and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idDemande = :idDemande ) ",
+						EtatDemande.class);
+
 		q.setParameter("idDemande", idDemande);
 
 		List<EtatDemande> r = q.getResultList();
@@ -47,24 +49,46 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@Override
 	public List<Demande> listeDemandesAgentNonPrises(Integer idAgentConnecte, Date fromDate, Date toDate,
-			Date dateDemande, Integer idRefEtat, Integer idRefType) {
+			Date dateDemande, Integer idRefType) {
+
+		// TODO
+		// date demande
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
-		//sb.append("where ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate ");
+		sb.append("where d.idAgent = :idAgent ");
 
 		if (idRefType != null) {
 			sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
 		}
 
+		if (fromDate != null && toDate == null) {
+			sb.append("and d.dateDebut = :fromDate ");
+		} else if (fromDate == null && toDate != null) {
+			sb.append("and d.dateDebut = :toDate ");
+		} else if (fromDate != null && toDate != null) {
+			sb.append("and d.dateDebut >= :fromDate and d.dateDebut < :toDate ");
+		}
+
 		sb.append("order by d.idDemande desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
-		//query.setParameter("fromDate", fromDate);
-		//query.setParameter("toDate", toDate);
+		query.setParameter("idAgent", idAgentConnecte);
 
 		if (idRefType != null) {
 			query.setParameter("idRefTypeAbsence", idRefType);
+		}
+
+		if (fromDate != null) {
+		}
+
+		if (fromDate != null && toDate == null) {
+			query.setParameter("fromDate", fromDate);
+		} else if (fromDate == null && toDate != null) {
+			query.setParameter("toDate", toDate);
+		} else if (fromDate != null && toDate != null) {
+			query.setParameter("fromDate", fromDate);
+			query.setParameter("toDate", toDate);
 		}
 
 		return query.getResultList();

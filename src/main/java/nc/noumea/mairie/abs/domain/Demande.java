@@ -62,8 +62,4 @@ public class Demande implements Serializable {
 	public EtatDemande getLatestEtatDemande() {
 		return etatsDemande.iterator().next();
 	}
-
-	@ManyToOne
-	@JoinColumn(name = "ID_DEMANDE", referencedColumnName = "ID_DEMANDE", insertable = false, updatable = false)
-	private DemandeRecup recup;
 }

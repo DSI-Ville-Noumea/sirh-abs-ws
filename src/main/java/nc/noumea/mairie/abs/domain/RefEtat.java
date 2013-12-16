@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import nc.noumea.mairie.abs.dto.AgentDto;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -21,4 +23,9 @@ public class RefEtat {
 
 	@Column(name = "LABEL", columnDefinition = "NVARCHAR2")
 	private String label;
+
+	@Override
+	public boolean equals(Object obj) {
+		return idRefEtat.equals(((RefEtat) obj).getIdRefEtat());
+	}
 }

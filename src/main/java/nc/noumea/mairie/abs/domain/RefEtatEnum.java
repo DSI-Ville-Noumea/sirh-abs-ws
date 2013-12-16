@@ -1,9 +1,8 @@
 package nc.noumea.mairie.abs.domain;
 
 public enum RefEtatEnum {
-	
-	PROVISOIRE(0), SAISIE(1), VISEE_FAVORABLE(2), VISEE_DEFAVORABLE(3),
-	APPROUVEE(4), REFUSEE(5), PRISE(6);
+
+	PROVISOIRE(0), SAISIE(1), VISEE_FAVORABLE(2), VISEE_DEFAVORABLE(3), APPROUVEE(4), REFUSEE(5), PRISE(6);
 
 	private int codeEtat;
 
@@ -24,7 +23,7 @@ public enum RefEtatEnum {
 
 		if (codeEtat == null)
 			return null;
-		
+
 		switch (codeEtat) {
 			case 0:
 				return PROVISOIRE;

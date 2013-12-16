@@ -204,15 +204,16 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<DemandeDto> getListeDemandesAgent(Integer idAgentConnecte, String ongletDemande, Date fromDate,
 			Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
-		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
+		List<Demande> listeSansEtat = new ArrayList<>();
+
+		List<RefEtat> etats = new ArrayList<RefEtat>();
 		switch (ongletDemande) {
 			case "NON_PRISES":
-				List<Demande> listeDemandeNonPrises = demandeRepository.listeDemandesAgentNonPrises(idAgentConnecte,
-						fromDate, toDate, dateDemande, idRefEtat, idRefType);
-				for (Demande d : listeDemandeNonPrises) {
-					DemandeDto dto = new DemandeDto(d);
-					listeDemandeDto.add(dto);
-				}
+				listeSansEtat = demandeRepository.listeDemandesAgentNonPrises(idAgentConnecte, fromDate, toDate,
+						dateDemande, idRefType);
+				etats = RefEtat.findAllRefEtats();
+				RefEtat etatPris = RefEtat.findRefEtat(6);
+				etats.remove(etatPris);
 				break;
 			case "EN_COURS":
 				/*
@@ -228,9 +229,19 @@ public class AbsenceService implements IAbsenceService {
 				 * fromDate, toDate, dateDemande, idRefEtat, idRefType);
 				 */
 				break;
+		}
 
-			default:
-				return listeDemandeDto;
+		return filterEtatFromList(listeSansEtat, etats);
+	}
+
+	private List<DemandeDto> filterEtatFromList(List<Demande> listeSansEtat, List<RefEtat> etats) {
+
+		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
+		for (Demande d : listeSansEtat) {
+			if (etats.contains(RefEtat.findRefEtat(d.getLatestEtatDemande().getEtat().getCodeEtat()))) {
+				DemandeDto dto = new DemandeDto(d);
+				listeDemandeDto.add(dto);
+			}
 		}
 
 		return listeDemandeDto;

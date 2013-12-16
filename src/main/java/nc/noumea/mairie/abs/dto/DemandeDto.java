@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeRecup;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
 @XmlRootElement
 public class DemandeDto {
@@ -22,7 +24,7 @@ public class DemandeDto {
 
 	public DemandeDto(Demande d) {
 		super();
-		this.idDemande = d.getIdDemande();		
+		this.idDemande = d.getIdDemande();
 		this.idAgent = d.getIdAgent();
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
 		this.dateDebut = d.getDateDebut();
@@ -30,8 +32,25 @@ public class DemandeDto {
 		if (d.getLatestEtatDemande().getEtat().getCodeEtat() == 1) {
 			isEtatDefinitif = true;
 		}
-		if(d.getRecup()!=null){
-			this.duree = d.getRecup().getDuree();
+		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
+			case CONGE_ANNUEL:
+				// TODO
+				break;
+			case REPOS_COMP:
+				// TODO
+				break;
+			case RECUP:
+				this.duree = ((DemandeRecup) d).getDuree();
+				break;
+			case ASA:
+				// TODO
+				break;
+			case AUTRES:
+				// TODO
+				break;
+			case MALADIES:
+				// TODO
+				break;
 		}
 	}
 

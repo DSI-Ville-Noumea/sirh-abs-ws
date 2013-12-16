@@ -15,7 +15,7 @@ public interface IDemandeRepository {
 	EtatDemande getLastEtatDemandeByIdDemande(Integer idDemande);
 
 	List<Demande> listeDemandesAgentNonPrises(Integer idAgentConnecte, Date fromDate, Date toDate, Date dateDemande,
-			Integer idRefEtat, Integer idRefType);
+			Integer idRefType);
 	
 	
 }
