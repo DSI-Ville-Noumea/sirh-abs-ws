@@ -16,4 +16,6 @@ public interface IDemandeRepository {
 
 	List<Demande> listeDemandesAgentNonPrises(Integer idAgentConnecte, Date fromDate, Date toDate, Date dateDemande,
 			Integer idRefEtat, Integer idRefType);
+	
+	
 }

@@ -69,9 +69,7 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		// verification des droits
-		if (!verifAccessRightSaveDemande(idAgent, demandeDto, returnDto)) {
-			return returnDto;
-		}
+		verifAccessRightSaveDemande(idAgent, demandeDto, returnDto);
 
 		Demande demande = demandeRepository.getEntity(Demande.class, demandeDto.getIdDemande());
 
@@ -107,7 +105,7 @@ public class AbsenceService implements IAbsenceService {
 			case RECUP:
 				DemandeRecup demandeRecup = (DemandeRecup) demande;
 				demandeRecup.setDuree(demandeDto.getDuree());
-				absDataConsistencyRules.processDataConsistencyDemandeRecup(returnDto, idAgent, demandeRecup, null);
+				absDataConsistencyRules.processDataConsistencyDemandeRecup(returnDto, idAgent, demandeRecup, dateJour);
 				break;
 			case ASA:
 				// TODO
@@ -135,11 +133,10 @@ public class AbsenceService implements IAbsenceService {
 		return returnDto;
 	}
 
-	public boolean verifAccessRightSaveDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto) {
-		boolean result = true;
+	public void verifAccessRightSaveDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto) {
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits
 		// sur l'agent pour qui il effectue la demande
-		if (!idAgent.equals(demandeDto.getIdAgent())) {
+		if (idAgent != demandeDto.getIdAgent()) {
 			if (accessRightsRepository.isUserOperateur(idAgent)) {
 
 				// on recherche tous les sous agents de la personne
@@ -158,16 +155,13 @@ public class AbsenceService implements IAbsenceService {
 							String.format(
 									"Vous n'êtes pas opérateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
 									demandeDto.getIdAgent()));
-					result = false;
 				}
 			} else {
 				logger.warn("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.");
 				returnDto.getErrors().add(
 						String.format("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes."));
-				result = false;
 			}
 		}
-		return result;
 
 	}
 
