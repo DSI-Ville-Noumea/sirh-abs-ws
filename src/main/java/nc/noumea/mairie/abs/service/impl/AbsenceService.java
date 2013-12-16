@@ -209,25 +209,18 @@ public class AbsenceService implements IAbsenceService {
 		List<RefEtat> etats = new ArrayList<RefEtat>();
 		switch (ongletDemande) {
 			case "NON_PRISES":
-				listeSansEtat = demandeRepository.listeDemandesAgentNonPrises(idAgentConnecte, fromDate, toDate,
-						dateDemande, idRefType);
-				etats = RefEtat.findAllRefEtats();
-				RefEtat etatPris = RefEtat.findRefEtat(6);
-				etats.remove(etatPris);
+				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, dateDemande,
+						idRefType);
+				etats = RefEtat.findRefEtatNonPris();
 				break;
 			case "EN_COURS":
-				/*
-				 * listeDemandeDto =
-				 * demandeRepository.listeDemandesAgentEnCours(idAgentConnecte,
-				 * fromDate, toDate, dateDemande, idRefEtat, idRefType);
-				 */
+				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, dateDemande,
+						idRefType);
+				etats = RefEtat.findRefEtatEnCours();
 				break;
 			case "TOUTES":
-				/*
-				 * listeDemandeDto =
-				 * demandeRepository.listeDemandesAgent(idAgentConnecte,
-				 * fromDate, toDate, dateDemande, idRefEtat, idRefType);
-				 */
+				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, dateDemande,
+						idRefType);
 				break;
 		}
 
@@ -235,10 +228,16 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	private List<DemandeDto> filterEtatFromList(List<Demande> listeSansEtat, List<RefEtat> etats) {
-
 		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
-		for (Demande d : listeSansEtat) {
-			if (etats.contains(RefEtat.findRefEtat(d.getLatestEtatDemande().getEtat().getCodeEtat()))) {
+		if (etats != null) {
+			for (Demande d : listeSansEtat) {
+				if (etats.contains(RefEtat.findRefEtat(d.getLatestEtatDemande().getEtat().getCodeEtat()))) {
+					DemandeDto dto = new DemandeDto(d);
+					listeDemandeDto.add(dto);
+				}
+			}
+		} else {
+			for (Demande d : listeSansEtat) {
 				DemandeDto dto = new DemandeDto(d);
 				listeDemandeDto.add(dto);
 			}

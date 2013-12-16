@@ -48,11 +48,11 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public List<Demande> listeDemandesAgentNonPrises(Integer idAgentConnecte, Date fromDate, Date toDate,
-			Date dateDemande, Integer idRefType) {
+	public List<Demande> listeDemandesAgent(Integer idAgentConnecte, Date fromDate, Date toDate, Date dateDemande,
+			Integer idRefType) {
 
 		// TODO
-		// date demande
+		// traiter date demande
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");

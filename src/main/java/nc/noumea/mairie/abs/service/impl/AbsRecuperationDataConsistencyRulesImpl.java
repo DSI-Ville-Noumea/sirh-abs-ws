@@ -2,6 +2,8 @@ package nc.noumea.mairie.abs.service.impl;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
@@ -9,6 +11,7 @@ import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
+@Service
 public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
 
 	/**
