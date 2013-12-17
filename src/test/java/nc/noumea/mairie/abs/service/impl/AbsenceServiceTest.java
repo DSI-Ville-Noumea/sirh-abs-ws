@@ -236,7 +236,7 @@ public class AbsenceServiceTest {
 		listeDemande.add(d2);
 
 		IDemandeRepository demRepo = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demRepo.listeDemandesAgent(idAgent, new Date(), new Date(), 3)).thenReturn(listeDemande);
+		Mockito.when(demRepo.listeDemandesAgent(Mockito.eq(idAgent), Mockito.isA(Date.class), Mockito.isA(Date.class), Mockito.eq(3))).thenReturn(listeDemande);
 		Mockito.when(demRepo.findRefEtatNonPris()).thenReturn(refEtatNonPris);
 
 		AbsenceService service = new AbsenceService();
