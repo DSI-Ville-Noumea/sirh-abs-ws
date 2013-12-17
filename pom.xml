@@ -160,6 +160,8 @@
         </dependency>
 
         <!-- Hibernate & ORM -->
+        <!-- 4.3.0.Final is crashing the app on startup.
+        	keeping 4.2.8.Final as latest version #5201 -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
