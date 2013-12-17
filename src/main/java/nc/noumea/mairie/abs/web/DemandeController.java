@@ -1,14 +1,22 @@
 package nc.noumea.mairie.abs.web;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.EditionDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.service.ISoldeService;
+import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.abs.transformer.MSDateTransformer;
+import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
@@ -41,6 +50,15 @@ public class DemandeController {
 
 	@Autowired
 	private IAccessRightsService accessRightService;
+
+	@Autowired
+	private HelperService helperService;
+
+	@Autowired
+	private ISirhWSConsumer sirhWSConsumer;
+
+	@Autowired
+	private ISoldeService soldeService;
 
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
@@ -113,5 +131,30 @@ public class DemandeController {
 		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
 				.deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/xml/getDemande", produces = "application/xml", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ModelAndView getXmlDemande(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande,
+			@RequestParam("idTypeDemande") int idTypeDemande) throws ParseException {
+
+		logger.debug(
+				"entered GET [demandes/xml/getDemande] => getXmlDemande with parameters idAgent = {}, idDemande = {}, idTypeDemande = {}",
+				idAgent, idDemande, idTypeDemande);
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (Agent.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+
+		SoldeDto soldeDto = soldeService.getAgentSolde(convertedIdAgent);
+
+		AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(convertedIdAgent, helperService.getCurrentDate());
+
+		DemandeDto demandeDto = absenceService.getDemande(idDemande, idTypeDemande);
+
+		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, agentDto, soldeDto);
+
+		return new ModelAndView("xmlView", "object", dtoFinal);
 	}
 }

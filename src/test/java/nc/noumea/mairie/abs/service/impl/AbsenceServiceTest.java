@@ -2,22 +2,33 @@ package nc.noumea.mairie.abs.service.impl;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
+import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
+import nc.noumea.mairie.abs.domain.RefEtat;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.AccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
+import nc.noumea.mairie.abs.repository.IDemandeRepository;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -160,5 +171,82 @@ public class AbsenceServiceTest {
 
 		// Then
 		assertEquals(0, returnDto.getErrors().size());
+	}
+
+	@Test
+	public void getListeDemandesAgent_WrongParam() {
+
+		// Given
+
+		AbsenceService service = new AbsenceService();
+
+		// When
+		List<DemandeDto> result = service.getListeDemandesAgent(9005138, "TEST", new Date(), new Date(), new Date(),
+				null, null);
+
+		// Then
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getListeDemandesAgent_DemandesNonPrises() {
+
+		// Given
+		Integer idAgent = 9005138;
+
+		List<RefEtat> refEtatNonPris = new ArrayList<RefEtat>();
+		RefEtat etatProvisoire = new RefEtat();
+		etatProvisoire.setIdRefEtat(0);
+		etatProvisoire.setLabel("PROVISOIRE");
+		RefEtat etatSaisie = new RefEtat();
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel("SAISIE");
+		refEtatNonPris.add(etatProvisoire);
+		refEtatNonPris.add(etatSaisie);
+
+		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
+		RefTypeAbsence refType = new RefTypeAbsence();
+		refType.setIdRefTypeAbsence(3);
+		refType.setLabel("RECUP");
+		EtatDemande etat1 = new EtatDemande();
+		etat1.setDate(new Date());
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		etat1.setIdAgent(idAgent);
+		etat1.setIdEtatDemande(1);
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setDate(new Date());
+		etat2.setEtat(RefEtatEnum.SAISIE);
+		etat2.setIdAgent(idAgent);
+		etat2.setIdEtatDemande(2);
+		DemandeRecup d = new DemandeRecup();
+		etat1.setDemande(d);
+		d.setIdDemande(1);
+		d.setIdAgent(idAgent);
+		d.setType(refType);
+		d.setEtatsDemande(Arrays.asList(etat1));
+		d.setDateDebut(new Date());
+		DemandeRecup d2 = new DemandeRecup();
+		etat2.setDemande(d2);
+		d2.setIdDemande(2);
+		d2.setIdAgent(idAgent);
+		d2.setType(refType);
+		d2.setEtatsDemande(Arrays.asList(etat2));
+		d2.setDateDebut(new Date());
+		listeDemande.add(d);
+		listeDemande.add(d2);
+
+		IDemandeRepository demRepo = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demRepo.listeDemandesAgent(idAgent, new Date(), new Date(), 3)).thenReturn(listeDemande);
+		Mockito.when(demRepo.findRefEtatNonPris()).thenReturn(refEtatNonPris);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demRepo);
+
+		// When
+		List<DemandeDto> result = service.getListeDemandesAgent(idAgent, "NON_PRISES", new Date(), new Date(),
+				new Date(), 3, 3);
+
+		// Then
+		assertEquals(1, result.size());
 	}
 }

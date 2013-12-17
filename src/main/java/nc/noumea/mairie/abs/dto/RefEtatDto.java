@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import nc.noumea.mairie.abs.domain.RefEtat;
 
-@XmlRootElement
 public class RefEtatDto {
 
 	private Integer idRefEtat;

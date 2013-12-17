@@ -1,0 +1,28 @@
+            ------
+            SIRH-ABS-WS API WS doc
+            ------
+
+
+
+SIRH-ABS-WS API et définition des services concernant les éditions
+
+* Edition demande de recuperation
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /edition/downloadDemandeRecuperation
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la visualisation du solde (au format 900xxxx ou 90xxxx).
+ 
+ * <<idDemande>> : id de la demande à imprimer
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request 
++-------------------------+

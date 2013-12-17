@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
-@XmlRootElement
 public class RefTypeAbsenceDto {
 
 	private Integer idRefTypeAbsence;

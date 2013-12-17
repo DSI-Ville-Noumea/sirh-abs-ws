@@ -31,6 +31,10 @@ SIRH-ABS-WS API et définition des services
   
  {{{../conception/ws-filtres-api.html}ws-filtres-api.html}}
 
+* Editions
+  
+ {{{../conception/ws-edition-api.html}ws-edition-api.html}}
+
 * Gestion des demandes d'absences
   
  {{{../conception/ws-filtres-api.html}ws-demandes-api.html}}

@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -204,44 +205,74 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<DemandeDto> getListeDemandesAgent(Integer idAgentConnecte, String ongletDemande, Date fromDate,
 			Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
-		List<Demande> listeSansEtat = new ArrayList<>();
+		List<Demande> listeSansEtat = new ArrayList<Demande>();
 
 		List<RefEtat> etats = new ArrayList<RefEtat>();
 		switch (ongletDemande) {
 			case "NON_PRISES":
-				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, dateDemande,
-						idRefType);
-				etats = RefEtat.findRefEtatNonPris();
+				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
+				etats = demandeRepository.findRefEtatNonPris();
 				break;
 			case "EN_COURS":
-				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, dateDemande,
-						idRefType);
-				etats = RefEtat.findRefEtatEnCours();
+				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
+				etats = demandeRepository.findRefEtatEnCours();
 				break;
 			case "TOUTES":
-				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, dateDemande,
-						idRefType);
-				etats = null;
+				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
+				if (idRefEtat != null) {
+					etats.add(RefEtat.findRefEtat(idRefEtat));
+				} else {
+					etats = null;
+				}
 				break;
 		}
 
-		return filterEtatFromList(listeSansEtat, etats);
+		return filterDateDemandeAndEtatFromList(listeSansEtat, etats, dateDemande);
 	}
 
-	private List<DemandeDto> filterEtatFromList(List<Demande> listeSansEtat, List<RefEtat> etats) {
-		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
+	private List<DemandeDto> filterDateDemandeAndEtatFromList(List<Demande> listeSansEtat, List<RefEtat> etats,
+			Date dateDemande) {
+		List<DemandeDto> listeDemandeDtoEtat = new ArrayList<DemandeDto>();
+		List<DemandeDto> listeDemandeDtoDateDemande = new ArrayList<DemandeDto>();
+		if (dateDemande == null && etats == null) {
+			for (Demande d : listeSansEtat) {
+				DemandeDto dto = new DemandeDto(d);
+				listeDemandeDtoDateDemande.add(dto);
+			}
+		}
+
+		// ON TRAITE LA DATE DE DEMANDE
+		if (dateDemande != null) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			String dateDemandeSDF = sdf.format(dateDemande);
+			for (Demande d : listeSansEtat) {
+				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
+				if (dateEtatSDF.equals(dateDemandeSDF)) {
+					DemandeDto dto = new DemandeDto(d);
+					listeDemandeDtoDateDemande.add(dto);
+				}
+			}
+		}
+
+		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansEtat) {
 				if (etats.contains(RefEtat.findRefEtat(d.getLatestEtatDemande().getEtat().getCodeEtat()))) {
 					DemandeDto dto = new DemandeDto(d);
-					listeDemandeDto.add(dto);
+					listeDemandeDtoEtat.add(dto);
 				}
 			}
-		} else {
-			for (Demande d : listeSansEtat) {
-				DemandeDto dto = new DemandeDto(d);
+		}
+
+		// on joins les 2 listes
+		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
+		for (DemandeDto dto : listeDemandeDtoDateDemande) {
+			if (!listeDemandeDto.contains(dto))
 				listeDemandeDto.add(dto);
-			}
+		}
+		for (DemandeDto dto : listeDemandeDtoEtat) {
+			if (!listeDemandeDto.contains(dto))
+				listeDemandeDto.add(dto);
 		}
 
 		return listeDemandeDto;

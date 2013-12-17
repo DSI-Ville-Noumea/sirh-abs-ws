@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.RefEtat;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 
 import org.springframework.stereotype.Repository;
 
@@ -48,12 +51,7 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public List<Demande> listeDemandesAgent(Integer idAgentConnecte, Date fromDate, Date toDate, Date dateDemande,
-			Integer idRefType) {
-
-		// TODO
-		// traiter date demande
-
+	public List<Demande> listeDemandesAgent(Integer idAgentConnecte, Date fromDate, Date toDate, Integer idRefType) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
 		sb.append("where d.idAgent = :idAgent ");
@@ -92,5 +90,24 @@ public class DemandeRepository implements IDemandeRepository {
 		}
 
 		return query.getResultList();
+	}
+
+	@Override
+	public List<RefEtat> findRefEtatNonPris() {
+		List<RefEtat> res = new ArrayList<RefEtat>();
+		res = RefEtat.findAllRefEtats();
+		RefEtat etatPris = RefEtat.findRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		res.remove(etatPris);
+		return res;
+	}
+
+	@Override
+	public List<RefEtat> findRefEtatEnCours() {
+		List<RefEtat> res = new ArrayList<RefEtat>();
+		res.add(RefEtat.findRefEtat(RefEtatEnum.SAISIE.getCodeEtat()));
+		res.add(RefEtat.findRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()));
+		res.add(RefEtat.findRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()));
+		res.add(RefEtat.findRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat()));
+		return res;
 	}
 }

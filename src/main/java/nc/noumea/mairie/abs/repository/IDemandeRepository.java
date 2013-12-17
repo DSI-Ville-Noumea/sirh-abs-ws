@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.RefEtat;
 
 public interface IDemandeRepository {
 
@@ -14,8 +15,10 @@ public interface IDemandeRepository {
 
 	EtatDemande getLastEtatDemandeByIdDemande(Integer idDemande);
 
-	List<Demande> listeDemandesAgent(Integer idAgentConnecte, Date fromDate, Date toDate, Date dateDemande,
-			Integer idRefType);
-	
-	
+	List<Demande> listeDemandesAgent(Integer idAgentConnecte, Date fromDate, Date toDate, Integer idRefType);
+
+	List<RefEtat> findRefEtatNonPris();
+
+	List<RefEtat> findRefEtatEnCours();
+
 }

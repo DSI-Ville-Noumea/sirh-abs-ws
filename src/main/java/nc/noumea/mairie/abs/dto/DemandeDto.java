@@ -2,13 +2,10 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
-@XmlRootElement
 public class DemandeDto {
 
 	private Integer idDemande;
@@ -108,6 +105,11 @@ public class DemandeDto {
 
 	public void setEtatDefinitif(boolean isEtatDefinitif) {
 		this.isEtatDefinitif = isEtatDefinitif;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return idDemande.equals(((DemandeDto) obj).getIdDemande());
 	}
 
 }
