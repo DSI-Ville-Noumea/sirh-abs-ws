@@ -42,6 +42,9 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	private IAbsenceDataConsistencyRules absDataConsistencyRules;
 
+	@Autowired
+	private HelperService helperService;
+	
 	@Override
 	public List<RefEtatDto> getRefEtats() {
 		List<RefEtatDto> res = new ArrayList<RefEtatDto>();
@@ -104,9 +107,11 @@ public class AbsenceService implements IAbsenceService {
 				// TODO
 				break;
 			case RECUP:
-				DemandeRecup demandeRecup = (DemandeRecup) demande;
+				DemandeRecup demandeRecup = new DemandeRecup(demande);
 				demandeRecup.setDuree(demandeDto.getDuree());
+				demandeRecup.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
 				absDataConsistencyRules.processDataConsistencyDemandeRecup(returnDto, idAgent, demandeRecup, dateJour);
+				demande = demandeRecup;
 				break;
 			case ASA:
 				// TODO
@@ -129,7 +134,7 @@ public class AbsenceService implements IAbsenceService {
 			etatDemande.setEtat(RefEtatEnum.PROVISOIRE);
 		}
 
-		demandeRepository.persisEntity(demande);
+		demandeRepository.persistEntity(demande);
 
 		return returnDto;
 	}
@@ -184,7 +189,6 @@ public class AbsenceService implements IAbsenceService {
 				}
 
 				demandeDto = new DemandeDto(demandeRecup);
-				demandeDto.setDuree(demandeRecup.getDuree());
 				break;
 			case ASA:
 				// TODO

@@ -9,7 +9,7 @@ import nc.noumea.mairie.abs.domain.RefEtat;
 
 public interface IDemandeRepository {
 
-	void persisEntity(Object obj);
+	void persistEntity(Object obj);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
 

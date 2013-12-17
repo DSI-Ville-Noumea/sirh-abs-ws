@@ -38,7 +38,11 @@ public class SirhRepository implements ISirhRepository {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		int dateFormatMairie = Integer.valueOf(sdf.format(asOfDate));
 		qSpadmn.setParameter("dateFormatMairie", dateFormatMairie);
-
+		
+		if(0 == qSpadmn.getResultList().size()) {
+			return null;
+		}
+		
 		Spadmn adm = qSpadmn.getSingleResult();
 
 		return adm;

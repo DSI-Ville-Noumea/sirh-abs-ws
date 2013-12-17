@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
@@ -33,5 +34,11 @@ public class HelperService {
 		}
 		
 		return null;
+	}
+	
+	public Date getDateFin(Date dateDeb, Integer duree) {
+
+		DateTime recupDateFin = new DateTime(dateDeb);
+		return recupDateFin.plusMinutes(duree).toDate();
 	}
 }

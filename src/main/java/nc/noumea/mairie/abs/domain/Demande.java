@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,9 +31,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @Inheritance(strategy = InheritanceType.JOINED)
 @RooJavaBean
 @RooToString
-public class Demande implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class Demande {
 
 	@Id
 	@Column(name = "ID_DEMANDE")
@@ -52,6 +49,10 @@ public class Demande implements Serializable {
 	@Column(name = "DATE_DEBUT")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateDebut;
+	
+	@Column(name = "DATE_FIN")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateFin;
 
 	@OneToMany(mappedBy = "demande", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
 	@OrderBy("idEtatDemande desc")
@@ -60,5 +61,19 @@ public class Demande implements Serializable {
 	@Transient
 	public EtatDemande getLatestEtatDemande() {
 		return etatsDemande.iterator().next();
+	}
+
+	public Demande(){ 
+	}
+			
+	public Demande(Integer idDemande, Integer idAgent, RefTypeAbsence type,
+			Date dateDebut, Date dateFin, List<EtatDemande> etatsDemande) {
+		super();
+		this.idDemande = idDemande;
+		this.idAgent = idAgent;
+		this.type = type;
+		this.dateDebut = dateDebut;
+		this.dateFin = dateFin;
+		this.etatsDemande = etatsDemande;
 	}
 }

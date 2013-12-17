@@ -22,7 +22,7 @@ public class DemandeRepository implements IDemandeRepository {
 	private EntityManager absEntityManager;
 
 	@Override
-	public void persisEntity(Object obj) {
+	public void persistEntity(Object obj) {
 		absEntityManager.persist(obj);
 	}
 

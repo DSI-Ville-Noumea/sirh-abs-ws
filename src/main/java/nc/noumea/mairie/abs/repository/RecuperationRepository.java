@@ -49,21 +49,21 @@ public class RecuperationRepository implements IRecuperationRepository {
 	@Override
     public Integer getSommeDureeDemandeRecupEnCoursSaisieouVisee(Integer idAgent) {
 		
-		TypedQuery<Integer> q = absEntityManager.createQuery("select sum(dr.duree) from DemandeRecup dr inner join dr.etatsDemande ed where dr.idAgent = :idAgent "
-				+ "and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgent ) "
-				+ "and (ed.etat = :SAISIE or ed.etat = :VISEE_F ed.etat = :VISEE_D )", 
-				Integer.class);
+		TypedQuery<Long> q = absEntityManager.createQuery("select sum(dr.duree) from DemandeRecup dr inner join dr.etatsDemande ed where dr.idAgent = :idAgent "
+				+ " and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgent group by ed2.demande ) "
+				+ "and ed.etat in ( :SAISIE, :VISEE_F, :VISEE_D )", 
+				Long.class);
 		
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat());
-		q.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-		q.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		q.setParameter("SAISIE", RefEtatEnum.SAISIE);
+		q.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE);
+		q.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE);
 
-		List<Integer> r = q.getResultList();
+		List<Long> r = q.getResultList();
 		
-		if (r.size() == 0)
-			return null;
+		if (r.size() == 0 || null ==  r.get(0))
+			return 0;
 
-		return r.get(0);
+		return r.get(0).intValue();
 	}
 }

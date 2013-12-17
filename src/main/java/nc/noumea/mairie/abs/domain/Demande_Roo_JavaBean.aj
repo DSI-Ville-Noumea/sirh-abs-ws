@@ -43,6 +43,14 @@ privileged aspect Demande_Roo_JavaBean {
         this.dateDebut = dateDebut;
     }
     
+    public Date Demande.getDateFin() {
+        return this.dateFin;
+    }
+    
+    public void Demande.setDateFin(Date dateFin) {
+        this.dateFin = dateFin;
+    }
+    
     public List<EtatDemande> Demande.getEtatsDemande() {
         return this.etatsDemande;
     }

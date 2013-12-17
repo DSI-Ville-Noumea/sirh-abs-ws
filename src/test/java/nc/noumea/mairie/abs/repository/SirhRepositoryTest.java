@@ -1,6 +1,8 @@
 package nc.noumea.mairie.abs.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 
@@ -8,8 +10,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.domain.SpSold;
+import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.SpadmnId;
 import nc.noumea.mairie.sirh.domain.Agent;
 
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +101,56 @@ public class SirhRepositoryTest {
 		assertEquals("72.0", result.getSoldeAnneeEnCours().toString());
 		assertEquals("12.5", result.getSoldeAnneePrec().toString());
 
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getAgentCurrentPosition_returnResult() {
+		
+		SpadmnId id = new SpadmnId();
+		id.setDatdeb(20130901);
+		id.setNomatr(9005138);
+		Spadmn adm = new Spadmn();
+		adm.setId(id);
+		adm.setCdpadm("");
+		adm.setDatfin(20130930);
+		
+		sirhEntityManager.persist(adm);
+		
+		Agent agent = new Agent();
+		agent.setNomatr(9005138);
+		
+		Spadmn result = repository.getAgentCurrentPosition(agent, new LocalDate(2013, 9, 22).toDate());
+		
+		assertNotNull(result);
+		
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getAgentCurrentPosition_returnNoResult() {
+		
+		SpadmnId id = new SpadmnId();
+		id.setDatdeb(20130901);
+		id.setNomatr(9005138);
+		Spadmn adm = new Spadmn();
+		adm.setId(id);
+		adm.setCdpadm("");
+		adm.setDatfin(20130930);
+		
+		sirhEntityManager.persist(adm);
+		
+		Agent agent = new Agent();
+		agent.setNomatr(9005138);
+		
+		Spadmn result = repository.getAgentCurrentPosition(agent, new LocalDate(2013, 10, 22).toDate());
+		
+		assertNull(result);
+		
 		sirhEntityManager.flush();
 		sirhEntityManager.clear();
 	}

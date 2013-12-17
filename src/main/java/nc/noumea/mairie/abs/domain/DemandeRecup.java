@@ -18,10 +18,15 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 public class DemandeRecup extends Demande {
-
-	private static final long serialVersionUID = 1L;
-
+	
 	@NotNull
 	@Column(name = "DUREE")
 	private Integer duree;
+	
+	public DemandeRecup(){
+	}
+			
+	public DemandeRecup(Demande demande) {
+		super(demande.getIdDemande(), demande.getIdAgent(), demande.getType(), demande.getDateDebut(), demande.getDateFin(), demande.getEtatsDemande());
+	}
 }
