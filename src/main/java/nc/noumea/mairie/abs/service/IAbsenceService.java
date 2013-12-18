@@ -20,4 +20,7 @@ public interface IAbsenceService {
 
 	List<DemandeDto> getListeDemandesAgent(Integer idAgentConnecte, String ongletDemande, Date fromDate, Date toDate,
 			Date dateDemande, Integer idRefEtat, Integer idRefType);
+
+	List<DemandeDto> getListeDemandes(Integer convertedIdAgentInputter, String ongletDemande, Date fromDate,
+			Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType, Integer idAgentConcerne);
 }

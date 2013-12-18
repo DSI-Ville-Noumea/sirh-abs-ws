@@ -122,6 +122,10 @@ public class DemandeController {
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
+		if (Agent.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+		//TODO
+
 		List<DemandeDto> result = absenceService.getListeDemandesAgent(convertedIdAgent, ongletDemande, fromDate,
 				toDate, dateDemande, idRefEtat, idRefType);
 
@@ -156,5 +160,38 @@ public class DemandeController {
 		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, agentDto, soldeDto);
 
 		return new ModelAndView("xmlView", "object", dtoFinal);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/listeDemandes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getListeDemandesAbsence(
+			@RequestParam("idInputter") int idInputter,
+			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
+			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
+			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date dateDemande,
+			@RequestParam(value = "etat", required = false) Integer idRefEtat,
+			@RequestParam(value = "type", required = false) Integer idRefType,
+			@RequestParam(value = "idAgent", required = false) Integer idAgentConcerne) {
+
+		logger.debug(
+				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters idInputter = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, type = {} and idAgentConcerne= {}",
+				idInputter, ongletDemande, fromDate, toDate, dateDemande, idRefEtat, idRefType, idAgentConcerne);
+
+		Integer convertedIdAgentInputter = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idInputter);
+
+		if (Agent.findAgent(convertedIdAgentInputter) == null)
+			throw new NotFoundException();
+
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgentInputter, ongletDemande, fromDate,
+				toDate, dateDemande, idRefEtat, idRefType, idAgentConcerne);
+
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
+				.deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 }

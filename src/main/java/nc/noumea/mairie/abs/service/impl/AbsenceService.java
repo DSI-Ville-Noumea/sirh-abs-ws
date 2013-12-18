@@ -284,4 +284,11 @@ public class AbsenceService implements IAbsenceService {
 
 		return listeDemandeDto;
 	}
+
+	@Override
+	public List<DemandeDto> getListeDemandes(Integer convertedIdAgentInputter, String ongletDemande, Date fromDate,
+			Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType, Integer idAgentConcerne) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

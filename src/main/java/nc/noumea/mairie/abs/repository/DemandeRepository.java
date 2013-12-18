@@ -76,18 +76,18 @@ public class DemandeRepository implements IDemandeRepository {
 	public List<RefEtat> findRefEtatNonPris() {
 		List<RefEtat> res = new ArrayList<RefEtat>();
 		res = RefEtat.findAllRefEtats();
-		RefEtat etatPris = RefEtat.findRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		RefEtat etatPris = absEntityManager.find(RefEtat.class, (RefEtatEnum.PRISE.getCodeEtat()));
 		res.remove(etatPris);
 		return res;
 	}
 
 	@Override
 	public List<RefEtat> findRefEtatEnCours() {
-		List<RefEtat> res = new ArrayList<RefEtat>();
-		res.add(RefEtat.findRefEtat(RefEtatEnum.SAISIE.getCodeEtat()));
-		res.add(RefEtat.findRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()));
-		res.add(RefEtat.findRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()));
-		res.add(RefEtat.findRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat()));
+		List<RefEtat> res = new ArrayList<RefEtat>();	
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.SAISIE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.APPROUVEE.getCodeEtat())));
 		return res;
 	}
 }

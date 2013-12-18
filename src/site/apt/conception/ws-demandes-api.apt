@@ -129,4 +129,58 @@ HTTP Code 200 : OK
 HTTP Code 204 : NO_CONTENT
 HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
 HTTP Code 403 : Accès non autorisé
+HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents mairie)
++-------------------------+
+
+
+* liste des demandes d'absence
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /demandes/listeDemandes
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idInputter>> : identifiant de l’agent connecté
+ 
+ * <<ongletDemande>> : type d'onglet pour la visualisation des demandes ( NON_PRISES,EN_COURS,TOUTES)
+ 
+ * <<from>> : date au format YYYYMMdd (optionnel)
+ 
+ * <<to>> : date au format YYYYMMdd (optionnel)
+ 
+ * <<dateDemande>> : date au format YYYYMMdd (optionnel)
+ 
+ * <<etat>> : 0:provisoire, 1:saisie(définitif).... (optionnel)
+ 
+ * <<type>> : 1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies (optionnel)
+ 
+ * <<idAgent>> : agent du filtre (optionnel)
+ 
+ <<Content>>
+ 
++-------------------------+
+    [
+       {
+           "dateDebut": "/Date(1385902800000+1100)/",
+           "duree": 30,
+           "etatDefinitif": false,
+           "idAgent": 9005131,
+           "idDemande": 8,
+           "idRefEtat": 0,
+           "idTypeDemande": 3
+       },....
+    ]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 204 : NO_CONTENT
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
+HTTP Code 403 : Accès non autorisé
+HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents mairie)
 +-------------------------+
