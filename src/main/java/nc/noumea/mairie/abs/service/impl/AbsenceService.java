@@ -50,7 +50,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private HelperService helperService;
-	
+
 	@Override
 	public List<RefEtatDto> getRefEtats() {
 		List<RefEtatDto> res = new ArrayList<RefEtatDto>();
@@ -230,7 +230,7 @@ public class AbsenceService implements IAbsenceService {
 			case "TOUTES":
 				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
 				if (idRefEtat != null) {
-					etats.add(RefEtat.findRefEtat(idRefEtat));
+					etats.add(absEntityManager.find(RefEtat.class, idRefEtat));
 				} else {
 					etats = null;
 				}
@@ -267,7 +267,6 @@ public class AbsenceService implements IAbsenceService {
 		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansEtat) {
-				logger.debug("Code etat : " + d.getLatestEtatDemande().getEtat().getCodeEtat());
 				DemandeDto dto = new DemandeDto(d);
 				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 						.getCodeEtat()))) {
