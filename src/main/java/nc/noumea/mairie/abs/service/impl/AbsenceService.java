@@ -215,20 +215,20 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<DemandeDto> getListeDemandesAgent(Integer idAgentConnecte, String ongletDemande, Date fromDate,
 			Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
-		List<Demande> listeSansEtat = new ArrayList<Demande>();
+		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 
 		List<RefEtat> etats = new ArrayList<RefEtat>();
 		switch (ongletDemande) {
 			case "NON_PRISES":
-				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
+				listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
 				etats = demandeRepository.findRefEtatNonPris();
 				break;
 			case "EN_COURS":
-				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
+				listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
 				etats = demandeRepository.findRefEtatEnCours();
 				break;
 			case "TOUTES":
-				listeSansEtat = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
+				listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
 				if (idRefEtat != null) {
 					etats.add(absEntityManager.find(RefEtat.class, idRefEtat));
 				} else {
@@ -237,12 +237,15 @@ public class AbsenceService implements IAbsenceService {
 				break;
 		}
 
-		return filterDateDemandeAndEtatFromList(listeSansEtat, etats, dateDemande);
+		return filterDateDemandeAndEtatFromList(listeSansFiltre, etats, dateDemande);
 	}
 
 	private List<DemandeDto> filterDateDemandeAndEtatFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
 			Date dateDemande) {
 		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
+		if (listeSansFiltre.size() == 0)
+			return listeDemandeDto;
+
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
 				DemandeDto dto = new DemandeDto(d);
