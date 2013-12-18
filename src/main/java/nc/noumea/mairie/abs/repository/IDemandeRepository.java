@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtat;
 
 public interface IDemandeRepository {
@@ -12,8 +11,6 @@ public interface IDemandeRepository {
 	void persistEntity(Object obj);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
-
-	EtatDemande getLastEtatDemandeByIdDemande(Integer idDemande);
 
 	List<Demande> listeDemandesAgent(Integer idAgentConnecte, Date fromDate, Date toDate, Integer idRefType);
 

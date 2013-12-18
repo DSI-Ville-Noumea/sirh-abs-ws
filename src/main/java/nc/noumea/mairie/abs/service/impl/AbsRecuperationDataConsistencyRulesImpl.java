@@ -2,14 +2,13 @@ package nc.noumea.mairie.abs.service.impl;
 
 import java.util.Date;
 
-import org.springframework.stereotype.Service;
-
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
-import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+
+import org.springframework.stereotype.Service;
 
 @Service
 public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
@@ -31,12 +30,10 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 	@Override
 	public ReturnMessageDto checkEtatDemandeIsProvisoireOuSaisie(ReturnMessageDto srm, Demande demande) {
 
-		for (EtatDemande etatDemande : demande.getEtatsDemande()) {
-			if (!RefEtatEnum.PROVISOIRE.equals(etatDemande.getEtat())
-					&& !RefEtatEnum.SAISIE.equals(etatDemande.getEtat())) {
-				logger.warn(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
-				srm.getErrors().add(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
-			}
+		if (!RefEtatEnum.PROVISOIRE.equals(demande.getLatestEtatDemande().getEtat())
+				&& !RefEtatEnum.SAISIE.equals(demande.getLatestEtatDemande().getEtat())) {
+			logger.warn(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
+			srm.getErrors().add(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
 		}
 
 		return srm;
@@ -51,7 +48,7 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 		Integer sommeDemandeEnCours = recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande
 				.getIdAgent());
 
-		if (soldeRecup.getTotalMinutes() + sommeDemandeEnCours - demande.getDuree() < 0) {
+		if (soldeRecup.getTotalMinutes() - sommeDemandeEnCours - demande.getDuree() < 0) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 			srm.getErrors().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 		}

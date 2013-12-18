@@ -53,7 +53,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public void processDataConsistencyDemandeRecup(ReturnMessageDto srm, Integer idAgent, Demande demande,
 			Date dateLundi) {
 		checkDemandeDejaSaisieSurMemePeriode(srm, demande);
-		checkAgentInactivity(srm, idAgent, dateLundi, demande);
+		checkAgentInactivity(srm, idAgent, dateLundi);
 	}
 
 	@Override
@@ -67,14 +67,21 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					&& !RefEtatEnum.PROVISOIRE.equals(demandeExistante.getLatestEtatDemande().getEtat())){
 				
 				// date de debut couverte par une autre demande
-				if(demande.getDateDebut().before(demandeExistante.getDateFin())
-						&& demande.getDateDebut().after(demandeExistante.getDateDebut())) {
+				if((demande.getDateDebut().before(demandeExistante.getDateFin())
+						|| demande.getDateDebut().equals(demandeExistante.getDateFin()))
+							&& (demande.getDateDebut().after(demandeExistante.getDateDebut())
+							|| demande.getDateDebut().equals(demandeExistante.getDateDebut()))
+						
+				) {
 					logger.warn(String.format(DEMANDE_DEJA_COUVERTE_MSG));
 					srm.getErrors().add(DEMANDE_DEJA_COUVERTE_MSG);
 					return srm;
 				}
-				if(demande.getDateFin().before(demandeExistante.getDateFin())
-						&& demande.getDateFin().after(demandeExistante.getDateDebut())) {
+				if((demande.getDateFin().before(demandeExistante.getDateFin())
+						|| demande.getDateFin().equals(demandeExistante.getDateFin()))
+						&& (demande.getDateFin().after(demandeExistante.getDateDebut())
+						|| demande.getDateFin().equals(demandeExistante.getDateDebut()))
+				) {
 					logger.warn(String.format(DEMANDE_DEJA_COUVERTE_MSG));
 					srm.getErrors().add(DEMANDE_DEJA_COUVERTE_MSG);
 					return srm;
@@ -86,7 +93,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	@Override
-	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi, Demande demande) {
+	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi) {
 
 		Agent ag = sirhRepository.getAgent(idAgent);
 		
