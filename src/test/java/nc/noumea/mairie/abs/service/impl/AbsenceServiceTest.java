@@ -60,7 +60,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		service.verifAccessRightSaveDemande(idAgent, dto, returnDto);
+		service.verifAccessRightDemande(idAgent, dto, returnDto);
 
 		// Then
 		assertEquals(1, returnDto.getErrors().size());
@@ -112,7 +112,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		service.verifAccessRightSaveDemande(idAgent, dto, returnDto);
+		service.verifAccessRightDemande(idAgent, dto, returnDto);
 
 		// Then
 		assertEquals(1, returnDto.getErrors().size());
@@ -165,10 +165,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		service.verifAccessRightSaveDemande(idAgent, dto, returnDto);
+		boolean res = service.verifAccessRightDemande(idAgent, dto, returnDto);
 
 		// Then
 		assertEquals(0, returnDto.getErrors().size());
+		assertTrue(res);
 	}
 
 	@Test
@@ -179,8 +180,8 @@ public class AbsenceServiceTest {
 		AbsenceService service = new AbsenceService();
 
 		// When
-		List<DemandeDto> result = service.getListeDemandesAgent(9005138, "TEST", new Date(), new Date(), new Date(),
-				null, null);
+		List<DemandeDto> result = service.getListeDemandes(9005138, "TEST", new Date(), new Date(), new Date(), null,
+				null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -191,11 +192,11 @@ public class AbsenceServiceTest {
 
 		// Given
 		Integer idAgent = 9005138;
-		
+
 		RefEtat etatProvisoire = new RefEtat();
 		etatProvisoire.setIdRefEtat(0);
 		etatProvisoire.setLabel("PROVISOIRE");
-		
+
 		RefEtat etatPris = new RefEtat();
 		etatPris.setIdRefEtat(6);
 		etatPris.setLabel("PRISE");
@@ -252,8 +253,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 
 		// When
-		List<DemandeDto> result = service.getListeDemandesAgent(idAgent, "TOUTES", new Date(), new Date(), new Date(),
-				6, 3);
+		List<DemandeDto> result = service.getListeDemandes(idAgent, "TOUTES", new Date(), new Date(), new Date(), 6, 3);
 
 		// Then
 		assertEquals(0, result.size());
@@ -264,7 +264,7 @@ public class AbsenceServiceTest {
 
 		// Given
 		Integer idAgent = 9005138;
-		
+
 		RefEtat etatProvisoire = new RefEtat();
 		etatProvisoire.setIdRefEtat(0);
 		etatProvisoire.setLabel("PROVISOIRE");
@@ -320,8 +320,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 
 		// When
-		List<DemandeDto> result = service.getListeDemandesAgent(idAgent, "TOUTES", new Date(), new Date(), new Date(),
-				0, 3);
+		List<DemandeDto> result = service.getListeDemandes(idAgent, "TOUTES", new Date(), new Date(), new Date(), 0, 3);
 
 		// Then
 		assertEquals(1, result.size());
@@ -333,7 +332,7 @@ public class AbsenceServiceTest {
 
 		// Given
 		Integer idAgent = 9005138;
-		
+
 		RefEtat etatProvisoire = new RefEtat();
 		etatProvisoire.setIdRefEtat(0);
 		etatProvisoire.setLabel("PROVISOIRE");
@@ -389,8 +388,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 
 		// When
-		List<DemandeDto> result = service.getListeDemandesAgent(idAgent, "TOUTES", new Date(), new Date(), null,
-				0, 3);
+		List<DemandeDto> result = service.getListeDemandes(idAgent, "TOUTES", new Date(), new Date(), null, 0, 3);
 
 		// Then
 		assertEquals(1, result.size());
@@ -402,7 +400,7 @@ public class AbsenceServiceTest {
 
 		// Given
 		Integer idAgent = 9005138;
-		
+
 		RefEtat etatProvisoire = new RefEtat();
 		etatProvisoire.setIdRefEtat(0);
 		etatProvisoire.setLabel("PROVISOIRE");
@@ -458,8 +456,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 
 		// When
-		List<DemandeDto> result = service.getListeDemandesAgent(idAgent, "TOUTES", new Date(), new Date(), null,
-				null, 3);
+		List<DemandeDto> result = service.getListeDemandes(idAgent, "TOUTES", new Date(), new Date(), null, null, 3);
 
 		// Then
 		assertEquals(2, result.size());
@@ -530,8 +527,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 
 		// When
-		List<DemandeDto> result = service.getListeDemandesAgent(idAgent, "EN_COURS", new Date(), new Date(), null,
-				null, 3);
+		List<DemandeDto> result = service.getListeDemandes(idAgent, "EN_COURS", new Date(), new Date(), null, null, 3);
 
 		// Then
 		assertEquals(1, result.size());
@@ -601,8 +597,8 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 
 		// When
-		List<DemandeDto> result = service.getListeDemandesAgent(idAgent, "NON_PRISES", new Date(), new Date(),
-				new Date(), null, 3);
+		List<DemandeDto> result = service.getListeDemandes(idAgent, "NON_PRISES", new Date(), new Date(), new Date(),
+				null, 3);
 
 		// Then
 		assertEquals(1, result.size());

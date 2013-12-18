@@ -79,7 +79,8 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		// verification des droits
-		verifAccessRightSaveDemande(idAgent, demandeDto, returnDto);
+		if (!verifAccessRightDemande(idAgent, demandeDto, returnDto))
+			return returnDto;
 
 		Demande demande = demandeRepository.getEntity(Demande.class, demandeDto.getIdDemande());
 
@@ -145,7 +146,9 @@ public class AbsenceService implements IAbsenceService {
 		return returnDto;
 	}
 
-	public void verifAccessRightSaveDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto) {
+	@Override
+	public boolean verifAccessRightDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto) {
+		boolean res = true;
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits
 		// sur l'agent pour qui il effectue la demande
 		if (idAgent != demandeDto.getIdAgent()) {
@@ -161,6 +164,7 @@ public class AbsenceService implements IAbsenceService {
 					}
 				}
 				if (!trouve) {
+					res = false;
 					logger.warn("Vous n'êtes pas opérateur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
 							demandeDto.getIdAgent());
 					returnDto.getErrors().add(
@@ -169,12 +173,13 @@ public class AbsenceService implements IAbsenceService {
 									demandeDto.getIdAgent()));
 				}
 			} else {
+				res = false;
 				logger.warn("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.");
 				returnDto.getErrors().add(
 						String.format("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes."));
 			}
 		}
-
+		return res;
 	}
 
 	public DemandeDto getDemande(Integer idDemande, Integer idTypeDemande) {
@@ -213,8 +218,8 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public List<DemandeDto> getListeDemandesAgent(Integer idAgentConnecte, String ongletDemande, Date fromDate,
-			Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
+	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, String ongletDemande, Date fromDate, Date toDate,
+			Date dateDemande, Integer idRefEtat, Integer idRefType) {
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 
 		List<RefEtat> etats = new ArrayList<RefEtat>();
@@ -283,12 +288,5 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		return listeDemandeDto;
-	}
-
-	@Override
-	public List<DemandeDto> getListeDemandes(Integer convertedIdAgentInputter, String ongletDemande, Date fromDate,
-			Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType, Integer idAgentConcerne) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

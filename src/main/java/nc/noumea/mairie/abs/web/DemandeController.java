@@ -124,10 +124,9 @@ public class DemandeController {
 
 		if (Agent.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
-		//TODO
 
-		List<DemandeDto> result = absenceService.getListeDemandesAgent(convertedIdAgent, ongletDemande, fromDate,
-				toDate, dateDemande, idRefEtat, idRefType);
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, ongletDemande, fromDate, toDate,
+				dateDemande, idRefEtat, idRefType);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
@@ -183,9 +182,22 @@ public class DemandeController {
 
 		if (Agent.findAgent(convertedIdAgentInputter) == null)
 			throw new NotFoundException();
+		
+		//ON VERIFIE LES DROITS
+		if (idAgentConcerne != null) {
+			ReturnMessageDto srm = new ReturnMessageDto();
+			DemandeDto dto = new DemandeDto();
+			dto.setIdAgent(idAgentConcerne);
+			if (!absenceService.verifAccessRightDemande(convertedIdAgentInputter, dto, srm)) {
+				if (!srm.getErrors().isEmpty()) {
+					String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+					return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+				}
+			}
+		}
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgentInputter, ongletDemande, fromDate,
-				toDate, dateDemande, idRefEtat, idRefType, idAgentConcerne);
+		List<DemandeDto> result = absenceService.getListeDemandes(idAgentConcerne, ongletDemande, fromDate, toDate,
+				dateDemande, idRefEtat, idRefType);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);

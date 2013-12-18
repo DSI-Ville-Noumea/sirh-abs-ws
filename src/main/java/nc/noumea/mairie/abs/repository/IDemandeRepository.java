@@ -12,7 +12,7 @@ public interface IDemandeRepository {
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
 
-	List<Demande> listeDemandesAgent(Integer idAgentConnecte, Date fromDate, Date toDate, Integer idRefType);
+	List<Demande> listeDemandesAgent(Integer idAgent, Date fromDate, Date toDate, Integer idRefType);
 
 	List<RefEtat> findRefEtatNonPris();
 

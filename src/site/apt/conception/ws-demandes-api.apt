@@ -183,4 +183,5 @@ HTTP Code 204 : NO_CONTENT
 HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
 HTTP Code 403 : Accès non autorisé
 HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents mairie)
+HTTP Code 409 : CONFLICT --> alors on retourne le MessageDTO des erreurs (si l'agent n'est pas opérateur ou que l'agent du filtre n'est pas un agent de l'operateur)
 +-------------------------+

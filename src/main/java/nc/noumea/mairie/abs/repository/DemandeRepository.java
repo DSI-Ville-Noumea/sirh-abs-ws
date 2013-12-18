@@ -31,10 +31,14 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public List<Demande> listeDemandesAgent(Integer idAgentConnecte, Date fromDate, Date toDate, Integer idRefType) {
+	public List<Demande> listeDemandesAgent(Integer idAgent, Date fromDate, Date toDate, Integer idRefType) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
-		sb.append("where d.idAgent = :idAgent ");
+		sb.append("where 1=1 ");
+
+		if (idAgent != null) {
+			sb.append("and d.idAgent = :idAgent ");
+		}
 
 		if (idRefType != null) {
 			sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
@@ -51,7 +55,10 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("order by d.idDemande desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
-		query.setParameter("idAgent", idAgentConnecte);
+
+		if (idAgent != null) {
+			query.setParameter("idAgent", idAgent);
+		}
 
 		if (idRefType != null) {
 			query.setParameter("idRefTypeAbsence", idRefType);
@@ -83,7 +90,7 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@Override
 	public List<RefEtat> findRefEtatEnCours() {
-		List<RefEtat> res = new ArrayList<RefEtat>();	
+		List<RefEtat> res = new ArrayList<RefEtat>();
 		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.SAISIE.getCodeEtat())));
 		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())));
 		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())));
