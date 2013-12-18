@@ -191,6 +191,9 @@ public class AbsenceServiceTest {
 
 		// Given
 		Integer idAgent = 9005138;
+		RefEtat etatPris = new RefEtat();
+		etatPris.setIdRefEtat(6);
+		etatPris.setLabel("PRISE");
 
 		List<RefEtat> refEtatNonPris = new ArrayList<RefEtat>();
 		RefEtat etatProvisoire = new RefEtat();
@@ -213,7 +216,7 @@ public class AbsenceServiceTest {
 		etat1.setIdEtatDemande(1);
 		EtatDemande etat2 = new EtatDemande();
 		etat2.setDate(new Date());
-		etat2.setEtat(RefEtatEnum.SAISIE);
+		etat2.setEtat(RefEtatEnum.PRISE);
 		etat2.setIdAgent(idAgent);
 		etat2.setIdEtatDemande(2);
 		DemandeRecup d = new DemandeRecup();
@@ -223,6 +226,7 @@ public class AbsenceServiceTest {
 		d.setType(refType);
 		d.setEtatsDemande(Arrays.asList(etat1));
 		d.setDateDebut(new Date());
+		d.setDuree(30);
 		DemandeRecup d2 = new DemandeRecup();
 		etat2.setDemande(d2);
 		d2.setIdDemande(2);
@@ -230,19 +234,27 @@ public class AbsenceServiceTest {
 		d2.setType(refType);
 		d2.setEtatsDemande(Arrays.asList(etat2));
 		d2.setDateDebut(new Date());
+		d2.setDuree(30);
 		listeDemande.add(d);
 		listeDemande.add(d2);
 
+		EntityManager emMock = Mockito.mock(EntityManager.class);
+		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat())).thenReturn(etatSaisie);
+		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PRISE.getCodeEtat())).thenReturn(etatPris);
+
 		IDemandeRepository demRepo = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demRepo.listeDemandesAgent(Mockito.eq(idAgent), Mockito.isA(Date.class), Mockito.isA(Date.class), Mockito.eq(3))).thenReturn(listeDemande);
+		Mockito.when(
+				demRepo.listeDemandesAgent(Mockito.eq(idAgent), Mockito.isA(Date.class), Mockito.isA(Date.class),
+						Mockito.eq(3))).thenReturn(listeDemande);
 		Mockito.when(demRepo.findRefEtatNonPris()).thenReturn(refEtatNonPris);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demRepo);
+		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 
 		// When
 		List<DemandeDto> result = service.getListeDemandesAgent(idAgent, "NON_PRISES", new Date(), new Date(),
-				new Date(), 3, 3);
+				new Date(), null, 3);
 
 		// Then
 		assertEquals(1, result.size());

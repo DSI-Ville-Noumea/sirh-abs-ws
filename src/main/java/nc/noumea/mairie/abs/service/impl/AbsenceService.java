@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.Droit;
@@ -41,6 +44,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private IAbsenceDataConsistencyRules absDataConsistencyRules;
+
+	@PersistenceContext(unitName = "absPersistenceUnit")
+	private EntityManager absEntityManager;
 
 	@Autowired
 	private HelperService helperService;
@@ -261,9 +267,15 @@ public class AbsenceService implements IAbsenceService {
 		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansEtat) {
-				if (etats.contains(RefEtat.findRefEtat(d.getLatestEtatDemande().getEtat().getCodeEtat()))) {
-					DemandeDto dto = new DemandeDto(d);
+				logger.debug("Code etat : " + d.getLatestEtatDemande().getEtat().getCodeEtat());
+				DemandeDto dto = new DemandeDto(d);
+				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
+						.getCodeEtat()))) {
 					listeDemandeDtoEtat.add(dto);
+				} else {
+					if (listeDemandeDtoDateDemande.contains(dto)) {
+						listeDemandeDtoDateDemande.remove(dto);
+					}
 				}
 			}
 		}
