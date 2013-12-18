@@ -240,54 +240,43 @@ public class AbsenceService implements IAbsenceService {
 		return filterDateDemandeAndEtatFromList(listeSansEtat, etats, dateDemande);
 	}
 
-	private List<DemandeDto> filterDateDemandeAndEtatFromList(List<Demande> listeSansEtat, List<RefEtat> etats,
+	private List<DemandeDto> filterDateDemandeAndEtatFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
 			Date dateDemande) {
-		List<DemandeDto> listeDemandeDtoEtat = new ArrayList<DemandeDto>();
-		List<DemandeDto> listeDemandeDtoDateDemande = new ArrayList<DemandeDto>();
+		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
 		if (dateDemande == null && etats == null) {
-			for (Demande d : listeSansEtat) {
+			for (Demande d : listeSansFiltre) {
 				DemandeDto dto = new DemandeDto(d);
-				listeDemandeDtoDateDemande.add(dto);
+				listeDemandeDto.add(dto);
 			}
+			return listeDemandeDto;
 		}
 
 		// ON TRAITE LA DATE DE DEMANDE
 		if (dateDemande != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			String dateDemandeSDF = sdf.format(dateDemande);
-			for (Demande d : listeSansEtat) {
+			for (Demande d : listeSansFiltre) {
 				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
 					DemandeDto dto = new DemandeDto(d);
-					listeDemandeDtoDateDemande.add(dto);
+					listeDemandeDto.add(dto);
 				}
 			}
 		}
 
 		// ON TRAITE L'ETAT
 		if (etats != null) {
-			for (Demande d : listeSansEtat) {
+			for (Demande d : listeSansFiltre) {
 				DemandeDto dto = new DemandeDto(d);
 				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 						.getCodeEtat()))) {
-					listeDemandeDtoEtat.add(dto);
+					if (!listeDemandeDto.contains(dto))
+						listeDemandeDto.add(dto);
 				} else {
-					if (listeDemandeDtoDateDemande.contains(dto)) {
-						listeDemandeDtoDateDemande.remove(dto);
-					}
+					if (listeDemandeDto.contains(dto))
+						listeDemandeDto.remove(dto);
 				}
 			}
-		}
-
-		// on joins les 2 listes
-		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
-		for (DemandeDto dto : listeDemandeDtoDateDemande) {
-			if (!listeDemandeDto.contains(dto))
-				listeDemandeDto.add(dto);
-		}
-		for (DemandeDto dto : listeDemandeDtoEtat) {
-			if (!listeDemandeDto.contains(dto))
-				listeDemandeDto.add(dto);
 		}
 
 		return listeDemandeDto;
