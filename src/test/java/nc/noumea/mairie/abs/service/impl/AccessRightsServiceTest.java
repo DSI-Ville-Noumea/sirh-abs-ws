@@ -30,7 +30,6 @@ import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.AccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
-import nc.noumea.mairie.abs.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -2652,6 +2651,48 @@ public class AccessRightsServiceTest {
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(Droit.class));
 		Mockito.verify(arRepo, Mockito.times(0)).removeEntity(Mockito.isA(Droit.class));
 		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(DroitProfil.class));
+
+	}
+
+	@Test
+	public void getApprobateurOfAgent_1Approbateur() {
+		// Given
+		Integer idAgent = 9005131;
+		Integer idApprobateur = 9005138;
+		final Date d = new Date();
+
+		AgentWithServiceDto dtoAppro = new AgentWithServiceDto();
+		dtoAppro.setIdAgent(idApprobateur);
+		dtoAppro.setNom("TEST");
+
+		DroitsAgent droitAgent = new DroitsAgent();
+		droitAgent.setIdAgent(idAgent);
+		
+		Droit droitAppro = new Droit();
+		droitAppro.setIdAgent(idApprobateur);
+
+		// mock
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getDroitsAgent(idAgent)).thenReturn(droitAgent);
+		Mockito.when(arRepo.getApprobateurOfAgent(droitAgent)).thenReturn(droitAppro);
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentService(idApprobateur, d)).thenReturn(dtoAppro);
+
+		HelperService helpServ = Mockito.mock(HelperService.class);
+		Mockito.when(helpServ.getCurrentDate()).thenReturn(d);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+		ReflectionTestUtils.setField(service, "helperService", helpServ);
+
+		// When
+		AgentWithServiceDto dto = service.getApprobateurOfAgent(idAgent);
+
+		// Then
+		assertEquals("TEST", dto.getNom());
+		assertEquals(idApprobateur, dto.getIdAgent());
 
 	}
 }
