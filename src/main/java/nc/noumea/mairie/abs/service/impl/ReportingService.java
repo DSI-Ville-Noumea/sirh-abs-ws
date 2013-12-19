@@ -88,11 +88,12 @@ public class ReportingService implements IReportingService {
 	}
 
 	@Override
-	public byte[] getDemandeRecuperationReportAsByteArray(Integer idAgent, Integer idDemande) throws Exception {
+	public byte[] getDemandeRecuperationReportAsByteArray(Integer idAgent, Integer idDemande,Integer idTypeDemande) throws Exception {
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("idAgent", String.valueOf(idAgent));
 		map.put("idDemande", String.valueOf(idDemande));
+		map.put("idTypeDemande", String.valueOf(idTypeDemande));
 
 		ClientResponse response = createAndFireRequest(map, "demandeRecup.rptdesign", "PDF");
 
