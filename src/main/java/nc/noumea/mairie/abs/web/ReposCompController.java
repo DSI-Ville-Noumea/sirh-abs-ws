@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/recuperations")
-public class RecuperationController {
+@RequestMapping("/reposcomps")
+public class ReposCompController {
 
-	private Logger logger = LoggerFactory.getLogger(RecuperationController.class);
+	private Logger logger = LoggerFactory.getLogger(ReposCompController.class);
 
 	@Autowired
 	private ICounterService counterService;
@@ -31,15 +31,15 @@ public class RecuperationController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> addRecuperationForAgentAndWeek(@RequestParam("idAgent") Integer idAgent,
+	public ResponseEntity<String> addReposCompForAgentAndWeek(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("dateLundi") @DateTimeFormat(pattern = "YYYYMMdd") Date dateMonday,
 			@RequestParam("minutes") int minutes) {
 
 		logger.debug(
-				"entered GET [recuperations/add] => addRecuperationForAgentAndWeek with parameters idAgent = {}, dateMonday = {} and minutes = {}",
+				"entered GET [reposcomps/add] => addReposCompForAgentAndWeek with parameters idAgent = {}, dateMonday = {} and minutes = {}",
 				idAgent, dateMonday, minutes);
 
-		counterService.addRecuperationToAgent(idAgent, dateMonday, minutes);
+		counterService.addReposCompensateurToAgent(idAgent, dateMonday, minutes);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

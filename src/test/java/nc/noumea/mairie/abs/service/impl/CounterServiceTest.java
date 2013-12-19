@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class RecuperationServiceTest {
+public class CounterServiceTest {
 
 	@Test
 	public void addRecuperationToAgent_AgentDoesNotExists_ThrowAgentNotFoundException() {
@@ -31,7 +31,7 @@ public class RecuperationServiceTest {
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(idAgent)).thenReturn(null);
 
-		RecuperationService service = new RecuperationService();
+		CounterService service = new CounterService();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 
 		// When
@@ -57,7 +57,7 @@ public class RecuperationServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(false);
 
-		RecuperationService service = new RecuperationService();
+		CounterService service = new CounterService();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
@@ -89,7 +89,7 @@ public class RecuperationServiceTest {
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 
-		RecuperationService service = new RecuperationService();
+		CounterService service = new CounterService();
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
@@ -125,7 +125,7 @@ public class RecuperationServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 
-		RecuperationService service = new RecuperationService();
+		CounterService service = new CounterService();
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -160,7 +160,7 @@ public class RecuperationServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 
-		RecuperationService service = new RecuperationService();
+		CounterService service = new CounterService();
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
