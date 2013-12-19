@@ -44,4 +44,6 @@ public interface IAccessRightsRepository {
 	DroitsAgent getDroitsAgent(Integer idAgent);
 
 	DroitProfil getDroitProfilApprobateur(Integer idAgentApprobateur);
+
+	Droit getApprobateurOfAgent(DroitsAgent droitAgent);
 }

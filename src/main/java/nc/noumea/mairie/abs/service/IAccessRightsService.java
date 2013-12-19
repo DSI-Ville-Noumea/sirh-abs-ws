@@ -35,4 +35,6 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents);
 
+	AgentWithServiceDto getApprobateurOfAgent(Integer convertedIdAgent);
+
 }

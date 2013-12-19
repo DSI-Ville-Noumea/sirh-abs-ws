@@ -15,6 +15,7 @@ public class DemandeDto {
 	private Integer duree;
 	private Integer idRefEtat;
 	private boolean isEtatDefinitif;
+	private Date dateDemande;
 
 	public DemandeDto() {
 	}
@@ -26,6 +27,7 @@ public class DemandeDto {
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
 		this.dateDebut = d.getDateDebut();
 		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
+		this.dateDemande = d.getLatestEtatDemande().getDate();
 		if (d.getLatestEtatDemande().getEtat().getCodeEtat() == 1) {
 			isEtatDefinitif = true;
 		}
@@ -110,6 +112,14 @@ public class DemandeDto {
 	@Override
 	public boolean equals(Object obj) {
 		return idDemande.equals(((DemandeDto) obj).getIdDemande());
+	}
+
+	public Date getDateDemande() {
+		return dateDemande;
+	}
+
+	public void setDateDemande(Date dateDemande) {
+		this.dateDemande = dateDemande;
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Droit;
@@ -262,4 +263,24 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		return r.get(0);
 	}
 
+	@Override
+	public Droit getApprobateurOfAgent(DroitsAgent droitAgent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d.* from abs_droits_agent da ");
+		sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent ");
+		sb.append("inner join abs_droit_profil dp on dda.id_droit_profil = dp.id_droit_profil ");
+		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
+		sb.append("inner join abs_droit d on d.id_droit = dp.id_droit_approbateur ");
+		sb.append("where da.id_droits_agent = :idDroitAgent ");
+		sb.append("and p.libelle = :libelle ");
+
+		Query q = absEntityManager.createNativeQuery(sb.toString(), Droit.class);
+		q.setParameter("idDroitAgent", droitAgent.getIdDroitsAgent());
+		q.setParameter("libelle", ProfilEnum.APPROBATEUR.toString());
+
+		@SuppressWarnings("unchecked")
+		List<Droit> listeFinale = q.getResultList();
+
+		return listeFinale.size() == 0 ? null : listeFinale.get(0);
+	}
 }

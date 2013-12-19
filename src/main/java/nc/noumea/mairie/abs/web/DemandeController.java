@@ -156,7 +156,9 @@ public class DemandeController {
 
 		DemandeDto demandeDto = absenceService.getDemande(idDemande, idTypeDemande);
 
-		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, agentDto, soldeDto);
+		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(convertedIdAgent);
+
+		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, agentDto, soldeDto, approbateurDto);
 
 		return new ModelAndView("xmlView", "object", dtoFinal);
 	}
@@ -182,8 +184,8 @@ public class DemandeController {
 
 		if (Agent.findAgent(convertedIdAgentInputter) == null)
 			throw new NotFoundException();
-		
-		//ON VERIFIE LES DROITS
+
+		// ON VERIFIE LES DROITS
 		if (idAgentConcerne != null) {
 			ReturnMessageDto srm = new ReturnMessageDto();
 			DemandeDto dto = new DemandeDto();

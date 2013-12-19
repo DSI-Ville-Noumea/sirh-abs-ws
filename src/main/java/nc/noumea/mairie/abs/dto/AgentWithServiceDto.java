@@ -8,6 +8,7 @@ public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJS
 	private String service;
 	private String codeService;
 	private String statut;
+	private String direction;
 
 	public AgentWithServiceDto() {
 
@@ -50,5 +51,13 @@ public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJS
 	@Override
 	public AgentWithServiceDto deserializeFromJSON(String json) {
 		return new JSONDeserializer<AgentWithServiceDto>().deserializeInto(json, this);
+	}
+
+	public String getDirection() {
+		return direction;
+	}
+
+	public void setDirection(String direction) {
+		this.direction = direction;
 	}
 }

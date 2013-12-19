@@ -766,4 +766,13 @@ public class AccessRightsService implements IAccessRightsService {
 
 		return result;
 	}
+
+	@Override
+	public AgentWithServiceDto getApprobateurOfAgent(Integer idAgent) {
+		DroitsAgent droitAgent = accessRightsRepository.getDroitsAgent(idAgent);
+		Droit droitApprobateur = accessRightsRepository.getApprobateurOfAgent(droitAgent);
+		AgentWithServiceDto agentApprobateurDto = sirhWSConsumer.getAgentService(droitApprobateur.getIdAgent(),
+				helperService.getCurrentDate());
+		return agentApprobateurDto;
+	}
 }
