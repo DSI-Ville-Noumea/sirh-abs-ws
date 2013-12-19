@@ -15,6 +15,8 @@
       	<class>nc.noumea.mairie.abs.domain.Profil</class>
       	<class>nc.noumea.mairie.abs.domain.RefEtat</class>
       	<class>nc.noumea.mairie.abs.domain.RefTypeAbsence</class>
+      	<class>nc.noumea.mairie.abs.domain.AgentReposCompCount</class>
+      	<class>nc.noumea.mairie.abs.domain.AgentWeekReposComp</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

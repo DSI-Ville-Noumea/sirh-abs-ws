@@ -13,15 +13,15 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_AGENT_WEEK_RECUP")
+@RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_AGENT_REPOS_COMP_COUNT")
 @NamedQueries({
-	@NamedQuery(name = "findAgentWeekRecupByIdAgentAndDateMonday", query = "select awr from AgentWeekRecup awr where awr.idAgent = :idAgent and awr.dateMonday = :dateMonday")
+		@NamedQuery(name = "findAgentReposCompCountByIdAgent", query = "select arc from AgentReposCompCount arc where arc.idAgent = :idAgent")
 })
-public class AgentWeekRecup extends BaseAgentWeekHisto {
-
+public class AgentReposCompCount extends BaseAgentCount {
+	
 	@Id
-	@Column(name = "ID_AGENT_WEEK_RECUP")
+	@Column(name = "ID_AGENT_REPOS_COMP_COUNT")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idAgentWeekRecup;
-
+	private Integer idAgentReposCompCount;
+	
 }

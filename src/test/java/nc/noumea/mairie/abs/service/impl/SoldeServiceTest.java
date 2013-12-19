@@ -3,7 +3,7 @@ package nc.noumea.mairie.abs.service.impl;
 import static org.junit.Assert.assertEquals;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.dto.SoldeDto;
-import nc.noumea.mairie.abs.repository.IRecuperationRepository;
+import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.domain.SpSold;
 
@@ -19,14 +19,14 @@ public class SoldeServiceTest {
 		// Given
 		Integer idAgent = 9008765;
 
-		IRecuperationRepository rr = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(null);
+		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(null);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(null);
 
 		SoldeService service = new SoldeService();
-		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
+		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 
 		// When
@@ -54,14 +54,14 @@ public class SoldeServiceTest {
 		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
 		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
 
-		IRecuperationRepository rr = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(arc);
+		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
 
 		SoldeService service = new SoldeService();
-		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
+		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 
 		// When

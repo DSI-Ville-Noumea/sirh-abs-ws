@@ -43,7 +43,7 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, DemandeRecup demande) {
 
 		// on recupere le solde de l agent
-		AgentRecupCount soldeRecup = recuperationRepository.getAgentRecupCount(demande.getIdAgent());
+		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent());
 
 		Integer sommeDemandeEnCours = recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande
 				.getIdAgent());

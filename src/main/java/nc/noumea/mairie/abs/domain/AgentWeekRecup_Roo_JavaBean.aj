@@ -3,7 +3,6 @@
 
 package nc.noumea.mairie.abs.domain;
 
-import java.util.Date;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 
 privileged aspect AgentWeekRecup_Roo_JavaBean {
@@ -14,38 +13,6 @@ privileged aspect AgentWeekRecup_Roo_JavaBean {
     
     public void AgentWeekRecup.setIdAgentWeekRecup(Integer idAgentWeekRecup) {
         this.idAgentWeekRecup = idAgentWeekRecup;
-    }
-    
-    public Integer AgentWeekRecup.getIdAgent() {
-        return this.idAgent;
-    }
-    
-    public void AgentWeekRecup.setIdAgent(Integer idAgent) {
-        this.idAgent = idAgent;
-    }
-    
-    public int AgentWeekRecup.getMinutesRecup() {
-        return this.minutesRecup;
-    }
-    
-    public void AgentWeekRecup.setMinutesRecup(int minutesRecup) {
-        this.minutesRecup = minutesRecup;
-    }
-    
-    public Date AgentWeekRecup.getDateMonday() {
-        return this.dateMonday;
-    }
-    
-    public void AgentWeekRecup.setDateMonday(Date dateMonday) {
-        this.dateMonday = dateMonday;
-    }
-    
-    public Date AgentWeekRecup.getLastModification() {
-        return this.lastModification;
-    }
-    
-    public void AgentWeekRecup.setLastModification(Date lastModification) {
-        this.lastModification = lastModification;
     }
     
 }

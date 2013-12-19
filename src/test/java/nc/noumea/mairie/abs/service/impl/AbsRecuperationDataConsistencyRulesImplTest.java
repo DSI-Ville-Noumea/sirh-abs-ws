@@ -13,13 +13,13 @@ import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.sirh.domain.Agent;
 
-import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -92,12 +92,15 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		AgentRecupCount soldeRecup = new AgentRecupCount();
 		soldeRecup.setTotalMinutes(50);
 		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent())).thenReturn(soldeRecup);
+		
 		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(recuperationRepository.getAgentRecupCount(demande.getIdAgent())).thenReturn(soldeRecup);
 		Mockito.when(recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande.getIdAgent())).thenReturn(10);
 				
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		
 		srm = impl.checkDepassementDroitsAcquis(srm, demande);
 		
@@ -115,12 +118,15 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		AgentRecupCount soldeRecup = new AgentRecupCount();
 		soldeRecup.setTotalMinutes(50);
 		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent())).thenReturn(soldeRecup);
+		
 		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(recuperationRepository.getAgentRecupCount(demande.getIdAgent())).thenReturn(soldeRecup);
 		Mockito.when(recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande.getIdAgent())).thenReturn(10);
 				
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		
 		srm = impl.checkDepassementDroitsAcquis(srm, demande);
 		

@@ -7,7 +7,7 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
-import nc.noumea.mairie.abs.repository.IRecuperationRepository;
+import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.NotAMondayException;
@@ -81,16 +81,16 @@ public class RecuperationServiceTest {
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
 
-		IRecuperationRepository rr = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(rr.getWeekRecupForAgentAndDate(idAgent, dateMonday)).thenReturn(null);
-		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(null);
+		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(rr.getWeekHistoForAgentAndDate(AgentWeekRecup.class, idAgent, dateMonday)).thenReturn(null);
+		Mockito.when(rr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(null);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 
 		RecuperationService service = new RecuperationService();
-		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
+		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 
@@ -115,18 +115,18 @@ public class RecuperationServiceTest {
 		Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
 
 		AgentWeekRecup awr = new AgentWeekRecup();
-		awr.setMinutesRecup(80);
-		IRecuperationRepository rr = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(rr.getWeekRecupForAgentAndDate(idAgent, dateMonday)).thenReturn(awr);
+		awr.setMinutes(80);
+		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(rr.getWeekHistoForAgentAndDate(AgentWeekRecup.class, idAgent, dateMonday)).thenReturn(awr);
 		AgentRecupCount arc = new AgentRecupCount();
 		arc.setTotalMinutes(10);
-		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(arc);
+		Mockito.when(rr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 
 		RecuperationService service = new RecuperationService();
-		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
+		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
@@ -136,7 +136,7 @@ public class RecuperationServiceTest {
 		// Then
 		assertEquals(20, result);
 		assertEquals(20, (int) arc.getTotalMinutes());
-		assertEquals(90, (int) awr.getMinutesRecup());
+		assertEquals(90, (int) awr.getMinutes());
 	}
 
 	@Test
@@ -150,18 +150,18 @@ public class RecuperationServiceTest {
 		Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
 
 		AgentWeekRecup awr = new AgentWeekRecup();
-		awr.setMinutesRecup(80);
-		IRecuperationRepository rr = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(rr.getWeekRecupForAgentAndDate(idAgent, dateMonday)).thenReturn(awr);
+		awr.setMinutes(80);
+		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(rr.getWeekHistoForAgentAndDate(AgentWeekRecup.class, idAgent, dateMonday)).thenReturn(awr);
 		AgentRecupCount arc = new AgentRecupCount();
 		arc.setTotalMinutes(10);
-		Mockito.when(rr.getAgentRecupCount(idAgent)).thenReturn(arc);
+		Mockito.when(rr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 
 		RecuperationService service = new RecuperationService();
-		ReflectionTestUtils.setField(service, "recuperationRepository", rr);
+		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
@@ -171,6 +171,6 @@ public class RecuperationServiceTest {
 		// Then
 		assertEquals(0, result);
 		assertEquals(0, (int) arc.getTotalMinutes());
-		assertEquals(70, (int) awr.getMinutesRecup());
+		assertEquals(70, (int) awr.getMinutes());
 	}
 }

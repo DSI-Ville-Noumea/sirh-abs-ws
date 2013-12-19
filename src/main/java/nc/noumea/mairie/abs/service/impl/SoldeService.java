@@ -2,7 +2,7 @@ package nc.noumea.mairie.abs.service.impl;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.dto.SoldeDto;
-import nc.noumea.mairie.abs.repository.IRecuperationRepository;
+import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.domain.SpSold;
@@ -21,7 +21,7 @@ public class SoldeService implements ISoldeService {
 	private ISirhRepository sirhRepository;
 
 	@Autowired
-	private IRecuperationRepository recuperationRepository;
+	private ICounterRepository counterRepository;
 
 	@Override
 	public SoldeDto getAgentSolde(Integer idAgent) {
@@ -29,7 +29,7 @@ public class SoldeService implements ISoldeService {
 		SpSold soldeConge = sirhRepository.getSpsold(idAgent);
 
 		// on traite les recup
-		AgentRecupCount soldeRecup = recuperationRepository.getAgentRecupCount(idAgent);
+		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, idAgent);
 
 		// on alimente le DTO
 		SoldeDto dto = new SoldeDto();

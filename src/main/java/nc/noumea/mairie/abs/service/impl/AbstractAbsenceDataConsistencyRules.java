@@ -7,6 +7,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
@@ -26,6 +27,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Autowired
 	protected IRecuperationRepository recuperationRepository;
+	
+	@Autowired
+	protected ICounterRepository counterRepository;
 
 	@Autowired
 	protected ISirhRepository sirhRepository;

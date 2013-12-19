@@ -3,7 +3,6 @@
 
 package nc.noumea.mairie.abs.domain;
 
-import java.util.Date;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 
 privileged aspect AgentRecupCount_Roo_JavaBean {
@@ -14,30 +13,6 @@ privileged aspect AgentRecupCount_Roo_JavaBean {
     
     public void AgentRecupCount.setIdAgentRecupCount(Integer idAgentRecupCount) {
         this.idAgentRecupCount = idAgentRecupCount;
-    }
-    
-    public Integer AgentRecupCount.getIdAgent() {
-        return this.idAgent;
-    }
-    
-    public void AgentRecupCount.setIdAgent(Integer idAgent) {
-        this.idAgent = idAgent;
-    }
-    
-    public int AgentRecupCount.getTotalMinutes() {
-        return this.totalMinutes;
-    }
-    
-    public void AgentRecupCount.setTotalMinutes(int totalMinutes) {
-        this.totalMinutes = totalMinutes;
-    }
-    
-    public Date AgentRecupCount.getLastModification() {
-        return this.lastModification;
-    }
-    
-    public void AgentRecupCount.setLastModification(Date lastModification) {
-        this.lastModification = lastModification;
     }
     
 }

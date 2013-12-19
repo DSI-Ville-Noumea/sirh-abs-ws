@@ -4,8 +4,7 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
-import nc.noumea.mairie.abs.dto.SoldeDto;
-import nc.noumea.mairie.abs.repository.IRecuperationRepository;
+import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.IRecuperationService;
@@ -22,7 +21,7 @@ public class RecuperationService implements IRecuperationService {
 	private Logger logger = LoggerFactory.getLogger(RecuperationService.class);
 
 	@Autowired
-	private IRecuperationRepository recuperationRepository;
+	private ICounterRepository counterRepository;
 
 	@Autowired
 	private ISirhRepository sirhRepository;
@@ -44,7 +43,7 @@ public class RecuperationService implements IRecuperationService {
 			throw new NotAMondayException();
 		}
 
-		AgentWeekRecup awr = recuperationRepository.getWeekRecupForAgentAndDate(idAgent, dateMonday);
+		AgentWeekRecup awr = counterRepository.getWeekHistoForAgentAndDate(AgentWeekRecup.class, idAgent, dateMonday);
 
 		if (awr == null) {
 			awr = new AgentWeekRecup();
@@ -52,11 +51,11 @@ public class RecuperationService implements IRecuperationService {
 			awr.setDateMonday(dateMonday);
 		}
 
-		int minutesBeforeUpdate = awr.getMinutesRecup();
-		awr.setMinutesRecup(minutes);
+		int minutesBeforeUpdate = awr.getMinutes();
+		awr.setMinutes(minutes);
 		awr.setLastModification(helperService.getCurrentDate());
 
-		AgentRecupCount arc = recuperationRepository.getAgentRecupCount(idAgent);
+		AgentRecupCount arc = counterRepository.getAgentCounter(AgentRecupCount.class, idAgent);
 
 		if (arc == null) {
 			arc = new AgentRecupCount();
@@ -67,10 +66,10 @@ public class RecuperationService implements IRecuperationService {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		if (awr.getIdAgentWeekRecup() == null)
-			recuperationRepository.persistEntity(awr);
+			counterRepository.persistEntity(awr);
 
 		if (arc.getIdAgentRecupCount() == null)
-			recuperationRepository.persistEntity(arc);
+			counterRepository.persistEntity(arc);
 
 		return arc.getTotalMinutes();
 	}
