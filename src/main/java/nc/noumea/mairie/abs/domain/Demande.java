@@ -54,26 +54,34 @@ public class Demande {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
 
-	@OneToMany(mappedBy = "demande", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "demande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL) 
 	@OrderBy("idEtatDemande desc")
 	private List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
 
 	@Transient
 	public EtatDemande getLatestEtatDemande() {
-		return etatsDemande.iterator().next();
+		if(!etatsDemande.isEmpty()) {
+			return etatsDemande.iterator().next();
+		}
+		return null;
+	}
+	
+	@Transient
+	public void addEtatDemande(EtatDemande etatDemande) {
+		etatDemande.setDemande(this);
+		this.getEtatsDemande().add(etatDemande);
 	}
 
 	public Demande(){ 
 	}
 			
-	public Demande(Integer idDemande, Integer idAgent, RefTypeAbsence type,
-			Date dateDebut, Date dateFin, List<EtatDemande> etatsDemande) {
+	public Demande(Demande demande) {
 		super();
-		this.idDemande = idDemande;
-		this.idAgent = idAgent;
-		this.type = type;
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
-		this.etatsDemande = etatsDemande;
+		this.idDemande = demande.getIdDemande();
+		this.idAgent = demande.getIdAgent();
+		this.type = demande.getType();
+		this.dateDebut = demande.getDateDebut();
+		this.dateFin = demande.getDateFin();
+		this.etatsDemande = demande.getEtatsDemande();
 	}
 }

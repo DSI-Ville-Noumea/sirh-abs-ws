@@ -9,6 +9,8 @@ import nc.noumea.mairie.abs.domain.RefEtat;
 public interface IDemandeRepository {
 
 	void persistEntity(Object obj);
+	
+	void mergeEntity(Object obj);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
 

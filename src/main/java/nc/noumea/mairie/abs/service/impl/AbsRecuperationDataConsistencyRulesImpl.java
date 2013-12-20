@@ -10,27 +10,28 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("AbsRecuperationDataConsistencyRulesImpl")
 public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
-
+	
 	/**
 	 * Processes the data consistency of a set of Pointages being input by a
 	 * user. It will check the different business rules in order to make sure
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemandeRecup(ReturnMessageDto srm, Integer idAgent, Demande demande,
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
 			Date dateLundi) {
 		checkEtatDemandeIsProvisoireOuSaisie(srm, demande);
-		checkDepassementDroitsAcquis(srm, (DemandeRecup) demande);
+		checkDepassementDroitsAcquis(srm, demande);
 		
-		super.processDataConsistencyDemandeRecup(srm, idAgent, demande, dateLundi);
+		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
 	}
 
 	@Override
 	public ReturnMessageDto checkEtatDemandeIsProvisoireOuSaisie(ReturnMessageDto srm, Demande demande) {
 
-		if (!RefEtatEnum.PROVISOIRE.equals(demande.getLatestEtatDemande().getEtat())
+		if (null != demande.getLatestEtatDemande()
+				&& !RefEtatEnum.PROVISOIRE.equals(demande.getLatestEtatDemande().getEtat())
 				&& !RefEtatEnum.SAISIE.equals(demande.getLatestEtatDemande().getEtat())) {
 			logger.warn(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
 			srm.getErrors().add(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
@@ -40,15 +41,16 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 	}
 
 	@Override
-	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, DemandeRecup demande) {
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
 
 		// on recupere le solde de l agent
 		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent());
 
 		Integer sommeDemandeEnCours = recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande
 				.getIdAgent());
-
-		if (soldeRecup.getTotalMinutes() - sommeDemandeEnCours - demande.getDuree() < 0) {
+		
+		if (null == soldeRecup ||
+				soldeRecup.getTotalMinutes() - sommeDemandeEnCours - ((DemandeRecup)demande).getDuree() < 0) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 			srm.getErrors().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 		}

@@ -27,6 +27,6 @@ public class DemandeRecup extends Demande {
 	}
 			
 	public DemandeRecup(Demande demande) {
-		super(demande.getIdDemande(), demande.getIdAgent(), demande.getType(), demande.getDateDebut(), demande.getDateFin(), demande.getEtatsDemande());
+		super(demande);
 	}
 }

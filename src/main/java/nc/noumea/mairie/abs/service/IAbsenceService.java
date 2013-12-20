@@ -16,7 +16,7 @@ public interface IAbsenceService {
 
 	ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto);
 
-	DemandeDto getDemande(Integer idDemande, Integer idTypeDemande);
+	DemandeDto getDemandeDto(Integer idDemande, Integer idTypeDemande);
 
 	List<DemandeDto> getListeDemandes(Integer idAgentConnecte, String ongletDemande, Date fromDate, Date toDate,
 			Date dateDemande, Integer idRefEtat, Integer idRefType);

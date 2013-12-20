@@ -36,8 +36,8 @@ public class EtatDemande {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 	
-	@ManyToOne()
-	@JoinColumn(name = "ID_DEMANDE", referencedColumnName = "ID_DEMANDE")
+	@ManyToOne
+	@JoinColumn(name = "ID_DEMANDE", referencedColumnName = "ID_DEMANDE", updatable = true, insertable = true)
 	private Demande demande;
 	
 	@NotNull

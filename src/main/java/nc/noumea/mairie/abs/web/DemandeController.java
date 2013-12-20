@@ -94,7 +94,7 @@ public class DemandeController {
 				"entered GET [demandes/demande] => getDemandeAbsence for Kiosque with parameters idAgent = {} and idDemande = {}",
 				idAgent, idDemande);
 
-		DemandeDto result = absenceService.getDemande(idDemande, idTypeDemande);
+		DemandeDto result = absenceService.getDemandeDto(idDemande, idTypeDemande);
 
 		if (null == result)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
@@ -154,7 +154,7 @@ public class DemandeController {
 
 		AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(convertedIdAgent, helperService.getCurrentDate());
 
-		DemandeDto demandeDto = absenceService.getDemande(idDemande, idTypeDemande);
+		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande, idTypeDemande);
 
 		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(convertedIdAgent);
 

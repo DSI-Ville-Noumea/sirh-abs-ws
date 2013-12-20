@@ -18,9 +18,7 @@ import nc.noumea.mairie.sirh.domain.Agent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
 public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDataConsistencyRules {
 	
 	protected Logger logger = LoggerFactory.getLogger(AbstractAbsenceDataConsistencyRules.class);
@@ -48,14 +46,18 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
 
+	
+	
+	
 	/**
 	 * Processes the data consistency of a set of Pointages being input by a
 	 * user. It will check the different business rules in order to make sure
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemandeRecup(ReturnMessageDto srm, Integer idAgent, Demande demande,
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
 			Date dateLundi) {
+	
 		checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 		checkAgentInactivity(srm, idAgent, dateLundi);
 	}
@@ -67,7 +69,11 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		
 		for(Demande demandeExistante : listDemande) {
 			
-			if(!RefEtatEnum.REFUSEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
+			if( (null == demande.getIdDemande()
+					|| (null != demande.getIdDemande()
+						&& !demandeExistante.getIdDemande().equals(demande.getIdDemande())) )
+					&& null != demandeExistante.getLatestEtatDemande()
+					&& !RefEtatEnum.REFUSEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
 					&& !RefEtatEnum.PROVISOIRE.equals(demandeExistante.getLatestEtatDemande().getEtat())){
 				
 				// date de debut couverte par une autre demande

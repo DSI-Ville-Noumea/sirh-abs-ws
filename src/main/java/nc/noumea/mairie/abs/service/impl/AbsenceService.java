@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Demande;
@@ -29,6 +30,7 @@ import nc.noumea.mairie.abs.service.IAbsenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,7 +45,8 @@ public class AbsenceService implements IAbsenceService {
 	private IAccessRightsRepository accessRightsRepository;
 
 	@Autowired
-	private IAbsenceDataConsistencyRules absDataConsistencyRules;
+	@Qualifier("AbsRecuperationDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absRecupDataConsistencyRules;
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
@@ -76,33 +79,17 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto) {
 
+		absEntityManager.setFlushMode(FlushModeType.COMMIT);
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		// verification des droits
 		if (!verifAccessRightDemande(idAgent, demandeDto, returnDto))
 			return returnDto;
 
-		Demande demande = demandeRepository.getEntity(Demande.class, demandeDto.getIdDemande());
-
+		Demande demande = null;
+		IAbsenceDataConsistencyRules rules = null;
 		Date dateJour = new Date();
-
-		// on mappe le DTO dans la Demande generique
-		if (null == demande) {
-			demande = new Demande();
-			demande.setEtatsDemande(new ArrayList<EtatDemande>());
-		}
-		demande.setDateDebut(demandeDto.getDateDebut());
-		demande.setIdAgent(demandeDto.getIdAgent());
-		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(demandeDto.getIdTypeDemande());
-		demande.setType(rta);
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setDate(dateJour);
-		etatDemande.setDemande(demande);
-		etatDemande.setIdAgent(idAgent);
-		demande.getEtatsDemande().add(etatDemande);
-
+		
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande
 		// et on effectue les verifications appropriees
@@ -114,11 +101,11 @@ public class AbsenceService implements IAbsenceService {
 				// TODO
 				break;
 			case RECUP:
-				DemandeRecup demandeRecup = new DemandeRecup(demande);
+				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto);
 				demandeRecup.setDuree(demandeDto.getDuree());
-				demandeRecup.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
-				absDataConsistencyRules.processDataConsistencyDemandeRecup(returnDto, idAgent, demandeRecup, dateJour);
-				demande = demandeRecup;
+				demande = mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
+				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA:
 				// TODO
@@ -132,18 +119,56 @@ public class AbsenceService implements IAbsenceService {
 			default:
 				returnDto.getErrors().add(
 						String.format("Le type [%d] de la demande n'est pas reconnu.", demandeDto.getIdTypeDemande()));
+				absEntityManager.clear();
 				return returnDto;
 		}
+		
+		rules.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
+		
+		if (returnDto.getErrors().size() != 0) {
+			absEntityManager.clear();
+			return returnDto;
+		}
+		
+		demandeRepository.mergeEntity(demande);
+		absEntityManager.flush();
+		absEntityManager.clear();
 
+		return returnDto;
+	}
+	
+	protected <T> T getDemande(Class<T> Tclass, DemandeDto demandeDto) {
+		if(null != demandeDto.getIdDemande()) {
+			return demandeRepository.getEntity(Tclass, demandeDto.getIdDemande());
+		}
+		
+		try {
+			return Tclass.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			return null;
+		}
+	}
+	
+	protected Demande mappingDemandeDtoToDemande(DemandeDto demandeDto, Demande demande, Integer idAgent, Date dateJour){
+		
+		// on mappe le DTO dans la Demande generique
+		demande.setDateDebut(demandeDto.getDateDebut());
+		demande.setIdAgent(demandeDto.getIdAgent());
+		RefTypeAbsence rta = new RefTypeAbsence();
+		rta.setIdRefTypeAbsence(demandeDto.getIdTypeDemande());
+		demande.setType(rta);
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setDate(dateJour);
+		etatDemande.setIdAgent(idAgent);
 		if (demandeDto.isEtatDefinitif()) {
 			etatDemande.setEtat(RefEtatEnum.SAISIE);
 		} else {
 			etatDemande.setEtat(RefEtatEnum.PROVISOIRE);
 		}
-
-		demandeRepository.persistEntity(demande);
-
-		return returnDto;
+		demande.addEtatDemande(etatDemande);
+		
+		return demande;
 	}
 
 	@Override
@@ -182,7 +207,7 @@ public class AbsenceService implements IAbsenceService {
 		return res;
 	}
 
-	public DemandeDto getDemande(Integer idDemande, Integer idTypeDemande) {
+	public DemandeDto getDemandeDto(Integer idDemande, Integer idTypeDemande) {
 		DemandeDto demandeDto = null;
 
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
