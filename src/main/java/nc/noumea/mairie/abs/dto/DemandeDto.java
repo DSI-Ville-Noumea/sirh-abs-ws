@@ -16,6 +16,9 @@ public class DemandeDto {
 	private Integer idRefEtat;
 	private boolean isEtatDefinitif;
 	private Date dateDemande;
+	private boolean isDemandeModifer;
+	private boolean isDemandeSupprimer;
+	private boolean isDemandeImprimer;
 
 	public DemandeDto() {
 	}
@@ -28,9 +31,13 @@ public class DemandeDto {
 		this.dateDebut = d.getDateDebut();
 		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
-		if (d.getLatestEtatDemande().getEtat().getCodeEtat() == 1) {
-			isEtatDefinitif = true;
-		}
+		this.isEtatDefinitif = d.getLatestEtatDemande().getEtat().getCodeEtat() == 1;
+
+		this.isDemandeModifer = d.getLatestEtatDemande().getEtat().getCodeEtat() == 0
+				|| d.getLatestEtatDemande().getEtat().getCodeEtat() == 1;
+		this.isDemandeSupprimer = d.getLatestEtatDemande().getEtat().getCodeEtat() == 0
+				|| d.getLatestEtatDemande().getEtat().getCodeEtat() == 1;
+		this.isDemandeImprimer = d.getLatestEtatDemande().getEtat().getCodeEtat() == 4;
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
 			case CONGE_ANNUEL:
 				// TODO
@@ -120,6 +127,30 @@ public class DemandeDto {
 
 	public void setDateDemande(Date dateDemande) {
 		this.dateDemande = dateDemande;
+	}
+
+	public boolean isDemandeModifer() {
+		return isDemandeModifer;
+	}
+
+	public void setDemandeModifer(boolean isDemandeModifer) {
+		this.isDemandeModifer = isDemandeModifer;
+	}
+
+	public boolean isDemandeSupprimer() {
+		return isDemandeSupprimer;
+	}
+
+	public void setDemandeSupprimer(boolean isDemandeSupprimer) {
+		this.isDemandeSupprimer = isDemandeSupprimer;
+	}
+
+	public boolean isDemandeImprimer() {
+		return isDemandeImprimer;
+	}
+
+	public void setDemandeImprimer(boolean isDemandeImprimer) {
+		this.isDemandeImprimer = isDemandeImprimer;
 	}
 
 }
