@@ -41,7 +41,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		
-		srm = impl.checkEtatDemandeIsProvisoireOuSaisie(srm, demande);
+		srm = impl.checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -58,7 +58,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		
-		srm = impl.checkEtatDemandeIsProvisoireOuSaisie(srm, demande);
+		srm = impl.checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -75,7 +75,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		
-		srm = impl.checkEtatDemandeIsProvisoireOuSaisie(srm, demande);
+		srm = impl.checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		
 		assertEquals(1, srm.getErrors().size());
 		assertEquals("La modification de la demande [1] n'est autorisée que si l'état est à Provisoire ou Saisie.", srm.getErrors().get(0).toString());

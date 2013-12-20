@@ -1,11 +1,13 @@
 package nc.noumea.mairie.abs.web;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.EditionDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
@@ -206,6 +208,31 @@ public class DemandeController {
 
 		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
 				.deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/changerEtats", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> setAbsencesEtat(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) String demandeEtatChangeDtoString) {
+
+		logger.debug("entered POST [demandes/changerEtats] => setAbsencesEtat with parameters idAgent = {}",
+				idAgent);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		DemandeEtatChangeDto dto = new JSONDeserializer<DemandeEtatChangeDto>()
+				.use(null, ArrayList.class).use("values", DemandeEtatChangeDto.class)
+				.deserialize(demandeEtatChangeDtoString);
+
+		ReturnMessageDto result = absenceService.setDemandeEtat(convertedIdAgent, dto);
+
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 }

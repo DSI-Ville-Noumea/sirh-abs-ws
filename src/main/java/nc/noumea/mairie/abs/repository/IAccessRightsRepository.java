@@ -46,4 +46,8 @@ public interface IAccessRightsRepository {
 	DroitProfil getDroitProfilApprobateur(Integer idAgentApprobateur);
 
 	Droit getApprobateurOfAgent(DroitsAgent droitAgent);
+	
+	boolean isViseurOfAgent(Integer idAgentViseur, Integer IdAgent);
+	
+	boolean isApprobateurOfAgent(Integer idAgentViseur, Integer IdAgent);
 }

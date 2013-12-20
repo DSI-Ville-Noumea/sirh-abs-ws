@@ -1,6 +1,8 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -21,18 +23,17 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
 			Date dateLundi) {
-		checkEtatDemandeIsProvisoireOuSaisie(srm, demande);
+		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkDepassementDroitsAcquis(srm, demande);
 		
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
 	}
 
 	@Override
-	public ReturnMessageDto checkEtatDemandeIsProvisoireOuSaisie(ReturnMessageDto srm, Demande demande) {
+	public ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande, List<RefEtatEnum> listEtatsAcceptes) {
 
 		if (null != demande.getLatestEtatDemande()
-				&& !RefEtatEnum.PROVISOIRE.equals(demande.getLatestEtatDemande().getEtat())
-				&& !RefEtatEnum.SAISIE.equals(demande.getLatestEtatDemande().getEtat())) {
+				&& !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
 			logger.warn(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
 			srm.getErrors().add(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
 		}

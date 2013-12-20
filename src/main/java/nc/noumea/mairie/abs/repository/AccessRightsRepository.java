@@ -283,4 +283,55 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 		return listeFinale.size() == 0 ? null : listeFinale.get(0);
 	}
+	
+	@Override
+	public boolean isViseurOfAgent(Integer idAgentViseur, Integer IdAgent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d.* from abs_droits_agent da ");
+		sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent ");
+		sb.append("inner join abs_droit_profil dp on dda.id_droit_profil = dp.id_droit_profil ");
+		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
+		sb.append("inner join abs_droit d on d.id_droit = dp.id_droit ");
+		sb.append("where da.id_agent = :idAgent ");
+		sb.append("where d.id_agent = :idAgentViseur ");
+		sb.append("and p.libelle = :libelle ");
+
+		Query q = absEntityManager.createNativeQuery(sb.toString(), Droit.class);
+		q.setParameter("idAgent", IdAgent);
+		q.setParameter("idAgentViseur", idAgentViseur);
+		q.setParameter("libelle", ProfilEnum.VISEUR.toString());
+
+		try {
+			q.getSingleResult();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean isApprobateurOfAgent(Integer idAgentApprobateur, Integer IdAgent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d.* from abs_droits_agent da ");
+		sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent ");
+		sb.append("inner join abs_droit_profil dp on dda.id_droit_profil = dp.id_droit_profil ");
+		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
+		sb.append("inner join abs_droit d on d.id_droit = dp.id_droit ");
+		sb.append("where da.id_agent = :idAgent ");
+		sb.append("where d.id_agent = :idAgentApprobateur ");
+		sb.append("and p.libelle in ( :approbateur, :delegataire ) ");
+
+		Query q = absEntityManager.createNativeQuery(sb.toString(), Droit.class);
+		q.setParameter("idAgent", IdAgent);
+		q.setParameter("idAgentApprobateur", idAgentApprobateur);
+		q.setParameter("approbateur", ProfilEnum.APPROBATEUR.toString());
+		q.setParameter("delegataire", ProfilEnum.DELEGATAIRE.toString());
+		
+		try {
+			q.getSingleResult();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }
