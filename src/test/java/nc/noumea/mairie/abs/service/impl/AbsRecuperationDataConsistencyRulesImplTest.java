@@ -152,10 +152,12 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		EtatDemande etat1 = new EtatDemande();
 		etat1.setEtat(RefEtatEnum.REFUSEE);
 		demandeExist1.getEtatsDemande().add(etat1);
+		demandeExist1.setIdDemande(2);
 		Demande demandeExist2 = new Demande();
 		EtatDemande etat2 = new EtatDemande();
 		etat2.setEtat(RefEtatEnum.PROVISOIRE);
 		demandeExist2.getEtatsDemande().add(etat2);
+		demandeExist2.setIdDemande(3);
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 		
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -191,12 +193,14 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		demandeExist1.getEtatsDemande().add(etat1);
 		demandeExist1.setDateDebut(new LocalDateTime(2013, 9, 1, 14, 0).toDate());
 		demandeExist1.setDateFin(new LocalDateTime(2013, 9, 10, 12, 0).toDate());
+		demandeExist1.setIdDemande(2);
 		Demande demandeExist2 = new Demande();
 		EtatDemande etat2 = new EtatDemande();
 		etat2.setEtat(RefEtatEnum.APPROUVEE);
 		demandeExist2.getEtatsDemande().add(etat2);
 		demandeExist2.setDateDebut(new LocalDateTime(2013, 9, 20, 14, 0).toDate());
 		demandeExist2.setDateFin(new LocalDateTime(2013, 9, 30, 0, 0).toDate());
+		demandeExist2.setIdDemande(3);
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 		
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -232,12 +236,14 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		demandeExist1.getEtatsDemande().add(etat1);
 		demandeExist1.setDateDebut(new LocalDateTime(2013, 9, 1, 14, 0).toDate());
 		demandeExist1.setDateFin(new LocalDateTime(2013, 9, 10, 12, 0).toDate());
+		demandeExist1.setIdDemande(2);
 		Demande demandeExist2 = new Demande();
 		EtatDemande etat2 = new EtatDemande();
 		etat2.setEtat(RefEtatEnum.APPROUVEE);
 		demandeExist2.getEtatsDemande().add(etat2);
 		demandeExist2.setDateDebut(new LocalDateTime(2013, 9, 20, 14, 0).toDate());
 		demandeExist2.setDateFin(new LocalDateTime(2013, 9, 30, 0, 0).toDate());
+		demandeExist2.setIdDemande(3);
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 		
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -274,12 +280,14 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		demandeExist1.getEtatsDemande().add(etat1);
 		demandeExist1.setDateDebut(new LocalDateTime(2013, 9, 1, 14, 0).toDate());
 		demandeExist1.setDateFin(new LocalDateTime(2013, 9, 10, 12, 0).toDate());
+		demandeExist1.setIdDemande(2);
 		Demande demandeExist2 = new Demande();
 		EtatDemande etat2 = new EtatDemande();
 		etat2.setEtat(RefEtatEnum.APPROUVEE);
 		demandeExist2.getEtatsDemande().add(etat2);
 		demandeExist2.setDateDebut(new LocalDateTime(2013, 9, 20, 14, 0).toDate());
 		demandeExist2.setDateFin(new LocalDateTime(2013, 9, 30, 0, 0).toDate());
+		demandeExist2.setIdDemande(3);
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 		
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);

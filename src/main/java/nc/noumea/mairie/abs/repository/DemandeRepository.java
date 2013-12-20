@@ -29,11 +29,6 @@ public class DemandeRepository implements IDemandeRepository {
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
 		return absEntityManager.find(Tclass, Id);
 	}
-
-	@Override
-	public void mergeEntity(Object obj) {
-		absEntityManager.merge(obj);
-	}
 	
 	@Override
 	public List<Demande> listeDemandesAgent(Integer idAgent, Date fromDate, Date toDate, Integer idRefType) {

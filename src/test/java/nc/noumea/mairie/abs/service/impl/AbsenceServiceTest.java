@@ -800,7 +800,7 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.getAgentDroitFetchAgents(idAgent)).thenReturn(droitOperateur);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(null);
+		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, dto.getIdDemande())).thenReturn(new DemandeRecup());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
@@ -842,7 +842,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "absDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absRecupDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "absEntityManager", absEntityManager);
 
 		result = service.saveDemande(idAgent, dto);
@@ -881,7 +881,7 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.getAgentDroitFetchAgents(idAgent)).thenReturn(droitOperateur);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(null);
+		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, dto.getIdDemande())).thenReturn(new DemandeRecup());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
@@ -924,7 +924,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "absDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absRecupDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "absEntityManager", absEntityManager);
 
 		result = service.saveDemande(idAgent, dto);
@@ -1005,7 +1005,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "absDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absRecupDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "absEntityManager", absEntityManager);
 
 		result = service.saveDemande(idAgent, dto);

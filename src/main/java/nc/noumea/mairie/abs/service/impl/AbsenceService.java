@@ -130,7 +130,7 @@ public class AbsenceService implements IAbsenceService {
 			return returnDto;
 		}
 		
-		demandeRepository.mergeEntity(demande);
+		demandeRepository.persistEntity(demande);
 		absEntityManager.flush();
 		absEntityManager.clear();
 
