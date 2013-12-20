@@ -61,9 +61,10 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		service.verifAccessRightDemande(idAgent, dto, returnDto);
+		boolean result = service.verifAccessRightDemande(idAgent, dto, returnDto);
 
 		// Then
+		assertFalse(result);
 		assertEquals(1, returnDto.getErrors().size());
 		assertEquals("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.", returnDto.getErrors().get(0));
 	}
@@ -113,9 +114,10 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		service.verifAccessRightDemande(idAgent, dto, returnDto);
+		boolean result = service.verifAccessRightDemande(idAgent, dto, returnDto);
 
 		// Then
+		assertFalse(result);
 		assertEquals(1, returnDto.getErrors().size());
 		assertEquals("Vous n'êtes pas opérateur de l'agent 9005138. Vous ne pouvez pas saisir de demandes.", returnDto
 				.getErrors().get(0));
@@ -326,6 +328,10 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals("50", result.get(0).getDuree().toString());
+		assertFalse(result.get(0).isDemandeImprimer());
+		assertTrue(result.get(0).isDemandeModifer());
+		assertTrue(result.get(0).isDemandeSupprimer());
+		assertFalse(result.get(0).isEtatDefinitif());
 	}
 
 	@Test
@@ -394,6 +400,10 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals("50", result.get(0).getDuree().toString());
+		assertFalse(result.get(0).isDemandeImprimer());
+		assertTrue(result.get(0).isDemandeModifer());
+		assertTrue(result.get(0).isDemandeSupprimer());
+		assertFalse(result.get(0).isEtatDefinitif());
 	}
 
 	@Test
@@ -462,7 +472,15 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(2, result.size());
 		assertEquals("30", result.get(0).getDuree().toString());
+		assertFalse(result.get(0).isDemandeImprimer());
+		assertTrue(result.get(0).isDemandeModifer());
+		assertTrue(result.get(0).isDemandeSupprimer());
+		assertTrue(result.get(0).isEtatDefinitif());
 		assertEquals("50", result.get(1).getDuree().toString());
+		assertFalse(result.get(1).isDemandeImprimer());
+		assertTrue(result.get(1).isDemandeModifer());
+		assertTrue(result.get(1).isDemandeSupprimer());
+		assertFalse(result.get(1).isEtatDefinitif());
 	}
 
 	@Test
@@ -533,6 +551,10 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals("30", result.get(0).getDuree().toString());
+		assertFalse(result.get(0).isDemandeImprimer());
+		assertTrue(result.get(0).isDemandeModifer());
+		assertTrue(result.get(0).isDemandeSupprimer());
+		assertTrue(result.get(0).isEtatDefinitif());
 	}
 
 	@Test
@@ -604,6 +626,10 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals("30", result.get(0).getDuree().toString());
+		assertFalse(result.get(0).isDemandeImprimer());
+		assertTrue(result.get(0).isDemandeModifer());
+		assertTrue(result.get(0).isDemandeSupprimer());
+		assertTrue(result.get(0).isEtatDefinitif());
 	}
 
 	@Test
@@ -660,6 +686,10 @@ public class AbsenceServiceTest {
 		assertEquals(result.getIdDemande(), idDemande);
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.SAISIE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.RECUP.getValue());
+		assertTrue(result.isEtatDefinitif());
+		assertFalse(result.isDemandeImprimer());
+		assertTrue(result.isDemandeModifer());
+		assertTrue(result.isDemandeSupprimer());
 		assertTrue(result.isEtatDefinitif());
 	}
 
@@ -718,6 +748,9 @@ public class AbsenceServiceTest {
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.APPROUVEE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.RECUP.getValue());
 		assertFalse(result.isEtatDefinitif());
+		assertTrue(result.isDemandeImprimer());
+		assertFalse(result.isDemandeModifer());
+		assertFalse(result.isDemandeSupprimer());
 	}
 
 	@Test

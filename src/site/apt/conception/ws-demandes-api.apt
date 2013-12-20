@@ -29,7 +29,10 @@ SIRH-ABS-WS API et définition des services concernant les demandes d'absences d
 	"dateDebut" : "/Date()/",
     "duree" : 30 (en minutes),
     "idRefEtat" : 0 (0:provisoire, 1:saisie(définitif)),
-    "isEtatDefinitif" : true 
+    "isEtatDefinitif" : true ,
+	"isDemandeModifer": false,
+	"isDemandeSupprimer": false,
+	"isDemandeImprimer": false
 }
 +-------------------------+
 
@@ -68,7 +71,10 @@ HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
   "idDemande": 1,
   "idRefEtat": 0,
   "idTypeDemande": 3,
-  "isEtatDefinitif" : true 
+  "isEtatDefinitif" : true ,
+  "isDemandeModifer": false,
+  "isDemandeSupprimer": false,
+  "isDemandeImprimer": false
 }
 +-------------------------+
 
@@ -117,7 +123,10 @@ HTTP Code 403 : Accès non autorisé
            "idAgent": 9005131,
            "idDemande": 8,
            "idRefEtat": 0,
-           "idTypeDemande": 3
+           "idTypeDemande": 3,
+           "isDemandeModifer": false,
+           "isDemandeSupprimer": false,
+           "isDemandeImprimer": false
        },....
     ]
 +-------------------------+
@@ -166,11 +175,14 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
        {
            "dateDebut": "/Date(1385902800000+1100)/",
            "duree": 30,
-           "etatDefinitif": false,
+           "isEtatDefinitif": false,
            "idAgent": 9005131,
            "idDemande": 8,
            "idRefEtat": 0,
-           "idTypeDemande": 3
+           "idTypeDemande": 3,
+           "isDemandeModifer": false,
+           "isDemandeSupprimer": false,
+           "isDemandeImprimer": false
        },....
     ]
 +-------------------------+
