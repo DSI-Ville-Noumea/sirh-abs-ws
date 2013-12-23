@@ -15,4 +15,5 @@ public interface IAbsenceDataConsistencyRules {
 	ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande);
 	ReturnMessageDto checkDemandeDejaSaisieSurMemePeriode(ReturnMessageDto srm, Demande demande);
 	ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi);
+	ReturnMessageDto checkChampMotifPourEtatDonne(ReturnMessageDto srm, Integer etat, String motif);
 }

@@ -42,7 +42,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Le dépassement des droits acquis n'est pas autorisé.";
 	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
 	public static final String DEMANDE_DEJA_COUVERTE_MSG = "La demande ne peut être couverte totalement ou partiellement par une autre absence.";
-
+	public static final String MOTIF_OBLIGATOIRE = "Le motif est obligatoire pour un avis Refusé.";
+	
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
 
@@ -115,6 +116,19 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			srm.getErrors().add(INACTIVITE_MSG); 
 		}
 
+		return srm;
+	}
+	
+	@Override
+	public ReturnMessageDto checkChampMotifPourEtatDonne(
+			ReturnMessageDto srm, Integer etat, String motif){
+		
+		if( (null == motif || "".equals(motif.trim()))
+				&& etat.equals(RefEtatEnum.REFUSEE.getCodeEtat()) ) {
+			logger.warn(String.format(MOTIF_OBLIGATOIRE));
+			srm.getErrors().add(MOTIF_OBLIGATOIRE);
+		}
+		
 		return srm;
 	}
 

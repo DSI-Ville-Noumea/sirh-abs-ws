@@ -29,6 +29,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -1046,4 +1047,76 @@ public class AbsenceServiceTest {
 		assertEquals(1, result.getErrors().size());
 		Mockito.verify(demandeRepository, Mockito.times(0)).persistEntity(Mockito.isA(Demande.class));
 	}
+	
+	@Test
+	public void setDemandeEtat_EtatIncorrect() {
+
+		Integer idAgent = 9005138;
+		DemandeEtatChangeDto dto1 = new DemandeEtatChangeDto();
+		dto1.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		DemandeEtatChangeDto dto2 = new DemandeEtatChangeDto();
+		dto2.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		DemandeEtatChangeDto dto3 = new DemandeEtatChangeDto();
+		dto3.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		
+		ReturnMessageDto result1 = new ReturnMessageDto();
+		ReturnMessageDto result2 = new ReturnMessageDto();
+		ReturnMessageDto result3 = new ReturnMessageDto();
+		
+		AbsenceService service = new AbsenceService();
+		result1 = service.setDemandeEtat(idAgent, dto1);
+		result2 = service.setDemandeEtat(idAgent, dto2);
+		result3 = service.setDemandeEtat(idAgent, dto3);
+		
+		assertEquals(1, result1.getErrors().size());
+		assertEquals("L'état de la demande envoyé n'est pas correcte.", result1.getErrors().get(0).toString());
+		assertEquals(1, result2.getErrors().size());
+		assertEquals("L'état de la demande envoyé n'est pas correcte.", result2.getErrors().get(0).toString());
+		assertEquals(1, result3.getErrors().size());
+		assertEquals("L'état de la demande envoyé n'est pas correcte.", result3.getErrors().get(0).toString());
+	}
+	
+	@Test
+	public void setDemandeEtat_demandeInexistante() {
+		
+		Integer idAgent = 9005138;
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		dto.setIdDemande(1);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(null);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		result = service.setDemandeEtat(idAgent, dto);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals("La demande n'existe pas.", result.getErrors().get(0).toString());
+	}
+	
+//	@Test
+//	public void setDemandeEtat_setDemandeEtatVisa() {
+//		
+//		Integer idAgent = 9005138;
+//		ReturnMessageDto result = new ReturnMessageDto();
+//		
+//		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+//		dto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+//		dto.setIdDemande(1);
+//		
+//		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+//		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(new Demande());
+//		
+//		AbsenceService service = new AbsenceService();
+//		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+//		
+//		result = service.setDemandeEtat(idAgent, dto);
+//		
+//		assertEquals(1, result.getErrors().size());
+//		assertEquals("La demande n'existe pas.", result.getErrors().get(0).toString());
+//	}
 }

@@ -8,6 +8,7 @@ import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.BaseAgentCount;
 import nc.noumea.mairie.abs.domain.BaseAgentWeekHisto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
@@ -33,6 +34,9 @@ public class CounterService implements ICounterService {
 	@Autowired
 	private HelperService helperService;
 
+	public static final String COMPTEUR_INEXISTANT = "Le compteur de l'agent n'existe pas.";
+	public static final String SOLDE_COMPTEUR_NEGATIF = "Le solde du compteur de l'agent ne peut pas être négatif.";
+	
 	/**
 	 * Mets à jour le compteur de minutes désiré (en fonction des types passés
 	 * en paramètre)
@@ -92,6 +96,10 @@ public class CounterService implements ICounterService {
 		return arc.getTotalMinutes();
 	}
 
+	/**
+	 * appeler par PTG exclusivement
+	 * l historique utilise a pour seul but de rectifier le compteur en cas de modification par l agent dans ses pointages
+	 */
 	@Override
 	public int addRecuperationToAgent(Integer idAgent, Date dateMonday, Integer minutes) {
 
@@ -105,6 +113,11 @@ public class CounterService implements ICounterService {
 		}
 	}
 
+
+	/**
+	 * appeler par PTG exclusivement
+	 * l historique utilise a pour seul but de rectifier le compteur en cas de modification par l agent dans ses pointages
+	 */
 	@Override
 	public int addReposCompensateurToAgent(Integer idAgent, Date dateMonday, Integer minutes) {
 
@@ -119,4 +132,65 @@ public class CounterService implements ICounterService {
 
 	}
 
+	/**
+	 * Mets à jour le compteur de minutes désiré (en fonction des types passés
+	 * en paramètre) sans mettre a jour l historique
+	 * 
+	 * @param T1
+	 *            inherits BaseAgentCount
+	 * @param idAgent
+	 * @param minutes : negatif pour debiter, positif pour crediter
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Class<T1> T1, Integer idAgent, Integer minutes, ReturnMessageDto srm) 
+			throws InstantiationException, IllegalAccessException {
+
+		if (sirhRepository.getAgent(idAgent) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+			throw new AgentNotFoundException();
+		}
+
+		logger.info("updating counters for Agent [{}] with {} minutes...", idAgent, minutes);
+		
+		BaseAgentCount arc = (BaseAgentCount) counterRepository.getAgentCounter(T1, idAgent);
+		
+		if (arc == null) {
+			logger.warn(COMPTEUR_INEXISTANT);
+			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
+			return srm;
+		}
+		
+		// on verifie que le solde est positif seulement si on debite le compteur
+		if(0 > minutes
+				&& 0 > arc.getTotalMinutes() + minutes) {
+			logger.warn(SOLDE_COMPTEUR_NEGATIF);
+			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
+			return srm;
+		}
+		
+		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
+		arc.setLastModification(helperService.getCurrentDate());
+
+		counterRepository.persistEntity(arc);
+
+		return srm;
+	}
+
+	/**
+	 * appeler depuis ABSENCE
+	 * l historique ABS_AGENT_WEEK_... n est pas utilise
+	 */
+	@Override
+	public ReturnMessageDto majCompteurRecupToAgent(ReturnMessageDto srm, Integer idAgent, Integer minutes) {
+
+		logger.info("Trying to update recuperation counters for Agent [{}] with {} minutes...", idAgent, minutes);
+
+		try {
+			return majCompteurToAgent(AgentRecupCount.class, idAgent, minutes, srm);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+		}
+	}
 }

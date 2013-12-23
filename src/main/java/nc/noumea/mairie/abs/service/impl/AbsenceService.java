@@ -28,6 +28,7 @@ import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
+import nc.noumea.mairie.abs.service.ICounterService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private HelperService helperService;
+	
+	@Autowired
+	private ICounterService counterService;
 
 	@Override
 	public List<RefEtatDto> getRefEtats() {
@@ -322,10 +326,10 @@ public class AbsenceService implements IAbsenceService {
 		
 		ReturnMessageDto result = new ReturnMessageDto();
 		
-		if(demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-				&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-				&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
-				&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) {
+		if(!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) {
 			
 			logger.warn("L'état de la demande envoyé n'est pas correcte.");
 			result.getErrors().add(
@@ -356,7 +360,7 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 	
-	private ReturnMessageDto setDemandeEtatVisa(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result) {
+	protected ReturnMessageDto setDemandeEtatVisa(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result) {
 		
 		// on verifie les droits
 		if (!accessRightsRepository.isViseurOfAgent(idAgent, demande.getIdAgent())) {
@@ -374,7 +378,7 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 	
-	private ReturnMessageDto setDemandeEtatApprouve(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result) {
+	protected ReturnMessageDto setDemandeEtatApprouve(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result) {
 		
 		// on verifie les droits
 		if (!accessRightsRepository.isApprobateurOfAgent(idAgent, demande.getIdAgent())) {
@@ -383,11 +387,26 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 		
-		absRecupDataConsistencyRules.checkEtatsDemandeAcceptes(result, demande, 
+		result = absRecupDataConsistencyRules.checkEtatsDemandeAcceptes(result, demande, 
 				Arrays.asList(RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.REFUSEE));
 		
-		//TODO champ motif
-		//TODO COMPTEUR
+		result = absRecupDataConsistencyRules.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotifAvis());
+		
+		int minutes = 0;
+		// si on approuve, le compteur decremente
+		if(RefEtatEnum.APPROUVEE.equals(demandeEtatChangeDto.getIdRefEtat())) {
+			minutes = 0 - ((DemandeRecup)demande).getDuree();
+		}
+		// si on passe de Approuve a Refuse, le compteur incremente
+		if(RefEtatEnum.REFUSEE.equals(demandeEtatChangeDto.getIdRefEtat())
+				&& RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getIdEtatDemande())) {
+			minutes = ((DemandeRecup)demande).getDuree();
+		}
+		
+		result = counterService.majCompteurRecupToAgent(result, idAgent, minutes);
+		
+		// maj de la demande
+		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 		
 		return result;
 	}

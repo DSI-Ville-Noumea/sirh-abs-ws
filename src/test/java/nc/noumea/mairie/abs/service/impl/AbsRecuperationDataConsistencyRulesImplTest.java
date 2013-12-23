@@ -30,7 +30,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class AbsRecuperationDataConsistencyRulesImplTest {
 
 	@Test
-	public void checkEtatDemandeIsProvisoireOuSaisie_isProvisoire() {
+	public void checkEtatsDemandeAcceptes_isProvisoire() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
@@ -47,7 +47,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 	}
 	
 	@Test
-	public void checkEtatDemandeIsProvisoireOuSaisie_isSaisie() {
+	public void checkEtatsDemandeAcceptes_isSaisie() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
@@ -64,7 +64,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 	}
 	
 	@Test
-	public void checkEtatDemandeIsProvisoireOuSaisie_isNotSaisie_Et_NotProvisoire() {
+	public void checkEtatsDemandeAcceptes_isNotSaisie_Et_NotProvisoire() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
@@ -352,5 +352,39 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		
 		assertEquals(1, srm.getErrors().size());
 		assertEquals("L'agent n'est pas en activité sur cette période.", srm.getErrors().get(0).toString());
+	}
+	
+	@Test
+	public void checkChampMotifPourEtatDonne_motifVide() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), "");
+		
+		assertEquals(1, srm.getErrors().size());
+		assertEquals("Le motif est obligatoire pour un avis Refusé.", srm.getErrors().get(0).toString());
+	}
+	
+	@Test
+	public void checkChampMotifPourEtatDonne_Ok_motifSaisi() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), "test");
+		
+		assertEquals(0, srm.getErrors().size());
+	}
+	
+	@Test
+	public void checkChampMotifPourEtatDonne_Ok_motifNonSaisi_EtatApprouve() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), "test");
+		
+		assertEquals(0, srm.getErrors().size());
 	}
 }
