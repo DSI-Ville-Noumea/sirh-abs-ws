@@ -29,7 +29,7 @@
 		<site>
             <id>sirhabsws.website.prod</id>
             <name>SIRH ABS Website Prod</name>
-            <url>file:\\cristal\dsi$\DSI\PROJETS\doxia\SIRH-ABS-WS\</url>
+            <url>file:\\cristal\DSI$\DSI\PROJETS\doxia\${project.name}</url>
         </site>
     </distributionManagement>
     
@@ -323,7 +323,7 @@
                         </resource>
                         <resource>
                             <directory>src/main/webapp</directory>
-                            <targetPath></targetPath>
+                            <targetPath/>
                             <filtering>true</filtering>
                         </resource>
                     </webResources>
