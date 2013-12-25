@@ -963,7 +963,7 @@ public class AccessRightsRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void getApprobateurOfAgent_ReturnResult() {
 		DroitsAgent da = new DroitsAgent();
-		da.setIdDroitsAgent(1);
+//		da.setIdDroitsAgent(1);
 		da.setIdAgent(9005131);
 		da.setCodeService("DCCB");
 		da.setDateModification(new Date());
@@ -997,6 +997,8 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(dpAppr);
 		absEntityManager.persist(dda);
 
+		absEntityManager.flush();
+		
 		// When
 		Droit result = repository.getApprobateurOfAgent(da);
 
