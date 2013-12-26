@@ -57,4 +57,5 @@ privileged aspect EtatDemande_Roo_JavaBean {
     public void EtatDemande.setMotif(String motif) {
         this.motif = motif;
     }
+    
 }
