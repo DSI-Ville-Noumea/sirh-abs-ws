@@ -293,7 +293,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
 		sb.append("inner join abs_droit d on d.id_droit = dp.id_droit ");
 		sb.append("where da.id_agent = :idAgent ");
-		sb.append("where d.id_agent = :idAgentViseur ");
+		sb.append("and d.id_agent = :idAgentViseur ");
 		sb.append("and p.libelle = :libelle ");
 
 		Query q = absEntityManager.createNativeQuery(sb.toString(), Droit.class);
@@ -318,7 +318,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
 		sb.append("inner join abs_droit d on d.id_droit = dp.id_droit ");
 		sb.append("where da.id_agent = :idAgent ");
-		sb.append("where d.id_agent = :idAgentApprobateur ");
+		sb.append("and d.id_agent = :idAgentApprobateur ");
 		sb.append("and p.libelle in ( :approbateur, :delegataire ) ");
 
 		Query q = absEntityManager.createNativeQuery(sb.toString(), Droit.class);

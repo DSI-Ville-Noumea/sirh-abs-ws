@@ -372,6 +372,10 @@ public class AbsenceService implements IAbsenceService {
 		// on verifie l etat de la demande
 		result = absRecupDataConsistencyRules.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE));
 		
+		if(0 < result.getErrors().size()) {
+			return result;
+		}
+		
 		// maj de la demande
 		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 		
@@ -392,18 +396,18 @@ public class AbsenceService implements IAbsenceService {
 		
 		result = absRecupDataConsistencyRules.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotifAvis());
 		
-		int minutes = 0;
-		// si on approuve, le compteur decremente
-		if(RefEtatEnum.APPROUVEE.equals(demandeEtatChangeDto.getIdRefEtat())) {
-			minutes = 0 - ((DemandeRecup)demande).getDuree();
-		}
-		// si on passe de Approuve a Refuse, le compteur incremente
-		if(RefEtatEnum.REFUSEE.equals(demandeEtatChangeDto.getIdRefEtat())
-				&& RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getIdEtatDemande())) {
-			minutes = ((DemandeRecup)demande).getDuree();
+		if(0 < result.getErrors().size()) {
+			return result;
 		}
 		
-		result = counterService.majCompteurRecupToAgent(result, idAgent, minutes);
+		int minutes = calculMinutesCompteur(demandeEtatChangeDto, demande);
+		if(0 != minutes) {
+			result = counterService.majCompteurRecupToAgent(result, idAgent, minutes);
+		}
+		
+		if(0 < result.getErrors().size()) {
+			return result;
+		}
 		
 		// maj de la demande
 		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
@@ -418,5 +422,20 @@ public class AbsenceService implements IAbsenceService {
 		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
 		etatDemande.setIdAgent(idAgent);
 		demande.addEtatDemande(etatDemande);
+	}
+	
+	protected int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
+		int minutes = 0;
+		// si on approuve, le compteur decremente
+		if(demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
+			minutes = 0 - ((DemandeRecup)demande).getDuree();
+		}
+		// si on passe de Approuve a Refuse, le compteur incremente
+		if(demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
+				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
+			minutes = ((DemandeRecup)demande).getDuree();
+		}
+		
+		return minutes;
 	}
 }
