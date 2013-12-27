@@ -197,3 +197,35 @@ HTTP Code 403 : Accès non autorisé
 HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents mairie)
 HTTP Code 409 : CONFLICT --> alors on retourne le MessageDTO des erreurs (si l'agent n'est pas opérateur ou que l'agent du filtre n'est pas un agent de l'operateur)
 +-------------------------+
+
+
+* modifier l'état d'une demande pour le VISA et l'APPROBATION
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /demandes/changerEtats
+ 
+ <<Accepted Methods>> : POST 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la saisie de la demande
+ 
+ <<Content>>
+ 
++-------------------------+
+{
+	"idDemande" : 1 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
+    "idRefEtat" : 0 (VISEE_FAVORABLE(2), VISEE_DEFAVORABLE(3), APPROUVEE(4), REFUSEE(5)),
+	"dateAvis" : "/Date(1368450000000+1100)/",
+	"motifAvis" : "motifs de l'avis"
+}
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
+HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
++-------------------------+
