@@ -1481,6 +1481,7 @@ public class AbsenceServiceTest {
 		etat2.setDemande(demande2);
 		etat2.setEtat(RefEtatEnum.APPROUVEE);
 		demande2.getEtatsDemande().add(etat2);
+		demande2.setIdAgent(9005138);
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -1494,7 +1495,7 @@ public class AbsenceServiceTest {
 				EtatDemande obj = (EtatDemande) args[0];
 
 				assertEquals(RefEtatEnum.PRISE.getCodeEtat(), obj.getEtat().getCodeEtat());
-				assertEquals(9000000, obj.getIdAgent().intValue());
+				assertEquals(9005138, obj.getIdAgent().intValue());
 
 				return true;
 			}

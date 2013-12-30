@@ -471,9 +471,9 @@ public class AbsenceService implements IAbsenceService {
 			EtatDemande epNew = new EtatDemande();
 			epNew.setDemande(demande);
 			epNew.setDate(dateJour);
-			epNew.setMotif("");
+			epNew.setMotif("Mise à jour automatique");
 			epNew.setEtat(RefEtatEnum.getRefEtatEnum(RefEtatEnum.PRISE.getCodeEtat()));
-			epNew.setIdAgent(9000000);
+			epNew.setIdAgent(demande.getIdAgent());
 
 			demandeRepository.persistEntity(epNew);
 			// insert nouvelle ligne EtatAbsence avec nouvel etat
