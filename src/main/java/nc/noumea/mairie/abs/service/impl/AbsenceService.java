@@ -446,11 +446,12 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public ReturnMessageDto setDemandesEtatPris(List<Integer> listIdDemande) {
+	public ReturnMessageDto setDemandesEtatPris(String csvListIdDemande) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		for (Integer idDemande : listIdDemande) {
+		for (String id : csvListIdDemande.split(",")) {
+			Integer idDemande = Integer.valueOf(id);
 			// on cherche la demande
 			Demande demande = getDemande(Demande.class, idDemande);
 			if (null == demande) {

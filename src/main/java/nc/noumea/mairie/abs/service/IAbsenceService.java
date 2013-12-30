@@ -26,5 +26,5 @@ public interface IAbsenceService {
 	
 	ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);
 
-	ReturnMessageDto setDemandesEtatPris(List<Integer> listIdDemande);
+	ReturnMessageDto setDemandesEtatPris(String csvListIdDemande);
 }

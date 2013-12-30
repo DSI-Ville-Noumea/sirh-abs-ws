@@ -237,7 +237,7 @@ public class DemandeController {
 	@ResponseBody
 	@RequestMapping(value = "/etatsPris", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> setAbsencesEtatPris(@RequestParam("listIdDemande") List<Integer> listIdDemande) {
+	public ResponseEntity<String> setAbsencesEtatPris(@RequestParam("listIdDemande") String listIdDemande) {
 
 		logger.debug("entered POST [demandes/etatsPris] => setAbsencesEtatPris with parameters listIdDemande = {}",
 				listIdDemande);
