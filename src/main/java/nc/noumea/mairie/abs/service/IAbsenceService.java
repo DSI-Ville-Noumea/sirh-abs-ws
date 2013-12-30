@@ -25,4 +25,6 @@ public interface IAbsenceService {
 	boolean verifAccessRightDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto);
 	
 	ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);
+
+	ReturnMessageDto setDemandesEtatPris(List<Integer> listIdDemande);
 }

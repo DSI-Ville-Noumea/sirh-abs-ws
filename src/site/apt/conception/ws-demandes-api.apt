@@ -229,3 +229,24 @@ HTTP Code 200 : OK
 HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
 HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
 +-------------------------+
+
+
+* modifier l'état d'une demande pour le PRISE --> utile à SIRH-JOBS
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /demandes/etatsPris
+ 
+ <<Accepted Methods>> : POST 
+ 
+  <<Parameters>>
+ 
+ * <<listIdDemande>> : liste des identifiants des demandes à passer en etat Pris
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
+HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
++-------------------------+
