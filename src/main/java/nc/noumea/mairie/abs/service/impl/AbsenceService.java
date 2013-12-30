@@ -449,6 +449,9 @@ public class AbsenceService implements IAbsenceService {
 	public ReturnMessageDto setDemandesEtatPris(String csvListIdDemande) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
+		if (csvListIdDemande.equals("")) {
+			return result;
+		}
 
 		for (String id : csvListIdDemande.split(",")) {
 			Integer idDemande = Integer.valueOf(id);
@@ -459,9 +462,7 @@ public class AbsenceService implements IAbsenceService {
 				continue;
 			}
 			if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
-				result.getErrors().add(
-						String.format("La demande %s n'est pas à l'état %s.", idDemande,
-								RefEtatEnum.getRefEtatEnum(RefEtatEnum.APPROUVEE.getCodeEtat())));
+				result.getErrors().add(String.format("La demande %s n'est pas à l'état %s.", idDemande, "approuvé"));
 				continue;
 			}
 
@@ -474,8 +475,8 @@ public class AbsenceService implements IAbsenceService {
 			epNew.setEtat(RefEtatEnum.getRefEtatEnum(RefEtatEnum.PRISE.getCodeEtat()));
 			epNew.setIdAgent(9000000);
 
+			demandeRepository.persistEntity(epNew);
 			// insert nouvelle ligne EtatAbsence avec nouvel etat
-			epNew.persist();
 
 		}
 
