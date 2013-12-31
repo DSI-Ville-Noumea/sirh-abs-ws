@@ -78,7 +78,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		srm = impl.checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		
 		assertEquals(1, srm.getErrors().size());
-		assertEquals("La modification de la demande [1] n'est autorisée que si l'état est à Provisoire ou Saisie.", srm.getErrors().get(0).toString());
+		assertEquals("La modification de la demande [1] n'est autorisée que si l'état est à [PROVISOIRE SAISIE ].", srm.getErrors().get(0).toString());
 	}
 	
 	@Test
@@ -96,7 +96,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent())).thenReturn(soldeRecup);
 		
 		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande.getIdAgent())).thenReturn(10);
+		Mockito.when(recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande.getIdAgent(), null)).thenReturn(10);
 				
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "recuperationRepository", recuperationRepository);
@@ -122,7 +122,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent())).thenReturn(soldeRecup);
 		
 		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande.getIdAgent())).thenReturn(10);
+		Mockito.when(recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande.getIdAgent(), null)).thenReturn(10);
 				
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "recuperationRepository", recuperationRepository);

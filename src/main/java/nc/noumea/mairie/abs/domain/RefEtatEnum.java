@@ -1,5 +1,7 @@
 package nc.noumea.mairie.abs.domain;
 
+import java.util.List;
+
 public enum RefEtatEnum {
 
 	PROVISOIRE(0), SAISIE(1), VISEE_FAVORABLE(2), VISEE_DEFAVORABLE(3), APPROUVEE(4), REFUSEE(5), PRISE(6);
@@ -42,5 +44,17 @@ public enum RefEtatEnum {
 			default:
 				return null;
 		}
+	}
+	
+	public static String listToString(List<RefEtatEnum> list) {
+		
+		String result = "";
+		if(null != list) {
+			for(RefEtatEnum e : list) {
+				result += e.name() + " ";
+			}
+		}
+		
+		return result;
 	}
 }

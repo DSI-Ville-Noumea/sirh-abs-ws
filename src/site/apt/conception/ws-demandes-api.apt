@@ -124,9 +124,9 @@ HTTP Code 403 : Accès non autorisé
            "idDemande": 8,
            "idRefEtat": 0,
            "idTypeDemande": 3,
-           "isDemandeModifer": false,
-           "isDemandeSupprimer": false,
-           "isDemandeImprimer": false
+           "demandeModifer": false,
+           "demandeSupprimer": false,
+           "demandeImprimer": false
        },....
     ]
 +-------------------------+
@@ -180,9 +180,9 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
            "idDemande": 8,
            "idRefEtat": 0,
            "idTypeDemande": 3,
-           "isDemandeModifer": false,
-           "isDemandeSupprimer": false,
-           "isDemandeImprimer": false
+           "demandeModifer": false,
+           "demandeSupprimer": false,
+           "demandeImprimer": false
        },....
     ]
 +-------------------------+

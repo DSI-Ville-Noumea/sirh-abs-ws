@@ -49,5 +49,5 @@ public interface IAccessRightsRepository {
 	
 	boolean isViseurOfAgent(Integer idAgentViseur, Integer IdAgent);
 	
-	boolean isApprobateurOfAgent(Integer idAgentViseur, Integer IdAgent);
+	boolean isApprobateurOrDelegataireOfAgent(Integer idAgentApprobateurOrDelegataire, Integer IdAgent);
 }

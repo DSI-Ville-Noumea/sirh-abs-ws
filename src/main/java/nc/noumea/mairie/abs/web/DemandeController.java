@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.web;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -220,9 +219,9 @@ public class DemandeController {
 		logger.debug("entered POST [demandes/changerEtats] => setAbsencesEtat with parameters idAgent = {}", idAgent);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-
-		DemandeEtatChangeDto dto = new JSONDeserializer<DemandeEtatChangeDto>().use(null, ArrayList.class)
-				.use("values", DemandeEtatChangeDto.class).deserialize(demandeEtatChangeDtoString);
+		
+		DemandeEtatChangeDto dto = new JSONDeserializer<DemandeEtatChangeDto>().use(Date.class, new MSDateTransformer()).deserializeInto(
+				demandeEtatChangeDtoString, new DemandeEtatChangeDto());
 
 		ReturnMessageDto result = absenceService.setDemandeEtat(convertedIdAgent, dto);
 

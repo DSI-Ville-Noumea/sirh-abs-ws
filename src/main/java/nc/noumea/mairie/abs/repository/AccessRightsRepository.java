@@ -310,20 +310,27 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 	
 	@Override
-	public boolean isApprobateurOfAgent(Integer idAgentApprobateur, Integer IdAgent) {
+	public boolean isApprobateurOrDelegataireOfAgent(Integer idAgentApprobateurOrDelegataire, Integer IdAgent) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d.* from abs_droits_agent da ");
-		sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent ");
-		sb.append("inner join abs_droit_profil dp on dda.id_droit_profil = dp.id_droit_profil ");
-		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
-		sb.append("inner join abs_droit d on d.id_droit = dp.id_droit ");
-		sb.append("where da.id_agent = :idAgent ");
-		sb.append("and d.id_agent = :idAgentApprobateur ");
-		sb.append("and p.libelle in ( :approbateur, :delegataire ) ");
-
+		
+		sb.append("select d.* from abs_droits_agent da  ");
+		sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent   ");
+		sb.append("inner join abs_droit_profil dp on dda.id_droit_profil = dp.id_droit_profil   ");
+		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil   ");
+		sb.append("inner join abs_droit d on d.id_droit = dp.id_droit   ");
+		sb.append("where da.id_agent = :idAgent  ");
+		sb.append("and p.libelle = :approbateur ");
+		sb.append("and ( d.id_agent = :idAgentApprobateurOrDelegataire  ");
+		sb.append("or d.id_droit in ( ");
+				sb.append("select dp2.id_droit_approbateur from abs_droit d2  ");
+				sb.append("inner join abs_droit_profil dp2 on d2.id_droit = dp2.id_droit  ");
+				sb.append("inner join abs_profil p2 on dp2.id_profil = p2.id_profil  ");
+				sb.append("where d2.id_agent = :idAgentApprobateurOrDelegataire ");
+				sb.append("and p2.libelle = :delegataire ) )  ");
+		
 		Query q = absEntityManager.createNativeQuery(sb.toString(), Droit.class);
 		q.setParameter("idAgent", IdAgent);
-		q.setParameter("idAgentApprobateur", idAgentApprobateur);
+		q.setParameter("idAgentApprobateurOrDelegataire", idAgentApprobateurOrDelegataire);
 		q.setParameter("approbateur", ProfilEnum.APPROBATEUR.toString());
 		q.setParameter("delegataire", ProfilEnum.DELEGATAIRE.toString());
 		

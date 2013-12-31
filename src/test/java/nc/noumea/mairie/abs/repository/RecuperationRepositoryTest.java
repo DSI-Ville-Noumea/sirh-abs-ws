@@ -1,8 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,14 +10,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import nc.noumea.mairie.abs.domain.AgentRecupCount;
-import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
-import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +77,7 @@ public class RecuperationRepositoryTest {
 		absEntityManager.persist(dr2);
 		
 		// When
-		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168);
+		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168, null);
 		
 		// Then
 		assertEquals(result.intValue(), 25);
@@ -133,7 +128,7 @@ public class RecuperationRepositoryTest {
 		absEntityManager.persist(dr2);
 		
 		// When
-		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168);
+		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168, null);
 		
 		// Then
 		assertEquals(result.intValue(), 25);
@@ -184,7 +179,7 @@ public class RecuperationRepositoryTest {
 		absEntityManager.persist(dr2);
 		
 		// When
-		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168);
+		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168, null);
 		
 		// Then
 		assertEquals(result.intValue(), 25);
@@ -252,7 +247,7 @@ public class RecuperationRepositoryTest {
 		absEntityManager.persist(dr3);
 		
 		// When
-		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168);
+		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168, null);
 		
 		// Then
 		assertEquals(result.intValue(), 45);
@@ -337,7 +332,7 @@ public class RecuperationRepositoryTest {
 		absEntityManager.persist(dr4);
 		
 		// When
-		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168);
+		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168, null);
 		
 		// Then
 		assertEquals(result.intValue(), 0);
@@ -386,7 +381,7 @@ public class RecuperationRepositoryTest {
 		absEntityManager.persist(dr1);
 		
 		// When
-		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168);
+		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168, null);
 		
 		// Then
 		assertEquals(result.intValue(), 10);
@@ -435,9 +430,50 @@ public class RecuperationRepositoryTest {
 		absEntityManager.persist(dr1);
 		
 		// When
-		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168);
+		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168, null);
 		
 		// Then
 		assertEquals(result.intValue(), 0);
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getSommeDureeDemandeRecupEnCoursSaisieouVisee_WithSameIdDemande() {
+		
+		Date dateJour = new Date();
+		
+		DemandeRecup dr1 = new DemandeRecup();
+		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
+		
+		EtatDemande et2 = new EtatDemande();
+		et2.setDate(dateJour);
+		et2.setEtat(RefEtatEnum.VISEE_FAVORABLE); 
+		et2.setIdAgent(9005168); 
+		et2.setDemande(dr1);
+		
+		listEtatDemande.addAll(Arrays.asList(et2));
+		
+		RefTypeAbsence rta = new RefTypeAbsence();
+		rta.setIdRefTypeAbsence(3);
+		absEntityManager.persist(rta);
+		// Given
+		
+		dr1.setDateDebut(dateJour);
+		dr1.setDateFin(dateJour);
+		dr1.setDuree(10);
+		dr1.setIdAgent(9005168);
+		dr1.setType(rta);
+		dr1.setEtatsDemande(listEtatDemande);
+		absEntityManager.persist(dr1);
+		
+		// When
+		Integer noResult = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168, dr1.getIdDemande());
+		
+		// When
+		Integer result = repository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(9005168, 10);
+		
+		// Then
+		assertEquals(result.intValue(), 10);
+		assertEquals(noResult.intValue(), 0);
 	}
 }

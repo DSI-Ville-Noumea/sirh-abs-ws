@@ -34,8 +34,8 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 
 		if (null != demande.getLatestEtatDemande()
 				&& !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
-			logger.warn(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
-			srm.getErrors().add(String.format(ETAT_NON_PROVISOIRE_OU_SAISIE_MSG, demande.getIdDemande()));
+			logger.warn(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdDemande(), RefEtatEnum.listToString(listEtatsAcceptes)));
+			srm.getErrors().add(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdDemande(), RefEtatEnum.listToString(listEtatsAcceptes)));
 		}
 
 		return srm;
@@ -47,8 +47,8 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 		// on recupere le solde de l agent
 		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent());
 
-		Integer sommeDemandeEnCours = recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande
-				.getIdAgent());
+		Integer sommeDemandeEnCours = recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(
+				demande.getIdAgent(), demande.getIdDemande());
 		
 		if (null == soldeRecup ||
 				soldeRecup.getTotalMinutes() - sommeDemandeEnCours - ((DemandeRecup)demande).getDuree() < 0) {

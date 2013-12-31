@@ -343,8 +343,15 @@ public class AbsenceService implements IAbsenceService {
 			result.getErrors().add(String.format("La demande n'existe pas."));
 			return result;
 		}
-
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+		
+		if(null != demande.getLatestEtatDemande() 
+				&& demandeEtatChangeDto.getIdRefEtat().equals(demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
+			logger.warn("L'état de la demande est inchangé.");
+			result.getErrors().add(String.format("L'état de la demande est inchangé."));
+			return result;
+		}
+		
+		if(demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())) {
 
 			return setDemandeEtatVisa(idAgent, demandeEtatChangeDto, demande, result);
@@ -388,7 +395,7 @@ public class AbsenceService implements IAbsenceService {
 			Demande demande, ReturnMessageDto result) {
 
 		// on verifie les droits
-		if (!accessRightsRepository.isApprobateurOfAgent(idAgent, demande.getIdAgent())) {
+		if (!accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent())) {
 			logger.warn("L'agent Approbateur n'est pas habilité à approuver la demande de cet agent.");
 			result.getErrors().add(
 					String.format("L'agent Approbateur n'est pas habilité à approuver la demande de cet agent."));
@@ -408,7 +415,7 @@ public class AbsenceService implements IAbsenceService {
 
 		int minutes = calculMinutesCompteur(demandeEtatChangeDto, demande);
 		if (0 != minutes) {
-			result = counterService.majCompteurRecupToAgent(result, idAgent, minutes);
+			result = counterService.majCompteurRecupToAgent(result, demande.getIdAgent(), minutes);
 		}
 
 		if (0 < result.getErrors().size()) {

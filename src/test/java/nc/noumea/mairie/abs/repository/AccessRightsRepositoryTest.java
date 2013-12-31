@@ -1108,7 +1108,7 @@ public class AccessRightsRepositoryTest {
 	
 	@Test
 	@Transactional("absTransactionManager")
-	public void isApprobateurOfAgent_returnFalse() {
+	public void isApprobateurOrDelegataireOfAgent_returnFalse() {
 		
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
@@ -1146,7 +1146,7 @@ public class AccessRightsRepositoryTest {
 
 		absEntityManager.flush();
 		
-		boolean result = repository.isApprobateurOfAgent(9005138, 9005131);
+		boolean result = repository.isApprobateurOrDelegataireOfAgent(9005138, 9005131);
 		
 		assertFalse(result);
 		
@@ -1156,7 +1156,7 @@ public class AccessRightsRepositoryTest {
 	
 	@Test
 	@Transactional("absTransactionManager")
-	public void isApprobateurOfAgent_returnTrue() {
+	public void isApprobateurOrDelegataireOfAgent_returnTrue() {
 		
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
@@ -1194,7 +1194,7 @@ public class AccessRightsRepositoryTest {
 
 		absEntityManager.flush();
 		
-		boolean result = repository.isApprobateurOfAgent(9005138, 9005131);
+		boolean result = repository.isApprobateurOrDelegataireOfAgent(9005138, 9005131);
 		
 		assertTrue(result);
 		
@@ -1204,7 +1204,70 @@ public class AccessRightsRepositoryTest {
 	
 	@Test
 	@Transactional("absTransactionManager")
-	public void isApprobateurOfAgent_isDelegataire_returnTrue() {
+	public void isApprobateurOrDelegataireOfAgent_isDelegataire_returnTrue() {
+		
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005131);
+		da.setCodeService("DCCB");
+		da.setDateModification(new Date());
+		da.setLibelleService("SED");
+
+		Profil profilDelegataire = new Profil();
+		profilDelegataire.setLibelle("DELEGATAIRE");
+		
+		Profil profilApprobateur = new Profil();
+		profilApprobateur.setLibelle("APPROBATEUR");
+
+		Droit droitAppro = new Droit();
+		droitAppro.setDateModification(new Date());
+		droitAppro.setIdAgent(9005138);
+		
+		Droit droitDelegataire = new Droit();
+		droitDelegataire.setDateModification(new Date());
+		droitDelegataire.setIdAgent(9005139);
+
+		DroitProfil dpDelegataire = new DroitProfil();
+		dpDelegataire.setDroit(droitDelegataire);
+		dpDelegataire.setDroitApprobateur(droitAppro);
+		dpDelegataire.setProfil(profilDelegataire);
+
+		DroitProfil dpAppr = new DroitProfil();
+		dpAppr.setDroit(droitAppro);
+		dpAppr.setDroitApprobateur(droitAppro);
+		dpAppr.setProfil(profilApprobateur);
+		
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(droitAppro);
+		dda.setDroitProfil(dpAppr);
+		dda.setDroitsAgent(da);
+
+		da.getDroitDroitsAgent().add(dda);
+		dpAppr.getDroitDroitsAgent().add(dda);
+		droitAppro.getDroitDroitsAgent().add(dda);
+		droitAppro.getDroitProfils().add(dpAppr);
+
+		absEntityManager.persist(da);
+		absEntityManager.persist(profilDelegataire);
+		absEntityManager.persist(profilApprobateur);
+		absEntityManager.persist(droitAppro);
+		absEntityManager.persist(droitDelegataire);
+		absEntityManager.persist(dpDelegataire);
+		absEntityManager.persist(dpAppr);
+		absEntityManager.persist(dda);
+
+		absEntityManager.flush();
+		
+		boolean result = repository.isApprobateurOrDelegataireOfAgent(9005139, 9005131);
+		
+		assertTrue(result);
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void isApprobateurOrDelegataireOfAgent_isDelegataire_returnFalse() {
 		
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
@@ -1247,60 +1310,7 @@ public class AccessRightsRepositoryTest {
 
 		absEntityManager.flush();
 		
-		boolean result = repository.isApprobateurOfAgent(9005139, 9005131);
-		
-		assertTrue(result);
-		
-		absEntityManager.flush();
-		absEntityManager.clear();
-	}
-	
-	@Test
-	@Transactional("absTransactionManager")
-	public void isApprobateurOfAgent_isDelegataire_returnFalse() {
-		
-		DroitsAgent da = new DroitsAgent();
-		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
-		da.setDateModification(new Date());
-		da.setLibelleService("SED");
-
-		Profil pAppro = new Profil();
-		pAppro.setLibelle("DELEGATAIRE");
-
-		Droit droitAppro = new Droit();
-		droitAppro.setDateModification(new Date());
-		droitAppro.setIdAgent(9005138);
-		
-		Droit droitDelegataire = new Droit();
-		droitDelegataire.setDateModification(new Date());
-		droitDelegataire.setIdAgent(9005139);
-
-		DroitProfil dpAppr = new DroitProfil();
-		dpAppr.setDroit(droitDelegataire);
-		dpAppr.setDroitApprobateur(droitAppro);
-		dpAppr.setProfil(pAppro);
-
-		DroitDroitsAgent dda = new DroitDroitsAgent();
-		dda.setDroit(droitAppro);
-		dda.setDroitProfil(dpAppr);
-		dda.setDroitsAgent(da);
-
-		da.getDroitDroitsAgent().add(dda);
-		dpAppr.getDroitDroitsAgent().add(dda);
-		droitAppro.getDroitDroitsAgent().add(dda);
-		droitAppro.getDroitProfils().add(dpAppr);
-
-		absEntityManager.persist(da);
-		absEntityManager.persist(pAppro);
-		absEntityManager.persist(droitAppro);
-		absEntityManager.persist(droitDelegataire);
-		absEntityManager.persist(dpAppr);
-		absEntityManager.persist(dda);
-
-		absEntityManager.flush();
-		
-		boolean result = repository.isApprobateurOfAgent(9005138, 9005131);
+		boolean result = repository.isApprobateurOrDelegataireOfAgent(9005138, 9005131);
 		
 		assertFalse(result);
 		

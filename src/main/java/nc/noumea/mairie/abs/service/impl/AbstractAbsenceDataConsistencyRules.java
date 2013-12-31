@@ -38,7 +38,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Autowired
 	protected IDemandeRepository demandeRepository;
 
-	public static final String ETAT_NON_PROVISOIRE_OU_SAISIE_MSG = "La modification de la demande [%d] n'est autorisée que si l'état est à Provisoire ou Saisie.";
+	public static final String ETAT_NON_AUTORISE_MSG = "La modification de la demande [%d] n'est autorisée que si l'état est à [%s].";
 	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Le dépassement des droits acquis n'est pas autorisé.";
 	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
 	public static final String DEMANDE_DEJA_COUVERTE_MSG = "La demande ne peut être couverte totalement ou partiellement par une autre absence.";
