@@ -329,7 +329,8 @@ public class AbsenceService implements IAbsenceService {
 		if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
 				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
-				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) {
+				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
+				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
 
 			logger.warn("L'état de la demande envoyé n'est pas correcte.");
 			result.getErrors().add(String.format("L'état de la demande envoyé n'est pas correcte."));
@@ -361,6 +362,10 @@ public class AbsenceService implements IAbsenceService {
 				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) {
 
 			return setDemandeEtatApprouve(idAgent, demandeEtatChangeDto, demande, result);
+		}
+		
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+			return setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result);
 		}
 
 		return result;
@@ -427,11 +432,47 @@ public class AbsenceService implements IAbsenceService {
 
 		return result;
 	}
+	
+	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
+			Demande demande, ReturnMessageDto result) {
+
+		// on verifie les droits
+		// verification des droits
+		if(!verifAccessRightDemande(idAgent, demande.getIdAgent(), result))
+			return result;
+
+		result = absRecupDataConsistencyRules.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
+				RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE,
+				RefEtatEnum.REFUSEE));
+
+		if (0 < result.getErrors().size()) {
+			return result;
+		}
+
+		int minutes = calculMinutesCompteur(demandeEtatChangeDto, demande);
+		if (0 != minutes) {
+			result = counterService.majCompteurRecupToAgent(result, demande.getIdAgent(), minutes);
+		}
+
+		if (0 < result.getErrors().size()) {
+			return result;
+		}
+
+		// maj de la demande
+		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+
+		return result;
+	}
 
 	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		EtatDemande etatDemande = new EtatDemande();
 		etatDemande.setDate(demandeEtatChangeDto.getDateAvis());
-		etatDemande.setMotif(demandeEtatChangeDto.getMotifAvis());
+		if(null == demandeEtatChangeDto.getMotifAvis()) {
+			etatDemande.setMotif("");
+		}else{
+			etatDemande.setMotif(demandeEtatChangeDto.getMotifAvis());
+		}
+		
 		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
 		etatDemande.setIdAgent(idAgent);
 		demande.addEtatDemande(etatDemande);
@@ -444,7 +485,8 @@ public class AbsenceService implements IAbsenceService {
 			minutes = 0 - ((DemandeRecup) demande).getDuree();
 		}
 		// si on passe de Approuve a Refuse, le compteur incremente
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
+		if (( demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
+					|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))
 				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
 			minutes = ((DemandeRecup) demande).getDuree();
 		}
