@@ -189,9 +189,7 @@ public class DemandeController {
 		// ON VERIFIE LES DROITS
 		if (idAgentConcerne != null) {
 			ReturnMessageDto srm = new ReturnMessageDto();
-			DemandeDto dto = new DemandeDto();
-			dto.setIdAgent(idAgentConcerne);
-			if (!absenceService.verifAccessRightDemande(convertedIdAgentInputter, dto, srm)) {
+			if (!absenceService.verifAccessRightDemande(convertedIdAgentInputter, idAgentConcerne, srm)) {
 				if (!srm.getErrors().isEmpty()) {
 					String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
 					return new ResponseEntity<>(response, HttpStatus.CONFLICT);
@@ -242,6 +240,29 @@ public class DemandeController {
 				listIdDemande);
 
 		ReturnMessageDto result = absenceService.setDemandesEtatPris(listIdDemande);
+
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/deleteDemande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> supprimerDemande(
+			@RequestParam("idAgent") int idAgent, 
+			@RequestParam("idDemande") int idDemande, 
+			@RequestParam("idTypeDemande") int idTypeDemande) {
+
+		logger.debug("entered GET [demandes/deleteDemande] => supprimerDemande with parameters idAgent = {}, idDemande = {}",
+				idAgent, idDemande);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		ReturnMessageDto result = absenceService.supprimerDemande(convertedIdAgent, idDemande, idTypeDemande);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 

@@ -31,6 +31,11 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 	
 	@Override
+	public void removeEntity(Object obj) {
+		absEntityManager.remove(obj);
+	}
+	
+	@Override
 	public List<Demande> listeDemandesAgent(Integer idAgent, Date fromDate, Date toDate, Integer idRefType) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");

@@ -17,5 +17,7 @@ public interface IDemandeRepository {
 	List<RefEtat> findRefEtatNonPris();
 
 	List<RefEtat> findRefEtatEnCours();
+	
+	void removeEntity(Object obj);
 
 }

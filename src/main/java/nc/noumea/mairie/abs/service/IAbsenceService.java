@@ -22,9 +22,11 @@ public interface IAbsenceService {
 	List<DemandeDto> getListeDemandes(Integer idAgentConnecte, String ongletDemande, Date fromDate, Date toDate,
 			Date dateDemande, Integer idRefEtat, Integer idRefType);
 
-	boolean verifAccessRightDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto);
+	boolean verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto);
 	
 	ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);
 
 	ReturnMessageDto setDemandesEtatPris(String csvListIdDemande);
+	
+	ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande, Integer idTypeDemande);
 }

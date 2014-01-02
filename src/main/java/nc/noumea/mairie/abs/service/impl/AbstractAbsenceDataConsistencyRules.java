@@ -43,6 +43,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
 	public static final String DEMANDE_DEJA_COUVERTE_MSG = "La demande ne peut être couverte totalement ou partiellement par une autre absence.";
 	public static final String MOTIF_OBLIGATOIRE = "Le motif est obligatoire pour un avis Refusé.";
+	public static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
 	
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
@@ -130,6 +131,16 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		}
 		
 		return srm;
+	}
+	
+	@Override
+	public ReturnMessageDto verifDemandeExiste(Demande demande, ReturnMessageDto returnDto) {
+		if (null == demande) {
+			logger.warn(DEMANDE_INEXISTANTE);
+			returnDto.getErrors().add(String.format(DEMANDE_INEXISTANTE));
+			return returnDto;
+		}
+		return returnDto;
 	}
 
 }

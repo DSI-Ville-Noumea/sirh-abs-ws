@@ -387,4 +387,26 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		
 		assertEquals(0, srm.getErrors().size());
 	}
+	
+	@Test
+	public void verifDemandeExiste_demandeExiste() {
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		
+		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
+		srm = impl.verifDemandeExiste(demande, srm);
+		
+		assertEquals(0, srm.getErrors().size());
+	}
+	
+	@Test
+	public void verifDemandeExiste_demandeNotExiste() {
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = null;
+		
+		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
+		srm = impl.verifDemandeExiste(demande, srm);
+		
+		assertEquals(1, srm.getErrors().size());
+	}
 }

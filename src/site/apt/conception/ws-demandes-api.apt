@@ -250,3 +250,28 @@ HTTP Code 200 : OK
 HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
 HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
 +-------------------------+
+
+
+* supprimer dune demande
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /demandes/deleteDemande
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la saisie de la demande
+ 
+ * <<idDemande>> : identifiant de la demande
+ 
+ * <<idTypeDemande>> : type de la demande (RECUP ou REPOS COMP ou ...)
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request
+HTTP Code 409 : CONFLICT
++-------------------------+

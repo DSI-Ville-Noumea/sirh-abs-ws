@@ -89,7 +89,7 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		// verification des droits
-		if (!verifAccessRightDemande(idAgent, demandeDto, returnDto))
+		if (!verifAccessRightDemande(idAgent, demandeDto.getIdAgent(), returnDto))
 			return returnDto;
 
 		Demande demande = null;
@@ -178,18 +178,18 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public boolean verifAccessRightDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto) {
+	public boolean verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
 		boolean res = true;
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits
 		// sur l'agent pour qui il effectue la demande
-		if (!idAgent.equals(demandeDto.getIdAgent())) {
+		if (!idAgent.equals(idAgentOfDemande)) {
 			if (accessRightsRepository.isUserOperateur(idAgent)) {
 
 				// on recherche tous les sous agents de la personne
 				Droit droitOperateur = accessRightsRepository.getAgentDroitFetchAgents(idAgent);
 				boolean trouve = false;
 				for (DroitDroitsAgent dda : droitOperateur.getDroitDroitsAgent()) {
-					if (dda.getDroitsAgent().getIdAgent().equals(demandeDto.getIdAgent())) {
+					if (dda.getDroitsAgent().getIdAgent().equals(idAgentOfDemande)) {
 						trouve = true;
 						break;
 					}
@@ -197,11 +197,11 @@ public class AbsenceService implements IAbsenceService {
 				if (!trouve) {
 					res = false;
 					logger.warn("Vous n'êtes pas opérateur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
-							demandeDto.getIdAgent());
+							idAgentOfDemande);
 					returnDto.getErrors().add(
 							String.format(
 									"Vous n'êtes pas opérateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
-									demandeDto.getIdAgent()));
+									idAgentOfDemande));
 				}
 			} else {
 				res = false;
@@ -489,4 +489,65 @@ public class AbsenceService implements IAbsenceService {
 
 		return result;
 	}
+	
+	@Override
+	public ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande, Integer idTypeDemande) {
+		
+		ReturnMessageDto returnDto = new ReturnMessageDto();
+		
+		Demande demande = null;
+		IAbsenceDataConsistencyRules rules = null;
+		// selon le type de demande, on mappe les donnees specifiques de la demande
+		// et on effectue les verifications appropriees
+		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
+			case CONGE_ANNUEL:
+				// TODO
+				break;
+			case REPOS_COMP:
+				// TODO
+				break;
+			case RECUP:
+				demande = getDemande(DemandeRecup.class, idDemande);
+				rules = absRecupDataConsistencyRules;
+				break;
+			case ASA:
+				// TODO
+				break;
+			case AUTRES:
+				// TODO
+				break;
+			case MALADIES:
+				// TODO
+				break;
+			default:
+				returnDto.getErrors().add(
+						String.format("Le type [%d] de la demande n'est pas reconnu.", idTypeDemande));
+				absEntityManager.clear();
+				return returnDto;
+		}
+
+		// on verifie si la demande existe
+		returnDto = rules.verifDemandeExiste(demande, returnDto);
+		if(0 < returnDto.getErrors().size())
+			return returnDto;
+		
+		// verification des droits
+		if(!verifAccessRightDemande(idAgent, demande.getIdAgent(), returnDto))
+			return returnDto;
+		
+		// verifier l etat de la demande
+		returnDto = rules.checkEtatsDemandeAcceptes(returnDto, demande, Arrays.asList(
+				RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+		
+		if(0 < returnDto.getErrors().size()) {
+			return returnDto;
+		}
+		
+		// suppression
+		demandeRepository.removeEntity(demande);
+		
+		return returnDto;
+	}
+	
+	
 }
