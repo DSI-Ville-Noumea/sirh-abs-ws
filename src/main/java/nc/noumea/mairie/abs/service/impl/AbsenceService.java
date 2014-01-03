@@ -249,7 +249,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, String ongletDemande, Date fromDate, Date toDate,
+	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande, Date fromDate, Date toDate,
 			Date dateDemande, Integer idRefEtat, Integer idRefType) {
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 

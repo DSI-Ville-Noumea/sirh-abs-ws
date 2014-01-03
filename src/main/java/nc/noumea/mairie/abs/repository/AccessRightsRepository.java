@@ -139,6 +139,21 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService) {
+
+		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
+				codeService == null ? "getListOfAgentsToInputOrApproveWithoutProfil" : "getListOfAgentsToInputOrApproveByServiceWithoutProfil",
+				DroitsAgent.class);
+
+		q.setParameter("idAgent", idAgent);
+
+		if (codeService != null)
+			q.setParameter("codeService", codeService);
+
+		return q.getResultList();
+	}
+	
+	@Override
 	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService, Integer idDroitProfil) {
 
 		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
@@ -300,6 +315,31 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		q.setParameter("idAgent", IdAgent);
 		q.setParameter("idAgentViseur", idAgentViseur);
 		q.setParameter("libelle", ProfilEnum.VISEUR.toString());
+
+		try {
+			q.getSingleResult();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean isOperateurOfAgent(Integer idAgentViseur, Integer IdAgent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d.* from abs_droits_agent da ");
+		sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent ");
+		sb.append("inner join abs_droit_profil dp on dda.id_droit_profil = dp.id_droit_profil ");
+		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
+		sb.append("inner join abs_droit d on d.id_droit = dp.id_droit ");
+		sb.append("where da.id_agent = :idAgent ");
+		sb.append("and d.id_agent = :idAgentViseur ");
+		sb.append("and p.libelle = :libelle ");
+
+		Query q = absEntityManager.createNativeQuery(sb.toString(), Droit.class);
+		q.setParameter("idAgent", IdAgent);
+		q.setParameter("idAgentViseur", idAgentViseur);
+		q.setParameter("libelle", ProfilEnum.OPERATEUR.toString());
 
 		try {
 			q.getSingleResult();

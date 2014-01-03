@@ -19,7 +19,7 @@ public interface IAbsenceService {
 
 	DemandeDto getDemandeDto(Integer idDemande, Integer idTypeDemande);
 
-	List<DemandeDto> getListeDemandes(Integer idAgentConnecte, String ongletDemande, Date fromDate, Date toDate,
+	List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande, Date fromDate, Date toDate,
 			Date dateDemande, Integer idRefEtat, Integer idRefType);
 
 	boolean verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto);

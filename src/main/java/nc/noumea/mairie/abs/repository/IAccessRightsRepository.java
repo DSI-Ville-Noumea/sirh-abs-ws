@@ -28,6 +28,8 @@ public interface IAccessRightsRepository {
 	List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur);
 
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService, Integer idDroitProfil);
+	
+	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
 
 	void removeEntity(Object obj);
 
@@ -50,4 +52,7 @@ public interface IAccessRightsRepository {
 	boolean isViseurOfAgent(Integer idAgentViseur, Integer IdAgent);
 	
 	boolean isApprobateurOrDelegataireOfAgent(Integer idAgentApprobateurOrDelegataire, Integer IdAgent);
+	
+	boolean isOperateurOfAgent(Integer idAgentViseur, Integer IdAgent);
+	
 }

@@ -26,6 +26,7 @@ import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.AccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -2693,6 +2694,168 @@ public class AccessRightsServiceTest {
 		// Then
 		assertEquals("TEST", dto.getNom());
 		assertEquals(idApprobateur, dto.getIdAgent());
+	}
+	
+	@Test
+	public void getAgentsToApproveWithoutProfil_NoAgents_ReturnEmptyList() {
 
+		// Given
+		Integer idAgent = 9007654;
+		String codeService = "TEST";
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, codeService)).thenReturn(new ArrayList<DroitsAgent>());
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		// When
+		List<AgentDto> result = service.getAgentsToApproveOrInput(idAgent, codeService);
+		
+		// Then
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getAgentsToApproveWithoutProfil_2Agents_ReturnListOf2() {
+
+		// Given
+		Integer idAgent = 9007654;
+		String codeService = null;
+
+		Agent a1 = new Agent();
+		a1.setIdAgent(1);
+		a1.setNomUsage("NOM TEST 1");
+		a1.setPrenomUsage("PRENOM TEST 1");
+		Agent a2 = new Agent();
+		a2.setIdAgent(2);
+		a2.setNomUsage("NOM TEST 2");
+		a2.setPrenomUsage("PRENOM TEST 2");
+
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(1);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(2);
+
+		Droit d = new Droit();
+		
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(d);
+		dda.setDroitsAgent(da1);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(d);
+		dda2.setDroitsAgent(da2);
+		
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.addAll(Arrays.asList(dda, dda2));
+
+		d.setDroitDroitsAgent(droitDroitsAgent);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
+
+		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		Mockito.when(mRepo.getAgent(1)).thenReturn(a1);
+		Mockito.when(mRepo.getAgent(2)).thenReturn(a2);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+
+		// When
+		List<AgentDto> result = service.getAgentsToApproveOrInput(idAgent, codeService);
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals(result.get(0).getIdAgent(), new Integer(1));
+		assertEquals(result.get(0).getNom(), "NOM TEST 1");
+		assertEquals(result.get(0).getPrenom(), "PRENOM TEST 1");
+		assertEquals(result.get(1).getIdAgent(), new Integer(2));
+		assertEquals(result.get(1).getNom(), "NOM TEST 2");
+		assertEquals(result.get(1).getPrenom(), "PRENOM TEST 2");
+	}
+	
+	@Test
+	public void getAgentsServicesToApproveOrInput_2agents_return2Dtos() {
+	
+		// Given
+		Integer idAgent = 9007654;
+
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(1);
+		da1.setCodeService("SERV 1");
+		da1.setLibelleService("SERVICE 1");
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(2);
+		da2.setCodeService("SERV 2");
+		da2.setLibelleService("SERVICE 2");
+
+		Droit d = new Droit();
+		
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(d);
+		dda.setDroitsAgent(da1);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(d);
+		dda2.setDroitsAgent(da2);
+		
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.addAll(Arrays.asList(dda, dda2));
+
+		d.setDroitDroitsAgent(droitDroitsAgent);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		// When
+		List<ServiceDto> result = service.getAgentsServicesToApproveOrInput(idAgent);
+
+		// Then
+		assertEquals(2, result.size());
+	}
+	
+	@Test
+	public void getAgentsServicesToApproveOrInput_2agentsSameService_return1Dtos() {
+	
+		// Given
+		Integer idAgent = 9007654;
+
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(1);
+		da1.setCodeService("SERV 1");
+		da1.setLibelleService("SERVICE 1");
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(2);
+		da2.setCodeService("SERV 1");
+		da2.setLibelleService("SERVICE 1");
+
+		Droit d = new Droit();
+		
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(d);
+		dda.setDroitsAgent(da1);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(d);
+		dda2.setDroitsAgent(da2);
+		
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.addAll(Arrays.asList(dda, dda2));
+
+		d.setDroitDroitsAgent(droitDroitsAgent);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		// When
+		List<ServiceDto> result = service.getAgentsServicesToApproveOrInput(idAgent);
+
+		// Then
+		assertEquals(1, result.size());
 	}
 }

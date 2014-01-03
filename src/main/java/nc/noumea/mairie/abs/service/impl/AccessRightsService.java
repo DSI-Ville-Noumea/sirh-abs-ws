@@ -18,6 +18,7 @@ import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
@@ -184,7 +185,7 @@ public class AccessRightsService implements IAccessRightsService {
 		return result;
 	}
 
-	private ArrayList<Droit> getOperateursApprobateur(Integer idAgentApprobateur,
+	private ArrayList<Droit> getOperateursOfApprobateur(Integer idAgentApprobateur,
 			List<Droit> droitSousAgentsByApprobateur) {
 		ArrayList<Droit> result = new ArrayList<Droit>();
 		for (Droit droit : droitSousAgentsByApprobateur) {
@@ -248,7 +249,7 @@ public class AccessRightsService implements IAccessRightsService {
 		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgentAppro);
 
 		// on trie la liste des sous agents
-		ArrayList<Droit> originalOperateurs = getOperateursApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
+		ArrayList<Droit> originalOperateurs = getOperateursOfApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
 		DroitProfil delegataire = getDelegataireApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
 
 		// /////////////////// DELEGATAIRE /////////////////////////////////////
@@ -775,4 +776,75 @@ public class AccessRightsService implements IAccessRightsService {
 				helperService.getCurrentDate());
 		return agentApprobateurDto;
 	}
+	
+	@Override
+	public boolean verifAccessRightListDemande(Integer idAgentConnecte, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
+		
+		boolean res = true;
+		
+		// l agent connecte a-t-il les droits de visualiser la liste de demande de l agent
+		if (!idAgentConnecte.equals(idAgentOfDemande)) {
+			
+			if(!accessRightsRepository.isViseurOfAgent(idAgentConnecte, idAgentOfDemande)
+					&& !accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgentConnecte, idAgentOfDemande)
+					&& !accessRightsRepository.isOperateurOfAgent(idAgentConnecte, idAgentOfDemande)) {
+				
+				res = false;
+				logger.warn("Vous n'êtes pas habilité à consulter la liste des demandes de cet agent.");
+				returnDto.getErrors().add(
+						String.format("Vous n'êtes pas habilité à consulter la liste des demandes de cet agent."));
+			}
+		}
+		
+		return res;
+	}
+	
+	/**
+	 * Returns the list of distinct services approved/input agents have
+	 * Used to build the filters (by service)
+	 */
+	@Override
+	public List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
+		
+		List<ServiceDto> result = new ArrayList<ServiceDto>();
+
+		List<String> codeServices = new ArrayList<String>();
+		
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, null)) {
+			
+			if (codeServices.contains(da.getCodeService()))
+				continue;
+			
+			codeServices.add(da.getCodeService());
+			ServiceDto svDto = new ServiceDto();
+			svDto.setCodeService(da.getCodeService());
+			svDto.setService(da.getLibelleService());
+			result.add(svDto);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Retrieves the agent an approbator is set to Approve or an Operator is set
+	 * to Input. This service also filters by service
+	 */
+	@Override
+	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService) {
+
+		List<AgentDto> result = new ArrayList<AgentDto>();
+
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
+			AgentDto agDto = new AgentDto();
+			Agent ag = sirhRepository.getAgent(da.getIdAgent());
+			agDto.setIdAgent(da.getIdAgent());
+			agDto.setNom(ag.getDisplayNom());
+			agDto.setPrenom(ag.getDisplayPrenom());
+			result.add(agDto);
+		}
+
+		return result;
+		
+	}
+	
 }

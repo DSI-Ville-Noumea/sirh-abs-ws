@@ -1317,4 +1317,146 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListOfAgentsToInputOrApproveWithoutProfil_OK(){
+
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		droitDroitsAgent.add(dda);
+		
+		Droit droit = new Droit();
+		droit.setDateModification(new Date());
+		droit.setIdAgent(9008777);
+		droit.setDroitDroitsAgent(droitDroitsAgent);
+		
+		DroitsAgent agent = new DroitsAgent();
+		agent.setIdAgent(9008778);
+		agent.setIdDroitsAgent(1);
+		agent.setCodeService("DEAB");
+		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+		agent.setDateModification(new Date());
+		
+		dda.setDroit(droit);
+		dda.setDroitsAgent(agent);
+		
+		absEntityManager.persist(agent);
+		absEntityManager.persist(droit);
+		absEntityManager.persist(dda);
+		
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, null);
+		
+		assertEquals(1, result.size());
+		assertEquals("9008778", result.get(0).getIdAgent().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListOfAgentsToInputOrApproveWithoutProfil_KO(){
+
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		droitDroitsAgent.add(dda);
+		
+		Droit droit = new Droit();
+		droit.setDateModification(new Date());
+		droit.setIdAgent(9008777);
+		droit.setDroitDroitsAgent(droitDroitsAgent);
+		
+		DroitsAgent agent = new DroitsAgent();
+		agent.setIdAgent(9008778);
+		agent.setIdDroitsAgent(1);
+		agent.setCodeService("DEAB");
+		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+		agent.setDateModification(new Date());
+		
+		dda.setDroit(droit);
+		dda.setDroitsAgent(agent);
+		
+		absEntityManager.persist(agent);
+		absEntityManager.persist(droit);
+		absEntityManager.persist(dda);
+		
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008778, null);
+		
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListOfAgentsToInputOrApproveByServiceWithoutProfil_OK(){
+
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		droitDroitsAgent.add(dda);
+		
+		Droit droit = new Droit();
+		droit.setDateModification(new Date());
+		droit.setIdAgent(9008777);
+		droit.setDroitDroitsAgent(droitDroitsAgent);
+		
+		DroitsAgent agent = new DroitsAgent();
+		agent.setIdAgent(9008778);
+		agent.setIdDroitsAgent(1);
+		agent.setCodeService("DEAB");
+		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+		agent.setDateModification(new Date());
+		
+		dda.setDroit(droit);
+		dda.setDroitsAgent(agent);
+		
+		absEntityManager.persist(agent);
+		absEntityManager.persist(droit);
+		absEntityManager.persist(dda);
+		
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, "DEAB");
+		
+		assertEquals(1, result.size());
+		assertEquals("9008778", result.get(0).getIdAgent().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListOfAgentsToInputOrApproveByServiceWithoutProfil_KO(){
+
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		droitDroitsAgent.add(dda);
+		
+		Droit droit = new Droit();
+		droit.setDateModification(new Date());
+		droit.setIdAgent(9008777);
+		droit.setDroitDroitsAgent(droitDroitsAgent);
+		
+		DroitsAgent agent = new DroitsAgent();
+		agent.setIdAgent(9008778);
+		agent.setIdDroitsAgent(1);
+		agent.setCodeService("DEAB");
+		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+		agent.setDateModification(new Date());
+		
+		dda.setDroit(droit);
+		dda.setDroitsAgent(agent);
+		
+		absEntityManager.persist(agent);
+		absEntityManager.persist(droit);
+		absEntityManager.persist(dda);
+		
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, "TEST");
+		
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 }

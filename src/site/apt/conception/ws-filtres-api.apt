@@ -73,3 +73,56 @@ HTTP Code 200 : OK
 +-------------------------+
 HTTP Code 200 : OK
 +-------------------------+
+
+
+* Liste les services disponibles pour le filtre
+
+ <<URL>> : /filtres/services
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ * <<idAgent>> : identifiant de l’agent depuis lequel trouver les sous services
+
+ <<Content>>
+  
++-------------------------+
+[
+	{
+      	"service" : "Direction des Systèmes d'Information",
+		"codeService" : "DCAA
+      },
+	{
+      	"service" : "DSI Cellule Planification et Méthodes ",
+		"codeService" : " DCAC
+      },
+	…
+]
++-------------------------+
+
+
+* Liste les agents disponibles pour le filtre
+
+ <<URL>> : /filtres/agents
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ * <<idAgent>> : identifiant de l’agent depuis lequel trouver les agents
+ 
+ * <<codeService>> : service restreignant la liste (code service) (optionnel)
+ 
+ <<Content>>
+
++-------------------------+
+[
+	{
+		"nom" : "Dupont",
+		"prenom" : "Michel",
+		"idAgent" : 9007865
+},
+	…	
+]
++-------------------------+

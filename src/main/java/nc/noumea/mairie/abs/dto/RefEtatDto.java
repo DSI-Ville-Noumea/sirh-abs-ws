@@ -1,7 +1,5 @@
 package nc.noumea.mairie.abs.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import nc.noumea.mairie.abs.domain.RefEtat;
 
 public class RefEtatDto {

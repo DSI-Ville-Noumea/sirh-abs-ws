@@ -7,6 +7,7 @@ import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 
 public interface IAccessRightsService {
@@ -36,5 +37,10 @@ public interface IAccessRightsService {
 	ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents);
 
 	AgentWithServiceDto getApprobateurOfAgent(Integer convertedIdAgent);
+	
+	boolean verifAccessRightListDemande(Integer idAgentConnecte, Integer idAgentOfDemande, ReturnMessageDto returnDto);
 
+	List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent);
+	
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService);
 }
