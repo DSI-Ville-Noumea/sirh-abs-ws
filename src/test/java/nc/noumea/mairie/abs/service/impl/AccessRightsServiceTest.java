@@ -2819,6 +2819,8 @@ public class AccessRightsServiceTest {
 
 		// Then
 		assertEquals(2, result.size());
+		assertEquals("SERV 1", result.get(0).getCodeService());
+		assertEquals("SERVICE 2", result.get(1).getService());
 	}
 	
 	@Test

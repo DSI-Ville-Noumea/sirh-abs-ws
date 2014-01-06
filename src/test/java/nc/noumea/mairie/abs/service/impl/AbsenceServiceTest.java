@@ -812,6 +812,11 @@ public class AbsenceServiceTest {
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		dto.setIdAgent(idAgent);
+		dto.setIdRefEtat(1);
+		dto.setDateDemande(new Date());
+		dto.setDemandeModifer(false);
+		dto.setDemandeSupprimer(false);
+		dto.setDemandeImprimer(false);
 
 		Droit droitOperateur = new Droit();
 		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
@@ -1050,10 +1055,16 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		DemandeEtatChangeDto dto1 = new DemandeEtatChangeDto();
 		dto1.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		dto1.setDateAvis(new Date());
+		dto1.setMotifAvis("Motif 1");
 		DemandeEtatChangeDto dto2 = new DemandeEtatChangeDto();
 		dto2.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		dto2.setDateAvis(new Date());
+		dto2.setMotifAvis("Motif 2");
 		DemandeEtatChangeDto dto3 = new DemandeEtatChangeDto();
 		dto3.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		dto3.setDateAvis(new Date());
+		dto3.setMotifAvis("Motif 3");
 
 		ReturnMessageDto result1 = new ReturnMessageDto();
 		ReturnMessageDto result2 = new ReturnMessageDto();
