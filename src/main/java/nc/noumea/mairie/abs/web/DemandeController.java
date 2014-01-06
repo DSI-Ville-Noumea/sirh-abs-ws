@@ -280,7 +280,7 @@ public class DemandeController {
 		logger.debug("entered POST [demandes/supprimerDemandes] => setSupprimerAbsencesProvisoires for SIRH-JOBS with parameters listIdDemande = {}",
 				listIdDemande);
 
-		ReturnMessageDto result = absenceService.setSupprimerDemandesEtatProvosoire(listIdDemande);
+		ReturnMessageDto result = absenceService.setSupprimerDemandesEtatProvisoire(listIdDemande);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 

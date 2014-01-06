@@ -1520,8 +1520,10 @@ public class AbsenceServiceTest {
 
 		// When
 		result = service.setDemandesEtatPris(csvListIdDemande);
+		ReturnMessageDto result2 = service.setDemandesEtatPris("");
 
 		// Then
+		assertEquals(0, result2.getErrors().size());
 		assertEquals(2, result.getErrors().size());
 		assertEquals("La demande 1 n'est pas à l'état approuvé.", result.getErrors().get(0).toString());
 		assertEquals("La demande 3 n'existe pas.", result.getErrors().get(1).toString());
@@ -1988,7 +1990,7 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 	@Test
-	public void setSupprimerDemandesEtatProvosoire_EtatIncorrect_DemandeInexistante_EtOK() {
+	public void setSupprimerDemandesEtatProvisoire_EtatIncorrect_DemandeInexistante_EtOK() {
 		RefTypeAbsence typeRecup = new RefTypeAbsence();
 		typeRecup.setLabel("Récupération");
 		typeRecup.setIdRefTypeAbsence(3);
@@ -2029,9 +2031,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		// When
-		result = service.setSupprimerDemandesEtatProvosoire(csvListIdDemande);
+		result = service.setSupprimerDemandesEtatProvisoire(csvListIdDemande);
+		ReturnMessageDto result2 = service.setSupprimerDemandesEtatProvisoire("");
 
 		// Then
+		assertEquals(0, result2.getErrors().size());
 		assertEquals(2, result.getErrors().size());
 		assertEquals("La demande 1 n'est pas à l'état provisoire.", result.getErrors().get(0).toString());
 		assertEquals("La demande 3 n'existe pas.", result.getErrors().get(1).toString());

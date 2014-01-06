@@ -531,7 +531,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public ReturnMessageDto setSupprimerDemandesEtatProvosoire(String csvListIdDemande) {
+	public ReturnMessageDto setSupprimerDemandesEtatProvisoire(String csvListIdDemande) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		if (csvListIdDemande.equals("")) {
