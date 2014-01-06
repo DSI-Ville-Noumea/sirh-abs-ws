@@ -477,9 +477,16 @@ public class AccessRightsRepositoryTest {
 		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008767, "DEAB",
 				droitProfil.getIdDroitProfil());
 
+		List<DroitsAgent> resultSansService = repository.getListOfAgentsToInputOrApprove(9008767, null,
+				droitProfil.getIdDroitProfil());
+
 		assertEquals(1, result.size());
 		assertEquals("9008767", result.get(0).getIdAgent().toString());
 		assertEquals("DASP Pôle Administratif et Budgétaire", result.get(0).getLibelleService());
+
+		assertEquals(1, resultSansService.size());
+		assertEquals("9008767", resultSansService.get(0).getIdAgent().toString());
+		assertEquals("DASP Pôle Administratif et Budgétaire", resultSansService.get(0).getLibelleService());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -1456,6 +1463,104 @@ public class AccessRightsRepositoryTest {
 		
 		assertEquals(0, result.size());
 
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void isOperateurOfAgent_returnTrue() {
+		
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005131);
+		da.setCodeService("DCCB");
+		da.setDateModification(new Date());
+		da.setLibelleService("SED");
+
+		Profil pAppro = new Profil();
+		pAppro.setLibelle("OPERATEUR");
+
+		Droit droitAppro = new Droit();
+		droitAppro.setDateModification(new Date());
+		droitAppro.setIdAgent(9005138);
+
+		DroitProfil dpAppr = new DroitProfil();
+		dpAppr.setDroit(droitAppro);
+		dpAppr.setDroitApprobateur(droitAppro);
+		dpAppr.setProfil(pAppro);
+
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(droitAppro);
+		dda.setDroitProfil(dpAppr);
+		dda.setDroitsAgent(da);
+
+		da.getDroitDroitsAgent().add(dda);
+		dpAppr.getDroitDroitsAgent().add(dda);
+		droitAppro.getDroitDroitsAgent().add(dda);
+		droitAppro.getDroitProfils().add(dpAppr);
+
+		absEntityManager.persist(da);
+		absEntityManager.persist(pAppro);
+		absEntityManager.persist(droitAppro);
+		absEntityManager.persist(dpAppr);
+		absEntityManager.persist(dda);
+
+		absEntityManager.flush();
+		
+		boolean result = repository.isOperateurOfAgent(9005138, 9005131);
+		
+		assertTrue(result);
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void isOperateurOfAgent_returnFalse() {
+		
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005131);
+		da.setCodeService("DCCB");
+		da.setDateModification(new Date());
+		da.setLibelleService("SED");
+
+		Profil pAppro = new Profil();
+		pAppro.setLibelle("APPROBATEUR");
+
+		Droit droitAppro = new Droit();
+		droitAppro.setDateModification(new Date());
+		droitAppro.setIdAgent(9005138);
+
+		DroitProfil dpAppr = new DroitProfil();
+		dpAppr.setDroit(droitAppro);
+		dpAppr.setDroitApprobateur(droitAppro);
+		dpAppr.setProfil(pAppro);
+
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(droitAppro);
+		dda.setDroitProfil(dpAppr);
+		dda.setDroitsAgent(da);
+
+		da.getDroitDroitsAgent().add(dda);
+		dpAppr.getDroitDroitsAgent().add(dda);
+		droitAppro.getDroitDroitsAgent().add(dda);
+		droitAppro.getDroitProfils().add(dpAppr);
+
+		absEntityManager.persist(da);
+		absEntityManager.persist(pAppro);
+		absEntityManager.persist(droitAppro);
+		absEntityManager.persist(dpAppr);
+		absEntityManager.persist(dda);
+
+		absEntityManager.flush();
+		
+		boolean result = repository.isOperateurOfAgent(9005138, 9005131);
+		
+		assertFalse(result);
+		
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
