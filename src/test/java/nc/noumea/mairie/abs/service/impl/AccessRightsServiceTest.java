@@ -448,11 +448,15 @@ public class AccessRightsServiceTest {
 		agDto1.setNom("TOTO");
 		agDto1.setService("service");
 		agDto1.setCodeService("CODE");
+		agDto1.setDirection("DIRECTION");
+		agDto1.setStatut("F");
 		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
 		agDto2.setIdAgent(9003041);
 		agDto2.setNom("TITO");
 		agDto2.setService("service");
 		agDto2.setCodeService("CODE2");
+		agDto2.setDirection("DIRECTION2");
+		agDto2.setStatut("C");
 
 		Date currentDate = new DateTime(2013, 4, 9, 12, 9, 34).toDate();
 
@@ -477,7 +481,9 @@ public class AccessRightsServiceTest {
 		// Then
 		assertEquals(2, dto.size());
 		assertEquals("CODE2", dto.get(0).getCodeService());
+		assertEquals("DIRECTION2", dto.get(0).getDirection());
 		assertEquals("CODE", dto.get(1).getCodeService());
+		assertEquals("F", dto.get(1).getStatut());
 	}
 
 	@Test
