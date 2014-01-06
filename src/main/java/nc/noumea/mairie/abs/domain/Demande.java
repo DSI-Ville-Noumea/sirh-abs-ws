@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,20 +16,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
-@Entity
-@Table(name = "ABS_DEMANDE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @RooJavaBean
 @RooToString
+@RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_DEMANDE")
 public class Demande {
 
 	@Id
@@ -49,32 +47,32 @@ public class Demande {
 	@Column(name = "DATE_DEBUT")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateDebut;
-	
+
 	@Column(name = "DATE_FIN")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
 
-	@OneToMany(mappedBy = "demande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL) 
+	@OneToMany(mappedBy = "demande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
 	@OrderBy("idEtatDemande desc")
 	private List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
 
 	@Transient
 	public EtatDemande getLatestEtatDemande() {
-		if(!etatsDemande.isEmpty()) {
+		if (!etatsDemande.isEmpty()) {
 			return etatsDemande.iterator().next();
 		}
 		return null;
 	}
-	
+
 	@Transient
 	public void addEtatDemande(EtatDemande etatDemande) {
 		etatDemande.setDemande(this);
 		this.getEtatsDemande().add(etatDemande);
 	}
 
-	public Demande(){ 
+	public Demande() {
 	}
-			
+
 	public Demande(Demande demande) {
 		super();
 		this.idDemande = demande.getIdDemande();

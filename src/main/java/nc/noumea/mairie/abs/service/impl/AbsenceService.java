@@ -249,8 +249,8 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande, Date fromDate, Date toDate,
-			Date dateDemande, Integer idRefEtat, Integer idRefType) {
+	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
+			Date fromDate, Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 
 		List<RefEtat> etats = new ArrayList<RefEtat>();
@@ -344,15 +344,15 @@ public class AbsenceService implements IAbsenceService {
 			result.getErrors().add(String.format("La demande n'existe pas."));
 			return result;
 		}
-		
-		if(null != demande.getLatestEtatDemande() 
+
+		if (null != demande.getLatestEtatDemande()
 				&& demandeEtatChangeDto.getIdRefEtat().equals(demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
 			logger.warn("L'état de la demande est inchangé.");
 			result.getErrors().add(String.format("L'état de la demande est inchangé."));
 			return result;
 		}
-		
-		if(demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())) {
 
 			return setDemandeEtatVisa(idAgent, demandeEtatChangeDto, demande, result);
@@ -363,7 +363,7 @@ public class AbsenceService implements IAbsenceService {
 
 			return setDemandeEtatApprouve(idAgent, demandeEtatChangeDto, demande, result);
 		}
-		
+
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
 			return setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result);
 		}
@@ -432,18 +432,18 @@ public class AbsenceService implements IAbsenceService {
 
 		return result;
 	}
-	
+
 	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
 			Demande demande, ReturnMessageDto result) {
 
 		// on verifie les droits
 		// verification des droits
-		if(!verifAccessRightDemande(idAgent, demande.getIdAgent(), result))
+		if (!verifAccessRightDemande(idAgent, demande.getIdAgent(), result))
 			return result;
 
-		result = absRecupDataConsistencyRules.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
-				RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE,
-				RefEtatEnum.REFUSEE));
+		result = absRecupDataConsistencyRules
+				.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(RefEtatEnum.VISEE_FAVORABLE,
+						RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.REFUSEE));
 
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -467,12 +467,12 @@ public class AbsenceService implements IAbsenceService {
 	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		EtatDemande etatDemande = new EtatDemande();
 		etatDemande.setDate(demandeEtatChangeDto.getDateAvis());
-		if(null == demandeEtatChangeDto.getMotifAvis()) {
+		if (null == demandeEtatChangeDto.getMotifAvis()) {
 			etatDemande.setMotif("");
-		}else{
+		} else {
 			etatDemande.setMotif(demandeEtatChangeDto.getMotifAvis());
 		}
-		
+
 		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
 		etatDemande.setIdAgent(idAgent);
 		demande.addEtatDemande(etatDemande);
@@ -485,8 +485,8 @@ public class AbsenceService implements IAbsenceService {
 			minutes = 0 - ((DemandeRecup) demande).getDuree();
 		}
 		// si on passe de Approuve a Refuse, le compteur incremente
-		if (( demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
-					|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))
+		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()) || demandeEtatChangeDto
+				.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))
 				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
 			minutes = ((DemandeRecup) demande).getDuree();
 		}
@@ -524,22 +524,73 @@ public class AbsenceService implements IAbsenceService {
 			epNew.setEtat(RefEtatEnum.getRefEtatEnum(RefEtatEnum.PRISE.getCodeEtat()));
 			epNew.setIdAgent(demande.getIdAgent());
 
-			demandeRepository.persistEntity(epNew);
 			// insert nouvelle ligne EtatAbsence avec nouvel etat
-
+			demandeRepository.persistEntity(epNew);
 		}
-
 		return result;
 	}
-	
+
+	@Override
+	public ReturnMessageDto setSupprimerDemandesEtatProvosoire(String csvListIdDemande) {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		if (csvListIdDemande.equals("")) {
+			return result;
+		}
+
+		for (String id : csvListIdDemande.split(",")) {
+			Integer idDemande = Integer.valueOf(id);
+			// on cherche la demande
+			Demande demande = getDemande(Demande.class, idDemande);
+			if (null == demande) {
+				result.getErrors().add(String.format("La demande %s n'existe pas.", idDemande));
+				continue;
+			}
+			if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.PROVISOIRE) {
+				result.getErrors().add(String.format("La demande %s n'est pas à l'état %s.", idDemande, "provisoire"));
+				continue;
+			}
+
+			switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getType().getIdRefTypeAbsence())) {
+				case CONGE_ANNUEL:
+					// TODO
+					break;
+				case REPOS_COMP:
+					// TODO
+					break;
+				case RECUP:
+					// on supprime la demande et ses etats
+					demandeRepository.removeEntity(demande);
+					break;
+				case ASA:
+					// TODO
+					break;
+				case AUTRES:
+					// TODO
+					break;
+				case MALADIES:
+					// TODO
+					break;
+				default:
+					result.getErrors().add(
+							String.format("Le type [%d] de la demande n'est pas reconnu.", demande.getType()
+									.getIdRefTypeAbsence()));
+					break;
+			}
+
+		}
+		return result;
+	}
+
 	@Override
 	public ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande, Integer idTypeDemande) {
-		
+
 		ReturnMessageDto returnDto = new ReturnMessageDto();
-		
+
 		Demande demande = null;
 		IAbsenceDataConsistencyRules rules = null;
-		// selon le type de demande, on mappe les donnees specifiques de la demande
+		// selon le type de demande, on mappe les donnees specifiques de la
+		// demande
 		// et on effectue les verifications appropriees
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
 			case CONGE_ANNUEL:
@@ -562,34 +613,33 @@ public class AbsenceService implements IAbsenceService {
 				// TODO
 				break;
 			default:
-				returnDto.getErrors().add(
-						String.format("Le type [%d] de la demande n'est pas reconnu.", idTypeDemande));
+				returnDto.getErrors()
+						.add(String.format("Le type [%d] de la demande n'est pas reconnu.", idTypeDemande));
 				absEntityManager.clear();
 				return returnDto;
 		}
 
 		// on verifie si la demande existe
 		returnDto = rules.verifDemandeExiste(demande, returnDto);
-		if(0 < returnDto.getErrors().size())
+		if (0 < returnDto.getErrors().size())
 			return returnDto;
-		
+
 		// verification des droits
-		if(!verifAccessRightDemande(idAgent, demande.getIdAgent(), returnDto))
+		if (!verifAccessRightDemande(idAgent, demande.getIdAgent(), returnDto))
 			return returnDto;
-		
+
 		// verifier l etat de la demande
-		returnDto = rules.checkEtatsDemandeAcceptes(returnDto, demande, Arrays.asList(
-				RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-		
-		if(0 < returnDto.getErrors().size()) {
+		returnDto = rules.checkEtatsDemandeAcceptes(returnDto, demande,
+				Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		if (0 < returnDto.getErrors().size()) {
 			return returnDto;
 		}
-		
+
 		// suppression
 		demandeRepository.removeEntity(demande);
-		
+
 		return returnDto;
 	}
-	
-	
+
 }

@@ -236,7 +236,7 @@ public class DemandeController {
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> setAbsencesEtatPris(@RequestParam("listIdDemande") String listIdDemande) {
 
-		logger.debug("entered POST [demandes/etatsPris] => setAbsencesEtatPris with parameters listIdDemande = {}",
+		logger.debug("entered POST [demandes/etatsPris] => setAbsencesEtatPris for SIRH-JOBS with parameters listIdDemande = {}",
 				listIdDemande);
 
 		ReturnMessageDto result = absenceService.setDemandesEtatPris(listIdDemande);
@@ -263,6 +263,24 @@ public class DemandeController {
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
 		ReturnMessageDto result = absenceService.supprimerDemande(convertedIdAgent, idDemande, idTypeDemande);
+
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/supprimerDemandes", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> setSupprimerAbsencesProvisoires(@RequestParam("listIdDemande") String listIdDemande) {
+
+		logger.debug("entered POST [demandes/supprimerDemandes] => setSupprimerAbsencesProvisoires for SIRH-JOBS with parameters listIdDemande = {}",
+				listIdDemande);
+
+		ReturnMessageDto result = absenceService.setSupprimerDemandesEtatProvosoire(listIdDemande);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 

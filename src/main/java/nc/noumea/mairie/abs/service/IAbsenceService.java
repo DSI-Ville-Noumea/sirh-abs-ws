@@ -29,4 +29,6 @@ public interface IAbsenceService {
 	ReturnMessageDto setDemandesEtatPris(String csvListIdDemande);
 	
 	ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande, Integer idTypeDemande);
+
+	ReturnMessageDto setSupprimerDemandesEtatProvosoire(String csvListIdDemande);
 }

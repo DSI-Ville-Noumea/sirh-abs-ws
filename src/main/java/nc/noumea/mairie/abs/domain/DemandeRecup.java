@@ -15,14 +15,14 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 public class DemandeRecup extends Demande {
-	
+
 	@NotNull
 	@Column(name = "DUREE")
 	private Integer duree;
-	
-	public DemandeRecup(){
+
+	public DemandeRecup() {
 	}
-			
+
 	public DemandeRecup(Demande demande) {
 		super(demande);
 	}

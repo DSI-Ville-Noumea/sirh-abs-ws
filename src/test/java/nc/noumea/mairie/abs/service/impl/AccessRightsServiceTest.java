@@ -282,7 +282,6 @@ public class AccessRightsServiceTest {
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
-		// Mockito.verify(dd, Mockito.times(1)).remove();
 	}
 
 	@Test
@@ -373,7 +372,6 @@ public class AccessRightsServiceTest {
 
 		// Then
 		Mockito.verify(arRepo, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
-		// Mockito.verify(d, Mockito.times(1)).remove();
 	}
 
 	@Test
