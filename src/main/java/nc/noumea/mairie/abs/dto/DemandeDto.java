@@ -4,6 +4,8 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
+import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
 public class DemandeDto {
@@ -14,11 +16,24 @@ public class DemandeDto {
 	private Date dateDebut;
 	private Integer duree;
 	private Integer idRefEtat;
+	// radio bouton lors de la saisie d une demande
 	private boolean isEtatDefinitif;
 	private Date dateDemande;
-	private boolean isDemandeModifer;
-	private boolean isDemandeSupprimer;
-	private boolean isDemandeImprimer;
+	
+	// permet d'afficher ou non les icones correspondants
+	private boolean isAffichageBoutonModifier;
+	private boolean isAffichageBoutonSupprimer;
+	private boolean isAffichageBoutonImprimer;
+	private boolean isAffichageBoutonAnnuler;
+	private boolean isAffichageVisa;
+	private boolean isAffichageApprobation;
+	// permet de viser ou approuver
+	private boolean isModifierVisa;
+	private boolean isModifierApprobation;
+	// valeur du visa et approbation de la demande
+	private Boolean isValeurVisa = null;
+	private Boolean isValeurApprobation = null;
+	
 
 	public DemandeDto() {
 	}
@@ -33,11 +48,29 @@ public class DemandeDto {
 		this.dateDemande = d.getLatestEtatDemande().getDate();
 		this.isEtatDefinitif = d.getLatestEtatDemande().getEtat().getCodeEtat() == 1;
 
-		this.isDemandeModifer = d.getLatestEtatDemande().getEtat().getCodeEtat() == 0
-				|| d.getLatestEtatDemande().getEtat().getCodeEtat() == 1;
-		this.isDemandeSupprimer = d.getLatestEtatDemande().getEtat().getCodeEtat() == 0
-				|| d.getLatestEtatDemande().getEtat().getCodeEtat() == 1;
-		this.isDemandeImprimer = d.getLatestEtatDemande().getEtat().getCodeEtat() == 4;
+		for(EtatDemande etat : d.getEtatsDemande()) {
+			if(this.isValeurVisa == null 
+					&& etat.getEtat().equals(RefEtatEnum.VISEE_FAVORABLE)) {
+				this.isValeurVisa = Boolean.TRUE;
+				continue;
+			}
+			if(this.isValeurVisa == null 
+					&& etat.getEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE)) {
+				this.isValeurVisa = Boolean.FALSE;
+				continue;
+			}
+			if(this.isValeurApprobation == null 
+					&& etat.getEtat().equals(RefEtatEnum.APPROUVEE)) {
+				this.isValeurApprobation = Boolean.TRUE;
+				continue;
+			}
+			if(this.isValeurApprobation == null 
+					&& etat.getEtat().equals(RefEtatEnum.REFUSEE)) {
+				this.isValeurApprobation = Boolean.FALSE;
+				continue;
+			}
+		}
+		
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
 			case CONGE_ANNUEL:
 				// TODO
@@ -129,28 +162,86 @@ public class DemandeDto {
 		this.dateDemande = dateDemande;
 	}
 
-	public boolean isDemandeModifer() {
-		return isDemandeModifer;
+	public boolean isAffichageBoutonModifier() {
+		return isAffichageBoutonModifier;
 	}
 
-	public void setDemandeModifer(boolean isDemandeModifer) {
-		this.isDemandeModifer = isDemandeModifer;
+	public void setAffichageBoutonModifier(boolean isAffichageBoutonModifier) {
+		this.isAffichageBoutonModifier = isAffichageBoutonModifier;
 	}
 
-	public boolean isDemandeSupprimer() {
-		return isDemandeSupprimer;
+	public boolean isAffichageBoutonSupprimer() {
+		return isAffichageBoutonSupprimer;
 	}
 
-	public void setDemandeSupprimer(boolean isDemandeSupprimer) {
-		this.isDemandeSupprimer = isDemandeSupprimer;
+	public void setAffichageBoutonSupprimer(boolean isAffichageBoutonSupprimer) {
+		this.isAffichageBoutonSupprimer = isAffichageBoutonSupprimer;
 	}
 
-	public boolean isDemandeImprimer() {
-		return isDemandeImprimer;
+	public boolean isAffichageBoutonImprimer() {
+		return isAffichageBoutonImprimer;
 	}
 
-	public void setDemandeImprimer(boolean isDemandeImprimer) {
-		this.isDemandeImprimer = isDemandeImprimer;
+	public void setAffichageBoutonImprimer(boolean isAffichageBoutonImprimer) {
+		this.isAffichageBoutonImprimer = isAffichageBoutonImprimer;
 	}
+
+	public boolean isAffichageVisa() {
+		return isAffichageVisa;
+	}
+
+	public void setAffichageVisa(boolean isAffichageVisa) {
+		this.isAffichageVisa = isAffichageVisa;
+	}
+
+	public boolean isAffichageApprobation() {
+		return isAffichageApprobation;
+	}
+
+	public void setAffichageApprobation(boolean isAffichageApprobation) {
+		this.isAffichageApprobation = isAffichageApprobation;
+	}
+
+	public boolean isAffichageBoutonAnnuler() {
+		return isAffichageBoutonAnnuler;
+	}
+
+	public void setAffichageBoutonAnnuler(boolean isAffichageBoutonAnnuler) {
+		this.isAffichageBoutonAnnuler = isAffichageBoutonAnnuler;
+	}
+
+	public Boolean getValeurVisa() {
+		return isValeurVisa;
+	}
+
+	public void setValeurVisa(Boolean isValeurVisa) {
+		this.isValeurVisa = isValeurVisa;
+	}
+
+	public Boolean getValeurApprobation() {
+		return isValeurApprobation;
+	}
+
+	public void setValeurApprobation(Boolean isValeurApprobation) {
+		this.isValeurApprobation = isValeurApprobation;
+	}
+
+	public boolean isModifierVisa() {
+		return isModifierVisa;
+	}
+
+	public void setModifierVisa(boolean isModifierVisa) {
+		this.isModifierVisa = isModifierVisa;
+	}
+
+	public boolean isModifierApprobation() {
+		return isModifierApprobation;
+	}
+
+	public void setModifierApprobation(boolean isModifierApprobation) {
+		this.isModifierApprobation = isModifierApprobation;
+	}
+
+	
 
 }

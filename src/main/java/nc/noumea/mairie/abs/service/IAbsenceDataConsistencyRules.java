@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface IAbsenceDataConsistencyRules {
@@ -17,4 +19,5 @@ public interface IAbsenceDataConsistencyRules {
 	ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi);
 	ReturnMessageDto checkChampMotifPourEtatDonne(ReturnMessageDto srm, Integer etat, String motif);
 	ReturnMessageDto verifDemandeExiste(Demande demande, ReturnMessageDto returnDto);
+	List<DemandeDto> filtreListDemande(Integer idAgentConnecte, Integer idAgentConcerne, List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande);
 }

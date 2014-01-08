@@ -12,6 +12,9 @@ import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
+import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
+import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
@@ -116,7 +119,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d);
 
 		// When
-		List<Demande> result = repository.listeDemandesAgent(9005138, null, null, null);
+		List<Demande> result = repository.listeDemandesAgent(null, 9005138, null, null, null);
 
 		// Then
 		assertEquals(1, result.size());
@@ -138,7 +141,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d);
 
 		// When
-		List<Demande> result = repository.listeDemandesAgent(9005138, null, null, null);
+		List<Demande> result = repository.listeDemandesAgent(null, 9005138, null, null, null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -168,7 +171,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d2);
 
 		// When
-		List<Demande> result = repository.listeDemandesAgent(9005138, sdf.parse("01/06/2013"), null, null);
+		List<Demande> result = repository.listeDemandesAgent(null, 9005138, sdf.parse("01/06/2013"), null, null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -198,7 +201,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d2);
 
 		// When
-		List<Demande> result = repository.listeDemandesAgent(9005138, sdf.parse("01/06/2013"), sdf.parse("16/06/2013"),
+		List<Demande> result = repository.listeDemandesAgent(null, 9005138, sdf.parse("01/06/2013"), sdf.parse("16/06/2013"),
 				null);
 
 		// Then
@@ -237,7 +240,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d2);
 
 		// When
-		List<Demande> result = repository.listeDemandesAgent(9005138, null, null, 3);
+		List<Demande> result = repository.listeDemandesAgent(null, 9005138, null, null, 3);
 
 		// Then
 		assertEquals(0, result.size());
@@ -277,12 +280,150 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(dR2);
 
 		// When
-		List<Demande> result = repository.listeDemandesAgent(9005138, null, null, 3);
+		List<Demande> result = repository.listeDemandesAgent(null, 9005138, null, null, 3);
 
 		// Then
 		assertEquals(1, result.size());
 		assertEquals("40", ((DemandeRecup) result.get(0)).getDuree().toString());
 
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesAgent_MultiAgent_Return3Demandes() throws ParseException {
+		// Given
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005130);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		absEntityManager.persist(d);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005131);
+		d2.setDateDebut(sdf.parse("15/06/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		absEntityManager.persist(d2);
+		
+		DemandeRecup d3 = new DemandeRecup();
+		d3.setIdAgent(9005132);
+		d3.setDateDebut(sdf.parse("15/07/2013"));
+		d3.setDateFin(null);
+		d3.setDuree(50);
+		absEntityManager.persist(d3);
+
+		Droit droit = new Droit();
+		droit.setIdAgent(9005138);
+		absEntityManager.persist(droit);
+		
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(9005130);
+		absEntityManager.persist(da1);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9005131);
+		absEntityManager.persist(da2);
+		DroitsAgent da3 = new DroitsAgent();
+		da3.setIdAgent(9005132);
+		absEntityManager.persist(da3);
+		
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroitsAgent(da1);
+		dda.setDroit(droit);
+		absEntityManager.persist(dda);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroitsAgent(da2);
+		dda2.setDroit(droit);
+		absEntityManager.persist(dda2);
+		DroitDroitsAgent dda3 = new DroitDroitsAgent();
+		dda3.setDroitsAgent(da3);
+		dda3.setDroit(droit);
+		absEntityManager.persist(dda3);
+		
+		// When
+		List<Demande> result = repository.listeDemandesAgent(9005138, null, null, null, null);
+		
+		// Then
+		assertEquals(3, result.size());
+
+		assertEquals(50, ((DemandeRecup)result.get(0)).getDuree().intValue());
+		assertEquals(40, ((DemandeRecup)result.get(1)).getDuree().intValue());
+		assertEquals(30, ((DemandeRecup)result.get(2)).getDuree().intValue());
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesAgent_MultiAgent_Return2DemandesOf3() throws ParseException {
+		// Given
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005130);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		absEntityManager.persist(d);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005131);
+		d2.setDateDebut(sdf.parse("15/06/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		absEntityManager.persist(d2);
+		
+		DemandeRecup d3 = new DemandeRecup();
+		d3.setIdAgent(9005132);
+		d3.setDateDebut(sdf.parse("15/07/2013"));
+		d3.setDateFin(null);
+		d3.setDuree(50);
+		absEntityManager.persist(d3);
+
+		Droit droit = new Droit();
+		droit.setIdAgent(9005138);
+		absEntityManager.persist(droit);
+		
+		Droit droit2 = new Droit();
+		droit2.setIdAgent(9005139);
+		absEntityManager.persist(droit2);
+		
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(9005130);
+		absEntityManager.persist(da1);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9005131);
+		absEntityManager.persist(da2);
+		DroitsAgent da3 = new DroitsAgent();
+		da3.setIdAgent(9005132);
+		absEntityManager.persist(da3);
+		
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroitsAgent(da1);
+		dda.setDroit(droit2);
+		absEntityManager.persist(dda);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroitsAgent(da2);
+		dda2.setDroit(droit);
+		absEntityManager.persist(dda2);
+		DroitDroitsAgent dda3 = new DroitDroitsAgent();
+		dda3.setDroitsAgent(da3);
+		dda3.setDroit(droit);
+		absEntityManager.persist(dda3);
+		
+		// When
+		List<Demande> result = repository.listeDemandesAgent(9005138, null, null, null, null);
+		
+		// Then
+		assertEquals(2, result.size());
+		assertEquals(50, ((DemandeRecup)result.get(0)).getDuree().intValue());
+		assertEquals(40, ((DemandeRecup)result.get(1)).getDuree().intValue());
+		
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}

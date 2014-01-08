@@ -36,13 +36,15 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 	
 	@Override
-	public List<Demande> listeDemandesAgent(Integer idAgent, Date fromDate, Date toDate, Integer idRefType) {
+	public List<Demande> listeDemandesAgent(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate, Date toDate, Integer idRefType) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
 		sb.append("where 1=1 ");
 
-		if (idAgent != null) {
-			sb.append("and d.idAgent = :idAgent ");
+		if (idAgentConcerne != null) {
+			sb.append("and d.idAgent = :idAgentConcerne ");
+		}else {
+			sb.append("and d.idAgent in ( select da.idAgent from DroitsAgent da inner join da.droitDroitsAgent dda inner join dda.droit d where d.idAgent = :idAgentConnecte ) ");
 		}
 
 		if (idRefType != null) {
@@ -61,8 +63,10 @@ public class DemandeRepository implements IDemandeRepository {
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
 
-		if (idAgent != null) {
-			query.setParameter("idAgent", idAgent);
+		if (idAgentConcerne != null) {
+			query.setParameter("idAgentConcerne", idAgentConcerne);
+		}else{
+			query.setParameter("idAgentConnecte", idAgentConnecte);
 		}
 
 		if (idRefType != null) {

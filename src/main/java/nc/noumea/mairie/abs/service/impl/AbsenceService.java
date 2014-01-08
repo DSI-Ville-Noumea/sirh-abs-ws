@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -14,7 +13,9 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
+import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
@@ -59,6 +60,10 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ICounterService counterService;
+	
+	public static final String ONGLET_NON_PRISES = "NON_PRISES";
+	public static final String ONGLET_EN_COURS = "EN_COURS";
+	public static final String ONGLET_TOUTES = "TOUTES";
 
 	@Override
 	public List<RefEtatDto> getRefEtats() {
@@ -251,20 +256,61 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
 			Date fromDate, Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
+		
+		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType);
+		
+		List<RefEtat> etats = getListeEtatsByOnglet(ongletDemande, idRefEtat);
+		
+		return absRecupDataConsistencyRules.filtreListDemande(idAgentConnecte, idAgentConcerne, listeSansFiltre, etats, dateDemande);
+	}
+	
+	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate, Date toDate, Integer idRefType){
+		
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
+		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
+		
+		Integer idApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
+		
+		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType);
+		if(null != idApprobateurOfDelegataire) {
+			listeSansFiltredelegataire = demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire, idAgentConcerne, fromDate, toDate, idRefType);
+		}
+	
+		for(Demande demandeDeleg : listeSansFiltredelegataire) {
+			if(!listeSansFiltre.contains(demandeDeleg)) {
+				listeSansFiltre.add(demandeDeleg);
+			}
+		}
+		
+		return listeSansFiltre;
+	}
+	
+	protected Integer getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne) {
+		
+		Integer idApprobateurOfDelegataire = null;
+		// on recupere les profils de l agent connectee
+		// si idAgentConcerne renseigne, inutile de recuperer les profils pour l execution de la requete ensuite
+		if(null == idAgentConcerne) {
+			// on verifie si l agent est delegataire ou non
+			if(accessRightsRepository.isUserDelegataire(idAgentConnecte)) {
+				DroitProfil droitProfil = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte, ProfilEnum.DELEGATAIRE.toString());
+				idApprobateurOfDelegataire = droitProfil.getDroitApprobateur().getIdAgent();
+			}
+		}
+		return idApprobateurOfDelegataire;
+	}
 
+	protected List<RefEtat> getListeEtatsByOnglet(String ongletDemande, Integer idRefEtat) {
+		
 		List<RefEtat> etats = new ArrayList<RefEtat>();
 		switch (ongletDemande) {
-			case "NON_PRISES":
-				listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
+			case ONGLET_NON_PRISES:
 				etats = demandeRepository.findRefEtatNonPris();
 				break;
-			case "EN_COURS":
-				listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
+			case ONGLET_EN_COURS:
 				etats = demandeRepository.findRefEtatEnCours();
 				break;
-			case "TOUTES":
-				listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, fromDate, toDate, idRefType);
+			case ONGLET_TOUTES:
 				if (idRefEtat != null) {
 					etats.add(absEntityManager.find(RefEtat.class, idRefEtat));
 				} else {
@@ -272,54 +318,10 @@ public class AbsenceService implements IAbsenceService {
 				}
 				break;
 		}
-
-		return filterDateDemandeAndEtatFromList(listeSansFiltre, etats, dateDemande);
+		
+		return etats;
 	}
-
-	private List<DemandeDto> filterDateDemandeAndEtatFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
-			Date dateDemande) {
-		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
-		if (listeSansFiltre.size() == 0)
-			return listeDemandeDto;
-
-		if (dateDemande == null && etats == null) {
-			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d);
-				listeDemandeDto.add(dto);
-			}
-			return listeDemandeDto;
-		}
-
-		// ON TRAITE LA DATE DE DEMANDE
-		if (dateDemande != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			String dateDemandeSDF = sdf.format(dateDemande);
-			for (Demande d : listeSansFiltre) {
-				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
-				if (dateEtatSDF.equals(dateDemandeSDF)) {
-					DemandeDto dto = new DemandeDto(d);
-					listeDemandeDto.add(dto);
-				}
-			}
-		}
-
-		// ON TRAITE L'ETAT
-		if (etats != null) {
-			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d);
-				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
-						.getCodeEtat()))) {
-					if (!listeDemandeDto.contains(dto))
-						listeDemandeDto.add(dto);
-				} else {
-					if (listeDemandeDto.contains(dto))
-						listeDemandeDto.remove(dto);
-				}
-			}
-		}
-
-		return listeDemandeDto;
-	}
+	
 
 	@Override
 	public ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto) {

@@ -1,12 +1,23 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
+import nc.noumea.mairie.abs.domain.DroitsAgent;
+import nc.noumea.mairie.abs.domain.ProfilEnum;
+import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
@@ -37,6 +48,12 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	
 	@Autowired
 	protected IDemandeRepository demandeRepository;
+	
+	@Autowired
+	protected IAccessRightsRepository accessRightsRepository;
+	
+	@PersistenceContext(unitName = "absPersistenceUnit")
+	private EntityManager absEntityManager;
 
 	public static final String ETAT_NON_AUTORISE_MSG = "La modification de la demande [%d] n'est autorisée que si l'état est à [%s].";
 	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Le dépassement des droits acquis n'est pas autorisé.";
@@ -67,7 +84,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public ReturnMessageDto checkDemandeDejaSaisieSurMemePeriode(ReturnMessageDto srm, Demande demande) {
 		
-		List<Demande> listDemande = demandeRepository.listeDemandesAgent(demande.getIdAgent(), null, null, null);
+		List<Demande> listDemande = demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null);
 		
 		for(Demande demandeExistante : listDemande) {
 			
@@ -143,4 +160,139 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		return returnDto;
 	}
 
+	@Override
+	public List<DemandeDto> filtreListDemande(Integer idAgentConnecte, Integer idAgentConcerne, List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande){
+		List<DemandeDto> resultListDto = filtreDateAndEtatDemandeFromList(listeSansFiltre, etats, dateDemande);
+		
+		if(null != resultListDto && !resultListDto.isEmpty()) {
+			resultListDto = filtreDroitOfListeDemandesByDemande(idAgentConnecte, idAgentConcerne, resultListDto);
+		}
+		
+		return resultListDto;
+	}
+	
+	protected List<DemandeDto> filtreDroitOfListeDemandesByDemande(Integer idAgentConnecte, Integer idAgentConcerne, List<DemandeDto> resultListDto){
+		
+		// si idAgentConnecte == idAgentConcerne, alors nous sommes dans le cas du WS listeDemandesAgent
+		// donc inutile de recuperer les droits en bdd
+		// le test 1 sera toujours vrai
+		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
+		if(null != idAgentConnecte
+				&& !idAgentConnecte.equals(idAgentConcerne)) {
+			listDroitAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null);
+		}
+		
+		for(DemandeDto demandeDto : resultListDto) {
+			// test 1 
+			if(demandeDto.getIdAgent().equals(idAgentConnecte)) {
+				demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+				demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+				demandeDto.setAffichageBoutonImprimer(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
+				
+				demandeDto.setAffichageBoutonAnnuler(demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()));
+				
+				continue;
+			}
+			
+			for(DroitsAgent droitsAgent : listDroitAgent) {
+				
+				if(demandeDto.getIdAgent().equals(droitsAgent.getIdAgent())) {
+				
+					for(DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
+						
+						if(dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.OPERATEUR.toString())) {
+							
+							demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) 
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+							demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) 
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+							demandeDto.setAffichageBoutonImprimer(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
+	
+							demandeDto.setAffichageBoutonAnnuler(demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()));
+							
+							continue;
+						}
+						if(dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.VISEUR.toString())) {
+							
+							demandeDto.setModifierVisa(demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()) 
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()));
+							demandeDto.setAffichageVisa(true);
+							demandeDto.setAffichageApprobation(true);
+							
+							continue;
+						}
+						if(dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.APPROBATEUR.toString())
+								|| dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.DELEGATAIRE.toString())) {
+							
+							demandeDto.setAffichageVisa(true);
+							demandeDto.setAffichageApprobation(true);
+							demandeDto.setModifierApprobation(demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()) 
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()));
+							
+							continue;
+						}
+					}
+				
+					break;
+				}
+			}
+		}
+		
+		return resultListDto;
+	}
+	
+	protected List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande) {
+		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
+		if (listeSansFiltre.size() == 0)
+			return listeDemandeDto;
+
+		if (dateDemande == null && etats == null) {
+			for (Demande d : listeSansFiltre) {
+				DemandeDto dto = new DemandeDto(d);
+				listeDemandeDto.add(dto);
+			}
+			return listeDemandeDto;
+		}
+
+		boolean isfiltreDateDemande = false;
+		// ON TRAITE LA DATE DE DEMANDE
+		if (dateDemande != null) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			String dateDemandeSDF = sdf.format(dateDemande);
+			for (Demande d : listeSansFiltre) {
+				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
+				if (dateEtatSDF.equals(dateDemandeSDF)) {
+					DemandeDto dto = new DemandeDto(d);
+					listeDemandeDto.add(dto);
+				}
+			}
+			isfiltreDateDemande = true;
+		}
+
+		// ON TRAITE L'ETAT
+		if (etats != null) {
+			for (Demande d : listeSansFiltre) {
+				DemandeDto dto = new DemandeDto(d);
+				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat().getCodeEtat()))) {
+					if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)
+						listeDemandeDto.add(dto);
+				} else {
+					if (listeDemandeDto.contains(dto))
+						listeDemandeDto.remove(dto);
+				}
+			}
+		}
+
+		return listeDemandeDto;
+	}
 }

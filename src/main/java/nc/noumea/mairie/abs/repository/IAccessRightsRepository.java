@@ -55,4 +55,5 @@ public interface IAccessRightsRepository {
 	
 	boolean isOperateurOfAgent(Integer idAgentViseur, Integer IdAgent);
 	
+	DroitProfil getDroitProfilByAgentAndLibelle(Integer idAgent, String libelleProfil);
 }

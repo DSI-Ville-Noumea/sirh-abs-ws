@@ -381,4 +381,20 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			return false;
 		}
 	}
+	
+	@Override
+	public DroitProfil getDroitProfilByAgentAndLibelle(Integer idAgent, String libelleProfil) {
+
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getDroitProfilByLibelleProfil",
+				DroitProfil.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("libelle", libelleProfil);
+
+		try {
+			return q.getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

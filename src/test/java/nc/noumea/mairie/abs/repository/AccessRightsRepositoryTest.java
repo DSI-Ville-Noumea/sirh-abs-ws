@@ -1564,4 +1564,54 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getDroitProfilByAgentAndLibelle_returnResult() {
+		
+		Droit droit = new Droit();
+			droit.setIdAgent(9005138);
+		Profil profil = new Profil();
+			profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		DroitProfil dp = new DroitProfil();
+			dp.setDroit(droit);
+			dp.setProfil(profil);
+			
+		absEntityManager.persist(profil);
+		absEntityManager.persist(droit);
+		absEntityManager.persist(dp);
+		
+		DroitProfil result = repository.getDroitProfilByAgentAndLibelle(9005138, ProfilEnum.DELEGATAIRE.toString());
+		
+		assertNotNull(result);
+		assertEquals(9005138, result.getDroit().getIdAgent().intValue());
+		assertEquals(ProfilEnum.DELEGATAIRE.toString(), result.getProfil().getLibelle());
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getDroitProfilByAgentAndLibelle_returnNull() {
+		
+		Droit droit = new Droit();
+			droit.setIdAgent(9005138);
+		Profil profil = new Profil();
+			profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		DroitProfil dp = new DroitProfil();
+			dp.setDroit(droit);
+			dp.setProfil(profil);
+			
+		absEntityManager.persist(profil);
+		absEntityManager.persist(droit);
+		absEntityManager.persist(dp);
+		
+		DroitProfil result = repository.getDroitProfilByAgentAndLibelle(9005138, ProfilEnum.OPERATEUR.toString());
+		
+		assertNull(result);
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 }
