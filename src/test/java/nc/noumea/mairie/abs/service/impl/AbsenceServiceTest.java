@@ -567,9 +567,9 @@ public class AbsenceServiceTest {
 		dto.setIdAgent(idAgent);
 		dto.setIdRefEtat(1);
 		dto.setDateDemande(new Date());
-		dto.setDemandeModifer(false);
-		dto.setDemandeSupprimer(false);
-		dto.setDemandeImprimer(false);
+		dto.setAffichageBoutonModifier(false);
+		dto.setAffichageBoutonSupprimer(false);
+		dto.setAffichageBoutonImprimer(false);
 
 		Droit droitOperateur = new Droit();
 		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
