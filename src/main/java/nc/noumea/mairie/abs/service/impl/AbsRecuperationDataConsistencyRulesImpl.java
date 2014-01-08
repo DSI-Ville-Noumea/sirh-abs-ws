@@ -2,7 +2,6 @@ package nc.noumea.mairie.abs.service.impl;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -28,21 +27,8 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 		
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
 	}
-
-	@Override
-	public ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande, List<RefEtatEnum> listEtatsAcceptes) {
-
-		if (null != demande.getLatestEtatDemande()
-				&& !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
-			logger.warn(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdDemande(), RefEtatEnum.listToString(listEtatsAcceptes)));
-			srm.getErrors().add(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdDemande(), RefEtatEnum.listToString(listEtatsAcceptes)));
-		}
-
-		return srm;
-	}
-
-	@Override
-	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
+	
+	protected ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
 
 		// on recupere le solde de l agent
 		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent());

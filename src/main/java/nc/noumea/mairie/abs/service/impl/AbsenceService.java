@@ -51,6 +51,10 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	@Qualifier("AbsRecuperationDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absRecupDataConsistencyRules;
+	
+	@Autowired
+	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules DefaultAbsenceDataConsistencyRulesImpl;
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
@@ -133,6 +137,15 @@ public class AbsenceService implements IAbsenceService {
 				absEntityManager.clear();
 				return returnDto;
 		}
+		// dans le cas des types de demande non geres
+		if(null == rules) {
+			rules = DefaultAbsenceDataConsistencyRulesImpl;
+			if(null == demande) {
+			demande = getDemande(Demande.class, demandeDto.getIdDemande());
+			demande = mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
+			demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+			}
+		}
 
 		rules.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
 
@@ -145,6 +158,12 @@ public class AbsenceService implements IAbsenceService {
 		absEntityManager.flush();
 		absEntityManager.clear();
 
+		if(null == demandeDto.getIdDemande()) {
+			returnDto.getInfos().add(String.format("La demande a bien été créée."));
+		}else{
+			returnDto.getInfos().add(String.format("La demande a bien été modifiée."));
+		}
+		
 		return returnDto;
 	}
 

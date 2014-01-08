@@ -161,6 +161,18 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	@Override
+	public ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande, List<RefEtatEnum> listEtatsAcceptes) {
+
+		if (null != demande.getLatestEtatDemande()
+				&& !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
+			logger.warn(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdDemande(), RefEtatEnum.listToString(listEtatsAcceptes)));
+			srm.getErrors().add(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdDemande(), RefEtatEnum.listToString(listEtatsAcceptes)));
+		}
+
+		return srm;
+	}
+	
+	@Override
 	public List<DemandeDto> filtreListDemande(Integer idAgentConnecte, Integer idAgentConcerne, List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande){
 		List<DemandeDto> resultListDto = filtreDateAndEtatDemandeFromList(listeSansFiltre, etats, dateDemande);
 		
