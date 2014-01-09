@@ -552,54 +552,24 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public ReturnMessageDto setSupprimerDemandesEtatProvisoire(String csvListIdDemande) {
-
+	public ReturnMessageDto supprimerDemandeEtatProvisoire(Integer idDemande) {
+		
 		ReturnMessageDto result = new ReturnMessageDto();
-		if (csvListIdDemande.equals("")) {
+		
+		Demande demande = getDemande(Demande.class, idDemande);
+		
+		if (demande == null) {
+			result.getErrors().add(String.format("La demande %s n'existe pas.", idDemande));
 			return result;
 		}
-
-		for (String id : csvListIdDemande.split(",")) {
-			Integer idDemande = Integer.valueOf(id);
-			// on cherche la demande
-			Demande demande = getDemande(Demande.class, idDemande);
-			if (null == demande) {
-				result.getErrors().add(String.format("La demande %s n'existe pas.", idDemande));
-				continue;
-			}
-			if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.PROVISOIRE) {
-				result.getErrors().add(String.format("La demande %s n'est pas à l'état %s.", idDemande, "provisoire"));
-				continue;
-			}
-
-			switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getType().getIdRefTypeAbsence())) {
-				case CONGE_ANNUEL:
-					// TODO
-					break;
-				case REPOS_COMP:
-					// TODO
-					break;
-				case RECUP:
-					// on supprime la demande et ses etats
-					demandeRepository.removeEntity(demande);
-					break;
-				case ASA:
-					// TODO
-					break;
-				case AUTRES:
-					// TODO
-					break;
-				case MALADIES:
-					// TODO
-					break;
-				default:
-					result.getErrors().add(
-							String.format("Le type [%d] de la demande n'est pas reconnu.", demande.getType()
-									.getIdRefTypeAbsence()));
-					break;
-			}
-
+		if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.PROVISOIRE) {
+			result.getErrors().add(String.format("La demande %s n'est pas à l'état %s.", idDemande, "provisoire"));
+			return result;
 		}
+		
+		// on supprime la demande et ses etats
+		demandeRepository.removeEntity(demande);
+		
 		return result;
 	}
 

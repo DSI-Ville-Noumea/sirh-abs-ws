@@ -30,5 +30,5 @@ public interface IAbsenceService {
 	
 	ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande, Integer idTypeDemande);
 
-	ReturnMessageDto setSupprimerDemandesEtatProvisoire(String csvListIdDemande);
+	ReturnMessageDto supprimerDemandeEtatProvisoire(Integer idDemande);
 }

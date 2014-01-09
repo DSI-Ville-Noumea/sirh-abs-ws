@@ -273,14 +273,14 @@ public class DemandeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/supprimerDemandes", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@RequestMapping(value = "/supprimerDemandeProvisoire", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> setSupprimerAbsencesProvisoires(@RequestParam("listIdDemande") String listIdDemande) {
+	public ResponseEntity<String> supprimerAbsenceProvisoire(@RequestParam("idDemande") Integer idDemande) {
 
-		logger.debug("entered POST [demandes/supprimerDemandes] => setSupprimerAbsencesProvisoires for SIRH-JOBS with parameters listIdDemande = {}",
-				listIdDemande);
+		logger.debug("entered POST [demandes/supprimerDemandeProvisoire] => supprimerAbsenceProvisoire for SIRH-JOBS with parameters idDemande = {}",
+				idDemande);
 
-		ReturnMessageDto result = absenceService.setSupprimerDemandesEtatProvisoire(listIdDemande);
+		ReturnMessageDto result = absenceService.supprimerDemandeEtatProvisoire(idDemande);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
