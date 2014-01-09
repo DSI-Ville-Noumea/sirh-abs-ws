@@ -51,7 +51,7 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	@Qualifier("AbsRecuperationDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absRecupDataConsistencyRules;
-	
+
 	@Autowired
 	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules DefaultAbsenceDataConsistencyRulesImpl;
@@ -64,7 +64,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ICounterService counterService;
-	
+
 	public static final String ONGLET_NON_PRISES = "NON_PRISES";
 	public static final String ONGLET_EN_COURS = "EN_COURS";
 	public static final String ONGLET_TOUTES = "TOUTES";
@@ -138,12 +138,12 @@ public class AbsenceService implements IAbsenceService {
 				return returnDto;
 		}
 		// dans le cas des types de demande non geres
-		if(null == rules) {
+		if (null == rules) {
 			rules = DefaultAbsenceDataConsistencyRulesImpl;
-			if(null == demande) {
-			demande = getDemande(Demande.class, demandeDto.getIdDemande());
-			demande = mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
-			demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+			if (null == demande) {
+				demande = getDemande(Demande.class, demandeDto.getIdDemande());
+				demande = mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
+				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
 			}
 		}
 
@@ -158,12 +158,12 @@ public class AbsenceService implements IAbsenceService {
 		absEntityManager.flush();
 		absEntityManager.clear();
 
-		if(null == demandeDto.getIdDemande()) {
+		if (null == demandeDto.getIdDemande()) {
 			returnDto.getInfos().add(String.format("La demande a bien été créée."));
-		}else{
+		} else {
 			returnDto.getInfos().add(String.format("La demande a bien été modifiée."));
 		}
-		
+
 		return returnDto;
 	}
 
@@ -275,44 +275,51 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
 			Date fromDate, Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
-		
-		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType);
-		
+
+		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
+				idRefType);
+
 		List<RefEtat> etats = getListeEtatsByOnglet(ongletDemande, idRefEtat);
-		
-		return absRecupDataConsistencyRules.filtreListDemande(idAgentConnecte, idAgentConcerne, listeSansFiltre, etats, dateDemande);
+
+		return absRecupDataConsistencyRules.filtreListDemande(idAgentConnecte, idAgentConcerne, listeSansFiltre, etats,
+				dateDemande);
 	}
-	
-	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate, Date toDate, Integer idRefType){
-		
+
+	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate,
+			Date toDate, Integer idRefType) {
+
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
-		
+
 		Integer idApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
-		
-		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType);
-		if(null != idApprobateurOfDelegataire) {
-			listeSansFiltredelegataire = demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire, idAgentConcerne, fromDate, toDate, idRefType);
+
+		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate,
+				idRefType);
+		if (null != idApprobateurOfDelegataire) {
+			listeSansFiltredelegataire = demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
+					idAgentConcerne, fromDate, toDate, idRefType);
 		}
-	
-		for(Demande demandeDeleg : listeSansFiltredelegataire) {
-			if(!listeSansFiltre.contains(demandeDeleg)) {
+
+		for (Demande demandeDeleg : listeSansFiltredelegataire) {
+			if (!listeSansFiltre.contains(demandeDeleg)) {
 				listeSansFiltre.add(demandeDeleg);
 			}
 		}
-		
+
 		return listeSansFiltre;
 	}
-	
+
 	protected Integer getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne) {
-		
+
 		Integer idApprobateurOfDelegataire = null;
 		// on recupere les profils de l agent connectee
-		// si idAgentConcerne renseigne, inutile de recuperer les profils pour l execution de la requete ensuite
-		if(null == idAgentConcerne) {
+		// si idAgentConcerne renseigne, inutile de recuperer les profils pour l
+		// execution de la requete ensuite
+		if (null == idAgentConcerne) {
 			// on verifie si l agent est delegataire ou non
-			if(accessRightsRepository.isUserDelegataire(idAgentConnecte)) {
-				DroitProfil droitProfil = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte, ProfilEnum.DELEGATAIRE.toString());
+			if (accessRightsRepository.isUserDelegataire(idAgentConnecte)) {
+				DroitProfil droitProfil = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte,
+						ProfilEnum.DELEGATAIRE.toString());
 				idApprobateurOfDelegataire = droitProfil.getDroitApprobateur().getIdAgent();
 			}
 		}
@@ -320,7 +327,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	protected List<RefEtat> getListeEtatsByOnglet(String ongletDemande, Integer idRefEtat) {
-		
+
 		List<RefEtat> etats = new ArrayList<RefEtat>();
 		switch (ongletDemande) {
 			case ONGLET_NON_PRISES:
@@ -337,10 +344,9 @@ public class AbsenceService implements IAbsenceService {
 				}
 				break;
 		}
-		
+
 		return etats;
 	}
-	
 
 	@Override
 	public ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto) {
@@ -553,22 +559,30 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	public ReturnMessageDto supprimerDemandeEtatProvisoire(Integer idDemande) {
-		
+
+		logger.info("Trying to delete demande id {} ...", idDemande);
+
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		Demande demande = getDemande(Demande.class, idDemande);
-		
+
 		if (demande == null) {
 			result.getErrors().add(String.format("La demande %s n'existe pas.", idDemande));
+			logger.error("Demande id {} does not exists. Stopping process.", idDemande);
 			return result;
 		}
 		if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.PROVISOIRE) {
-			result.getErrors().add(String.format("La demande %s n'est pas à l'état %s.", idDemande, "provisoire"));
+			result.getErrors().add(
+					String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande, "provisoire", demande
+							.getLatestEtatDemande().getEtat()));
+			logger.error("Demande id {} is not in state [PROVISOIRE] but {}. Stopping process.", idDemande, demande
+					.getLatestEtatDemande().getEtat().toString());
 			return result;
 		}
-		
+
 		// on supprime la demande et ses etats
 		demandeRepository.removeEntity(demande);
+		logger.info("Deleted demande id {}.", idDemande);
 		
 		return result;
 	}

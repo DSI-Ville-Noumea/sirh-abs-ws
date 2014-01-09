@@ -1821,7 +1821,7 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("La demande 1 n'est pas à l'état provisoire.", result.getErrors().get(0).toString());
+		assertEquals("La demande 1 n'est pas à l'état provisoire mais SAISIE.", result.getErrors().get(0).toString());
 		Mockito.verify(demandeRepository, Mockito.never()).removeEntity(Mockito.isA(Demande.class));
 	}
 

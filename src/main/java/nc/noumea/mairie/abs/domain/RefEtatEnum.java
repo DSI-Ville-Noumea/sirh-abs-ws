@@ -16,11 +16,6 @@ public enum RefEtatEnum {
 		return codeEtat;
 	}
 
-	@Override
-	public String toString() {
-		return String.valueOf(codeEtat);
-	}
-
 	public static RefEtatEnum getRefEtatEnum(Integer codeEtat) {
 
 		if (codeEtat == null)
