@@ -25,10 +25,10 @@ public interface IAbsenceService {
 	boolean verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto);
 	
 	ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);
-
-	ReturnMessageDto setDemandesEtatPris(String csvListIdDemande);
 	
 	ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande, Integer idTypeDemande);
 
+	ReturnMessageDto setDemandeEtatPris(Integer idDemande);
+	
 	ReturnMessageDto supprimerDemandeEtatProvisoire(Integer idDemande);
 }

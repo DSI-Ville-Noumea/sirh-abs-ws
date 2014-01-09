@@ -232,14 +232,14 @@ public class DemandeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/etatsPris", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateToEtatPris", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> setAbsencesEtatPris(@RequestParam("listIdDemande") String listIdDemande) {
+	public ResponseEntity<String> setAbsencesEtatPris(@RequestParam("idDemande") Integer idDemande) {
 
-		logger.debug("entered POST [demandes/etatsPris] => setAbsencesEtatPris for SIRH-JOBS with parameters listIdDemande = {}",
-				listIdDemande);
+		logger.debug("entered POST [demandes/updateToEtatPris] => setAbsencesEtatPris for SIRH-JOBS with parameters idDemande = {}",
+				idDemande);
 
-		ReturnMessageDto result = absenceService.setDemandesEtatPris(listIdDemande);
+		ReturnMessageDto result = absenceService.setDemandeEtatPris(idDemande);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 

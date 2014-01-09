@@ -36,6 +36,7 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.ICounterService;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -1232,55 +1233,55 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
-	@Test
-	public void setDemandesEtatPris_EtatIncorrect_DemandeInexistante_EtOK() {
-		EtatDemande etat1 = new EtatDemande();
-		Demande demande1 = new Demande();
-		etat1.setDemande(demande1);
-		etat1.setEtat(RefEtatEnum.SAISIE);
-		demande1.getEtatsDemande().add(etat1);
-
-		EtatDemande etat2 = new EtatDemande();
-		Demande demande2 = new Demande();
-		etat2.setDemande(demande2);
-		etat2.setEtat(RefEtatEnum.APPROUVEE);
-		demande2.getEtatsDemande().add(etat2);
-		demande2.setIdAgent(9005138);
-
-		ReturnMessageDto result = new ReturnMessageDto();
-
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(demande1);
-		Mockito.when(demandeRepository.getEntity(Demande.class, 2)).thenReturn(demande2);
-		Mockito.when(demandeRepository.getEntity(Demande.class, 3)).thenReturn(null);
-		Mockito.doAnswer(new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				Object[] args = invocation.getArguments();
-				EtatDemande obj = (EtatDemande) args[0];
-
-				assertEquals(RefEtatEnum.PRISE.getCodeEtat(), obj.getEtat().getCodeEtat());
-				assertEquals(9005138, obj.getIdAgent().intValue());
-
-				return true;
-			}
-		}).when(demandeRepository).persistEntity(Mockito.isA(EtatDemande.class));
-
-		String csvListIdDemande = "1,2,3";
-
-		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-
-		// When
-		result = service.setDemandesEtatPris(csvListIdDemande);
-		ReturnMessageDto result2 = service.setDemandesEtatPris("");
-
-		// Then
-		assertEquals(0, result2.getErrors().size());
-		assertEquals(2, result.getErrors().size());
-		assertEquals("La demande 1 n'est pas à l'état approuvé.", result.getErrors().get(0).toString());
-		assertEquals("La demande 3 n'existe pas.", result.getErrors().get(1).toString());
-		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(EtatDemande.class));
-	}
+//	@Test
+//	public void setDemandesEtatPris_EtatIncorrect_DemandeInexistante_EtOK() {
+//		EtatDemande etat1 = new EtatDemande();
+//		Demande demande1 = new Demande();
+//		etat1.setDemande(demande1);
+//		etat1.setEtat(RefEtatEnum.SAISIE);
+//		demande1.getEtatsDemande().add(etat1);
+//
+//		EtatDemande etat2 = new EtatDemande();
+//		Demande demande2 = new Demande();
+//		etat2.setDemande(demande2);
+//		etat2.setEtat(RefEtatEnum.APPROUVEE);
+//		demande2.getEtatsDemande().add(etat2);
+//		demande2.setIdAgent(9005138);
+//
+//		ReturnMessageDto result = new ReturnMessageDto();
+//
+//		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+//		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(demande1);
+//		Mockito.when(demandeRepository.getEntity(Demande.class, 2)).thenReturn(demande2);
+//		Mockito.when(demandeRepository.getEntity(Demande.class, 3)).thenReturn(null);
+//		Mockito.doAnswer(new Answer<Object>() {
+//			public Object answer(InvocationOnMock invocation) {
+//				Object[] args = invocation.getArguments();
+//				EtatDemande obj = (EtatDemande) args[0];
+//
+//				assertEquals(RefEtatEnum.PRISE.getCodeEtat(), obj.getEtat().getCodeEtat());
+//				assertEquals(9005138, obj.getIdAgent().intValue());
+//
+//				return true;
+//			}
+//		}).when(demandeRepository).persistEntity(Mockito.isA(EtatDemande.class));
+//
+//		String csvListIdDemande = "1,2,3";
+//
+//		AbsenceService service = new AbsenceService();
+//		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+//
+//		// When
+//		result = service.setDemandeEtatPris(csvListIdDemande);
+//		ReturnMessageDto result2 = service.setDemandeEtatPris("");
+//
+//		// Then
+//		assertEquals(0, result2.getErrors().size());
+//		assertEquals(2, result.getErrors().size());
+//		assertEquals("La demande 1 n'est pas à l'état approuvé.", result.getErrors().get(0).toString());
+//		assertEquals("La demande 3 n'existe pas.", result.getErrors().get(1).toString());
+//		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(EtatDemande.class));
+//	}
 
 	@Test
 	public void supprimerDemande_demandeNotExiste() {
@@ -1741,59 +1742,6 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
-	
-//	@Test
-//	public void setSupprimerDemandesEtatProvisoire_EtatIncorrect_DemandeInexistante_EtOK() {
-//		RefTypeAbsence typeRecup = new RefTypeAbsence();
-//		typeRecup.setLabel("Récupération");
-//		typeRecup.setIdRefTypeAbsence(3);
-//
-//		EtatDemande etat1 = new EtatDemande();
-//		DemandeRecup demande1 = new DemandeRecup();
-//		etat1.setDemande(demande1);
-//		etat1.setEtat(RefEtatEnum.SAISIE);
-//		demande1.getEtatsDemande().add(etat1);
-//		demande1.setType(typeRecup);
-//
-//		EtatDemande etat2 = new EtatDemande();
-//		DemandeRecup demande2 = spy(new DemandeRecup());
-//		etat2.setDemande(demande2);
-//		etat2.setEtat(RefEtatEnum.PROVISOIRE);
-//		demande2.getEtatsDemande().add(etat2);
-//		demande2.setIdAgent(9005138);
-//		demande2.setType(typeRecup);
-//
-//		ReturnMessageDto result = new ReturnMessageDto();
-//
-//		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-//		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(demande1);
-//		Mockito.when(demandeRepository.getEntity(Demande.class, 2)).thenReturn(demande2);
-//		Mockito.when(demandeRepository.getEntity(Demande.class, 3)).thenReturn(null);
-//		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, 1)).thenReturn(demande1);
-//		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, 2)).thenReturn(demande2);
-//		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, 3)).thenReturn(null);
-//		Mockito.doAnswer(new Answer<Object>() {
-//			public Object answer(InvocationOnMock invocation) {
-//				return true;
-//			}
-//		}).when(demandeRepository).removeEntity(Mockito.any(Demande.class));
-//
-//		String csvListIdDemande = "1,2,3";
-//
-//		AbsenceService service = new AbsenceService();
-//		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//
-//		// When
-//		result = service.setSupprimerDemandesEtatProvisoire(csvListIdDemande);
-//		ReturnMessageDto result2 = service.setSupprimerDemandesEtatProvisoire("");
-//
-//		// Then
-//		assertEquals(0, result2.getErrors().size());
-//		assertEquals(2, result.getErrors().size());
-//		assertEquals("La demande 1 n'est pas à l'état provisoire.", result.getErrors().get(0).toString());
-//		assertEquals("La demande 3 n'existe pas.", result.getErrors().get(1).toString());
-//		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
-//	}
 
 	@Test
 	public void supprimerDemandeEtatProvisoire_EtatIncorrect_ReturnError() {
@@ -1821,7 +1769,7 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("La demande 1 n'est pas à l'état provisoire mais SAISIE.", result.getErrors().get(0).toString());
+		assertEquals("La demande 1 n'est pas à l'état PROVISOIRE mais SAISIE.", result.getErrors().get(0).toString());
 		Mockito.verify(demandeRepository, Mockito.never()).removeEntity(Mockito.isA(Demande.class));
 	}
 
@@ -1871,5 +1819,104 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
+	}
+	
+	@Test
+	public void setDemandeEtatPris_EtatIncorrect_ReturnError() {
+		
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setLabel("Récupération");
+		typeRecup.setIdRefTypeAbsence(3);
+
+		EtatDemande etat1 = new EtatDemande();
+		DemandeRecup demande1 = new DemandeRecup();
+		etat1.setDemande(demande1);
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		demande1.getEtatsDemande().add(etat1);
+		demande1.setType(typeRecup);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(demande1);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		// When
+		ReturnMessageDto result = service.setDemandeEtatPris(1);
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("La demande 1 n'est pas à l'état APPROUVEE mais SAISIE.", result.getErrors().get(0).toString());
+		Mockito.verify(demandeRepository, Mockito.never()).removeEntity(Mockito.isA(Demande.class));
+	}
+
+	@Test
+	public void setDemandeEtatPris_DemandeDoesNotExist_ReturnError() {
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(null);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		// When
+		ReturnMessageDto result = service.setDemandeEtatPris(1);
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("La demande 1 n'existe pas.", result.getErrors().get(0).toString());
+		Mockito.verify(demandeRepository, Mockito.never()).removeEntity(Mockito.isA(Demande.class));
+	}
+	
+	@Test
+	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande() {
+		
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setLabel("Récupération");
+		typeRecup.setIdRefTypeAbsence(3);
+
+		EtatDemande etat1 = new EtatDemande();
+		final DemandeRecup demande1 = new DemandeRecup();
+		etat1.setDemande(demande1);
+		etat1.setEtat(RefEtatEnum.APPROUVEE);
+		demande1.getEtatsDemande().add(etat1);
+		demande1.setType(typeRecup);
+		demande1.setIdAgent(9006565);
+
+		final Date date = new DateTime(2014, 1, 26, 15, 16, 35).toDate();
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(demande1);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				EtatDemande etat = (EtatDemande) args[0];
+				
+				assertEquals(date, etat.getDate());
+				assertEquals(demande1, etat.getDemande());
+				assertEquals(RefEtatEnum.PRISE, etat.getEtat());
+				assertEquals(9006565, (int) etat.getIdAgent());
+				assertEquals("Mise à jour automatique", etat.getMotif());
+				return null;
+			}
+		}).when(demandeRepository)
+				.persistEntity(Mockito.isA(EtatDemande.class));
+		
+		HelperService helper = Mockito.mock(HelperService.class);
+		Mockito.when(helper.getCurrentDate()).thenReturn(date);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "helperService", helper);
+
+		// When
+		ReturnMessageDto result = service.setDemandeEtatPris(1);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(EtatDemande.class));
 	}
 }

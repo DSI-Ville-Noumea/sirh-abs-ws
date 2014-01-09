@@ -522,38 +522,40 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public ReturnMessageDto setDemandesEtatPris(String csvListIdDemande) {
+	public ReturnMessageDto setDemandeEtatPris(Integer idDemande) {
 
+		logger.info("Trying to update demande id {} to Etat PRISE...", idDemande);
+		
 		ReturnMessageDto result = new ReturnMessageDto();
-		if (csvListIdDemande.equals("")) {
+
+		// on cherche la demande
+		Demande demande = getDemande(Demande.class, idDemande);
+		if (demande == null) {
+			result.getErrors().add(String.format("La demande %s n'existe pas.", idDemande));
+			logger.error("Demande id {} does not exists. Stopping process.", idDemande);
+			return result;
+		}
+		if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
+			result.getErrors().add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande, RefEtatEnum.APPROUVEE.toString(), demande
+					.getLatestEtatDemande().getEtat().toString()));
+			logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande, RefEtatEnum.APPROUVEE.toString(), demande
+					.getLatestEtatDemande().getEtat().toString());
 			return result;
 		}
 
-		for (String id : csvListIdDemande.split(",")) {
-			Integer idDemande = Integer.valueOf(id);
-			// on cherche la demande
-			Demande demande = getDemande(Demande.class, idDemande);
-			if (null == demande) {
-				result.getErrors().add(String.format("La demande %s n'existe pas.", idDemande));
-				continue;
-			}
-			if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
-				result.getErrors().add(String.format("La demande %s n'est pas à l'état %s.", idDemande, "approuvé"));
-				continue;
-			}
+		EtatDemande epNew = new EtatDemande();
+		epNew.setDemande(demande);
+		epNew.setDate(helperService.getCurrentDate());
+		epNew.setMotif("Mise à jour automatique");
+		epNew.setEtat(RefEtatEnum.PRISE);
+		epNew.setIdAgent(demande.getIdAgent());
+		demande.addEtatDemande(epNew);
+		
+		// insert nouvelle ligne EtatAbsence avec nouvel etat
+		demandeRepository.persistEntity(epNew);
 
-			Date dateJour = new Date();
-
-			EtatDemande epNew = new EtatDemande();
-			epNew.setDemande(demande);
-			epNew.setDate(dateJour);
-			epNew.setMotif("Mise à jour automatique");
-			epNew.setEtat(RefEtatEnum.getRefEtatEnum(RefEtatEnum.PRISE.getCodeEtat()));
-			epNew.setIdAgent(demande.getIdAgent());
-
-			// insert nouvelle ligne EtatAbsence avec nouvel etat
-			demandeRepository.persistEntity(epNew);
-		}
+		logger.info("Updated demande id {}.", idDemande);
+		
 		return result;
 	}
 
@@ -573,9 +575,9 @@ public class AbsenceService implements IAbsenceService {
 		}
 		if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.PROVISOIRE) {
 			result.getErrors().add(
-					String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande, "provisoire", demande
+					String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande, RefEtatEnum.PROVISOIRE.toString(), demande
 							.getLatestEtatDemande().getEtat()));
-			logger.error("Demande id {} is not in state [PROVISOIRE] but {}. Stopping process.", idDemande, demande
+			logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande, RefEtatEnum.PROVISOIRE.toString(), demande
 					.getLatestEtatDemande().getEtat().toString());
 			return result;
 		}
@@ -583,7 +585,7 @@ public class AbsenceService implements IAbsenceService {
 		// on supprime la demande et ses etats
 		demandeRepository.removeEntity(demande);
 		logger.info("Deleted demande id {}.", idDemande);
-		
+
 		return result;
 	}
 
