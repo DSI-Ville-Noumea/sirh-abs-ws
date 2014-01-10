@@ -209,7 +209,7 @@ public class DemandeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/changerEtats", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@RequestMapping(value = "/changerEtats", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> setAbsencesEtat(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String demandeEtatChangeDtoString) {
@@ -232,7 +232,7 @@ public class DemandeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/updateToEtatPris", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateToEtatPris", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> setAbsencesEtatPris(@RequestParam("idDemande") Integer idDemande) {
 
