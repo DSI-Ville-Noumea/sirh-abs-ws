@@ -847,4 +847,55 @@ public class AccessRightsService implements IAccessRightsService {
 		
 	}
 	
+	@Override
+	public ReturnMessageDto verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
+		
+		// si l'agent est un operateur alors on verifie qu'il a bien les droits
+		// sur l'agent pour qui il effectue la demande
+		if (!idAgent.equals(idAgentOfDemande)) {
+			if (accessRightsRepository.isUserOperateur(idAgent)) {
+
+				// on recherche tous les sous agents de la personne
+				Droit droitOperateur = accessRightsRepository.getAgentDroitFetchAgents(idAgent);
+				boolean trouve = false;
+				for (DroitDroitsAgent dda : droitOperateur.getDroitDroitsAgent()) {
+					if (dda.getDroitsAgent().getIdAgent().equals(idAgentOfDemande)) {
+						trouve = true;
+						break;
+					}
+				}
+				if (!trouve) {
+					logger.warn("Vous n'êtes pas opérateur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
+							idAgentOfDemande);
+					returnDto.getErrors().add(
+							String.format(
+									"Vous n'êtes pas opérateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
+									idAgentOfDemande));
+				}
+			} else {
+				logger.warn("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.");
+				returnDto.getErrors().add(
+						String.format("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes."));
+			}
+		}
+		return returnDto;
+	}
+	
+	@Override
+	public Integer getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne) {
+
+		Integer idApprobateurOfDelegataire = null;
+		// on recupere les profils de l agent connectee
+		// si idAgentConcerne renseigne, inutile de recuperer les profils pour l
+		// execution de la requete ensuite
+		if (null == idAgentConcerne) {
+			// on verifie si l agent est delegataire ou non
+			if (accessRightsRepository.isUserDelegataire(idAgentConnecte)) {
+				DroitProfil droitProfil = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte,
+						ProfilEnum.DELEGATAIRE.toString());
+				idApprobateurOfDelegataire = droitProfil.getDroitApprobateur().getIdAgent();
+			}
+		}
+		return idApprobateurOfDelegataire;
+	}
 }

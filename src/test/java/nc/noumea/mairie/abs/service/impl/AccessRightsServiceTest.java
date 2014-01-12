@@ -2864,4 +2864,177 @@ public class AccessRightsServiceTest {
 		// Then
 		assertEquals(1, result.size());
 	}
+	
+	@Test
+	public void verifAccessRightSaveDemande_AgentNotOperateur() {
+
+		// Given
+		ReturnMessageDto returnDto = new ReturnMessageDto();
+		Integer idAgent = 9006543;
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.isUserOperateur(idAgent)).thenReturn(false);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		// When
+		returnDto = service.verifAccessRightDemande(idAgent, 9005138, returnDto);
+
+		// Then
+		assertEquals(1, returnDto.getErrors().size());
+		assertEquals("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.", returnDto.getErrors().get(0));
+	}
+
+	@Test
+	public void verifAccessRightSaveDemande_Operateur_NotAgentOfOperateur() {
+
+		// Given
+		ReturnMessageDto returnDto = new ReturnMessageDto();
+		Integer idAgent = 9006543;
+
+		Profil p = new Profil();
+		p.setLibelle(ProfilEnum.OPERATEUR.toString());
+
+		DroitProfil dpOpe = new DroitProfil();
+		dpOpe.setDroitApprobateur(new Droit());
+		dpOpe.setProfil(p);
+		Set<DroitProfil> setDroitProfil = new HashSet<DroitProfil>();
+		setDroitProfil.add(dpOpe);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005131);
+
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroitProfil(dpOpe);
+		dda.setDroitsAgent(da);
+		Set<DroitDroitsAgent> setDroitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		setDroitDroitsAgent.add(dda);
+
+		Droit d = new Droit();
+		d.setIdAgent(idAgent);
+		d.setIdDroit(1);
+		d.setDroitProfils(setDroitProfil);
+		d.setDroitDroitsAgent(setDroitDroitsAgent);
+
+		dpOpe.setDroit(d);
+		dda.setDroit(d);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.isUserOperateur(idAgent)).thenReturn(true);
+		Mockito.when(arRepo.getAgentDroitFetchAgents(idAgent)).thenReturn(d);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		// When
+		returnDto = service.verifAccessRightDemande(idAgent, 9005138, returnDto);
+
+		// Then
+		assertEquals(1, returnDto.getErrors().size());
+		assertEquals("Vous n'êtes pas opérateur de l'agent 9005138. Vous ne pouvez pas saisir de demandes.", returnDto
+				.getErrors().get(0));
+	}
+
+	@Test
+	public void verifAccessRightSaveDemande_AllOk() {
+
+		// Given
+		ReturnMessageDto returnDto = new ReturnMessageDto();
+		Integer idAgent = 9006543;
+
+		Profil p = new Profil();
+		p.setLibelle(ProfilEnum.OPERATEUR.toString());
+
+		DroitProfil dpOpe = new DroitProfil();
+		dpOpe.setDroitApprobateur(new Droit());
+		dpOpe.setProfil(p);
+		Set<DroitProfil> setDroitProfil = new HashSet<DroitProfil>();
+		setDroitProfil.add(dpOpe);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroitProfil(dpOpe);
+		dda.setDroitsAgent(da);
+		Set<DroitDroitsAgent> setDroitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		setDroitDroitsAgent.add(dda);
+
+		Droit d = new Droit();
+		d.setIdAgent(idAgent);
+		d.setIdDroit(1);
+		d.setDroitProfils(setDroitProfil);
+		d.setDroitDroitsAgent(setDroitDroitsAgent);
+
+		dpOpe.setDroit(d);
+		dda.setDroit(d);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.isUserOperateur(idAgent)).thenReturn(true);
+		Mockito.when(arRepo.getAgentDroitFetchAgents(idAgent)).thenReturn(d);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		// When
+		returnDto = service.verifAccessRightDemande(idAgent, 9005138, returnDto);
+
+		// Then
+		assertEquals(0, returnDto.getErrors().size());
+	}
+	
+	@Test
+	public void getIdApprobateurOfDelegataire_returnNull() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer idAgentConcerne = 9005140;
+		
+		AccessRightsService service = new AccessRightsService();
+		
+		Integer result = service.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
+		
+		assertNull(result);
+	}
+	
+	@Test
+	public void getIdApprobateurOfDelegataire_noDelegataire() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer idAgentConcerne = null;
+		
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+			Mockito.when(accessRightsRepository.isUserDelegataire(idAgentConnecte)).thenReturn(false);
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		
+		Integer result = service.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
+		
+		assertNull(result);
+	}
+	
+	@Test
+	public void getIdApprobateurOfDelegataire_isDelegataire() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer idAgentConcerne = null;
+		
+		Droit droitApprobateur = new Droit();
+			droitApprobateur.setIdAgent(9001234);
+			
+		DroitProfil droitProfil = new DroitProfil();
+			droitProfil.setDroitApprobateur(droitApprobateur);
+		
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+			Mockito.when(accessRightsRepository.isUserDelegataire(idAgentConnecte)).thenReturn(true);
+			Mockito.when(accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte, ProfilEnum.DELEGATAIRE.toString())).thenReturn(droitProfil);
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		
+		Integer result = service.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
+		
+		assertEquals(9001234, result.intValue());
+	}
 }

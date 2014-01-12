@@ -16,8 +16,6 @@ public class DemandeDto {
 	private Date dateDebut;
 	private Integer duree;
 	private Integer idRefEtat;
-	// radio bouton lors de la saisie d une demande
-	private boolean isEtatDefinitif;
 	private Date dateDemande;
 	
 	// permet d'afficher ou non les icones correspondants
@@ -46,7 +44,6 @@ public class DemandeDto {
 		this.dateDebut = d.getDateDebut();
 		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
-		this.isEtatDefinitif = d.getLatestEtatDemande().getEtat().getCodeEtat() == 1;
 
 		for(EtatDemande etat : d.getEtatsDemande()) {
 			if(this.isValeurVisa == null 
@@ -139,14 +136,6 @@ public class DemandeDto {
 
 	public void setIdRefEtat(Integer idRefEtat) {
 		this.idRefEtat = idRefEtat;
-	}
-
-	public boolean isEtatDefinitif() {
-		return isEtatDefinitif;
-	}
-
-	public void setEtatDefinitif(boolean isEtatDefinitif) {
-		this.isEtatDefinitif = isEtatDefinitif;
 	}
 
 	@Override

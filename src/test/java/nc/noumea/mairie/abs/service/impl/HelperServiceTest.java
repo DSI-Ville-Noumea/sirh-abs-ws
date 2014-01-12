@@ -9,6 +9,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import nc.noumea.mairie.abs.domain.DemandeRecup;
+import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
@@ -66,5 +71,61 @@ public class HelperServiceTest {
 	    Date result = service.getDateFin(dateDebut, 21);
 	    
 	    assertNotEquals(result, dateFinAttendue);
+	}
+	
+	@Test
+	public void calculMinutesCompteur_etatApprouve() {
+
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+
+		DemandeRecup demande = new DemandeRecup();
+		demande.setDuree(10);
+
+		HelperService service = new HelperService();
+
+		int minutes = service.calculMinutesCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(-10, minutes);
+	}
+
+	@Test
+	public void calculMinutesCompteur_etatRefuse_and_etatPrcdApprouve() {
+
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup demande = new DemandeRecup();
+		demande.setDuree(10);
+		demande.addEtatDemande(etatDemande);
+
+		HelperService service = new HelperService();
+
+		int minutes = service.calculMinutesCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(10, minutes);
+	}
+
+	@Test
+	public void calculMinutesCompteur_etatRefuse_and_etatPrcdVisee() {
+
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+
+		DemandeRecup demande = new DemandeRecup();
+		demande.setDuree(10);
+		demande.addEtatDemande(etatDemande);
+
+		HelperService service = new HelperService();
+
+		int minutes = service.calculMinutesCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(0, minutes);
 	}
 }

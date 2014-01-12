@@ -11,11 +11,7 @@ import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
-import nc.noumea.mairie.abs.domain.Droit;
-import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
-import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.EtatDemande;
-import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
@@ -29,6 +25,7 @@ import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
+import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
 
 import org.slf4j.Logger;
@@ -47,6 +44,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private IAccessRightsRepository accessRightsRepository;
+	
+	@Autowired
+	private IAccessRightsService accessRightsService;
 
 	@Autowired
 	@Qualifier("AbsRecuperationDataConsistencyRulesImpl")
@@ -98,7 +98,8 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		// verification des droits
-		if (!verifAccessRightDemande(idAgent, demandeDto.getIdAgent(), returnDto))
+		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getIdAgent(), returnDto);
+		if(!returnDto.getErrors().isEmpty())
 			return returnDto;
 
 		Demande demande = null;
@@ -118,7 +119,7 @@ public class AbsenceService implements IAbsenceService {
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
 				demandeRecup.setDuree(demandeDto.getDuree());
-				demande = mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
 				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
 				rules = absRecupDataConsistencyRules;
 				break;
@@ -142,7 +143,7 @@ public class AbsenceService implements IAbsenceService {
 			rules = DefaultAbsenceDataConsistencyRulesImpl;
 			if (null == demande) {
 				demande = getDemande(Demande.class, demandeDto.getIdDemande());
-				demande = mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
 				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
 			}
 		}
@@ -179,63 +180,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 	}
 
-	protected Demande mappingDemandeDtoToDemande(DemandeDto demandeDto, Demande demande, Integer idAgent, Date dateJour) {
-
-		// on mappe le DTO dans la Demande generique
-		demande.setDateDebut(demandeDto.getDateDebut());
-		demande.setIdAgent(demandeDto.getIdAgent());
-		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(demandeDto.getIdTypeDemande());
-		demande.setType(rta);
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setDate(dateJour);
-		etatDemande.setIdAgent(idAgent);
-		if (demandeDto.isEtatDefinitif()) {
-			etatDemande.setEtat(RefEtatEnum.SAISIE);
-		} else {
-			etatDemande.setEtat(RefEtatEnum.PROVISOIRE);
-		}
-		demande.addEtatDemande(etatDemande);
-
-		return demande;
-	}
-
-	@Override
-	public boolean verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
-		boolean res = true;
-		// si l'agent est un operateur alors on verifie qu'il a bien les droits
-		// sur l'agent pour qui il effectue la demande
-		if (!idAgent.equals(idAgentOfDemande)) {
-			if (accessRightsRepository.isUserOperateur(idAgent)) {
-
-				// on recherche tous les sous agents de la personne
-				Droit droitOperateur = accessRightsRepository.getAgentDroitFetchAgents(idAgent);
-				boolean trouve = false;
-				for (DroitDroitsAgent dda : droitOperateur.getDroitDroitsAgent()) {
-					if (dda.getDroitsAgent().getIdAgent().equals(idAgentOfDemande)) {
-						trouve = true;
-						break;
-					}
-				}
-				if (!trouve) {
-					res = false;
-					logger.warn("Vous n'êtes pas opérateur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
-							idAgentOfDemande);
-					returnDto.getErrors().add(
-							String.format(
-									"Vous n'êtes pas opérateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
-									idAgentOfDemande));
-				}
-			} else {
-				res = false;
-				logger.warn("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.");
-				returnDto.getErrors().add(
-						String.format("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes."));
-			}
-		}
-		return res;
-	}
+	
 
 	public DemandeDto getDemandeDto(Integer idDemande, Integer idTypeDemande) {
 		DemandeDto demandeDto = null;
@@ -291,7 +236,7 @@ public class AbsenceService implements IAbsenceService {
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
 
-		Integer idApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
+		Integer idApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
 
 		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate,
 				idRefType);
@@ -307,23 +252,6 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		return listeSansFiltre;
-	}
-
-	protected Integer getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne) {
-
-		Integer idApprobateurOfDelegataire = null;
-		// on recupere les profils de l agent connectee
-		// si idAgentConcerne renseigne, inutile de recuperer les profils pour l
-		// execution de la requete ensuite
-		if (null == idAgentConcerne) {
-			// on verifie si l agent est delegataire ou non
-			if (accessRightsRepository.isUserDelegataire(idAgentConnecte)) {
-				DroitProfil droitProfil = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte,
-						ProfilEnum.DELEGATAIRE.toString());
-				idApprobateurOfDelegataire = droitProfil.getDroitApprobateur().getIdAgent();
-			}
-		}
-		return idApprobateurOfDelegataire;
 	}
 
 	protected List<RefEtat> getListeEtatsByOnglet(String ongletDemande, Integer idRefEtat) {
@@ -445,7 +373,7 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		int minutes = calculMinutesCompteur(demandeEtatChangeDto, demande);
+		int minutes = helperService.calculMinutesCompteur(demandeEtatChangeDto, demande);
 		if (0 != minutes) {
 			result = counterService.majCompteurRecupToAgent(result, demande.getIdAgent(), minutes);
 		}
@@ -465,7 +393,8 @@ public class AbsenceService implements IAbsenceService {
 
 		// on verifie les droits
 		// verification des droits
-		if (!verifAccessRightDemande(idAgent, demande.getIdAgent(), result))
+		result = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), result);
+		if(!result.getErrors().isEmpty())
 			return result;
 
 		result = absRecupDataConsistencyRules
@@ -476,7 +405,7 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		int minutes = calculMinutesCompteur(demandeEtatChangeDto, demande);
+		int minutes = helperService.calculMinutesCompteur(demandeEtatChangeDto, demande);
 		if (0 != minutes) {
 			result = counterService.majCompteurRecupToAgent(result, demande.getIdAgent(), minutes);
 		}
@@ -503,22 +432,6 @@ public class AbsenceService implements IAbsenceService {
 		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
 		etatDemande.setIdAgent(idAgent);
 		demande.addEtatDemande(etatDemande);
-	}
-
-	protected int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
-		int minutes = 0;
-		// si on approuve, le compteur decremente
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
-			minutes = 0 - ((DemandeRecup) demande).getDuree();
-		}
-		// si on passe de Approuve a Refuse, le compteur incremente
-		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()) || demandeEtatChangeDto
-				.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))
-				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
-			minutes = ((DemandeRecup) demande).getDuree();
-		}
-
-		return minutes;
 	}
 
 	@Override
@@ -632,7 +545,8 @@ public class AbsenceService implements IAbsenceService {
 			return returnDto;
 
 		// verification des droits
-		if (!verifAccessRightDemande(idAgent, demande.getIdAgent(), returnDto))
+		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), returnDto);
+		if(!returnDto.getErrors().isEmpty())
 			return returnDto;
 
 		// verifier l etat de la demande

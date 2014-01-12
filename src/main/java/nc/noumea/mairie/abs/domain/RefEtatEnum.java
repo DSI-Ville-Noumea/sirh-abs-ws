@@ -14,7 +14,7 @@ public enum RefEtatEnum {
 
 	public int getCodeEtat() {
 		return codeEtat;
-	}
+	} 
 
 	public static RefEtatEnum getRefEtatEnum(Integer codeEtat) {
 

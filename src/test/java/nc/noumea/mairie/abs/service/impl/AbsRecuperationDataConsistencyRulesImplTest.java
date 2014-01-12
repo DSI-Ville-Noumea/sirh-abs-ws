@@ -556,7 +556,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
-		assertFalse(result.get(0).isEtatDefinitif());
 	}
 
 	@Test
@@ -623,7 +622,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
-		assertFalse(result.get(0).isEtatDefinitif());
 	}
 
 	@Test
@@ -691,7 +689,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
-		assertFalse(result.get(0).isEtatDefinitif());
 	}
 
 	@Test
@@ -758,12 +755,10 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
-		assertTrue(result.get(0).isEtatDefinitif());
 		assertEquals("50", result.get(1).getDuree().toString());
 		assertFalse(result.get(1).isAffichageBoutonImprimer());
 		assertFalse(result.get(1).isAffichageBoutonModifier());
 		assertFalse(result.get(1).isAffichageBoutonSupprimer());
-		assertFalse(result.get(1).isEtatDefinitif());
 	}
 
 	@Test
@@ -942,7 +937,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
-		assertTrue(result.get(0).isEtatDefinitif());
 	}
 
 	@Test
@@ -1009,7 +1003,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
-		assertTrue(result.get(0).isEtatDefinitif());
 	}
 	
 	@Test
@@ -1060,7 +1053,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertTrue(result.get(0).isAffichageBoutonModifier());
 		assertTrue(result.get(0).isAffichageBoutonSupprimer());
 		assertFalse(result.get(0).isAffichageVisa());
-		assertFalse(result.get(0).isEtatDefinitif());
 		assertFalse(result.get(0).isModifierApprobation());
 		assertFalse(result.get(0).isModifierVisa());
 		assertNull(result.get(0).getValeurApprobation());
@@ -1073,7 +1065,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertTrue(result.get(1).isAffichageBoutonModifier());
 		assertTrue(result.get(1).isAffichageBoutonSupprimer());
 		assertFalse(result.get(1).isAffichageVisa());
-		assertFalse(result.get(1).isEtatDefinitif());
 		assertFalse(result.get(1).isModifierApprobation());
 		assertFalse(result.get(1).isModifierVisa());
 		assertNull(result.get(1).getValeurApprobation());
@@ -1086,7 +1077,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(2).isAffichageBoutonModifier());
 		assertFalse(result.get(2).isAffichageBoutonSupprimer());
 		assertFalse(result.get(2).isAffichageVisa());
-		assertFalse(result.get(2).isEtatDefinitif());
 		assertFalse(result.get(2).isModifierApprobation());
 		assertFalse(result.get(2).isModifierVisa());
 		assertNull(result.get(2).getValeurApprobation());
@@ -1099,7 +1089,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(3).isAffichageBoutonModifier());
 		assertFalse(result.get(3).isAffichageBoutonSupprimer());
 		assertFalse(result.get(3).isAffichageVisa());
-		assertFalse(result.get(3).isEtatDefinitif());
 		assertFalse(result.get(3).isModifierApprobation());
 		assertFalse(result.get(3).isModifierVisa());
 		assertNull(result.get(3).getValeurApprobation());
@@ -1112,7 +1101,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(4).isAffichageBoutonModifier());
 		assertFalse(result.get(4).isAffichageBoutonSupprimer());
 		assertFalse(result.get(4).isAffichageVisa());
-		assertFalse(result.get(4).isEtatDefinitif());
 		assertFalse(result.get(4).isModifierApprobation());
 		assertFalse(result.get(4).isModifierVisa());
 		assertNull(result.get(4).getValeurApprobation());
@@ -1125,7 +1113,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(5).isAffichageBoutonModifier());
 		assertFalse(result.get(5).isAffichageBoutonSupprimer());
 		assertFalse(result.get(5).isAffichageVisa());
-		assertFalse(result.get(5).isEtatDefinitif());
 		assertFalse(result.get(5).isModifierApprobation());
 		assertFalse(result.get(5).isModifierVisa());
 		assertNull(result.get(5).getValeurApprobation());
@@ -1138,7 +1125,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(6).isAffichageBoutonModifier());
 		assertFalse(result.get(6).isAffichageBoutonSupprimer());
 		assertFalse(result.get(6).isAffichageVisa());
-		assertFalse(result.get(6).isEtatDefinitif());
 		assertFalse(result.get(6).isModifierApprobation());
 		assertFalse(result.get(6).isModifierVisa());
 		assertNull(result.get(6).getValeurApprobation());
@@ -1151,7 +1137,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(7).isAffichageBoutonModifier());
 		assertFalse(result.get(7).isAffichageBoutonSupprimer());
 		assertFalse(result.get(7).isAffichageVisa());
-		assertFalse(result.get(7).isEtatDefinitif());
 		assertFalse(result.get(7).isModifierApprobation());
 		assertFalse(result.get(7).isModifierVisa());
 		assertNull(result.get(7).getValeurApprobation());
@@ -1252,7 +1237,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertTrue(result.get(0).isAffichageBoutonModifier());
 		assertTrue(result.get(0).isAffichageBoutonSupprimer());
 		assertFalse(result.get(0).isAffichageVisa());
-		assertFalse(result.get(0).isEtatDefinitif());
 		assertFalse(result.get(0).isModifierApprobation());
 		assertFalse(result.get(0).isModifierVisa());
 		assertNull(result.get(0).getValeurApprobation());
@@ -1266,7 +1250,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertTrue(result.get(1).isAffichageBoutonModifier());
 		assertTrue(result.get(1).isAffichageBoutonSupprimer());
 		assertFalse(result.get(1).isAffichageVisa());
-		assertFalse(result.get(1).isEtatDefinitif());
 		assertFalse(result.get(1).isModifierApprobation());
 		assertFalse(result.get(1).isModifierVisa());
 		assertNull(result.get(1).getValeurApprobation());
@@ -1280,7 +1263,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(2).isAffichageBoutonModifier());
 		assertFalse(result.get(2).isAffichageBoutonSupprimer());
 		assertFalse(result.get(2).isAffichageVisa());
-		assertFalse(result.get(2).isEtatDefinitif());
 		assertFalse(result.get(2).isModifierApprobation());
 		assertFalse(result.get(2).isModifierVisa());
 		assertNull(result.get(2).getValeurApprobation());
@@ -1294,7 +1276,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(3).isAffichageBoutonModifier());
 		assertFalse(result.get(3).isAffichageBoutonSupprimer());
 		assertFalse(result.get(3).isAffichageVisa());
-		assertFalse(result.get(3).isEtatDefinitif());
 		assertFalse(result.get(3).isModifierApprobation());
 		assertFalse(result.get(3).isModifierVisa());
 		assertNull(result.get(3).getValeurApprobation());
@@ -1308,7 +1289,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(4).isAffichageBoutonModifier());
 		assertFalse(result.get(4).isAffichageBoutonSupprimer());
 		assertFalse(result.get(4).isAffichageVisa());
-		assertFalse(result.get(4).isEtatDefinitif());
 		assertFalse(result.get(4).isModifierApprobation());
 		assertFalse(result.get(4).isModifierVisa());
 		assertNull(result.get(4).getValeurApprobation());
@@ -1322,7 +1302,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(5).isAffichageBoutonModifier());
 		assertFalse(result.get(5).isAffichageBoutonSupprimer());
 		assertFalse(result.get(5).isAffichageVisa());
-		assertFalse(result.get(5).isEtatDefinitif());
 		assertFalse(result.get(5).isModifierApprobation());
 		assertFalse(result.get(5).isModifierVisa());
 		assertNull(result.get(5).getValeurApprobation());
@@ -1336,7 +1315,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(6).isAffichageBoutonModifier());
 		assertFalse(result.get(6).isAffichageBoutonSupprimer());
 		assertFalse(result.get(6).isAffichageVisa());
-		assertFalse(result.get(6).isEtatDefinitif());
 		assertFalse(result.get(6).isModifierApprobation());
 		assertFalse(result.get(6).isModifierVisa());
 		assertNull(result.get(6).getValeurApprobation());
@@ -1350,7 +1328,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(7).isAffichageBoutonModifier());
 		assertFalse(result.get(7).isAffichageBoutonSupprimer());
 		assertFalse(result.get(7).isAffichageVisa());
-		assertFalse(result.get(7).isEtatDefinitif());
 		assertFalse(result.get(7).isModifierApprobation());
 		assertFalse(result.get(7).isModifierVisa());
 		assertNull(result.get(7).getValeurApprobation());
@@ -1451,7 +1428,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
 		assertTrue(result.get(0).isAffichageVisa());
-		assertFalse(result.get(0).isEtatDefinitif());
 		assertFalse(result.get(0).isModifierApprobation());
 		assertFalse(result.get(0).isModifierVisa());
 		assertNull(result.get(0).getValeurApprobation());
@@ -1465,7 +1441,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(1).isAffichageBoutonModifier());
 		assertFalse(result.get(1).isAffichageBoutonSupprimer());
 		assertTrue(result.get(1).isAffichageVisa());
-		assertFalse(result.get(1).isEtatDefinitif());
 		assertFalse(result.get(1).isModifierApprobation());
 		assertTrue(result.get(1).isModifierVisa());
 		assertNull(result.get(1).getValeurApprobation());
@@ -1479,7 +1454,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(2).isAffichageBoutonModifier());
 		assertFalse(result.get(2).isAffichageBoutonSupprimer());
 		assertTrue(result.get(2).isAffichageVisa());
-		assertFalse(result.get(2).isEtatDefinitif());
 		assertFalse(result.get(2).isModifierApprobation());
 		assertFalse(result.get(2).isModifierVisa());
 		assertNull(result.get(2).getValeurApprobation());
@@ -1493,7 +1467,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(3).isAffichageBoutonModifier());
 		assertFalse(result.get(3).isAffichageBoutonSupprimer());
 		assertTrue(result.get(3).isAffichageVisa());
-		assertFalse(result.get(3).isEtatDefinitif());
 		assertFalse(result.get(3).isModifierApprobation());
 		assertFalse(result.get(3).isModifierVisa());
 		assertNull(result.get(3).getValeurApprobation());
@@ -1507,7 +1480,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(4).isAffichageBoutonModifier());
 		assertFalse(result.get(4).isAffichageBoutonSupprimer());
 		assertTrue(result.get(4).isAffichageVisa());
-		assertFalse(result.get(4).isEtatDefinitif());
 		assertFalse(result.get(4).isModifierApprobation());
 		assertTrue(result.get(4).isModifierVisa());
 		assertNull(result.get(4).getValeurApprobation());
@@ -1521,7 +1493,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(5).isAffichageBoutonModifier());
 		assertFalse(result.get(5).isAffichageBoutonSupprimer());
 		assertTrue(result.get(5).isAffichageVisa());
-		assertFalse(result.get(5).isEtatDefinitif());
 		assertFalse(result.get(5).isModifierApprobation());
 		assertTrue(result.get(5).isModifierVisa());
 		assertNull(result.get(5).getValeurApprobation());
@@ -1535,7 +1506,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(6).isAffichageBoutonModifier());
 		assertFalse(result.get(6).isAffichageBoutonSupprimer());
 		assertTrue(result.get(6).isAffichageVisa());
-		assertFalse(result.get(6).isEtatDefinitif());
 		assertFalse(result.get(6).isModifierApprobation());
 		assertFalse(result.get(6).isModifierVisa());
 		assertNull(result.get(6).getValeurApprobation());
@@ -1549,7 +1519,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(7).isAffichageBoutonModifier());
 		assertFalse(result.get(7).isAffichageBoutonSupprimer());
 		assertTrue(result.get(7).isAffichageVisa());
-		assertFalse(result.get(7).isEtatDefinitif());
 		assertFalse(result.get(7).isModifierApprobation());
 		assertFalse(result.get(7).isModifierVisa());
 		assertNull(result.get(7).getValeurApprobation());
@@ -1650,7 +1619,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
 		assertTrue(result.get(0).isAffichageVisa());
-		assertFalse(result.get(0).isEtatDefinitif());
 		assertFalse(result.get(0).isModifierApprobation());
 		assertFalse(result.get(0).isModifierVisa());
 		assertNull(result.get(0).getValeurApprobation());
@@ -1664,7 +1632,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(1).isAffichageBoutonModifier());
 		assertFalse(result.get(1).isAffichageBoutonSupprimer());
 		assertTrue(result.get(1).isAffichageVisa());
-		assertFalse(result.get(1).isEtatDefinitif());
 		assertTrue(result.get(1).isModifierApprobation());
 		assertFalse(result.get(1).isModifierVisa());
 		assertNull(result.get(1).getValeurApprobation());
@@ -1678,7 +1645,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(2).isAffichageBoutonModifier());
 		assertFalse(result.get(2).isAffichageBoutonSupprimer());
 		assertTrue(result.get(2).isAffichageVisa());
-		assertFalse(result.get(2).isEtatDefinitif());
 		assertTrue(result.get(2).isModifierApprobation());
 		assertFalse(result.get(2).isModifierVisa());
 		assertNull(result.get(2).getValeurApprobation());
@@ -1692,7 +1658,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(3).isAffichageBoutonModifier());
 		assertFalse(result.get(3).isAffichageBoutonSupprimer());
 		assertTrue(result.get(3).isAffichageVisa());
-		assertFalse(result.get(3).isEtatDefinitif());
 		assertTrue(result.get(3).isModifierApprobation());
 		assertFalse(result.get(3).isModifierVisa());
 		assertNull(result.get(3).getValeurApprobation());
@@ -1706,7 +1671,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(4).isAffichageBoutonModifier());
 		assertFalse(result.get(4).isAffichageBoutonSupprimer());
 		assertTrue(result.get(4).isAffichageVisa());
-		assertFalse(result.get(4).isEtatDefinitif());
 		assertTrue(result.get(4).isModifierApprobation());
 		assertFalse(result.get(4).isModifierVisa());
 		assertNull(result.get(4).getValeurApprobation());
@@ -1720,7 +1684,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(5).isAffichageBoutonModifier());
 		assertFalse(result.get(5).isAffichageBoutonSupprimer());
 		assertTrue(result.get(5).isAffichageVisa());
-		assertFalse(result.get(5).isEtatDefinitif());
 		assertTrue(result.get(5).isModifierApprobation());
 		assertFalse(result.get(5).isModifierVisa());
 		assertNull(result.get(5).getValeurApprobation());
@@ -1734,7 +1697,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(6).isAffichageBoutonModifier());
 		assertFalse(result.get(6).isAffichageBoutonSupprimer());
 		assertTrue(result.get(6).isAffichageVisa());
-		assertFalse(result.get(6).isEtatDefinitif());
 		assertFalse(result.get(6).isModifierApprobation());
 		assertFalse(result.get(6).isModifierVisa());
 		assertNull(result.get(6).getValeurApprobation());
@@ -1748,7 +1710,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(7).isAffichageBoutonModifier());
 		assertFalse(result.get(7).isAffichageBoutonSupprimer());
 		assertTrue(result.get(7).isAffichageVisa());
-		assertFalse(result.get(7).isEtatDefinitif());
 		assertFalse(result.get(7).isModifierApprobation());
 		assertFalse(result.get(7).isModifierVisa());
 		assertNull(result.get(7).getValeurApprobation());
@@ -1849,7 +1810,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
 		assertTrue(result.get(0).isAffichageVisa());
-		assertFalse(result.get(0).isEtatDefinitif());
 		assertFalse(result.get(0).isModifierApprobation());
 		assertFalse(result.get(0).isModifierVisa());
 		assertNull(result.get(0).getValeurApprobation());
@@ -1863,7 +1823,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(1).isAffichageBoutonModifier());
 		assertFalse(result.get(1).isAffichageBoutonSupprimer());
 		assertTrue(result.get(1).isAffichageVisa());
-		assertFalse(result.get(1).isEtatDefinitif());
 		assertTrue(result.get(1).isModifierApprobation());
 		assertFalse(result.get(1).isModifierVisa());
 		assertNull(result.get(1).getValeurApprobation());
@@ -1877,7 +1836,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(2).isAffichageBoutonModifier());
 		assertFalse(result.get(2).isAffichageBoutonSupprimer());
 		assertTrue(result.get(2).isAffichageVisa());
-		assertFalse(result.get(2).isEtatDefinitif());
 		assertTrue(result.get(2).isModifierApprobation());
 		assertFalse(result.get(2).isModifierVisa());
 		assertNull(result.get(2).getValeurApprobation());
@@ -1891,7 +1849,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(3).isAffichageBoutonModifier());
 		assertFalse(result.get(3).isAffichageBoutonSupprimer());
 		assertTrue(result.get(3).isAffichageVisa());
-		assertFalse(result.get(3).isEtatDefinitif());
 		assertTrue(result.get(3).isModifierApprobation());
 		assertFalse(result.get(3).isModifierVisa());
 		assertNull(result.get(3).getValeurApprobation());
@@ -1905,7 +1862,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(4).isAffichageBoutonModifier());
 		assertFalse(result.get(4).isAffichageBoutonSupprimer());
 		assertTrue(result.get(4).isAffichageVisa());
-		assertFalse(result.get(4).isEtatDefinitif());
 		assertTrue(result.get(4).isModifierApprobation());
 		assertFalse(result.get(4).isModifierVisa());
 		assertNull(result.get(4).getValeurApprobation());
@@ -1919,7 +1875,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(5).isAffichageBoutonModifier());
 		assertFalse(result.get(5).isAffichageBoutonSupprimer());
 		assertTrue(result.get(5).isAffichageVisa());
-		assertFalse(result.get(5).isEtatDefinitif());
 		assertTrue(result.get(5).isModifierApprobation());
 		assertFalse(result.get(5).isModifierVisa());
 		assertNull(result.get(5).getValeurApprobation());
@@ -1933,7 +1888,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(6).isAffichageBoutonModifier());
 		assertFalse(result.get(6).isAffichageBoutonSupprimer());
 		assertTrue(result.get(6).isAffichageVisa());
-		assertFalse(result.get(6).isEtatDefinitif());
 		assertFalse(result.get(6).isModifierApprobation());
 		assertFalse(result.get(6).isModifierVisa());
 		assertNull(result.get(6).getValeurApprobation());
@@ -1947,7 +1901,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(7).isAffichageBoutonModifier());
 		assertFalse(result.get(7).isAffichageBoutonSupprimer());
 		assertTrue(result.get(7).isAffichageVisa());
-		assertFalse(result.get(7).isEtatDefinitif());
 		assertFalse(result.get(7).isModifierApprobation());
 		assertFalse(result.get(7).isModifierVisa());
 		assertNull(result.get(7).getValeurApprobation());

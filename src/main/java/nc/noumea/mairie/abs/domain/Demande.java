@@ -23,6 +23,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import nc.noumea.mairie.abs.dto.DemandeDto;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 
@@ -83,5 +85,24 @@ public class Demande {
 		this.dateDebut = demande.getDateDebut();
 		this.dateFin = demande.getDateFin();
 		this.etatsDemande = demande.getEtatsDemande();
+	}
+	
+	@Transient
+	public static Demande mappingDemandeDtoToDemande(DemandeDto demandeDto, Demande demande, Integer idAgent, Date dateJour) {
+
+		// on mappe le DTO dans la Demande generique
+		demande.setDateDebut(demandeDto.getDateDebut());
+		demande.setIdAgent(demandeDto.getIdAgent());
+		RefTypeAbsence rta = new RefTypeAbsence();
+		rta.setIdRefTypeAbsence(demandeDto.getIdTypeDemande());
+		demande.setType(rta);
+
+		EtatDemande etatDemande = new EtatDemande();
+			etatDemande.setDate(dateJour);
+			etatDemande.setIdAgent(idAgent);
+			etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeDto.getIdRefEtat()));
+		demande.addEtatDemande(etatDemande);
+
+		return demande;
 	}
 }
