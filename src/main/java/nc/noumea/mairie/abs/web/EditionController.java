@@ -36,7 +36,7 @@ public class EditionController {
 	@RequestMapping(value = "/downloadDemandeRecuperation", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<byte[]> downloadDemandeRecuperation(@RequestParam("idAgent") int idAgent,
-			@RequestParam("idDemande") int idDemande, @RequestParam("idTypeDemande") int idTypeDemande) {
+			@RequestParam("idDemande") int idDemande) {
 
 		logger.debug(
 				"entered GET [edition/downloadDemandeRecuperation] => downloadDemandeRecuperation with parameters  idDemande = {}, idAgent = {}",
@@ -47,8 +47,7 @@ public class EditionController {
 		byte[] responseData = null;
 
 		try {
-			responseData = reportingService.getDemandeRecuperationReportAsByteArray(convertedIdAgent, idDemande,
-					idTypeDemande);
+			responseData = reportingService.getDemandeRecuperationReportAsByteArray(convertedIdAgent, idDemande);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
