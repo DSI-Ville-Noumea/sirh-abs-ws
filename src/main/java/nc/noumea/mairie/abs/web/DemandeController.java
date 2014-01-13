@@ -88,14 +88,13 @@ public class DemandeController {
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getDemandeAbsence(@RequestParam("idAgent") int idAgent,
-			@RequestParam("idDemande") int idDemande, @RequestParam("idTypeDemande") int idTypeDemande) {
+	public ResponseEntity<String> getDemandeAbsence(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande) {
 
 		logger.debug(
 				"entered GET [demandes/demande] => getDemandeAbsence for Kiosque with parameters idAgent = {} and idDemande = {}",
 				idAgent, idDemande);
 
-		DemandeDto result = absenceService.getDemandeDto(idDemande, idTypeDemande);
+		DemandeDto result = absenceService.getDemandeDto(idDemande);
 
 		if (null == result)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
@@ -140,12 +139,11 @@ public class DemandeController {
 	@ResponseBody
 	@RequestMapping(value = "/xml/getDemande", produces = "application/xml", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ModelAndView getXmlDemande(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande,
-			@RequestParam("idTypeDemande") int idTypeDemande) throws ParseException {
+	public ModelAndView getXmlDemande(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande) throws ParseException {
 
 		logger.debug(
-				"entered GET [demandes/xml/getDemande] => getXmlDemande with parameters idAgent = {}, idDemande = {}, idTypeDemande = {}",
-				idAgent, idDemande, idTypeDemande);
+				"entered GET [demandes/xml/getDemande] => getXmlDemande with parameters idAgent = {}, idDemande = {}",
+				idAgent, idDemande);
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		if (Agent.findAgent(convertedIdAgent) == null)
@@ -155,7 +153,7 @@ public class DemandeController {
 
 		AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(convertedIdAgent, helperService.getCurrentDate());
 
-		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande, idTypeDemande);
+		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
 
 		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(convertedIdAgent);
 

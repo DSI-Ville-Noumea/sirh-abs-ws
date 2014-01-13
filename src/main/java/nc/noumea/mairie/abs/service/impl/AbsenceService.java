@@ -182,10 +182,16 @@ public class AbsenceService implements IAbsenceService {
 
 	
 
-	public DemandeDto getDemandeDto(Integer idDemande, Integer idTypeDemande) {
+	public DemandeDto getDemandeDto(Integer idDemande) {
 		DemandeDto demandeDto = null;
 
-		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
+		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
+		
+		if(null == demande) {
+			return demandeDto;
+		}
+		
+		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getType().getIdRefTypeAbsence())) {
 			case CONGE_ANNUEL:
 				// TODO
 				break;
@@ -198,7 +204,7 @@ public class AbsenceService implements IAbsenceService {
 				if (null == demandeRecup) {
 					return demandeDto;
 				}
-
+				
 				demandeDto = new DemandeDto(demandeRecup);
 				break;
 			case ASA:

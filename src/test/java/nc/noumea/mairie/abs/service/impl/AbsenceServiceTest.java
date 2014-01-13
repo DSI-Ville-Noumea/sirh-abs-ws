@@ -271,44 +271,47 @@ public class AbsenceServiceTest {
 		Date dateMaj = new Date();
 		Date dateMaj2 = new Date();
 		Integer idDemande = 1;
-		Integer idTypeDemande = RefTypeAbsenceEnum.RECUP.getValue();
 
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
+			rta.setIdRefTypeAbsence(3);
 
+		Demande d = new Demande();
+			d.setType(rta);
+		
 		DemandeRecup dr = new DemandeRecup();
-
-		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
+		
 		EtatDemande ed = new EtatDemande();
-		ed.setDate(dateMaj);
-		ed.setDemande((Demande) dr);
-		ed.setEtat(RefEtatEnum.PROVISOIRE);
-		ed.setIdAgent(9005138);
-		ed.setIdEtatDemande(1);
+			ed.setDate(dateMaj);
+			ed.setDemande((Demande) dr);
+			ed.setEtat(RefEtatEnum.PROVISOIRE);
+			ed.setIdAgent(9005138);
+			ed.setIdEtatDemande(1);
 		EtatDemande ed2 = new EtatDemande();
-		ed2.setDate(dateMaj2);
-		ed2.setDemande((Demande) dr);
-		ed2.setEtat(RefEtatEnum.SAISIE);
-		ed2.setIdAgent(9005138);
-		ed2.setIdEtatDemande(2);
-		listEtatDemande.addAll(Arrays.asList(ed2, ed));
+			ed2.setDate(dateMaj2);
+			ed2.setDemande((Demande) dr);
+			ed2.setEtat(RefEtatEnum.SAISIE);
+			ed2.setIdAgent(9005138);
+			ed2.setIdEtatDemande(2);
+		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
+			listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
-		dr.setDateDebut(dateDebut);
-		dr.setDateFin(dateFin);
-		dr.setDuree(10);
-		dr.setEtatsDemande(listEtatDemande);
-		dr.setIdAgent(9005138);
-		dr.setIdDemande(idDemande);
-		dr.setType(rta);
+			dr.setDateDebut(dateDebut);
+			dr.setDateFin(dateFin);
+			dr.setDuree(10);
+			dr.setEtatsDemande(listEtatDemande);
+			dr.setIdAgent(9005138);
+			dr.setIdDemande(idDemande);
+			dr.setType(rta);
 
 		IDemandeRepository demandeRepo = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepo.getEntity(DemandeRecup.class, idDemande)).thenReturn(dr);
+			Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
+			Mockito.when(demandeRepo.getEntity(DemandeRecup.class, idDemande)).thenReturn(dr);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
 
 		// When
-		DemandeDto result = service.getDemandeDto(idDemande, idTypeDemande);
+		DemandeDto result = service.getDemandeDto(idDemande);
 
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
@@ -330,44 +333,47 @@ public class AbsenceServiceTest {
 		Date dateMaj = new Date();
 		Date dateMaj2 = new Date();
 		Integer idDemande = 1;
-		Integer idTypeDemande = RefTypeAbsenceEnum.RECUP.getValue();
 
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(3);
 
+		Demande d = new Demande();
+		d.setType(rta);
+		
 		DemandeRecup dr = new DemandeRecup();
 
-		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		EtatDemande ed = new EtatDemande();
-		ed.setDate(dateMaj);
-		ed.setDemande((Demande) dr);
-		ed.setEtat(RefEtatEnum.SAISIE);
-		ed.setIdAgent(9005138);
-		ed.setIdEtatDemande(1);
+			ed.setDate(dateMaj);
+			ed.setDemande((Demande) dr);
+			ed.setEtat(RefEtatEnum.SAISIE);
+			ed.setIdAgent(9005138);
+			ed.setIdEtatDemande(1);
 		EtatDemande ed2 = new EtatDemande();
-		ed2.setDate(dateMaj2);
-		ed2.setDemande((Demande) dr);
-		ed2.setEtat(RefEtatEnum.APPROUVEE);
-		ed2.setIdAgent(9005138);
-		ed2.setIdEtatDemande(2);
-		listEtatDemande.addAll(Arrays.asList(ed2, ed));
+			ed2.setDate(dateMaj2);
+			ed2.setDemande((Demande) dr);
+			ed2.setEtat(RefEtatEnum.APPROUVEE);
+			ed2.setIdAgent(9005138);
+			ed2.setIdEtatDemande(2);
+		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
+			listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
-		dr.setDateDebut(dateDebut);
-		dr.setDateFin(dateFin);
-		dr.setDuree(10);
-		dr.setEtatsDemande(listEtatDemande);
-		dr.setIdAgent(9005138);
-		dr.setIdDemande(idDemande);
-		dr.setType(rta);
+			dr.setDateDebut(dateDebut);
+			dr.setDateFin(dateFin);
+			dr.setDuree(10);
+			dr.setEtatsDemande(listEtatDemande);
+			dr.setIdAgent(9005138);
+			dr.setIdDemande(idDemande);
+			dr.setType(rta);
 
 		IDemandeRepository demandeRepo = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepo.getEntity(DemandeRecup.class, idDemande)).thenReturn(dr);
+			Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
+			Mockito.when(demandeRepo.getEntity(DemandeRecup.class, idDemande)).thenReturn(dr);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
 
 		// When
-		DemandeDto result = service.getDemandeDto(idDemande, idTypeDemande);
+		DemandeDto result = service.getDemandeDto(idDemande);
 
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
@@ -379,56 +385,6 @@ public class AbsenceServiceTest {
 		assertFalse(result.isAffichageBoutonImprimer());
 		assertFalse(result.isAffichageBoutonModifier());
 		assertFalse(result.isAffichageBoutonSupprimer());
-	}
-
-	@Test
-	public void getDemande_Recup_WithNoResult_OtherType() {
-
-		Date dateDebut = new Date();
-		Date dateFin = new Date();
-		Date dateMaj = new Date();
-		Date dateMaj2 = new Date();
-		Integer idDemande = 1;
-
-		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
-
-		DemandeRecup dr = new DemandeRecup();
-
-		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
-		EtatDemande ed = new EtatDemande();
-		ed.setDate(dateMaj);
-		ed.setDemande((Demande) dr);
-		ed.setEtat(RefEtatEnum.SAISIE);
-		ed.setIdAgent(9005138);
-		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
-		ed2.setDate(dateMaj2);
-		ed2.setDemande((Demande) dr);
-		ed2.setEtat(RefEtatEnum.APPROUVEE);
-		ed2.setIdAgent(9005138);
-		ed2.setIdEtatDemande(2);
-		listEtatDemande.addAll(Arrays.asList(ed2, ed));
-
-		dr.setDateDebut(dateDebut);
-		dr.setDateFin(dateFin);
-		dr.setDuree(10);
-		dr.setEtatsDemande(listEtatDemande);
-		dr.setIdAgent(9005138);
-		dr.setIdDemande(idDemande);
-		dr.setType(rta);
-
-		IDemandeRepository demandeRepo = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepo.getEntity(DemandeRecup.class, idDemande)).thenReturn(dr);
-
-		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
-
-		// When
-		DemandeDto result = service.getDemandeDto(idDemande, RefTypeAbsenceEnum.MALADIES.getValue());
-
-		// Then
-		assertNull(result);
 	}
 
 	@Test

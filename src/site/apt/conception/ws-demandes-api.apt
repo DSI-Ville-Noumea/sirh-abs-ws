@@ -65,8 +65,6 @@ HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
  
  * <<idDemande>> : identifiant de la demande 
  
- * <<idTypeDemande>> : type de la demande (type absence) 
- 
  <<Content>>
  
 +-------------------------+
@@ -88,6 +86,78 @@ HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
 	"valeurVisa": false/null,
 	"valeurApprobation": false/null
 }
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 204 : NO_CONTENT
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
+HTTP Code 403 : Accès non autorisé
++-------------------------+
+
+
+* retourne une demande pour l'impression BIRT au format xml
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /demandes/xml/getDemande
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent 
+ 
+ * <<idDemande>> : identifiant de la demande 
+ 
+ <<Content>>
+ 
++-------------------------+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<editionDemandeDto>
+	<agent>
+		<idAgent>9005138</idAgent>
+		<nom>CHARVET</nom>
+		<prenom>TATIANA</prenom>
+		<codeService>DCCA</codeService>
+		<direction>Direction des Systèmes d'Information</direction>
+		<service>DSI Service Etudes et Développement</service>
+    </agent>
+    <approbateur>
+		<idAgent>9005138</idAgent>
+		<nom>CHARVET</nom>
+		<prenom>TATIANA</prenom>
+		<codeService>DCCA</codeService>
+		<direction>Direction des Systèmes d'Information</direction>
+		<service>DSI Service Etudes et Développement</service>
+    </approbateur>
+    <demande>
+		<affichageApprobation>false</affichageApprobation>
+		<affichageBoutonAnnuler>false</affichageBoutonAnnuler>
+		<affichageBoutonImprimer>false</affichageBoutonImprimer>
+		<affichageBoutonModifier>false</affichageBoutonModifier>
+		<affichageBoutonSupprimer>false</affichageBoutonSupprimer>
+		<affichageVisa>false</affichageVisa>
+		<dateDebut>2016-04-24T09:20:00+11:00</dateDebut>
+		<dateDemande>2013-05-14T00:00:00+11:00</dateDemande>
+		<duree>100</duree>
+		<idAgent>9005138</idAgent>
+		<idDemande>6</idDemande>
+		<idRefEtat>5</idRefEtat>
+		<idTypeDemande>3</idTypeDemande>
+		<modifierApprobation>false</modifierApprobation>
+		<modifierVisa>false</modifierVisa>
+		<valeurApprobation>false</valeurApprobation>
+		<valeurVisa>true</valeurVisa>
+    </demande>
+    <solde>
+		<soldeCongeAnnee>0.0</soldeCongeAnnee>
+		<soldeCongeAnneePrec>24.5</soldeCongeAnneePrec>
+		<soldeRecup>370.0</soldeRecup>
+    </solde>
+</editionDemandeDto>
 +-------------------------+
 
  <<Response>> : 
