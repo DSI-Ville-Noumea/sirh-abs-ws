@@ -11,7 +11,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface IAbsenceService {
 
-	List<RefEtatDto> getRefEtats();
+	List<RefEtatDto> getRefEtats(String ongletDemande);
 
 	List<RefTypeAbsenceDto> getRefTypesAbsence();
 

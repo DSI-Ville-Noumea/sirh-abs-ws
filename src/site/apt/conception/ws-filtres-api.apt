@@ -51,7 +51,7 @@ HTTP Code 200 : OK
  
   <<Parameters>>
   
-  -
+ * <<ongletDemande>> : type d'onglet pour la liste des etats de demande correspondants (NON_PRISES, EN_COURS, TOUTES) (optionnel)
   
  <<Content>>
  

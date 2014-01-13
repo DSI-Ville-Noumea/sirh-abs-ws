@@ -42,11 +42,11 @@ public class FiltreController {
 	@ResponseBody
 	@RequestMapping(value = "/getEtats", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getEtats() {
+	public ResponseEntity<String> getEtats(@RequestParam(value = "ongletDemande", required = false) String ongletDemande) {
 
 		logger.debug("entered GET [filtres/getEtats] => getEtats");
 
-		List<RefEtatDto> etats = absenceService.getRefEtats();
+		List<RefEtatDto> etats = absenceService.getRefEtats(ongletDemande);
 
 		String json = new JSONSerializer().exclude("*.class").serialize(etats);
 

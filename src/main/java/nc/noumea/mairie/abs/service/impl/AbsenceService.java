@@ -70,9 +70,11 @@ public class AbsenceService implements IAbsenceService {
 	public static final String ONGLET_TOUTES = "TOUTES";
 
 	@Override
-	public List<RefEtatDto> getRefEtats() {
+	public List<RefEtatDto> getRefEtats(String ongletDemande) {
+		
 		List<RefEtatDto> res = new ArrayList<RefEtatDto>();
-		List<RefEtat> refEtats = RefEtat.findAllRefEtats();
+		List<RefEtat> refEtats = getListeEtatsByOnglet(ongletDemande, null);
+		
 		for (RefEtat etat : refEtats) {
 			RefEtatDto dto = new RefEtatDto(etat);
 			res.add(dto);
@@ -263,6 +265,12 @@ public class AbsenceService implements IAbsenceService {
 	protected List<RefEtat> getListeEtatsByOnglet(String ongletDemande, Integer idRefEtat) {
 
 		List<RefEtat> etats = new ArrayList<RefEtat>();
+		
+		if(null == ongletDemande) {
+			etats = demandeRepository.findAllRefEtats();
+			return etats;
+		}
+		
 		switch (ongletDemande) {
 			case ONGLET_NON_PRISES:
 				etats = demandeRepository.findRefEtatNonPris();
@@ -274,7 +282,7 @@ public class AbsenceService implements IAbsenceService {
 				if (idRefEtat != null) {
 					etats.add(absEntityManager.find(RefEtat.class, idRefEtat));
 				} else {
-					etats = null;
+					etats = demandeRepository.findAllRefEtats();
 				}
 				break;
 		}

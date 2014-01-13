@@ -28,6 +28,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -242,25 +243,51 @@ public class AbsenceServiceTest {
 			etatSaisie.setIdRefEtat(1);
 			etatSaisie.setLabel(RefEtatEnum.SAISIE.name());
 		
-		List<RefEtat> listRefEtatNonPris = new ArrayList<RefEtat>();
-			listRefEtatNonPris.addAll(Arrays.asList(etatProvisoire, etatSaisie));
-		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
-			listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
+		List<RefEtat> listRefEtatToutes = new ArrayList<RefEtat>();
+		listRefEtatToutes.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 		
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
-		Mockito.when(demandeRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
-		
-		EntityManager absEntityManager = Mockito.mock(EntityManager.class);
-		Mockito.when(absEntityManager.find(RefEtat.class, idRefEtat)).thenReturn(etatProvisoire);
+		Mockito.when(demandeRepository.findAllRefEtats()).thenReturn(listRefEtatToutes);
 		
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "absEntityManager", absEntityManager);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		
 		List<RefEtat> result = service.getListeEtatsByOnglet("TOUTES", idRefEtat);
 		
-		assertNull(result);
+		assertEquals(3, result.size());
+		assertEquals(0, result.get(0).getIdRefEtat().intValue());
+		assertEquals(1, result.get(1).getIdRefEtat().intValue());
+		assertEquals(6, result.get(2).getIdRefEtat().intValue());
+	}
+	
+	@Test
+	public void getListeEtatsByOnglet_ongletNonDefini(){
+		
+		RefEtat etatProvisoire = new RefEtat();
+			etatProvisoire.setIdRefEtat(0);
+			etatProvisoire.setLabel(RefEtatEnum.PROVISOIRE.name());
+		RefEtat etatPris = new RefEtat();
+			etatPris.setIdRefEtat(6);
+			etatPris.setLabel(RefEtatEnum.PRISE.name());
+		RefEtat etatSaisie = new RefEtat();
+			etatSaisie.setIdRefEtat(1);
+			etatSaisie.setLabel(RefEtatEnum.SAISIE.name());
+		
+		List<RefEtat> listRefEtat = new ArrayList<RefEtat>();
+			listRefEtat.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.findAllRefEtats()).thenReturn(listRefEtat);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		List<RefEtat> result = service.getListeEtatsByOnglet(null, null);
+		
+		assertEquals(3, result.size());
+		assertEquals(0, result.get(0).getIdRefEtat().intValue());
+		assertEquals(1, result.get(1).getIdRefEtat().intValue());
+		assertEquals(6, result.get(2).getIdRefEtat().intValue());
 	}
 
 	@Test
@@ -1756,5 +1783,131 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(EtatDemande.class));
+	}
+	
+	
+	@Test
+	public void getRefEtats_NON_PRISES(){
+		
+		RefEtat etatProvisoire = new RefEtat();
+			etatProvisoire.setIdRefEtat(0);
+			etatProvisoire.setLabel(RefEtatEnum.PROVISOIRE.name());
+		RefEtat etatPris = new RefEtat();
+			etatPris.setIdRefEtat(6);
+			etatPris.setLabel(RefEtatEnum.PRISE.name());
+		RefEtat etatSaisie = new RefEtat();
+			etatSaisie.setIdRefEtat(1);
+			etatSaisie.setLabel(RefEtatEnum.SAISIE.name());
+		
+		List<RefEtat> listRefEtatNonPris = new ArrayList<RefEtat>();
+			listRefEtatNonPris.addAll(Arrays.asList(etatProvisoire, etatSaisie));
+		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
+			listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
+		Mockito.when(demandeRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		List<RefEtatDto> result = service.getRefEtats("NON_PRISES");
+		
+		assertEquals(2, result.size());
+		assertEquals(0, result.get(0).getIdRefEtat().intValue());
+		assertEquals(1, result.get(1).getIdRefEtat().intValue());
+	}
+	
+	@Test
+	public void getRefEtats_EN_COURS(){
+		
+		RefEtat etatProvisoire = new RefEtat();
+			etatProvisoire.setIdRefEtat(0);
+			etatProvisoire.setLabel(RefEtatEnum.PROVISOIRE.name());
+		RefEtat etatPris = new RefEtat();
+			etatPris.setIdRefEtat(6);
+			etatPris.setLabel(RefEtatEnum.PRISE.name());
+		RefEtat etatSaisie = new RefEtat();
+			etatSaisie.setIdRefEtat(1);
+			etatSaisie.setLabel(RefEtatEnum.SAISIE.name());
+		
+		List<RefEtat> listRefEtatNonPris = new ArrayList<RefEtat>();
+			listRefEtatNonPris.addAll(Arrays.asList(etatProvisoire, etatSaisie));
+		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
+			listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
+		Mockito.when(demandeRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		List<RefEtatDto> result = service.getRefEtats("EN_COURS");
+		
+		assertEquals(3, result.size());
+		assertEquals(0, result.get(0).getIdRefEtat().intValue());
+		assertEquals(1, result.get(1).getIdRefEtat().intValue());
+		assertEquals(6, result.get(2).getIdRefEtat().intValue());
+	}
+	
+	@Test
+	public void getRefEtats_TOUTES(){
+	
+		RefEtat etatProvisoire = new RefEtat();
+			etatProvisoire.setIdRefEtat(0);
+			etatProvisoire.setLabel(RefEtatEnum.PROVISOIRE.name());
+		RefEtat etatPris = new RefEtat();
+			etatPris.setIdRefEtat(6);
+			etatPris.setLabel(RefEtatEnum.PRISE.name());
+		RefEtat etatSaisie = new RefEtat();
+			etatSaisie.setIdRefEtat(1);
+			etatSaisie.setLabel(RefEtatEnum.SAISIE.name());
+		
+		List<RefEtat> listRefEtatToutes = new ArrayList<RefEtat>();
+			listRefEtatToutes.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.findAllRefEtats()).thenReturn(listRefEtatToutes);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		List<RefEtatDto> result = service.getRefEtats("TOUTES");
+		
+		assertEquals(3, result.size());
+		assertEquals(0, result.get(0).getIdRefEtat().intValue());
+		assertEquals(1, result.get(1).getIdRefEtat().intValue());
+		assertEquals(6, result.get(2).getIdRefEtat().intValue());
+	}
+	
+	@Test
+	public void getRefEtats_ongletNonDefini(){
+		
+		RefEtat etatProvisoire = new RefEtat();
+			etatProvisoire.setIdRefEtat(0);
+			etatProvisoire.setLabel(RefEtatEnum.PROVISOIRE.name());
+		RefEtat etatPris = new RefEtat();
+			etatPris.setIdRefEtat(6);
+			etatPris.setLabel(RefEtatEnum.PRISE.name());
+		RefEtat etatSaisie = new RefEtat();
+			etatSaisie.setIdRefEtat(1);
+			etatSaisie.setLabel(RefEtatEnum.SAISIE.name());
+		
+		List<RefEtat> listRefEtat = new ArrayList<RefEtat>();
+			listRefEtat.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.findAllRefEtats()).thenReturn(listRefEtat);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		List<RefEtatDto> result = service.getRefEtats(null);
+		
+		assertEquals(3, result.size());
+		assertEquals(0, result.get(0).getIdRefEtat().intValue());
+		assertEquals(1, result.get(1).getIdRefEtat().intValue());
+		assertEquals(6, result.get(2).getIdRefEtat().intValue());
 	}
 }

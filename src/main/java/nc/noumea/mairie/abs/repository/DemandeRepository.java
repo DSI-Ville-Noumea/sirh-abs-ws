@@ -106,4 +106,10 @@ public class DemandeRepository implements IDemandeRepository {
 		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.APPROUVEE.getCodeEtat())));
 		return res;
 	}
+	
+	@Override
+	public List<RefEtat> findAllRefEtats() {
+		
+		return RefEtat.findAllRefEtats();
+	}
 }
