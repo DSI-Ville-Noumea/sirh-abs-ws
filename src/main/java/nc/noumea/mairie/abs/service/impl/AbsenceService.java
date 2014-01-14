@@ -44,7 +44,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private IAccessRightsRepository accessRightsRepository;
-	
+
 	@Autowired
 	private IAccessRightsService accessRightsService;
 
@@ -71,10 +71,10 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	public List<RefEtatDto> getRefEtats(String ongletDemande) {
-		
+
 		List<RefEtatDto> res = new ArrayList<RefEtatDto>();
 		List<RefEtat> refEtats = getListeEtatsByOnglet(ongletDemande, null);
-		
+
 		for (RefEtat etat : refEtats) {
 			RefEtatDto dto = new RefEtatDto(etat);
 			res.add(dto);
@@ -101,7 +101,7 @@ public class AbsenceService implements IAbsenceService {
 
 		// verification des droits
 		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getIdAgent(), returnDto);
-		if(!returnDto.getErrors().isEmpty())
+		if (!returnDto.getErrors().isEmpty())
 			return returnDto;
 
 		Demande demande = null;
@@ -182,17 +182,15 @@ public class AbsenceService implements IAbsenceService {
 		}
 	}
 
-	
-
 	public DemandeDto getDemandeDto(Integer idDemande) {
 		DemandeDto demandeDto = null;
 
 		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
-		
-		if(null == demande) {
+
+		if (null == demande) {
 			return demandeDto;
 		}
-		
+
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getType().getIdRefTypeAbsence())) {
 			case CONGE_ANNUEL:
 				// TODO
@@ -206,7 +204,7 @@ public class AbsenceService implements IAbsenceService {
 				if (null == demandeRecup) {
 					return demandeDto;
 				}
-				
+
 				demandeDto = new DemandeDto(demandeRecup);
 				break;
 			case ASA:
@@ -244,7 +242,8 @@ public class AbsenceService implements IAbsenceService {
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
 
-		Integer idApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
+		Integer idApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte,
+				idAgentConcerne);
 
 		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate,
 				idRefType);
@@ -265,18 +264,26 @@ public class AbsenceService implements IAbsenceService {
 	protected List<RefEtat> getListeEtatsByOnglet(String ongletDemande, Integer idRefEtat) {
 
 		List<RefEtat> etats = new ArrayList<RefEtat>();
-		
-		if(null == ongletDemande) {
+
+		if (null == ongletDemande) {
 			etats = demandeRepository.findAllRefEtats();
 			return etats;
 		}
-		
+
 		switch (ongletDemande) {
 			case ONGLET_NON_PRISES:
-				etats = demandeRepository.findRefEtatNonPris();
+				if (idRefEtat != null) {
+					etats.add(absEntityManager.find(RefEtat.class, idRefEtat));
+				} else {
+					etats = demandeRepository.findRefEtatNonPris();
+				}
 				break;
 			case ONGLET_EN_COURS:
-				etats = demandeRepository.findRefEtatEnCours();
+				if (idRefEtat != null) {
+					etats.add(absEntityManager.find(RefEtat.class, idRefEtat));
+				} else {
+					etats = demandeRepository.findRefEtatEnCours();
+				}
 				break;
 			case ONGLET_TOUTES:
 				if (idRefEtat != null) {
@@ -408,7 +415,7 @@ public class AbsenceService implements IAbsenceService {
 		// on verifie les droits
 		// verification des droits
 		result = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), result);
-		if(!result.getErrors().isEmpty())
+		if (!result.getErrors().isEmpty())
 			return result;
 
 		result = absRecupDataConsistencyRules
@@ -452,7 +459,7 @@ public class AbsenceService implements IAbsenceService {
 	public ReturnMessageDto setDemandeEtatPris(Integer idDemande) {
 
 		logger.info("Trying to update demande id {} to Etat PRISE...", idDemande);
-		
+
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		// on cherche la demande
@@ -463,10 +470,11 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 		if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
-			result.getErrors().add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande, RefEtatEnum.APPROUVEE.toString(), demande
-					.getLatestEtatDemande().getEtat().toString()));
-			logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande, RefEtatEnum.APPROUVEE.toString(), demande
-					.getLatestEtatDemande().getEtat().toString());
+			result.getErrors().add(
+					String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
+							RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat().toString()));
+			logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
+					RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
 			return result;
 		}
 
@@ -477,12 +485,12 @@ public class AbsenceService implements IAbsenceService {
 		epNew.setEtat(RefEtatEnum.PRISE);
 		epNew.setIdAgent(demande.getIdAgent());
 		demande.addEtatDemande(epNew);
-		
+
 		// insert nouvelle ligne EtatAbsence avec nouvel etat
 		demandeRepository.persistEntity(epNew);
 
 		logger.info("Updated demande id {}.", idDemande);
-		
+
 		return result;
 	}
 
@@ -502,10 +510,10 @@ public class AbsenceService implements IAbsenceService {
 		}
 		if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.PROVISOIRE) {
 			result.getErrors().add(
-					String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande, RefEtatEnum.PROVISOIRE.toString(), demande
-							.getLatestEtatDemande().getEtat()));
-			logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande, RefEtatEnum.PROVISOIRE.toString(), demande
-					.getLatestEtatDemande().getEtat().toString());
+					String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
+							RefEtatEnum.PROVISOIRE.toString(), demande.getLatestEtatDemande().getEtat()));
+			logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
+					RefEtatEnum.PROVISOIRE.toString(), demande.getLatestEtatDemande().getEtat().toString());
 			return result;
 		}
 
@@ -560,7 +568,7 @@ public class AbsenceService implements IAbsenceService {
 
 		// verification des droits
 		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), returnDto);
-		if(!returnDto.getErrors().isEmpty())
+		if (!returnDto.getErrors().isEmpty())
 			return returnDto;
 
 		// verifier l etat de la demande
