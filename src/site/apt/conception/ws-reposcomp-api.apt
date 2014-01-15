@@ -6,7 +6,7 @@
 
 SIRH-ABS-WS API et définition des services concernant les repos compensateurs des agents
 
-* Mise à jour des repos compensateurs d'un agent pour une semaine donnée
+* Mise à jour des repos compensateurs d'un agent pour une semaine donnée /!\ EXCLUSIVEMENT APPELE PAR LE MODULE DES POINTAGES /!\
 
  <<PROJET>> : SIRH-ABS-WS
  
