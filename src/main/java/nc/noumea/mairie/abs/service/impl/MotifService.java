@@ -28,10 +28,11 @@ public class MotifService implements IMotifService {
 
 		List<MotifRefusDto> res = new ArrayList<MotifRefusDto>();
 		List<MotifRefus> motifRefus = motifRepository.getListeMotifRefus(idRefType);
-
-		for (MotifRefus motif : motifRefus) {
-			MotifRefusDto dto = new MotifRefusDto(motif);
-			res.add(dto);
+		if (motifRefus != null) {
+			for (MotifRefus motif : motifRefus) {
+				MotifRefusDto dto = new MotifRefusDto(motif);
+				res.add(dto);
+			}
 		}
 		return res;
 	}
@@ -42,9 +43,11 @@ public class MotifService implements IMotifService {
 		List<MotifCompteurDto> res = new ArrayList<MotifCompteurDto>();
 		List<MotifCompteur> motifCompteur = motifRepository.getListeMotifCompteur(idRefType);
 
-		for (MotifCompteur motif : motifCompteur) {
-			MotifCompteurDto dto = new MotifCompteurDto(motif);
-			res.add(dto);
+		if (motifCompteur != null) {
+			for (MotifCompteur motif : motifCompteur) {
+				MotifCompteurDto dto = new MotifCompteurDto(motif);
+				res.add(dto);
+			}
 		}
 		return res;
 	}
