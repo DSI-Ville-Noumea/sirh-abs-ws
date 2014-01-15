@@ -1,0 +1,31 @@
+            ------
+            SIRH-ABS-WS API WS doc
+            ------
+
+
+
+SIRH-ABS-WS API et définition des services concernant les motifs des compteurs
+
+* Liste des motifs des compteurs
+
+ <<PROJET>> : SIRH-ABS-WS
+ 
+ <<URL>> : /motifCompteur/getListeMotifCompteur
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idRefType>> : 1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies 
+  
+ <<Content>> 
+ 
+ -
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant)
++-------------------------+
+

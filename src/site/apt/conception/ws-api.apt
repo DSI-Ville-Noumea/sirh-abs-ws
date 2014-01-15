@@ -46,4 +46,12 @@ SIRH-ABS-WS API et définition des services
 * Repos compensateurs
 
  {{{../conception/ws-reposcomp-api.html}ws-reposcomp-api.html}}
+ 
+* Motif Refus
+
+ {{{../conception/ws-motif-refus-api.html}ws-motif-refus-api.html}}
+ 
+* Motif Compteur
+
+ {{{../conception/ws-motif-compteur-api.html}ws-motif-compteur-api.html}}
 
