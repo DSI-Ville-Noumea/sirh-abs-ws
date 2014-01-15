@@ -29,7 +29,7 @@ public class RecuperationController {
 	@Autowired
 	private IAgentMatriculeConverterService converterService;
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	@RequestMapping(value = "/addForPTG", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> addRecuperationForAgentAndWeek(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("dateLundi") @DateTimeFormat(pattern = "YYYYMMdd") Date dateMonday,
@@ -39,7 +39,7 @@ public class RecuperationController {
 				"entered GET [recuperations/add] => addRecuperationForAgentAndWeek with parameters idAgent = {}, dateMonday = {} and minutes = {}",
 				idAgent, dateMonday, minutes);
 
-		counterService.addRecuperationToAgent(idAgent, dateMonday, minutes);
+		counterService.addRecuperationToAgentForPTG(idAgent, dateMonday, minutes);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

@@ -101,7 +101,7 @@ public class CounterService implements ICounterService {
 	 * l historique utilise a pour seul but de rectifier le compteur en cas de modification par l agent dans ses pointages
 	 */
 	@Override
-	public int addRecuperationToAgent(Integer idAgent, Date dateMonday, Integer minutes) {
+	public int addRecuperationToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes) {
 
 		logger.info("Trying to update recuperation counters for Agent [{}] and date [{}] with {} minutes...", idAgent,
 				dateMonday, minutes);
@@ -119,7 +119,7 @@ public class CounterService implements ICounterService {
 	 * l historique utilise a pour seul but de rectifier le compteur en cas de modification par l agent dans ses pointages
 	 */
 	@Override
-	public int addReposCompensateurToAgent(Integer idAgent, Date dateMonday, Integer minutes) {
+	public int addReposCompensateurToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes) {
 
 		logger.info("Trying to update repos compensateurs counters for Agent [{}] and date [{}] with {} minutes...",
 				idAgent, dateMonday, minutes);

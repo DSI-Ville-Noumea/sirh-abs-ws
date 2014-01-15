@@ -38,7 +38,7 @@ public class CounterServiceTest {
 
 		// When
 		try {
-			service.addRecuperationToAgent(idAgent, dateMonday, 90);
+			service.addRecuperationToAgentForPTG(idAgent, dateMonday, 90);
 		} catch (AgentNotFoundException ex) {
 			return;
 		}
@@ -65,7 +65,7 @@ public class CounterServiceTest {
 
 		// When
 		try {
-			service.addRecuperationToAgent(idAgent, dateMonday, 90);
+			service.addRecuperationToAgentForPTG(idAgent, dateMonday, 90);
 		} catch (NotAMondayException ex) {
 			return;
 		}
@@ -97,7 +97,7 @@ public class CounterServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 
 		// When
-		int result = service.addRecuperationToAgent(idAgent, dateMonday, 90);
+		int result = service.addRecuperationToAgentForPTG(idAgent, dateMonday, 90);
 
 		// Then
 		assertEquals(90, result);
@@ -133,7 +133,7 @@ public class CounterServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		int result = service.addRecuperationToAgent(idAgent, dateMonday, 90);
+		int result = service.addRecuperationToAgentForPTG(idAgent, dateMonday, 90);
 
 		// Then
 		assertEquals(20, result);
@@ -168,7 +168,7 @@ public class CounterServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		int result = service.addRecuperationToAgent(idAgent, dateMonday, 70);
+		int result = service.addRecuperationToAgentForPTG(idAgent, dateMonday, 70);
 
 		// Then
 		assertEquals(0, result);

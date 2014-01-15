@@ -29,7 +29,7 @@ public class ReposCompController {
 	@Autowired
 	private IAgentMatriculeConverterService converterService;
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	@RequestMapping(value = "/addForPTG", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> addReposCompForAgentAndWeek(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("dateLundi") @DateTimeFormat(pattern = "YYYYMMdd") Date dateMonday,
@@ -39,7 +39,7 @@ public class ReposCompController {
 				"entered GET [reposcomps/add] => addReposCompForAgentAndWeek with parameters idAgent = {}, dateMonday = {} and minutes = {}",
 				idAgent, dateMonday, minutes);
 
-		counterService.addReposCompensateurToAgent(idAgent, dateMonday, minutes);
+		counterService.addReposCompensateurToAgentForPTG(idAgent, dateMonday, minutes);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

@@ -10,7 +10,7 @@ SIRH-ABS-WS API et définition des services concernant les repos compensateurs d
 
  <<PROJET>> : SIRH-ABS-WS
  
- <<URL>> : /reposcomps/add
+ <<URL>> : /reposcomps/addForPTG
  
  <<Accepted Methods>> : POST
  

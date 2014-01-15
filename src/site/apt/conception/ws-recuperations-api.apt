@@ -10,7 +10,7 @@ SIRH-ABS-WS API et définition des services concernant les récupérations des a
 
  <<PROJET>> : SIRH-ABS-WS
  
- <<URL>> : /recuperations/add
+ <<URL>> : /recuperations/addForPTG
  
  <<Accepted Methods>> : POST
  
