@@ -312,7 +312,7 @@ HTTP Code 409 : CONFLICT --> alors on retourne le MessageDTO des erreurs (si l'a
 	"idDemande": 1 (reprendre l'identifiant de la demande envoyé initialement),
     "idRefEtat": 0 (VISEE_FAVORABLE(2), VISEE_DEFAVORABLE(3), APPROUVEE(4), REFUSEE(5), ANNULEE(7)),
 	"dateAvis": "/Date(1368450000000+1100)/",
-	"motifAvis": "motifs de l'avis"
+	"idMotifAvis": 1/NULL (obligatoire si etat = REFUSEE)
 }
 +-------------------------+
 

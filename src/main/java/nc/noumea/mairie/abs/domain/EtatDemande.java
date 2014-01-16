@@ -45,6 +45,6 @@ public class EtatDemande {
 	@Enumerated(EnumType.ORDINAL)
 	private RefEtatEnum etat;
 	
-	@Column(name = "MOTIF")
-	private String motif;
+	@Column(name = "ID_MOTIF_REFUS")
+	private Integer idMotifRefus;
 }

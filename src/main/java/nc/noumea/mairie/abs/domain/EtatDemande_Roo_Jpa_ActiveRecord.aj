@@ -14,7 +14,7 @@ privileged aspect EtatDemande_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "absPersistenceUnit")
     transient EntityManager EtatDemande.entityManager;
     
-    public static final List<String> EtatDemande.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idEtatDemande", "date", "idAgent", "demande", "etat", "motif");
+    public static final List<String> EtatDemande.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idEtatDemande", "date", "idAgent", "demande", "etat", "idMotifRefus");
     
     public static final EntityManager EtatDemande.entityManager() {
         EntityManager em = new EtatDemande().entityManager;

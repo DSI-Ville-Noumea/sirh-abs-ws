@@ -377,7 +377,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
-		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), "");
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), null);
 		
 		assertEquals(1, srm.getErrors().size());
 		assertEquals("Le motif est obligatoire pour un avis Refusé.", srm.getErrors().get(0).toString());
@@ -389,7 +389,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
-		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), "test");
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), 1);
 		
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -400,7 +400,18 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
-		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), "test");
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), null);
+		
+		assertEquals(0, srm.getErrors().size());
+	}
+	
+	@Test
+	public void checkChampMotifPourEtatDonne_Ok_motifSaisi_EtatApprouve() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), 2);
 		
 		assertEquals(0, srm.getErrors().size());
 	}

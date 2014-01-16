@@ -50,12 +50,12 @@ privileged aspect EtatDemande_Roo_JavaBean {
         this.etat = etat;
     }
     
-    public String EtatDemande.getMotif() {
-        return this.motif;
+    public Integer EtatDemande.getIdMotifRefus() {
+        return this.idMotifRefus;
     }
     
-    public void EtatDemande.setMotif(String motif) {
-        this.motif = motif;
+    public void EtatDemande.setIdMotifRefus(Integer idMotifRefus) {
+        this.idMotifRefus = idMotifRefus;
     }
     
 }

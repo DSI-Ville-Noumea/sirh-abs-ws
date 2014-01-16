@@ -389,7 +389,7 @@ public class AbsenceService implements IAbsenceService {
 				RefEtatEnum.REFUSEE));
 
 		result = absRecupDataConsistencyRules.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(),
-				demandeEtatChangeDto.getMotifAvis());
+				demandeEtatChangeDto.getIdMotifAvis());
 
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -445,11 +445,7 @@ public class AbsenceService implements IAbsenceService {
 	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		EtatDemande etatDemande = new EtatDemande();
 		etatDemande.setDate(demandeEtatChangeDto.getDateAvis());
-		if (null == demandeEtatChangeDto.getMotifAvis()) {
-			etatDemande.setMotif("");
-		} else {
-			etatDemande.setMotif(demandeEtatChangeDto.getMotifAvis());
-		}
+		etatDemande.setIdMotifRefus(demandeEtatChangeDto.getIdMotifAvis());
 
 		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
 		etatDemande.setIdAgent(idAgent);
@@ -482,7 +478,6 @@ public class AbsenceService implements IAbsenceService {
 		EtatDemande epNew = new EtatDemande();
 		epNew.setDemande(demande);
 		epNew.setDate(helperService.getCurrentDate());
-		epNew.setMotif("Mise à jour automatique");
 		epNew.setEtat(RefEtatEnum.PRISE);
 		epNew.setIdAgent(demande.getIdAgent());
 		demande.addEtatDemande(epNew);

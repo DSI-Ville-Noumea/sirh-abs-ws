@@ -139,9 +139,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	
 	@Override
 	public ReturnMessageDto checkChampMotifPourEtatDonne(
-			ReturnMessageDto srm, Integer etat, String motif){
+			ReturnMessageDto srm, Integer etat, Integer idMotif){
 		
-		if( (null == motif || "".equals(motif.trim()))
+		if( null == idMotif
 				&& etat.equals(RefEtatEnum.REFUSEE.getCodeEtat()) ) {
 			logger.warn(String.format(MOTIF_OBLIGATOIRE));
 			srm.getErrors().add(MOTIF_OBLIGATOIRE);
