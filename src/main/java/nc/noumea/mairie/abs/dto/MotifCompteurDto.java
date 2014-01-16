@@ -6,6 +6,7 @@ public class MotifCompteurDto {
 
 	private Integer idMotifCompteur;
 	private String libelle;
+	private Integer idRefTypeAbsence;
 
 	public MotifCompteurDto() {
 	}
@@ -30,5 +31,13 @@ public class MotifCompteurDto {
 
 	public void setIdMotifCompteur(Integer idMotifCompteur) {
 		this.idMotifCompteur = idMotifCompteur;
+	}
+
+	public Integer getIdRefTypeAbsence() {
+		return idRefTypeAbsence;
+	}
+
+	public void setIdRefTypeAbsence(Integer idRefTypeAbsence) {
+		this.idRefTypeAbsence = idRefTypeAbsence;
 	}
 }

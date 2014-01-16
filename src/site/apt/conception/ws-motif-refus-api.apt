@@ -29,3 +29,33 @@ HTTP Code 200 : OK
 HTTP Code 400 : Bad Request (si un des paramètres est manquant)
 +-------------------------+
 
+
+* Saisie et modification de motif de refus de l'approbateur
+
+ <<PROJET>> : SIRH-ABS-WS
+ 
+ <<URL>> : /motifRefus/setMotifRefus
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+ -
+  
+ <<Content>> 
+ 
++-------------------------+
+{
+	"idMotifRefus": 1/NULL (si NULL alors création),
+	"libelle": "test yoyo bis",
+	"idRefTypeAbsence": 3
+}
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant)
+HTTP Code 409 : CONFLICT (ex: type absence inexistante)
++-------------------------+
