@@ -71,6 +71,7 @@ public class MotifService implements IMotifService {
 		if(null != motifRefusDto.getIdMotifRefus()) {
 			motifRefus = motifRepository.getEntity(MotifRefus.class, motifRefusDto.getIdMotifRefus());
 			if(null == motifRefus) {
+				logger.debug(MOTIF_MODIFIE_INEXISTANT);
 				result.getErrors().add(MOTIF_MODIFIE_INEXISTANT);
 				return result;
 			}
@@ -107,6 +108,7 @@ public class MotifService implements IMotifService {
 		if(null != motifCompteurDto.getIdMotifCompteur()) {
 			motifCompteur = motifRepository.getEntity(MotifCompteur.class, motifCompteurDto.getIdMotifCompteur());
 			if(null == motifCompteur) {
+				logger.debug(MOTIF_MODIFIE_INEXISTANT);
 				result.getErrors().add(MOTIF_MODIFIE_INEXISTANT);
 				return result;
 			}
@@ -138,12 +140,14 @@ public class MotifService implements IMotifService {
 		
 		RefTypeAbsence refTypeAbsence = null;
 		if(null == idRefTypeAbs) {
+			logger.debug(TYPE_ABS_INEXISTANT);
 			message.getErrors().add(TYPE_ABS_INEXISTANT);
 			return refTypeAbsence;
 		}else{
 			refTypeAbsence = motifRepository.getEntity(RefTypeAbsence.class, idRefTypeAbs);
 		}
 		if(null == refTypeAbsence) {
+			logger.debug(TYPE_ABS_INEXISTANT);
 			message.getErrors().add(TYPE_ABS_INEXISTANT);
 		}
 		return refTypeAbsence;
@@ -152,8 +156,10 @@ public class MotifService implements IMotifService {
 	private void addMessageConfirmation(Integer idMotif, ReturnMessageDto result) {
 		
 		if(null != idMotif) {
+			logger.debug(MOTIF_MODIFIE);
 			result.getInfos().add(MOTIF_MODIFIE);
 		}else{
+			logger.debug(MOTIF_CREE);
 			result.getInfos().add(MOTIF_CREE);
 		}
 	}
@@ -161,6 +167,7 @@ public class MotifService implements IMotifService {
 	protected boolean controlLibelleMotif(String libelle, ReturnMessageDto result) {
 		
 		if(null == libelle || "".equals(libelle)) {
+			logger.debug(LIBELLE_MOTIF_VIDE);
 			result.getErrors().add(LIBELLE_MOTIF_VIDE);
 			return false;
 		}
