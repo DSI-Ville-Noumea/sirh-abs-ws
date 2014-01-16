@@ -14,6 +14,8 @@ privileged aspect EtatDemande_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "absPersistenceUnit")
     transient EntityManager EtatDemande.entityManager;
     
+    public static final List<String> EtatDemande.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idEtatDemande", "date", "idAgent", "demande", "etat", "motif");
+    
     public static final EntityManager EtatDemande.entityManager() {
         EntityManager em = new EtatDemande().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect EtatDemande_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM EtatDemande o", EtatDemande.class).getResultList();
     }
     
+    public static List<EtatDemande> EtatDemande.findAllEtatDemandes(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM EtatDemande o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, EtatDemande.class).getResultList();
+    }
+    
     public static EtatDemande EtatDemande.findEtatDemande(Integer idEtatDemande) {
         if (idEtatDemande == null) return null;
         return entityManager().find(EtatDemande.class, idEtatDemande);
@@ -35,6 +48,17 @@ privileged aspect EtatDemande_Roo_Jpa_ActiveRecord {
     
     public static List<EtatDemande> EtatDemande.findEtatDemandeEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM EtatDemande o", EtatDemande.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<EtatDemande> EtatDemande.findEtatDemandeEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM EtatDemande o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, EtatDemande.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

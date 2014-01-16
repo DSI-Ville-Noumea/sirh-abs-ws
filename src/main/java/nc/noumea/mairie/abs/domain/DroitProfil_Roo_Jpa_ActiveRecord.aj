@@ -14,6 +14,8 @@ privileged aspect DroitProfil_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "absPersistenceUnit")
     transient EntityManager DroitProfil.entityManager;
     
+    public static final List<String> DroitProfil.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idDroitProfil", "droit", "profil", "droitApprobateur", "droitDroitsAgent");
+    
     public static final EntityManager DroitProfil.entityManager() {
         EntityManager em = new DroitProfil().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect DroitProfil_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM DroitProfil o", DroitProfil.class).getResultList();
     }
     
+    public static List<DroitProfil> DroitProfil.findAllDroitProfils(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM DroitProfil o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, DroitProfil.class).getResultList();
+    }
+    
     public static DroitProfil DroitProfil.findDroitProfil(Integer idDroitProfil) {
         if (idDroitProfil == null) return null;
         return entityManager().find(DroitProfil.class, idDroitProfil);
@@ -35,6 +48,17 @@ privileged aspect DroitProfil_Roo_Jpa_ActiveRecord {
     
     public static List<DroitProfil> DroitProfil.findDroitProfilEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM DroitProfil o", DroitProfil.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<DroitProfil> DroitProfil.findDroitProfilEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM DroitProfil o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, DroitProfil.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

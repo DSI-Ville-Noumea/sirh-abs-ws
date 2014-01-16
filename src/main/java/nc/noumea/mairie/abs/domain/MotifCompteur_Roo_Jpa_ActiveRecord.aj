@@ -14,6 +14,8 @@ privileged aspect MotifCompteur_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "absPersistenceUnit")
     transient EntityManager MotifCompteur.entityManager;
     
+    public static final List<String> MotifCompteur.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idMotifCompteur", "libelle", "refTypeAbsence");
+    
     public static final EntityManager MotifCompteur.entityManager() {
         EntityManager em = new MotifCompteur().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect MotifCompteur_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM MotifCompteur o", MotifCompteur.class).getResultList();
     }
     
+    public static List<MotifCompteur> MotifCompteur.findAllMotifCompteurs(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM MotifCompteur o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, MotifCompteur.class).getResultList();
+    }
+    
     public static MotifCompteur MotifCompteur.findMotifCompteur(Integer idMotifCompteur) {
         if (idMotifCompteur == null) return null;
         return entityManager().find(MotifCompteur.class, idMotifCompteur);
@@ -35,6 +48,17 @@ privileged aspect MotifCompteur_Roo_Jpa_ActiveRecord {
     
     public static List<MotifCompteur> MotifCompteur.findMotifCompteurEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM MotifCompteur o", MotifCompteur.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<MotifCompteur> MotifCompteur.findMotifCompteurEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM MotifCompteur o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, MotifCompteur.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

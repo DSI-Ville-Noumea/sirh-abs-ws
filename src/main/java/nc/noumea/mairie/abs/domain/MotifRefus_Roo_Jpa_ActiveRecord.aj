@@ -14,6 +14,8 @@ privileged aspect MotifRefus_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "absPersistenceUnit")
     transient EntityManager MotifRefus.entityManager;
     
+    public static final List<String> MotifRefus.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idMotifRefus", "libelle", "refTypeAbsence");
+    
     public static final EntityManager MotifRefus.entityManager() {
         EntityManager em = new MotifRefus().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect MotifRefus_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM MotifRefus o", MotifRefus.class).getResultList();
     }
     
+    public static List<MotifRefus> MotifRefus.findAllMotifRefuses(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM MotifRefus o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, MotifRefus.class).getResultList();
+    }
+    
     public static MotifRefus MotifRefus.findMotifRefus(Integer idMotifRefus) {
         if (idMotifRefus == null) return null;
         return entityManager().find(MotifRefus.class, idMotifRefus);
@@ -35,6 +48,17 @@ privileged aspect MotifRefus_Roo_Jpa_ActiveRecord {
     
     public static List<MotifRefus> MotifRefus.findMotifRefusEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM MotifRefus o", MotifRefus.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<MotifRefus> MotifRefus.findMotifRefusEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM MotifRefus o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, MotifRefus.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

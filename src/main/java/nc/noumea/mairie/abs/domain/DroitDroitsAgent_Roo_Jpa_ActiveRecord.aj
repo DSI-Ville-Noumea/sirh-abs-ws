@@ -14,6 +14,8 @@ privileged aspect DroitDroitsAgent_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "absPersistenceUnit")
     transient EntityManager DroitDroitsAgent.entityManager;
     
+    public static final List<String> DroitDroitsAgent.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idDroitDroitsAgent", "droit", "droitsAgent", "droitProfil");
+    
     public static final EntityManager DroitDroitsAgent.entityManager() {
         EntityManager em = new DroitDroitsAgent().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect DroitDroitsAgent_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM DroitDroitsAgent o", DroitDroitsAgent.class).getResultList();
     }
     
+    public static List<DroitDroitsAgent> DroitDroitsAgent.findAllDroitDroitsAgents(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM DroitDroitsAgent o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, DroitDroitsAgent.class).getResultList();
+    }
+    
     public static DroitDroitsAgent DroitDroitsAgent.findDroitDroitsAgent(Integer idDroitDroitsAgent) {
         if (idDroitDroitsAgent == null) return null;
         return entityManager().find(DroitDroitsAgent.class, idDroitDroitsAgent);
@@ -35,6 +48,17 @@ privileged aspect DroitDroitsAgent_Roo_Jpa_ActiveRecord {
     
     public static List<DroitDroitsAgent> DroitDroitsAgent.findDroitDroitsAgentEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM DroitDroitsAgent o", DroitDroitsAgent.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<DroitDroitsAgent> DroitDroitsAgent.findDroitDroitsAgentEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM DroitDroitsAgent o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, DroitDroitsAgent.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

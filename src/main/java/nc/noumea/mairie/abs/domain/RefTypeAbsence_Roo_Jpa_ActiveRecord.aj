@@ -14,6 +14,8 @@ privileged aspect RefTypeAbsence_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "absPersistenceUnit")
     transient EntityManager RefTypeAbsence.entityManager;
     
+    public static final List<String> RefTypeAbsence.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idRefTypeAbsence", "label");
+    
     public static final EntityManager RefTypeAbsence.entityManager() {
         EntityManager em = new RefTypeAbsence().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect RefTypeAbsence_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).getResultList();
     }
     
+    public static List<RefTypeAbsence> RefTypeAbsence.findAllRefTypeAbsences(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM RefTypeAbsence o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, RefTypeAbsence.class).getResultList();
+    }
+    
     public static RefTypeAbsence RefTypeAbsence.findRefTypeAbsence(Integer idRefTypeAbsence) {
         if (idRefTypeAbsence == null) return null;
         return entityManager().find(RefTypeAbsence.class, idRefTypeAbsence);
@@ -35,6 +48,17 @@ privileged aspect RefTypeAbsence_Roo_Jpa_ActiveRecord {
     
     public static List<RefTypeAbsence> RefTypeAbsence.findRefTypeAbsenceEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<RefTypeAbsence> RefTypeAbsence.findRefTypeAbsenceEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM RefTypeAbsence o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, RefTypeAbsence.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional
