@@ -143,11 +143,12 @@ public class AbsenceService implements IAbsenceService {
 		// dans le cas des types de demande non geres
 		if (null == rules) {
 			rules = DefaultAbsenceDataConsistencyRulesImpl;
+			demande = getDemande(Demande.class, demandeDto.getIdDemande());
 			if (null == demande) {
-				demande = getDemande(Demande.class, demandeDto.getIdDemande());
-				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
-				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+				demande = new Demande();
 			}
+			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
+			demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
 		}
 
 		rules.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
