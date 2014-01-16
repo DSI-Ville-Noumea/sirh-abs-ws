@@ -15,6 +15,7 @@ public class MotifRefusDto {
 		super();
 		this.idMotifRefus = motif.getIdMotifRefus();
 		this.libelle = motif.getLibelle();
+		this.idRefTypeAbsence = motif.getRefTypeAbsence().getIdRefTypeAbsence();
 	}
 
 	public String getLibelle() {

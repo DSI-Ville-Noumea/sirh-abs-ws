@@ -31,10 +31,14 @@ public class MotifRepository implements IMotifRepository {
 	public List<MotifRefus> getListeMotifRefus(Integer idType) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select m from MotifRefus m ");
-		sb.append("where m.refTypeAbsence.idRefTypeAbsence =:idType ");
+		if (idType != null) {
+			sb.append("where m.refTypeAbsence.idRefTypeAbsence =:idType ");
+		}
 
 		TypedQuery<MotifRefus> query = absEntityManager.createQuery(sb.toString(), MotifRefus.class);
-		query.setParameter("idType", idType);
+		if (idType != null) {
+			query.setParameter("idType", idType);
+		}
 
 		return query.getResultList();
 	}
@@ -43,10 +47,14 @@ public class MotifRepository implements IMotifRepository {
 	public List<MotifCompteur> getListeMotifCompteur(Integer idType) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select m from MotifCompteur m ");
-		sb.append("where m.refTypeAbsence.idRefTypeAbsence =:idType ");
+		if (idType != null) {
+			sb.append("where m.refTypeAbsence.idRefTypeAbsence =:idType ");
+		}
 
 		TypedQuery<MotifCompteur> query = absEntityManager.createQuery(sb.toString(), MotifCompteur.class);
-		query.setParameter("idType", idType);
+		if (idType != null) {
+			query.setParameter("idType", idType);
+		}
 
 		return query.getResultList();
 	}

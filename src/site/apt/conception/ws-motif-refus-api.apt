@@ -16,7 +16,7 @@ SIRH-ABS-WS API et définition des services concernant les motifs de refus de l'
  
  <<Parameters>>
 
-  * <<idRefType>> : 1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies 
+  * <<idRefType>> : 1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies (optionnel)
   
  <<Content>> 
  

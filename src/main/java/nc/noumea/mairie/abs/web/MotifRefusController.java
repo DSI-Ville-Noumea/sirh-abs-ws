@@ -34,7 +34,7 @@ public class MotifRefusController {
 	@ResponseBody
 	@RequestMapping(value = "/getListeMotifRefus", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListeMotifRefus(@RequestParam("idRefType") Integer idRefType) {
+	public ResponseEntity<String> getListeMotifRefus(@RequestParam(value = "idRefType", required = false) Integer idRefType) {
 
 		logger.debug("entered GET [motifRefus/getListeMotifRefus] => getListeMotifRefus");
 

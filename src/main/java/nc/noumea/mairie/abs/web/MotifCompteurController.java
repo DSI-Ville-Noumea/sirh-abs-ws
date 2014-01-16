@@ -34,7 +34,7 @@ public class MotifCompteurController {
 	@ResponseBody
 	@RequestMapping(value = "/getListeMotifCompteur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListeMotifCompteur(@RequestParam("idRefType") Integer idRefType) {
+	public ResponseEntity<String> getListeMotifCompteur(@RequestParam(value = "idRefType", required = false) Integer idRefType) {
 
 		logger.debug("entered GET [motifCompteur/getListeMotifCompteur] => getListeMotifCompteur");
 
