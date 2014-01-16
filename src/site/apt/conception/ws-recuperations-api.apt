@@ -32,3 +32,35 @@ SIRH-ABS-WS API et définition des services concernant les récupérations des a
 HTTP Code 200 : OK
 HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas ou si la date ne correspond pas à un lundi)
 +-------------------------+
+
+
+* Mise à jour des récupérations d'un agent /!\ APPELE PAR SIRH /!\
+
+ <<PROJET>> : SIRH-ABS-WS
+ 
+ <<URL>> : /recuperations/addForSIRH
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : Le matricule de l'agent connecte
+  
+ <<Content>> 
+ 
++-------------------------+
+{
+	"idAgent": 1 (reprendre l'identifiant de la demande envoyé initialement),
+    "dureeAAjouter": 15/NULL, (un seul des deux champs "dureeAAjouter" et "dureeARetrancher" doit être obligatoirement renseigné)
+	"dureeARetrancher": 10/NULL,
+	"idMotifCompteur": 1 (obligatoire si etat = REFUSEE)
+}
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas ou si la date ne correspond pas à un lundi)
+HTTP Code 409 : CONFLICT (ex : si l'agent n'est pas opérateur de l'agent saisi)
++-------------------------+

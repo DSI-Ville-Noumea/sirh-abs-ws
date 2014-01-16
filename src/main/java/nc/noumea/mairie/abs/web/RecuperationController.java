@@ -2,8 +2,13 @@ package nc.noumea.mairie.abs.web;
 
 import java.util.Date;
 
+import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.MotifRefusDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ICounterService;
+import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
 @Controller
 @RequestMapping("/recuperations")
@@ -36,10 +46,27 @@ public class RecuperationController {
 			@RequestParam("minutes") int minutes) {
 
 		logger.debug(
-				"entered GET [recuperations/add] => addRecuperationForAgentAndWeek with parameters idAgent = {}, dateMonday = {} and minutes = {}",
+				"entered POST [recuperations/addForPTG] => addRecuperationForAgentAndWeek with parameters idAgent = {}, dateMonday = {} and minutes = {}",
 				idAgent, dateMonday, minutes);
 
 		counterService.addRecuperationToAgentForPTG(idAgent, dateMonday, minutes);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/addForSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> addRecuperationForAgentAndWeek(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) String compteurDto) {
+
+		logger.debug("entered POST [recuperations/addForSIRH] => addRecuperationForAgentAndWeek with parameters idAgent = {}", idAgent);
+		
+		CompteurDto dto = new JSONDeserializer<CompteurDto>().deserializeInto(compteurDto, new CompteurDto());
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+//		counterService.addRecuperationToAgentForPTG(idAgent, dateMonday, minutes);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
