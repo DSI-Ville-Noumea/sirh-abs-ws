@@ -69,4 +69,9 @@ public class CounterRepository implements ICounterRepository {
 	public void persistEntity(Object entity) {
 		absEntityManager.persist(entity);
 	}
+	
+	@Override
+	public <T> T getEntity(Class<T> Tclass, Object Id) {
+		return absEntityManager.find(Tclass, Id);
+	}
 }

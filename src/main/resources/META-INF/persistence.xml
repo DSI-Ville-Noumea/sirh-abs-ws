@@ -19,6 +19,7 @@
       	<class>nc.noumea.mairie.abs.domain.AgentWeekReposComp</class>
       	<class>nc.noumea.mairie.abs.domain.MotifRefus</class>
       	<class>nc.noumea.mairie.abs.domain.MotifCompteur</class>
+      	<class>nc.noumea.mairie.abs.domain.AgentWeekAlimManuelle</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

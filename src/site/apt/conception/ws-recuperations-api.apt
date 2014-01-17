@@ -34,11 +34,11 @@ HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'ex
 +-------------------------+
 
 
-* Mise à jour des récupérations d'un agent /!\ APPELE PAR SIRH /!\
+* Mise à jour des récupérations d'un agent /!\ APPELE PAR SIRH et KIOSQUE /!\
 
  <<PROJET>> : SIRH-ABS-WS
  
- <<URL>> : /recuperations/addForSIRH
+ <<URL>> : /recuperations/addManual
  
  <<Accepted Methods>> : POST
  
@@ -50,7 +50,7 @@ HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'ex
  
 +-------------------------+
 {
-	"idAgent": 1 (reprendre l'identifiant de la demande envoyé initialement),
+	"idAgent": 9005131,
     "dureeAAjouter": 15/NULL, (un seul des deux champs "dureeAAjouter" et "dureeARetrancher" doit être obligatoirement renseigné)
 	"dureeARetrancher": 10/NULL,
 	"idMotifCompteur": 1 (obligatoire si etat = REFUSEE)

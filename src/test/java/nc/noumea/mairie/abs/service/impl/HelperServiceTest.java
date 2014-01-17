@@ -12,6 +12,7 @@ import java.util.Date;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 
 import org.joda.time.LocalDate;
@@ -126,6 +127,41 @@ public class HelperServiceTest {
 
 		int minutes = service.calculMinutesCompteur(demandeEtatChangeDto, demande);
 
+		assertEquals(0, minutes);
+	}
+	
+	@Test
+	public void calculMinutesAlimManuelleCompteur_ajoutMinutes() {
+		
+		CompteurDto compteurDto = new CompteurDto();
+			compteurDto.setDureeAAjouter(10);
+		
+		HelperService service = new HelperService();
+		int minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
+		
+		assertEquals(10, minutes);
+	}
+	
+	@Test
+	public void calculMinutesAlimManuelleCompteur_retireMinutes() {
+		
+		CompteurDto compteurDto = new CompteurDto();
+			compteurDto.setDureeARetrancher(10);
+		
+		HelperService service = new HelperService();
+		int minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
+		
+		assertEquals(-10, minutes);
+	}
+	
+	@Test
+	public void calculMinutesAlimManuelleCompteur_zero() {
+		
+		CompteurDto compteurDto = new CompteurDto();
+		
+		HelperService service = new HelperService();
+		int minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
+		
 		assertEquals(0, minutes);
 	}
 }

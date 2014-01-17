@@ -3,12 +3,9 @@ package nc.noumea.mairie.abs.web;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.dto.CompteurDto;
-import nc.noumea.mairie.abs.dto.DemandeDto;
-import nc.noumea.mairie.abs.dto.MotifRefusDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ICounterService;
-import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,19 +52,25 @@ public class RecuperationController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/addForSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@RequestMapping(value = "/addManual", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> addRecuperationForAgentAndWeek(@RequestParam("idAgent") int idAgent,
+	public ResponseEntity<String> addRecuperationManuelForAgent(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String compteurDto) {
 
-		logger.debug("entered POST [recuperations/addForSIRH] => addRecuperationForAgentAndWeek with parameters idAgent = {}", idAgent);
+		logger.debug("entered POST [recuperations/addManual] => addRecuperationManuelForAgent with parameters idAgent = {}", idAgent);
 		
 		CompteurDto dto = new JSONDeserializer<CompteurDto>().deserializeInto(compteurDto, new CompteurDto());
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
-//		counterService.addRecuperationToAgentForPTG(idAgent, dateMonday, minutes);
+		ReturnMessageDto srm = counterService.majManuelleCompteurRecupToAgent(convertedIdAgent, dto);
 
-		return new ResponseEntity<>(HttpStatus.OK);
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+
+		if (!srm.getErrors().isEmpty()) {
+			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+		} else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 	}
 }

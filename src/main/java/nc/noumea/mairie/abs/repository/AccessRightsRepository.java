@@ -325,7 +325,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 	
 	@Override
-	public boolean isOperateurOfAgent(Integer idAgentViseur, Integer IdAgent) {
+	public boolean isOperateurOfAgent(Integer idAgentOperateur, Integer IdAgent) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d.* from abs_droits_agent da ");
 		sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent ");
@@ -338,7 +338,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 		Query q = absEntityManager.createNativeQuery(sb.toString(), Droit.class);
 		q.setParameter("idAgent", IdAgent);
-		q.setParameter("idAgentViseur", idAgentViseur);
+		q.setParameter("idAgentViseur", idAgentOperateur);
 		q.setParameter("libelle", ProfilEnum.OPERATEUR.toString());
 
 		try {

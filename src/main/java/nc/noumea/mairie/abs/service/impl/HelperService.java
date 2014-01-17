@@ -7,6 +7,7 @@ import java.util.Date;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 
 import org.joda.time.DateTime;
@@ -60,6 +61,18 @@ public class HelperService {
 			minutes = ((DemandeRecup) demande).getDuree();
 		}
 
+		return minutes;
+	}
+	
+	public int calculMinutesAlimManuelleCompteur(CompteurDto compteurDto){
+		
+		int minutes = 0;
+		if(null != compteurDto.getDureeAAjouter()) {
+			minutes = compteurDto.getDureeAAjouter();
+		}
+		if(null != compteurDto.getDureeARetrancher()) {
+			minutes = 0 - compteurDto.getDureeARetrancher();
+		}
 		return minutes;
 	}
 }

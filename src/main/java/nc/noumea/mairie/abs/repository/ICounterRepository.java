@@ -10,4 +10,6 @@ public interface ICounterRepository {
 	
 	void persistEntity(Object entity);
 	
+	<T> T getEntity(Class<T> Tclass, Object Id);
+	
 }
