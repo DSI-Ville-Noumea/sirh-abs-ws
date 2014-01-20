@@ -28,6 +28,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.EmailInfoDto;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -1964,5 +1965,28 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.get(0).getIdRefEtat().intValue());
 		assertEquals(1, result.get(1).getIdRefEtat().intValue());
 		assertEquals(6, result.get(2).getIdRefEtat().intValue());
+	}
+	
+	@Test
+	public void getListIdDestinatairesEmailInfo() {
+		
+		List<Integer> listViseurs = new ArrayList<Integer>();
+			listViseurs.add(1);
+		List<Integer> listApprobateurs = new ArrayList<Integer>();
+			listApprobateurs.add(2);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+			Mockito.when(demandeRepository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue())).thenReturn(listViseurs);
+			Mockito.when(demandeRepository.getListApprobateursDemandesSaisiesViseesJourDonne(RefTypeAbsenceEnum.RECUP.getValue())).thenReturn(listApprobateurs);
+			
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		EmailInfoDto dto = service.getListIdDestinatairesEmailInfo();
+		
+		assertEquals(1, dto.getListApprobateurs().size());
+		assertEquals(2, dto.getListApprobateurs().get(0).intValue());
+		assertEquals(1, dto.getListViseurs().size());
+		assertEquals(1, dto.getListViseurs().get(0).intValue());
 	}
 }

@@ -21,5 +21,9 @@ public interface IDemandeRepository {
 	void removeEntity(Object obj);
 	
 	List<RefEtat> findAllRefEtats();
+	
+	List<Integer> getListViseursDemandesSaisiesJourDonne(Integer type);
+	
+	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(Integer type);
 
 }

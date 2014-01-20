@@ -18,6 +18,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.EmailInfoDto;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -579,6 +580,20 @@ public class AbsenceService implements IAbsenceService {
 		demandeRepository.removeEntity(demande);
 
 		return returnDto;
+	}
+	
+	@Override
+	public EmailInfoDto getListIdDestinatairesEmailInfo() {
+		
+		EmailInfoDto dto = new EmailInfoDto();
+		
+			dto.setListViseurs(
+				demandeRepository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue()));
+			
+			dto.setListApprobateurs(
+				demandeRepository.getListApprobateursDemandesSaisiesViseesJourDonne(RefTypeAbsenceEnum.RECUP.getValue()));
+		
+		return dto;
 	}
 
 }
