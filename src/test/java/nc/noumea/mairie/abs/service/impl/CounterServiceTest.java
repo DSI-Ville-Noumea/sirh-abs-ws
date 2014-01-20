@@ -19,6 +19,7 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.NotAMondayException;
 import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -349,20 +350,25 @@ public class CounterServiceTest {
 	public void majManuelleCompteurRecupToAgent_OperateurNonHabilite() {
 		
 		ReturnMessageDto result = new ReturnMessageDto();
+			result.getErrors().add("L'agent 9005138 n'existe pas dans SIIDMA.");
 		Integer idAgent = 9005138; 
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
 		
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+			Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+			
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
 		
 		CounterService service = new CounterService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		
 		result = service.majManuelleCompteurRecupToAgent(idAgent, compteurDto);
 		
 		assertEquals(1, result.getErrors().size());
-		assertEquals("Vous n'êtes pas opérateur de cette agent.", result.getErrors().get(0).toString());
+		assertEquals("Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.", result.getErrors().get(0).toString());
 	}
 	
 	@Test
@@ -371,6 +377,7 @@ public class CounterServiceTest {
 		Integer idAgent = 9005138; 
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeARetrancher(10);
 		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);

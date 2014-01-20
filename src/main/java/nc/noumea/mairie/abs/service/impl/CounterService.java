@@ -18,6 +18,7 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.NotAMondayException;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,9 @@ public class CounterService implements ICounterService {
 
 	private Logger logger = LoggerFactory.getLogger(CounterService.class);
 
+	@Autowired
+	private ISirhWSConsumer sirhWSConsumer;
+	
 	@Autowired
 	private ICounterRepository counterRepository;
 
@@ -43,7 +47,7 @@ public class CounterService implements ICounterService {
 
 	public static final String MOTIF_COMPTEUR_INEXISTANT = "Le motif n'existe pas.";
 	public static final String SOLDE_COMPTEUR_NEGATIF = "Le solde du compteur de l'agent ne peut pas être négatif.";
-	public static final String OPERATEUR_INEXISTANT = "Vous n'êtes pas opérateur de cette agent.";
+	public static final String OPERATEUR_INEXISTANT = "Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.";
 	public static final String DUREE_A_SAISIR = "La durée à ajouter ou retrancher n'est pas saisie.";
 	public static final String ERREUR_DUREE_SAISIE = "Un seul des champs Durée à ajouter ou Durée à retrancher doit être saisi.";
 	
@@ -217,9 +221,13 @@ public class CounterService implements ICounterService {
 		
 		// seul l operateur peut mettre a jour les compteurs de ses agents
 		if(!accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())){
-			logger.warn(OPERATEUR_INEXISTANT);
-			result.getErrors().add(String.format(OPERATEUR_INEXISTANT));
-			return result;
+			// tester si agent est un utilisateur SIRH
+			ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
+			if(!isUtilisateurSIRH.getErrors().isEmpty()) {
+				logger.warn(OPERATEUR_INEXISTANT);
+				result.getErrors().add(String.format(OPERATEUR_INEXISTANT));
+				return result;
+			}
 		}
 		
 		controlSaisieAlimManuelleCompteur(compteurDto, result);
