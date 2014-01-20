@@ -36,6 +36,8 @@ SIRH-ABS-WS API et définition des services concernant les demandes d'absences d
 	"affichageVisa": false,
 	"affichageApprobation": false,
 	"affichageBoutonAnnuler": false,
+    "modifierApprobation": false,
+    "modifierVisa": false,
 	"valeurVisa": false/null,
 	"valeurApprobation": false/null
 }
@@ -81,6 +83,8 @@ HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
 	"affichageVisa": false,
 	"affichageApprobation": false,
 	"affichageBoutonAnnuler": false,
+    "modifierApprobation": false,
+    "modifierVisa": false,
 	"valeurVisa": false/null,
 	"valeurApprobation": false/null
 }
@@ -211,6 +215,8 @@ HTTP Code 403 : Accès non autorisé
 			"affichageVisa": false,
 			"affichageApprobation": false,
 			"affichageBoutonAnnuler": false,
+			"modifierApprobation": false,
+			"modifierVisa": false,
 			"valeurVisa": false/null,
 			"valeurApprobation": false/null
        },....
@@ -273,6 +279,8 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
 			"affichageVisa": false,
 			"affichageApprobation": false,
 			"affichageBoutonAnnuler": false,
+			"modifierApprobation": false,
+			"modifierVisa": false,
 			"valeurVisa": false/null,
 			"valeurApprobation": false/null
        },....
