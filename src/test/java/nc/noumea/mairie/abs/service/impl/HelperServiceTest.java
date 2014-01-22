@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemande;
@@ -20,6 +21,8 @@ import org.junit.Test;
 
 public class HelperServiceTest {
 
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 	@Test
 	public void isDateAMonday_DateIsMonday_ReturnTrue() {
 		HelperService service = new HelperService();
@@ -38,8 +41,7 @@ public class HelperServiceTest {
 	public void getDateFin_resultOk(){
 		
 		HelperService service = new HelperService();
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		
+	    
 		java.util.Date dateFinAttendue = new java.util.Date();
 	    java.util.Date dateDebut = new java.util.Date();
 	    try {
@@ -163,5 +165,18 @@ public class HelperServiceTest {
 		int minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
 		
 		assertEquals(0, minutes);
+	}
+	
+	@Test
+	public void getCurrentDateMoinsUnAn() {
+		
+		GregorianCalendar calStr1 = new GregorianCalendar(); 
+			calStr1.setTime(new Date()); 
+			calStr1.add(GregorianCalendar.YEAR, -1);
+		
+		HelperService service = new HelperService();
+		Date result = service.getCurrentDateMoinsUnAn();
+		
+		assertEquals(sdf.format(result), sdf.format(calStr1.getTime()));
 	}
 }

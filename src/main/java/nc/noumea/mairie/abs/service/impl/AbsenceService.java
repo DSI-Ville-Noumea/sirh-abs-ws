@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -229,6 +230,12 @@ public class AbsenceService implements IAbsenceService {
 	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
 			Date fromDate, Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
 
+		// si date de debut et de fin nulles, alors on filtre sur 12 mois glissants
+		
+		if(null == fromDate && null == toDate) {
+			fromDate = helperService.getCurrentDateMoinsUnAn();
+		}
+		
 		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
 				idRefType);
 

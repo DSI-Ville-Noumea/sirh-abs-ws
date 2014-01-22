@@ -14,9 +14,15 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
+import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
+import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.Profil;
+import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -174,7 +180,7 @@ public class DemandeRepositoryTest {
 		List<Demande> result = repository.listeDemandesAgent(null, 9005138, sdf.parse("01/06/2013"), null, null);
 
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(1, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -423,6 +429,52 @@ public class DemandeRepositoryTest {
 		assertEquals(2, result.size());
 		assertEquals(50, ((DemandeRecup)result.get(0)).getDuree().intValue());
 		assertEquals(40, ((DemandeRecup)result.get(1)).getDuree().intValue());
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+//	@Test
+	@Transactional("absTransactionManager")
+	public void getListViseursDemandesSaisiesJourDonne() {
+		
+		Droit droitViseur = new Droit();
+			droitViseur.setIdAgent(9000001);
+		absEntityManager.persist(droitViseur);
+		Profil profil = new Profil();
+			profil.setLibelle(ProfilEnum.VISEUR.toString());
+		absEntityManager.persist(profil);
+		DroitProfil droitProfil = new DroitProfil();
+			droitProfil.setProfil(profil);
+			droitProfil.setDroit(droitViseur);
+		absEntityManager.persist(droitProfil);
+		
+		DroitsAgent droitsAgent = new DroitsAgent();
+			droitsAgent.setIdAgent(9000011);
+		absEntityManager.persist(droitsAgent);
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+			dda.setDroit(droitViseur);
+			dda.setDroitProfil(droitProfil);
+			dda.setDroitsAgent(droitsAgent);
+		absEntityManager.persist(dda);
+		
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		absEntityManager.persist(rta);
+		Demande demande = new Demande();
+			demande.setIdAgent(9000011);
+			demande.setType(rta);
+		absEntityManager.persist(demande);
+		EtatDemande etatDemande = new EtatDemande();
+			etatDemande.setDemande(demande);
+			etatDemande.setIdAgent(9000001);
+			etatDemande.setEtat(RefEtatEnum.SAISIE);
+		absEntityManager.persist(etatDemande);
+		
+		// When
+		List<Integer> result = repository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue());
+		
+		assertEquals(1, result.size());
 		
 		absEntityManager.flush();
 		absEntityManager.clear();

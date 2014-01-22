@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.service.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
@@ -74,5 +75,12 @@ public class HelperService {
 			minutes = 0 - compteurDto.getDureeARetrancher();
 		}
 		return minutes;
+	}
+	
+	public Date getCurrentDateMoinsUnAn() {
+		GregorianCalendar calStr1 = new GregorianCalendar(); 
+			calStr1.setTime(new Date()); 
+			calStr1.add(GregorianCalendar.YEAR, -1);
+		return calStr1.getTime();
 	}
 }
