@@ -3,7 +3,6 @@ package nc.noumea.mairie.abs.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
