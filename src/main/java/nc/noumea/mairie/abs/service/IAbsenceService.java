@@ -25,7 +25,7 @@ public interface IAbsenceService {
 	
 	ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);
 	
-	ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande, Integer idTypeDemande);
+	ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande);
 
 	ReturnMessageDto setDemandeEtatPris(Integer idDemande);
 	

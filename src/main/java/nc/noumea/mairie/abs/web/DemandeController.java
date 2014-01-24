@@ -255,15 +255,14 @@ public class DemandeController {
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> supprimerDemande(
 			@RequestParam("idAgent") int idAgent, 
-			@RequestParam("idDemande") int idDemande, 
-			@RequestParam("idTypeDemande") int idTypeDemande) {
+			@RequestParam("idDemande") int idDemande) {
 
 		logger.debug("entered GET [demandes/deleteDemande] => supprimerDemande with parameters idAgent = {}, idDemande = {}",
 				idAgent, idDemande);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
-		ReturnMessageDto result = absenceService.supprimerDemande(convertedIdAgent, idDemande, idTypeDemande);
+		ReturnMessageDto result = absenceService.supprimerDemande(convertedIdAgent, idDemande);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 

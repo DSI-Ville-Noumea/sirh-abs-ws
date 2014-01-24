@@ -528,16 +528,22 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande, Integer idTypeDemande) {
+	public ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande) {
 
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
-		Demande demande = null;
-		IAbsenceDataConsistencyRules rules = null;
+		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
+		IAbsenceDataConsistencyRules rules = DefaultAbsenceDataConsistencyRulesImpl;
+		
+		// on verifie si la demande existe
+		returnDto = rules.verifDemandeExiste(demande, returnDto);
+		if (0 < returnDto.getErrors().size())
+			return returnDto;
+				
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande
 		// et on effectue les verifications appropriees
-		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
+		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getType().getIdRefTypeAbsence())) {
 			case CONGE_ANNUEL:
 				// TODO
 				break;
@@ -559,11 +565,11 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			default:
 				returnDto.getErrors()
-						.add(String.format("Le type [%d] de la demande n'est pas reconnu.", idTypeDemande));
+						.add(String.format("Le type [%d] de la demande n'est pas reconnu.", demande.getType().getIdRefTypeAbsence()));
 				demandeRepository.clear();
 				return returnDto;
-		}
-
+		} 
+				
 		// on verifie si la demande existe
 		returnDto = rules.verifDemandeExiste(demande, returnDto);
 		if (0 < returnDto.getErrors().size())
