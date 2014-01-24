@@ -6,11 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-@RooJavaBean
 @MappedSuperclass
 public abstract class BaseAgentCount {
 
@@ -25,5 +23,41 @@ public abstract class BaseAgentCount {
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastModification;
+	
+	@Version
+    @Column(name = "version")
+	private Integer version;
+	
+	public Integer getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(Integer idAgent) {
+		this.idAgent = idAgent;
+	}
+
+	public int getTotalMinutes() {
+		return totalMinutes;
+	}
+
+	public void setTotalMinutes(int totalMinutes) {
+		this.totalMinutes = totalMinutes;
+	}
+
+	public Date getLastModification() {
+		return lastModification;
+	}
+
+	public void setLastModification(Date lastModification) {
+		this.lastModification = lastModification;
+	}
+
+	public Integer getVersion() {
+	    return this.version;
+	}
+	   
+	public void setVersion(Integer version) {
+	    this.version = version;
+	}
 	
 }

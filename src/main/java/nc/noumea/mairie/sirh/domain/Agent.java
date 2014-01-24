@@ -3,19 +3,18 @@ package nc.noumea.mairie.sirh.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "AGENT", versionField = "")
+@Entity
+@Table(name = "AGENT")
+@PersistenceUnit(unitName = "sirhPersistenceUnit")
 public class Agent {
 
 	@Id
@@ -59,4 +58,70 @@ public class Agent {
 	public String getDisplayNom() {
 		return getNomUsage();
 	}
+
+	public Integer getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(Integer idAgent) {
+		this.idAgent = idAgent;
+	}
+
+	public Integer getNomatr() {
+		return nomatr;
+	}
+
+	public void setNomatr(Integer nomatr) {
+		this.nomatr = nomatr;
+	}
+
+	public String getNomMarital() {
+		return nomMarital;
+	}
+
+	public void setNomMarital(String nomMarital) {
+		this.nomMarital = nomMarital;
+	}
+
+	public String getNomPatronymique() {
+		return nomPatronymique;
+	}
+
+	public void setNomPatronymique(String nomPatronymique) {
+		this.nomPatronymique = nomPatronymique;
+	}
+
+	public String getNomUsage() {
+		return nomUsage;
+	}
+
+	public void setNomUsage(String nomUsage) {
+		this.nomUsage = nomUsage;
+	}
+
+	public String getPrenom() {
+		return prenom;
+	}
+
+	public void setPrenom(String prenom) {
+		this.prenom = prenom;
+	}
+
+	public String getPrenomUsage() {
+		return prenomUsage;
+	}
+
+	public void setPrenomUsage(String prenomUsage) {
+		this.prenomUsage = prenomUsage;
+	}
+
+	public Date getDateNaissance() {
+		return dateNaissance;
+	}
+
+	public void setDateNaissance(Date dateNaissance) {
+		this.dateNaissance = dateNaissance;
+	}
+	
+	
 }

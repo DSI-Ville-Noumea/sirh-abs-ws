@@ -440,13 +440,13 @@ public class AccessRightsRepositoryTest {
 	public void getListOfAgentsToInputOrApproveByService() {
 
 		Profil p1 = new Profil();
-		p1.setLibelle("APPROBATEUR");
+			p1.setLibelle("APPROBATEUR");
 		absEntityManager.persist(p1);
 
 		Droit droit = new Droit();
-		droit.setDateModification(new Date());
-		droit.setIdAgent(9008767);
-		droit.setIdDroit(1);
+			droit.setDateModification(new Date());
+			droit.setIdAgent(9008767);
+			droit.setIdDroit(1);
 		absEntityManager.persist(droit);
 
 		DroitDroitsAgent droitDroitsAgent = new DroitDroitsAgent();
@@ -454,8 +454,8 @@ public class AccessRightsRepositoryTest {
 		Set<DroitDroitsAgent> droitDroitsAgents = new HashSet<DroitDroitsAgent>();
 
 		DroitProfil droitProfil = new DroitProfil();
-		droitProfil.setDroit(droit);
-		droitProfil.setProfil(p1);
+			droitProfil.setDroit(droit);
+			droitProfil.setProfil(p1);
 		absEntityManager.persist(droitProfil);
 
 		droitDroitsAgent.setDroit(droit);
@@ -464,8 +464,7 @@ public class AccessRightsRepositoryTest {
 
 		droitDroitsAgents.add(droitDroitsAgent);
 
-		agent.setIdAgent(9008767);
-		agent.setIdDroitsAgent(1);
+		agent.setIdAgent(9008767); 
 		agent.setCodeService("DEAB");
 		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
@@ -694,22 +693,21 @@ public class AccessRightsRepositoryTest {
 		Date d = new Date();
 
 		Droit droit = new Droit();
-		droit.setDateModification(d);
-		droit.setIdAgent(9008767);
+			droit.setDateModification(d);
+			droit.setIdAgent(9008767);
 		absEntityManager.persist(droit);
 
 		Set<DroitDroitsAgent> droitDroitsAgents = new HashSet<DroitDroitsAgent>();
 		DroitDroitsAgent droitDroitsAgent = new DroitDroitsAgent();
-		droitDroitsAgent.setDroit(droit);
-		droitDroitsAgents.add(droitDroitsAgent);
+			droitDroitsAgent.setDroit(droit);
+			droitDroitsAgents.add(droitDroitsAgent);
 
 		DroitsAgent agent = new DroitsAgent();
-		agent.setIdAgent(9008768);
-		agent.setIdDroitsAgent(1);
-		agent.setCodeService("TEST");
-		agent.setLibelleService("DASP Pôle Administratif et test");
-		agent.setDateModification(new Date());
-		agent.setDroitDroitsAgent(droitDroitsAgents);
+			agent.setIdAgent(9008768); 
+			agent.setCodeService("TEST");
+			agent.setLibelleService("DASP Pôle Administratif et test");
+			agent.setDateModification(new Date());
+			agent.setDroitDroitsAgent(droitDroitsAgents);
 		absEntityManager.persist(agent);
 
 		Droit result = repository.getAgentDroitFetchAgents(9008767);
@@ -732,22 +730,21 @@ public class AccessRightsRepositoryTest {
 		Date d = new Date();
 
 		Droit droit = new Droit();
-		droit.setDateModification(d);
-		droit.setIdAgent(9008767);
+			droit.setDateModification(d);
+			droit.setIdAgent(9008767);
 		absEntityManager.persist(droit);
 
 		Set<DroitDroitsAgent> droitDroitsAgents = new HashSet<DroitDroitsAgent>();
 		DroitDroitsAgent droitDroitsAgent = new DroitDroitsAgent();
-		droitDroitsAgent.setDroit(droit);
-		droitDroitsAgents.add(droitDroitsAgent);
+			droitDroitsAgent.setDroit(droit);
+			droitDroitsAgents.add(droitDroitsAgent);
 
 		DroitsAgent agent = new DroitsAgent();
-		agent.setIdAgent(9008767);
-		agent.setIdDroitsAgent(1);
-		agent.setCodeService("DEAB");
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
-		agent.setDateModification(new Date());
-		agent.setDroitDroitsAgent(droitDroitsAgents);
+			agent.setIdAgent(9008767); 
+			agent.setCodeService("DEAB");
+			agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+			agent.setDateModification(new Date());
+			agent.setDroitDroitsAgent(droitDroitsAgents);
 		absEntityManager.persist(agent);
 
 		Droit result = repository.getAgentDroitFetchAgents(9008768);
@@ -1331,19 +1328,18 @@ public class AccessRightsRepositoryTest {
 
 		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 		DroitDroitsAgent dda = new DroitDroitsAgent();
-		droitDroitsAgent.add(dda);
+			droitDroitsAgent.add(dda);
 		
 		Droit droit = new Droit();
-		droit.setDateModification(new Date());
-		droit.setIdAgent(9008777);
-		droit.setDroitDroitsAgent(droitDroitsAgent);
+			droit.setDateModification(new Date());
+			droit.setIdAgent(9008777);
+			droit.setDroitDroitsAgent(droitDroitsAgent);
 		
 		DroitsAgent agent = new DroitsAgent();
-		agent.setIdAgent(9008778);
-		agent.setIdDroitsAgent(1);
-		agent.setCodeService("DEAB");
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
-		agent.setDateModification(new Date());
+			agent.setIdAgent(9008778); 
+			agent.setCodeService("DEAB");
+			agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+			agent.setDateModification(new Date());
 		
 		dda.setDroit(droit);
 		dda.setDroitsAgent(agent);
@@ -1367,19 +1363,18 @@ public class AccessRightsRepositoryTest {
 
 		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 		DroitDroitsAgent dda = new DroitDroitsAgent();
-		droitDroitsAgent.add(dda);
+			droitDroitsAgent.add(dda);
 		
 		Droit droit = new Droit();
-		droit.setDateModification(new Date());
-		droit.setIdAgent(9008777);
-		droit.setDroitDroitsAgent(droitDroitsAgent);
+			droit.setDateModification(new Date());
+			droit.setIdAgent(9008777);
+			droit.setDroitDroitsAgent(droitDroitsAgent);
 		
 		DroitsAgent agent = new DroitsAgent();
-		agent.setIdAgent(9008778);
-		agent.setIdDroitsAgent(1);
-		agent.setCodeService("DEAB");
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
-		agent.setDateModification(new Date());
+			agent.setIdAgent(9008778); 
+			agent.setCodeService("DEAB");
+			agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+			agent.setDateModification(new Date());
 		
 		dda.setDroit(droit);
 		dda.setDroitsAgent(agent);
@@ -1410,8 +1405,7 @@ public class AccessRightsRepositoryTest {
 		droit.setDroitDroitsAgent(droitDroitsAgent);
 		
 		DroitsAgent agent = new DroitsAgent();
-		agent.setIdAgent(9008778);
-		agent.setIdDroitsAgent(1);
+		agent.setIdAgent(9008778); 
 		agent.setCodeService("DEAB");
 		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
@@ -1433,24 +1427,23 @@ public class AccessRightsRepositoryTest {
 	}
 	
 	@Test
-	@Transactional("absTransactionManager")
+	@Transactional("absTransactionManager") 
 	public void getListOfAgentsToInputOrApproveByServiceWithoutProfil_KO(){
 
 		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 		DroitDroitsAgent dda = new DroitDroitsAgent();
-		droitDroitsAgent.add(dda);
+			droitDroitsAgent.add(dda);
 		
 		Droit droit = new Droit();
-		droit.setDateModification(new Date());
-		droit.setIdAgent(9008777);
-		droit.setDroitDroitsAgent(droitDroitsAgent);
+			droit.setDateModification(new Date());
+			droit.setIdAgent(9008777);
+			droit.setDroitDroitsAgent(droitDroitsAgent);
 		
 		DroitsAgent agent = new DroitsAgent();
-		agent.setIdAgent(9008778);
-		agent.setIdDroitsAgent(1);
-		agent.setCodeService("DEAB");
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
-		agent.setDateModification(new Date());
+			agent.setIdAgent(9008778);
+			agent.setCodeService("DEAB");
+			agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+			agent.setDateModification(new Date());
 		
 		dda.setDroit(droit);
 		dda.setDroitsAgent(agent);

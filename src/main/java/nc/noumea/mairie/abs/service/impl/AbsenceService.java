@@ -5,9 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
-import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
@@ -57,9 +55,6 @@ public class AbsenceService implements IAbsenceService {
 	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules DefaultAbsenceDataConsistencyRulesImpl;
 
-	@PersistenceContext(unitName = "absPersistenceUnit")
-	private EntityManager absEntityManager;
-
 	@Autowired
 	private HelperService helperService;
 
@@ -86,7 +81,7 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<RefTypeAbsenceDto> getRefTypesAbsence() {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
-		List<RefTypeAbsence> refTypeAbs = RefTypeAbsence.findAllRefTypeAbsences();
+		List<RefTypeAbsence> refTypeAbs = demandeRepository.findAllRefTypeAbsences();
 		for (RefTypeAbsence type : refTypeAbs) {
 			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
 			res.add(dto);
@@ -97,7 +92,7 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto) {
 
-		absEntityManager.setFlushMode(FlushModeType.COMMIT);
+		demandeRepository.setFlushMode(FlushModeType.COMMIT);
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		// verification des droits
@@ -138,7 +133,7 @@ public class AbsenceService implements IAbsenceService {
 			default:
 				returnDto.getErrors().add(
 						String.format("Le type [%d] de la demande n'est pas reconnu.", demandeDto.getIdTypeDemande()));
-				absEntityManager.clear();
+				demandeRepository.clear();
 				return returnDto;
 		}
 		// dans le cas des types de demande non geres
@@ -155,13 +150,13 @@ public class AbsenceService implements IAbsenceService {
 		rules.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
 
 		if (returnDto.getErrors().size() != 0) {
-			absEntityManager.clear();
+			demandeRepository.clear();
 			return returnDto;
 		}
 
 		demandeRepository.persistEntity(demande);
-		absEntityManager.flush();
-		absEntityManager.clear();
+		demandeRepository.flush();
+		demandeRepository.clear();
 
 		if (null == demandeDto.getIdDemande()) {
 			returnDto.getInfos().add(String.format("La demande a bien été créée."));
@@ -221,7 +216,12 @@ public class AbsenceService implements IAbsenceService {
 			default:
 				return demandeDto;
 		}
-
+		
+		if(null == demandeDto 
+				&& null != demande) {
+			demandeDto = new DemandeDto(demande);
+		}
+		
 		return demandeDto;
 	}
 
@@ -281,21 +281,21 @@ public class AbsenceService implements IAbsenceService {
 		switch (ongletDemande) {
 			case ONGLET_NON_PRISES:
 				if (idRefEtat != null) {
-					etats.add(absEntityManager.find(RefEtat.class, idRefEtat));
+					etats.add(demandeRepository.getEntity(RefEtat.class, idRefEtat));
 				} else {
 					etats = demandeRepository.findRefEtatNonPris();
 				}
 				break;
 			case ONGLET_EN_COURS:
 				if (idRefEtat != null) {
-					etats.add(absEntityManager.find(RefEtat.class, idRefEtat));
+					etats.add(demandeRepository.getEntity(RefEtat.class, idRefEtat));
 				} else {
 					etats = demandeRepository.findRefEtatEnCours();
 				}
 				break;
 			case ONGLET_TOUTES:
 				if (idRefEtat != null) {
-					etats.add(absEntityManager.find(RefEtat.class, idRefEtat));
+					etats.add(demandeRepository.getEntity(RefEtat.class, idRefEtat));
 				} else {
 					etats = demandeRepository.findAllRefEtats();
 				}
@@ -560,7 +560,7 @@ public class AbsenceService implements IAbsenceService {
 			default:
 				returnDto.getErrors()
 						.add(String.format("Le type [%d] de la demande n'est pas reconnu.", idTypeDemande));
-				absEntityManager.clear();
+				demandeRepository.clear();
 				return returnDto;
 		}
 

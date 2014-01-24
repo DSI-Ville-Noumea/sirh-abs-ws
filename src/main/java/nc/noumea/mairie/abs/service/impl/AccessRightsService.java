@@ -48,7 +48,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private ISirhRepository sirhRepository;
-
+	
 	@Override
 	public AccessRightsDto getAgentAccessRights(Integer idAgent) {
 
@@ -146,8 +146,8 @@ public class AccessRightsService implements IAccessRightsService {
 			// this will also delete all the agents its operateurs were filling
 			// in for
 			for (DroitDroitsAgent agentSaisiToDelete : droitToDelete.getDroitDroitsAgent()) {
-				agentSaisiToDelete.getDroit().clear();
-				agentSaisiToDelete.remove();
+				accessRightsRepository.clear();
+				accessRightsRepository.removeEntity(agentSaisiToDelete); 
 			}
 			for (DroitProfil dp : droitToDelete.getDroitProfils()) {
 				deleteDroitProfil(dp);

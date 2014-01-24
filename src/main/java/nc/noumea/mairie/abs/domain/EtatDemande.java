@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -10,17 +11,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_ETAT_DEMANDE", versionField = "")
+@Entity
+@Table(name = "ABS_ETAT_DEMANDE") 
+@PersistenceUnit(unitName = "absPersistenceUnit")
 public class EtatDemande {
 
 	@Id 
@@ -47,4 +46,54 @@ public class EtatDemande {
 	
 	@Column(name = "ID_MOTIF_REFUS")
 	private Integer idMotifRefus;
+
+	public Integer getIdEtatDemande() {
+		return idEtatDemande;
+	}
+
+	public void setIdEtatDemande(Integer idEtatDemande) {
+		this.idEtatDemande = idEtatDemande;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Integer getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(Integer idAgent) {
+		this.idAgent = idAgent;
+	}
+
+	public Demande getDemande() {
+		return demande;
+	}
+
+	public void setDemande(Demande demande) {
+		this.demande = demande;
+	}
+
+	public RefEtatEnum getEtat() {
+		return etat;
+	}
+
+	public void setEtat(RefEtatEnum etat) {
+		this.etat = etat;
+	}
+
+	public Integer getIdMotifRefus() {
+		return idMotifRefus;
+	}
+
+	public void setIdMotifRefus(Integer idMotifRefus) {
+		this.idMotifRefus = idMotifRefus;
+	}
+	
+	
 }

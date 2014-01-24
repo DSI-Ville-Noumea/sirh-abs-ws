@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
@@ -12,6 +13,7 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
 import org.springframework.stereotype.Repository;
 
@@ -34,6 +36,21 @@ public class DemandeRepository implements IDemandeRepository {
 	@Override
 	public void removeEntity(Object obj) {
 		absEntityManager.remove(obj);
+	}
+	
+	@Override
+	public void clear() {
+		absEntityManager.clear();
+	}
+	
+	@Override
+	public void flush() {
+		absEntityManager.flush();
+	}
+	
+	@Override
+	public void setFlushMode(FlushModeType flushMode) {
+		absEntityManager.setFlushMode(flushMode);
 	}
 	
 	@Override
@@ -92,7 +109,7 @@ public class DemandeRepository implements IDemandeRepository {
 	@Override
 	public List<RefEtat> findRefEtatNonPris() {
 		List<RefEtat> res = new ArrayList<RefEtat>();
-		res = RefEtat.findAllRefEtats();
+		res = findAllRefEtats(); 
 		RefEtat etatPris = absEntityManager.find(RefEtat.class, (RefEtatEnum.PRISE.getCodeEtat()));
 		res.remove(etatPris);
 		return res;
@@ -111,7 +128,7 @@ public class DemandeRepository implements IDemandeRepository {
 	@Override
 	public List<RefEtat> findAllRefEtats() {
 		
-		return RefEtat.findAllRefEtats();
+	    return absEntityManager.createQuery("SELECT o FROM RefEtat o", RefEtat.class).getResultList();
 	}
 	
 	@Override
@@ -172,5 +189,12 @@ public class DemandeRepository implements IDemandeRepository {
 			.getResultList();
 		
 		return result;
+	}
+	
+	
+	@Override
+	public List<RefTypeAbsence> findAllRefTypeAbsences() {
+		
+	    return absEntityManager.createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).getResultList();
 	}
 }

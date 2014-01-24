@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,14 +26,10 @@ import javax.validation.constraints.NotNull;
 
 import nc.noumea.mairie.abs.dto.DemandeDto;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.tostring.RooToString;
-
 @Entity
 @Table(name = "ABS_DEMANDE")
+@PersistenceUnit(unitName = "absPersistenceUnit")
 @Inheritance(strategy = InheritanceType.JOINED)
-@RooJavaBean
-@RooToString
 public class Demande {
 
 	@Id
@@ -105,4 +102,55 @@ public class Demande {
 
 		return demande;
 	}
+
+	public Integer getIdDemande() {
+		return idDemande;
+	}
+
+	public void setIdDemande(Integer idDemande) {
+		this.idDemande = idDemande;
+	}
+
+	public Integer getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(Integer idAgent) {
+		this.idAgent = idAgent;
+	}
+
+	public RefTypeAbsence getType() {
+		return type;
+	}
+
+	public void setType(RefTypeAbsence type) {
+		this.type = type;
+	}
+
+	public Date getDateDebut() {
+		return dateDebut;
+	}
+
+	public void setDateDebut(Date dateDebut) {
+		this.dateDebut = dateDebut;
+	}
+
+	public Date getDateFin() {
+		return dateFin;
+	}
+
+	public void setDateFin(Date dateFin) {
+		this.dateFin = dateFin;
+	}
+
+	public List<EtatDemande> getEtatsDemande() {
+		return etatsDemande;
+	}
+
+	public void setEtatsDemande(List<EtatDemande> etatsDemande) {
+		this.etatsDemande = etatsDemande;
+	}
+	
+	
+	
 }

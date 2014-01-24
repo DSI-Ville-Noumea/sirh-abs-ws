@@ -11,7 +11,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.service.ISirhService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +41,9 @@ public class AccessRightsController {
 	@Autowired
 	private IAgentMatriculeConverterService converterService;
 
+	@Autowired
+	private ISirhService sirhService;
+
 	@ResponseBody
 	@RequestMapping(value = "listeDroitsAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
@@ -51,7 +54,7 @@ public class AccessRightsController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (Agent.findAgent(convertedIdAgent) == null)
+		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
 		AccessRightsDto result = accessRightService.getAgentAccessRights(convertedIdAgent);
@@ -262,7 +265,7 @@ public class AccessRightsController {
 
 		int convertedIdOperateurOrViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateurOrViseur);
 
-		if (Agent.findAgent(convertedIdOperateurOrViseur) == null)
+		if (sirhService.findAgent(convertedIdOperateurOrViseur) == null)
 			throw new NotFoundException();
 
 		List<AgentDto> agDtos = new JSONDeserializer<List<AgentDto>>().use(null, ArrayList.class)

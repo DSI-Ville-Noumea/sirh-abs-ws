@@ -9,6 +9,8 @@ import nc.noumea.mairie.abs.domain.Profil;
 
 public interface IAccessRightsRepository {
 
+	void clear();
+	
 	Droit getAgentAccessRights(Integer idAgent);
 
 	List<Droit> getAgentsApprobateurs();

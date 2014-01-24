@@ -23,6 +23,11 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	private EntityManager absEntityManager;
 
 	@Override
+	public void clear() {
+		absEntityManager.clear();
+	}
+	
+	@Override
 	public Droit getAgentAccessRights(Integer idAgent) throws NoResultException {
 
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getAgentAccessRights", Droit.class);

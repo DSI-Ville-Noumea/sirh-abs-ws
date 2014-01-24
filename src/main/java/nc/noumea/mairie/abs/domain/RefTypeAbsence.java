@@ -1,15 +1,14 @@
 package nc.noumea.mairie.abs.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Table;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_REF_TYPE_ABSENCE", versionField = "")
+@Entity
+@Table(name = "ABS_REF_TYPE_ABSENCE")
+@PersistenceUnit(unitName = "absPersistenceUnit")
 public class RefTypeAbsence {
 
 	@Id
@@ -18,4 +17,21 @@ public class RefTypeAbsence {
 
 	@Column(name = "LABEL", columnDefinition = "NVARCHAR2")
 	private String label;
+
+	public Integer getIdRefTypeAbsence() {
+		return idRefTypeAbsence;
+	}
+
+	public void setIdRefTypeAbsence(Integer idRefTypeAbsence) {
+		this.idRefTypeAbsence = idRefTypeAbsence;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
 }

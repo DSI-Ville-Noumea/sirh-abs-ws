@@ -16,7 +16,7 @@ import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.abs.transformer.MSDateTransformer;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.service.ISirhService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -60,6 +60,9 @@ public class DemandeController {
 
 	@Autowired
 	private ISoldeService soldeService;
+
+	@Autowired
+	private ISirhService sirhService;
 
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
@@ -122,7 +125,7 @@ public class DemandeController {
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (Agent.findAgent(convertedIdAgent) == null)
+		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande, fromDate, toDate,
@@ -146,7 +149,7 @@ public class DemandeController {
 				idAgent, idDemande);
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (Agent.findAgent(convertedIdAgent) == null)
+		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
 		SoldeDto soldeDto = soldeService.getAgentSolde(convertedIdAgent);
@@ -181,7 +184,7 @@ public class DemandeController {
 
 		Integer convertedIdAgentInputter = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idInputter);
 
-		if (Agent.findAgent(convertedIdAgentInputter) == null)
+		if (sirhService.findAgent(convertedIdAgentInputter) == null)
 			throw new NotFoundException();
 
 		// ON VERIFIE LES DROITS

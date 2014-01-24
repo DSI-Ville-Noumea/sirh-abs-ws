@@ -4,7 +4,7 @@ import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.service.ISirhService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +33,9 @@ public class SoldeController {
 	@Autowired
 	private ISoldeService soldeService;
 
+	@Autowired
+	private ISirhService sirhService;
+	
 	@ResponseBody
 	@RequestMapping(value = "soldeAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
@@ -42,7 +45,7 @@ public class SoldeController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (Agent.findAgent(convertedIdAgent) == null)
+		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
 		SoldeDto result = soldeService.getAgentSolde(convertedIdAgent);

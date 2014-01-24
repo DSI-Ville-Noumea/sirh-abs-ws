@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,17 +14,15 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_DROITS_AGENT")
+@Entity
+@Table(name = "ABS_DROITS_AGENT") 
+@PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
 	@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d INNER JOIN FETCH dda.droitProfil dp where d.idAgent = :idAgent and dp.idDroitProfil = :idDroitProfil "),
 	@NamedQuery(name = "getDroitsAgent", query = "from DroitsAgent da where da.idAgent = :idAgent"),
@@ -54,5 +53,54 @@ public class DroitsAgent {
 	
 	@OneToMany(mappedBy = "droitsAgent", fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.ALL, CascadeType.REMOVE})
 	private Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+
+	public Integer getIdDroitsAgent() {
+		return idDroitsAgent;
+	}
+
+	public void setIdDroitsAgent(Integer idDroitsAgent) {
+		this.idDroitsAgent = idDroitsAgent;
+	}
+
+	public Integer getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(Integer idAgent) {
+		this.idAgent = idAgent;
+	}
+
+	public String getCodeService() {
+		return codeService;
+	}
+
+	public void setCodeService(String codeService) {
+		this.codeService = codeService;
+	}
+
+	public String getLibelleService() {
+		return libelleService;
+	}
+
+	public void setLibelleService(String libelleService) {
+		this.libelleService = libelleService;
+	}
+
+	public Date getDateModification() {
+		return dateModification;
+	}
+
+	public void setDateModification(Date dateModification) {
+		this.dateModification = dateModification;
+	}
+
+	public Set<DroitDroitsAgent> getDroitDroitsAgent() {
+		return droitDroitsAgent;
+	}
+
+	public void setDroitDroitsAgent(Set<DroitDroitsAgent> droitDroitsAgent) {
+		this.droitDroitsAgent = droitDroitsAgent;
+	}
+	
 	
 }

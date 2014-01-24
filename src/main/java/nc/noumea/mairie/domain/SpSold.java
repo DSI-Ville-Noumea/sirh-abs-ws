@@ -1,16 +1,15 @@
 package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPSOLD", versionField = "")
+@Entity
+@Table(name = "SPSOLD")
+@PersistenceUnit(unitName = "sirhPersistenceUnit")
 public class SpSold {
 
 	@Id
@@ -24,4 +23,30 @@ public class SpSold {
 	@NotNull
 	@Column(name = "SOLDE2", columnDefinition = "decimal")
 	private Double soldeAnneePrec;
+
+	public Integer getNomatr() {
+		return nomatr;
+	}
+
+	public void setNomatr(Integer nomatr) {
+		this.nomatr = nomatr;
+	}
+
+	public Double getSoldeAnneeEnCours() {
+		return soldeAnneeEnCours;
+	}
+
+	public void setSoldeAnneeEnCours(Double soldeAnneeEnCours) {
+		this.soldeAnneeEnCours = soldeAnneeEnCours;
+	}
+
+	public Double getSoldeAnneePrec() {
+		return soldeAnneePrec;
+	}
+
+	public void setSoldeAnneePrec(Double soldeAnneePrec) {
+		this.soldeAnneePrec = soldeAnneePrec;
+	}
+	
+	
 }

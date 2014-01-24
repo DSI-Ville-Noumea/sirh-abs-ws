@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,17 +14,16 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "absPersistenceUnit", table = "ABS_DROIT")
+@Entity
+@Table(name = "ABS_DROIT")
+@PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
 		@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent"),
 		@NamedQuery(name = "getAgentsApprobateurs", query = "select d from Droit d inner join d.droitProfils dp inner join dp.profil p where p.libelle = 'APPROBATEUR'"),
@@ -49,4 +49,55 @@ public class Droit {
 	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY)
 	private Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 
+	@Version
+    @Column(name = "version")
+	private Integer version;
+
+	public Integer getIdDroit() {
+		return idDroit;
+	}
+
+	public void setIdDroit(Integer idDroit) {
+		this.idDroit = idDroit;
+	}
+
+	public Integer getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(Integer idAgent) {
+		this.idAgent = idAgent;
+	}
+
+	public Date getDateModification() {
+		return dateModification;
+	}
+
+	public void setDateModification(Date dateModification) {
+		this.dateModification = dateModification;
+	}
+
+	public Set<DroitProfil> getDroitProfils() {
+		return droitProfils;
+	}
+
+	public void setDroitProfils(Set<DroitProfil> droitProfils) {
+		this.droitProfils = droitProfils;
+	}
+
+	public Set<DroitDroitsAgent> getDroitDroitsAgent() {
+		return droitDroitsAgent;
+	}
+
+	public void setDroitDroitsAgent(Set<DroitDroitsAgent> droitDroitsAgent) {
+		this.droitDroitsAgent = droitDroitsAgent;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 }
