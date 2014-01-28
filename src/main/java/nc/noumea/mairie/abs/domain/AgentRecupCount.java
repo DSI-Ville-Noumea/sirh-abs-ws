@@ -25,7 +25,5 @@ public class AgentRecupCount extends BaseAgentCount {
 	public void setIdAgentRecupCount(Integer idAgentRecupCount) {
 		this.idAgentRecupCount = idAgentRecupCount;
 	}
-	
-	
-	
+
 }

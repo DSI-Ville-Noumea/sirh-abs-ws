@@ -24,7 +24,9 @@ SIRH-ABS-WS API et définition des services concernant les soldes que l'agent pe
     {
        "soldeCongeAnnee": 20.5, (nb jours)
        "soldeCongeAnneePrec": 1.5, (nb jours)
-       "soldeRecup": 72.0 (nb minutes)
+       "soldeRecup": 72.0 ,(nb minutes)
+	   "soldeReposCompAnnee": 1.0, (nb minutes)
+	   "soldeReposCompAnneePrec": 1.0 (nb minutes)
     }
 +-------------------------+
 

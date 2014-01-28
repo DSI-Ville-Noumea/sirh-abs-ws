@@ -7,6 +7,8 @@ public class SoldeDto implements IJSONSerialize {
 	private Double soldeCongeAnnee;
 	private Double soldeCongeAnneePrec;
 	private Double soldeRecup;
+	private Double soldeReposCompAnnee;
+	private Double soldeReposCompAnneePrec;
 
 	@Override
 	public String serializeInJSON() {
@@ -35,6 +37,22 @@ public class SoldeDto implements IJSONSerialize {
 
 	public void setSoldeRecup(Double soldeRecup) {
 		this.soldeRecup = soldeRecup;
+	}
+
+	public Double getSoldeReposCompAnnee() {
+		return soldeReposCompAnnee;
+	}
+
+	public void setSoldeReposCompAnnee(Double soldeReposCompAnnee) {
+		this.soldeReposCompAnnee = soldeReposCompAnnee;
+	}
+
+	public Double getSoldeReposCompAnneePrec() {
+		return soldeReposCompAnneePrec;
+	}
+
+	public void setSoldeReposCompAnneePrec(Double soldeReposCompAnneePrec) {
+		this.soldeReposCompAnneePrec = soldeReposCompAnneePrec;
 	}
 
 }
