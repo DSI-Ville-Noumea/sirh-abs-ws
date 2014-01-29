@@ -31,9 +31,9 @@ public interface IDemandeRepository {
 	
 	List<RefEtat> findAllRefEtats();
 	
-	List<Integer> getListViseursDemandesSaisiesJourDonne(Integer type);
+	List<Integer> getListViseursDemandesSaisiesJourDonne(Integer typeRecup, Integer typeRC);
 	
-	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(Integer type);
+	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(Integer typeRecup, Integer typeRC);
 
 	List<RefTypeAbsence> findAllRefTypeAbsences();
 }

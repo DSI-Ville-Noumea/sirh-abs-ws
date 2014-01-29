@@ -618,7 +618,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(etatDemande);
 
 		// When
-		List<Integer> result = repository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue());
+		List<Integer> result = repository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue());
 
 		assertEquals(1, result.size());
 

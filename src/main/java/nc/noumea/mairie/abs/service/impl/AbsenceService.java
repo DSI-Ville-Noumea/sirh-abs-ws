@@ -607,10 +607,10 @@ public class AbsenceService implements IAbsenceService {
 
 		EmailInfoDto dto = new EmailInfoDto();
 
-		dto.setListViseurs(demandeRepository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue()));
+		dto.setListViseurs(demandeRepository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue()));
 
 		dto.setListApprobateurs(demandeRepository
-				.getListApprobateursDemandesSaisiesViseesJourDonne(RefTypeAbsenceEnum.RECUP.getValue()));
+				.getListApprobateursDemandesSaisiesViseesJourDonne(RefTypeAbsenceEnum.RECUP.getValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue()));
 
 		return dto;
 	}

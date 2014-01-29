@@ -132,7 +132,7 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 	
 	@Override
-	public List<Integer> getListViseursDemandesSaisiesJourDonne(Integer type) {
+	public List<Integer> getListViseursDemandesSaisiesJourDonne(Integer typeRecup, Integer typeRC) {
 		
 		StringBuilder sb = new StringBuilder();
 			sb.append("select droit.id_agent as idAgent from abs_droit droit ");
@@ -144,7 +144,7 @@ public class DemandeRepository implements IDemandeRepository {
 			sb.append("and da.id_agent in ( ");
 					sb.append("select d.id_agent from abs_demande d ");
 					sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
-					sb.append("where d.id_type_demande = :TYPE ");
+					sb.append("where d.id_type_demande in ( :RECUP , :RC ) ");
 					sb.append("and ed.id_ref_etat = :SAISIE ");
 					sb.append("and date_trunc('day', ed.date) = current_date - interval '1 day' ");
 					sb.append("and ed.id_etat_demande in ( select max(ed2.id_etat_demande) from abs_etat_demande ed2 group by ed2.id_demande ) ");
@@ -153,7 +153,8 @@ public class DemandeRepository implements IDemandeRepository {
 		@SuppressWarnings("unchecked")
 		List<Integer> result = absEntityManager.createNativeQuery(sb.toString())
 			.setParameter("LIBELLE", ProfilEnum.VISEUR.toString())
-			.setParameter("TYPE", type)
+			.setParameter("RECUP", typeRecup)
+			.setParameter("RC", typeRC)
 			.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat())
 			.getResultList();
 		
@@ -161,7 +162,7 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 	
 	@Override
-	public List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(Integer type) {
+	public List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(Integer typeRecup, Integer typeRC) {
 		
 		StringBuilder sb = new StringBuilder();
 			sb.append("select droit.id_agent as idAgent from abs_droit droit ");
@@ -173,7 +174,7 @@ public class DemandeRepository implements IDemandeRepository {
 			sb.append("and da.id_agent in ( ");
 					sb.append("select d.id_agent from abs_demande d ");
 					sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
-					sb.append("where d.id_type_demande = :TYPE ");
+					sb.append("where d.id_type_demande in ( :RECUP , :RC ) ");
 					sb.append("and ed.id_ref_etat in( :SAISIE , :VISEE_F , :VISEE_D ) ");
 					sb.append("and date_trunc('day', ed.date) = current_date - interval '1 day' ");
 					sb.append("and ed.id_etat_demande in ( select max(ed2.id_etat_demande) from abs_etat_demande ed2 group by ed2.id_demande ) ");
@@ -182,7 +183,8 @@ public class DemandeRepository implements IDemandeRepository {
 		@SuppressWarnings("unchecked")
 		List<Integer> result = absEntityManager.createNativeQuery(sb.toString())
 			.setParameter("LIBELLE", ProfilEnum.APPROBATEUR.toString())
-			.setParameter("TYPE", type)
+			.setParameter("RECUP", typeRecup)
+			.setParameter("RC", typeRC)
 			.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat())
 			.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 			.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
