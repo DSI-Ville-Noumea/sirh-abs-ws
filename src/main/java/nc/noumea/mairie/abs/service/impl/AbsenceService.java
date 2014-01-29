@@ -216,12 +216,11 @@ public class AbsenceService implements IAbsenceService {
 			default:
 				return demandeDto;
 		}
-		
-		if(null == demandeDto 
-				&& null != demande) {
+
+		if (null == demandeDto && null != demande) {
 			demandeDto = new DemandeDto(demande);
 		}
-		
+
 		return demandeDto;
 	}
 
@@ -534,12 +533,12 @@ public class AbsenceService implements IAbsenceService {
 
 		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
 		IAbsenceDataConsistencyRules rules = DefaultAbsenceDataConsistencyRulesImpl;
-		
+
 		// on verifie si la demande existe
 		returnDto = rules.verifDemandeExiste(demande, returnDto);
 		if (0 < returnDto.getErrors().size())
 			return returnDto;
-				
+
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande
 		// et on effectue les verifications appropriees
@@ -564,12 +563,13 @@ public class AbsenceService implements IAbsenceService {
 				// TODO
 				break;
 			default:
-				returnDto.getErrors()
-						.add(String.format("Le type [%d] de la demande n'est pas reconnu.", demande.getType().getIdRefTypeAbsence()));
+				returnDto.getErrors().add(
+						String.format("Le type [%d] de la demande n'est pas reconnu.", demande.getType()
+								.getIdRefTypeAbsence()));
 				demandeRepository.clear();
 				return returnDto;
-		} 
-				
+		}
+
 		// on verifie si la demande existe
 		returnDto = rules.verifDemandeExiste(demande, returnDto);
 		if (0 < returnDto.getErrors().size())
@@ -593,18 +593,17 @@ public class AbsenceService implements IAbsenceService {
 
 		return returnDto;
 	}
-	
+
 	@Override
 	public EmailInfoDto getListIdDestinatairesEmailInfo() {
-		
+
 		EmailInfoDto dto = new EmailInfoDto();
-		
-			dto.setListViseurs(
-				demandeRepository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue()));
-			
-			dto.setListApprobateurs(
-				demandeRepository.getListApprobateursDemandesSaisiesViseesJourDonne(RefTypeAbsenceEnum.RECUP.getValue()));
-		
+
+		dto.setListViseurs(demandeRepository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue()));
+
+		dto.setListApprobateurs(demandeRepository
+				.getListApprobateursDemandesSaisiesViseesJourDonne(RefTypeAbsenceEnum.RECUP.getValue()));
+
 		return dto;
 	}
 

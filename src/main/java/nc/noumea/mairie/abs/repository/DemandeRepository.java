@@ -70,9 +70,9 @@ public class DemandeRepository implements IDemandeRepository {
 		}
 
 		if (fromDate != null && toDate == null) {
-			sb.append("and d.dateDebut = :fromDate ");
+			sb.append("and d.dateDebut >= :fromDate ");
 		} else if (fromDate == null && toDate != null) {
-			sb.append("and d.dateDebut = :toDate ");
+			sb.append("and d.dateDebut <= :toDate ");
 		} else if (fromDate != null && toDate != null) {
 			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
 		}
