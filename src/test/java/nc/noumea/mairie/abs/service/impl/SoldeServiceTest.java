@@ -55,7 +55,7 @@ public class SoldeServiceTest {
 		AgentReposCompCount arcc = new AgentReposCompCount();
 		arcc.setIdAgent(idAgent);
 		arcc.setTotalMinutes(12);
-		arcc.setTotalMinutesPrec(10);
+		arcc.setTotalMinutesAnneeN1(10);
 
 		SpSold solde = new SpSold();
 		solde.setNomatr(8765);

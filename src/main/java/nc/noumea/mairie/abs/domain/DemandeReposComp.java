@@ -5,17 +5,18 @@ import javax.persistence.Entity;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ABS_DEMANDE_REPOS_COMP")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @PrimaryKeyJoinColumn(name = "ID_DEMANDE")
 public class DemandeReposComp extends Demande {
-
-	@NotNull
+	
 	@Column(name = "DUREE")
 	private Integer duree;
+	
+	@Column(name = "DUREE_ANNEE_N1")
+	private Integer dureeAnneeN1;
 
 	public DemandeReposComp() {
 	}
@@ -30,6 +31,14 @@ public class DemandeReposComp extends Demande {
 
 	public void setDuree(Integer duree) {
 		this.duree = duree;
+	}
+
+	public Integer getDureeAnneeN1() {
+		return dureeAnneeN1;
+	}
+
+	public void setDureeAnneeN1(Integer dureeAnneeN1) {
+		this.dureeAnneeN1 = dureeAnneeN1;
 	}
 
 }

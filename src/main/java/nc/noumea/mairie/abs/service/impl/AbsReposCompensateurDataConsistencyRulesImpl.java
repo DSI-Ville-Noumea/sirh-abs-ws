@@ -37,7 +37,7 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 				demande.getIdAgent(), demande.getIdDemande());
 
 		if (null == soldeReposComp
-				|| (soldeReposComp.getTotalMinutes() + soldeReposComp.getTotalMinutesPrec()) - sommeDemandeEnCours
+				|| (soldeReposComp.getTotalMinutes() + soldeReposComp.getTotalMinutesAnneeN1()) - sommeDemandeEnCours
 						- ((DemandeReposComp) demande).getDuree() < 0) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 			srm.getErrors().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));

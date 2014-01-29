@@ -4,7 +4,7 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
-import nc.noumea.mairie.abs.domain.AgentWeekAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.BaseAgentCount;
@@ -285,7 +285,7 @@ public class CounterService implements ICounterService {
 			return srm;
 		}
 		
-		AgentWeekAlimManuelle histo = new AgentWeekAlimManuelle();
+		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
 			histo.setIdAgent(idAgent);
 			histo.setMinutes(minutes);
 			histo.setDateModification(helperService.getCurrentDate());

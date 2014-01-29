@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "ABS_AGENT_HISTO_ALIM_MANUELLE")
 @PersistenceUnit(unitName = "absPersistenceUnit")
-public class AgentWeekAlimManuelle {
+public class AgentHistoAlimManuelle {
 
 	@Id
 	@Column(name = "ID_AGENT_HISTO_ALIM_MANUELLE")
@@ -34,9 +34,11 @@ public class AgentWeekAlimManuelle {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
 	
-	@NotNull
 	@Column(name = "MINUTES")
 	private int minutes;
+	
+	@Column(name = "MINUTES_ANNEE_N1")
+	private int minutesAnneeN1;
 	
 	@ManyToOne()
 	@JoinColumn(name = "ID_MOTIF_COMPTEUR", referencedColumnName = "ID_MOTIF_COMPTEUR")
@@ -92,6 +94,14 @@ public class AgentWeekAlimManuelle {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public int getMinutesAnneeN1() {
+		return minutesAnneeN1;
+	}
+
+	public void setMinutesAnneeN1(int minutesAnneeN1) {
+		this.minutesAnneeN1 = minutesAnneeN1;
 	}
 	
 	

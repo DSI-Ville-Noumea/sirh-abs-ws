@@ -109,7 +109,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		AgentReposCompCount soldeReposComp = new AgentReposCompCount();
 		soldeReposComp.setTotalMinutes(50);
-		soldeReposComp.setTotalMinutesPrec(20);
+		soldeReposComp.setTotalMinutesAnneeN1(20);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, demande.getIdAgent())).thenReturn(
@@ -138,7 +138,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		AgentReposCompCount soldeReposComp = new AgentReposCompCount();
 		soldeReposComp.setTotalMinutes(50);
-		soldeReposComp.setTotalMinutesPrec(20);
+		soldeReposComp.setTotalMinutesAnneeN1(20);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, demande.getIdAgent())).thenReturn(

@@ -7,7 +7,7 @@ import static org.junit.Assert.fail;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
-import nc.noumea.mairie.abs.domain.AgentWeekAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.BaseAgentCount;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
@@ -434,7 +434,7 @@ public class CounterServiceTest {
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());
-		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentWeekAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentRecupCount.class));
 	}
 	
@@ -472,7 +472,7 @@ public class CounterServiceTest {
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());
-		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentWeekAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentRecupCount.class));
 	}
 	
@@ -512,7 +512,7 @@ public class CounterServiceTest {
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
-		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentWeekAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentRecupCount.class));
 	}
 	
@@ -553,7 +553,7 @@ public class CounterServiceTest {
 
 		assertEquals(0, result.getErrors().size()); 
 		
-		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentRecupCount.class));
 	}
 	
@@ -591,7 +591,7 @@ public class CounterServiceTest {
 
 		assertEquals(0, result.getErrors().size()); 
 		
-		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentRecupCount.class));
 	}
 }
