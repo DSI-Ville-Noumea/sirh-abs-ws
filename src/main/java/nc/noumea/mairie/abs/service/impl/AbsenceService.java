@@ -9,6 +9,7 @@ import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
+import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -48,12 +49,8 @@ public class AbsenceService implements IAbsenceService {
 	private IAccessRightsService accessRightsService;
 
 	@Autowired
-	@Qualifier("AbsRecuperationDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absRecupDataConsistencyRules;
-
-	@Autowired
 	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules DefaultAbsenceDataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules defaultAbsenceDataConsistencyRulesImpl;
 
 	@Autowired
 	private HelperService helperService;
@@ -112,14 +109,18 @@ public class AbsenceService implements IAbsenceService {
 				// TODO
 				break;
 			case REPOS_COMP:
-				// TODO
+				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
+				demandeReposComp.setDuree(demandeDto.getDuree());
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
+				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+				rules = defaultAbsenceDataConsistencyRulesImpl;
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
 				demandeRecup.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
 				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
-				rules = absRecupDataConsistencyRules;
+				rules = defaultAbsenceDataConsistencyRulesImpl;
 				break;
 			case ASA:
 				// TODO
@@ -138,7 +139,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 		// dans le cas des types de demande non geres
 		if (null == rules) {
-			rules = DefaultAbsenceDataConsistencyRulesImpl;
+			rules = defaultAbsenceDataConsistencyRulesImpl;
 			demande = getDemande(Demande.class, demandeDto.getIdDemande());
 			if (null == demande) {
 				demande = new Demande();
@@ -193,7 +194,13 @@ public class AbsenceService implements IAbsenceService {
 				// TODO
 				break;
 			case REPOS_COMP:
-				// TODO
+
+				DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, idDemande);
+				if (null == demandeReposComp) {
+					return demandeDto;
+				}
+
+				demandeDto = new DemandeDto(demandeReposComp);
 				break;
 			case RECUP:
 
@@ -239,7 +246,7 @@ public class AbsenceService implements IAbsenceService {
 
 		List<RefEtat> etats = getListeEtatsByOnglet(ongletDemande, idRefEtat);
 
-		return absRecupDataConsistencyRules.filtreListDemande(idAgentConnecte, idAgentConcerne, listeSansFiltre, etats,
+		return defaultAbsenceDataConsistencyRulesImpl.filtreListDemande(idAgentConnecte, idAgentConcerne, listeSansFiltre, etats,
 				dateDemande);
 	}
 
@@ -366,7 +373,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// on verifie l etat de la demande
-		result = absRecupDataConsistencyRules.checkEtatsDemandeAcceptes(result, demande,
+		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
 				Arrays.asList(RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE));
 
 		if (0 < result.getErrors().size()) {
@@ -390,11 +397,11 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		result = absRecupDataConsistencyRules.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
+		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
 				RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE,
 				RefEtatEnum.REFUSEE));
 
-		result = absRecupDataConsistencyRules.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(),
+		result = defaultAbsenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(),
 				demandeEtatChangeDto.getIdMotifAvis());
 
 		if (0 < result.getErrors().size()) {
@@ -425,7 +432,7 @@ public class AbsenceService implements IAbsenceService {
 		if (!result.getErrors().isEmpty())
 			return result;
 
-		result = absRecupDataConsistencyRules
+		result = defaultAbsenceDataConsistencyRulesImpl
 				.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(RefEtatEnum.VISEE_FAVORABLE,
 						RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.REFUSEE));
 
@@ -532,7 +539,7 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
-		IAbsenceDataConsistencyRules rules = DefaultAbsenceDataConsistencyRulesImpl;
+		IAbsenceDataConsistencyRules rules = defaultAbsenceDataConsistencyRulesImpl;
 
 		// on verifie si la demande existe
 		returnDto = rules.verifDemandeExiste(demande, returnDto);
@@ -551,7 +558,7 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case RECUP:
 				demande = getDemande(DemandeRecup.class, idDemande);
-				rules = absRecupDataConsistencyRules;
+				rules = defaultAbsenceDataConsistencyRulesImpl;
 				break;
 			case ASA:
 				// TODO
