@@ -33,13 +33,13 @@ public class EditionController {
 	private IReportingService reportingService;
 
 	@ResponseBody
-	@RequestMapping(value = "/downloadDemandeRecuperation", method = RequestMethod.GET)
+	@RequestMapping(value = "/downloadTitreDemande", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<byte[]> downloadDemandeRecuperation(@RequestParam("idAgent") int idAgent,
+	public ResponseEntity<byte[]> downloadTitreDemande(@RequestParam("idAgent") int idAgent,
 			@RequestParam("idDemande") int idDemande) {
 
 		logger.debug(
-				"entered GET [edition/downloadDemandeRecuperation] => downloadDemandeRecuperation with parameters  idDemande = {}, idAgent = {}",
+				"entered GET [edition/downloadTitreDemande] => downloadTitreDemande with parameters  idDemande = {}, idAgent = {}",
 				idDemande, idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
@@ -47,7 +47,7 @@ public class EditionController {
 		byte[] responseData = null;
 
 		try {
-			responseData = reportingService.getDemandeRecuperationReportAsByteArray(convertedIdAgent, idDemande);
+			responseData = reportingService.getDemandeReportAsByteArray(convertedIdAgent, idDemande);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -55,7 +55,7 @@ public class EditionController {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/pdf");
-		headers.add("Content-Disposition", String.format("attachment; filename=\"demandeRecuperation.pdf\""));
+		headers.add("Content-Disposition", String.format("attachment; filename=\"titreDemande.pdf\""));
 
 		return new ResponseEntity<byte[]>(responseData, headers, HttpStatus.OK);
 	}

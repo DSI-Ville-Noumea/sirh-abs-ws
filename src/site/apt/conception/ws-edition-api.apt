@@ -6,11 +6,11 @@
 
 SIRH-ABS-WS API et définition des services concernant les éditions
 
-* Edition demande de recuperation
+* Edition demande de recuperation, de repos compensateur
 
  <<PROJET>> : SIRH-ABS-WS
 
- <<URL>> : /edition/downloadDemandeRecuperation
+ <<URL>> : /edition/downloadTitreDemande
  
  <<Accepted Methods>> : GET 
  
