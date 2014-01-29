@@ -54,6 +54,7 @@ public class ReposCompensateurRepositoryTest {
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
 		dr1.setDuree(10);
+		dr1.setDureeAnneeN1(10);
 		dr1.setIdAgent(9005168);
 		dr1.setType(rta);
 		dr1.setEtatsDemande(listEtatDemande);
@@ -105,6 +106,7 @@ public class ReposCompensateurRepositoryTest {
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
 		dr1.setDuree(10);
+		dr1.setDureeAnneeN1(10);
 		dr1.setIdAgent(9005168);
 		dr1.setType(rta);
 		dr1.setEtatsDemande(listEtatDemande);
@@ -156,6 +158,7 @@ public class ReposCompensateurRepositoryTest {
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
 		dr1.setDuree(10);
+		dr1.setDureeAnneeN1(10);
 		dr1.setIdAgent(9005168);
 		dr1.setType(rta);
 		dr1.setEtatsDemande(listEtatDemande);
@@ -207,6 +210,7 @@ public class ReposCompensateurRepositoryTest {
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
 		dr1.setDuree(10);
+		dr1.setDureeAnneeN1(10);
 		dr1.setIdAgent(9005168);
 		dr1.setType(rta);
 		dr1.setEtatsDemande(listEtatDemande);
@@ -275,6 +279,7 @@ public class ReposCompensateurRepositoryTest {
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
 		dr1.setDuree(10);
+		dr1.setDureeAnneeN1(10);
 		dr1.setIdAgent(9005168);
 		dr1.setType(rta);
 		dr1.setEtatsDemande(listEtatDemande);
@@ -375,6 +380,7 @@ public class ReposCompensateurRepositoryTest {
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
 		dr1.setDuree(10);
+		dr1.setDureeAnneeN1(10);
 		dr1.setIdAgent(9005168);
 		dr1.setType(rta);
 		dr1.setEtatsDemande(listEtatDemande);
@@ -424,6 +430,7 @@ public class ReposCompensateurRepositoryTest {
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
 		dr1.setDuree(10);
+		dr1.setDureeAnneeN1(10);
 		dr1.setIdAgent(9005168);
 		dr1.setType(rta);
 		dr1.setEtatsDemande(listEtatDemande);
@@ -461,6 +468,7 @@ public class ReposCompensateurRepositoryTest {
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
 		dr1.setDuree(10);
+		dr1.setDureeAnneeN1(10);
 		dr1.setIdAgent(9005168);
 		dr1.setType(rta);
 		dr1.setEtatsDemande(listEtatDemande);

@@ -130,6 +130,7 @@ public class DemandeRepositoryTest {
 		drc.setDateDebut(new Date());
 		drc.setDateFin(null);
 		drc.setDuree(15);
+		drc.setDureeAnneeN1(10);
 		absEntityManager.persist(drc);
 
 		// When
@@ -154,12 +155,13 @@ public class DemandeRepositoryTest {
 		d.setDateFin(null);
 		d.setDuree(30);
 		absEntityManager.persist(d);
-		
+
 		DemandeReposComp drp = new DemandeReposComp();
 		drp.setIdAgent(9005131);
 		drp.setDateDebut(new Date());
 		drp.setDateFin(null);
 		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
 		absEntityManager.persist(drp);
 
 		// When
@@ -197,6 +199,7 @@ public class DemandeRepositoryTest {
 		drp.setDateDebut(sdf.parse("02/05/2013"));
 		drp.setDateFin(null);
 		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
 		absEntityManager.persist(drp);
 
 		DemandeReposComp drp2 = new DemandeReposComp();
@@ -204,6 +207,7 @@ public class DemandeRepositoryTest {
 		drp2.setDateDebut(sdf.parse("15/06/2013"));
 		drp2.setDateFin(null);
 		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
 		absEntityManager.persist(drp2);
 
 		// When
@@ -243,6 +247,7 @@ public class DemandeRepositoryTest {
 		drp.setDateDebut(sdf.parse("15/05/2013"));
 		drp.setDateFin(null);
 		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
 		absEntityManager.persist(drp);
 
 		DemandeReposComp drp2 = new DemandeReposComp();
@@ -250,6 +255,7 @@ public class DemandeRepositoryTest {
 		drp2.setDateDebut(sdf.parse("15/06/2013"));
 		drp2.setDateFin(null);
 		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
 		absEntityManager.persist(drp2);
 
 		// When
@@ -297,6 +303,7 @@ public class DemandeRepositoryTest {
 		drp.setDateDebut(sdf.parse("15/05/2013"));
 		drp.setDateFin(null);
 		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
 		drp.setType(typeMaladie);
 		absEntityManager.persist(drp);
 
@@ -305,6 +312,7 @@ public class DemandeRepositoryTest {
 		drp2.setDateDebut(sdf.parse("15/06/2013"));
 		drp2.setDateFin(null);
 		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
 		drp2.setType(typeMaladie);
 		absEntityManager.persist(drp2);
 
@@ -353,6 +361,7 @@ public class DemandeRepositoryTest {
 		drp.setDateDebut(sdf.parse("15/05/2013"));
 		drp.setDateFin(null);
 		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
 		drp.setType(typeMaladie);
 		absEntityManager.persist(drp);
 
@@ -361,6 +370,7 @@ public class DemandeRepositoryTest {
 		drp2.setDateDebut(sdf.parse("15/06/2013"));
 		drp2.setDateFin(null);
 		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
 		drp2.setType(typeRecup);
 		absEntityManager.persist(drp2);
 
@@ -408,6 +418,7 @@ public class DemandeRepositoryTest {
 		dpr.setDateDebut(sdf.parse("15/05/2013"));
 		dpr.setDateFin(null);
 		dpr.setDuree(30);
+		dpr.setDureeAnneeN1(10);
 		absEntityManager.persist(dpr);
 
 		DemandeReposComp dpr2 = new DemandeReposComp();
@@ -415,6 +426,7 @@ public class DemandeRepositoryTest {
 		dpr2.setDateDebut(sdf.parse("15/06/2013"));
 		dpr2.setDateFin(null);
 		dpr2.setDuree(40);
+		dpr2.setDureeAnneeN1(10);
 		absEntityManager.persist(dpr2);
 
 		DemandeReposComp dpr3 = new DemandeReposComp();
@@ -422,6 +434,7 @@ public class DemandeRepositoryTest {
 		dpr3.setDateDebut(sdf.parse("15/07/2013"));
 		dpr3.setDateFin(null);
 		dpr3.setDuree(50);
+		dpr3.setDureeAnneeN1(10);
 		absEntityManager.persist(dpr3);
 
 		Droit droit = new Droit();
@@ -501,6 +514,7 @@ public class DemandeRepositoryTest {
 		drp.setDateDebut(sdf.parse("15/05/2013"));
 		drp.setDateFin(null);
 		drp.setDuree(30);
+		drp.setDureeAnneeN1(10);
 		absEntityManager.persist(drp);
 
 		DemandeReposComp drp2 = new DemandeReposComp();
@@ -508,6 +522,7 @@ public class DemandeRepositoryTest {
 		drp2.setDateDebut(sdf.parse("15/06/2013"));
 		drp2.setDateFin(null);
 		drp2.setDuree(40);
+		drp2.setDureeAnneeN1(10);
 		absEntityManager.persist(drp2);
 
 		DemandeReposComp drp3 = new DemandeReposComp();
@@ -515,6 +530,7 @@ public class DemandeRepositoryTest {
 		drp3.setDateDebut(sdf.parse("15/07/2013"));
 		drp3.setDateFin(null);
 		drp3.setDuree(50);
+		drp3.setDureeAnneeN1(10);
 		absEntityManager.persist(drp3);
 
 		Droit droit = new Droit();
@@ -553,7 +569,7 @@ public class DemandeRepositoryTest {
 
 		// Then
 		assertEquals(4, result.size());
-		
+
 		assertEquals(50, ((DemandeRecup) result.get(2)).getDuree().intValue());
 		assertEquals(40, ((DemandeRecup) result.get(3)).getDuree().intValue());
 

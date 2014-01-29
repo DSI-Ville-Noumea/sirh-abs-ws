@@ -134,7 +134,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		DemandeReposComp demande = new DemandeReposComp();
 		demande.setIdAgent(9005138);
-		demande.setDuree(81);
+		demande.setDuree(59);
 
 		AgentReposCompCount soldeReposComp = new AgentReposCompCount();
 		soldeReposComp.setTotalMinutes(50);
@@ -146,7 +146,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		IReposCompensateurRepository reposCompRepository = Mockito.mock(IReposCompensateurRepository.class);
 		Mockito.when(reposCompRepository.getSommeDureeDemandeReposCompEnCoursSaisieouVisee(demande.getIdAgent(), null))
-				.thenReturn(10);
+				.thenReturn(30);
 
 		AbsReposCompensateurDataConsistencyRulesImpl impl = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "reposCompensateurRepository", reposCompRepository);
