@@ -18,7 +18,7 @@ public class DemandeDto {
 	private Integer duree;
 	private Integer idRefEtat;
 	private Date dateDemande;
-	
+
 	// permet d'afficher ou non les icones correspondants
 	private boolean isAffichageBoutonModifier;
 	private boolean isAffichageBoutonSupprimer;
@@ -32,7 +32,6 @@ public class DemandeDto {
 	// valeur du visa et approbation de la demande
 	private Boolean isValeurVisa = null;
 	private Boolean isValeurApprobation = null;
-	
 
 	public DemandeDto() {
 	}
@@ -46,35 +45,34 @@ public class DemandeDto {
 		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
 
-		for(EtatDemande etat : d.getEtatsDemande()) {
-			if(this.isValeurVisa == null 
-					&& etat.getEtat().equals(RefEtatEnum.VISEE_FAVORABLE)) {
+		for (EtatDemande etat : d.getEtatsDemande()) {
+			if (this.isValeurVisa == null && etat.getEtat().equals(RefEtatEnum.VISEE_FAVORABLE)) {
 				this.isValeurVisa = Boolean.TRUE;
 				continue;
 			}
-			if(this.isValeurVisa == null 
-					&& etat.getEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE)) {
+			if (this.isValeurVisa == null && etat.getEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE)) {
 				this.isValeurVisa = Boolean.FALSE;
 				continue;
 			}
-			if(this.isValeurApprobation == null 
-					&& etat.getEtat().equals(RefEtatEnum.APPROUVEE)) {
+			if (this.isValeurApprobation == null && etat.getEtat().equals(RefEtatEnum.APPROUVEE)) {
 				this.isValeurApprobation = Boolean.TRUE;
 				continue;
 			}
-			if(this.isValeurApprobation == null 
-					&& etat.getEtat().equals(RefEtatEnum.REFUSEE)) {
+			if (this.isValeurApprobation == null && etat.getEtat().equals(RefEtatEnum.REFUSEE)) {
 				this.isValeurApprobation = Boolean.FALSE;
 				continue;
 			}
 		}
-		
+
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
 			case CONGE_ANNUEL:
 				// TODO
 				break;
 			case REPOS_COMP:
-				this.duree = ((DemandeReposComp) d).getDuree();
+				Integer dureeAnnee = ((DemandeReposComp) d).getDuree() == null ? 0 : ((DemandeReposComp) d).getDuree();
+				Integer dureeAnneePrec = ((DemandeReposComp) d).getDureeAnneeN1() == null ? 0 : ((DemandeReposComp) d)
+						.getDureeAnneeN1();
+				this.duree = dureeAnnee + dureeAnneePrec;
 				break;
 			case RECUP:
 				this.duree = ((DemandeRecup) d).getDuree();
@@ -231,7 +229,5 @@ public class DemandeDto {
 	public void setModifierApprobation(boolean isModifierApprobation) {
 		this.isModifierApprobation = isModifierApprobation;
 	}
-
-	
 
 }
