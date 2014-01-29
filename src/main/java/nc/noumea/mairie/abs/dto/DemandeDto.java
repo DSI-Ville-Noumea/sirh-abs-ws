@@ -4,6 +4,7 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
+import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
@@ -73,7 +74,7 @@ public class DemandeDto {
 				// TODO
 				break;
 			case REPOS_COMP:
-				// TODO
+				this.duree = ((DemandeReposComp) d).getDuree();
 				break;
 			case RECUP:
 				this.duree = ((DemandeRecup) d).getDuree();

@@ -7,6 +7,7 @@
       	<class>nc.noumea.mairie.abs.domain.AgentWeekRecup</class>
       	<class>nc.noumea.mairie.abs.domain.Demande</class>
       	<class>nc.noumea.mairie.abs.domain.DemandeRecup</class>
+      	<class>nc.noumea.mairie.abs.domain.DemandeReposComp</class>
       	<class>nc.noumea.mairie.abs.domain.Droit</class>
       	<class>nc.noumea.mairie.abs.domain.DroitProfil</class>
       	<class>nc.noumea.mairie.abs.domain.DroitsAgent</class>
