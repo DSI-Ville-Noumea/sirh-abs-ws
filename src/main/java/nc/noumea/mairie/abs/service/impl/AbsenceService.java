@@ -554,7 +554,8 @@ public class AbsenceService implements IAbsenceService {
 				// TODO
 				break;
 			case REPOS_COMP:
-				// TODO
+				demande = getDemande(DemandeReposComp.class, idDemande);
+				rules = defaultAbsenceDataConsistencyRulesImpl;
 				break;
 			case RECUP:
 				demande = getDemande(DemandeRecup.class, idDemande);
