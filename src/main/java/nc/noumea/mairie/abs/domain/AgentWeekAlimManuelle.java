@@ -17,14 +17,14 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "ABS_AGENT_WEEK_ALIM_MANUELLE")
+@Table(name = "ABS_AGENT_HISTO_ALIM_MANUELLE")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 public class AgentWeekAlimManuelle {
 
 	@Id
-	@Column(name = "ID_AGENT_WEEK_ALIM_MANUELLE")
+	@Column(name = "ID_AGENT_HISTO_ALIM_MANUELLE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idAgentWeekAlimManuelle;
+	private Integer idAgentHistoAlimManuelle;
 
 	@NotNull
 	@Column(name = "ID_AGENT")
@@ -46,12 +46,12 @@ public class AgentWeekAlimManuelle {
     @Column(name = "version")
 	private Integer version;
 
-	public Integer getIdAgentWeekAlimManuelle() {
-		return idAgentWeekAlimManuelle;
+	public Integer getIdAgentHistoAlimManuelle() {
+		return idAgentHistoAlimManuelle;
 	}
 
-	public void setIdAgentWeekAlimManuelle(Integer idAgentWeekAlimManuelle) {
-		this.idAgentWeekAlimManuelle = idAgentWeekAlimManuelle;
+	public void setIdAgentHistoAlimManuelle(Integer idAgentHistoAlimManuelle) {
+		this.idAgentHistoAlimManuelle = idAgentHistoAlimManuelle;
 	}
 
 	public Integer getIdAgent() {
