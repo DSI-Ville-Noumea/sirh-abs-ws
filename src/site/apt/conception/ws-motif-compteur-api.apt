@@ -20,8 +20,31 @@ SIRH-ABS-WS API et définition des services concernant les motifs des compteurs
   
  <<Content>> 
  
- -
++-------------------------+
+    [
+       {
+           "idMotifCompteur": 2,
+           "idRefTypeAbsence": 4,
+           "libelle": "bdsf",
+           "motifTechnique": false
+       },
+       {
+           "idMotifCompteur": 3,
+           "idRefTypeAbsence": 1,
+           "libelle": "hrz",
+           "motifTechnique": false
+       },
+       {
+           "idMotifCompteur": 1,
+           "idRefTypeAbsence": 3,
+           "libelle": "nono",
+           "motifTechnique": false
+       }
+    ]
 
+
++-------------------------+
+ 
  <<Response>> : 
 
 +-------------------------+
@@ -46,9 +69,10 @@ HTTP Code 400 : Bad Request (si un des paramètres est manquant)
  
 +-------------------------+
 {
-	"idMotifCompteur": 1/NULL (si NULL alors création),
-	"libelle": "test yoyo bis",
-	"idRefTypeAbsence": 3
+           "idMotifCompteur": 1,
+           "idRefTypeAbsence": 3,
+           "libelle": "nono",
+           "motifTechnique": false
 }
 +-------------------------+
 
