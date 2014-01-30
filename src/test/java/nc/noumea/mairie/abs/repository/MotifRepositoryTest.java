@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 
@@ -90,25 +91,28 @@ public class MotifRepositoryTest {
 		MotifCompteur refus1 = new MotifCompteur();
 		refus1.setLibelle("motif1 compteur recup");
 		refus1.setRefTypeAbsence(typeRecup);
+		refus1.setMotifTechnique(false);
 		absEntityManager.persist(refus1);
 
 		MotifCompteur refus2 = new MotifCompteur();
 		refus2.setLibelle("motif2 compteur congé");
 		refus2.setRefTypeAbsence(typeConge);
+		refus2.setMotifTechnique(false);
 		absEntityManager.persist(refus2);
 
 		MotifCompteur refus3 = new MotifCompteur();
 		refus3.setLibelle("motif3 compteur recup");
 		refus3.setRefTypeAbsence(typeRecup);
+		refus3.setMotifTechnique(true);
 		absEntityManager.persist(refus3);
 
 		// When
 		List<MotifCompteur> result = repository.getListeMotifCompteur(idRefType);
 
 		// Then
-		assertEquals(2, result.size());
+		assertEquals(1, result.size());
 		assertEquals(refus1.getLibelle(), result.get(0).getLibelle());
-		assertEquals(refus3.getLibelle(), result.get(1).getLibelle());
+		assertFalse(result.get(0).isMotifTechnique());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

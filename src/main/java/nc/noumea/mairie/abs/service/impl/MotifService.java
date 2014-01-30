@@ -128,6 +128,7 @@ public class MotifService implements IMotifService {
 		
 		motifCompteur.setLibelle(motifCompteurDto.getLibelle());
 		motifCompteur.setRefTypeAbsence(refTypeAbsence);
+		motifCompteur.setMotifTechnique(motifCompteurDto.isMotifTechnique());
 		
 		motifRepository.persistEntity(motifCompteur);
 		
