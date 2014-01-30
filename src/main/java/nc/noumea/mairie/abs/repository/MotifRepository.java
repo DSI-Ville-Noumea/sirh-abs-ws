@@ -47,9 +47,8 @@ public class MotifRepository implements IMotifRepository {
 	public List<MotifCompteur> getListeMotifCompteur(Integer idType) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select m from MotifCompteur m ");
-		sb.append("where m.motifTechnique = false ");
 		if (idType != null) {
-			sb.append("and m.refTypeAbsence.idRefTypeAbsence =:idType ");
+			sb.append("where m.refTypeAbsence.idRefTypeAbsence =:idType ");
 		}
 
 		TypedQuery<MotifCompteur> query = absEntityManager.createQuery(sb.toString(), MotifCompteur.class);

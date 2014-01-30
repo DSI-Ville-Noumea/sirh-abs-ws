@@ -26,10 +26,10 @@ public class MotifService implements IMotifService {
 	public static final String MOTIF_MODIFIE_INEXISTANT = "Le motif à modifier n'existe pas.";
 	public static final String TYPE_ABS_INEXISTANT = "Le type d'absence saisi n'existe pas.";
 	public static final String LIBELLE_MOTIF_VIDE = "Le libellé du motif n'est pas saisi.";
-	
+
 	public static final String MOTIF_CREE = "Le motif est bien créé.";
 	public static final String MOTIF_MODIFIE = "Le motif est bien modifié.";
-	
+
 	@Autowired
 	private IMotifRepository motifRepository;
 
@@ -61,113 +61,112 @@ public class MotifService implements IMotifService {
 		}
 		return res;
 	}
-	
+
 	@Override
 	public ReturnMessageDto setMotifRefus(MotifRefusDto motifRefusDto) {
-		
+
 		ReturnMessageDto result = new ReturnMessageDto();
 		MotifRefus motifRefus = null;
-		
-		if(null != motifRefusDto.getIdMotifRefus()) {
+
+		if (null != motifRefusDto.getIdMotifRefus()) {
 			motifRefus = motifRepository.getEntity(MotifRefus.class, motifRefusDto.getIdMotifRefus());
-			if(null == motifRefus) {
+			if (null == motifRefus) {
 				logger.debug(MOTIF_MODIFIE_INEXISTANT);
 				result.getErrors().add(MOTIF_MODIFIE_INEXISTANT);
 				return result;
 			}
 		}
-		
+
 		RefTypeAbsence refTypeAbsence = getRefTypeAbsence(motifRefusDto.getIdRefTypeAbsence(), result);
-		if(!result.getErrors().isEmpty()) {
+		if (!result.getErrors().isEmpty()) {
 			return result;
 		}
-		
-		if(!controlLibelleMotif(motifRefusDto.getLibelle(), result))
+
+		if (!controlLibelleMotif(motifRefusDto.getLibelle(), result))
 			return result;
-		
-		if(null == motifRefus) {
+
+		if (null == motifRefus) {
 			motifRefus = new MotifRefus();
 		}
-		
+
 		motifRefus.setLibelle(motifRefusDto.getLibelle());
 		motifRefus.setRefTypeAbsence(refTypeAbsence);
-		
+
 		motifRepository.persistEntity(motifRefus);
-		
+
 		addMessageConfirmation(motifRefusDto.getIdMotifRefus(), result);
-		
+
 		return result;
 	}
-	
+
 	@Override
 	public ReturnMessageDto setMotifCompteur(MotifCompteurDto motifCompteurDto) {
-		
+
 		ReturnMessageDto result = new ReturnMessageDto();
 		MotifCompteur motifCompteur = null;
-		
-		if(null != motifCompteurDto.getIdMotifCompteur()) {
+
+		if (null != motifCompteurDto.getIdMotifCompteur()) {
 			motifCompteur = motifRepository.getEntity(MotifCompteur.class, motifCompteurDto.getIdMotifCompteur());
-			if(null == motifCompteur) {
+			if (null == motifCompteur) {
 				logger.debug(MOTIF_MODIFIE_INEXISTANT);
 				result.getErrors().add(MOTIF_MODIFIE_INEXISTANT);
 				return result;
 			}
 		}
-		
+
 		RefTypeAbsence refTypeAbsence = getRefTypeAbsence(motifCompteurDto.getIdRefTypeAbsence(), result);
-		if(!result.getErrors().isEmpty()) {
+		if (!result.getErrors().isEmpty()) {
 			return result;
 		}
-		
-		if(!controlLibelleMotif(motifCompteurDto.getLibelle(), result))
+
+		if (!controlLibelleMotif(motifCompteurDto.getLibelle(), result))
 			return result;
-		
-		if(null == motifCompteur) {
+
+		if (null == motifCompteur) {
 			motifCompteur = new MotifCompteur();
 		}
-		
+
 		motifCompteur.setLibelle(motifCompteurDto.getLibelle());
 		motifCompteur.setRefTypeAbsence(refTypeAbsence);
-		motifCompteur.setMotifTechnique(motifCompteurDto.isMotifTechnique());
-		
+
 		motifRepository.persistEntity(motifCompteur);
-		
+
 		addMessageConfirmation(motifCompteurDto.getIdMotifCompteur(), result);
-		
+
 		return result;
 	}
-	
+
 	protected RefTypeAbsence getRefTypeAbsence(Integer idRefTypeAbs, ReturnMessageDto message) {
-		
+
 		RefTypeAbsence refTypeAbsence = null;
-		if(null == idRefTypeAbs) {
+		if (null == idRefTypeAbs) {
 			logger.debug(TYPE_ABS_INEXISTANT);
 			message.getErrors().add(TYPE_ABS_INEXISTANT);
 			return refTypeAbsence;
-		}else{
+		} else {
 			refTypeAbsence = motifRepository.getEntity(RefTypeAbsence.class, idRefTypeAbs);
 		}
-		if(null == refTypeAbsence) {
+		if (null == refTypeAbsence) {
 			logger.debug(TYPE_ABS_INEXISTANT);
 			message.getErrors().add(TYPE_ABS_INEXISTANT);
 		}
 		return refTypeAbsence;
 	}
-	
+
 	private void addMessageConfirmation(Integer idMotif, ReturnMessageDto result) {
-		
-		if(null != idMotif) {
+
+		if (null != idMotif) {
 			logger.debug(MOTIF_MODIFIE);
 			result.getInfos().add(MOTIF_MODIFIE);
-		}else{
+		} else {
 			logger.debug(MOTIF_CREE);
 			result.getInfos().add(MOTIF_CREE);
 		}
 	}
-	
+
 	protected boolean controlLibelleMotif(String libelle, ReturnMessageDto result) {
-		
-		if(null == libelle || "".equals(libelle)) {
+
+		if (null == libelle || "".equals(libelle)) {
 			logger.debug(LIBELLE_MOTIF_VIDE);
 			result.getErrors().add(LIBELLE_MOTIF_VIDE);
 			return false;

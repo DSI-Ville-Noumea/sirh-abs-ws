@@ -75,7 +75,6 @@ public class MotifServiceTest {
 		MotifCompteur refus1 = new MotifCompteur();
 		refus1.setLibelle("motif compteur recup");
 		refus1.setRefTypeAbsence(typeRecup);
-		refus1.setMotifTechnique(false);
 		listMotif.add(refus1);
 
 		IMotifRepository motifRepository = Mockito.mock(IMotifRepository.class);
@@ -88,7 +87,6 @@ public class MotifServiceTest {
 
 		assertEquals(1, listResult.size());
 		assertEquals("motif compteur recup", listResult.get(0).getLibelle());
-		assertFalse(listResult.get(0).isMotifTechnique());
 	}
 
 	@Test

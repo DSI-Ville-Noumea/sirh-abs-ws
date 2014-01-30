@@ -7,7 +7,6 @@ public class MotifCompteurDto {
 	private Integer idMotifCompteur;
 	private String libelle;
 	private Integer idRefTypeAbsence;
-	private boolean motifTechnique;
 
 	public MotifCompteurDto() {
 	}
@@ -17,7 +16,6 @@ public class MotifCompteurDto {
 		this.idMotifCompteur = motif.getIdMotifCompteur();
 		this.libelle = motif.getLibelle();
 		this.idRefTypeAbsence = motif.getRefTypeAbsence().getIdRefTypeAbsence();
-		this.motifTechnique = motif.isMotifTechnique();
 	}
 
 	public String getLibelle() {
@@ -42,13 +40,5 @@ public class MotifCompteurDto {
 
 	public void setIdRefTypeAbsence(Integer idRefTypeAbsence) {
 		this.idRefTypeAbsence = idRefTypeAbsence;
-	}
-
-	public boolean isMotifTechnique() {
-		return motifTechnique;
-	}
-
-	public void setMotifTechnique(boolean motifTechnique) {
-		this.motifTechnique = motifTechnique;
 	}
 }

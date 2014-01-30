@@ -12,8 +12,6 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Type;
-
 @Entity
 @Table(name = "ABS_MOTIF_COMPTEUR")
 @PersistenceUnit(unitName = "absPersistenceUnit")
@@ -35,11 +33,6 @@ public class MotifCompteur {
 	@Version
 	@Column(name = "version")
 	private Integer version;
-
-	@NotNull
-	@Column(name = "MOTIF_TECHNIQUE", nullable = false)
-	@Type(type = "boolean")
-	private boolean motifTechnique;
 
 	public Integer getIdMotifCompteur() {
 		return idMotifCompteur;
@@ -71,14 +64,6 @@ public class MotifCompteur {
 
 	public void setVersion(Integer version) {
 		this.version = version;
-	}
-
-	public boolean isMotifTechnique() {
-		return motifTechnique;
-	}
-
-	public void setMotifTechnique(boolean motifTechnique) {
-		this.motifTechnique = motifTechnique;
 	}
 
 }
