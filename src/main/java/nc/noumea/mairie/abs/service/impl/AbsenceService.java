@@ -235,19 +235,20 @@ public class AbsenceService implements IAbsenceService {
 	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
 			Date fromDate, Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
 
-		// si date de debut et de fin nulles, alors on filtre sur 12 mois glissants
-		
-		if(null == fromDate && null == toDate) {
+		// si date de debut et de fin nulles, alors on filtre sur 12 mois
+		// glissants
+
+		if (null == fromDate && null == toDate) {
 			fromDate = helperService.getCurrentDateMoinsUnAn();
 		}
-		
+
 		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
 				idRefType);
 
 		List<RefEtat> etats = getListeEtatsByOnglet(ongletDemande, idRefEtat);
 
-		return defaultAbsenceDataConsistencyRulesImpl.filtreListDemande(idAgentConnecte, idAgentConcerne, listeSansFiltre, etats,
-				dateDemande);
+		return defaultAbsenceDataConsistencyRulesImpl.filtreListDemande(idAgentConnecte, idAgentConcerne,
+				listeSansFiltre, etats, dateDemande);
 	}
 
 	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate,
@@ -401,8 +402,8 @@ public class AbsenceService implements IAbsenceService {
 				RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE,
 				RefEtatEnum.REFUSEE));
 
-		result = defaultAbsenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(),
-				demandeEtatChangeDto.getIdMotifAvis());
+		result = defaultAbsenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
+				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getIdMotifAvis());
 
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -607,10 +608,13 @@ public class AbsenceService implements IAbsenceService {
 
 		EmailInfoDto dto = new EmailInfoDto();
 
-		dto.setListViseurs(demandeRepository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue()));
+		List<Integer> listeTypes = new ArrayList<Integer>();
+		listeTypes.add(RefTypeAbsenceEnum.RECUP.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 
-		dto.setListApprobateurs(demandeRepository
-				.getListApprobateursDemandesSaisiesViseesJourDonne(RefTypeAbsenceEnum.RECUP.getValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue()));
+		dto.setListViseurs(demandeRepository.getListViseursDemandesSaisiesJourDonne(listeTypes));
+
+		dto.setListApprobateurs(demandeRepository.getListApprobateursDemandesSaisiesViseesJourDonne(listeTypes));
 
 		return dto;
 	}

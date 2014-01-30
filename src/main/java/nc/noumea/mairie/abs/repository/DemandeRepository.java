@@ -22,7 +22,7 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
-	
+
 	@Override
 	public void persistEntity(Object obj) {
 		absEntityManager.persist(obj);
@@ -32,36 +32,37 @@ public class DemandeRepository implements IDemandeRepository {
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
 		return absEntityManager.find(Tclass, Id);
 	}
-	
+
 	@Override
 	public void removeEntity(Object obj) {
 		absEntityManager.remove(obj);
 	}
-	
+
 	@Override
 	public void clear() {
 		absEntityManager.clear();
 	}
-	
+
 	@Override
 	public void flush() {
 		absEntityManager.flush();
 	}
-	
+
 	@Override
 	public void setFlushMode(FlushModeType flushMode) {
 		absEntityManager.setFlushMode(flushMode);
 	}
-	
+
 	@Override
-	public List<Demande> listeDemandesAgent(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate, Date toDate, Integer idRefType) {
+	public List<Demande> listeDemandesAgent(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate,
+			Date toDate, Integer idRefType) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
 		sb.append("where 1=1 ");
 
 		if (idAgentConcerne != null) {
 			sb.append("and d.idAgent = :idAgentConcerne ");
-		}else {
+		} else {
 			sb.append("and d.idAgent in ( select da.idAgent from DroitsAgent da inner join da.droitDroitsAgent dda inner join dda.droit d where d.idAgent = :idAgentConnecte ) ");
 		}
 
@@ -83,7 +84,7 @@ public class DemandeRepository implements IDemandeRepository {
 
 		if (idAgentConcerne != null) {
 			query.setParameter("idAgentConcerne", idAgentConcerne);
-		}else{
+		} else {
 			query.setParameter("idAgentConnecte", idAgentConnecte);
 		}
 
@@ -109,7 +110,7 @@ public class DemandeRepository implements IDemandeRepository {
 	@Override
 	public List<RefEtat> findRefEtatNonPris() {
 		List<RefEtat> res = new ArrayList<RefEtat>();
-		res = findAllRefEtats(); 
+		res = findAllRefEtats();
 		RefEtat etatPris = absEntityManager.find(RefEtat.class, (RefEtatEnum.PRISE.getCodeEtat()));
 		res.remove(etatPris);
 		return res;
@@ -124,79 +125,74 @@ public class DemandeRepository implements IDemandeRepository {
 		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.APPROUVEE.getCodeEtat())));
 		return res;
 	}
-	
+
 	@Override
 	public List<RefEtat> findAllRefEtats() {
-		
-	    return absEntityManager.createQuery("SELECT o FROM RefEtat o", RefEtat.class).getResultList();
+
+		return absEntityManager.createQuery("SELECT o FROM RefEtat o", RefEtat.class).getResultList();
 	}
-	
+
 	@Override
-	public List<Integer> getListViseursDemandesSaisiesJourDonne(Integer typeRecup, Integer typeRC) {
-		
+	public List<Integer> getListViseursDemandesSaisiesJourDonne(List<Integer> listeTypes) {
+
 		StringBuilder sb = new StringBuilder();
-			sb.append("select droit.id_agent as idAgent from abs_droit droit ");
-			sb.append("inner join abs_droit_profil dp on droit.id_droit = dp.id_droit ");
-			sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
-			sb.append("inner join abs_droit_droits_agent dda on dp.id_droit_profil = dda.id_droit_profil ");
-			sb.append("inner join abs_droits_agent da on dda.id_droits_agent = da.id_droits_agent ");
-			sb.append("where p.libelle = :LIBELLE ");
-			sb.append("and da.id_agent in ( ");
-					sb.append("select d.id_agent from abs_demande d ");
-					sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
-					sb.append("where d.id_type_demande in ( :RECUP , :RC ) ");
-					sb.append("and ed.id_ref_etat = :SAISIE ");
-					sb.append("and date_trunc('day', ed.date) = current_date - interval '1 day' ");
-					sb.append("and ed.id_etat_demande in ( select max(ed2.id_etat_demande) from abs_etat_demande ed2 group by ed2.id_demande ) ");
-			sb.append(" ) GROUP BY idAgent ");
-		
+		sb.append("select distinct(droit.id_agent) as idAgent from abs_droit droit ");
+		sb.append("inner join abs_droit_profil dp on droit.id_droit = dp.id_droit ");
+		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
+		sb.append("inner join abs_droit_droits_agent dda on dp.id_droit_profil = dda.id_droit_profil ");
+		sb.append("inner join abs_droits_agent da on dda.id_droits_agent = da.id_droits_agent ");
+		sb.append("where p.libelle = :LIBELLE ");
+		sb.append("and da.id_agent in ( ");
+		sb.append("select d.id_agent from abs_demande d ");
+		sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
+		sb.append("where d.id_type_demande in ( :TYPE ) ");
+		sb.append("and ed.id_ref_etat = :SAISIE ");
+		sb.append("and date_trunc('day', ed.date) = current_date - interval '1 day' ");
+		sb.append("and ed.id_etat_demande in ( select max(ed2.id_etat_demande) from abs_etat_demande ed2 group by ed2.id_demande ) ");
+		sb.append(" ) GROUP BY idAgent ");
+
 		@SuppressWarnings("unchecked")
 		List<Integer> result = absEntityManager.createNativeQuery(sb.toString())
-			.setParameter("LIBELLE", ProfilEnum.VISEUR.toString())
-			.setParameter("RECUP", typeRecup)
-			.setParameter("RC", typeRC)
-			.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat())
-			.getResultList();
-		
+				.setParameter("LIBELLE", ProfilEnum.VISEUR.toString()).setParameter("TYPE", listeTypes)
+				.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat()).getResultList();
+
 		return result;
 	}
-	
+
 	@Override
-	public List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(Integer typeRecup, Integer typeRC) {
-		
+	public List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(List<Integer> listeTypes) {
+
 		StringBuilder sb = new StringBuilder();
-			sb.append("select droit.id_agent as idAgent from abs_droit droit ");
-			sb.append("inner join abs_droit_profil dp on droit.id_droit = dp.id_droit ");
-			sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
-			sb.append("inner join abs_droit_droits_agent dda on dp.id_droit_profil = dda.id_droit_profil ");
-			sb.append("inner join abs_droits_agent da on dda.id_droits_agent = da.id_droits_agent ");
-			sb.append("where p.libelle = :LIBELLE ");
-			sb.append("and da.id_agent in ( ");
-					sb.append("select d.id_agent from abs_demande d ");
-					sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
-					sb.append("where d.id_type_demande in ( :RECUP , :RC ) ");
-					sb.append("and ed.id_ref_etat in( :SAISIE , :VISEE_F , :VISEE_D ) ");
-					sb.append("and date_trunc('day', ed.date) = current_date - interval '1 day' ");
-					sb.append("and ed.id_etat_demande in ( select max(ed2.id_etat_demande) from abs_etat_demande ed2 group by ed2.id_demande ) ");
-			sb.append(" ) GROUP BY idAgent ");
-		
+		sb.append("select distinct(droit.id_agent) as idAgent from abs_droit droit ");
+		sb.append("inner join abs_droit_profil dp on droit.id_droit = dp.id_droit ");
+		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
+		sb.append("inner join abs_droit_droits_agent dda on dp.id_droit_profil = dda.id_droit_profil ");
+		sb.append("inner join abs_droits_agent da on dda.id_droits_agent = da.id_droits_agent ");
+		sb.append("where p.libelle = :LIBELLE ");
+		sb.append("and da.id_agent in ( ");
+		sb.append("select d.id_agent from abs_demande d ");
+		sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
+		sb.append("where d.id_type_demande in ( :TYPE ) ");
+		sb.append("and ed.id_ref_etat in( :SAISIE , :VISEE_F , :VISEE_D ) ");
+		sb.append("and date_trunc('day', ed.date) = current_date - interval '1 day' ");
+		sb.append("and ed.id_etat_demande in ( select max(ed2.id_etat_demande) from abs_etat_demande ed2 group by ed2.id_demande ) ");
+		sb.append(" ) GROUP BY idAgent ");
+
 		@SuppressWarnings("unchecked")
 		List<Integer> result = absEntityManager.createNativeQuery(sb.toString())
-			.setParameter("LIBELLE", ProfilEnum.APPROBATEUR.toString())
-			.setParameter("RECUP", typeRecup)
-			.setParameter("RC", typeRC)
-			.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat())
-			.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-			.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-			.getResultList();
-		
+				.setParameter("LIBELLE", ProfilEnum.APPROBATEUR.toString())
+				.setParameter("TYPE", listeTypes)
+				.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat())
+				.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+				.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+				.getResultList();
+
 		return result;
 	}
-	
-	
+
 	@Override
 	public List<RefTypeAbsence> findAllRefTypeAbsences() {
-		
-	    return absEntityManager.createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).getResultList();
+
+		return absEntityManager.createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).getResultList();
 	}
 }

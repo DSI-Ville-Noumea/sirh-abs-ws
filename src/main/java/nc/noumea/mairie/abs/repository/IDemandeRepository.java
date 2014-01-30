@@ -14,26 +14,27 @@ public interface IDemandeRepository {
 	void persistEntity(Object obj);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
-	
+
 	void clear();
-	
+
 	void flush();
-	
+
 	void setFlushMode(FlushModeType flushMode);
 
-	List<Demande> listeDemandesAgent(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate, Date toDate, Integer idRefType);
+	List<Demande> listeDemandesAgent(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate, Date toDate,
+			Integer idRefType);
 
 	List<RefEtat> findRefEtatNonPris();
 
 	List<RefEtat> findRefEtatEnCours();
-	
+
 	void removeEntity(Object obj);
-	
+
 	List<RefEtat> findAllRefEtats();
-	
-	List<Integer> getListViseursDemandesSaisiesJourDonne(Integer typeRecup, Integer typeRC);
-	
-	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(Integer typeRecup, Integer typeRC);
+
+	List<Integer> getListViseursDemandesSaisiesJourDonne(List<Integer> listeTypes);
+
+	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(List<Integer> listeTypes);
 
 	List<RefTypeAbsence> findAllRefTypeAbsences();
 }

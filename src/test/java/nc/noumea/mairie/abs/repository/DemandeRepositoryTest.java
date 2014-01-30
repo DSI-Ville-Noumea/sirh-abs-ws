@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -580,10 +581,11 @@ public class DemandeRepositoryTest {
 		absEntityManager.clear();
 	}
 
-	// @Test
+	//@Test
 	@Transactional("absTransactionManager")
 	public void getListViseursDemandesSaisiesJourDonne() {
 
+		// Recup
 		Droit droitViseur = new Droit();
 		droitViseur.setIdAgent(9000001);
 		absEntityManager.persist(droitViseur);
@@ -617,10 +619,133 @@ public class DemandeRepositoryTest {
 		etatDemande.setEtat(RefEtatEnum.SAISIE);
 		absEntityManager.persist(etatDemande);
 
-		// When
-		List<Integer> result = repository.getListViseursDemandesSaisiesJourDonne(RefTypeAbsenceEnum.RECUP.getValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		// Repos Comp
+		Droit droitViseur2 = new Droit();
+		droitViseur2.setIdAgent(9000002);
+		absEntityManager.persist(droitViseur2);
+		Profil profil2 = new Profil();
+		profil2.setLibelle(ProfilEnum.VISEUR.toString());
+		absEntityManager.persist(profil2);
+		DroitProfil droitProfil2 = new DroitProfil();
+		droitProfil2.setProfil(profil2);
+		droitProfil2.setDroit(droitViseur2);
+		absEntityManager.persist(droitProfil2);
 
-		assertEquals(1, result.size());
+		DroitsAgent droitsAgent2 = new DroitsAgent();
+		droitsAgent2.setIdAgent(9000012);
+		absEntityManager.persist(droitsAgent2);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(droitViseur2);
+		dda2.setDroitProfil(droitProfil2);
+		dda2.setDroitsAgent(droitsAgent2);
+		absEntityManager.persist(dda2);
+
+		RefTypeAbsence rta2 = new RefTypeAbsence();
+		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		absEntityManager.persist(rta2);
+		Demande demande2 = new Demande();
+		demande2.setIdAgent(9000012);
+		demande2.setType(rta2);
+		absEntityManager.persist(demande2);
+		EtatDemande etatDemande2 = new EtatDemande();
+		etatDemande2.setDemande(demande2);
+		etatDemande2.setIdAgent(9000001);
+		etatDemande2.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		absEntityManager.persist(etatDemande2);
+
+		List<Integer> listeTypes = new ArrayList<Integer>();
+		listeTypes.add(RefTypeAbsenceEnum.RECUP.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+
+		// When
+		List<Integer> result = repository.getListViseursDemandesSaisiesJourDonne(listeTypes);
+
+		assertEquals(2, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	//@Test
+	@Transactional("absTransactionManager")
+	public void getListApprobateursDemandesSaisiesJourDonne() {
+
+		// Recup
+		Droit droitApprobateur = new Droit();
+		droitApprobateur.setIdAgent(9000001);
+		absEntityManager.persist(droitApprobateur);
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.APPROBATEUR.toString());
+		absEntityManager.persist(profil);
+		DroitProfil droitProfil = new DroitProfil();
+		droitProfil.setProfil(profil);
+		droitProfil.setDroit(droitApprobateur);
+		absEntityManager.persist(droitProfil);
+
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(9000011);
+		absEntityManager.persist(droitsAgent);
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(droitApprobateur);
+		dda.setDroitProfil(droitProfil);
+		dda.setDroitsAgent(droitsAgent);
+		absEntityManager.persist(dda);
+
+		RefTypeAbsence rta = new RefTypeAbsence();
+		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		absEntityManager.persist(rta);
+		Demande demande = new Demande();
+		demande.setIdAgent(9000011);
+		demande.setType(rta);
+		absEntityManager.persist(demande);
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setDemande(demande);
+		etatDemande.setIdAgent(9000001);
+		etatDemande.setEtat(RefEtatEnum.SAISIE);
+		absEntityManager.persist(etatDemande);
+
+		// Repos Comp
+		Droit droitAppro2 = new Droit();
+		droitAppro2.setIdAgent(9000002);
+		absEntityManager.persist(droitAppro2);
+		Profil profil2 = new Profil();
+		profil2.setLibelle(ProfilEnum.APPROBATEUR.toString());
+		absEntityManager.persist(profil2);
+		DroitProfil droitProfil2 = new DroitProfil();
+		droitProfil2.setProfil(profil2);
+		droitProfil2.setDroit(droitAppro2);
+		absEntityManager.persist(droitProfil2);
+
+		DroitsAgent droitsAgent2 = new DroitsAgent();
+		droitsAgent2.setIdAgent(9000012);
+		absEntityManager.persist(droitsAgent2);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(droitAppro2);
+		dda2.setDroitProfil(droitProfil2);
+		dda2.setDroitsAgent(droitsAgent2);
+		absEntityManager.persist(dda2);
+
+		RefTypeAbsence rta2 = new RefTypeAbsence();
+		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		absEntityManager.persist(rta2);
+		Demande demande2 = new Demande();
+		demande2.setIdAgent(9000012);
+		demande2.setType(rta2);
+		absEntityManager.persist(demande2);
+		EtatDemande etatDemande2 = new EtatDemande();
+		etatDemande2.setDemande(demande2);
+		etatDemande2.setIdAgent(9000001);
+		etatDemande2.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		absEntityManager.persist(etatDemande2);
+
+		List<Integer> listeTypes = new ArrayList<Integer>();
+		listeTypes.add(RefTypeAbsenceEnum.RECUP.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+
+		// When
+		List<Integer> result = repository.getListApprobateursDemandesSaisiesViseesJourDonne(listeTypes);
+
+		assertEquals(2, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
