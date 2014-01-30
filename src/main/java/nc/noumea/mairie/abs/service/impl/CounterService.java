@@ -2,14 +2,16 @@ package nc.noumea.mairie.abs.service.impl;
 
 import java.util.Date;
 
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
-import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.BaseAgentCount;
 import nc.noumea.mairie.abs.domain.BaseAgentWeekHisto;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
+import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -213,9 +215,9 @@ public class CounterService implements ICounterService {
 	 * l historique ABS_AGENT_WEEK_ALIM_MANUELLE mise a jour
 	 */
 	@Override
-	public ReturnMessageDto majManuelleCompteurRecupToAgent(Integer idAgent, CompteurDto compteurDto) {
-
-		logger.info("Trying to update manually recuperation counters for Agent {} ...", compteurDto.getIdAgent());
+	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, RefTypeAbsenceEnum refTypeAbsence) {
+		
+		logger.info("Trying to update manually counters for Agent {} ...", compteurDto.getIdAgent());
 		
 		ReturnMessageDto result = new ReturnMessageDto();
 		
@@ -234,10 +236,42 @@ public class CounterService implements ICounterService {
 		if(!result.getErrors().isEmpty())
 			return result;
 		
-		int minutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+		switch (refTypeAbsence) {
+			case CONGE_ANNUEL:
+				// TODO
+				break;
+			case REPOS_COMP:
+				result = majManuelleCompteurRCToAgent(idAgent, compteurDto, result, RefTypeAbsenceEnum.REPOS_COMP.getValue());
+				break;
+			case RECUP:
+				result = majManuelleCompteurRecupToAgent(idAgent, compteurDto, result, RefTypeAbsenceEnum.RECUP.getValue());
+				break;
+			case ASA:
+				// TODO
+				break;
+			case AUTRES:
+				// TODO
+				break;
+			case MALADIES:
+				// TODO
+				break;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * appeler depuis Kiosque ou SIRH
+	 * l historique ABS_AGENT_WEEK_ALIM_MANUELLE mise a jour
+	 */
+	protected ReturnMessageDto majManuelleCompteurRecupToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto result, Integer idRefTypeAbsence) {
 
+		logger.info("Trying to update manually recuperation counters for Agent {} ...", compteurDto.getIdAgent());
+		
+		int minutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+		
 		try {
-			return majManuelleCompteurToAgent(AgentRecupCount.class, compteurDto.getIdAgent(), minutes, compteurDto.getIdMotifCompteur(), result);
+			return majManuelleCompteurToAgent(AgentRecupCount.class, idAgent, compteurDto.getIdAgent(), minutes, null, compteurDto.getIdMotifCompteur(), idRefTypeAbsence, result);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -254,7 +288,8 @@ public class CounterService implements ICounterService {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Class<T1> T1, Integer idAgent, Integer minutes, Integer idMotifCompteur, ReturnMessageDto srm) 
+	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(
+			Class<T1> T1, Integer idAgentOperateur, Integer idAgent, Integer minutes, Integer minutesAnneeN1, Integer idMotifCompteur, Integer idRefTypeAbsence, ReturnMessageDto srm) 
 			throws InstantiationException, IllegalAccessException {
 
 		if (sirhRepository.getAgent(idAgent) == null) {
@@ -272,9 +307,8 @@ public class CounterService implements ICounterService {
 		}
 		
 		// on verifie que le solde est positif seulement si on debite le compteur
-		if(0 > arc.getTotalMinutes() + minutes) {
-			logger.warn(SOLDE_COMPTEUR_NEGATIF);
-			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
+		controlCompteurPositif(minutes, arc.getTotalMinutes(), srm);
+		if(!srm.getErrors().isEmpty()) {
 			return srm;
 		}
 		
@@ -286,11 +320,16 @@ public class CounterService implements ICounterService {
 		}
 		
 		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
-			histo.setIdAgent(idAgent);
+			histo.setIdAgent(idAgentOperateur);
 			histo.setMinutes(minutes);
+			histo.setMinutesAnneeN1(minutesAnneeN1);
 			histo.setDateModification(helperService.getCurrentDate());
 			histo.setMotifCompteur(motifCompteur);
 		
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(idRefTypeAbsence);
+			histo.setType(rta);
+				
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
 		arc.setLastModification(helperService.getCurrentDate());
 
@@ -313,4 +352,99 @@ public class CounterService implements ICounterService {
 		}
 	}
 	
+	protected ReturnMessageDto majManuelleCompteurRCToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto srm, Integer idRefTypeAbsence) {
+		
+		logger.info("Trying to update manually Repos Comp. counters for Agent {} ...", compteurDto.getIdAgent());
+		
+		Integer minutes = null;
+		Integer minutesAnneeN1 = null;
+		
+		if(compteurDto.isAnneePrécedente()) {
+			minutesAnneeN1 = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+		}else{
+			minutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+		}
+		
+		try {
+			return majManuelleCompteurRCToAgent(idAgent, compteurDto.getIdAgent(), minutes, minutesAnneeN1, compteurDto.getIdMotifCompteur(), idRefTypeAbsence, srm);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+		}
+	}
+	
+	/**
+	 * Mise à jour manuelle du compteur de récup
+	 * 
+	 * @param T1
+	 *            inherits BaseAgentCount
+	 * @param idAgent
+	 * @param minutes : negatif pour debiter, positif pour crediter
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	protected ReturnMessageDto majManuelleCompteurRCToAgent(
+			Integer idAgentOperateur, Integer idAgent, Integer minutes, Integer minutesAnneeN1, Integer idMotifCompteur, Integer idRefTypeAbsence, ReturnMessageDto srm) 
+			throws InstantiationException, IllegalAccessException {
+
+		if (sirhRepository.getAgent(idAgent) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+			throw new AgentNotFoundException();
+		}
+
+		logger.info("updating counters for Agent [{}] with {} minutes...", idAgent, minutes);
+		
+		AgentReposCompCount arc = (AgentReposCompCount) counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent);
+		
+		if (arc == null) {
+			arc = new AgentReposCompCount();
+			arc.setIdAgent(idAgent);
+		}
+		
+		// on verifie que le solde est positif
+		controlCompteurPositif(minutes, arc.getTotalMinutes(), srm);
+		controlCompteurPositif(minutesAnneeN1, arc.getTotalMinutesAnneeN1(), srm);
+		if(!srm.getErrors().isEmpty()) {
+			return srm;
+		}
+		
+		MotifCompteur motifCompteur = counterRepository.getEntity(MotifCompteur.class, idMotifCompteur);
+		if(null == motifCompteur) {
+			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
+			srm.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
+			return srm;
+		}
+		
+		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
+			histo.setIdAgent(idAgentOperateur);
+			histo.setMinutes(minutes);
+			histo.setMinutesAnneeN1(minutesAnneeN1);
+			histo.setDateModification(helperService.getCurrentDate());
+			histo.setMotifCompteur(motifCompteur);
+			
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(idRefTypeAbsence);
+			histo.setType(rta);
+		
+		if(null != minutes) {
+			arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
+		}
+		if(null != minutesAnneeN1) {
+			arc.setTotalMinutesAnneeN1(arc.getTotalMinutesAnneeN1() + minutesAnneeN1);
+		}
+		arc.setLastModification(helperService.getCurrentDate());
+
+		counterRepository.persistEntity(arc);
+		counterRepository.persistEntity(histo);
+
+		return srm;
+	}
+	
+	protected void controlCompteurPositif(Integer minutes, Integer totalMinutes, ReturnMessageDto srm) {
+		if(null != minutes
+				&& 0 > totalMinutes + minutes) {
+			logger.warn(SOLDE_COMPTEUR_NEGATIF);
+			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
+		}
+	}
 }

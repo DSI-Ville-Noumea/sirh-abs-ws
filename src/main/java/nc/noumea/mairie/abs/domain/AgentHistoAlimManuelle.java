@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -35,14 +36,18 @@ public class AgentHistoAlimManuelle {
 	private Date dateModification;
 	
 	@Column(name = "MINUTES")
-	private int minutes;
+	private Integer minutes;
 	
 	@Column(name = "MINUTES_ANNEE_N1")
-	private int minutesAnneeN1;
+	private Integer minutesAnneeN1;
 	
 	@ManyToOne()
 	@JoinColumn(name = "ID_MOTIF_COMPTEUR", referencedColumnName = "ID_MOTIF_COMPTEUR")
 	private MotifCompteur motifCompteur;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "ID_TYPE_DEMANDE")
+	private RefTypeAbsence type;
 	
 	@Version
     @Column(name = "version")
@@ -72,11 +77,11 @@ public class AgentHistoAlimManuelle {
 		this.dateModification = dateModification;
 	}
 
-	public int getMinutes() {
+	public Integer getMinutes() {
 		return minutes;
 	}
 
-	public void setMinutes(int minutes) {
+	public void setMinutes(Integer minutes) {
 		this.minutes = minutes;
 	}
 
@@ -96,12 +101,20 @@ public class AgentHistoAlimManuelle {
 		this.version = version;
 	}
 
-	public int getMinutesAnneeN1() {
+	public Integer getMinutesAnneeN1() {
 		return minutesAnneeN1;
 	}
 
-	public void setMinutesAnneeN1(int minutesAnneeN1) {
+	public void setMinutesAnneeN1(Integer minutesAnneeN1) {
 		this.minutesAnneeN1 = minutesAnneeN1;
+	}
+
+	public RefTypeAbsence getType() {
+		return type;
+	}
+
+	public void setType(RefTypeAbsence type) {
+		this.type = type;
 	}
 	
 	

@@ -8,9 +8,11 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.BaseAgentCount;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -357,15 +359,19 @@ public class CounterServiceTest {
 		
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 			Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
-			
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
 		
 		CounterService service = new CounterService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		
-		result = service.majManuelleCompteurRecupToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.RECUP);
 		
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.", result.getErrors().get(0).toString());
@@ -395,7 +401,7 @@ public class CounterServiceTest {
 		
 		boolean isAgentNotFoundException = false;
 		try {
-			service.majManuelleCompteurRecupToAgent(idAgent, compteurDto);
+			service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.RECUP);
 		} catch (AgentNotFoundException e) {
 			isAgentNotFoundException = true;
 		}
@@ -430,7 +436,7 @@ public class CounterServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		
-		result = service.majManuelleCompteurRecupToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.RECUP);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());
@@ -468,7 +474,7 @@ public class CounterServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		
-		result = service.majManuelleCompteurRecupToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.RECUP);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());
@@ -477,7 +483,7 @@ public class CounterServiceTest {
 	}
 	
 	@Test
-	public void majManuelleCompteurRecupToAgent_MotifCompteurExistant() {
+	public void majManuelleCompteurRecupToAgent_MotifCompteurInexistant() {
 		
 		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138; 
@@ -508,7 +514,7 @@ public class CounterServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		
-		result = service.majManuelleCompteurRecupToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.RECUP);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
@@ -549,7 +555,7 @@ public class CounterServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		
-		result = service.majManuelleCompteurRecupToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.RECUP);
 
 		assertEquals(0, result.getErrors().size()); 
 		
@@ -587,11 +593,210 @@ public class CounterServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		
-		result = service.majManuelleCompteurRecupToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.RECUP);
 
 		assertEquals(0, result.getErrors().size()); 
 		
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentRecupCount.class));
 	}
+	
+	@Test
+	public void majManuelleCompteurRCToAgent_OK_sansCompteurExistant_AnneeN() {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138; 
+		CompteurDto compteurDto = new CompteurDto();
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeARetrancher(10);
+			compteurDto.setIdMotifCompteur(1);
+			compteurDto.setAnneePrécedente(false);
+		
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+			
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(null);
+			Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(new MotifCompteur());
+		
+		CounterService service = new CounterService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.REPOS_COMP);
+
+		assertEquals(0, result.getErrors().size()); 
+		
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void majManuelleCompteurRCToAgent_OK_sansCompteurExistant_AnneeN1() {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138; 
+		CompteurDto compteurDto = new CompteurDto();
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeARetrancher(10);
+			compteurDto.setIdMotifCompteur(1);
+			compteurDto.setAnneePrécedente(true);
+		
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+			
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(null);
+			Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(new MotifCompteur());
+		
+		CounterService service = new CounterService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.REPOS_COMP);
+
+		assertEquals(0, result.getErrors().size()); 
+		
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void majManuelleCompteurRCToAgent_KO_compteurNegatif_AnneeN1() {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138; 
+		CompteurDto compteurDto = new CompteurDto();
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeARetrancher(10);
+			compteurDto.setIdMotifCompteur(1);
+			compteurDto.setAnneePrécedente(true);
+		
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+			
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(null);
+			Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(new MotifCompteur());
+		
+		CounterService service = new CounterService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.REPOS_COMP);
+
+		assertEquals(1, result.getErrors().size()); 
+		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());
+		
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void majManuelleCompteurRCToAgent_KO_compteurNegatif_AnneeN0() {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138; 
+		CompteurDto compteurDto = new CompteurDto();
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeARetrancher(10);
+			compteurDto.setIdMotifCompteur(1);
+			compteurDto.setAnneePrécedente(false);
+		
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+			
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(null);
+			Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(new MotifCompteur());
+		
+		CounterService service = new CounterService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.REPOS_COMP);
+
+		assertEquals(1, result.getErrors().size()); 
+		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());
+		
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void majManuelleCompteurRCToAgent_MotifCompteurInexistant() {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138; 
+		CompteurDto compteurDto = new CompteurDto();
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeARetrancher(10);
+			compteurDto.setIdMotifCompteur(1);
+		
+		AgentRecupCount arc = new AgentRecupCount();
+			arc.setTotalMinutes(15);
+					
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+			
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(arc);
+			Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(null);
+		
+		CounterService service = new CounterService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, RefTypeAbsenceEnum.REPOS_COMP);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentRecupCount.class));
+	}
+	
 }

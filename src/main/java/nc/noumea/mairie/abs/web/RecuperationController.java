@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.web;
 
 import java.util.Date;
 
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -63,7 +64,7 @@ public class RecuperationController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
-		ReturnMessageDto srm = counterService.majManuelleCompteurRecupToAgent(convertedIdAgent, dto);
+		ReturnMessageDto srm = counterService.majManuelleCompteurToAgent(convertedIdAgent, dto, RefTypeAbsenceEnum.RECUP);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
 

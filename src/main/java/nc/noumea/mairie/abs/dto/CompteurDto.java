@@ -9,6 +9,8 @@ public class CompteurDto {
 	private Integer dureeARetrancher;
 	
 	private Integer idMotifCompteur;
+	
+	private boolean isAnneePrécedente;
 
 	public Integer getIdAgent() {
 		return idAgent;
@@ -41,6 +43,13 @@ public class CompteurDto {
 	public void setIdMotifCompteur(Integer idMotifCompteur) {
 		this.idMotifCompteur = idMotifCompteur;
 	}
-	
+
+	public boolean isAnneePrécedente() {
+		return isAnneePrécedente;
+	}
+
+	public void setAnneePrécedente(boolean isAnneePrécedente) {
+		this.isAnneePrécedente = isAnneePrécedente;
+	}
 	
 }
