@@ -54,4 +54,8 @@ SIRH-ABS-WS API et définition des services
 * Motif Compteur
 
  {{{../conception/ws-motif-compteur-api.html}ws-motif-compteur-api.html}}
+ 
+* Email
+
+ {{{../conception/ws-email-api.html}ws-email-api.html}}
 
