@@ -1,6 +1,9 @@
 package nc.noumea.mairie.abs.repository;
 
 import java.util.Date;
+import java.util.List;
+
+import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 
 public interface ICounterRepository {
 
@@ -12,4 +15,9 @@ public interface ICounterRepository {
 	
 	<T> T getEntity(Class<T> Tclass, Object Id);
 	
+	AgentReposCompCount getAgentReposCompCountByIdCounter(Integer IdCounter);
+	
+	List<Integer> getListAgentReposCompCountForResetAnneePrcd();
+	
+	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
 }

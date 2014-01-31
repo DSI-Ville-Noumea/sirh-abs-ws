@@ -49,6 +49,9 @@ public class AgentHistoAlimManuelle {
 	@JoinColumn(name = "ID_TYPE_DEMANDE")
 	private RefTypeAbsence type;
 	
+	@Column(name = "MOTIF_TECHNIQUE")
+	private String motifTechnique;
+	
 	@Version
     @Column(name = "version")
 	private Integer version;
@@ -115,6 +118,14 @@ public class AgentHistoAlimManuelle {
 
 	public void setType(RefTypeAbsence type) {
 		this.type = type;
+	}
+
+	public String getMotifTechnique() {
+		return motifTechnique;
+	}
+
+	public void setMotifTechnique(String motifTechnique) {
+		this.motifTechnique = motifTechnique;
 	}
 	
 	

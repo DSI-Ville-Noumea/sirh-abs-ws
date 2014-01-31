@@ -11,6 +11,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
+import nc.noumea.mairie.abs.domain.AgentReposCompCount;
+
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -74,4 +76,34 @@ public class CounterRepository implements ICounterRepository {
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
 		return absEntityManager.find(Tclass, Id);
 	}
+	
+	@Override
+	public AgentReposCompCount getAgentReposCompCountByIdCounter(Integer IdCounter) {
+		return absEntityManager.find(AgentReposCompCount.class, IdCounter);
+	}
+	
+	@Override
+	public List<Integer> getListAgentReposCompCountForResetAnneePrcd() {
+
+		StringBuilder sb = new StringBuilder();
+			sb.append("select c.idAgentReposCompCount from AgentReposCompCount c ");
+			sb.append("where c.totalMinutesAnneeN1 <> 0 ");
+
+		TypedQuery<Integer> query = absEntityManager.createQuery(sb.toString(), Integer.class);
+
+		return query.getResultList();
+	}
+	
+	@Override
+	public List<Integer> getListAgentReposCompCountForResetAnneeEnCours() {
+		
+		StringBuilder sb = new StringBuilder();
+			sb.append("select c.idAgentReposCompCount from AgentReposCompCount c ");
+			sb.append("where c.totalMinutes <> 0 ");
+
+		TypedQuery<Integer> query = absEntityManager.createQuery(sb.toString(), Integer.class);
+
+		return query.getResultList();
+	}
+	
 }

@@ -27,6 +27,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class CounterServiceTest {
@@ -797,6 +799,199 @@ public class CounterServiceTest {
 		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentRecupCount.class));
+	}
+	
+	@Test
+	public void resetCompteurRCAnneePrecedente_compteurInexistant() {
+		
+		Integer idAgentReposCompCount = 1;
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentReposCompCountByIdCounter(idAgentReposCompCount)).thenReturn(null);
+		
+		CounterService service = new CounterService();
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+			
+		ReturnMessageDto result = service.resetCompteurRCAnneePrecedente(idAgentReposCompCount);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le compteur n'existe pas.", result.getErrors().get(0));
+		
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void resetCompteurRCAnneePrecedente_OK() {
+		
+		Integer idAgentReposCompCount = 1;
+		
+		AgentReposCompCount arc = new AgentReposCompCount();
+			arc.setTotalMinutes(10);
+			arc.setTotalMinutesAnneeN1(250);
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentReposCompCountByIdCounter(idAgentReposCompCount)).thenReturn(arc);
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
+
+					assertEquals(10, obj.getMinutes().intValue() );
+					assertEquals(-250, obj.getMinutesAnneeN1().intValue());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+			
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(20, obj.getTotalMinutes());
+					assertEquals(0, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+			
+		CounterService service = new CounterService();
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+			ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		ReturnMessageDto result = service.resetCompteurRCAnneePrecedente(idAgentReposCompCount);
+		
+		assertEquals(0, result.getErrors().size());
+		
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void resetCompteurRCAnneePrecedente_OKBis() {
+		
+		Integer idAgentReposCompCount = 1;
+		
+		AgentReposCompCount arc = new AgentReposCompCount();
+			arc.setTotalMinutes(10);
+			arc.setTotalMinutesAnneeN1(150);
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentReposCompCountByIdCounter(idAgentReposCompCount)).thenReturn(arc);
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
+
+					assertEquals(150, obj.getMinutes().intValue() );
+					assertEquals(-150, obj.getMinutesAnneeN1().intValue());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+			
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(160, obj.getTotalMinutes());
+					assertEquals(0, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+			
+		CounterService service = new CounterService();
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+			ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		ReturnMessageDto result = service.resetCompteurRCAnneePrecedente(idAgentReposCompCount);
+		
+		assertEquals(0, result.getErrors().size());
+		
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void resetCompteurRCAnneenCours_compteurInexistant() {
+		
+		Integer idAgentReposCompCount = 1;
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentReposCompCountByIdCounter(idAgentReposCompCount)).thenReturn(null);
+		
+		CounterService service = new CounterService();
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+			
+		ReturnMessageDto result = service.resetCompteurRCAnneenCours(idAgentReposCompCount);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le compteur n'existe pas.", result.getErrors().get(0));
+		
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void resetCompteurRCAnneenCours_OK() {
+		
+		Integer idAgentReposCompCount = 1;
+		
+		AgentReposCompCount arc = new AgentReposCompCount();
+			arc.setTotalMinutes(20);
+			arc.setTotalMinutesAnneeN1(10);
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getAgentReposCompCountByIdCounter(idAgentReposCompCount)).thenReturn(arc);
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
+
+					assertEquals(-20, obj.getMinutes().intValue() );
+					assertEquals(20, obj.getMinutesAnneeN1().intValue());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+			
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(0, obj.getTotalMinutes());
+					assertEquals(30, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+			
+		CounterService service = new CounterService();
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+			ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		ReturnMessageDto result = service.resetCompteurRCAnneenCours(idAgentReposCompCount);
+		
+		assertEquals(0, result.getErrors().size());
+		
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
 	}
 	
 }

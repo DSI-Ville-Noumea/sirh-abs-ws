@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
@@ -52,6 +53,10 @@ public class CounterService implements ICounterService {
 	public static final String OPERATEUR_INEXISTANT = "Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.";
 	public static final String DUREE_A_SAISIR = "La durée à ajouter ou retrancher n'est pas saisie.";
 	public static final String ERREUR_DUREE_SAISIE = "Un seul des champs Durée à ajouter ou Durée à retrancher doit être saisi.";
+	public static final String COMPTEUR_INEXISTANT = "Le compteur n'existe pas.";
+	
+	public static final String RESET_COMPTEUR_ANNEE_PRECEDENTE = "Remise à 0 du compteur Année précédente";
+	public static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur Année en cours";
 	
 	
 	/**
@@ -446,5 +451,86 @@ public class CounterService implements ICounterService {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF);
 			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
 		}
+	}
+	
+	public ReturnMessageDto resetCompteurRCAnneePrecedente(Integer idAgentReposCompCount) {
+		
+		logger.info("reset CompteurRCAnneePrecedente for idAgentReposCompCount {} ...", idAgentReposCompCount);
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		AgentReposCompCount arc = counterRepository.getAgentReposCompCountByIdCounter(idAgentReposCompCount);
+		
+		if (arc == null) {
+			logger.warn(COMPTEUR_INEXISTANT);
+			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
+			return srm;
+		}
+		
+		// selon la SFD, compteur annee en cours = solde annee en cours + modulo 4 en heures de l annee precedente
+		int modulo4 = arc.getTotalMinutesAnneeN1() % (4*60);
+		
+		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
+			histo.setIdAgent(arc.getIdAgent());
+			histo.setMinutes(modulo4);
+			histo.setMinutesAnneeN1(0 - arc.getTotalMinutesAnneeN1());
+			histo.setDateModification(helperService.getCurrentDate());
+			histo.setMotifCompteur(null);
+			histo.setMotifTechnique(RESET_COMPTEUR_ANNEE_PRECEDENTE);
+		
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+			histo.setType(rta);
+		
+		arc.setTotalMinutes(arc.getTotalMinutes() + modulo4);
+		arc.setTotalMinutesAnneeN1(0);
+		
+		counterRepository.persistEntity(arc);
+		counterRepository.persistEntity(histo);
+		
+		return srm;
+	}
+	
+	public ReturnMessageDto resetCompteurRCAnneenCours(Integer idAgentReposCompCount) {
+		
+		logger.info("reset CompteurRCAnneePrecedente for idAgentReposCompCount {} ...", idAgentReposCompCount);
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		AgentReposCompCount arc = counterRepository.getAgentReposCompCountByIdCounter(idAgentReposCompCount);
+		
+		if (arc == null) {
+			logger.warn(COMPTEUR_INEXISTANT);
+			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
+			return srm;
+		}
+		
+		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
+			histo.setIdAgent(arc.getIdAgent());
+			histo.setMinutes(0 - arc.getTotalMinutes());
+			histo.setMinutesAnneeN1(arc.getTotalMinutes());
+			histo.setDateModification(helperService.getCurrentDate());
+			histo.setMotifCompteur(null);
+			histo.setMotifTechnique(RESET_COMPTEUR_ANNEE_EN_COURS);
+		
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+			histo.setType(rta);
+		
+		arc.setTotalMinutesAnneeN1(arc.getTotalMinutesAnneeN1() + arc.getTotalMinutes());
+		arc.setTotalMinutes(0);
+		
+		counterRepository.persistEntity(arc);
+		counterRepository.persistEntity(histo);
+		
+		return srm;
+	}
+	
+	public List<Integer> getListAgentReposCompCountForResetAnneePrcd() {
+		return counterRepository.getListAgentReposCompCountForResetAnneePrcd();
+	}
+	
+	public List<Integer> getListAgentReposCompCountForResetAnneeEnCours() {
+		return counterRepository.getListAgentReposCompCountForResetAnneeEnCours();
 	}
 }

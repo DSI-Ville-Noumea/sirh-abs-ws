@@ -4,10 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
+import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 
 import org.joda.time.LocalDate;
@@ -106,5 +110,89 @@ public class CounterRepositoryTest {
 		
 		// Then
 		assertEquals(result, r1);
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getAgentReposCompCountByIdCounter_KO() {
+		
+		AgentReposCompCount arcc = new AgentReposCompCount();
+			arcc .setIdAgent(9005138);
+			arcc.setLastModification(new Date());
+		absEntityManager.persist(arcc);
+		
+		AgentReposCompCount result = repository.getAgentReposCompCountByIdCounter(3);
+		
+		assertNull(result);
+		
+		absEntityManager.clear();
+		absEntityManager.flush();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getAgentReposCompCountByIdCounter_OK() {
+		
+		AgentReposCompCount arcc = new AgentReposCompCount();
+			arcc.setIdAgentReposCompCount(2);
+			arcc .setIdAgent(9005138);
+			arcc.setLastModification(new Date());
+		absEntityManager.persist(arcc);
+		
+		AgentReposCompCount result = repository.getAgentReposCompCountByIdCounter(2);
+		
+		assertNotNull(result);
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListAgentReposCompCountForResetAnneePrcd() {
+		
+		AgentReposCompCount arcc = new AgentReposCompCount();
+			arcc .setIdAgent(9005138);
+			arcc.setLastModification(new Date());
+		absEntityManager.persist(arcc);
+	
+		AgentReposCompCount arcc2 = new AgentReposCompCount();
+			arcc2 .setIdAgent(9005138);
+			arcc2.setLastModification(new Date());
+			arcc2.setTotalMinutesAnneeN1(10);
+		absEntityManager.persist(arcc2);
+		
+		AgentReposCompCount arcc3 = new AgentReposCompCount();
+			arcc3 .setIdAgent(9005138);
+			arcc3.setLastModification(new Date());
+			arcc3.setTotalMinutesAnneeN1(0);
+		absEntityManager.persist(arcc3);
+		
+		List<Integer> result = repository.getListAgentReposCompCountForResetAnneePrcd();
+		
+		assertEquals(1, result.size());
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListAgentReposCompCountForResetAnneeEnCours() {
+		
+		AgentReposCompCount arcc = new AgentReposCompCount();
+			arcc .setIdAgent(9005138);
+			arcc.setLastModification(new Date());
+		absEntityManager.persist(arcc);
+	
+		AgentReposCompCount arcc2 = new AgentReposCompCount();
+			arcc2 .setIdAgent(9005138);
+			arcc2.setLastModification(new Date());
+			arcc2.setTotalMinutes(10);
+		absEntityManager.persist(arcc2);
+		
+		AgentReposCompCount arcc3 = new AgentReposCompCount();
+			arcc3 .setIdAgent(9005138);
+			arcc3.setLastModification(new Date());
+			arcc3.setTotalMinutes(0);
+		absEntityManager.persist(arcc3);
+		
+		List<Integer> result = repository.getListAgentReposCompCountForResetAnneeEnCours();
+		
+		assertEquals(1, result.size());
 	}
 }

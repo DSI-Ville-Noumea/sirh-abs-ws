@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.web;
 
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
@@ -59,7 +60,7 @@ public class ReposCompController {
 	public ResponseEntity<String> addRecuperationManuelForAgent(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String compteurDto) {
 
-		logger.debug("entered POST [recuperations/addManual] => addRecuperationManuelForAgent with parameters idAgent = {}", idAgent);
+		logger.debug("entered POST [reposcomps/addManual] => addRecuperationManuelForAgent with parameters idAgent = {}", idAgent);
 		
 		CompteurDto dto = new JSONDeserializer<CompteurDto>().deserializeInto(compteurDto, new CompteurDto());
 
@@ -74,5 +75,69 @@ public class ReposCompController {
 		} else {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/resetCompteurAnneePrecedente", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> resetCompteurAnneePrecedente(@RequestParam("idAgentReposCompCount") int idAgentReposCompCount) {
+
+		logger.debug("entered POST [reposcomps/resetCompteurAnneePrecedente] => resetCompteurAnneePrecedente with parameters idAgentReposCompCount = {}", idAgentReposCompCount);
+		
+		ReturnMessageDto srm = counterService.resetCompteurRCAnneePrecedente(idAgentReposCompCount);
+
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+
+		if (!srm.getErrors().isEmpty()) {
+			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+		} else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/resetCompteurAnneenCours", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> resetCompteurRCAnneenCours(@RequestParam("idAgentReposCompCount") int idAgentReposCompCount) {
+
+		logger.debug("entered POST [reposcomps/resetCompteurRCAnneenCours] => resetCompteurRCAnneenCours with parameters idAgentReposCompCount = {}", idAgentReposCompCount);
+		
+		ReturnMessageDto srm = counterService.resetCompteurRCAnneenCours(idAgentReposCompCount);
+
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+
+		if (!srm.getErrors().isEmpty()) {
+			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+		} else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getListeCompteurAnneePrecedente", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getListeCompteurAnneePrecedente() {
+
+		logger.debug("entered GET [reposcomps/getListeCompteurAnneePrecedente] => getListeCompteurAnneePrecedente");
+
+		List<Integer> listCompteur = counterService.getListAgentReposCompCountForResetAnneePrcd();
+
+		String json = new JSONSerializer().exclude("*.class").serialize(listCompteur);
+
+		return new ResponseEntity<String>(json, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getListeCompteurAnneeEnCours", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getListeCompteurAnneeEnCours() {
+
+		logger.debug("entered GET [reposcomps/getListeCompteurAnneeEnCours] => getListeCompteurAnneeEnCours");
+
+		List<Integer> listCompteur = counterService.getListAgentReposCompCountForResetAnneeEnCours();
+
+		String json = new JSONSerializer().exclude("*.class").serialize(listCompteur);
+
+		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}
 }
