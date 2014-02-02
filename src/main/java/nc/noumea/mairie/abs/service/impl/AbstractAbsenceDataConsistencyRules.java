@@ -10,14 +10,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.DemandeRecup;
-import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -72,28 +69,6 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
 
-//	public AbstractAbsenceDataConsistencyRules(Integer idTypeDemande) {
-//		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
-//			case CONGE_ANNUEL:
-//				// TODO
-//				break;
-//			case REPOS_COMP:
-//				return new DefaultAbsenceDataConsistencyRulesImpl();
-//				break;
-//			case RECUP:
-//				rules = defaultAbsenceDataConsistencyRulesImpl;
-//				break;
-//			case ASA:
-//				// TODO
-//				break;
-//			case AUTRES:
-//				// TODO
-//				break;
-//			case MALADIES:
-//				// TODO
-//				break;
-//		}
-//	}
 	
 	/**
 	 * Processes the data consistency of a set of Pointages being input by a
