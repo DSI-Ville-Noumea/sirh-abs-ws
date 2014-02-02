@@ -608,6 +608,8 @@ public class AbsenceService implements IAbsenceService {
 		// suppression
 		demandeRepository.removeEntity(demande);
 
+		returnDto.getInfos().add(String.format("La demande est supprimée."));
+		
 		return returnDto;
 	}
 
