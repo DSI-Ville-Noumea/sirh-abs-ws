@@ -53,6 +53,14 @@ public class AbsenceService implements IAbsenceService {
 	private IAbsenceDataConsistencyRules defaultAbsenceDataConsistencyRulesImpl;
 
 	@Autowired
+	@Qualifier("AbsRecuperationDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absRecupDataConsistencyRules;
+	
+	@Autowired
+	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absReposCompDataConsistencyRules;
+	
+	@Autowired
 	private HelperService helperService;
 
 	@Autowired
@@ -113,14 +121,14 @@ public class AbsenceService implements IAbsenceService {
 				demandeReposComp.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
 				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
-				rules = defaultAbsenceDataConsistencyRulesImpl;
+				rules = absReposCompDataConsistencyRules;
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
 				demandeRecup.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
 				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
-				rules = defaultAbsenceDataConsistencyRulesImpl;
+				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA:
 				// TODO
@@ -556,11 +564,11 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case REPOS_COMP:
 				demande = getDemande(DemandeReposComp.class, idDemande);
-				rules = defaultAbsenceDataConsistencyRulesImpl;
+				rules = absReposCompDataConsistencyRules;
 				break;
 			case RECUP:
 				demande = getDemande(DemandeRecup.class, idDemande);
-				rules = defaultAbsenceDataConsistencyRulesImpl;
+				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA:
 				// TODO

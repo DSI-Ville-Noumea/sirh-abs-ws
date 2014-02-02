@@ -1198,6 +1198,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absRecupDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -1275,6 +1276,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absRecupDataConsistencyRules", absDataConsistencyRules);
 
 		result = service.supprimerDemande(idAgent, idDemande);
 
@@ -1355,6 +1357,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absRecupDataConsistencyRules", absDataConsistencyRules);
 
 		result = service.supprimerDemande(idAgent, idDemande);
 
@@ -1434,6 +1437,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absRecupDataConsistencyRules", absDataConsistencyRules);
 
 		result = service.supprimerDemande(idAgent, idDemande);
 
@@ -2483,6 +2487,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -2560,6 +2565,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		result = service.supprimerDemande(idAgent, idDemande);
 
@@ -2640,6 +2646,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		result = service.supprimerDemande(idAgent, idDemande);
 
@@ -2719,6 +2726,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		result = service.supprimerDemande(idAgent, idDemande);
 
