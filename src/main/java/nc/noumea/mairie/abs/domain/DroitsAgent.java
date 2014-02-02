@@ -18,6 +18,7 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -54,6 +55,10 @@ public class DroitsAgent {
 	@OneToMany(mappedBy = "droitsAgent", fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.ALL, CascadeType.REMOVE})
 	private Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 
+	@Version
+    @Column(name = "version")
+	private Integer version;
+	
 	public Integer getIdDroitsAgent() {
 		return idDroitsAgent;
 	}
@@ -100,6 +105,14 @@ public class DroitsAgent {
 
 	public void setDroitDroitsAgent(Set<DroitDroitsAgent> droitDroitsAgent) {
 		this.droitDroitsAgent = droitDroitsAgent;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 	
 	
