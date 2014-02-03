@@ -20,7 +20,23 @@ SIRH-ABS-WS API et définition des services concernant les motifs de refus de l'
   
  <<Content>> 
  
- -
+
+
++-------------------------+
+    [
+       {
+           "idMotifRefus": 2,
+           "idRefTypeAbsence": 1,
+           "libelle": "test2"
+       },
+       {
+           "idMotifRefus": 1,
+           "idRefTypeAbsence": 1,
+           "libelle": "test3"
+       }
+    ]
++-------------------------+
+
 
  <<Response>> : 
 
