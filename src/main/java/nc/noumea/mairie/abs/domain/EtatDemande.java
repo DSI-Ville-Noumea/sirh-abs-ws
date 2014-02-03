@@ -18,34 +18,37 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "ABS_ETAT_DEMANDE") 
+@Table(name = "ABS_ETAT_DEMANDE")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 public class EtatDemande {
 
-	@Id 
+	@Id
 	@Column(name = "ID_ETAT_DEMANDE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idEtatDemande;
-	
+
 	@Column(name = "DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
-	
+
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ID_DEMANDE", referencedColumnName = "ID_DEMANDE", updatable = true, insertable = true)
 	private Demande demande;
-	
+
 	@NotNull
 	@Column(name = "ID_REF_ETAT")
 	@Enumerated(EnumType.ORDINAL)
 	private RefEtatEnum etat;
-	
+
 	@Column(name = "ID_MOTIF_REFUS")
 	private Integer idMotifRefus;
+
+	@Column(name = "MOTIF_VISEUR", columnDefinition = "text")
+	private String motifViseur;
 
 	public Integer getIdEtatDemande() {
 		return idEtatDemande;
@@ -94,6 +97,13 @@ public class EtatDemande {
 	public void setIdMotifRefus(Integer idMotifRefus) {
 		this.idMotifRefus = idMotifRefus;
 	}
-	
-	
+
+	public String getMotifViseur() {
+		return motifViseur;
+	}
+
+	public void setMotifViseur(String motifViseur) {
+		this.motifViseur = motifViseur;
+	}
+
 }

@@ -29,9 +29,11 @@ public class DemandeDto {
 	// permet de viser ou approuver
 	private boolean isModifierVisa;
 	private boolean isModifierApprobation;
+	private String motifViseur;
 	// valeur du visa et approbation de la demande
 	private Boolean isValeurVisa = null;
 	private Boolean isValeurApprobation = null;
+	private Integer idMotifRefus;
 
 	public DemandeDto() {
 	}
@@ -44,6 +46,8 @@ public class DemandeDto {
 		this.dateDebut = d.getDateDebut();
 		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
+		this.motifViseur = d.getLatestEtatDemande().getMotifViseur();
+		this.idMotifRefus = d.getLatestEtatDemande().getIdMotifRefus();
 
 		for (EtatDemande etat : d.getEtatsDemande()) {
 			if (this.isValeurVisa == null && etat.getEtat().equals(RefEtatEnum.VISEE_FAVORABLE)) {
@@ -228,6 +232,22 @@ public class DemandeDto {
 
 	public void setModifierApprobation(boolean isModifierApprobation) {
 		this.isModifierApprobation = isModifierApprobation;
+	}
+
+	public String getMotifViseur() {
+		return motifViseur;
+	}
+
+	public void setMotifViseur(String motifViseur) {
+		this.motifViseur = motifViseur;
+	}
+
+	public Integer getIdMotifRefus() {
+		return idMotifRefus;
+	}
+
+	public void setIdMotifRefus(Integer idMotifRefus) {
+		this.idMotifRefus = idMotifRefus;
 	}
 
 }

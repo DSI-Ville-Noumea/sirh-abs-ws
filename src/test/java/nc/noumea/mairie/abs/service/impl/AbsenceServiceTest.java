@@ -818,6 +818,8 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		dto.setIdDemande(1);
+		dto.setIdMotifAvis(1);
+		dto.setMotifViseur("motif");
 
 		Demande demande = Mockito.spy(new Demande());
 
@@ -2306,6 +2308,8 @@ public class AbsenceServiceTest {
 		ed2.setEtat(RefEtatEnum.SAISIE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
+		ed2.setIdMotifRefus(1);
+		ed2.setMotifViseur("motif");
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -2338,6 +2342,8 @@ public class AbsenceServiceTest {
 		assertFalse(result.isAffichageBoutonImprimer());
 		assertFalse(result.isAffichageBoutonModifier());
 		assertFalse(result.isAffichageBoutonSupprimer());
+		assertEquals(new Integer(1),result.getIdMotifRefus());
+		assertEquals("motif",result.getMotifViseur());
 	}
 
 	@Test
@@ -2369,6 +2375,8 @@ public class AbsenceServiceTest {
 		ed2.setEtat(RefEtatEnum.APPROUVEE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
+		ed2.setIdMotifRefus(1);
+		ed2.setMotifViseur("motif");
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -2401,6 +2409,8 @@ public class AbsenceServiceTest {
 		assertFalse(result.isAffichageBoutonImprimer());
 		assertFalse(result.isAffichageBoutonModifier());
 		assertFalse(result.isAffichageBoutonSupprimer());
+		assertEquals(new Integer(1),result.getIdMotifRefus());
+		assertEquals("motif",result.getMotifViseur());
 	}
 
 	@Test

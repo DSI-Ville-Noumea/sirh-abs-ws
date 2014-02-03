@@ -468,6 +468,7 @@ public class AbsenceService implements IAbsenceService {
 		EtatDemande etatDemande = new EtatDemande();
 		etatDemande.setDate(demandeEtatChangeDto.getDateAvis());
 		etatDemande.setIdMotifRefus(demandeEtatChangeDto.getIdMotifAvis());
+		etatDemande.setMotifViseur(demandeEtatChangeDto.getMotifViseur());
 
 		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
 		etatDemande.setIdAgent(idAgent);

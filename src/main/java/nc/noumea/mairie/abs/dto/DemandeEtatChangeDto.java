@@ -8,6 +8,7 @@ public class DemandeEtatChangeDto {
 	private Integer idRefEtat;
 	private Date dateAvis;
 	private Integer idMotifAvis;
+	private String motifViseur;
 
 	public Integer getIdDemande() {
 		return idDemande;
@@ -39,5 +40,13 @@ public class DemandeEtatChangeDto {
 
 	public void setIdMotifAvis(Integer idMotifAvis) {
 		this.idMotifAvis = idMotifAvis;
+	}
+
+	public String getMotifViseur() {
+		return motifViseur;
+	}
+
+	public void setMotifViseur(String motifViseur) {
+		this.motifViseur = motifViseur;
 	}
 }
