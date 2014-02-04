@@ -169,28 +169,28 @@ public class DemandeController {
 	@RequestMapping(value = "/listeDemandes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getListeDemandesAbsence(
-			@RequestParam("idInputter") int idInputter,
+			@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
 			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date dateDemande,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType,
-			@RequestParam(value = "idAgent", required = false) Integer idAgentConcerne) {
+			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche) {
 
 		logger.debug(
 				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters idInputter = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, type = {} and idAgentConcerne= {}",
-				idInputter, ongletDemande, fromDate, toDate, dateDemande, idRefEtat, idRefType, idAgentConcerne);
+				idAgent, ongletDemande, fromDate, toDate, dateDemande, idRefEtat, idRefType, idAgentRecherche);
 
-		Integer convertedIdAgentInputter = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idInputter);
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhService.findAgent(convertedIdAgentInputter) == null)
+		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
 		// ON VERIFIE LES DROITS
-		if (idAgentConcerne != null) {
+		if (idAgentRecherche != null) {
 			ReturnMessageDto srm = new ReturnMessageDto();
-			if(!accessRightService.verifAccessRightListDemande(convertedIdAgentInputter, idAgentConcerne, srm)) {
+			if(!accessRightService.verifAccessRightListDemande(convertedIdAgent, idAgentRecherche, srm)) {
 				if (!srm.getErrors().isEmpty()) {
 					String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
 					return new ResponseEntity<>(response, HttpStatus.CONFLICT);
@@ -198,7 +198,7 @@ public class DemandeController {
 			}
 		}
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgentInputter, idAgentConcerne, ongletDemande, fromDate, toDate,
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, idAgentRecherche, ongletDemande, fromDate, toDate,
 				dateDemande, idRefEtat, idRefType);
 
 		if (result.size() == 0)

@@ -250,7 +250,7 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
  
   <<Parameters>>
  
- * <<idInputter>> : identifiant de l’agent connecté
+ * <<idAgent>> : identifiant de l’agent connecté
  
  * <<ongletDemande>> : type d'onglet pour la visualisation des demandes ( NON_PRISES,EN_COURS,TOUTES)
  
@@ -264,7 +264,7 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
  
  * <<type>> : 1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies (optionnel)
  
- * <<idAgent>> : agent du filtre (optionnel)
+ * <<idAgentRecherche>> : agent du filtre (optionnel)
  
  <<Content>>
  
