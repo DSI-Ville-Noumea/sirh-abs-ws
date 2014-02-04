@@ -3,19 +3,18 @@ package nc.noumea.mairie.abs.service;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface ICounterService {
 
-	int addRecuperationToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes);
+	int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes);
 	
-	int addReposCompensateurToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes);
+	ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Integer minutes);
 	
-	ReturnMessageDto majCompteurRecupToAgent(ReturnMessageDto srm, Integer idAgent, Integer minutes);
-	
-	ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, RefTypeAbsenceEnum refTypeAbsence);
+	ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto);
 	
 	ReturnMessageDto resetCompteurRCAnneePrecedente(Integer idAgentReposCompCount);
 	
@@ -24,4 +23,6 @@ public interface ICounterService {
 	List<Integer> getListAgentReposCompCountForResetAnneePrcd();
 	
 	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
+	
+	int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande);
 }

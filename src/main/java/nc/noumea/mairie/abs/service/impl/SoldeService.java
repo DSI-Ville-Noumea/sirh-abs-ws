@@ -26,6 +26,9 @@ public class SoldeService implements ISoldeService {
 
 	@Override
 	public SoldeDto getAgentSolde(Integer idAgent) {
+		
+		logger.info("Read getAgentSolde for Agent {} ...", idAgent);
+		
 		// on traite les congés
 		SpSold soldeConge = sirhRepository.getSpsold(idAgent);
 

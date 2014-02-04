@@ -3,7 +3,6 @@ package nc.noumea.mairie.abs.web;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -12,6 +11,7 @@ import nc.noumea.mairie.abs.service.ICounterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +33,7 @@ public class ReposCompController {
 	private Logger logger = LoggerFactory.getLogger(ReposCompController.class);
 
 	@Autowired
+	@Qualifier("ReposCompCounterServiceImpl")
 	private ICounterService counterService;
 
 	@Autowired
@@ -48,7 +49,7 @@ public class ReposCompController {
 				"entered GET [reposcomps/add] => addReposCompForAgentAndWeek with parameters idAgent = {}, dateMonday = {} and minutes = {}",
 				idAgent, dateMonday, minutes);
 
-		counterService.addReposCompensateurToAgentForPTG(idAgent, dateMonday, minutes);
+		counterService.addToAgentForPTG(idAgent, dateMonday, minutes);
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -66,7 +67,7 @@ public class ReposCompController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
-		ReturnMessageDto srm = counterService.majManuelleCompteurToAgent(convertedIdAgent, dto, RefTypeAbsenceEnum.REPOS_COMP);
+		ReturnMessageDto srm = counterService.majManuelleCompteurToAgent(convertedIdAgent, dto);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
 

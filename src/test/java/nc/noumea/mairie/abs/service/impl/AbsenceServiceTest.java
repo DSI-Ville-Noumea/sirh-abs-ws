@@ -36,6 +36,7 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
+import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -950,47 +951,51 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		dto.setIdDemande(1);
 
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(2);
+	
 		DemandeRecup demande = Mockito.spy(new DemandeRecup());
-		demande.setDuree(10);
+			demande.setDuree(10);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+			Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
+			Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
 				.thenReturn(true);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
-		Mockito.doAnswer(new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				return new ReturnMessageDto();
-			}
-		})
-				.when(absDataConsistencyRules)
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return new ReturnMessageDto();
+				}
+			}).when(absDataConsistencyRules)
 				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.isA(List.class));
 
-		Mockito.doAnswer(new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				return new ReturnMessageDto();
-			}
-		}).when(absDataConsistencyRules)
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return new ReturnMessageDto();
+				}
+			}).when(absDataConsistencyRules)
 				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyInt());
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
-		Mockito.when(
-				counterService.majCompteurRecupToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+			Mockito.when(
+				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.anyInt())).thenReturn(srm);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesCompteur(dto, demande)).thenReturn(10);
+			Mockito.when(counterService.calculMinutesCompteur(dto, demande)).thenReturn(10);
+			
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+			Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(counterService);
 
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "counterService", counterService);
+		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 
 		result = service.setDemandeEtat(idAgent, dto);
 
@@ -1008,50 +1013,51 @@ public class AbsenceServiceTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
-		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		dto.setIdDemande(1);
+			dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+			dto.setIdDemande(1);
 
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeRecup demande = Mockito.spy(new DemandeRecup());
-		demande.setDuree(10);
+			demande.setDuree(10);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+			Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
+			Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
 				.thenReturn(true);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
-		Mockito.doAnswer(new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				return new ReturnMessageDto();
-			}
-		})
-				.when(absDataConsistencyRules)
-				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
-						Mockito.isA(List.class));
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return new ReturnMessageDto();
+				}
+			}).when(absDataConsistencyRules)
+				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class), Mockito.isA(List.class));
 
-		Mockito.doAnswer(new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				return new ReturnMessageDto();
-			}
-		}).when(absDataConsistencyRules)
-				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyInt());
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return new ReturnMessageDto();
+				}
+			}).when(absDataConsistencyRules)
+					.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyInt());
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
-		Mockito.when(
-				counterService.majCompteurRecupToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+			Mockito.when(counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.anyInt())).thenReturn(srm);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesCompteur(dto, demande)).thenReturn(10);
-
+			Mockito.when(counterService.calculMinutesCompteur(dto, demande)).thenReturn(10);
+			
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+			Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(counterService);
+		
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
-		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+			ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+			ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+			ReflectionTestUtils.setField(service, "counterService", counterService);
+			ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 
 		result = service.setDemandeEtat(idAgent, dto);
 
@@ -1553,10 +1559,14 @@ public class AbsenceServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(2);
+		
 		DemandeRecup demande = Mockito.spy(new DemandeRecup());
-		demande.setDuree(10);
-		demande.setIdAgent(idAgent);
-		demande.setEtatsDemande(listEtat);
+			demande.setDuree(10);
+			demande.setIdAgent(idAgent);
+			demande.setEtatsDemande(listEtat);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
@@ -1584,24 +1594,25 @@ public class AbsenceServiceTest {
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
-				counterService.majCompteurRecupToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.anyInt())).thenReturn(srm);
+		Mockito.when(counterService.calculMinutesCompteur(dto, demande)).thenReturn(10);
+
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+			Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(counterService);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesCompteur(dto, demande)).thenReturn(10);
-
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "counterService", counterService);
+		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 
 		result = service.setDemandeEtat(idAgent, dto);
 
@@ -1619,63 +1630,67 @@ public class AbsenceServiceTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
-		dto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		dto.setIdDemande(1);
+			dto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+			dto.setIdDemande(1);
 
 		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+			etatDemande.setEtat(RefEtatEnum.APPROUVEE);
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
-		listEtat.add(etatDemande);
+			listEtat.add(etatDemande);
 
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(2);
+		
 		DemandeRecup demande = Mockito.spy(new DemandeRecup());
-		demande.setDuree(10);
-		demande.setIdAgent(idAgent);
-		demande.setEtatsDemande(listEtat);
+			demande.setDuree(10);
+			demande.setIdAgent(idAgent);
+			demande.setEtatsDemande(listEtat);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+			Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
+			Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
 				.thenReturn(true);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
-		Mockito.doAnswer(new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				return new ReturnMessageDto();
-			}
-		})
-				.when(absDataConsistencyRules)
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return new ReturnMessageDto();
+				}
+			}).when(absDataConsistencyRules)
 				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.isA(List.class));
 
-		Mockito.doAnswer(new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				return new ReturnMessageDto();
-			}
-		}).when(absDataConsistencyRules)
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return new ReturnMessageDto();
+				}
+			}).when(absDataConsistencyRules)
 				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyInt());
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
-		Mockito.when(
-				counterService.majCompteurRecupToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+			Mockito.when(
+				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.anyInt())).thenReturn(srm);
+			Mockito.when(counterService.calculMinutesCompteur(dto, demande)).thenReturn(10);
+			
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+			Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(counterService);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
-		Mockito.when(
+			Mockito.when(
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesCompteur(dto, demande)).thenReturn(10);
-
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "counterService", counterService);
+		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 
 		result = service.setDemandeEtat(idAgent, dto);
 

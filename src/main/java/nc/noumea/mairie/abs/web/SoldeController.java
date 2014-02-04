@@ -2,7 +2,6 @@ package nc.noumea.mairie.abs.web;
 
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.sirh.service.ISirhService;
 
@@ -23,9 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SoldeController {
 
 	private Logger logger = LoggerFactory.getLogger(SoldeController.class);
-
-	@Autowired
-	private ICounterService recuperationService;
 
 	@Autowired
 	private IAgentMatriculeConverterService converterService;

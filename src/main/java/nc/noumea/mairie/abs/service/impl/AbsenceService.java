@@ -27,6 +27,7 @@ import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
+import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,12 @@ public class AbsenceService implements IAbsenceService {
 	private HelperService helperService;
 
 	@Autowired
+	@Qualifier("DefaultCounterServiceImpl")
 	private ICounterService counterService;
+	
+	@Autowired
+	private CounterServiceFactory counterServiceFactory;
+	 
 
 	public static final String ONGLET_NON_PRISES = "NON_PRISES";
 	public static final String ONGLET_EN_COURS = "EN_COURS";
@@ -417,9 +423,10 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		int minutes = helperService.calculMinutesCompteur(demandeEtatChangeDto, demande);
+		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		int minutes = counterService.calculMinutesCompteur(demandeEtatChangeDto, demande);
 		if (0 != minutes) {
-			result = counterService.majCompteurRecupToAgent(result, demande.getIdAgent(), minutes);
+			result = counterService.majCompteurToAgent(result, demande, minutes);
 		}
 
 		if (0 < result.getErrors().size()) {
@@ -449,9 +456,10 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		int minutes = helperService.calculMinutesCompteur(demandeEtatChangeDto, demande);
+		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		int minutes = counterService.calculMinutesCompteur(demandeEtatChangeDto, demande);
 		if (0 != minutes) {
-			result = counterService.majCompteurRecupToAgent(result, demande.getIdAgent(), minutes);
+			result = counterService.majCompteurToAgent(result, demande, minutes);
 		}
 
 		if (0 < result.getErrors().size()) {
