@@ -91,7 +91,8 @@ public class DemandeController {
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getDemandeAbsence(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande) {
+	public ResponseEntity<String> getDemandeAbsence(@RequestParam("idAgent") int idAgent,
+			@RequestParam("idDemande") int idDemande) {
 
 		logger.debug(
 				"entered GET [demandes/demande] => getDemandeAbsence for Kiosque with parameters idAgent = {} and idDemande = {}",
@@ -128,8 +129,8 @@ public class DemandeController {
 		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande, fromDate, toDate,
-				dateDemande, idRefEtat, idRefType);
+		List<DemandeDto> result = absenceService.getListeDemandes(null, convertedIdAgent, ongletDemande, fromDate,
+				toDate, dateDemande, idRefEtat, idRefType);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
@@ -142,7 +143,8 @@ public class DemandeController {
 	@ResponseBody
 	@RequestMapping(value = "/xml/getDemande", produces = "application/xml", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ModelAndView getXmlDemande(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande) throws ParseException {
+	public ModelAndView getXmlDemande(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande)
+			throws ParseException {
 
 		logger.debug(
 				"entered GET [demandes/xml/getDemande] => getXmlDemande with parameters idAgent = {}, idDemande = {}",
@@ -190,7 +192,7 @@ public class DemandeController {
 		// ON VERIFIE LES DROITS
 		if (idAgentRecherche != null) {
 			ReturnMessageDto srm = new ReturnMessageDto();
-			if(!accessRightService.verifAccessRightListDemande(convertedIdAgent, idAgentRecherche, srm)) {
+			if (!accessRightService.verifAccessRightListDemande(convertedIdAgent, idAgentRecherche, srm)) {
 				if (!srm.getErrors().isEmpty()) {
 					String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
 					return new ResponseEntity<>(response, HttpStatus.CONFLICT);
@@ -198,8 +200,8 @@ public class DemandeController {
 			}
 		}
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, idAgentRecherche, ongletDemande, fromDate, toDate,
-				dateDemande, idRefEtat, idRefType);
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, idAgentRecherche, ongletDemande,
+				fromDate, toDate, dateDemande, idRefEtat, idRefType);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
@@ -218,9 +220,10 @@ public class DemandeController {
 		logger.debug("entered POST [demandes/changerEtats] => setAbsencesEtat with parameters idAgent = {}", idAgent);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
-		DemandeEtatChangeDto dto = new JSONDeserializer<DemandeEtatChangeDto>().use(Date.class, new MSDateTransformer()).deserializeInto(
-				demandeEtatChangeDtoString, new DemandeEtatChangeDto());
+
+		DemandeEtatChangeDto dto = new JSONDeserializer<DemandeEtatChangeDto>()
+				.use(Date.class, new MSDateTransformer()).deserializeInto(demandeEtatChangeDtoString,
+						new DemandeEtatChangeDto());
 
 		ReturnMessageDto result = absenceService.setDemandeEtat(convertedIdAgent, dto);
 
@@ -237,7 +240,8 @@ public class DemandeController {
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> setAbsencesEtatPris(@RequestParam("idDemande") Integer idDemande) {
 
-		logger.debug("entered POST [demandes/updateToEtatPris] => setAbsencesEtatPris for SIRH-JOBS with parameters idDemande = {}",
+		logger.debug(
+				"entered POST [demandes/updateToEtatPris] => setAbsencesEtatPris for SIRH-JOBS with parameters idDemande = {}",
 				idDemande);
 
 		ReturnMessageDto result = absenceService.setDemandeEtatPris(idDemande);
@@ -249,19 +253,19 @@ public class DemandeController {
 
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/deleteDemande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> supprimerDemande(
-			@RequestParam("idAgent") int idAgent, 
+	public ResponseEntity<String> supprimerDemande(@RequestParam("idAgent") int idAgent,
 			@RequestParam("idDemande") int idDemande) {
 
-		logger.debug("entered GET [demandes/deleteDemande] => supprimerDemande with parameters idAgent = {}, idDemande = {}",
+		logger.debug(
+				"entered GET [demandes/deleteDemande] => supprimerDemande with parameters idAgent = {}, idDemande = {}",
 				idAgent, idDemande);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
+
 		ReturnMessageDto result = absenceService.supprimerDemande(convertedIdAgent, idDemande);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
@@ -277,7 +281,8 @@ public class DemandeController {
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> supprimerAbsenceProvisoire(@RequestParam("idDemande") Integer idDemande) {
 
-		logger.debug("entered POST [demandes/supprimerDemandeProvisoire] => supprimerAbsenceProvisoire for SIRH-JOBS with parameters idDemande = {}",
+		logger.debug(
+				"entered POST [demandes/supprimerDemandeProvisoire] => supprimerAbsenceProvisoire for SIRH-JOBS with parameters idDemande = {}",
 				idDemande);
 
 		ReturnMessageDto result = absenceService.supprimerDemandeEtatProvisoire(idDemande);
