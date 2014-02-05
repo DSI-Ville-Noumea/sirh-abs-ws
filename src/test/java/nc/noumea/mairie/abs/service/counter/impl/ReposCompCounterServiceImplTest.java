@@ -2,14 +2,18 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
+import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
@@ -21,10 +25,12 @@ import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
+import nc.noumea.mairie.abs.service.NotAMondayException;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -33,6 +39,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class ReposCompCounterServiceImplTest {
 
+	private SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
+	
 	@Test
 	public void majManuelleCompteurRCToAgent_OK_sansCompteurExistant_AnneeN() {
 		
@@ -911,4 +919,510 @@ public class ReposCompCounterServiceImplTest {
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(DemandeReposComp.class));
 	}
+	
+	
+	@Test
+	public void addToAgentForPTG_AgentDoesNotExists_ThrowAgentNotFoundException() {
+
+		// Given
+		Integer idAgent = 9008765;
+		Date dateMonday = new LocalDate(2013, 9, 30).toDate();
+
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgent(idAgent)).thenReturn(null);
+
+		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+
+		// When
+		try {
+			service.addToAgentForPTG(idAgent, dateMonday, 90);
+		} catch (AgentNotFoundException ex) {
+			return;
+		}
+
+		fail("Should have thrown an AgentNotFoundException");
+	}
+
+	@Test
+	public void addToAgentForPTG_DateIsNotAMonday_ThrowDateIsNotAMondayException() {
+
+		// Given
+		Integer idAgent = 9008765;
+		Date dateMonday = new LocalDate(2013, 9, 29).toDate();
+
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(false);
+
+		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		// When
+		try {
+			service.addToAgentForPTG(idAgent, dateMonday, 90);
+		} catch (NotAMondayException ex) {
+			return;
+		}
+
+		fail("Should have thrown an NotAMondayException");
+	}
+	
+	@Test
+	public void addToAgentForPTG_CounterNotFount_createCounterOK_AnneePrcdt() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		
+		GregorianCalendar calStr1 = new GregorianCalendar(); 
+			calStr1.setTime(new Date()); 
+			calStr1.add(GregorianCalendar.YEAR, -1);
+		Date dateMonday =  calStr1.getTime();
+
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
+			Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getWeekHistoForAgentAndDate(AgentWeekReposComp.class, idAgent, dateMonday)).thenReturn(null);
+			Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(null);
+		
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentWeekReposComp obj = (AgentWeekReposComp) args[0];
+
+					GregorianCalendar calStr1 = new GregorianCalendar(); 
+						calStr1.setTime(new Date()); 
+						calStr1.add(GregorianCalendar.YEAR, -1);
+					
+					assertEquals(90, obj.getMinutes());
+					assertEquals(sdf.format(calStr1.getTime()), sdf.format(obj.getDateMonday()));
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+			
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(0, obj.getTotalMinutes());
+					assertEquals(90, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
+			ReflectionTestUtils.setField(service, "sirhRepository", sR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		// When
+		int result = service.addToAgentForPTG(idAgent, dateMonday, 90);
+
+		// Then
+		assertEquals(0, result);
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void addToAgentForPTG_CounterNotFount_createCounterOK_AnneeEnCours() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		Date dateMonday = new Date();
+
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
+			Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getWeekHistoForAgentAndDate(AgentWeekReposComp.class, idAgent, dateMonday)).thenReturn(null);
+			Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(null);
+		
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentWeekReposComp obj = (AgentWeekReposComp) args[0];
+
+					assertEquals(90, obj.getMinutes());
+					assertEquals(sdf.format(new Date()), sdf.format(obj.getDateMonday()));
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+			
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(90, obj.getTotalMinutes());
+					assertEquals(0, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
+			ReflectionTestUtils.setField(service, "sirhRepository", sR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		// When
+		int result = service.addToAgentForPTG(idAgent, dateMonday, 90);
+
+		// Then
+		assertEquals(90, result);
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void addToAgentForPTG_OK_AnneePrcdtCredite() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		GregorianCalendar calStr1 = new GregorianCalendar(); 
+			calStr1.setTime(new Date()); 
+			calStr1.add(GregorianCalendar.YEAR, -1);
+		Date dateMonday =  calStr1.getTime();
+
+		AgentWeekReposComp awrc = new AgentWeekReposComp();
+			awrc.setDateMonday(dateMonday);
+			awrc.setMinutes(70);
+		
+		AgentReposCompCount arcc = new AgentReposCompCount();
+			arcc.setTotalMinutes(50);
+			arcc.setTotalMinutesAnneeN1(50);
+
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
+			Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getWeekHistoForAgentAndDate(AgentWeekReposComp.class, idAgent, dateMonday)).thenReturn(awrc);
+			Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentWeekReposComp obj = (AgentWeekReposComp) args[0];
+
+					GregorianCalendar calStr1 = new GregorianCalendar(); 
+						calStr1.setTime(new Date()); 
+						calStr1.add(GregorianCalendar.YEAR, -1);
+					
+					assertEquals(90, obj.getMinutes());
+					assertEquals(sdf.format(calStr1.getTime()), sdf.format(obj.getDateMonday()));
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(50, obj.getTotalMinutes());
+					assertEquals(70, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
+			ReflectionTestUtils.setField(service, "sirhRepository", sR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		// When
+		service.addToAgentForPTG(idAgent, dateMonday, 90);
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void addToAgentForPTG_OK_AnneePrcdtDebitee() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		GregorianCalendar calStr1 = new GregorianCalendar(); 
+			calStr1.setTime(new Date()); 
+			calStr1.add(GregorianCalendar.YEAR, -1);
+		Date dateMonday =  calStr1.getTime();
+
+		AgentWeekReposComp awrc = new AgentWeekReposComp();
+			awrc.setDateMonday(dateMonday);
+			awrc.setMinutes(70);
+		
+		AgentReposCompCount arcc = new AgentReposCompCount();
+			arcc.setTotalMinutes(50);
+			arcc.setTotalMinutesAnneeN1(50);
+
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
+			Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getWeekHistoForAgentAndDate(AgentWeekReposComp.class, idAgent, dateMonday)).thenReturn(awrc);
+			Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentWeekReposComp obj = (AgentWeekReposComp) args[0];
+
+					GregorianCalendar calStr1 = new GregorianCalendar(); 
+						calStr1.setTime(new Date()); 
+						calStr1.add(GregorianCalendar.YEAR, -1);
+					
+					assertEquals(20, obj.getMinutes());
+					assertEquals(sdf.format(calStr1.getTime()), sdf.format(obj.getDateMonday()));
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(50, obj.getTotalMinutes());
+					assertEquals(0, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
+			ReflectionTestUtils.setField(service, "sirhRepository", sR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		// When
+		service.addToAgentForPTG(idAgent, dateMonday, 20);
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void addToAgentForPTG_OK_AnneePrcdtDebitee_ET_AnneeEnCoursDebitee() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		GregorianCalendar calStr1 = new GregorianCalendar(); 
+			calStr1.setTime(new Date()); 
+			calStr1.add(GregorianCalendar.YEAR, -1);
+		Date dateMonday =  calStr1.getTime();
+
+		AgentWeekReposComp awrc = new AgentWeekReposComp();
+			awrc.setDateMonday(dateMonday);
+			awrc.setMinutes(70);
+		
+		AgentReposCompCount arcc = new AgentReposCompCount();
+			arcc.setTotalMinutes(50);
+			arcc.setTotalMinutesAnneeN1(50);
+
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
+			Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getWeekHistoForAgentAndDate(AgentWeekReposComp.class, idAgent, dateMonday)).thenReturn(awrc);
+			Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentWeekReposComp obj = (AgentWeekReposComp) args[0];
+
+					GregorianCalendar calStr1 = new GregorianCalendar(); 
+						calStr1.setTime(new Date()); 
+						calStr1.add(GregorianCalendar.YEAR, -1);
+					
+					assertEquals(0, obj.getMinutes());
+					assertEquals(sdf.format(calStr1.getTime()), sdf.format(obj.getDateMonday()));
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(30, obj.getTotalMinutes());
+					assertEquals(0, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
+			ReflectionTestUtils.setField(service, "sirhRepository", sR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		// When
+		service.addToAgentForPTG(idAgent, dateMonday, 0);
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+	@Test
+	public void addToAgentForPTG_OK_AnneeEnCoursDebitee() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		Date dateMonday = new Date();
+
+		AgentWeekReposComp awrc = new AgentWeekReposComp();
+			awrc.setDateMonday(dateMonday);
+			awrc.setMinutes(70);
+		
+		AgentReposCompCount arcc = new AgentReposCompCount();
+			arcc.setTotalMinutes(50);
+			arcc.setTotalMinutesAnneeN1(0);
+
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
+			Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getWeekHistoForAgentAndDate(AgentWeekReposComp.class, idAgent, dateMonday)).thenReturn(awrc);
+			Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentWeekReposComp obj = (AgentWeekReposComp) args[0];
+
+					assertEquals(0, obj.getMinutes());
+					assertEquals(sdf.format(new Date()), sdf.format(obj.getDateMonday()));
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(-20, obj.getTotalMinutes());
+					assertEquals(0, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
+			ReflectionTestUtils.setField(service, "sirhRepository", sR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		// When
+		service.addToAgentForPTG(idAgent, dateMonday, 0);
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
+
+	@Test
+	public void addToAgentForPTG_OK_AnneeEnCoursCreditee() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		Date dateMonday = new Date();
+
+		AgentWeekReposComp awrc = new AgentWeekReposComp();
+			awrc.setDateMonday(dateMonday);
+			awrc.setMinutes(70);
+		
+		AgentReposCompCount arcc = new AgentReposCompCount();
+			arcc.setTotalMinutes(50);
+			arcc.setTotalMinutesAnneeN1(0);
+
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sR.getAgent(idAgent)).thenReturn(new Agent());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
+			Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+			Mockito.when(counterRepository.getWeekHistoForAgentAndDate(AgentWeekReposComp.class, idAgent, dateMonday)).thenReturn(awrc);
+			Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentWeekReposComp obj = (AgentWeekReposComp) args[0];
+
+					assertEquals(100, obj.getMinutes());
+					assertEquals(sdf.format(new Date()), sdf.format(obj.getDateMonday()));
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					AgentReposCompCount obj = (AgentReposCompCount) args[0];
+
+					assertEquals(80, obj.getTotalMinutes());
+					assertEquals(0, obj.getTotalMinutesAnneeN1());
+
+					return true;
+				}
+			}).when(counterRepository).persistEntity(Mockito.isA(AgentReposCompCount.class));
+			
+		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
+			ReflectionTestUtils.setField(service, "sirhRepository", sR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		// When
+		service.addToAgentForPTG(idAgent, dateMonday, 100);
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekReposComp.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
+	}
+	
 }

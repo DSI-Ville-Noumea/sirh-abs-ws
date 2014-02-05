@@ -1,11 +1,14 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
+import nc.noumea.mairie.abs.domain.BaseAgentWeekHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
@@ -16,6 +19,7 @@ import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
+import nc.noumea.mairie.abs.service.NotAMondayException;
 
 import org.springframework.stereotype.Service;
 
@@ -37,6 +41,90 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update repos compensateur counters :", e);
 		}
+	}
+	
+	/**
+	 * Mets à jour le compteur de minutes désiré (en fonction des types passés
+	 * en paramètre)
+	 * 
+	 * @param T1
+	 *            inherits BaseAgentCount
+	 * @param T2
+	 *            inherits BaseAgentWeekHisto
+	 * @param idAgent
+	 * @param minutes
+	 * @param dateMonday
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	protected <T1, T2> int addMinutesToAgent(Class<T1> T1, Class<T2> T2, Integer idAgent, Date dateMonday,
+			Integer minutes) throws InstantiationException, IllegalAccessException {
+
+		if (sirhRepository.getAgent(idAgent) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+			throw new AgentNotFoundException();
+		}
+
+		if (!helperService.isDateAMonday(dateMonday)) {
+			logger.error("Given monday date [{}] is not a Monday. Impossible to update counters.", dateMonday);
+			throw new NotAMondayException();
+		}
+
+		logger.info("updating counters for Agent [{}] and date [{}] with {} minutes...", idAgent, dateMonday, minutes);
+
+		BaseAgentWeekHisto awr = (BaseAgentWeekHisto) counterRepository.getWeekHistoForAgentAndDate(T2, idAgent,
+				dateMonday);
+
+		if (awr == null) {
+			awr = (BaseAgentWeekHisto) T2.newInstance();
+			awr.setIdAgent(idAgent);
+			awr.setDateMonday(dateMonday);
+		}
+
+		int minutesBeforeUpdate = awr.getMinutes();
+		awr.setMinutes(minutes);
+		awr.setLastModification(helperService.getCurrentDate());
+
+		AgentReposCompCount arc = (AgentReposCompCount) counterRepository.getAgentCounter(T1, idAgent);
+
+		if (arc == null) {
+			arc = new AgentReposCompCount();
+			arc.setIdAgent(idAgent);
+		}
+
+		int totalMinutesAnneeN1 = 0;
+		int totalMinutes = 0;
+		// Met on a jour le compteur de l annee precedente ou l annee en cours
+		int precedentYear = GregorianCalendar.getInstance().get(Calendar.YEAR) - 1;
+		GregorianCalendar calStr1 = new GregorianCalendar(); 
+			calStr1.setTime(dateMonday);
+		int yearDateMonday = calStr1.get(Calendar.YEAR);
+		// annee precedente
+		if(precedentYear >= yearDateMonday) {
+			// si compteur annee N-1 negatif, on met a jour les compteurs N-1 et N
+			if(arc.getTotalMinutesAnneeN1() + minutes - minutesBeforeUpdate < 0) {
+				totalMinutesAnneeN1 = 0;
+				totalMinutes = arc.getTotalMinutes() + (arc.getTotalMinutesAnneeN1() + minutes - minutesBeforeUpdate);
+			}else{
+				totalMinutesAnneeN1 = arc.getTotalMinutesAnneeN1() + minutes - minutesBeforeUpdate;
+				totalMinutes = arc.getTotalMinutes();
+			}
+		}
+		// annee en cours
+		if(precedentYear < yearDateMonday) {
+			totalMinutesAnneeN1 = arc.getTotalMinutesAnneeN1();
+			totalMinutes = arc.getTotalMinutes() + minutes - minutesBeforeUpdate;
+		}
+		
+		arc.setTotalMinutesAnneeN1(totalMinutesAnneeN1);
+		arc.setTotalMinutes(totalMinutes);
+		arc.setLastModification(helperService.getCurrentDate());
+
+		counterRepository.persistEntity(awr);
+		counterRepository.persistEntity(arc);
+
+		return arc.getTotalMinutes();
 	}
 	
 	public ReturnMessageDto resetCompteurRCAnneePrecedente(Integer idAgentReposCompCount) {
