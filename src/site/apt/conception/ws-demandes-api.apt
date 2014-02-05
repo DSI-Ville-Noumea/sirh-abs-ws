@@ -41,7 +41,11 @@ SIRH-ABS-WS API et définition des services concernant les demandes d'absences d
     "motifViseur": null,
     "modifierVisa": false,
 	"valeurVisa": false/null,
-	"valeurApprobation": false/null
+	"valeurApprobation": false/null,
+	"nomAgent": null,
+	"prenomAgent": null,
+	"service": null,
+	"codeService": null
 }
 +-------------------------+
 
@@ -91,6 +95,10 @@ HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
     "motifViseur": null,
 	"valeurVisa": false/null,
 	"valeurApprobation": false/null
+	"nomAgent": "CHARVET",
+	"prenomAgent": "TATIANA",
+	"service": "DSI Service Etudes et Développement",
+	"codeService": "DCCA"
 }
 +-------------------------+
 
@@ -224,7 +232,11 @@ HTTP Code 403 : Accès non autorisé
 			"motifViseur": null,
 			"modifierVisa": false,
 			"valeurVisa": false/null,
-			"valeurApprobation": false/null
+			"valeurApprobation": false/null,
+			"nomAgent": null,
+			"prenomAgent": null,
+			"service": null,
+			"codeService": null
        },....
     ]
 +-------------------------+
@@ -290,7 +302,11 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
 			"modifierApprobation": false,
 			"modifierVisa": false,
 			"valeurVisa": false/null,
-			"valeurApprobation": false/null
+			"valeurApprobation": false/null,
+			"nomAgent": null,
+			"prenomAgent": null,
+			"service": null,
+			"codeService": null
        },....
     ]
 +-------------------------+

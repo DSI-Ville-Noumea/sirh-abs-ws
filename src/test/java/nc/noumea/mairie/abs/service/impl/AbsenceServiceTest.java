@@ -26,6 +26,7 @@ import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.EmailInfoDto;
@@ -33,12 +34,11 @@ import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
-import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -333,16 +333,21 @@ public class AbsenceServiceTest {
 		dr.setType(rta);
 
 		IDemandeRepository demandeRepo = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
-		Mockito.when(demandeRepo.getEntity(DemandeRecup.class, idDemande)).thenReturn(dr);
+			Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
+			Mockito.when(demandeRepo.getEntity(DemandeRecup.class, idDemande)).thenReturn(dr);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(dr.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+			
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+			Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+			Mockito.when(sirhWSConsumer.getAgentService(dr.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 		
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
+			ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+			ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		// When
 		DemandeDto result = service.getDemandeDto(idDemande);
@@ -403,13 +408,18 @@ public class AbsenceServiceTest {
 			Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
 			Mockito.when(demandeRepo.getEntity(DemandeRecup.class, idDemande)).thenReturn(dr);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(dr.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+			
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+			Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+			Mockito.when(sirhWSConsumer.getAgentService(dr.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 		
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		DemandeDto result = service.getDemandeDto(idDemande);
@@ -2349,9 +2359,13 @@ public class AbsenceServiceTest {
 		dr.setIdDemande(idDemande);
 		dr.setType(rta);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(dr.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+			
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+			Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+			Mockito.when(sirhWSConsumer.getAgentService(dr.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 		
 		IDemandeRepository demandeRepo = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
@@ -2359,7 +2373,8 @@ public class AbsenceServiceTest {
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		// When
 		DemandeDto result = service.getDemandeDto(idDemande);
@@ -2422,16 +2437,21 @@ public class AbsenceServiceTest {
 		dr.setType(rta);
 
 		IDemandeRepository demandeRepo = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
-		Mockito.when(demandeRepo.getEntity(DemandeReposComp.class, idDemande)).thenReturn(dr);
+			Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
+			Mockito.when(demandeRepo.getEntity(DemandeReposComp.class, idDemande)).thenReturn(dr);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(dr.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+			
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+			Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+			Mockito.when(sirhWSConsumer.getAgentService(dr.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 		
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
+			ReflectionTestUtils.setField(service, "helperService", helperService);
+			ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		DemandeDto result = service.getDemandeDto(idDemande);

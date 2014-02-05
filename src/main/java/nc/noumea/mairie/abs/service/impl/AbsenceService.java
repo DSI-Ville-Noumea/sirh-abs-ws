@@ -29,6 +29,7 @@ import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +75,9 @@ public class AbsenceService implements IAbsenceService {
 	
 	@Autowired
 	private CounterServiceFactory counterServiceFactory;
+	
+	@Autowired
+	private ISirhWSConsumer sirhWSConsumer;
 	 
 
 	public static final String ONGLET_NON_PRISES = "NON_PRISES";
@@ -218,7 +222,7 @@ public class AbsenceService implements IAbsenceService {
 					return demandeDto;
 				}
 
-				demandeDto = new DemandeDto(demandeReposComp, sirhRepository.getAgent(demande.getIdAgent()));
+				demandeDto = new DemandeDto(demandeReposComp, sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()));
 				break;
 			case RECUP:
 
@@ -227,7 +231,7 @@ public class AbsenceService implements IAbsenceService {
 					return demandeDto;
 				}
 
-				demandeDto = new DemandeDto(demandeRecup, sirhRepository.getAgent(demande.getIdAgent()));
+				demandeDto = new DemandeDto(demandeRecup, sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()));
 				break;
 			case ASA:
 				// TODO
@@ -243,7 +247,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		if (null == demandeDto && null != demande) {
-			demandeDto = new DemandeDto(demande, sirhRepository.getAgent(demande.getIdAgent()));
+			demandeDto = new DemandeDto(demande, sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()));
 		}
 
 		return demandeDto;

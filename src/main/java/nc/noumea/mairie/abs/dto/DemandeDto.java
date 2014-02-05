@@ -17,6 +17,8 @@ public class DemandeDto {
 	private Integer idAgent;
 	private String nomAgent;
 	private String prenomAgent;
+	private String service;
+	private String codeService;
 	
 	private Integer idTypeDemande;
 	private Date dateDebut;
@@ -42,13 +44,25 @@ public class DemandeDto {
 
 	public DemandeDto() {
 	}
-
+	
+	public DemandeDto(Demande d, AgentWithServiceDto agent){
+		this(d);
+		this.nomAgent = agent.getNom();
+		this.prenomAgent = agent.getPrenom();
+		this.codeService = agent.getCodeService();
+		this.service = agent.getService();
+	}
+	
 	public DemandeDto(Demande d, Agent agent) {
+		this(d);
+		this.nomAgent = agent.getDisplayNom();
+		this.prenomAgent = agent.getDisplayPrenom();
+	}
+
+	public DemandeDto(Demande d) {
 		super();
 		this.idDemande = d.getIdDemande();
 		this.idAgent = d.getIdAgent();
-		this.nomAgent = agent.getDisplayNom();
-		this.prenomAgent = agent.getDisplayPrenom();
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
 		this.dateDebut = d.getDateDebut();
 		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
@@ -271,6 +285,22 @@ public class DemandeDto {
 
 	public void setIdMotifRefus(Integer idMotifRefus) {
 		this.idMotifRefus = idMotifRefus;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public String getCodeService() {
+		return codeService;
+	}
+
+	public void setCodeService(String codeService) {
+		this.codeService = codeService;
 	}
 
 }
