@@ -286,7 +286,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d);
+				DemandeDto dto = new DemandeDto(d, sirhRepository.getAgent(d.getIdAgent()));
 				listeDemandeDto.add(dto);
 			}
 			return listeDemandeDto;
@@ -300,17 +300,17 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
-					DemandeDto dto = new DemandeDto(d);
+					DemandeDto dto = new DemandeDto(d, sirhRepository.getAgent(d.getIdAgent()));
 					listeDemandeDto.add(dto);
 				}
-			}
 			isfiltreDateDemande = true;
+			}
 		}
 
 		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d);
+				DemandeDto dto = new DemandeDto(d, sirhRepository.getAgent(d.getIdAgent()));
 				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 						.getCodeEtat()))) {
 					if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)

@@ -8,11 +8,16 @@ import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.sirh.domain.Agent;
 
 public class DemandeDto {
 
 	private Integer idDemande;
+	
 	private Integer idAgent;
+	private String nomAgent;
+	private String prenomAgent;
+	
 	private Integer idTypeDemande;
 	private Date dateDebut;
 	private Integer duree;
@@ -38,10 +43,12 @@ public class DemandeDto {
 	public DemandeDto() {
 	}
 
-	public DemandeDto(Demande d) {
+	public DemandeDto(Demande d, Agent agent) {
 		super();
 		this.idDemande = d.getIdDemande();
 		this.idAgent = d.getIdAgent();
+		this.nomAgent = agent.getDisplayNom();
+		this.prenomAgent = agent.getDisplayPrenom();
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
 		this.dateDebut = d.getDateDebut();
 		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
@@ -107,6 +114,22 @@ public class DemandeDto {
 
 	public void setIdAgent(Integer idAgent) {
 		this.idAgent = idAgent;
+	}
+
+	public String getNomAgent() {
+		return nomAgent;
+	}
+
+	public void setNomAgent(String nomAgent) {
+		this.nomAgent = nomAgent;
+	}
+
+	public String getPrenomAgent() {
+		return prenomAgent;
+	}
+
+	public void setPrenomAgent(String prenomAgent) {
+		this.prenomAgent = prenomAgent;
 	}
 
 	public Integer getIdTypeDemande() {

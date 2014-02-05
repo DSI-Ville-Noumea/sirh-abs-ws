@@ -19,43 +19,43 @@ public class EditionDemandeDtoTest {
 
 		// Given
 		Agent ag = new Agent();
-		ag.setNomUsage("RAYNAUD");
-		ag.setPrenomUsage("Nicolas");
-		ag.setIdAgent(9006765);
+			ag.setNomUsage("RAYNAUD");
+			ag.setPrenomUsage("Nicolas");
+			ag.setIdAgent(9006765);
 		AgentWithServiceDto agDto = new AgentWithServiceDto(ag);
-		agDto.setCodeService("DCCA");
-		agDto.setDirection("DIR");
-		agDto.setService("SERV");
-		agDto.setStatut("F");
+			agDto.setCodeService("DCCA");
+			agDto.setDirection("DIR");
+			agDto.setService("SERV");
+			agDto.setStatut("F");
 
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(2);
+			type.setIdRefTypeAbsence(2);
 
 		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
-		etatDemande.setDate(new Date());
+			etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+			etatDemande.setDate(new Date());
 
 		DemandeReposComp d = new DemandeReposComp();
-		d.setIdDemande(1);
-		d.setDuree(52);
-		d.setDureeAnneeN1(null);
-		d.setIdAgent(ag.getIdAgent());
-		d.setType(type);
-		d.getEtatsDemande().add(etatDemande);
+			d.setIdDemande(1);
+			d.setDuree(52);
+			d.setDureeAnneeN1(null);
+			d.setIdAgent(ag.getIdAgent());
+			d.setType(type);
+			d.getEtatsDemande().add(etatDemande);
 
-		DemandeDto demandeDto = new DemandeDto(d);
+		DemandeDto demandeDto = new DemandeDto(d, ag);
 
 		SoldeDto soldeDto = new SoldeDto();
-		soldeDto.setSoldeCongeAnnee((double) 12);
-		soldeDto.setSoldeCongeAnneePrec((double) 12.2);
-		soldeDto.setSoldeRecup((double) 22);
-		soldeDto.setSoldeReposCompAnnee((double) 14);
-		soldeDto.setSoldeReposCompAnneePrec((double) 0);
+			soldeDto.setSoldeCongeAnnee((double) 12);
+			soldeDto.setSoldeCongeAnneePrec((double) 12.2);
+			soldeDto.setSoldeRecup((double) 22);
+			soldeDto.setSoldeReposCompAnnee((double) 14);
+			soldeDto.setSoldeReposCompAnneePrec((double) 0);
 
 		Agent agAppro = new Agent();
-		agAppro.setNomUsage("CHARVET");
-		agAppro.setPrenomUsage("Tatiana");
-		agAppro.setIdAgent(9005138);
+			agAppro.setNomUsage("CHARVET");
+			agAppro.setPrenomUsage("Tatiana");
+			agAppro.setIdAgent(9005138);
 		AgentWithServiceDto approbateurDto = new AgentWithServiceDto(agAppro);
 
 		// When

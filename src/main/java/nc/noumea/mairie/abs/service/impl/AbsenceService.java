@@ -23,6 +23,7 @@ import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
@@ -49,6 +50,9 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	private IAccessRightsService accessRightsService;
 
+	@Autowired
+	private ISirhRepository sirhRepository;
+	
 	@Autowired
 	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules defaultAbsenceDataConsistencyRulesImpl;
@@ -214,7 +218,7 @@ public class AbsenceService implements IAbsenceService {
 					return demandeDto;
 				}
 
-				demandeDto = new DemandeDto(demandeReposComp);
+				demandeDto = new DemandeDto(demandeReposComp, sirhRepository.getAgent(demande.getIdAgent()));
 				break;
 			case RECUP:
 
@@ -223,7 +227,7 @@ public class AbsenceService implements IAbsenceService {
 					return demandeDto;
 				}
 
-				demandeDto = new DemandeDto(demandeRecup);
+				demandeDto = new DemandeDto(demandeRecup, sirhRepository.getAgent(demande.getIdAgent()));
 				break;
 			case ASA:
 				// TODO
@@ -239,7 +243,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		if (null == demandeDto && null != demande) {
-			demandeDto = new DemandeDto(demande);
+			demandeDto = new DemandeDto(demande, sirhRepository.getAgent(demande.getIdAgent()));
 		}
 
 		return demandeDto;
