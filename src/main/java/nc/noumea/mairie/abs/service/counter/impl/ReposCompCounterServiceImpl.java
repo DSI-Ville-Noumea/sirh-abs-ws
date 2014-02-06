@@ -142,11 +142,10 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		}
 		
 		// selon la SFD, compteur annee en cours = solde annee en cours + modulo 4 en heures de l annee precedente
-		int modulo4 = arc.getTotalMinutesAnneeN1() % (4*60);
 		
 		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
 			histo.setIdAgent(arc.getIdAgent());
-			histo.setMinutes(modulo4);
+			histo.setMinutes(0);
 			histo.setMinutesAnneeN1(0 - arc.getTotalMinutesAnneeN1());
 			histo.setDateModification(helperService.getCurrentDate());
 			histo.setMotifCompteur(null);
@@ -156,7 +155,6 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 			histo.setType(rta);
 		
-		arc.setTotalMinutes(arc.getTotalMinutes() + modulo4);
 		arc.setTotalMinutesAnneeN1(0);
 		
 		counterRepository.persistEntity(arc);
