@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.repository;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -9,6 +10,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.SpSold; 
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.springframework.stereotype.Repository;
@@ -46,5 +48,22 @@ public class SirhRepository implements ISirhRepository {
 		Spadmn adm = qSpadmn.getSingleResult();
 
 		return adm;
+	}
+
+	@Override
+	public Spcarr getAgentCurrentCarriere(Integer nomatr, Date asOfDate) {
+		TypedQuery<Spcarr> qCarr = sirhEntityManager.createNamedQuery("getCurrentCarriere", Spcarr.class);
+		qCarr.setParameter("nomatr", nomatr);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		int dateFormatMairie = Integer.valueOf(sdf.format(asOfDate));
+		qCarr.setParameter("todayFormatMairie", dateFormatMairie);
+
+		List<Spcarr> result = qCarr.getResultList();
+		
+		if (result.size() != 1)
+			return null;
+
+		return result.get(0);
 	}
 }

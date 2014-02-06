@@ -34,6 +34,7 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.LocalDate;
@@ -513,9 +514,9 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PRISE.getCodeEtat())).thenReturn(etatPris);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
-		
+		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -574,9 +575,9 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PROVISOIRE.getCodeEtat())).thenReturn(etatProvisoire);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
-			
+		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -646,9 +647,9 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PROVISOIRE.getCodeEtat())).thenReturn(etatProvisoire);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
-		
+		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -719,9 +720,9 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PROVISOIRE.getCodeEtat())).thenReturn(etatProvisoire);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
-		
+		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -791,9 +792,9 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PROVISOIRE.getCodeEtat())).thenReturn(etatProvisoire);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
-			
+		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -978,9 +979,9 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.ANNULEE.getCodeEtat())).thenReturn(etatAnnulee);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
-			
+		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -1050,9 +1051,9 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PRISE.getCodeEtat())).thenReturn(etatPris);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-			Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
-			
+		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -1979,5 +1980,72 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertFalse(result.get(7).isModifierVisa());
 		assertNull(result.get(7).getValeurApprobation());
 		assertNull(result.get(7).getValeurVisa());
+	}
+
+	@Test
+	public void checkStatutAgent_isNotFonctionnaire() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		demande.setIdAgent(9005131);
+
+		Agent ag = new Agent();
+		ag.setNomatr(5131);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(4);
+
+		Date date = new LocalDate(2013, 9, 29).toDate();
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgent(demande.getIdAgent())).thenReturn(ag);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(ag.getNomatr(), date)).thenReturn(carr);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		AbsReposCompensateurDataConsistencyRulesImpl impl = new AbsReposCompensateurDataConsistencyRulesImpl();
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+
+		srm = impl.checkStatutAgent(srm, demande);
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkStatutAgent_isFonctionnaire() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		demande.setIdAgent(9005131);
+
+		Agent ag = new Agent();
+		ag.setNomatr(5131);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(2);
+
+		Date date = new LocalDate(2013, 9, 29).toDate();
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgent(demande.getIdAgent())).thenReturn(ag);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(ag.getNomatr(), date)).thenReturn(carr);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		AbsReposCompensateurDataConsistencyRulesImpl impl = new AbsReposCompensateurDataConsistencyRulesImpl();
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+
+		srm = impl.checkStatutAgent(srm, demande);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(
+				"L'agent [9005131] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.",
+				srm.getErrors().get(0).toString());
 	}
 }

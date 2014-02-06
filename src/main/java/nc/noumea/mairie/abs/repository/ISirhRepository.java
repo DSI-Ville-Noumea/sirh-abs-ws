@@ -4,6 +4,7 @@ import java.util.Date;
 
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 public interface ISirhRepository {
@@ -13,4 +14,6 @@ public interface ISirhRepository {
 	SpSold getSpsold(Integer idAgent);
 	
 	Spadmn getAgentCurrentPosition(Agent agent, Date asOfDate);
+
+	Spcarr getAgentCurrentCarriere(Integer nomatr, Date asOfDate);
 }
