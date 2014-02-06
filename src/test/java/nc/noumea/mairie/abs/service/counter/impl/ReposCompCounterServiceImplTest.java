@@ -275,7 +275,7 @@ public class ReposCompCounterServiceImplTest {
 					Object[] args = invocation.getArguments();
 					AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
 
-					assertEquals(10, obj.getMinutes().intValue() );
+					assertEquals(0, obj.getMinutes().intValue() );
 					assertEquals(-250, obj.getMinutesAnneeN1().intValue());
 
 					return true;
@@ -287,7 +287,7 @@ public class ReposCompCounterServiceImplTest {
 					Object[] args = invocation.getArguments();
 					AgentReposCompCount obj = (AgentReposCompCount) args[0];
 
-					assertEquals(20, obj.getTotalMinutes());
+					assertEquals(10, obj.getTotalMinutes());
 					assertEquals(0, obj.getTotalMinutesAnneeN1());
 
 					return true;
@@ -326,7 +326,7 @@ public class ReposCompCounterServiceImplTest {
 					Object[] args = invocation.getArguments();
 					AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
 
-					assertEquals(150, obj.getMinutes().intValue() );
+					assertEquals(0, obj.getMinutes().intValue() );
 					assertEquals(-150, obj.getMinutesAnneeN1().intValue());
 
 					return true;
@@ -338,7 +338,7 @@ public class ReposCompCounterServiceImplTest {
 					Object[] args = invocation.getArguments();
 					AgentReposCompCount obj = (AgentReposCompCount) args[0];
 
-					assertEquals(160, obj.getTotalMinutes());
+					assertEquals(10, obj.getTotalMinutes());
 					assertEquals(0, obj.getTotalMinutesAnneeN1());
 
 					return true;
