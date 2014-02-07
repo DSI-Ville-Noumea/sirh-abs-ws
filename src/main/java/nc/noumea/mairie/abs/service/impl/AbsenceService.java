@@ -29,6 +29,7 @@ import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -98,12 +99,24 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public List<RefTypeAbsenceDto> getRefTypesAbsence() {
+	public List<RefTypeAbsenceDto> getRefTypesAbsence(Integer idAgentConcerne) {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
 		List<RefTypeAbsence> refTypeAbs = demandeRepository.findAllRefTypeAbsences();
+		
+		Spcarr carr = null;
+		if(null != idAgentConcerne) {
+			carr = sirhRepository.getAgentCurrentCarriere(idAgentConcerne, helperService.getCurrentDate());
+		}
+		
 		for (RefTypeAbsence type : refTypeAbs) {
-			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
-			res.add(dto);
+			if (null == carr
+					|| carr.getCdcate() == 4 
+					|| carr.getCdcate() == 7
+					|| !RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type.getIdRefTypeAbsence()).equals(RefTypeAbsenceEnum.REPOS_COMP)) {
+				
+				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
+				res.add(dto);
+			}
 		}
 		return res;
 	}

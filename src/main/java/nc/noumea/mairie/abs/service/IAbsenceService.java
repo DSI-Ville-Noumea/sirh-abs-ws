@@ -14,7 +14,7 @@ public interface IAbsenceService {
 
 	List<RefEtatDto> getRefEtats(String ongletDemande);
 
-	List<RefTypeAbsenceDto> getRefTypesAbsence();
+	List<RefTypeAbsenceDto> getRefTypesAbsence(Integer idAgentConcerne);
 
 	ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto);
 

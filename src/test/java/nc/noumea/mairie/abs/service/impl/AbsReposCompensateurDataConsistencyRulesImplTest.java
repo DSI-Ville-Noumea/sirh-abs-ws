@@ -1999,8 +1999,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Date date = new LocalDate(2013, 9, 29).toDate();
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(demande.getIdAgent())).thenReturn(ag);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(ag.getNomatr(), date)).thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(demande.getIdAgent(), date)).thenReturn(carr);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
@@ -2031,8 +2030,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Date date = new LocalDate(2013, 9, 29).toDate();
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(demande.getIdAgent())).thenReturn(ag);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(ag.getNomatr(), date)).thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(demande.getIdAgent(), date)).thenReturn(carr);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(date);

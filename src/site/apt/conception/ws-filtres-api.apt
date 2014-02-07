@@ -17,7 +17,7 @@ SIRH-ABS-WS API et définition des services concernant les récupérations des a
  
   <<Parameters>>
   
-  -
+  * <<idAgentConcerne>> : identifiant de l’agent (optionnel)
   
  <<Content>>
  

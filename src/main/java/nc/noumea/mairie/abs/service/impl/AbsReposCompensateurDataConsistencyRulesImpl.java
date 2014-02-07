@@ -9,7 +9,6 @@ import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.springframework.stereotype.Service;
 
@@ -33,8 +32,7 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 	protected ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Demande demande) {
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
-		Agent ag = sirhRepository.getAgent(demande.getIdAgent());
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag.getNomatr(), helperService.getCurrentDate());
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(demande.getIdAgent(), helperService.getCurrentDate());
 		if (!(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
 			logger.warn(String.format(STATUT_AGENT, demande.getIdAgent()));
 			srm.getErrors().add(String.format(STATUT_AGENT, demande.getIdAgent()));

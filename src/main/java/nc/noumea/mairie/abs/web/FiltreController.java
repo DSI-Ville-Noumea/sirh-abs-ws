@@ -56,11 +56,11 @@ public class FiltreController {
 	@ResponseBody
 	@RequestMapping(value = "/getTypes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getTypes() {
+	public ResponseEntity<String> getTypes(@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
 
 		logger.debug("entered GET [filtres/getTypes] => getTypes");
 
-		List<RefTypeAbsenceDto> types = absenceService.getRefTypesAbsence();
+		List<RefTypeAbsenceDto> types = absenceService.getRefTypesAbsence(idAgentConcerne);
 
 		String json = new JSONSerializer().exclude("*.class").serialize(types);
 

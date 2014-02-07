@@ -31,13 +31,16 @@ import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.EmailInfoDto;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
+import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -2799,5 +2802,158 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
+	}
+	
+	@Test
+	public void getRefTypesAbsence_noIdAgent() {
+		
+		RefTypeAbsence ASA = new RefTypeAbsence();
+			ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA.getValue());
+		RefTypeAbsence AUTRES = new RefTypeAbsence();
+			AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
+		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
+			CONGE_ANNUEL.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		RefTypeAbsence MALADIES = new RefTypeAbsence();
+			MALADIES.setIdRefTypeAbsence(RefTypeAbsenceEnum.MALADIES.getValue());
+		RefTypeAbsence RECUP = new RefTypeAbsence();
+			RECUP.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		RefTypeAbsence REPOS_COMP = new RefTypeAbsence();
+			REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		
+		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
+			refTypeAbs.addAll(Arrays.asList(ASA, AUTRES, CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+			Mockito.when(demandeRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
+		
+		AbsenceService service = new AbsenceService();
+			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(null);
+		
+		assertEquals(6, result.size());
+	}
+	
+	@Test
+	public void getRefTypesAbsence_Fonctionnaire() {
+		
+		RefTypeAbsence ASA = new RefTypeAbsence();
+			ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA.getValue());
+		RefTypeAbsence AUTRES = new RefTypeAbsence();
+			AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
+		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
+			CONGE_ANNUEL.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		RefTypeAbsence MALADIES = new RefTypeAbsence();
+			MALADIES.setIdRefTypeAbsence(RefTypeAbsenceEnum.MALADIES.getValue());
+		RefTypeAbsence RECUP = new RefTypeAbsence();
+			RECUP.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		RefTypeAbsence REPOS_COMP = new RefTypeAbsence();
+			REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		
+		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
+			refTypeAbs.addAll(Arrays.asList(ASA, AUTRES, CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
+		
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(24);
+			
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+			Mockito.when(demandeRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sirhRepository.getAgentCurrentCarriere(9005138, helperService.getCurrentDate())).thenReturn(carr);
+			
+		AbsenceService service = new AbsenceService();
+			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+			ReflectionTestUtils.setField(service, "helperService", helperService);
+			ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
+		
+		assertEquals(5, result.size());
+	}
+	
+	@Test
+	public void getRefTypesAbsence_CC() {
+		
+		RefTypeAbsence ASA = new RefTypeAbsence();
+			ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA.getValue());
+		RefTypeAbsence AUTRES = new RefTypeAbsence();
+			AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
+		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
+			CONGE_ANNUEL.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		RefTypeAbsence MALADIES = new RefTypeAbsence();
+			MALADIES.setIdRefTypeAbsence(RefTypeAbsenceEnum.MALADIES.getValue());
+		RefTypeAbsence RECUP = new RefTypeAbsence();
+			RECUP.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		RefTypeAbsence REPOS_COMP = new RefTypeAbsence();
+			REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		
+		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
+			refTypeAbs.addAll(Arrays.asList(ASA, AUTRES, CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
+		
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(4);
+			
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+			Mockito.when(demandeRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sirhRepository.getAgentCurrentCarriere(9005138, helperService.getCurrentDate())).thenReturn(carr);
+			
+		AbsenceService service = new AbsenceService();
+			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+			ReflectionTestUtils.setField(service, "helperService", helperService);
+			ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
+		
+		assertEquals(6, result.size());
+	}
+	
+	@Test
+	public void getRefTypesAbsence_C() {
+		
+		RefTypeAbsence ASA = new RefTypeAbsence();
+			ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA.getValue());
+		RefTypeAbsence AUTRES = new RefTypeAbsence();
+			AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
+		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
+			CONGE_ANNUEL.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		RefTypeAbsence MALADIES = new RefTypeAbsence();
+			MALADIES.setIdRefTypeAbsence(RefTypeAbsenceEnum.MALADIES.getValue());
+		RefTypeAbsence RECUP = new RefTypeAbsence();
+			RECUP.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		RefTypeAbsence REPOS_COMP = new RefTypeAbsence();
+			REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		
+		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
+			refTypeAbs.addAll(Arrays.asList(ASA, AUTRES, CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
+		
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(7);
+			
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+			Mockito.when(demandeRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+			Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sirhRepository.getAgentCurrentCarriere(9005138, helperService.getCurrentDate())).thenReturn(carr);
+			
+		AbsenceService service = new AbsenceService();
+			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+			ReflectionTestUtils.setField(service, "helperService", helperService);
+			ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
+		
+		assertEquals(6, result.size());
 	}
 }
