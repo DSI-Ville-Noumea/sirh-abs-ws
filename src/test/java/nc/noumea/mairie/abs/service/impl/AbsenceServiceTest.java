@@ -713,15 +713,15 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto1 = new DemandeEtatChangeDto();
 		dto1.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		dto1.setDateAvis(new Date());
-		dto1.setIdMotifAvis(1);
+		dto1.setIdMotifRefus(1);
 		DemandeEtatChangeDto dto2 = new DemandeEtatChangeDto();
 		dto2.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
 		dto2.setDateAvis(new Date());
-		dto2.setIdMotifAvis(2);
+		dto2.setIdMotifRefus(2);
 		DemandeEtatChangeDto dto3 = new DemandeEtatChangeDto();
 		dto3.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 		dto3.setDateAvis(new Date());
-		dto3.setIdMotifAvis(3);
+		dto3.setIdMotifRefus(3);
 
 		ReturnMessageDto result1 = new ReturnMessageDto();
 		ReturnMessageDto result2 = new ReturnMessageDto();
@@ -844,7 +844,7 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		dto.setIdDemande(1);
-		dto.setIdMotifAvis(1);
+		dto.setIdMotifRefus(1);
 		dto.setMotifViseur("motif");
 
 		Demande demande = Mockito.spy(new Demande());
