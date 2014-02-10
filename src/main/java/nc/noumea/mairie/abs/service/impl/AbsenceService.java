@@ -418,6 +418,13 @@ public class AbsenceService implements IAbsenceService {
 
 		// maj de la demande
 		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+		
+		if(demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())){
+			result.getInfos().add(String.format("La demande est visée favorablement."));
+		}
+		if(demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())){
+			result.getInfos().add(String.format("La demande est visée défavorablement."));
+		}
 
 		return result;
 	}
@@ -456,6 +463,13 @@ public class AbsenceService implements IAbsenceService {
 
 		// maj de la demande
 		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+		
+		if(demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())){
+			result.getInfos().add(String.format("La demande est refusée."));
+		}
+		if(demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())){
+			result.getInfos().add(String.format("La demande est approuvée."));
+		}
 
 		return result;
 	}
@@ -490,6 +504,8 @@ public class AbsenceService implements IAbsenceService {
 		// maj de la demande
 		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 
+		result.getInfos().add(String.format("La demande est annulée."));
+		
 		return result;
 	}
 

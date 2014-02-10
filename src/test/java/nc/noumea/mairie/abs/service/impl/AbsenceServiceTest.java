@@ -874,6 +874,7 @@ public class AbsenceServiceTest {
 		result = service.setDemandeEtat(idAgent, dto);
 
 		assertEquals(0, result.getErrors().size());
+		assertEquals("La demande est visée favorablement.", result.getInfos().get(0));
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
@@ -1087,6 +1088,7 @@ public class AbsenceServiceTest {
 		result = service.setDemandeEtat(idAgent, dto);
 
 		assertEquals(0, result.getErrors().size());
+		assertEquals("La demande est approuvée.", result.getInfos().get(0));
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
@@ -1395,6 +1397,7 @@ public class AbsenceServiceTest {
 		result = service.supprimerDemande(idAgent, idDemande);
 
 		assertEquals(0, result.getErrors().size());
+		assertEquals("La demande est supprimée.", result.getInfos().get(0));
 		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
 	}
 
@@ -1475,6 +1478,7 @@ public class AbsenceServiceTest {
 		result = service.supprimerDemande(idAgent, idDemande);
 
 		assertEquals(0, result.getErrors().size());
+		assertEquals("La demande est supprimée.", result.getInfos().get(0));
 		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
 	}
 
@@ -1720,6 +1724,7 @@ public class AbsenceServiceTest {
 		result = service.setDemandeEtat(idAgent, dto);
 
 		assertEquals(0, result.getErrors().size());
+		assertEquals("La demande est annulée.", result.getInfos().get(0));
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
