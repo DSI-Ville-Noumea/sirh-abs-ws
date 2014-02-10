@@ -54,7 +54,7 @@ HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'ex
     "dureeAAjouter": 15/NULL, (un seul des deux champs "dureeAAjouter" et "dureeARetrancher" doit être obligatoirement renseigné)
 	"dureeARetrancher": 10/NULL,
 	"idMotifCompteur": 1 (obligatoire si etat = REFUSEE)
-	"anneePrécedente": true/false (par défaut false)
+	"anneePrecedente": true/false (par défaut false)
 }
 +-------------------------+
 

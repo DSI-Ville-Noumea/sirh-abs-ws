@@ -233,7 +233,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		Integer minutes = null;
 		Integer minutesAnneeN1 = null;
 		
-		if(compteurDto.isAnneePrécedente()) {
+		if(compteurDto.isAnneePrecedente()) {
 			minutesAnneeN1 = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
 		}else{
 			minutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);

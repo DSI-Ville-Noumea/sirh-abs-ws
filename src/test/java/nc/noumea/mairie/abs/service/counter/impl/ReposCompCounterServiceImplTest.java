@@ -50,7 +50,7 @@ public class ReposCompCounterServiceImplTest {
 			compteurDto.setIdAgent(9005151);
 			compteurDto.setDureeARetrancher(10);
 			compteurDto.setIdMotifCompteur(1);
-			compteurDto.setAnneePrécedente(false);
+			compteurDto.setAnneePrecedente(false);
 		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
@@ -89,7 +89,7 @@ public class ReposCompCounterServiceImplTest {
 			compteurDto.setIdAgent(9005151);
 			compteurDto.setDureeARetrancher(10);
 			compteurDto.setIdMotifCompteur(1);
-			compteurDto.setAnneePrécedente(true);
+			compteurDto.setAnneePrecedente(true);
 		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
@@ -168,7 +168,7 @@ public class ReposCompCounterServiceImplTest {
 			compteurDto.setIdAgent(9005151);
 			compteurDto.setDureeARetrancher(10);
 			compteurDto.setIdMotifCompteur(1);
-			compteurDto.setAnneePrécedente(true);
+			compteurDto.setAnneePrecedente(true);
 		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
@@ -208,7 +208,7 @@ public class ReposCompCounterServiceImplTest {
 			compteurDto.setIdAgent(9005151);
 			compteurDto.setDureeARetrancher(10);
 			compteurDto.setIdMotifCompteur(1);
-			compteurDto.setAnneePrécedente(false);
+			compteurDto.setAnneePrecedente(false);
 		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
