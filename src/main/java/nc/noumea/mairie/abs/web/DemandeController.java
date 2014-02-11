@@ -129,7 +129,7 @@ public class DemandeController {
 		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		List<DemandeDto> result = absenceService.getListeDemandes(null, convertedIdAgent, ongletDemande, fromDate,
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande, fromDate,
 				toDate, dateDemande, idRefEtat, idRefType);
 
 		if (result.size() == 0)
