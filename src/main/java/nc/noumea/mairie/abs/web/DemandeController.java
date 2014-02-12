@@ -129,8 +129,8 @@ public class DemandeController {
 		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande, fromDate,
-				toDate, dateDemande, idRefEtat, idRefType);
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande,
+				fromDate, toDate, dateDemande, idRefEtat, idRefType);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
@@ -154,13 +154,14 @@ public class DemandeController {
 		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		SoldeDto soldeDto = soldeService.getAgentSolde(convertedIdAgent);
-
-		AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(convertedIdAgent, helperService.getCurrentDate());
-
 		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
 
-		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(convertedIdAgent);
+		SoldeDto soldeDto = soldeService.getAgentSolde(demandeDto.getIdAgent());
+
+		AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(demandeDto.getIdAgent(),
+				helperService.getCurrentDate());
+
+		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(demandeDto.getIdAgent());
 
 		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, agentDto, soldeDto, approbateurDto);
 
