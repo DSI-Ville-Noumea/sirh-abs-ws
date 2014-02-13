@@ -1,4 +1,4 @@
-package nc.noumea.mairie.abs.service.impl;
+package nc.noumea.mairie.abs.service.rules.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,6 +33,7 @@ import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
+import nc.noumea.mairie.abs.service.rules.impl.AbsRecuperationDataConsistencyRulesImpl;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.sirh.domain.Agent;
 

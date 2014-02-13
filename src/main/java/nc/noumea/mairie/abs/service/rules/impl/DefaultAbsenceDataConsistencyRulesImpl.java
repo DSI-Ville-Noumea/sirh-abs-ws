@@ -1,4 +1,4 @@
-package nc.noumea.mairie.abs.service.impl;
+package nc.noumea.mairie.abs.service.rules.impl;
 
 import org.springframework.stereotype.Service;
 

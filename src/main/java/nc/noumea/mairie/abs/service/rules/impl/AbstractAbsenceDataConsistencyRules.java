@@ -1,4 +1,4 @@
-package nc.noumea.mairie.abs.service.impl;
+package nc.noumea.mairie.abs.service.rules.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
+import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.sirh.domain.Agent;
 
