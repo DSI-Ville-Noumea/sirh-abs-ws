@@ -24,5 +24,7 @@ SIRH-ABS-WS API et définition des services concernant les éditions
 
 +-------------------------+
 HTTP Code 200 : OK
+HTTP Code 204 : No Content (demande non trouvée)
 HTTP Code 400 : Bad Request 
+HTTP Code 401 : UNAUTHORIZED (l'agent n'a pas les droits)
 +-------------------------+

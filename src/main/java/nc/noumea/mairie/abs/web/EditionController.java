@@ -48,6 +48,12 @@ public class EditionController {
 
 		try {
 			responseData = reportingService.getDemandeReportAsByteArray(convertedIdAgent, idDemande);
+		} catch (AccessForbiddenException e) {
+			logger.error(e.getMessage(), e);
+			return new ResponseEntity<byte[]>(HttpStatus.UNAUTHORIZED);
+		} catch (NoContentException e) {
+			logger.error(e.getMessage(), e);
+			return new ResponseEntity<byte[]>(HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);

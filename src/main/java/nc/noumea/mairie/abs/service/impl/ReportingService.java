@@ -5,7 +5,13 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IReportingService;
+import nc.noumea.mairie.abs.web.AccessForbiddenException;
+import nc.noumea.mairie.abs.web.NoContentException;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +33,12 @@ public class ReportingService implements IReportingService {
 	@Autowired
 	@Qualifier("reportServerPath")
 	private String reportServerPath;
+	
+	@Autowired
+	private IAccessRightsService accessRightsService;
+	
+	@Autowired
+	private IDemandeRepository demandeRepository;
 
 	private static final String REPORT_PAGE = "frameset";
 	private static final String PARAM_REPORT = "__report";
@@ -90,6 +102,16 @@ public class ReportingService implements IReportingService {
 	@Override
 	public byte[] getDemandeReportAsByteArray(Integer idAgent, Integer idDemande) throws Exception {
 
+		ReturnMessageDto returnDto = new ReturnMessageDto();
+		// verification des droits
+		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
+		if(null == demande)
+			throw new NoContentException();
+			
+		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), returnDto);
+		if (!returnDto.getErrors().isEmpty())
+			throw new AccessForbiddenException();
+		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("idAgent", String.valueOf(idAgent));
 		map.put("idDemande", String.valueOf(idDemande));
