@@ -410,7 +410,7 @@ public class AbsenceService implements IAbsenceService {
 
 		result = defaultAbsenceDataConsistencyRulesImpl
 				.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(RefEtatEnum.VISEE_FAVORABLE,
-						RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.REFUSEE));
+						RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
 
 		if (0 < result.getErrors().size()) {
 			return result;

@@ -1153,7 +1153,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result.get(3).getIdRefEtat().intValue());
 		assertFalse(result.get(3).isAffichageApprobation());
-		assertTrue(result.get(3).isAffichageBoutonAnnuler());
+		assertFalse(result.get(3).isAffichageBoutonAnnuler());
 		assertFalse(result.get(3).isAffichageBoutonImprimer());
 		assertFalse(result.get(3).isAffichageBoutonModifier());
 		assertFalse(result.get(3).isAffichageBoutonSupprimer());
@@ -1342,7 +1342,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result.get(3).getIdRefEtat().intValue());
 		assertEquals(9005133, result.get(3).getIdAgent().intValue());
 		assertFalse(result.get(3).isAffichageApprobation());
-		assertTrue(result.get(3).isAffichageBoutonAnnuler());
+		assertFalse(result.get(3).isAffichageBoutonAnnuler());
 		assertFalse(result.get(3).isAffichageBoutonImprimer());
 		assertFalse(result.get(3).isAffichageBoutonModifier());
 		assertFalse(result.get(3).isAffichageBoutonSupprimer());

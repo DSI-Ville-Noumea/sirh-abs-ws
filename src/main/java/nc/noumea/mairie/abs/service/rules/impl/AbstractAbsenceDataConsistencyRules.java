@@ -71,7 +71,6 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
 
-	
 	/**
 	 * Processes the data consistency of a set of Pointages being input by a
 	 * user. It will check the different business rules in order to make sure
@@ -213,8 +212,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				demandeDto.setAffichageBoutonAnnuler(demandeDto.getIdRefEtat().equals(
 						RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
-						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()));
+						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
 
 				continue;
 			}
@@ -239,8 +237,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 							demandeDto.setAffichageBoutonAnnuler(demandeDto.getIdRefEtat().equals(
 									RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()));
+									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
 
 							continue;
 						}
@@ -305,7 +302,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					DemandeDto dto = new DemandeDto(d, sirhRepository.getAgent(d.getIdAgent()));
 					listeDemandeDto.add(dto);
 				}
-			isfiltreDateDemande = true;
+				isfiltreDateDemande = true;
 			}
 		}
 
