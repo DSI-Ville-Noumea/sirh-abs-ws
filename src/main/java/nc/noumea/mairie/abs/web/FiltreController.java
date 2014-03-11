@@ -6,9 +6,9 @@ import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
-import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.service.IFiltresService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +31,11 @@ public class FiltreController {
 	private Logger logger = LoggerFactory.getLogger(FiltreController.class);
 
 	@Autowired
-	private IAbsenceService absenceService;
+	private IFiltresService filtresService;
 
 	@Autowired
 	private IAgentMatriculeConverterService converterService;
-	
+
 	@Autowired
 	private IAccessRightsService accessRightsService;
 
@@ -46,7 +46,7 @@ public class FiltreController {
 
 		logger.debug("entered GET [filtres/getEtats] => getEtats");
 
-		List<RefEtatDto> etats = absenceService.getRefEtats(ongletDemande);
+		List<RefEtatDto> etats = filtresService.getRefEtats(ongletDemande);
 
 		String json = new JSONSerializer().exclude("*.class").serialize(etats);
 
@@ -56,17 +56,18 @@ public class FiltreController {
 	@ResponseBody
 	@RequestMapping(value = "/getTypes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getTypes(@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
+	public ResponseEntity<String> getTypes(
+			@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
 
 		logger.debug("entered GET [filtres/getTypes] => getTypes");
 
-		List<RefTypeAbsenceDto> types = absenceService.getRefTypesAbsence(idAgentConcerne);
+		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsence(idAgentConcerne);
 
 		String json = new JSONSerializer().exclude("*.class").serialize(types);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/services", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
@@ -75,31 +76,33 @@ public class FiltreController {
 		logger.debug("entered GET [filtres/services] => getServices with parameter idAgent = {}", idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
+
 		List<ServiceDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent);
 
 		if (services.size() == 0)
 			throw new NoContentException();
-		
+
 		String json = new JSONSerializer().exclude("*.class").serialize(services);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getAgents(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "codeService", required = false) String codeService) {
+	public ResponseEntity<String> getAgents(@RequestParam("idAgent") Integer idAgent,
+			@RequestParam(value = "codeService", required = false) String codeService) {
 
-		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and codeService = {}", idAgent, codeService);
+		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and codeService = {}",
+				idAgent, codeService);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
+
 		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, codeService);
 
 		if (services.size() == 0)
 			throw new NoContentException();
-		
+
 		String json = new JSONSerializer().exclude("*.class").serialize(services);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);

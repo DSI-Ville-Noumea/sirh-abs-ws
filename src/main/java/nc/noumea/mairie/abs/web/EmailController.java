@@ -1,7 +1,7 @@
 package nc.noumea.mairie.abs.web;
 
 import nc.noumea.mairie.abs.dto.EmailInfoDto;
-import nc.noumea.mairie.abs.service.IAbsenceService;
+import nc.noumea.mairie.abs.service.IEmailService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +23,8 @@ public class EmailController {
 	private Logger logger = LoggerFactory.getLogger(FiltreController.class);
 
 	@Autowired
-	private IAbsenceService absenceService;
-	
+	private IEmailService emailService;
+
 	@ResponseBody
 	@RequestMapping(value = "/listDestinatairesEmailInfo", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
@@ -32,8 +32,8 @@ public class EmailController {
 
 		logger.debug("entered GET [email/listDestinatairesEmailInfo] => getListIdDestinatairesEmailInfo");
 
-		EmailInfoDto result = absenceService.getListIdDestinatairesEmailInfo();
-		
+		EmailInfoDto result = emailService.getListIdDestinatairesEmailInfo();
+
 		String json = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);

@@ -14,6 +14,7 @@ import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
+import nc.noumea.mairie.abs.service.ISuppressionService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 import nc.noumea.mairie.sirh.service.ISirhService;
@@ -45,6 +46,9 @@ public class DemandeController {
 
 	@Autowired
 	private IAbsenceService absenceService;
+
+	@Autowired
+	private ISuppressionService suppressionService;
 
 	@Autowired
 	private IAgentMatriculeConverterService converterService;
@@ -267,7 +271,7 @@ public class DemandeController {
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		ReturnMessageDto result = absenceService.supprimerDemande(convertedIdAgent, idDemande);
+		ReturnMessageDto result = suppressionService.supprimerDemande(convertedIdAgent, idDemande);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
@@ -286,7 +290,7 @@ public class DemandeController {
 				"entered POST [demandes/supprimerDemandeProvisoire] => supprimerAbsenceProvisoire for SIRH-JOBS with parameters idDemande = {}",
 				idDemande);
 
-		ReturnMessageDto result = absenceService.supprimerDemandeEtatProvisoire(idDemande);
+		ReturnMessageDto result = suppressionService.supprimerDemandeEtatProvisoire(idDemande);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
