@@ -28,7 +28,6 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
-import nc.noumea.mairie.abs.dto.EmailInfoDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -626,6 +625,7 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtat_setDemandeEtatVisa_badEtat() {
 
@@ -669,6 +669,7 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtat_setDemandeEtatVisa_ok() {
 
@@ -743,6 +744,7 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtat_setDemandeEtatApprouve_checkEtatDemandeAndChampMotif() {
 
@@ -798,6 +800,7 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtat_setDemandeEtatApprouve_majCompteurKo() {
 
@@ -866,6 +869,7 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtat_setDemandeEtatApprouve_ok() {
 
@@ -1028,6 +1032,7 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtat_setDemandeEtatAnnule_checkEtatDemande() {
 
@@ -1079,6 +1084,7 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtat_setDemandeEtatAnnule_majCompteurKo() {
 
@@ -1160,6 +1166,7 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtat_setDemandeEtatAnnule_ok() {
 

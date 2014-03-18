@@ -13,15 +13,12 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IFiltresService;
 import nc.noumea.mairie.domain.Spcarr;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FiltresService implements IFiltresService {
 
-	private Logger logger = LoggerFactory.getLogger(FiltresService.class);
 
 	@Autowired
 	private IDemandeRepository demandeRepository;

@@ -5,7 +5,6 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
-import nc.noumea.mairie.abs.dto.EmailInfoDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface IAbsenceService {

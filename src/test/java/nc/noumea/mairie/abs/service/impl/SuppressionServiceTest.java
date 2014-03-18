@@ -117,6 +117,7 @@ public class SuppressionServiceTest {
 		Mockito.verify(demandeRepository, Mockito.times(0)).removeEntity(Mockito.isA(Demande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void supprimerDemande_checkEtatDemande() {
 
@@ -193,6 +194,7 @@ public class SuppressionServiceTest {
 		Mockito.verify(demandeRepository, Mockito.times(0)).removeEntity(Mockito.isA(Demande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void supprimerDemande_ok_etatSaisie() {
 
@@ -274,6 +276,7 @@ public class SuppressionServiceTest {
 		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void supprimerDemande_ok_etatProvisoire() {
 
@@ -527,6 +530,7 @@ public class SuppressionServiceTest {
 		Mockito.verify(demandeRepository, Mockito.times(0)).removeEntity(Mockito.isA(Demande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void supprimerDemandeReposComp_checkEtatDemande() {
 
@@ -603,6 +607,7 @@ public class SuppressionServiceTest {
 		Mockito.verify(demandeRepository, Mockito.times(0)).removeEntity(Mockito.isA(Demande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void supprimerDemandeReposComp_ok_etatSaisie() {
 
@@ -683,6 +688,7 @@ public class SuppressionServiceTest {
 		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void supprimerDemandeReposComp_ok_etatProvisoire() {
 

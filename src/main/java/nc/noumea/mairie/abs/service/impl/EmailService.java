@@ -8,15 +8,11 @@ import nc.noumea.mairie.abs.dto.EmailInfoDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.IEmailService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService implements IEmailService {
-
-	private Logger logger = LoggerFactory.getLogger(EmailService.class);
 
 	@Autowired
 	private IDemandeRepository demandeRepository;
