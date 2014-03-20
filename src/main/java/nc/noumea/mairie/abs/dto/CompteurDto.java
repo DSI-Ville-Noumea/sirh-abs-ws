@@ -1,5 +1,7 @@
 package nc.noumea.mairie.abs.dto;
 
+import java.util.Date;
+
 public class CompteurDto {
 
 	private Integer idAgent;
@@ -11,6 +13,10 @@ public class CompteurDto {
 	private Integer idMotifCompteur;
 
 	private boolean isAnneePrecedente;
+
+	private Date dateDebut;
+
+	private Date dateFin;
 
 	public Integer getIdAgent() {
 		return idAgent;
@@ -50,6 +56,22 @@ public class CompteurDto {
 
 	public void setAnneePrecedente(boolean isAnneePrecedente) {
 		this.isAnneePrecedente = isAnneePrecedente;
+	}
+
+	public Date getDateDebut() {
+		return dateDebut;
+	}
+
+	public void setDateDebut(Date dateDebut) {
+		this.dateDebut = dateDebut;
+	}
+
+	public Date getDateFin() {
+		return dateFin;
+	}
+
+	public void setDateFin(Date dateFin) {
+		this.dateFin = dateFin;
 	}
 
 }

@@ -21,7 +21,7 @@ public class AgentAsaA48Count extends BaseAgentCount {
 	@Id
 	@Column(name = "ID_AGENT_ASA_A48_COUNT")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idAgentRecupCount;
+	private Integer idAgentAsaA48Count;
 
 	@NotNull
 	@Column(name = "TOTAL_JOURS")
@@ -34,14 +34,6 @@ public class AgentAsaA48Count extends BaseAgentCount {
 	@Column(name = "DATE_FIN")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
-
-	public Integer getIdAgentRecupCount() {
-		return idAgentRecupCount;
-	}
-
-	public void setIdAgentRecupCount(Integer idAgentRecupCount) {
-		this.idAgentRecupCount = idAgentRecupCount;
-	}
 
 	public int getTotalJours() {
 		return totalJours;
@@ -65,6 +57,14 @@ public class AgentAsaA48Count extends BaseAgentCount {
 
 	public void setDateFin(Date dateFin) {
 		this.dateFin = dateFin;
+	}
+
+	public Integer getIdAgentAsaA48Count() {
+		return idAgentAsaA48Count;
+	}
+
+	public void setIdAgentAsaA48Count(Integer idAgentAsaA48Count) {
+		this.idAgentAsaA48Count = idAgentAsaA48Count;
 	}
 
 }
