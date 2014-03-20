@@ -33,7 +33,7 @@ public class CounterServiceFactory {
 				return reposCompCounterServiceImpl;
 			case RECUP:
 				return recupCounterServiceImpl;
-			case ASA:
+			case ASA_A48:
 				// TODO
 				break;
 			case AUTRES:

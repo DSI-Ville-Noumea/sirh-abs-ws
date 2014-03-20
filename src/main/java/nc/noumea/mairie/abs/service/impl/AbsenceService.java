@@ -115,7 +115,7 @@ public class AbsenceService implements IAbsenceService {
 				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
 				rules = absRecupDataConsistencyRules;
 				break;
-			case ASA:
+			case ASA_A48:
 				// TODO
 				break;
 			case AUTRES:
@@ -206,7 +206,7 @@ public class AbsenceService implements IAbsenceService {
 				demandeDto = new DemandeDto(demandeRecup, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
 				break;
-			case ASA:
+			case ASA_A48:
 				// TODO
 				break;
 			case AUTRES:

@@ -100,7 +100,7 @@ public class SuppressionService implements ISuppressionService {
 				demande = getDemande(DemandeRecup.class, idDemande);
 				rules = absRecupDataConsistencyRules;
 				break;
-			case ASA:
+			case ASA_A48:
 				// TODO
 				break;
 			case AUTRES:

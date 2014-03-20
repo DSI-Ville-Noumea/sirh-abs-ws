@@ -27,7 +27,7 @@ public class FiltresServiceTest {
 	public void getRefTypesAbsence_noIdAgent() {
 
 		RefTypeAbsence ASA = new RefTypeAbsence();
-		ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA.getValue());
+		ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		RefTypeAbsence AUTRES = new RefTypeAbsence();
 		AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
 		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
@@ -57,7 +57,7 @@ public class FiltresServiceTest {
 	public void getRefTypesAbsence_Fonctionnaire() {
 
 		RefTypeAbsence ASA = new RefTypeAbsence();
-		ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA.getValue());
+		ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		RefTypeAbsence AUTRES = new RefTypeAbsence();
 		AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
 		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
@@ -98,7 +98,7 @@ public class FiltresServiceTest {
 	public void getRefTypesAbsence_CC() {
 
 		RefTypeAbsence ASA = new RefTypeAbsence();
-		ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA.getValue());
+		ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		RefTypeAbsence AUTRES = new RefTypeAbsence();
 		AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
 		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
@@ -139,7 +139,7 @@ public class FiltresServiceTest {
 	public void getRefTypesAbsence_C() {
 
 		RefTypeAbsence ASA = new RefTypeAbsence();
-		ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA.getValue());
+		ASA.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		RefTypeAbsence AUTRES = new RefTypeAbsence();
 		AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
 		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();

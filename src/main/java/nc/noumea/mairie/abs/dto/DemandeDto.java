@@ -102,7 +102,7 @@ public class DemandeDto {
 			case RECUP:
 				this.duree = ((DemandeRecup) d).getDuree();
 				break;
-			case ASA:
+			case ASA_A48:
 				// TODO
 				break;
 			case AUTRES:
