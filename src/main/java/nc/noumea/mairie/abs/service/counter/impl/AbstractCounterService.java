@@ -34,7 +34,7 @@ public abstract class AbstractCounterService implements ICounterService {
 
 	@Autowired
 	protected ISirhWSConsumer sirhWSConsumer;
-	
+
 	@Autowired
 	protected ICounterRepository counterRepository;
 
@@ -53,12 +53,12 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected static final String DUREE_A_SAISIR = "La durée à ajouter ou retrancher n'est pas saisie.";
 	protected static final String ERREUR_DUREE_SAISIE = "Un seul des champs Durée à ajouter ou Durée à retrancher doit être saisi.";
 	protected static final String COMPTEUR_INEXISTANT = "Le compteur n'existe pas.";
-	
+
 	protected static final String RESET_COMPTEUR_ANNEE_PRECEDENTE = "Remise à 0 du compteur Année précédente";
 	protected static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur Année en cours";
-	
+
 	protected static final String ERROR_TECHNIQUE = "Erreur technique : ICounterService défaut d'implémentation";
-	
+
 	/**
 	 * Mets à jour le compteur de minutes désiré (en fonction des types passés
 	 * en paramètre)
@@ -119,8 +119,9 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	/**
-	 * appeler par PTG exclusivement
-	 * l historique utilise a pour seul but de rectifier le compteur en cas de modification par l agent dans ses pointages
+	 * appeler par PTG exclusivement l historique utilise a pour seul but de
+	 * rectifier le compteur en cas de modification par l agent dans ses
+	 * pointages
 	 */
 	@Override
 	public abstract int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes);
@@ -132,13 +133,14 @@ public abstract class AbstractCounterService implements ICounterService {
 	 * @param T1
 	 *            inherits BaseAgentCount
 	 * @param idAgent
-	 * @param minutes : negatif pour debiter, positif pour crediter
+	 * @param minutes
+	 *            : negatif pour debiter, positif pour crediter
 	 * @return
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Class<T1> T1, Integer idAgent, Integer minutes, ReturnMessageDto srm) 
-			throws InstantiationException, IllegalAccessException {
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Class<T1> T1, Integer idAgent, Integer minutes,
+			ReturnMessageDto srm) throws InstantiationException, IllegalAccessException {
 
 		if (sirhRepository.getAgent(idAgent) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
@@ -146,22 +148,22 @@ public abstract class AbstractCounterService implements ICounterService {
 		}
 
 		logger.info("updating counters for Agent [{}] with {} minutes...", idAgent, minutes);
-		
+
 		BaseAgentCount arc = (BaseAgentCount) counterRepository.getAgentCounter(T1, idAgent);
-		
+
 		if (arc == null) {
 			arc = (BaseAgentCount) T1.newInstance();
 			arc.setIdAgent(idAgent);
 		}
-		
-		// on verifie que le solde est positif seulement si on debite le compteur
-		if(0 > minutes
-				&& 0 > arc.getTotalMinutes() + minutes) {
+
+		// on verifie que le solde est positif seulement si on debite le
+		// compteur
+		if (0 > minutes && 0 > arc.getTotalMinutes() + minutes) {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF);
 			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
 			return srm;
 		}
-		
+
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
 		arc.setLastModification(helperService.getCurrentDate());
 
@@ -169,95 +171,103 @@ public abstract class AbstractCounterService implements ICounterService {
 
 		return srm;
 	}
-	
+
 	/**
-	 * appeler depuis ABSENCE
-	 * l historique ABS_AGENT_WEEK_... n est pas utilise
+	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
 	public abstract ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Integer minutes);
-	
+
 	/**
-	 * appeler depuis Kiosque ou SIRH
-	 * l historique ABS_AGENT_WEEK_ALIM_MANUELLE mise a jour
+	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
+	 * mise a jour
 	 */
 	@Override
 	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto) {
-		
+
 		logger.info("Trying to update manually counters for Agent {} ...", compteurDto.getIdAgent());
-		
+
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		// seul l operateur peut mettre a jour les compteurs de ses agents
-		if(!accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())){
+		if (!accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())) {
 			// tester si agent est un utilisateur SIRH
 			ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
-			if(!isUtilisateurSIRH.getErrors().isEmpty()) {
+			if (!isUtilisateurSIRH.getErrors().isEmpty()) {
 				logger.warn(OPERATEUR_INEXISTANT);
 				result.getErrors().add(String.format(OPERATEUR_INEXISTANT));
 				return result;
 			}
 		}
-		
+
 		controlSaisieAlimManuelleCompteur(compteurDto, result);
-		
+
 		return result;
 	}
-	
-	
+
 	/**
 	 * Mise à jour manuelle du compteur de récup
 	 * 
 	 * @param T1
 	 *            inherits BaseAgentCount
 	 * @param idAgent
-	 * @param minutes : negatif pour debiter, positif pour crediter
+	 * @param minutes
+	 *            : negatif pour debiter, positif pour crediter
 	 * @return
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(
-			Class<T1> T1, Integer idAgentOperateur, Integer idAgent, Integer minutes, Integer minutesAnneeN1, Integer idMotifCompteur, Integer idRefTypeAbsence, ReturnMessageDto srm) 
+	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Class<T1> T1, Integer idAgentOperateur,
+			CompteurDto compteurDto, Integer minutes, Integer idRefTypeAbsence, ReturnMessageDto srm)
 			throws InstantiationException, IllegalAccessException {
 
-		if (sirhRepository.getAgent(idAgent) == null) {
-			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} minutes...", idAgent, minutes);
-		
-		BaseAgentCount arc = (BaseAgentCount) counterRepository.getAgentCounter(T1, idAgent);
-		
+		logger.info("updating counters for Agent [{}] with {} minutes...", compteurDto.getIdAgent(), minutes);
+
+		BaseAgentCount arc = (BaseAgentCount) counterRepository.getAgentCounter(T1, compteurDto.getIdAgent());
+
 		if (arc == null) {
 			arc = (BaseAgentCount) T1.newInstance();
-			arc.setIdAgent(idAgent);
+			arc.setIdAgent(compteurDto.getIdAgent());
 		}
-		
-		// on verifie que le solde est positif seulement si on debite le compteur
+
+		// on verifie que le solde est positif seulement si on debite le
+		// compteur
 		controlCompteurPositif(minutes, arc.getTotalMinutes(), srm);
-		if(!srm.getErrors().isEmpty()) {
+		if (!srm.getErrors().isEmpty()) {
 			return srm;
 		}
-		
-		MotifCompteur motifCompteur = counterRepository.getEntity(MotifCompteur.class, idMotifCompteur);
-		if(null == motifCompteur) {
+
+		MotifCompteur motifCompteur = counterRepository
+				.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur());
+		if (null == motifCompteur) {
 			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
 			srm.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
 			return srm;
 		}
-		
+
 		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
-			histo.setIdAgent(idAgentOperateur);
-			histo.setMinutes(minutes);
-			histo.setMinutesAnneeN1(minutesAnneeN1);
-			histo.setDateModification(helperService.getCurrentDate());
-			histo.setMotifCompteur(motifCompteur);
-		
+		histo.setIdAgent(idAgentOperateur);
+		histo.setIdAgentConcerne(compteurDto.getIdAgent());
+		histo.setDateModification(helperService.getCurrentDate());
+		histo.setMotifCompteur(motifCompteur);
+		String textLog = "";
+		if (null != compteurDto.getDureeAAjouter()) {
+			textLog = "Ajout de " + minutes + " minutes.";
+		}
+		if (null != compteurDto.getDureeARetrancher()) {
+			textLog = "Retrait de " + minutes + " minutes.";
+		}
+		histo.setText(textLog);
+
 		RefTypeAbsence rta = new RefTypeAbsence();
-			rta.setIdRefTypeAbsence(idRefTypeAbsence);
-			histo.setType(rta);
-				
+		rta.setIdRefTypeAbsence(idRefTypeAbsence);
+		histo.setType(rta);
+
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
 		arc.setLastModification(helperService.getCurrentDate());
 
@@ -266,56 +276,55 @@ public abstract class AbstractCounterService implements ICounterService {
 
 		return srm;
 	}
-	
+
 	public void controlSaisieAlimManuelleCompteur(CompteurDto compteurDto, ReturnMessageDto result) {
-		
-		if(null == compteurDto.getDureeAAjouter() && null == compteurDto.getDureeARetrancher()) {
+
+		if (null == compteurDto.getDureeAAjouter() && null == compteurDto.getDureeARetrancher()) {
 			logger.debug(DUREE_A_SAISIR);
 			result.getErrors().add(String.format(DUREE_A_SAISIR));
 		}
-		
-		if(null != compteurDto.getDureeAAjouter() && null != compteurDto.getDureeARetrancher()) {
+
+		if (null != compteurDto.getDureeAAjouter() && null != compteurDto.getDureeARetrancher()) {
 			logger.debug(ERREUR_DUREE_SAISIE);
 			result.getErrors().add(String.format(ERREUR_DUREE_SAISIE));
 		}
 	}
-	
+
 	protected void controlCompteurPositif(Integer minutes, Integer totalMinutes, ReturnMessageDto srm) {
-		if(null != minutes
-				&& 0 > totalMinutes + minutes) {
+		if (null != minutes && 0 > totalMinutes + minutes) {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF);
 			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
 		}
 	}
-	
+
 	@Override
 	public ReturnMessageDto resetCompteurRCAnneePrecedente(Integer idAgentReposCompCount) {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
-			srm.getErrors().add(String.format(ERROR_TECHNIQUE));
-		
+		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
+
 		return srm;
 	}
-	
+
 	@Override
 	public ReturnMessageDto resetCompteurRCAnneenCours(Integer idAgentReposCompCount) {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
-			srm.getErrors().add(String.format(ERROR_TECHNIQUE));
-		
+		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
+
 		return srm;
 	}
-	
+
 	@Override
 	public List<Integer> getListAgentReposCompCountForResetAnneePrcd() {
-		return new  ArrayList<Integer>();
+		return new ArrayList<Integer>();
 	}
-	
+
 	@Override
 	public List<Integer> getListAgentReposCompCountForResetAnneeEnCours() {
-		return new  ArrayList<Integer>();
+		return new ArrayList<Integer>();
 	}
-	
+
 	@Override
 	public int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		int minutes = 0;

@@ -34,26 +34,26 @@ public class AgentHistoAlimManuelle {
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
-	
-	@Column(name = "MINUTES")
-	private Integer minutes;
-	
-	@Column(name = "MINUTES_ANNEE_N1")
-	private Integer minutesAnneeN1;
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "ID_MOTIF_COMPTEUR", referencedColumnName = "ID_MOTIF_COMPTEUR")
 	private MotifCompteur motifCompteur;
-	
+
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_TYPE_DEMANDE")
 	private RefTypeAbsence type;
-	
+
 	@Column(name = "MOTIF_TECHNIQUE")
 	private String motifTechnique;
-	
+
+	@Column(name = "ID_AGENT_CONCERNE")
+	private Integer idAgentConcerne;
+
+	@Column(name = "TEXT", columnDefinition = "text")
+	private String text;
+
 	@Version
-    @Column(name = "version")
+	@Column(name = "version")
 	private Integer version;
 
 	public Integer getIdAgentHistoAlimManuelle() {
@@ -80,14 +80,6 @@ public class AgentHistoAlimManuelle {
 		this.dateModification = dateModification;
 	}
 
-	public Integer getMinutes() {
-		return minutes;
-	}
-
-	public void setMinutes(Integer minutes) {
-		this.minutes = minutes;
-	}
-
 	public MotifCompteur getMotifCompteur() {
 		return motifCompteur;
 	}
@@ -102,14 +94,6 @@ public class AgentHistoAlimManuelle {
 
 	public void setVersion(Integer version) {
 		this.version = version;
-	}
-
-	public Integer getMinutesAnneeN1() {
-		return minutesAnneeN1;
-	}
-
-	public void setMinutesAnneeN1(Integer minutesAnneeN1) {
-		this.minutesAnneeN1 = minutesAnneeN1;
 	}
 
 	public RefTypeAbsence getType() {
@@ -127,6 +111,21 @@ public class AgentHistoAlimManuelle {
 	public void setMotifTechnique(String motifTechnique) {
 		this.motifTechnique = motifTechnique;
 	}
-	
-	
+
+	public Integer getIdAgentConcerne() {
+		return idAgentConcerne;
+	}
+
+	public void setIdAgentConcerne(Integer idAgentConcerne) {
+		this.idAgentConcerne = idAgentConcerne;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
 }
