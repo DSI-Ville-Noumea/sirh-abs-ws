@@ -15,33 +15,21 @@ public abstract class BaseAgentCount {
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
-	
-	@NotNull
-	@Column(name = "TOTAL_MINUTES")
-	private int totalMinutes;
-	
+
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastModification;
-	
+
 	@Version
-    @Column(name = "version")
+	@Column(name = "version")
 	private Integer version;
-	
+
 	public Integer getIdAgent() {
 		return idAgent;
 	}
 
 	public void setIdAgent(Integer idAgent) {
 		this.idAgent = idAgent;
-	}
-
-	public int getTotalMinutes() {
-		return totalMinutes;
-	}
-
-	public void setTotalMinutes(int totalMinutes) {
-		this.totalMinutes = totalMinutes;
 	}
 
 	public Date getLastModification() {
@@ -53,11 +41,11 @@ public abstract class BaseAgentCount {
 	}
 
 	public Integer getVersion() {
-	    return this.version;
+		return this.version;
 	}
-	   
+
 	public void setVersion(Integer version) {
-	    this.version = version;
+		this.version = version;
 	}
-	
+
 }

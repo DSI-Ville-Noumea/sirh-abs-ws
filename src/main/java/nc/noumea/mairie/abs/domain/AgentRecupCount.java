@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ABS_AGENT_RECUP_COUNT")
@@ -17,6 +18,10 @@ public class AgentRecupCount extends BaseAgentCount {
 	@Column(name = "ID_AGENT_RECUP_COUNT")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idAgentRecupCount;
+	
+	@NotNull
+	@Column(name = "TOTAL_MINUTES")
+	private int totalMinutes;
 
 	public Integer getIdAgentRecupCount() {
 		return idAgentRecupCount;
@@ -24,6 +29,14 @@ public class AgentRecupCount extends BaseAgentCount {
 
 	public void setIdAgentRecupCount(Integer idAgentRecupCount) {
 		this.idAgentRecupCount = idAgentRecupCount;
+	}
+
+	public int getTotalMinutes() {
+		return totalMinutes;
+	}
+
+	public void setTotalMinutes(int totalMinutes) {
+		this.totalMinutes = totalMinutes;
 	}
 
 }

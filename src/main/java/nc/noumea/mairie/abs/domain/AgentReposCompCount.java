@@ -20,6 +20,10 @@ public class AgentReposCompCount extends BaseAgentCount {
 	private Integer idAgentReposCompCount;
 
 	@NotNull
+	@Column(name = "TOTAL_MINUTES")
+	private int totalMinutes;
+
+	@NotNull
 	@Column(name = "TOTAL_MINUTES_ANNEE_N1")
 	private int totalMinutesAnneeN1;
 
@@ -37,6 +41,14 @@ public class AgentReposCompCount extends BaseAgentCount {
 
 	public void setTotalMinutesAnneeN1(int totalMinutesAnneeN1) {
 		this.totalMinutesAnneeN1 = totalMinutesAnneeN1;
+	}
+
+	public int getTotalMinutes() {
+		return totalMinutes;
+	}
+
+	public void setTotalMinutes(int totalMinutes) {
+		this.totalMinutes = totalMinutes;
 	}
 
 }
