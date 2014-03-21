@@ -18,12 +18,14 @@ public class RefTypeAbsenceDtoTest {
 		RefTypeAbsence ref = new RefTypeAbsence();
 		ref.setIdRefTypeAbsence(12);
 		ref.setLabel("test lib");
+		ref.setGroupe("grup");
 
 		// When
 		RefTypeAbsenceDto result = new RefTypeAbsenceDto(ref);
 
 		// Then
 		assertEquals(ref.getLabel(), result.getLibelle());
+		assertEquals(ref.getGroupe(), result.getGroupe());
 		assertEquals(ref.getIdRefTypeAbsence(), result.getIdRefTypeAbsence());
 	}
 }

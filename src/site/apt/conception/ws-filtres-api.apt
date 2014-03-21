@@ -22,15 +22,17 @@ SIRH-ABS-WS API et définition des services concernant les récupérations des a
  <<Content>>
  
 +-------------------------+
-[
-	{
-		"idRefType" : 1,
-		"libelle" : "Congé annuel"
-	},
-	{
-		"idRefType" : 2,
-		"libelle" : "Repos compensateur"
-	}
+[    
+   {
+       "groupe": null,
+       "idRefTypeAbsence": 6,
+       "libelle": "Maladies"
+   },
+   {
+       "groupe": "ASA",
+       "idRefTypeAbsence": 7,
+       "libelle": "Réunion des membres du bureau directeur(ASA)"
+   }....
 ]
 +-------------------------+
 

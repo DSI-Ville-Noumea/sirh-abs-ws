@@ -18,6 +18,9 @@ public class RefTypeAbsence {
 	@Column(name = "LABEL", columnDefinition = "NVARCHAR2")
 	private String label;
 
+	@Column(name = "GROUPE", columnDefinition = "NVARCHAR2")
+	private String groupe;
+
 	public Integer getIdRefTypeAbsence() {
 		return idRefTypeAbsence;
 	}
@@ -32,6 +35,14 @@ public class RefTypeAbsence {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public String getGroupe() {
+		return groupe;
+	}
+
+	public void setGroupe(String groupe) {
+		this.groupe = groupe;
 	}
 	
 }
