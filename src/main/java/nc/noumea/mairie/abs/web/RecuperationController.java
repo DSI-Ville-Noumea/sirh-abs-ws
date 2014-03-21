@@ -6,6 +6,7 @@ import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ICounterService;
+import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,19 +53,22 @@ public class RecuperationController {
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/addManual", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> addRecuperationManuelForAgent(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String compteurDto) {
 
-		logger.debug("entered POST [recuperations/addManual] => addRecuperationManuelForAgent with parameters idAgent = {}", idAgent);
-		
-		CompteurDto dto = new JSONDeserializer<CompteurDto>().deserializeInto(compteurDto, new CompteurDto());
+		logger.debug(
+				"entered POST [recuperations/addManual] => addRecuperationManuelForAgent with parameters idAgent = {}",
+				idAgent);
+
+		CompteurDto dto = new JSONDeserializer<CompteurDto>().use(Date.class, new MSDateTransformer()).deserializeInto(
+				compteurDto, new CompteurDto());
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
+
 		ReturnMessageDto srm = counterService.majManuelleCompteurToAgent(convertedIdAgent, dto);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);

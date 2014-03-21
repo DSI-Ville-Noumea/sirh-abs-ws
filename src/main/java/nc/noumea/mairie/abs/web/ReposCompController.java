@@ -7,6 +7,7 @@ import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ICounterService;
+import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,6 @@ public class ReposCompController {
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
 
 	@ResponseBody
 	@RequestMapping(value = "/addManual", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
@@ -61,12 +61,15 @@ public class ReposCompController {
 	public ResponseEntity<String> addRecuperationManuelForAgent(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String compteurDto) {
 
-		logger.debug("entered POST [reposcomps/addManual] => addRecuperationManuelForAgent with parameters idAgent = {}", idAgent);
-		
-		CompteurDto dto = new JSONDeserializer<CompteurDto>().deserializeInto(compteurDto, new CompteurDto());
+		logger.debug(
+				"entered POST [reposcomps/addManual] => addRecuperationManuelForAgent with parameters idAgent = {}",
+				idAgent);
+
+		CompteurDto dto = new JSONDeserializer<CompteurDto>().use(Date.class, new MSDateTransformer()).deserializeInto(
+				compteurDto, new CompteurDto());
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
+
 		ReturnMessageDto srm = counterService.majManuelleCompteurToAgent(convertedIdAgent, dto);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
@@ -77,14 +80,17 @@ public class ReposCompController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/resetCompteurAnneePrecedente", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> resetCompteurAnneePrecedente(@RequestParam("idAgentReposCompCount") int idAgentReposCompCount) {
+	public ResponseEntity<String> resetCompteurAnneePrecedente(
+			@RequestParam("idAgentReposCompCount") int idAgentReposCompCount) {
 
-		logger.debug("entered POST [reposcomps/resetCompteurAnneePrecedente] => resetCompteurAnneePrecedente with parameters idAgentReposCompCount = {}", idAgentReposCompCount);
-		
+		logger.debug(
+				"entered POST [reposcomps/resetCompteurAnneePrecedente] => resetCompteurAnneePrecedente with parameters idAgentReposCompCount = {}",
+				idAgentReposCompCount);
+
 		ReturnMessageDto srm = counterService.resetCompteurRCAnneePrecedente(idAgentReposCompCount);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
@@ -95,14 +101,17 @@ public class ReposCompController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/resetCompteurAnneenCours", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> resetCompteurRCAnneenCours(@RequestParam("idAgentReposCompCount") int idAgentReposCompCount) {
+	public ResponseEntity<String> resetCompteurRCAnneenCours(
+			@RequestParam("idAgentReposCompCount") int idAgentReposCompCount) {
 
-		logger.debug("entered POST [reposcomps/resetCompteurRCAnneenCours] => resetCompteurRCAnneenCours with parameters idAgentReposCompCount = {}", idAgentReposCompCount);
-		
+		logger.debug(
+				"entered POST [reposcomps/resetCompteurRCAnneenCours] => resetCompteurRCAnneenCours with parameters idAgentReposCompCount = {}",
+				idAgentReposCompCount);
+
 		ReturnMessageDto srm = counterService.resetCompteurRCAnneenCours(idAgentReposCompCount);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
@@ -113,7 +122,7 @@ public class ReposCompController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/getListeCompteurAnneePrecedente", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
@@ -127,7 +136,7 @@ public class ReposCompController {
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/getListeCompteurAnneeEnCours", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)

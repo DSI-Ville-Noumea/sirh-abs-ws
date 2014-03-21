@@ -1,9 +1,12 @@
 package nc.noumea.mairie.abs.web;
 
+import java.util.Date;
+
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ICounterService;
+import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +46,8 @@ public class AsaA48Controller {
 
 		logger.debug("entered POST [asaA48/addManual] => addAsaA48ManuelForAgent with parameters idAgent = {}", idAgent);
 
-		CompteurDto dto = new JSONDeserializer<CompteurDto>().deserializeInto(compteurDto, new CompteurDto());
+		CompteurDto dto = new JSONDeserializer<CompteurDto>().use(Date.class, new MSDateTransformer()).deserializeInto(
+				compteurDto, new CompteurDto());
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 

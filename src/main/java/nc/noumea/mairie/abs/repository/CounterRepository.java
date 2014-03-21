@@ -19,11 +19,11 @@ import org.springframework.stereotype.Repository;
 public class CounterRepository implements ICounterRepository {
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
-    private EntityManager absEntityManager;
-	
+	private EntityManager absEntityManager;
+
 	@Override
 	public <T> T getAgentCounter(Class<T> T, Integer idAgent) {
-		
+
 		// Build query criteria
 		CriteriaBuilder cb = absEntityManager.getCriteriaBuilder();
 		CriteriaQuery<T> cq = cb.createQuery(T);
@@ -31,7 +31,7 @@ public class CounterRepository implements ICounterRepository {
 		cq.select(c);
 		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idAgent");
 		cq.where(cb.equal(c.get("idAgent"), p));
-		
+
 		// Build query
 		TypedQuery<T> q = absEntityManager.createQuery(cq);
 		q.setParameter("idAgent", idAgent);
@@ -39,7 +39,7 @@ public class CounterRepository implements ICounterRepository {
 
 		// Exec query
 		List<T> r = q.getResultList();
-		
+
 		return (r.size() == 1 ? r.get(0) : null);
 	}
 
@@ -54,56 +54,82 @@ public class CounterRepository implements ICounterRepository {
 		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idAgent");
 		ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateMonday");
 		cq.where(cb.and(cb.equal(c.get("idAgent"), p), cb.equal(c.get("dateMonday"), p2)));
-		
+
 		// Build query
 		TypedQuery<T> q = absEntityManager.createQuery(cq);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateMonday", dateMonday);
 		q.setMaxResults(1);
-		
+
 		// Exec query
 		List<T> r = q.getResultList();
-		
+
 		return (r.size() == 1 ? r.get(0) : null);
 	}
-	
+
 	@Override
 	public void persistEntity(Object entity) {
 		absEntityManager.persist(entity);
 	}
-	
+
 	@Override
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
 		return absEntityManager.find(Tclass, Id);
 	}
-	
+
 	@Override
 	public AgentReposCompCount getAgentReposCompCountByIdCounter(Integer IdCounter) {
 		return absEntityManager.find(AgentReposCompCount.class, IdCounter);
 	}
-	
+
 	@Override
 	public List<Integer> getListAgentReposCompCountForResetAnneePrcd() {
 
 		StringBuilder sb = new StringBuilder();
-			sb.append("select c.idAgentReposCompCount from AgentReposCompCount c ");
-			sb.append("where c.totalMinutesAnneeN1 <> 0 ");
+		sb.append("select c.idAgentReposCompCount from AgentReposCompCount c ");
+		sb.append("where c.totalMinutesAnneeN1 <> 0 ");
 
 		TypedQuery<Integer> query = absEntityManager.createQuery(sb.toString(), Integer.class);
 
 		return query.getResultList();
 	}
-	
+
 	@Override
 	public List<Integer> getListAgentReposCompCountForResetAnneeEnCours() {
-		
+
 		StringBuilder sb = new StringBuilder();
-			sb.append("select c.idAgentReposCompCount from AgentReposCompCount c ");
-			sb.append("where c.totalMinutes <> 0 ");
+		sb.append("select c.idAgentReposCompCount from AgentReposCompCount c ");
+		sb.append("where c.totalMinutes <> 0 ");
 
 		TypedQuery<Integer> query = absEntityManager.createQuery(sb.toString(), Integer.class);
 
 		return query.getResultList();
 	}
-	
+
+	@Override
+	public <T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date dateDebut, Date dateFin) {
+
+		// Build query criteria
+		CriteriaBuilder cb = absEntityManager.getCriteriaBuilder();
+		CriteriaQuery<T> cq = cb.createQuery(T);
+		Root<T> c = cq.from(T);
+		cq.select(c);
+		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idAgent");
+		ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateDebut");
+		ParameterExpression<Date> p3 = cb.parameter(Date.class, "dateFin");
+		cq.where(cb.and(cb.equal(c.get("idAgent"), p), cb.equal(c.get("dateDebut"), p2), cb.equal(c.get("dateFin"), p3)));
+
+		// Build query
+		TypedQuery<T> q = absEntityManager.createQuery(cq);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateDebut", dateDebut);
+		q.setParameter("dateFin", dateFin);
+		q.setMaxResults(1);
+
+		// Exec query
+		List<T> r = q.getResultList();
+
+		return (r.size() == 1 ? r.get(0) : null);
+	}
+
 }

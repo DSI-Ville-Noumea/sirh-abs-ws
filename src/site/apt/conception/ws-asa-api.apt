@@ -1,0 +1,41 @@
+            ------
+            SIRH-ABS-WS API WS doc
+            ------
+
+
+
+SIRH-ABS-WS API et définition des services concernant les ASA des agents
+
+* Mise à jour des récupérations d'un agent /!\ APPELE PAR SIRH et KIOSQUE /!\
+
+ <<PROJET>> : SIRH-ABS-WS
+ 
+ <<URL>> : /asaA48/addManual
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : Le matricule de l'agent connecte
+  
+ <<Content>> 
+ 
++-------------------------+
+{
+	"idAgent": 9005131,
+    "dureeAAjouter": 15, (un seul des deux champs "dureeAAjouter" et "dureeARetrancher" doit être obligatoirement renseigné)
+	"dureeARetrancher": NULL, (pour ce compteur, on ne retranche jamais)
+	"idMotifCompteur": 1,
+	"anneePrecedente": false,
+	"dateDebut": "/Date(1388494800000+1100)/",
+	"dateFin": "/Date(1419944400000+1100)/"
+}
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas ou si la date ne correspond pas à un lundi)
+HTTP Code 409 : CONFLICT (ex : si l'agent n'est pas opérateur de l'agent saisi)
++-------------------------+

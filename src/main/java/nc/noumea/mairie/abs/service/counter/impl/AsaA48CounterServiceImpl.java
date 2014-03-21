@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
@@ -72,11 +73,15 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} nbJours for Year {}...", compteurDto.getIdAgent(),
-				nbJours, compteurDto.getDateDebut().getYear());
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(compteurDto.getDateDebut());
+		int annee = cal.get(Calendar.YEAR);
 
-		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounter(AgentAsaA48Count.class,
-				compteurDto.getIdAgent());
+		logger.info("updating counters for Agent [{}] with {} nbJours for Year {}...", compteurDto.getIdAgent(),
+				nbJours, annee);
+
+		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounterByDate(AgentAsaA48Count.class,
+				compteurDto.getIdAgent(), compteurDto.getDateDebut(), compteurDto.getDateFin());
 
 		if (arc == null) {
 			arc = new AgentAsaA48Count();
@@ -102,7 +107,7 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 		histo.setMotifCompteur(motifCompteur);
 		String textLog = "";
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Mise en place de " + nbJours + " jours pour l'année " + compteurDto.getDateDebut().getYear();
+			textLog = "Mise en place de " + nbJours + " jours pour l'année " + annee+".";
 		}
 		histo.setText(textLog);
 
