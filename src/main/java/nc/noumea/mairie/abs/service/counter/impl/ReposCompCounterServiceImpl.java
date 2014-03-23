@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -444,5 +445,10 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		counterRepository.persistEntity(demande);
 
 		return srm;
+	}
+
+	@Override
+	public List<CompteurAsaDto> getListeCompteur() {
+		return null;
 	}
 }

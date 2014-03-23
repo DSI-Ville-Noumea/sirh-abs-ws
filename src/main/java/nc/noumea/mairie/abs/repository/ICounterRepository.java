@@ -22,4 +22,6 @@ public interface ICounterRepository {
 	List<Integer> getListAgentReposCompCountForResetAnneePrcd();
 
 	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
+
+	<T> List<T> getListCounter(Class<T> T);
 }

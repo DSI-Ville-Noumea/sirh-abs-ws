@@ -203,7 +203,7 @@ public class CounterRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getAgentAsaA48Count_NoAgent_ReturnNull() {
+	public void getAgentCounterByDate_NoAgent_ReturnNull() {
 
 		// Given
 		AgentAsaA48Count record = new AgentAsaA48Count();
@@ -223,7 +223,7 @@ public class CounterRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getAgentAsaA48Count_1Agent_ReturnRecord() {
+	public void getAgentCounterByDate_1Agent_ReturnRecord() {
 
 		// Given
 		AgentAsaA48Count record = new AgentAsaA48Count();
@@ -240,5 +240,46 @@ public class CounterRepositoryTest {
 		// Then
 		assertNotNull(result);
 		assertEquals(result, record);
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListCounter_ReturnEmptyList() {
+
+		// When
+		List<AgentAsaA48Count> result = repository.getListCounter(AgentAsaA48Count.class);
+
+		// Then
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListCounter_ReturnListCompteur() {
+
+		// Given
+		AgentAsaA48Count record = new AgentAsaA48Count();
+		record.setIdAgent(9001767);
+		record.setTotalJours(7);
+		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		record.setDateFin(new DateTime(2014, 12, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record);
+		AgentAsaA48Count record2 = new AgentAsaA48Count();
+		record2.setIdAgent(9005138);
+		record2.setTotalJours(10);
+		record2.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		record2.setDateFin(new DateTime(2014, 12, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record2);
+
+		// When
+		List<AgentAsaA48Count> result = repository.getListCounter(AgentAsaA48Count.class);
+
+		// Then
+		assertNotNull(result);
+		assertEquals(2, result.size());
+		assertEquals(record.getTotalJours(), result.get(0).getTotalJours());
+		assertEquals(record.getIdAgent(), result.get(0).getIdAgent());
+		assertEquals(record2.getTotalJours(), result.get(1).getTotalJours());
+		assertEquals(record2.getIdAgent(), result.get(1).getIdAgent());
 	}
 }

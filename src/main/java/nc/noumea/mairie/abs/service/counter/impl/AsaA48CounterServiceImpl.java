@@ -1,7 +1,9 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
@@ -9,6 +11,7 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
@@ -107,7 +110,7 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 		histo.setMotifCompteur(motifCompteur);
 		String textLog = "";
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Mise en place de " + nbJours + " jours pour l'année " + annee+".";
+			textLog = "Mise en place de " + nbJours + " jours pour l'année " + annee + ".";
 		}
 		histo.setText(textLog);
 
@@ -138,4 +141,15 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 		return null;
 	}
 
+	@Override
+	public List<CompteurAsaDto> getListeCompteur() {
+		List<CompteurAsaDto> result = new ArrayList<>();
+
+		List<AgentAsaA48Count> listeArc = counterRepository.getListCounter(AgentAsaA48Count.class);
+		for (AgentAsaA48Count arc : listeArc) {
+			CompteurAsaDto dto = new CompteurAsaDto(arc);
+			result.add(dto);
+		}
+		return result;
+	}
 }

@@ -132,4 +132,23 @@ public class CounterRepository implements ICounterRepository {
 		return (r.size() == 1 ? r.get(0) : null);
 	}
 
+	@Override
+	public <T> List<T> getListCounter(Class<T> T) {
+
+		// Build query criteria
+		CriteriaBuilder cb = absEntityManager.getCriteriaBuilder();
+		CriteriaQuery<T> cq = cb.createQuery(T);
+		Root<T> c = cq.from(T);
+		cq.select(c);
+		cq.orderBy(cb.asc(c.get("idAgent")));
+
+		// Build query
+		TypedQuery<T> q = absEntityManager.createQuery(cq);
+
+		// Exec query
+		List<T> r = q.getResultList();
+
+		return r;
+	}
+
 }

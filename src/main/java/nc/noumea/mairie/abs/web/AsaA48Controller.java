@@ -1,7 +1,9 @@
 package nc.noumea.mairie.abs.web;
 
 import java.util.Date;
+import java.util.List;
 
+import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -60,5 +62,22 @@ public class AsaA48Controller {
 		} else {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/listeCompteurA48", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getListeCompteur() {
+
+		logger.debug("entered GET [asaA48/listeCompteurA48] => getListeCompteur ");
+
+		List<CompteurAsaDto> result = counterService.getListeCompteur();
+
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
+				.deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 }
