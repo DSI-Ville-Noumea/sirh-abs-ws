@@ -140,7 +140,7 @@ public class CounterRepository implements ICounterRepository {
 		CriteriaQuery<T> cq = cb.createQuery(T);
 		Root<T> c = cq.from(T);
 		cq.select(c);
-		cq.orderBy(cb.asc(c.get("idAgent")));
+		cq.orderBy(cb.asc(c.get("idAgent")), cb.desc(c.get("dateDebut")));
 
 		// Build query
 		TypedQuery<T> q = absEntityManager.createQuery(cq);
