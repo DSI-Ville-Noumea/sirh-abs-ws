@@ -3,11 +3,14 @@ package nc.noumea.mairie.abs.service.counter.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
+import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -235,6 +238,50 @@ public class AsaA48CounterServiceImplTest {
 
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentAsaA48Count.class));
+	}
+
+	@Test
+	public void getListeCompteur_noResult() {
+
+		List<CompteurAsaDto> result = new ArrayList<CompteurAsaDto>();
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getListCounter(AgentAsaA48Count.class)).thenReturn(
+				new ArrayList<AgentAsaA48Count>());
+
+		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+
+		result = service.getListeCompteur();
+
+		assertEquals(0, result.size());
+
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA48Count.class));
+	}
+
+	@Test
+	public void getListeCompteur_1Result() {
+
+		List<CompteurAsaDto> result = new ArrayList<CompteurAsaDto>();
+		AgentAsaA48Count e = new AgentAsaA48Count();
+		e.setTotalJours(12);
+		List<AgentAsaA48Count> list = new ArrayList<AgentAsaA48Count>();
+		list.add(e);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getListCounter(AgentAsaA48Count.class)).thenReturn(list);
+
+		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+
+		result = service.getListeCompteur();
+
+		assertEquals(1, result.size());
+		assertEquals(12, (int) result.get(0).getNb());
+
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA48Count.class));
 	}
 
 }
