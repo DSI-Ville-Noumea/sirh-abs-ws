@@ -1,11 +1,15 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
+import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -71,5 +75,17 @@ public class SoldeService implements ISoldeService {
 		dto.setSoldeAsaA48(soldeAsaA48 == null ? 0 : soldeAsaA48.getTotalJours());
 
 		return dto;
+	}
+
+	@Override
+	public List<HistoriqueSoldeDto> getHistoriqueSoldeAgentByTypeAbsence(Integer idAgent, Integer codeRefTypeAbsence) {
+		List<HistoriqueSoldeDto> result = new ArrayList<HistoriqueSoldeDto>();
+		List<AgentHistoAlimManuelle> list = counterRepository.getListHistoByRefTypeAbsenceAndAgent(idAgent,
+				codeRefTypeAbsence);
+		for (AgentHistoAlimManuelle aha : list) {
+			HistoriqueSoldeDto dto = new HistoriqueSoldeDto(aha);
+			result.add(dto);
+		}
+		return result;
 	}
 }

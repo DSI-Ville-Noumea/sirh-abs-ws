@@ -42,3 +42,54 @@ HTTP Code 200 : OK
 HTTP Code 400 : Bad Request 
 HTTP Code 404 : Not Found (si l'agent n'existe pas)
 +-------------------------+
+
+* Historique du solde de l'agent
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /solde/historiqueSolde
+ 
+ <<Accepted Methods>> : GET 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent concerné pour la visualisation du solde (au format 900xxxx ou 90xxxx).
+ 
+ * <<codeRefTypeAbsence>> : id du type d'absence souhaité
+ 
+ <<Content>>
+
++-------------------------+
+[
+   {
+       "dateModifcation": "/Date(1395707462049+1100)/",
+       "idAgentModification": 9005138,
+       "motif":
+       {
+           "idMotifCompteur": 4,
+           "idRefTypeAbsence": 7,
+           "libelle": "test"
+       },
+       "textModification": "Mise en place de 2 jours pour l'année 2014."
+   },
+   {
+       "dateModifcation": "/Date(1395634545814+1100)/",
+       "idAgentModification": 9005138,
+       "motif":
+       {
+           "idMotifCompteur": 4,
+           "idRefTypeAbsence": 7,
+           "libelle": "test"
+       },
+       "textModification": "Mise en place de 0 jours pour l'année 2015."
+   },... 
+]
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request 
+HTTP Code 404 : Not Found (si l'agent n'existe pas)
++-------------------------+

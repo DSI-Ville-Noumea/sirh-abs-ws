@@ -11,9 +11,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
+import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -61,6 +63,9 @@ public class CounterRepositoryTest {
 		// Then
 		assertNotNull(result);
 		assertEquals(result, record);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -79,6 +84,9 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -97,6 +105,9 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -115,6 +126,9 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertEquals(result, r1);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -147,6 +161,9 @@ public class CounterRepositoryTest {
 		AgentReposCompCount result = repository.getAgentReposCompCountByIdCounter(2);
 
 		assertNotNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -173,6 +190,9 @@ public class CounterRepositoryTest {
 		List<Integer> result = repository.getListAgentReposCompCountForResetAnneePrcd();
 
 		assertEquals(1, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -199,6 +219,9 @@ public class CounterRepositoryTest {
 		List<Integer> result = repository.getListAgentReposCompCountForResetAnneeEnCours();
 
 		assertEquals(1, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -219,6 +242,9 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -240,6 +266,9 @@ public class CounterRepositoryTest {
 		// Then
 		assertNotNull(result);
 		assertEquals(result, record);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -281,5 +310,52 @@ public class CounterRepositoryTest {
 		assertEquals(record.getIdAgent(), result.get(0).getIdAgent());
 		assertEquals(record2.getTotalJours(), result.get(1).getTotalJours());
 		assertEquals(record2.getIdAgent(), result.get(1).getIdAgent());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListHistoByRefTypeAbsence_ReturnEmptyList() {
+
+		// When
+		List<AgentHistoAlimManuelle> result = repository.getListHistoByRefTypeAbsenceAndAgent(9005138, 1);
+
+		// Then
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListHistoByRefTypeAbsence_ReturnListCompteur() {
+
+		// Given
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(7);
+		absEntityManager.persist(type);
+		AgentHistoAlimManuelle record = new AgentHistoAlimManuelle();
+		record.setIdAgent(9005138);
+		record.setIdAgentConcerne(9001767);
+		record.setText("1er text");
+		record.setType(type);
+		absEntityManager.persist(record);
+		AgentHistoAlimManuelle record2 = new AgentHistoAlimManuelle();
+		record2.setIdAgent(9005138);
+		record2.setIdAgentConcerne(9001768);
+		record2.setText("2eme text");
+		record2.setType(type);
+		absEntityManager.persist(record2);
+
+		// When
+		List<AgentHistoAlimManuelle> result = repository.getListHistoByRefTypeAbsenceAndAgent(9001767, 7);
+
+		// Then
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		assertEquals(record.getText(), result.get(0).getText());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 }
