@@ -22,20 +22,20 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 	 */
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
-		checkStatutAgent(srm, demande);
+		checkStatutAgent(srm, demande.getIdAgent());
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkDepassementDroitsAcquis(srm, demande);
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
 	}
 
-	protected ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Demande demande) {
+	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Integer idAgent) {
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(demande.getIdAgent(), helperService.getCurrentDate());
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(idAgent, helperService.getCurrentDate());
 		if (!(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
-			logger.warn(String.format(STATUT_AGENT, demande.getIdAgent()));
-			srm.getErrors().add(String.format(STATUT_AGENT, demande.getIdAgent()));
+			logger.warn(String.format(STATUT_AGENT, idAgent));
+			srm.getErrors().add(String.format(STATUT_AGENT, idAgent));
 		}
 
 		return srm;

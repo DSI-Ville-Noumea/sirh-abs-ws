@@ -34,7 +34,6 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
-import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -2010,7 +2009,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
-		srm = impl.checkStatutAgent(srm, demande);
+		srm = impl.checkStatutAgent(srm, demande.getIdAgent());
 
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -2041,7 +2040,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
-		srm = impl.checkStatutAgent(srm, demande);
+		srm = impl.checkStatutAgent(srm, demande.getIdAgent());
 
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(
