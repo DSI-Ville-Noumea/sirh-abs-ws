@@ -26,6 +26,7 @@ public class EmailServiceTest {
 		List<Integer> listeTypes = new ArrayList<Integer>();
 		listeTypes.add(RefTypeAbsenceEnum.RECUP.getValue());
 		listeTypes.add(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.ASA_A48.getValue());
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getListViseursDemandesSaisiesJourDonne(listeTypes)).thenReturn(listViseurs);
