@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -206,8 +207,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(
 						RefEtatEnum.PROVISOIRE.getCodeEtat())
 						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
-				demandeDto.setAffichageBoutonImprimer(demandeDto.getIdRefEtat().equals(
-						RefEtatEnum.APPROUVEE.getCodeEtat()));
+				demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
 
 				demandeDto.setAffichageBoutonAnnuler(demandeDto.getIdRefEtat().equals(
 						RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
@@ -231,8 +231,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 							demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(
 									RefEtatEnum.PROVISOIRE.getCodeEtat())
 									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
-							demandeDto.setAffichageBoutonImprimer(demandeDto.getIdRefEtat().equals(
-									RefEtatEnum.APPROUVEE.getCodeEtat()));
+							demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
 
 							demandeDto.setAffichageBoutonAnnuler(demandeDto.getIdRefEtat().equals(
 									RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
@@ -275,6 +274,18 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		}
 
 		return resultListDto;
+	}
+
+	private boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+		// a completer au fur et à mesure des developpements
+		// TODO
+		if (RefTypeAbsenceEnum.RECUP.getValue() == demandeDto.getIdTypeDemande()
+				|| RefTypeAbsenceEnum.REPOS_COMP.getValue() == demandeDto.getIdTypeDemande()) {
+			return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
+		} else {
+			return false;
+		}
+
 	}
 
 	protected List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
