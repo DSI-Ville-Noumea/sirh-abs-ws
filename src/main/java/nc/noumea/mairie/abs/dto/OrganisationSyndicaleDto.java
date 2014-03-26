@@ -1,5 +1,7 @@
 package nc.noumea.mairie.abs.dto;
 
+import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
+
 public class OrganisationSyndicaleDto {
 
 	private Integer idOrganisation;
@@ -8,6 +10,14 @@ public class OrganisationSyndicaleDto {
 	private boolean actif;
 
 	public OrganisationSyndicaleDto() {
+	}
+
+	public OrganisationSyndicaleDto(OrganisationSyndicale org) {
+		super();
+		this.idOrganisation = org.getIdOrganisationSyndicale();
+		this.libelle = org.getLibelle();
+		this.sigle = org.getSigle();
+		this.actif = org.isActif();
 	}
 
 	public Integer getIdOrganisation() {

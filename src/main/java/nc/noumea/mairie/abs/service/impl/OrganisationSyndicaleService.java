@@ -1,5 +1,8 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -54,6 +57,34 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 		} catch (InstantiationException | IllegalAccessException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public List<OrganisationSyndicaleDto> getListOrganisationSyndicale() {
+		List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
+		List<OrganisationSyndicale> listOrganisation = demandeRepository.findAllOrganisation();
+
+		for (OrganisationSyndicale org : listOrganisation) {
+
+			OrganisationSyndicaleDto dto = new OrganisationSyndicaleDto(org);
+			res.add(dto);
+
+		}
+		return res;
+	}
+
+	@Override
+	public List<OrganisationSyndicaleDto> getListOrganisationSyndicaleActives() {
+		List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
+		List<OrganisationSyndicale> listOrganisation = demandeRepository.findAllOrganisationActives();
+
+		for (OrganisationSyndicale org : listOrganisation) {
+
+			OrganisationSyndicaleDto dto = new OrganisationSyndicaleDto(org);
+			res.add(dto);
+
+		}
+		return res;
 	}
 
 }

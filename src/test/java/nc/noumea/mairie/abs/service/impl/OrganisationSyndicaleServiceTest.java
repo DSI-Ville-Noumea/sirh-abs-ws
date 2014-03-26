@@ -1,6 +1,10 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -59,5 +63,74 @@ public class OrganisationSyndicaleServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
+	}
+
+	@Test
+	public void getListOrganisationSyndicale_Return1List() {
+		// Given
+		OrganisationSyndicale org = new OrganisationSyndicale();
+		org.setIdOrganisationSyndicale(1);
+		org.setLibelle("lib");
+		org.setSigle("sigle");
+		org.setActif(true);
+
+		List<OrganisationSyndicale> listOrg = new ArrayList<OrganisationSyndicale>();
+		listOrg.add(org);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.findAllOrganisation()).thenReturn(listOrg);
+
+		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicale();
+
+		assertEquals(1, result.size());
+		assertEquals(org.getLibelle(), result.get(0).getLibelle());
+		assertEquals(org.getSigle(), result.get(0).getSigle());
+		assertEquals(1, (int) result.get(0).getIdOrganisation());
+		assertEquals(org.isActif(), result.get(0).isActif());
+	}
+
+	@Test
+	public void getListOrganisationSyndicaleActives_ReturnEmptyList() {
+		// Given
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.findAllOrganisationActives()).thenReturn(new ArrayList<OrganisationSyndicale>());
+
+		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives();
+
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getListOrganisationSyndicaleActives_Return1List() {
+		// Given
+		OrganisationSyndicale org = new OrganisationSyndicale();
+		org.setIdOrganisationSyndicale(1);
+		org.setLibelle("lib");
+		org.setSigle("sigle");
+		org.setActif(true);
+
+		List<OrganisationSyndicale> listOrg = new ArrayList<OrganisationSyndicale>();
+		listOrg.add(org);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.findAllOrganisationActives()).thenReturn(listOrg);
+
+		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives();
+
+		assertEquals(1, result.size());
+		assertEquals(org.getLibelle(), result.get(0).getLibelle());
+		assertEquals(org.getSigle(), result.get(0).getSigle());
+		assertEquals(1, (int) result.get(0).getIdOrganisation());
+		assertEquals(org.isActif(), result.get(0).isActif());
 	}
 }

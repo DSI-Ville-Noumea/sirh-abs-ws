@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -180,19 +181,28 @@ public class DemandeRepository implements IDemandeRepository {
 
 		@SuppressWarnings("unchecked")
 		List<Integer> result = absEntityManager.createNativeQuery(sb.toString())
-				.setParameter("LIBELLE", ProfilEnum.APPROBATEUR.toString())
-				.setParameter("TYPE", listeTypes)
+				.setParameter("LIBELLE", ProfilEnum.APPROBATEUR.toString()).setParameter("TYPE", listeTypes)
 				.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat())
 				.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-				.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-				.getResultList();
+				.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()).getResultList();
 
 		return result;
 	}
 
 	@Override
 	public List<RefTypeAbsence> findAllRefTypeAbsences() {
-
 		return absEntityManager.createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).getResultList();
+	}
+
+	@Override
+	public List<OrganisationSyndicale> findAllOrganisation() {
+		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o", OrganisationSyndicale.class)
+				.getResultList();
+	}
+
+	@Override
+	public List<OrganisationSyndicale> findAllOrganisationActives() {
+		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o where o.actif = true",
+				OrganisationSyndicale.class).getResultList();
 	}
 }

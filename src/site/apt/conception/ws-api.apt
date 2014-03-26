@@ -62,4 +62,8 @@ SIRH-ABS-WS API et définition des services
 * Email
 
  {{{../conception/ws-email-api.html}ws-email-api.html}}
+ 
+* Organisations Syndicales
+
+ {{{../conception/ws-organisation-api.html}ws-organisation-api.html}}
 

@@ -1,5 +1,7 @@
 package nc.noumea.mairie.abs.web;
 
+import java.util.List;
+
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IOrganisationSyndicaleService;
@@ -47,5 +49,33 @@ public class OrganisationSyndicaleController {
 		} else {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/listOrganisation", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> listOrganisationSyndicale() {
+
+		logger.debug("entered GET [organisation/listOrganisation] => listOrganisationSyndicale");
+
+		List<OrganisationSyndicaleDto> orga = organisationService.getListOrganisationSyndicale();
+
+		String json = new JSONSerializer().exclude("*.class").serialize(orga);
+
+		return new ResponseEntity<String>(json, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/listOrganisationActif", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> listOrganisationSyndicaleActives() {
+
+		logger.debug("entered GET [organisation/listOrganisationActif] => listOrganisationSyndicaleActives");
+
+		List<OrganisationSyndicaleDto> orga = organisationService.getListOrganisationSyndicaleActives();
+
+		String json = new JSONSerializer().exclude("*.class").serialize(orga);
+
+		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}
 }
