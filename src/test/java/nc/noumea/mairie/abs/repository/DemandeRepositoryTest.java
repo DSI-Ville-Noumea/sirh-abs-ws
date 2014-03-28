@@ -832,4 +832,45 @@ public class DemandeRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void findAllRefTypeAbsences_NoRefTypeAbsence() {
+		// Given
+
+		// When
+		List<RefTypeAbsence> result = repository.findAllRefTypeAbsences();
+
+		// Then
+		assertEquals(0, result.size());
+		assertNotNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void findAllRefTypeAbsences() {
+		// Given
+		RefTypeAbsence org1 = new RefTypeAbsence();
+		org1.setIdRefTypeAbsence(1);
+		org1.setLabel("lib1");
+		org1.setGroupe("A");
+		absEntityManager.persist(org1);
+		RefTypeAbsence org2 = new RefTypeAbsence();
+		org2.setIdRefTypeAbsence(2);
+		org2.setLabel("lib2");
+		org2.setGroupe("A");
+		absEntityManager.persist(org2);
+
+		// When
+		List<RefTypeAbsence> result = repository.findAllRefTypeAbsences();
+
+		// Then
+		assertEquals(2, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 }

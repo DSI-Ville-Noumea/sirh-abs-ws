@@ -1,7 +1,7 @@
 package nc.noumea.mairie.sirh.service;
 
+import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
-import nc.noumea.mairie.sirh.repository.IAgentRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 public class SirhService implements ISirhService {
 
 	@Autowired
-	private IAgentRepository agentRepository;
-	
+	private ISirhRepository sirhRepository;
+
 	@Override
-	public Agent findAgent(Integer idAgent){
-		return agentRepository.findAgent(idAgent);
+	public Agent findAgent(Integer idAgent) {
+		return sirhRepository.getAgent(idAgent);
 	}
 }
