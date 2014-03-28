@@ -70,12 +70,21 @@ public class DemandeRepositoryTest {
 		RefEtat etatPris = new RefEtat();
 		etatPris.setLabel("PRISE");
 		absEntityManager.persist(etatPris);
+		RefEtat etatValide = new RefEtat();
+		etatValide.setLabel("VALIDEE");
+		absEntityManager.persist(etatValide);
+		RefEtat etatRejete = new RefEtat();
+		etatRejete.setLabel("REJETEE");
+		absEntityManager.persist(etatRejete);
+		RefEtat etatAttente = new RefEtat();
+		etatAttente.setLabel("EN ATTENTE");
+		absEntityManager.persist(etatAttente);
 
 		// When
 		List<RefEtat> result = repository.findRefEtatEnCours();
 
 		// Then
-		assertEquals(4, result.size());
+		assertEquals(5, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
