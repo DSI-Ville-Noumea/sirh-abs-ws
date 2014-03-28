@@ -242,6 +242,7 @@ public class SoldeServiceTest {
 		motifCompteur.setLibelle("lib motif");
 		motifCompteur.setRefTypeAbsence(type);
 		AgentHistoAlimManuelle e = new AgentHistoAlimManuelle();
+		e.setIdAgent(9005138);
 		e.setIdAgentConcerne(9005138);
 		e.setType(type);
 		e.setText("texte test");
@@ -259,6 +260,8 @@ public class SoldeServiceTest {
 
 		assertEquals(1, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());
+		assertEquals(e.getDateModification(), listResult.get(0).getDateModifcation());
+		assertEquals(e.getIdAgent(), listResult.get(0).getIdAgentModification());
 		assertEquals(motifCompteur.getLibelle(), listResult.get(0).getMotif().getLibelle());
 	}
 }
