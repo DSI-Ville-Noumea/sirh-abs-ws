@@ -124,6 +124,7 @@ public class DemandeRepository implements IDemandeRepository {
 		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())));
 		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())));
 		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.APPROUVEE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VALIDEE.getCodeEtat())));
 		return res;
 	}
 
