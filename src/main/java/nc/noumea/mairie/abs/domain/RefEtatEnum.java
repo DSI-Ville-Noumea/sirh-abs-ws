@@ -4,7 +4,8 @@ import java.util.List;
 
 public enum RefEtatEnum {
 
-	PROVISOIRE(0), SAISIE(1), VISEE_FAVORABLE(2), VISEE_DEFAVORABLE(3), APPROUVEE(4), REFUSEE(5), PRISE(6), ANNULEE(7), VALIDEE(8);
+	PROVISOIRE(0), SAISIE(1), VISEE_FAVORABLE(2), VISEE_DEFAVORABLE(3), APPROUVEE(4), REFUSEE(5), PRISE(6), ANNULEE(7), VALIDEE(
+			8), REJETE(9), EN_ATTENTE(10);
 
 	private int codeEtat;
 
@@ -14,7 +15,7 @@ public enum RefEtatEnum {
 
 	public int getCodeEtat() {
 		return codeEtat;
-	} 
+	}
 
 	public static RefEtatEnum getRefEtatEnum(Integer codeEtat) {
 
@@ -40,20 +41,24 @@ public enum RefEtatEnum {
 				return ANNULEE;
 			case 8:
 				return VALIDEE;
+			case 9:
+				return REJETE;
+			case 10:
+				return EN_ATTENTE;
 			default:
 				return null;
 		}
 	}
-	
+
 	public static String listToString(List<RefEtatEnum> list) {
-		
+
 		String result = "";
-		if(null != list) {
-			for(RefEtatEnum e : list) {
+		if (null != list) {
+			for (RefEtatEnum e : list) {
 				result += e.name() + " ";
 			}
 		}
-		
+
 		return result;
 	}
 }
