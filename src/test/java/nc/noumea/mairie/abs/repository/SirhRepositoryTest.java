@@ -12,6 +12,8 @@ import javax.persistence.PersistenceContext;
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.SpadmnId;
+import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.SpcarrId;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.LocalDate;
@@ -56,7 +58,7 @@ public class SirhRepositoryTest {
 		ag.setNomUsage("USAGE");
 		ag.setPrenomUsage("NONO");
 		sirhEntityManager.persist(ag);
-		
+
 		sirhEntityManager.flush();
 
 		// When
@@ -90,7 +92,7 @@ public class SirhRepositoryTest {
 		solde.setSoldeAnneeEnCours(72.0);
 		solde.setSoldeAnneePrec(12.5);
 		sirhEntityManager.persist(solde);
-		
+
 		sirhEntityManager.flush();
 
 		// When
@@ -104,53 +106,114 @@ public class SirhRepositoryTest {
 		sirhEntityManager.flush();
 		sirhEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("sirhTransactionManager")
 	public void getAgentCurrentPosition_returnResult() {
-		
+
 		SpadmnId id = new SpadmnId();
 		id.setDatdeb(20130901);
-		id.setNomatr(9005138);
+		id.setNomatr(5138);
 		Spadmn adm = new Spadmn();
 		adm.setId(id);
 		adm.setCdpadm("");
 		adm.setDatfin(20130930);
-		
+
 		sirhEntityManager.persist(adm);
-		
+
 		Agent agent = new Agent();
-		agent.setNomatr(9005138);
-		
+		agent.setNomatr(5138);
+
 		Spadmn result = repository.getAgentCurrentPosition(agent, new LocalDate(2013, 9, 22).toDate());
-		
+
 		assertNotNull(result);
-		
+
 		sirhEntityManager.flush();
 		sirhEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("sirhTransactionManager")
 	public void getAgentCurrentPosition_returnNoResult() {
-		
+
 		SpadmnId id = new SpadmnId();
 		id.setDatdeb(20130901);
-		id.setNomatr(9005138);
+		id.setNomatr(5138);
 		Spadmn adm = new Spadmn();
 		adm.setId(id);
 		adm.setCdpadm("");
 		adm.setDatfin(20130930);
-		
+
 		sirhEntityManager.persist(adm);
-		
+
 		Agent agent = new Agent();
-		agent.setNomatr(9005138);
-		
+		agent.setNomatr(5138);
+
 		Spadmn result = repository.getAgentCurrentPosition(agent, new LocalDate(2013, 10, 22).toDate());
-		
+
 		assertNull(result);
-		
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getAgentCurrentCarriere_returnResult() {
+
+		SpcarrId id = new SpcarrId();
+		id.setDatdeb(20130901);
+		id.setNomatr(5138);
+		Spcarr adm = new Spcarr();
+		adm.setId(id);
+		adm.setCdcate(1);
+		adm.setDateFin(20130930);
+
+		sirhEntityManager.persist(adm);
+
+		Agent agent = new Agent();
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
+		agent.setDateNaissance(new Date());
+		sirhEntityManager.persist(agent);
+
+		Spcarr result = repository.getAgentCurrentCarriere(agent.getIdAgent(), new LocalDate(2013, 9, 22).toDate());
+
+		assertNotNull(result);
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getAgentCurrentCarriere_returnNoResult() {
+
+		SpcarrId id = new SpcarrId();
+		id.setDatdeb(20130901);
+		id.setNomatr(5138);
+		Spcarr adm = new Spcarr();
+		adm.setId(id);
+		adm.setCdcate(1);
+		adm.setDateFin(20130930);
+		sirhEntityManager.persist(adm);
+
+		Agent agent = new Agent();
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
+		agent.setDateNaissance(new Date());
+		sirhEntityManager.persist(agent);
+
+		Spcarr result = repository.getAgentCurrentCarriere(agent.getIdAgent(), new LocalDate(2013, 10, 22).toDate());
+
+		assertNull(result);
+
 		sirhEntityManager.flush();
 		sirhEntityManager.clear();
 	}
