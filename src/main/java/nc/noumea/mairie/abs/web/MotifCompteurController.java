@@ -50,7 +50,7 @@ public class MotifCompteurController {
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> setMotifCompteur(@RequestBody(required = true) String motifCompteurDto) {
 
-		logger.debug("entered POST [motifRefus/setMotifRefus] => setMotifRefus");
+		logger.debug("entered POST [motifCompteur/setMotifCompteur] => setMotifCompteur");
 
 		MotifCompteurDto dto = new JSONDeserializer<MotifCompteurDto>().deserializeInto(motifCompteurDto, new MotifCompteurDto());
 		
