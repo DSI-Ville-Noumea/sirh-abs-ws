@@ -9,11 +9,11 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.Motif;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.MotifRefus;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.dto.MotifCompteurDto;
-import nc.noumea.mairie.abs.dto.MotifRefusDto;
+import nc.noumea.mairie.abs.dto.MotifDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IMotifRepository;
 
@@ -24,44 +24,23 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class MotifServiceTest {
 
 	@Test
-	public void getListeMotifRefus_returnListe() {
+	public void getListeMotif_returnListe() {
 
-		Integer idRefType = 1;
-		RefTypeAbsence typeRecup = new RefTypeAbsence();
-		typeRecup.setLabel("RECUP");
-
-		List<MotifRefus> listMotif = new ArrayList<MotifRefus>();
-		MotifRefus refus1 = new MotifRefus();
+		List<Motif> listMotif = new ArrayList<Motif>();
+		Motif refus1 = new Motif();
 		refus1.setLibelle("motif refus recup");
-		refus1.setRefTypeAbsence(typeRecup);
 		listMotif.add(refus1);
 
 		IMotifRepository motifRepository = Mockito.mock(IMotifRepository.class);
-		Mockito.when(motifRepository.getListeMotifRefus(idRefType)).thenReturn(listMotif);
+		Mockito.when(motifRepository.getListeMotif()).thenReturn(listMotif);
 
 		MotifService service = new MotifService();
 		ReflectionTestUtils.setField(service, "motifRepository", motifRepository);
 
-		List<MotifRefusDto> listResult = service.getListeMotifRefus(idRefType);
+		List<MotifDto> listResult = service.getListeMotif();
 
 		assertEquals(1, listResult.size());
 		assertEquals("motif refus recup", listResult.get(0).getLibelle());
-	}
-
-	@Test
-	public void getListeMotifRefus_wrongType() {
-
-		Integer idRefType = 1;
-
-		IMotifRepository motifRepository = Mockito.mock(IMotifRepository.class);
-		Mockito.when(motifRepository.getListeMotifRefus(idRefType)).thenReturn(null);
-
-		MotifService service = new MotifService();
-		ReflectionTestUtils.setField(service, "motifRepository", motifRepository);
-
-		List<MotifRefusDto> listResult = service.getListeMotifRefus(idRefType);
-
-		assertEquals(0, listResult.size());
 	}
 
 	@Test
@@ -196,122 +175,88 @@ public class MotifServiceTest {
 	}
 
 	@Test
-	public void setMotifRefus_motifInexistant() {
+	public void setMotif_motifInexistant() {
 
-		MotifRefusDto motifRefusDto = new MotifRefusDto();
-		motifRefusDto.setIdMotifRefus(1);
+		MotifDto motifDto = new MotifDto();
+		motifDto.setIdMotif(1);
 
 		ReturnMessageDto message = new ReturnMessageDto();
 
 		IMotifRepository motifRepository = Mockito.mock(IMotifRepository.class);
-		Mockito.when(motifRepository.getEntity(MotifRefus.class, motifRefusDto.getIdMotifRefus())).thenReturn(null);
+		Mockito.when(motifRepository.getEntity(Motif.class, motifDto.getIdMotif())).thenReturn(null);
 
 		MotifService service = new MotifService();
 		ReflectionTestUtils.setField(service, "motifRepository", motifRepository);
 
-		message = service.setMotifRefus(motifRefusDto);
+		message = service.setMotif(motifDto);
 
 		assertEquals(1, message.getErrors().size());
-		Mockito.verify(motifRepository, Mockito.times(0)).persistEntity(Mockito.isA(MotifRefus.class));
+		Mockito.verify(motifRepository, Mockito.times(0)).persistEntity(Mockito.isA(Motif.class));
 		assertEquals("Le motif à modifier n'existe pas.", message.getErrors().get(0).toString());
 	}
 
 	@Test
-	public void setMotifRefus_typeAbsenceInexistant() {
+	public void setMotif_libelleVide() {
 
-		MotifRefusDto motifRefusDto = new MotifRefusDto();
-		motifRefusDto.setIdMotifRefus(1);
-
-		ReturnMessageDto message = new ReturnMessageDto();
-
-		IMotifRepository motifRepository = Mockito.mock(IMotifRepository.class);
-		Mockito.when(motifRepository.getEntity(MotifRefus.class, motifRefusDto.getIdMotifRefus())).thenReturn(
-				new MotifRefus());
-
-		MotifService service = new MotifService();
-		ReflectionTestUtils.setField(service, "motifRepository", motifRepository);
-
-		message = service.setMotifRefus(motifRefusDto);
-
-		assertEquals(1, message.getErrors().size());
-		Mockito.verify(motifRepository, Mockito.times(0)).persistEntity(Mockito.isA(MotifRefus.class));
-		assertEquals("Le type d'absence saisi n'existe pas.", message.getErrors().get(0).toString());
-	}
-
-	@Test
-	public void setMotifRefus_libelleVide() {
-
-		MotifRefusDto motifRefusDto = new MotifRefusDto();
-		motifRefusDto.setIdMotifRefus(1);
-		motifRefusDto.setIdRefTypeAbsence(1);
+		MotifDto motifDto = new MotifDto();
+		motifDto.setIdMotif(1);
 
 		ReturnMessageDto message = new ReturnMessageDto();
 
 		IMotifRepository motifRepository = Mockito.mock(IMotifRepository.class);
-		Mockito.when(motifRepository.getEntity(MotifRefus.class, motifRefusDto.getIdMotifRefus())).thenReturn(
-				new MotifRefus());
-		Mockito.when(motifRepository.getEntity(RefTypeAbsence.class, motifRefusDto.getIdRefTypeAbsence())).thenReturn(
-				new RefTypeAbsence());
+		Mockito.when(motifRepository.getEntity(Motif.class, motifDto.getIdMotif())).thenReturn(new Motif());
 
 		MotifService service = new MotifService();
 		ReflectionTestUtils.setField(service, "motifRepository", motifRepository);
 
-		message = service.setMotifRefus(motifRefusDto);
+		message = service.setMotif(motifDto);
 
 		assertEquals(1, message.getErrors().size());
-		Mockito.verify(motifRepository, Mockito.times(0)).persistEntity(Mockito.isA(MotifRefus.class));
+		Mockito.verify(motifRepository, Mockito.times(0)).persistEntity(Mockito.isA(Motif.class));
 		assertEquals("Le libellé du motif n'est pas saisi.", message.getErrors().get(0).toString());
 	}
 
 	@Test
-	public void setMotifRefus_modifOK() {
+	public void setMotif_modifOK() {
 
-		MotifRefusDto motifRefusDto = new MotifRefusDto();
-		motifRefusDto.setIdMotifRefus(1);
-		motifRefusDto.setIdRefTypeAbsence(1);
-		motifRefusDto.setLibelle("TEST");
+		MotifDto motifDto = new MotifDto();
+		motifDto.setIdMotif(1);
+		motifDto.setLibelle("TEST");
 
 		ReturnMessageDto message = new ReturnMessageDto();
 
 		IMotifRepository motifRepository = Mockito.mock(IMotifRepository.class);
-		Mockito.when(motifRepository.getEntity(MotifRefus.class, motifRefusDto.getIdMotifRefus())).thenReturn(
-				new MotifRefus());
-		Mockito.when(motifRepository.getEntity(RefTypeAbsence.class, motifRefusDto.getIdRefTypeAbsence())).thenReturn(
-				new RefTypeAbsence());
+		Mockito.when(motifRepository.getEntity(Motif.class, motifDto.getIdMotif())).thenReturn(new Motif());
 
 		MotifService service = new MotifService();
 		ReflectionTestUtils.setField(service, "motifRepository", motifRepository);
 
-		message = service.setMotifRefus(motifRefusDto);
+		message = service.setMotif(motifDto);
 
 		assertEquals(0, message.getErrors().size());
-		Mockito.verify(motifRepository, Mockito.times(1)).persistEntity(Mockito.isA(MotifRefus.class));
+		Mockito.verify(motifRepository, Mockito.times(1)).persistEntity(Mockito.isA(Motif.class));
 		assertEquals("Le motif est bien modifié.", message.getInfos().get(0).toString());
 	}
 
 	@Test
-	public void setMotifRefus_creationOK() {
+	public void setMotif_creationOK() {
 
-		MotifRefusDto motifRefusDto = new MotifRefusDto();
-		motifRefusDto.setIdMotifRefus(null);
-		motifRefusDto.setIdRefTypeAbsence(1);
-		motifRefusDto.setLibelle("TEST");
+		MotifDto motifDto = new MotifDto();
+		motifDto.setIdMotif(null);
+		motifDto.setLibelle("TEST");
 
 		ReturnMessageDto message = new ReturnMessageDto();
 
 		IMotifRepository motifRepository = Mockito.mock(IMotifRepository.class);
-		Mockito.when(motifRepository.getEntity(MotifRefus.class, motifRefusDto.getIdMotifRefus())).thenReturn(
-				new MotifRefus());
-		Mockito.when(motifRepository.getEntity(RefTypeAbsence.class, motifRefusDto.getIdRefTypeAbsence())).thenReturn(
-				new RefTypeAbsence());
+		Mockito.when(motifRepository.getEntity(Motif.class, motifDto.getIdMotif())).thenReturn(new Motif());
 
 		MotifService service = new MotifService();
 		ReflectionTestUtils.setField(service, "motifRepository", motifRepository);
 
-		message = service.setMotifRefus(motifRefusDto);
+		message = service.setMotif(motifDto);
 
 		assertEquals(0, message.getErrors().size());
-		Mockito.verify(motifRepository, Mockito.times(1)).persistEntity(Mockito.isA(MotifRefus.class));
+		Mockito.verify(motifRepository, Mockito.times(1)).persistEntity(Mockito.isA(Motif.class));
 		assertEquals("Le motif est bien créé.", message.getInfos().get(0).toString());
 	}
 

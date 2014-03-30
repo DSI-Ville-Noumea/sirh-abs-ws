@@ -44,11 +44,8 @@ public class EtatDemande {
 	@Enumerated(EnumType.ORDINAL)
 	private RefEtatEnum etat;
 
-	@Column(name = "ID_MOTIF_REFUS")
-	private Integer idMotifRefus;
-
-	@Column(name = "MOTIF_VISEUR", columnDefinition = "text")
-	private String motifViseur;
+	@Column(name = "MOTIF", columnDefinition = "text")
+	private String motif;
 
 	public Integer getIdEtatDemande() {
 		return idEtatDemande;
@@ -90,20 +87,12 @@ public class EtatDemande {
 		this.etat = etat;
 	}
 
-	public Integer getIdMotifRefus() {
-		return idMotifRefus;
+	public String getMotif() {
+		return motif;
 	}
 
-	public void setIdMotifRefus(Integer idMotifRefus) {
-		this.idMotifRefus = idMotifRefus;
-	}
-
-	public String getMotifViseur() {
-		return motifViseur;
-	}
-
-	public void setMotifViseur(String motifViseur) {
-		this.motifViseur = motifViseur;
+	public void setMotif(String motif) {
+		this.motif = motif;
 	}
 
 }

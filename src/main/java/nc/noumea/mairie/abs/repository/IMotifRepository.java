@@ -2,8 +2,8 @@ package nc.noumea.mairie.abs.repository;
 
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.Motif;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.MotifRefus;
 
 public interface IMotifRepository {
 
@@ -11,7 +11,7 @@ public interface IMotifRepository {
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
 
-	List<MotifRefus> getListeMotifRefus(Integer idType);
+	List<Motif> getListeMotif();
 
 	List<MotifCompteur> getListeMotifCompteur(Integer idType);
 

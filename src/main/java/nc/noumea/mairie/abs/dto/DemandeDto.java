@@ -13,18 +13,19 @@ import nc.noumea.mairie.sirh.domain.Agent;
 public class DemandeDto {
 
 	private Integer idDemande;
-	
+
 	private Integer idAgent;
 	private String nomAgent;
 	private String prenomAgent;
 	private String service;
 	private String codeService;
-	
+
 	private Integer idTypeDemande;
 	private Date dateDebut;
 	private Integer duree;
 	private Integer idRefEtat;
 	private Date dateDemande;
+	private String motif;
 
 	// permet d'afficher ou non les icones correspondants
 	private boolean isAffichageBoutonModifier;
@@ -36,23 +37,21 @@ public class DemandeDto {
 	// permet de viser ou approuver
 	private boolean isModifierVisa;
 	private boolean isModifierApprobation;
-	private String motifViseur;
 	// valeur du visa et approbation de la demande
 	private Boolean isValeurVisa = null;
 	private Boolean isValeurApprobation = null;
-	private Integer idMotifRefus;
 
 	public DemandeDto() {
 	}
-	
-	public DemandeDto(Demande d, AgentWithServiceDto agent){
+
+	public DemandeDto(Demande d, AgentWithServiceDto agent) {
 		this(d);
 		this.nomAgent = agent.getNom();
 		this.prenomAgent = agent.getPrenom();
 		this.codeService = agent.getCodeService();
 		this.service = agent.getService();
 	}
-	
+
 	public DemandeDto(Demande d, Agent agent) {
 		this(d);
 		this.nomAgent = agent.getDisplayNom();
@@ -67,8 +66,7 @@ public class DemandeDto {
 		this.dateDebut = d.getDateDebut();
 		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
-		this.motifViseur = d.getLatestEtatDemande().getMotifViseur();
-		this.idMotifRefus = d.getLatestEtatDemande().getIdMotifRefus();
+		this.motif = d.getLatestEtatDemande().getMotif();
 
 		for (EtatDemande etat : d.getEtatsDemande()) {
 			if (this.isValeurVisa == null && etat.getEtat().equals(RefEtatEnum.VISEE_FAVORABLE)) {
@@ -271,22 +269,6 @@ public class DemandeDto {
 		this.isModifierApprobation = isModifierApprobation;
 	}
 
-	public String getMotifViseur() {
-		return motifViseur;
-	}
-
-	public void setMotifViseur(String motifViseur) {
-		this.motifViseur = motifViseur;
-	}
-
-	public Integer getIdMotifRefus() {
-		return idMotifRefus;
-	}
-
-	public void setIdMotifRefus(Integer idMotifRefus) {
-		this.idMotifRefus = idMotifRefus;
-	}
-
 	public String getService() {
 		return service;
 	}
@@ -301,6 +283,30 @@ public class DemandeDto {
 
 	public void setCodeService(String codeService) {
 		this.codeService = codeService;
+	}
+
+	public String getMotif() {
+		return motif;
+	}
+
+	public void setMotif(String motif) {
+		this.motif = motif;
+	}
+
+	public Boolean getIsValeurVisa() {
+		return isValeurVisa;
+	}
+
+	public void setIsValeurVisa(Boolean isValeurVisa) {
+		this.isValeurVisa = isValeurVisa;
+	}
+
+	public Boolean getIsValeurApprobation() {
+		return isValeurApprobation;
+	}
+
+	public void setIsValeurApprobation(Boolean isValeurApprobation) {
+		this.isValeurApprobation = isValeurApprobation;
 	}
 
 }

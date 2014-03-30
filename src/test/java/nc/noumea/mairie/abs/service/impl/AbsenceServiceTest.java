@@ -546,15 +546,15 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto1 = new DemandeEtatChangeDto();
 		dto1.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		dto1.setDateAvis(new Date());
-		dto1.setIdMotifRefus(1);
+		dto1.setMotif("motif 1");
 		DemandeEtatChangeDto dto2 = new DemandeEtatChangeDto();
 		dto2.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
 		dto2.setDateAvis(new Date());
-		dto2.setIdMotifRefus(2);
+		dto2.setMotif("motif 2");
 		DemandeEtatChangeDto dto3 = new DemandeEtatChangeDto();
 		dto3.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 		dto3.setDateAvis(new Date());
-		dto3.setIdMotifRefus(3);
+		dto3.setMotif("motif 3");
 
 		ReturnMessageDto result1 = new ReturnMessageDto();
 		ReturnMessageDto result2 = new ReturnMessageDto();
@@ -679,8 +679,7 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		dto.setIdDemande(1);
-		dto.setIdMotifRefus(1);
-		dto.setMotifViseur("motif");
+		dto.setMotif("motif");
 
 		Demande demande = Mockito.spy(new Demande());
 
@@ -784,8 +783,10 @@ public class AbsenceServiceTest {
 				result.getErrors().add("Erreur motif incorrect");
 				return result;
 			}
-		}).when(absDataConsistencyRules)
-				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyInt());
+		})
+				.when(absDataConsistencyRules)
+				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+						Mockito.anyString());
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -842,8 +843,10 @@ public class AbsenceServiceTest {
 			public Object answer(InvocationOnMock invocation) {
 				return new ReturnMessageDto();
 			}
-		}).when(absDataConsistencyRules)
-				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyInt());
+		})
+				.when(absDataConsistencyRules)
+				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+						Mockito.anyString());
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -909,8 +912,10 @@ public class AbsenceServiceTest {
 			public Object answer(InvocationOnMock invocation) {
 				return new ReturnMessageDto();
 			}
-		}).when(absDataConsistencyRules)
-				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyInt());
+		})
+				.when(absDataConsistencyRules)
+				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+						Mockito.anyString());
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -1133,8 +1138,10 @@ public class AbsenceServiceTest {
 			public Object answer(InvocationOnMock invocation) {
 				return new ReturnMessageDto();
 			}
-		}).when(absDataConsistencyRules)
-				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyInt());
+		})
+				.when(absDataConsistencyRules)
+				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+						Mockito.anyString());
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -1214,8 +1221,10 @@ public class AbsenceServiceTest {
 			public Object answer(InvocationOnMock invocation) {
 				return new ReturnMessageDto();
 			}
-		}).when(absDataConsistencyRules)
-				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyInt());
+		})
+				.when(absDataConsistencyRules)
+				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+						Mockito.anyString());
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -1324,7 +1333,7 @@ public class AbsenceServiceTest {
 				assertEquals(demande1, etat.getDemande());
 				assertEquals(RefEtatEnum.PRISE, etat.getEtat());
 				assertEquals(9006565, (int) etat.getIdAgent());
-				assertNull(etat.getIdMotifRefus());
+				assertNull(etat.getMotif());
 				return null;
 			}
 		}).when(demandeRepository).persistEntity(Mockito.isA(EtatDemande.class));
@@ -1641,8 +1650,7 @@ public class AbsenceServiceTest {
 		ed2.setEtat(RefEtatEnum.SAISIE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
-		ed2.setIdMotifRefus(1);
-		ed2.setMotifViseur("motif");
+		ed2.setMotif("motif");
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -1685,8 +1693,7 @@ public class AbsenceServiceTest {
 		assertFalse(result.isAffichageBoutonImprimer());
 		assertFalse(result.isAffichageBoutonModifier());
 		assertFalse(result.isAffichageBoutonSupprimer());
-		assertEquals(new Integer(1), result.getIdMotifRefus());
-		assertEquals("motif", result.getMotifViseur());
+		assertEquals("motif", result.getMotif());
 	}
 
 	@Test
@@ -1718,8 +1725,7 @@ public class AbsenceServiceTest {
 		ed2.setEtat(RefEtatEnum.APPROUVEE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
-		ed2.setIdMotifRefus(1);
-		ed2.setMotifViseur("motif");
+		ed2.setMotif("motif");
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -1762,7 +1768,6 @@ public class AbsenceServiceTest {
 		assertFalse(result.isAffichageBoutonImprimer());
 		assertFalse(result.isAffichageBoutonModifier());
 		assertFalse(result.isAffichageBoutonSupprimer());
-		assertEquals(new Integer(1), result.getIdMotifRefus());
-		assertEquals("motif", result.getMotifViseur());
+		assertEquals("motif", result.getMotif());
 	}
 }

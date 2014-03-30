@@ -6,8 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.abs.domain.Motif;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.MotifRefus;
 
 import org.springframework.stereotype.Repository;
 
@@ -28,17 +28,11 @@ public class MotifRepository implements IMotifRepository {
 	}
 
 	@Override
-	public List<MotifRefus> getListeMotifRefus(Integer idType) {
+	public List<Motif> getListeMotif() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select m from MotifRefus m ");
-		if (idType != null) {
-			sb.append("where m.refTypeAbsence.idRefTypeAbsence =:idType ");
-		}
+		sb.append("select m from Motif m ");
 
-		TypedQuery<MotifRefus> query = absEntityManager.createQuery(sb.toString(), MotifRefus.class);
-		if (idType != null) {
-			query.setParameter("idType", idType);
-		}
+		TypedQuery<Motif> query = absEntityManager.createQuery(sb.toString(), Motif.class);
 
 		return query.getResultList();
 	}

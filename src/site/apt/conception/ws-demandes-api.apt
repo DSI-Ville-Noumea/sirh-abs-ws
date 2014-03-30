@@ -37,8 +37,7 @@ SIRH-ABS-WS API et définition des services concernant les demandes d'absences d
 	"affichageApprobation": false,
 	"affichageBoutonAnnuler": false,
     "modifierApprobation": false,
-    "idMotifRefus": null,
-    "motifViseur": null,
+    "motif": null,
     "modifierVisa": false,
 	"valeurVisa": false/null,
 	"valeurApprobation": false/null,
@@ -91,8 +90,7 @@ HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
 	"affichageBoutonAnnuler": false,
     "modifierApprobation": false,
     "modifierVisa": false,
-    "idMotifRefus": null,
-    "motifViseur": null,
+    "motif": null,
 	"valeurVisa": false/null,
 	"valeurApprobation": false/null
 	"nomAgent": "CHARVET",
@@ -228,8 +226,7 @@ HTTP Code 403 : Accès non autorisé
 			"affichageApprobation": false,
 			"affichageBoutonAnnuler": false,
 			"modifierApprobation": false,
-			"idMotifRefus": null,
-			"motifViseur": null,
+			"motif": null,
 			"modifierVisa": false,
 			"valeurVisa": false/null,
 			"valeurApprobation": false/null,
@@ -295,8 +292,7 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
 			"affichageBoutonSupprimer": false,
 			"affichageBoutonImprimer": false,
 			"affichageVisa": false,
-			"idMotifRefus": null,
-			"motifViseur": null,
+			"motif": null,
 			"affichageApprobation": false,
 			"affichageBoutonAnnuler": false,
 			"modifierApprobation": false,
@@ -342,8 +338,7 @@ HTTP Code 409 : CONFLICT --> alors on retourne le MessageDTO des erreurs (si l'a
 	"idDemande": 1 (reprendre l'identifiant de la demande envoyé initialement),
     "idRefEtat": 0 (VISEE_FAVORABLE(2), VISEE_DEFAVORABLE(3), APPROUVEE(4), REFUSEE(5), ANNULEE(7)),
 	"dateAvis": "/Date(1368450000000+1100)/",
-	"motifViseur": null/"motif",
-	"idMotifRefus": 1/NULL (obligatoire si etat = REFUSEE)
+	"motif": null/"motif"
 }
 +-------------------------+
 

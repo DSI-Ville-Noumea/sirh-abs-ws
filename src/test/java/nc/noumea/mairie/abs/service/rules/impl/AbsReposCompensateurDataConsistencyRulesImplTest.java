@@ -405,7 +405,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 
 		AbsReposCompensateurDataConsistencyRulesImpl impl = new AbsReposCompensateurDataConsistencyRulesImpl();
-		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), 1);
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), "m");
 
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -427,7 +427,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 
 		AbsReposCompensateurDataConsistencyRulesImpl impl = new AbsReposCompensateurDataConsistencyRulesImpl();
-		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), 2);
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), "m");
 
 		assertEquals(0, srm.getErrors().size());
 	}

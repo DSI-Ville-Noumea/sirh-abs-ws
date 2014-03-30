@@ -370,7 +370,7 @@ public class AbsenceService implements IAbsenceService {
 				RefEtatEnum.REFUSEE));
 
 		result = defaultAbsenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
-				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getIdMotifRefus());
+				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -408,9 +408,8 @@ public class AbsenceService implements IAbsenceService {
 		if (!result.getErrors().isEmpty())
 			return result;
 
-		result = defaultAbsenceDataConsistencyRulesImpl
-				.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(RefEtatEnum.VISEE_FAVORABLE,
-						RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
+		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
+				Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
 
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -437,8 +436,7 @@ public class AbsenceService implements IAbsenceService {
 	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		EtatDemande etatDemande = new EtatDemande();
 		etatDemande.setDate(demandeEtatChangeDto.getDateAvis());
-		etatDemande.setIdMotifRefus(demandeEtatChangeDto.getIdMotifRefus());
-		etatDemande.setMotifViseur(demandeEtatChangeDto.getMotifViseur());
+		etatDemande.setMotif(demandeEtatChangeDto.getMotif());
 
 		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
 		etatDemande.setIdAgent(idAgent);

@@ -12,11 +12,18 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 public interface IAbsenceDataConsistencyRules {
 
 	void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi);
-	
-	ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande, List<RefEtatEnum> listEtatsAcceptes );
+
+	ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande,
+			List<RefEtatEnum> listEtatsAcceptes);
+
 	ReturnMessageDto checkDemandeDejaSaisieSurMemePeriode(ReturnMessageDto srm, Demande demande);
+
 	ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi);
-	ReturnMessageDto checkChampMotifPourEtatDonne(ReturnMessageDto srm, Integer etat, Integer idMotif);
+
+	ReturnMessageDto checkChampMotifPourEtatDonne(ReturnMessageDto srm, Integer etat, String motif);
+
 	ReturnMessageDto verifDemandeExiste(Demande demande, ReturnMessageDto returnDto);
-	List<DemandeDto> filtreListDemande(Integer idAgentConnecte, Integer idAgentConcerne, List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande);
+
+	List<DemandeDto> filtreListDemande(Integer idAgentConnecte, Integer idAgentConcerne, List<Demande> listeSansFiltre,
+			List<RefEtat> etats, Date dateDemande);
 }

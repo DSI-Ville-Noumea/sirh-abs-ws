@@ -3,11 +3,11 @@ package nc.noumea.mairie.abs.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.Motif;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.MotifRefus;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.dto.MotifCompteurDto;
-import nc.noumea.mairie.abs.dto.MotifRefusDto;
+import nc.noumea.mairie.abs.dto.MotifDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IMotifRepository;
 import nc.noumea.mairie.abs.service.IMotifService;
@@ -34,13 +34,13 @@ public class MotifService implements IMotifService {
 	private IMotifRepository motifRepository;
 
 	@Override
-	public List<MotifRefusDto> getListeMotifRefus(Integer idRefType) {
+	public List<MotifDto> getListeMotif() {
 
-		List<MotifRefusDto> res = new ArrayList<MotifRefusDto>();
-		List<MotifRefus> motifRefus = motifRepository.getListeMotifRefus(idRefType);
-		if (motifRefus != null) {
-			for (MotifRefus motif : motifRefus) {
-				MotifRefusDto dto = new MotifRefusDto(motif);
+		List<MotifDto> res = new ArrayList<MotifDto>();
+		List<Motif> listMotif = motifRepository.getListeMotif();
+		if (listMotif != null) {
+			for (Motif motif : listMotif) {
+				MotifDto dto = new MotifDto(motif);
 				res.add(dto);
 			}
 		}
@@ -63,38 +63,32 @@ public class MotifService implements IMotifService {
 	}
 
 	@Override
-	public ReturnMessageDto setMotifRefus(MotifRefusDto motifRefusDto) {
+	public ReturnMessageDto setMotif(MotifDto motifDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		MotifRefus motifRefus = null;
+		Motif motif = null;
 
-		if (null != motifRefusDto.getIdMotifRefus()) {
-			motifRefus = motifRepository.getEntity(MotifRefus.class, motifRefusDto.getIdMotifRefus());
-			if (null == motifRefus) {
+		if (null != motifDto.getIdMotif()) {
+			motif = motifRepository.getEntity(Motif.class, motifDto.getIdMotif());
+			if (null == motif) {
 				logger.debug(MOTIF_MODIFIE_INEXISTANT);
 				result.getErrors().add(MOTIF_MODIFIE_INEXISTANT);
 				return result;
 			}
 		}
 
-		RefTypeAbsence refTypeAbsence = getRefTypeAbsence(motifRefusDto.getIdRefTypeAbsence(), result);
-		if (!result.getErrors().isEmpty()) {
-			return result;
-		}
-
-		if (!controlLibelleMotif(motifRefusDto.getLibelle(), result))
+		if (!controlLibelleMotif(motifDto.getLibelle(), result))
 			return result;
 
-		if (null == motifRefus) {
-			motifRefus = new MotifRefus();
+		if (null == motif) {
+			motif = new Motif();
 		}
 
-		motifRefus.setLibelle(motifRefusDto.getLibelle());
-		motifRefus.setRefTypeAbsence(refTypeAbsence);
+		motif.setLibelle(motifDto.getLibelle());
 
-		motifRepository.persistEntity(motifRefus);
+		motifRepository.persistEntity(motif);
 
-		addMessageConfirmation(motifRefusDto.getIdMotifRefus(), result);
+		addMessageConfirmation(motifDto.getIdMotif(), result);
 
 		return result;
 	}

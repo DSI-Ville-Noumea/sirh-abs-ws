@@ -4,19 +4,17 @@
 
 
 
-SIRH-ABS-WS API et définition des services concernant les motifs de refus de l'approbateur
+SIRH-ABS-WS API et définition des services concernant les motifs 
 
-* Liste des motifs de refus de l'approbateur
+* Liste des motifs 
 
  <<PROJET>> : SIRH-ABS-WS
  
- <<URL>> : /motifRefus/getListeMotifRefus
+ <<URL>> : /motif/getListeMotif
  
  <<Accepted Methods>> : GET
  
  <<Parameters>>
-
-  * <<idRefType>> : 1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies (optionnel)
   
  <<Content>> 
  
@@ -25,13 +23,11 @@ SIRH-ABS-WS API et définition des services concernant les motifs de refus de l'
 +-------------------------+
     [
        {
-           "idMotifRefus": 2,
-           "idRefTypeAbsence": 1,
+           "idMotif": 2,
            "libelle": "test2"
        },
        {
-           "idMotifRefus": 1,
-           "idRefTypeAbsence": 1,
+           "idMotif": 1,
            "libelle": "test3"
        }
     ]
@@ -46,11 +42,11 @@ HTTP Code 400 : Bad Request (si un des paramètres est manquant)
 +-------------------------+
 
 
-* Saisie et modification de motif de refus de l'approbateur
+* Saisie et modification de motif
 
  <<PROJET>> : SIRH-ABS-WS
  
- <<URL>> : /motifRefus/setMotifRefus
+ <<URL>> : /motif/setMotif
  
  <<Accepted Methods>> : POST
  
@@ -62,9 +58,8 @@ HTTP Code 400 : Bad Request (si un des paramètres est manquant)
  
 +-------------------------+
 {
-	"idMotifRefus": 1/NULL (si NULL alors création),
-	"libelle": "test yoyo bis",
-	"idRefTypeAbsence": 3
+	"idMotif": 1/NULL (si NULL alors création),
+	"libelle": "test yoyo bis"
 }
 +-------------------------+
 

@@ -7,8 +7,7 @@ public class DemandeEtatChangeDto {
 	private Integer idDemande;
 	private Integer idRefEtat;
 	private Date dateAvis;
-	private Integer idMotifRefus;
-	private String motifViseur;
+	private String motif;
 
 	public Integer getIdDemande() {
 		return idDemande;
@@ -33,20 +32,12 @@ public class DemandeEtatChangeDto {
 	public void setDateAvis(Date dateAvis) {
 		this.dateAvis = dateAvis;
 	}
-	
-	public Integer getIdMotifRefus() {
-		return idMotifRefus;
+
+	public String getMotif() {
+		return motif;
 	}
 
-	public void setIdMotifRefus(Integer idMotifRefus) {
-		this.idMotifRefus = idMotifRefus;
-	}
-
-	public String getMotifViseur() {
-		return motifViseur;
-	}
-
-	public void setMotifViseur(String motifViseur) {
-		this.motifViseur = motifViseur;
+	public void setMotif(String motif) {
+		this.motif = motif;
 	}
 }

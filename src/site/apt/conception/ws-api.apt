@@ -51,9 +51,9 @@ SIRH-ABS-WS API et définition des services
 
  {{{../conception/ws-asa-api.html}ws-asa-api.html}}
  
-* Motif Refus
+* Motif
 
- {{{../conception/ws-motif-refus-api.html}ws-motif-refus-api.html}}
+ {{{../conception/ws-motif-api.html}ws-motif-api.html}}
  
 * Motif Compteur
 

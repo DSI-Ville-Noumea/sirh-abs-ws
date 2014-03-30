@@ -7,8 +7,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import nc.noumea.mairie.abs.domain.Motif;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.MotifRefus;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
 import org.junit.Test;
@@ -30,42 +30,28 @@ public class MotifRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getListeMotifRefus() {
+	public void getListeMotif() {
 		// Given
-		Integer idRefType = 3;
-
-		RefTypeAbsence typeRecup = new RefTypeAbsence();
-		typeRecup.setIdRefTypeAbsence(3);
-		typeRecup.setLabel("Récupération");
-		absEntityManager.persist(typeRecup);
-
-		RefTypeAbsence typeConge = new RefTypeAbsence();
-		typeConge.setIdRefTypeAbsence(1);
-		typeConge.setLabel("Congé annuel");
-		absEntityManager.persist(typeConge);
-
-		MotifRefus refus1 = new MotifRefus();
+		Motif refus1 = new Motif();
 		refus1.setLibelle("motif1 refus recup");
-		refus1.setRefTypeAbsence(typeRecup);
 		absEntityManager.persist(refus1);
 
-		MotifRefus refus2 = new MotifRefus();
+		Motif refus2 = new Motif();
 		refus2.setLibelle("motif2 refus congé");
-		refus2.setRefTypeAbsence(typeConge);
 		absEntityManager.persist(refus2);
 
-		MotifRefus refus3 = new MotifRefus();
+		Motif refus3 = new Motif();
 		refus3.setLibelle("motif3 refus recup");
-		refus3.setRefTypeAbsence(typeRecup);
 		absEntityManager.persist(refus3);
 
 		// When
-		List<MotifRefus> result = repository.getListeMotifRefus(idRefType);
+		List<Motif> result = repository.getListeMotif();
 
 		// Then
-		assertEquals(2, result.size());
+		assertEquals(3, result.size());
 		assertEquals(refus1.getLibelle(), result.get(0).getLibelle());
-		assertEquals(refus3.getLibelle(), result.get(1).getLibelle());
+		assertEquals(refus2.getLibelle(), result.get(1).getLibelle());
+		assertEquals(refus3.getLibelle(), result.get(2).getLibelle());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

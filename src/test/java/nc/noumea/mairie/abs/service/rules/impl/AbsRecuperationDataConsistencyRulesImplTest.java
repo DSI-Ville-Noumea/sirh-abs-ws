@@ -34,7 +34,6 @@ import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
-import nc.noumea.mairie.abs.service.rules.impl.AbsRecuperationDataConsistencyRulesImpl;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.sirh.domain.Agent;
 
@@ -391,7 +390,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
-		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), 1);
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), "motif");
 		
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -413,7 +412,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
-		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), 2);
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), "motif");
 		
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -748,15 +747,13 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 			etat1.setEtat(RefEtatEnum.SAISIE);
 			etat1.setIdAgent(idAgent);
 			etat1.setIdEtatDemande(1);
-			etat1.setIdMotifRefus(1);
-			etat1.setMotifViseur("motif");
+			etat1.setMotif("motif");
 		EtatDemande etat2 = new EtatDemande();
 			etat2.setDate(new Date());
 			etat2.setEtat(RefEtatEnum.PROVISOIRE);
 			etat2.setIdAgent(idAgent);
 			etat2.setIdEtatDemande(2);
-			etat2.setIdMotifRefus(2);
-			etat2.setMotifViseur("motif");
+			etat2.setMotif("motif");
 		DemandeRecup d = new DemandeRecup();
 			etat1.setDemande(d);
 			d.setIdDemande(1);
@@ -797,14 +794,12 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
-		assertEquals(new Integer(1),result.get(0).getIdMotifRefus());
-		assertEquals("motif",result.get(0).getMotifViseur());
+		assertEquals("motif",result.get(0).getMotif());
 		assertEquals("50", result.get(1).getDuree().toString());
 		assertFalse(result.get(1).isAffichageBoutonImprimer());
 		assertFalse(result.get(1).isAffichageBoutonModifier());
 		assertFalse(result.get(1).isAffichageBoutonSupprimer());
-		assertEquals(new Integer(2),result.get(1).getIdMotifRefus());
-		assertEquals("motif",result.get(1).getMotifViseur());
+		assertEquals("motif",result.get(1).getMotif());
 	}
 
 	@Test
@@ -853,8 +848,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 			etat1.setEtat(RefEtatEnum.SAISIE);
 			etat1.setIdAgent(idAgent);
 			etat1.setIdEtatDemande(1);
-			etat1.setIdMotifRefus(1);
-			etat1.setMotifViseur("motif");
+			etat1.setMotif("motif");
 		DemandeRecup d = new DemandeRecup();
 			etat1.setDemande(d);
 			d.setIdDemande(1);
@@ -996,8 +990,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
-		assertEquals(new Integer(1),result.get(0).getIdMotifRefus());
-		assertEquals("motif",result.get(0).getMotifViseur());
+		assertEquals("motif",result.get(0).getMotif());
 	}
 
 	@Test
@@ -1131,8 +1124,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isModifierVisa());
 		assertNull(result.get(0).getValeurApprobation());
 		assertNull(result.get(0).getValeurVisa());
-		assertEquals(null,result.get(0).getIdMotifRefus());
-		assertEquals(null,result.get(0).getMotifViseur());
+		assertEquals(null,result.get(0).getMotif());
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result.get(1).getIdRefEtat().intValue());
 		assertFalse(result.get(1).isAffichageApprobation());
@@ -1145,8 +1137,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(1).isModifierVisa());
 		assertNull(result.get(1).getValeurApprobation());
 		assertNull(result.get(1).getValeurVisa());
-		assertEquals(null,result.get(1).getIdMotifRefus());
-		assertEquals(null,result.get(1).getMotifViseur());
+		assertEquals(null,result.get(1).getMotif());
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result.get(2).getIdRefEtat().intValue());
 		assertFalse(result.get(2).isAffichageApprobation());
@@ -1159,8 +1150,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(2).isModifierVisa());
 		assertNull(result.get(2).getValeurApprobation());
 		assertNull(result.get(2).getValeurVisa());
-		assertEquals(null,result.get(2).getIdMotifRefus());
-		assertEquals(null,result.get(2).getMotifViseur());
+		assertEquals(null,result.get(2).getMotif());
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result.get(3).getIdRefEtat().intValue());
 		assertFalse(result.get(3).isAffichageApprobation());
@@ -1173,8 +1163,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 		assertFalse(result.get(3).isModifierVisa());
 		assertNull(result.get(3).getValeurApprobation());
 		assertNull(result.get(3).getValeurVisa());
-		assertEquals(null,result.get(3).getIdMotifRefus());
-		assertEquals(null,result.get(3).getMotifViseur());
+		assertEquals(null,result.get(3).getMotif());
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result.get(4).getIdRefEtat().intValue());
 		assertFalse(result.get(4).isAffichageApprobation());
