@@ -12,7 +12,7 @@ SIRH-ABS-WS API et définition des services concernant les soldes que l'agent pe
 
  <<URL>> : /solde/soldeAgent
  
- <<Accepted Methods>> : GET 
+ <<Accepted Methods>> : POST 
  
   <<Parameters>>
  

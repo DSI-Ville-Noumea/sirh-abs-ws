@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -67,7 +68,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
 
 		assertEquals("0.0", dto.getSoldeCongeAnnee().toString());
 		assertEquals("0.0", dto.getSoldeCongeAnneePrec().toString());
@@ -82,7 +83,7 @@ public class SoldeServiceTest {
 	}
 
 	@Test
-	public void getAgentSolde_GetAllSolde() {
+	public void getAgentSolde_GetAllSolde() throws ParseException {
 
 		// Given
 		Integer idAgent = 9008765;
@@ -136,8 +137,10 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
+		Date dateDeb = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent);
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -149,6 +152,78 @@ public class SoldeServiceTest {
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
 		assertTrue(dto.isAfficheSoldeAsaA48());
+	}
+
+	@Test
+	public void getAgentSolde_GetAllSolde_WithDate() throws ParseException {
+
+		// Given
+		Integer idAgent = 9008765;
+		double cotaSoldeAnnee = 62.0;
+		double cotaSoldeAnneePrec = 25.5;
+
+		AgentRecupCount arc = new AgentRecupCount();
+		arc.setIdAgent(idAgent);
+		arc.setTotalMinutes(72);
+
+		AgentReposCompCount arcc = new AgentReposCompCount();
+		arcc.setIdAgent(idAgent);
+		arcc.setTotalMinutes(12);
+		arcc.setTotalMinutesAnneeN1(10);
+
+		AgentAsaA48Count arccc = new AgentAsaA48Count();
+		arccc.setIdAgent(idAgent);
+		arccc.setTotalJours(12);
+		arccc.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		arccc.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
+
+		SpSold solde = new SpSold();
+		solde.setNomatr(8765);
+		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
+		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+
+		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
+		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+		Mockito.when(
+				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(),
+						new DateTime(2014, 12, 31, 23, 59, 0).toDate())).thenReturn(arccc);
+
+		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
+
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
+				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				// result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
+				return result;
+			}
+		}).when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+
+		SoldeService service = new SoldeService();
+		ReflectionTestUtils.setField(service, "counterRepository", cr);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+
+		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2013, 12, 31, 23, 59, 0).toDate();
+		// When
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin);
+
+		assertEquals("72.0", dto.getSoldeRecup().toString());
+		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
+		assertEquals("25.5", dto.getSoldeCongeAnneePrec().toString());
+		assertEquals("12.0", dto.getSoldeReposCompAnnee().toString());
+		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
+		assertEquals(0, (int) dto.getSoldeAsaA48());
+		assertTrue(dto.isAfficheSoldeConge());
+		assertTrue(dto.isAfficheSoldeRecup());
+		assertTrue(dto.isAfficheSoldeReposComp());
+		assertFalse(dto.isAfficheSoldeAsaA48());
 	}
 
 	@Test
@@ -204,7 +279,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());

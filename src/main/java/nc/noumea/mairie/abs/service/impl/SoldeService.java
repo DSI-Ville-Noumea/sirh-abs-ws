@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +17,6 @@ import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 import nc.noumea.mairie.domain.SpSold;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +39,9 @@ public class SoldeService implements ISoldeService {
 	private AbsReposCompensateurDataConsistencyRulesImpl absReposCompDataConsistencyRules;
 
 	@Override
-	public SoldeDto getAgentSolde(Integer idAgent) {
+	public SoldeDto getAgentSolde(Integer idAgent, Date dateDebut, Date dateFin) {
 
-		logger.info("Read getAgentSolde for Agent {} ...", idAgent);
+		logger.info("Read getAgentSolde for Agent {}, and dateDeb {}, and dateFin {} ...", idAgent, dateDebut, dateFin);
 		ReturnMessageDto msg = new ReturnMessageDto();
 		SoldeDto dto = new SoldeDto();
 
@@ -65,12 +63,9 @@ public class SoldeService implements ISoldeService {
 		dto.setSoldeReposCompAnnee((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutes()));
 		dto.setSoldeReposCompAnneePrec((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutesAnneeN1()));
 
-		// on traite les ASA A48 pour l'année en cours
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		Integer annee = cal.get(Calendar.YEAR);
+		// on traite les ASA A48 pour l'année en parametre
 		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, idAgent,
-				new DateTime(annee, 1, 1, 0, 0, 0).toDate(), new DateTime(annee, 12, 31, 23, 59, 0).toDate());
+				dateDebut, dateFin);
 		dto.setAfficheSoldeAsaA48(soldeAsaA48 == null ? false : true);
 		dto.setSoldeAsaA48(soldeAsaA48 == null ? 0 : soldeAsaA48.getTotalJours());
 
