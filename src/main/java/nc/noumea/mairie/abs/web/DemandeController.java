@@ -299,4 +299,30 @@ public class DemandeController {
 
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
+	
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "/demandeSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> setDemandeAbsenceSIRH(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) String demandeDto) {
+
+		logger.debug("entered POST [demandes/demandeSIRH] => setDemandeAbsenceSIRH for SIRH with parameters idAgent = {}",
+				idAgent);
+
+		DemandeDto dto = new JSONDeserializer<DemandeDto>().use(Date.class, new MSDateTransformer()).deserializeInto(
+				demandeDto, new DemandeDto());
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		ReturnMessageDto srm = absenceService.saveDemande(convertedIdAgent, dto);
+
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+
+		if (!srm.getErrors().isEmpty()) {
+			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+		} else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
 }

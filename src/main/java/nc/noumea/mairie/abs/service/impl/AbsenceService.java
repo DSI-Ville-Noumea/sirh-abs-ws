@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
@@ -65,6 +66,10 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absReposCompDataConsistencyRules;
+	
+	@Autowired
+	@Qualifier("AbsASADataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absASADataConsistencyRulesImpl;
 
 	@Autowired
 	private HelperService helperService;
@@ -479,6 +484,101 @@ public class AbsenceService implements IAbsenceService {
 		logger.info("Updated demande id {}.", idDemande);
 
 		return result;
+	}
+	
+	
+	@Override
+	public ReturnMessageDto saveDemandeSIRH(Integer idAgent, DemandeDto demandeDto) {
+
+		demandeRepository.setFlushMode(FlushModeType.COMMIT);
+		ReturnMessageDto returnDto = new ReturnMessageDto();
+
+		// verification des droits SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			logger.warn("L'agent n'est pas habilité à saisir une demande.");
+			returnDto.getErrors().add(String.format("L'agent n'est pas habilité à saisir une demande."));
+			return returnDto;
+		}
+
+		Demande demande = null;
+		IAbsenceDataConsistencyRules rules = null;
+		Date dateJour = new Date();
+
+		// selon le type de demande, on mappe les donnees specifiques de la
+		// demande
+		// et on effectue les verifications appropriees
+		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demandeDto.getIdTypeDemande())) {
+			case CONGE_ANNUEL:
+				// TODO
+				break;
+			case REPOS_COMP:
+				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
+				demandeReposComp.setDuree(demandeDto.getDuree());
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
+				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+				rules = absReposCompDataConsistencyRules;
+				break;
+			case RECUP:
+				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
+				demandeRecup.setDuree(demandeDto.getDuree());
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
+				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+				rules = absRecupDataConsistencyRules;
+				break;
+			case ASA_A48:
+				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
+				demandeAsa.setDuree(demandeDto.getDuree());
+				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
+				demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
+				demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
+				demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
+				//TODO
+				demandeAsa.setDateFin(null);
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
+				rules = absASADataConsistencyRulesImpl;
+				break;
+			case AUTRES:
+				// TODO
+				break;
+			case MALADIES:
+				// TODO
+				break;
+			default:
+				returnDto.getErrors().add(
+						String.format("Le type [%d] de la demande n'est pas reconnu.", demandeDto.getIdTypeDemande()));
+				demandeRepository.clear();
+				return returnDto;
+		}
+		// dans le cas des types de demande non geres ==> //TODO a supprimer par la suite
+		if (null == rules) {
+			rules = defaultAbsenceDataConsistencyRulesImpl;
+			demande = getDemande(Demande.class, demandeDto.getIdDemande());
+			if (null == demande) {
+				demande = new Demande();
+			}
+			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
+			demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+		}
+
+		rules.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
+
+		if (returnDto.getErrors().size() != 0) {
+			demandeRepository.clear();
+			return returnDto;
+		}
+
+		demandeRepository.persistEntity(demande);
+		demandeRepository.flush();
+		demandeRepository.clear();
+
+		if (null == demandeDto.getIdDemande()) {
+			returnDto.getInfos().add(String.format("La demande a bien été créée."));
+		} else {
+			returnDto.getInfos().add(String.format("La demande a bien été modifiée."));
+		}
+
+		return returnDto;
 	}
 
 }
