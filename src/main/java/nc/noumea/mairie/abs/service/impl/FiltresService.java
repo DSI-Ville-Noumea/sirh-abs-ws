@@ -6,8 +6,10 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IFiltresService;
@@ -105,6 +107,21 @@ public class FiltresService implements IFiltresService {
 		}
 
 		return etats;
+	}
+	
+	@Override
+	public List<RefTypeSaisiDto> getRefTypeSaisi(Integer idRefTypeAbsence) {
+		
+		List<RefTypeSaisiDto> resultDto = new ArrayList<RefTypeSaisiDto>();
+		List<RefTypeSaisi> result = demandeRepository.findRefTypeSaisi(idRefTypeAbsence);
+		if(null != result) {
+			for(RefTypeSaisi typeSaisi : result) {
+				RefTypeSaisiDto dto = new RefTypeSaisiDto(typeSaisi);
+				resultDto.add(dto);
+			}
+		}
+		
+		return resultDto;
 	}
 
 }

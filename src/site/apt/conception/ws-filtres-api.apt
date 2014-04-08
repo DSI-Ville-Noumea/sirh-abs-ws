@@ -128,3 +128,40 @@ HTTP Code 200 : OK
 	…	
 ]
 +-------------------------+
+
+
+* liste des types de saisie par famille d'absence
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /filtres/getTypesSaisi
+ 
+ <<Accepted Methods>> : GET
+ 
+  <<Parameters>>
+  
+  * <<idRefTypeAbsence>> : identifiant du type d'absence (CONGES, ASA, ...) (optionnel)
+  
+ <<Content>>
+ 
++-------------------------+
+[
+  {
+    "idRefTypeDemande": 2,
+    "calendarDateDebut": true,
+    "calendarDateFin": false,
+    "calendarHeureDebut": true,
+    "calendarHeureFin": false,
+    "chkDateDebut": false,
+    "chkDateFin": false,
+    "duree": true,
+    "pieceJointe": false
+  },
+  ...
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
++-------------------------+

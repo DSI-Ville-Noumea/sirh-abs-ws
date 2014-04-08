@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 
 import org.springframework.stereotype.Repository;
 
@@ -205,5 +206,20 @@ public class DemandeRepository implements IDemandeRepository {
 	public List<OrganisationSyndicale> findAllOrganisationActives() {
 		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o where o.actif = true",
 				OrganisationSyndicale.class).getResultList();
+	}
+	
+	@Override
+	public List<RefTypeSaisi> findRefTypeSaisi(Integer idRefTypeAbsence) {
+		
+		TypedQuery<RefTypeSaisi> query = null;
+		
+		if(null == idRefTypeAbsence) {
+			query = absEntityManager.createNamedQuery("getAllRefTypeSaisi", RefTypeSaisi.class);
+		}else{
+			query = absEntityManager.createNamedQuery("getRefTypeSaisiByIdTypeDemande", RefTypeSaisi.class);
+			query.setParameter("idRefTypeAbsence", idRefTypeAbsence);
+		}
+		
+		return query.getResultList();
 	}
 }

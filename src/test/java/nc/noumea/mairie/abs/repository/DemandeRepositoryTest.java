@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +26,7 @@ import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -870,6 +870,119 @@ public class DemandeRepositoryTest {
 		// Then
 		assertEquals(2, result.size());
 
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void findRefTypeSaisi_all() {
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(1);
+		absEntityManager.persist(type);
+		
+		RefTypeAbsence type2 = new RefTypeAbsence();
+			type2.setIdRefTypeAbsence(2);
+		absEntityManager.persist(type2);
+	
+		RefTypeSaisi rts = new RefTypeSaisi();
+			rts.setIdRefTypeAbsence(1);
+			rts.setType(type);
+			rts.setCalendarDateDebut(true);
+			rts.setCalendarHeureDebut(true);
+		absEntityManager.persist(rts);
+		
+		RefTypeSaisi rts2 = new RefTypeSaisi();
+			rts2.setIdRefTypeAbsence(2);
+			rts2.setType(type2);
+			rts2.setCalendarDateFin(true);
+			rts2.setCalendarHeureFin(true);
+		absEntityManager.persist(rts2);
+		
+		List<RefTypeSaisi> result = repository.findRefTypeSaisi(null);
+		
+		// Then
+		assertEquals(2, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void findRefTypeSaisi_type1() {
+
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(1);
+		absEntityManager.persist(type);
+		
+		RefTypeAbsence type2 = new RefTypeAbsence();
+			type2.setIdRefTypeAbsence(2);
+		absEntityManager.persist(type2);
+		
+		RefTypeSaisi rts = new RefTypeSaisi();
+			rts.setIdRefTypeAbsence(1);
+			rts.setType(type);
+			rts.setCalendarDateDebut(true);
+			rts.setCalendarHeureDebut(true);
+		absEntityManager.persist(rts);
+		
+		RefTypeSaisi rts2 = new RefTypeSaisi();
+			rts2.setIdRefTypeAbsence(2);
+			rts2.setType(type2);
+			rts2.setCalendarDateFin(true);
+			rts2.setCalendarHeureFin(true);
+		absEntityManager.persist(rts2);
+		
+		List<RefTypeSaisi> result = repository.findRefTypeSaisi(1);
+		
+		// Then
+		assertEquals(1, result.size());
+		assertTrue(result.get(0).isCalendarDateDebut());
+		assertTrue(result.get(0).isCalendarHeureDebut());
+		assertFalse(result.get(0).isCalendarDateFin());
+		assertFalse(result.get(0).isCalendarHeureFin());
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void findRefTypeSaisi_type2() {
+
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(1);
+		absEntityManager.persist(type);
+		
+		RefTypeAbsence type2 = new RefTypeAbsence();
+			type2.setIdRefTypeAbsence(2);
+		absEntityManager.persist(type2);
+		
+		RefTypeSaisi rts = new RefTypeSaisi();
+			rts.setIdRefTypeAbsence(1);
+			rts.setType(type);
+			rts.setCalendarDateDebut(true);
+			rts.setCalendarHeureDebut(true);
+		absEntityManager.persist(rts);
+		
+		RefTypeSaisi rts2 = new RefTypeSaisi();
+			rts2.setIdRefTypeAbsence(2);
+			rts2.setType(type2);
+			rts2.setCalendarDateFin(true);
+			rts2.setCalendarHeureFin(true);
+		absEntityManager.persist(rts2);
+		
+		List<RefTypeSaisi> result = repository.findRefTypeSaisi(2);
+		
+		// Then
+		assertEquals(1, result.size());
+		assertFalse(result.get(0).isCalendarDateDebut());
+		assertFalse(result.get(0).isCalendarHeureDebut());
+		assertTrue(result.get(0).isCalendarDateFin());
+		assertTrue(result.get(0).isCalendarHeureFin());
+		
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}

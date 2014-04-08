@@ -3,6 +3,8 @@ package nc.noumea.mairie.abs.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 
@@ -20,6 +22,10 @@ public class RefTypeAbsence {
 
 	@Column(name = "GROUPE", columnDefinition = "NVARCHAR2")
 	private String groupe;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
+	private RefTypeSaisi typeSaisi;
 
 	public Integer getIdRefTypeAbsence() {
 		return idRefTypeAbsence;
@@ -43,6 +49,14 @@ public class RefTypeAbsence {
 
 	public void setGroupe(String groupe) {
 		this.groupe = groupe;
+	}
+
+	public RefTypeSaisi getTypeSaisi() {
+		return typeSaisi;
+	}
+
+	public void setTypeSaisi(RefTypeSaisi typeSaisi) {
+		this.typeSaisi = typeSaisi;
 	}
 	
 }

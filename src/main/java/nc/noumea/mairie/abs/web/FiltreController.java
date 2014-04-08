@@ -5,6 +5,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -104,6 +105,21 @@ public class FiltreController {
 			throw new NoContentException();
 
 		String json = new JSONSerializer().exclude("*.class").serialize(services);
+
+		return new ResponseEntity<String>(json, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getTypesSaisi", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getTypesSaisi(
+			@RequestParam(value = "idRefTypeAbsence", required = false) Integer idRefTypeAbsence) {
+
+		logger.debug("entered GET [filtres/getTypesSaisi] => getTypesSaisi");
+
+		List<RefTypeSaisiDto> typesSaisi = filtresService.getRefTypeSaisi(idRefTypeAbsence);
+
+		String json = new JSONSerializer().exclude("*.class").serialize(typesSaisi);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}

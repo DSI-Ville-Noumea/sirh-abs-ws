@@ -1,6 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +11,10 @@ import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.domain.Spcarr;
@@ -460,5 +462,58 @@ public class FiltresServiceTest {
 		assertEquals(0, result.get(0).getIdRefEtat().intValue());
 		assertEquals(1, result.get(1).getIdRefEtat().intValue());
 		assertEquals(6, result.get(2).getIdRefEtat().intValue());
+	}
+	
+	@Test
+	public void getRefTypeSaisi() {
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(1);
+	
+		RefTypeSaisi rts = new RefTypeSaisi();
+			rts.setType(type);
+			rts.setIdRefTypeAbsence(1);
+			rts.setCalendarDateDebut(true);
+			rts.setCalendarHeureDebut(true);
+			rts.setChkDateDebut(true);
+			rts.setDuree(true);
+		
+		RefTypeSaisi rts2 = new RefTypeSaisi();
+			rts2.setType(type);
+			rts2.setIdRefTypeAbsence(2);
+			rts2.setCalendarDateFin(true);
+			rts2.setCalendarHeureFin(true);
+			rts2.setChkDateFin(true);
+			rts2.setPieceJointe(true);
+	
+		List<RefTypeSaisi> listRefTypeSaisi = new ArrayList<RefTypeSaisi>();
+			listRefTypeSaisi.addAll(Arrays.asList(rts, rts2));
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+			Mockito.when(demandeRepository.findRefTypeSaisi(Mockito.anyInt())).thenReturn(listRefTypeSaisi);
+		
+		FiltresService service = new FiltresService();
+			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		List<RefTypeSaisiDto> result = service.getRefTypeSaisi(null);
+		
+		assertEquals(2, result.size());
+		assertTrue(result.get(0).isCalendarDateDebut());
+		assertTrue(result.get(0).isCalendarHeureDebut());
+		assertTrue(result.get(0).isChkDateDebut());
+		assertTrue(result.get(0).isDuree());
+		assertFalse(result.get(0).isCalendarDateFin());
+		assertFalse(result.get(0).isCalendarHeureFin());
+		assertFalse(result.get(0).isChkDateFin());
+		assertFalse(result.get(0).isPieceJointe());
+
+		assertFalse(result.get(1).isCalendarDateDebut());
+		assertFalse(result.get(1).isCalendarHeureDebut());
+		assertFalse(result.get(1).isChkDateDebut());
+		assertFalse(result.get(1).isDuree());
+		assertTrue(result.get(1).isCalendarDateFin());
+		assertTrue(result.get(1).isCalendarHeureFin());
+		assertTrue(result.get(1).isChkDateFin());
+		assertTrue(result.get(1).isPieceJointe());
 	}
 }

@@ -9,6 +9,7 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 
 public interface IDemandeRepository {
 
@@ -42,4 +43,6 @@ public interface IDemandeRepository {
 	List<OrganisationSyndicale> findAllOrganisation();
 
 	List<OrganisationSyndicale> findAllOrganisationActives();
+	
+	List<RefTypeSaisi> findRefTypeSaisi(Integer idRefTypeAbsence);
 }
