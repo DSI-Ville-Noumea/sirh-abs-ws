@@ -6,9 +6,9 @@ public class CompteurDto {
 
 	private Integer idAgent;
 
-	private Integer dureeAAjouter;
+	private Double dureeAAjouter;
 
-	private Integer dureeARetrancher;
+	private Double dureeARetrancher;
 
 	private Integer idMotifCompteur;
 
@@ -26,19 +26,19 @@ public class CompteurDto {
 		this.idAgent = idAgent;
 	}
 
-	public Integer getDureeAAjouter() {
+	public Double getDureeAAjouter() {
 		return dureeAAjouter;
 	}
 
-	public void setDureeAAjouter(Integer dureeAAjouter) {
+	public void setDureeAAjouter(Double dureeAAjouter) {
 		this.dureeAAjouter = dureeAAjouter;
 	}
 
-	public Integer getDureeARetrancher() {
+	public Double getDureeARetrancher() {
 		return dureeARetrancher;
 	}
 
-	public void setDureeARetrancher(Integer dureeARetrancher) {
+	public void setDureeARetrancher(Double dureeARetrancher) {
 		this.dureeARetrancher = dureeARetrancher;
 	}
 

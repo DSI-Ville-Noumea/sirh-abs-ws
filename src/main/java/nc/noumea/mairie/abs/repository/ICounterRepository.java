@@ -10,7 +10,7 @@ public interface ICounterRepository {
 
 	<T> T getAgentCounter(Class<T> T, Integer idAgent);
 
-	<T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date dateDebut, Date dateFin);
+	<T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date dateDebutDemande);
 
 	<T> T getWeekHistoForAgentAndDate(Class<T> T, Integer idAgent, Date dateMonday);
 

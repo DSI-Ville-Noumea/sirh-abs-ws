@@ -45,8 +45,7 @@ public class SoldeServiceTest {
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(null);
 		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA48Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate(),
-						new DateTime(annee, 12, 31, 23, 59, 0).toDate())).thenReturn(null);
+				cr.getAgentCounterByDate(AgentAsaA48Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate())).thenReturn(null);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(null);
@@ -68,14 +67,14 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null);
 
 		assertEquals("0.0", dto.getSoldeCongeAnnee().toString());
 		assertEquals("0.0", dto.getSoldeCongeAnneePrec().toString());
 		assertEquals("0.0", dto.getSoldeRecup().toString());
 		assertEquals("0.0", dto.getSoldeReposCompAnnee().toString());
 		assertEquals("0.0", dto.getSoldeReposCompAnneePrec().toString());
-		assertEquals("0", dto.getSoldeAsaA48().toString());
+		assertEquals("0.0", dto.getSoldeAsaA48().toString());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
@@ -101,7 +100,7 @@ public class SoldeServiceTest {
 
 		AgentAsaA48Count arccc = new AgentAsaA48Count();
 		arccc.setIdAgent(idAgent);
-		arccc.setTotalJours(12);
+		arccc.setTotalJours(12.0);
 		arccc.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arccc.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
 
@@ -114,8 +113,7 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
 		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(),
-						new DateTime(2014, 12, 31, 23, 59, 0).toDate())).thenReturn(arccc);
+				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(arccc);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
@@ -138,16 +136,16 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		Date dateDeb = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
+//		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin);
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
 		assertEquals("25.5", dto.getSoldeCongeAnneePrec().toString());
 		assertEquals("12.0", dto.getSoldeReposCompAnnee().toString());
 		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
-		assertEquals(12, (int) dto.getSoldeAsaA48());
+		assertEquals(12, dto.getSoldeAsaA48().intValue());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
@@ -173,7 +171,7 @@ public class SoldeServiceTest {
 
 		AgentAsaA48Count arccc = new AgentAsaA48Count();
 		arccc.setIdAgent(idAgent);
-		arccc.setTotalJours(12);
+		arccc.setTotalJours(12.0);
 		arccc.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arccc.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
 
@@ -186,8 +184,7 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
 		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(),
-						new DateTime(2014, 12, 31, 23, 59, 0).toDate())).thenReturn(arccc);
+				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(arccc);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
@@ -210,16 +207,16 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2013, 12, 31, 23, 59, 0).toDate();
+//		Date dateFin = new DateTime(2013, 12, 31, 23, 59, 0).toDate();
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin);
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
 		assertEquals("25.5", dto.getSoldeCongeAnneePrec().toString());
 		assertEquals("12.0", dto.getSoldeReposCompAnnee().toString());
 		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
-		assertEquals(0, (int) dto.getSoldeAsaA48());
+		assertEquals(0, dto.getSoldeAsaA48().intValue());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
@@ -254,8 +251,7 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
 		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(),
-						new DateTime(2014, 12, 31, 23, 59, 0).toDate())).thenReturn(null);
+				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(null);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
@@ -279,14 +275,14 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
 		assertEquals("25.5", dto.getSoldeCongeAnneePrec().toString());
 		assertEquals("12.0", dto.getSoldeReposCompAnnee().toString());
 		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
-		assertEquals(0, (int) dto.getSoldeAsaA48());
+		assertEquals(0, dto.getSoldeAsaA48().intValue());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertFalse(dto.isAfficheSoldeReposComp());

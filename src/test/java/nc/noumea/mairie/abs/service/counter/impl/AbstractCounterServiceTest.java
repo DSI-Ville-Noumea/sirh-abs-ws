@@ -86,8 +86,8 @@ public class AbstractCounterServiceTest {
 	public void controlSaisieAlimManuelleCompteur_minutesErreurSaisie() {
 		
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setDureeAAjouter(1);
-			compteurDto.setDureeARetrancher(1);
+			compteurDto.setDureeAAjouter(1.0);
+			compteurDto.setDureeARetrancher(1.0);
 		ReturnMessageDto result = new ReturnMessageDto();
 		
 		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
@@ -101,7 +101,7 @@ public class AbstractCounterServiceTest {
 	public void controlSaisieAlimManuelleCompteur_ajoutOK() {
 		
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setDureeAAjouter(1);
+			compteurDto.setDureeAAjouter(1.0);
 		ReturnMessageDto result = new ReturnMessageDto();
 		
 		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
@@ -113,7 +113,7 @@ public class AbstractCounterServiceTest {
 	@Test
 	public void controlSaisieAlimManuelleCompteur_retireOK() {
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setDureeARetrancher(1);
+			compteurDto.setDureeARetrancher(1.0);
 		ReturnMessageDto result = new ReturnMessageDto();
 		
 		RecupCounterServiceImpl service = new RecupCounterServiceImpl();

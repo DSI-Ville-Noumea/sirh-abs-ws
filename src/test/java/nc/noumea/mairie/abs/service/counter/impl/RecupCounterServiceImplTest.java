@@ -312,7 +312,7 @@ public class RecupCounterServiceImplTest {
 			Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
@@ -334,13 +334,13 @@ public class RecupCounterServiceImplTest {
 		Integer idAgent = 9005138; 
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeARetrancher(10);
+			compteurDto.setDureeARetrancher(10.0);
 		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 			
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 			Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(null);
@@ -367,13 +367,13 @@ public class RecupCounterServiceImplTest {
 		Integer idAgent = 9005138; 
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeARetrancher(10);
+			compteurDto.setDureeARetrancher(10.0);
 		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 			
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 			Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
@@ -402,7 +402,7 @@ public class RecupCounterServiceImplTest {
 		Integer idAgent = 9005138; 
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeARetrancher(10);
+			compteurDto.setDureeARetrancher(10.0);
 		
 		AgentRecupCount arc = new AgentRecupCount();
 			arc.setTotalMinutes(5);
@@ -411,7 +411,7 @@ public class RecupCounterServiceImplTest {
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 			
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 			Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
@@ -440,7 +440,7 @@ public class RecupCounterServiceImplTest {
 		Integer idAgent = 9005138; 
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeARetrancher(10);
+			compteurDto.setDureeARetrancher(10.0);
 			compteurDto.setIdMotifCompteur(1);
 		
 		AgentRecupCount arc = new AgentRecupCount();
@@ -450,7 +450,7 @@ public class RecupCounterServiceImplTest {
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 			
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 			Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
@@ -480,7 +480,7 @@ public class RecupCounterServiceImplTest {
 		Integer idAgent = 9005138; 
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeARetrancher(10);
+			compteurDto.setDureeARetrancher(10.0);
 			compteurDto.setIdMotifCompteur(1);
 		
 		AgentRecupCount arc = new AgentRecupCount();
@@ -490,7 +490,7 @@ public class RecupCounterServiceImplTest {
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 			Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 			
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
@@ -521,14 +521,14 @@ public class RecupCounterServiceImplTest {
 		Integer idAgent = 9005138; 
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeARetrancher(10);
+			compteurDto.setDureeARetrancher(10.0);
 			compteurDto.setIdMotifCompteur(1);
 		
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 			Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+			Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 			Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 			
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);

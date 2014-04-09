@@ -39,9 +39,9 @@ public class SoldeService implements ISoldeService {
 	private AbsReposCompensateurDataConsistencyRulesImpl absReposCompDataConsistencyRules;
 
 	@Override
-	public SoldeDto getAgentSolde(Integer idAgent, Date dateDebut, Date dateFin) {
+	public SoldeDto getAgentSolde(Integer idAgent, Date dateDebutDemande) {
 
-		logger.info("Read getAgentSolde for Agent {}, and dateDeb {}, and dateFin {} ...", idAgent, dateDebut, dateFin);
+		logger.info("Read getAgentSolde for Agent {}, and dateDebutDemande {} ...", idAgent, dateDebutDemande);
 		ReturnMessageDto msg = new ReturnMessageDto();
 		SoldeDto dto = new SoldeDto();
 
@@ -65,7 +65,7 @@ public class SoldeService implements ISoldeService {
 
 		// on traite les ASA A48 pour l'année en parametre
 		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, idAgent,
-				dateDebut, dateFin);
+				dateDebutDemande);
 		dto.setAfficheSoldeAsaA48(soldeAsaA48 == null ? false : true);
 		dto.setSoldeAsaA48(soldeAsaA48 == null ? 0 : soldeAsaA48.getTotalJours());
 

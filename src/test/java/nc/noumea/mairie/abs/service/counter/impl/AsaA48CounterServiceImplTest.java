@@ -42,7 +42,7 @@ public class AsaA48CounterServiceImplTest {
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
@@ -66,12 +66,12 @@ public class AsaA48CounterServiceImplTest {
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
-		compteurDto.setDureeAAjouter(10);
+		compteurDto.setDureeAAjouter(10.0);
 		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
 		compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
 
 		AgentAsaA48Count arc = new AgentAsaA48Count();
-		arc.setTotalJours(15);
+		arc.setTotalJours(15.0);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
@@ -80,7 +80,7 @@ public class AsaA48CounterServiceImplTest {
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
@@ -88,7 +88,7 @@ public class AsaA48CounterServiceImplTest {
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(
 				counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, compteurDto.getIdAgent(),
-						compteurDto.getDateDebut(), compteurDto.getDateFin())).thenReturn(arc);
+						compteurDto.getDateDebut())).thenReturn(arc);
 
 		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
@@ -112,14 +112,14 @@ public class AsaA48CounterServiceImplTest {
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
-		compteurDto.setDureeAAjouter(10);
+		compteurDto.setDureeAAjouter(10.0);
 		compteurDto.setDateDebut(new DateTime(2013, 4, 2, 0, 0, 0).toDate());
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(null);
@@ -150,19 +150,19 @@ public class AsaA48CounterServiceImplTest {
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
-		compteurDto.setDureeAAjouter(10);
+		compteurDto.setDureeAAjouter(10.0);
 		compteurDto.setIdMotifCompteur(1);
 		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
 		compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
 
 		AgentAsaA48Count arc = new AgentAsaA48Count();
-		arc.setTotalJours(15);
+		arc.setTotalJours(15.0);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10);
+		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
@@ -171,7 +171,7 @@ public class AsaA48CounterServiceImplTest {
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(
 				counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, compteurDto.getIdAgent(),
-						compteurDto.getDateDebut(), compteurDto.getDateFin())).thenReturn(arc);
+						compteurDto.getDateDebut())).thenReturn(arc);
 		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
@@ -200,7 +200,7 @@ public class AsaA48CounterServiceImplTest {
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
-		compteurDto.setDureeAAjouter(10);
+		compteurDto.setDureeAAjouter(10.0);
 		compteurDto.setIdMotifCompteur(1);
 		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
 		compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
@@ -209,7 +209,7 @@ public class AsaA48CounterServiceImplTest {
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10);
+		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
@@ -218,7 +218,7 @@ public class AsaA48CounterServiceImplTest {
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(
 				counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, compteurDto.getIdAgent(),
-						compteurDto.getDateDebut(), compteurDto.getDateFin())).thenReturn(null);
+						compteurDto.getDateDebut())).thenReturn(null);
 		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
@@ -265,7 +265,7 @@ public class AsaA48CounterServiceImplTest {
 
 		List<CompteurAsaDto> result = new ArrayList<CompteurAsaDto>();
 		AgentAsaA48Count e = new AgentAsaA48Count();
-		e.setTotalJours(12);
+		e.setTotalJours(12.0);
 		List<AgentAsaA48Count> list = new ArrayList<AgentAsaA48Count>();
 		list.add(e);
 
@@ -278,7 +278,7 @@ public class AsaA48CounterServiceImplTest {
 		result = service.getListeCompteur();
 
 		assertEquals(1, result.size());
-		assertEquals(12, (int) result.get(0).getNb());
+		assertEquals(12, result.get(0).getNb().intValue());
 
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA48Count.class));

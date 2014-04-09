@@ -13,7 +13,7 @@ public class SoldeDto implements IJSONSerialize {
 	private Double soldeReposCompAnnee;
 	private Double soldeReposCompAnneePrec;
 	private boolean afficheSoldeAsaA48;
-	private Integer soldeAsaA48;
+	private Double soldeAsaA48;
 
 	@Override
 	public String serializeInJSON() {
@@ -92,11 +92,11 @@ public class SoldeDto implements IJSONSerialize {
 		this.afficheSoldeAsaA48 = afficheSoldeAsaA48;
 	}
 
-	public Integer getSoldeAsaA48() {
+	public Double getSoldeAsaA48() {
 		return soldeAsaA48;
 	}
 
-	public void setSoldeAsaA48(Integer soldeAsaA48) {
+	public void setSoldeAsaA48(Double soldeAsaA48) {
 		this.soldeAsaA48 = soldeAsaA48;
 	}
 

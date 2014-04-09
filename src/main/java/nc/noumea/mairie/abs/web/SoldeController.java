@@ -58,7 +58,7 @@ public class SoldeController {
 		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		SoldeDto result = soldeService.getAgentSolde(convertedIdAgent, dto.getDateDebut(), dto.getDateFin());
+		SoldeDto result = soldeService.getAgentSolde(convertedIdAgent, dto.getDateDebut());
 
 		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}

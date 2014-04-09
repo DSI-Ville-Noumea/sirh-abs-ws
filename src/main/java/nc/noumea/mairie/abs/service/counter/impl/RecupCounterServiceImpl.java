@@ -47,8 +47,8 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 
 		logger.info("Trying to update manually recuperation counters for Agent {} ...", compteurDto.getIdAgent());
 
-		int minutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
-
+		Double dMinutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+		Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
 		try {
 			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, idRefTypeAbsence, result);
 		} catch (InstantiationException | IllegalAccessException e) {

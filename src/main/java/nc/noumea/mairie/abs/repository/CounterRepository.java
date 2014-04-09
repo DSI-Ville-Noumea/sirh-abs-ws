@@ -108,7 +108,7 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public <T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date dateDebut, Date dateFin) {
+	public <T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date dateDebutDemande) {
 
 		// Build query criteria
 		CriteriaBuilder cb = absEntityManager.getCriteriaBuilder();
@@ -117,14 +117,12 @@ public class CounterRepository implements ICounterRepository {
 		cq.select(c);
 		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idAgent");
 		ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateDebut");
-		ParameterExpression<Date> p3 = cb.parameter(Date.class, "dateFin");
-		cq.where(cb.and(cb.equal(c.get("idAgent"), p), cb.equal(c.get("dateDebut"), p2), cb.equal(c.get("dateFin"), p3)));
-
+		cq.where(cb.and(cb.equal(c.get("idAgent"), p), cb.between(p2, c.<Date>get("dateDebut"), c.<Date>get("dateFin"))));
+		
 		// Build query
 		TypedQuery<T> q = absEntityManager.createQuery(cq);
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("dateDebut", dateDebut);
-		q.setParameter("dateFin", dateFin);
+		q.setParameter("dateDebut", dateDebutDemande);
 		q.setMaxResults(1);
 
 		// Exec query

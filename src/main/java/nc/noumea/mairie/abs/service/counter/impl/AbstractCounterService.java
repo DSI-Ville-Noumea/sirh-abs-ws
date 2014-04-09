@@ -107,6 +107,9 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	protected void controlCompteurPositif(Integer minutes, Integer totalMinutes, ReturnMessageDto srm) {
+		controlCompteurPositif(minutes, new Double(totalMinutes), srm);
+	}
+	protected void controlCompteurPositif(Integer minutes, Double totalMinutes, ReturnMessageDto srm) {
 		if (null != minutes && 0 > totalMinutes + minutes) {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF);
 			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));

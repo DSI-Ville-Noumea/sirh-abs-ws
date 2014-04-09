@@ -46,7 +46,7 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 
 		logger.info("Trying to update manually ASA A48 counters for Agent {} ...", compteurDto.getIdAgent());
 
-		int nbJours = helperService.calculJoursAlimManuelleCompteur(compteurDto);
+		Double nbJours = helperService.calculJoursAlimManuelleCompteur(compteurDto);
 
 		try {
 			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, idRefTypeAbsence, result);
@@ -68,7 +68,7 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 	 * @throws IllegalAccessException
 	 */
 	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Integer nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm) throws InstantiationException,
+			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm) throws InstantiationException,
 			IllegalAccessException {
 
 		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
@@ -84,7 +84,7 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 				nbJours, annee);
 
 		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounterByDate(AgentAsaA48Count.class,
-				compteurDto.getIdAgent(), compteurDto.getDateDebut(), compteurDto.getDateFin());
+				compteurDto.getIdAgent(), compteurDto.getDateDebut());
 
 		if (arc == null) {
 			arc = new AgentAsaA48Count();

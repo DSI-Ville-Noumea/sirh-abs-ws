@@ -8,7 +8,7 @@ public class CompteurAsaDto {
 
 	private Integer idAgent;
 
-	private Integer nb;
+	private Double nb;
 
 	private Date dateDebut;
 
@@ -45,11 +45,11 @@ public class CompteurAsaDto {
 		this.dateFin = dateFin;
 	}
 
-	public Integer getNb() {
+	public Double getNb() {
 		return nb;
 	}
 
-	public void setNb(Integer nb) {
+	public void setNb(Double nb) {
 		this.nb = nb;
 	}
 

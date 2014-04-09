@@ -231,14 +231,14 @@ public class CounterRepositoryTest {
 		// Given
 		AgentAsaA48Count record = new AgentAsaA48Count();
 		record.setIdAgent(9008767);
-		record.setTotalJours(7);
+		record.setTotalJours(7.0);
 		record.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
 		record.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record);
 
 		// When
 		AgentAsaA48Count result = repository.getAgentCounterByDate(AgentAsaA48Count.class, 9008767, new DateTime(2014,
-				1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 0, 0, 0).toDate());
+				1, 1, 0, 0, 0).toDate());
 
 		// Then
 		assertNull(result);
@@ -254,14 +254,14 @@ public class CounterRepositoryTest {
 		// Given
 		AgentAsaA48Count record = new AgentAsaA48Count();
 		record.setIdAgent(9008767);
-		record.setTotalJours(7);
+		record.setTotalJours(7.0);
 		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		record.setDateFin(new DateTime(2014, 12, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record);
 
 		// When
 		AgentAsaA48Count result = repository.getAgentCounterByDate(AgentAsaA48Count.class, 9008767, new DateTime(2014,
-				1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 0, 0, 0).toDate());
+				1, 1, 0, 0, 0).toDate());
 
 		// Then
 		assertNotNull(result);
@@ -289,13 +289,13 @@ public class CounterRepositoryTest {
 		// Given
 		AgentAsaA48Count record = new AgentAsaA48Count();
 		record.setIdAgent(9001767);
-		record.setTotalJours(7);
+		record.setTotalJours(7.0);
 		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		record.setDateFin(new DateTime(2014, 12, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record);
 		AgentAsaA48Count record2 = new AgentAsaA48Count();
 		record2.setIdAgent(9005138);
-		record2.setTotalJours(10);
+		record2.setTotalJours(10.0);
 		record2.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		record2.setDateFin(new DateTime(2014, 12, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record2);

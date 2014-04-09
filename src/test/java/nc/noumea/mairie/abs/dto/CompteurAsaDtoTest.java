@@ -20,7 +20,7 @@ public class CompteurAsaDtoTest {
 		ref.setIdAgent(9005138);
 		ref.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
 		ref.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
-		ref.setTotalJours(10);
+		ref.setTotalJours(10.0);
 
 		// When
 		CompteurAsaDto result = new CompteurAsaDto(ref);
@@ -29,6 +29,6 @@ public class CompteurAsaDtoTest {
 		assertEquals(ref.getDateDebut(), result.getDateDebut());
 		assertEquals(ref.getDateFin(), result.getDateFin());
 		assertEquals(ref.getIdAgent(), result.getIdAgent());
-		assertEquals(ref.getTotalJours(), (int) result.getNb());
+		assertEquals(ref.getTotalJours(), result.getNb());
 	}
 }

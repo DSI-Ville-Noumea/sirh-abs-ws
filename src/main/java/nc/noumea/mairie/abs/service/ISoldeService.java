@@ -8,7 +8,7 @@ import nc.noumea.mairie.abs.dto.SoldeDto;
 
 public interface ISoldeService {
 
-	SoldeDto getAgentSolde(Integer idAgent, Date dateDebut, Date dateFin);
+	SoldeDto getAgentSolde(Integer idAgent, Date dateDebutDemande);
 
 	List<HistoriqueSoldeDto> getHistoriqueSoldeAgentByTypeAbsence(Integer idAgent, Integer codeRefTypeAbsence);
 
