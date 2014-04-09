@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 @PrimaryKeyJoinColumn(name = "ID_DEMANDE") 
 public class DemandeAsa extends Demande {
 	
-	@NotNull
 	@Column(name = "DUREE")
 	private Integer duree;
 	

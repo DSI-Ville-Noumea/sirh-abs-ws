@@ -315,7 +315,7 @@ public class DemandeController {
 				demandeDto, new DemandeDto());
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		ReturnMessageDto srm = absenceService.saveDemande(convertedIdAgent, dto);
+		ReturnMessageDto srm = absenceService.saveDemandeSIRH(convertedIdAgent, dto);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
 
