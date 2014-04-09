@@ -465,7 +465,7 @@ public class FiltresServiceTest {
 	}
 	
 	@Test
-	public void getRefTypeSaisi() {
+	public void getRefTypeSaisi_all() {
 		
 		RefTypeAbsence type = new RefTypeAbsence();
 			type.setIdRefTypeAbsence(1);
@@ -490,7 +490,7 @@ public class FiltresServiceTest {
 			listRefTypeSaisi.addAll(Arrays.asList(rts, rts2));
 		
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-			Mockito.when(demandeRepository.findRefTypeSaisi(Mockito.anyInt())).thenReturn(listRefTypeSaisi);
+			Mockito.when(demandeRepository.findAllRefTypeSaisi()).thenReturn(listRefTypeSaisi);
 		
 		FiltresService service = new FiltresService();
 			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -515,5 +515,38 @@ public class FiltresServiceTest {
 		assertTrue(result.get(1).isCalendarHeureFin());
 		assertTrue(result.get(1).isChkDateFin());
 		assertTrue(result.get(1).isPieceJointe());
+	}
+	
+	@Test
+	public void getRefTypeSaisi_one() {
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(1);
+	
+		RefTypeSaisi rts = new RefTypeSaisi();
+			rts.setType(type);
+			rts.setIdRefTypeAbsence(1);
+			rts.setCalendarDateDebut(true);
+			rts.setCalendarHeureDebut(true);
+			rts.setChkDateDebut(true);
+			rts.setDuree(true);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+			Mockito.when(demandeRepository.findRefTypeSaisi(1)).thenReturn(rts);
+		
+		FiltresService service = new FiltresService();
+			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		List<RefTypeSaisiDto> result = service.getRefTypeSaisi(1);
+		
+		assertEquals(1, result.size());
+		assertTrue(result.get(0).isCalendarDateDebut());
+		assertTrue(result.get(0).isCalendarHeureDebut());
+		assertTrue(result.get(0).isChkDateDebut());
+		assertTrue(result.get(0).isDuree());
+		assertFalse(result.get(0).isCalendarDateFin());
+		assertFalse(result.get(0).isCalendarHeureFin());
+		assertFalse(result.get(0).isChkDateFin());
+		assertFalse(result.get(0).isPieceJointe());
 	}
 }

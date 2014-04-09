@@ -24,8 +24,8 @@ public class AgentAsaA48Count extends BaseAgentCount {
 	private Integer idAgentAsaA48Count;
 
 	@NotNull
-	@Column(name = "TOTAL_JOURS")
-	private int totalJours;
+	@Column(name = "TOTAL_JOURS", columnDefinition = "numeric")
+	private Double totalJours;
 
 	@Column(name = "DATE_DEBUT")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -35,11 +35,11 @@ public class AgentAsaA48Count extends BaseAgentCount {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
 
-	public int getTotalJours() {
+	public Double getTotalJours() {
 		return totalJours;
 	}
 
-	public void setTotalJours(int totalJours) {
+	public void setTotalJours(Double totalJours) {
 		this.totalJours = totalJours;
 	}
 

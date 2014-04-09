@@ -7,9 +7,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 
 import org.joda.time.LocalDate;
@@ -34,7 +36,11 @@ public class HelperServiceTest {
 	}
 	
 	@Test
-	public void getDateFin_resultOk(){
+	public void getDateFin_typeSaisiDuree_resultOk(){
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setDuree(true);
+			typeSaisi.setCalendarDateFin(false);
 		
 		HelperService service = new HelperService();
 	    
@@ -47,13 +53,17 @@ public class HelperServiceTest {
 	        pe.printStackTrace();
 	    }
 	    
-	    Date result = service.getDateFin(dateDebut, 22);
+	    Date result = service.getDateFin(typeSaisi, null, dateDebut, 22, false, false);
 	    
 	    assertEquals(result, dateFinAttendue);
 	}
 	
 	@Test
-	public void getDateFin_resultKo(){
+	public void getDateFin_typeSaisiDuree_resultKo(){
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setDuree(true);
+			typeSaisi.setCalendarDateFin(false);
 		
 		HelperService service = new HelperService();
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -67,33 +77,176 @@ public class HelperServiceTest {
 	        pe.printStackTrace();
 	    }
 	    
-	    Date result = service.getDateFin(dateDebut, 21);
+	    Date result = service.getDateFin(typeSaisi, null, dateDebut, 21, false, false);
 	    
 	    assertNotEquals(result, dateFinAttendue);
+	}
+	
+	@Test
+	public void getDateFin_typeSaisiDateEtHeureFin_resultOk(){
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setDuree(false);
+			typeSaisi.setCalendarDateFin(true);
+			typeSaisi.setCalendarHeureFin(true);
+		
+		HelperService service = new HelperService();
+	    
+		java.util.Date dateFinAttendue = new java.util.Date();
+	    java.util.Date dateDebut = new java.util.Date();
+	    try {
+	    	dateDebut = sdf.parse("2013-12-17 10:00:00");
+	    	dateFinAttendue = sdf.parse("2013-12-17 10:22:00");
+	    } catch (ParseException pe){
+	        pe.printStackTrace();
+	    }
+	    
+	    Date result = service.getDateFin(typeSaisi, dateFinAttendue, dateDebut, null, false, false);
+	    
+	    assertEquals(result, dateFinAttendue);
+	}
+	
+	@Test
+	public void getDateFin_typeSaisiChkDateFin_matin_resultOk(){
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setDuree(false);
+			typeSaisi.setCalendarDateFin(true);
+			typeSaisi.setCalendarHeureFin(false);
+			typeSaisi.setChkDateFin(true);
+		
+		HelperService service = new HelperService();
+	    
+		java.util.Date dateFinSaisie = new java.util.Date();
+	    java.util.Date dateFinAttendue = new java.util.Date();
+	    try {
+	    	dateFinSaisie = sdf.parse("2013-12-17 00:00:00");
+	    	dateFinAttendue = sdf.parse("2013-12-17 12:00:00");
+	    } catch (ParseException pe){
+	        pe.printStackTrace();
+	    }
+	    
+	    Date result = service.getDateFin(typeSaisi, dateFinSaisie, null, null, true, false);
+	    
+	    assertEquals(result, dateFinAttendue);
+	}
+	
+	@Test
+	public void getDateFin_typeSaisiChkDateFin_apresmidi_resultOk(){
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setDuree(false);
+			typeSaisi.setCalendarDateFin(true);
+			typeSaisi.setCalendarHeureFin(false);
+			typeSaisi.setChkDateFin(true);
+		
+		HelperService service = new HelperService();
+	    
+		java.util.Date dateFinSaisie = new java.util.Date();
+	    java.util.Date dateFinAttendue = new java.util.Date();
+	    try {
+	    	dateFinSaisie = sdf.parse("2013-12-17 00:00:00");
+	    	dateFinAttendue = sdf.parse("2013-12-17 23:59:00");
+	    } catch (ParseException pe){
+	        pe.printStackTrace();
+	    }
+	    
+	    Date result = service.getDateFin(typeSaisi, dateFinSaisie, null, null, false, true);
+	    
+	    assertEquals(result, dateFinAttendue);
+	}
+	
+	@Test
+	public void getDateDebut_typeSaisiDateEtHeureFin_resultOk(){
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setCalendarHeureDebut(true);
+		
+		HelperService service = new HelperService();
+	    
+		java.util.Date dateDebutAttendue = new java.util.Date();
+	    java.util.Date dateDebut = new java.util.Date();
+	    try {
+	    	dateDebut = sdf.parse("2013-12-17 10:22:00");
+	    	dateDebutAttendue = sdf.parse("2013-12-17 10:22:00");
+	    } catch (ParseException pe){
+	        pe.printStackTrace();
+	    }
+	    
+	    Date result = service.getDateDebut(typeSaisi, dateDebut, false, false);
+	    
+	    assertEquals(result, dateDebutAttendue);
+	}
+	
+	@Test
+	public void getDateDebut_typeSaisiChkDateFin_matin_resultOk(){
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setChkDateDebut(true);
+		
+		HelperService service = new HelperService();
+	    
+		java.util.Date dateDebSaisie = new java.util.Date();
+	    java.util.Date dateDebutAttendue = new java.util.Date();
+	    try {
+	    	dateDebSaisie = sdf.parse("2013-12-17 00:00:00");
+	    	dateDebutAttendue = sdf.parse("2013-12-17 00:00:00");
+	    } catch (ParseException pe){
+	        pe.printStackTrace();
+	    }
+	    
+	    Date result = service.getDateDebut(typeSaisi, dateDebSaisie, true, false);
+	    
+	    assertEquals(result, dateDebutAttendue);
+	}
+	
+	@Test
+	public void getDateDebut_typeSaisiChkDateFin_apresmidi_resultOk(){
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setChkDateDebut(true);
+		
+		HelperService service = new HelperService();
+	    
+		java.util.Date dateDebSaisie = new java.util.Date();
+	    java.util.Date datedebutAttendue = new java.util.Date();
+	    try {
+	    	dateDebSaisie = sdf.parse("2013-12-17 00:00:00");
+	    	datedebutAttendue = sdf.parse("2013-12-17 12:00:00");
+	    } catch (ParseException pe){
+	        pe.printStackTrace();
+	    }
+	    
+	    Date result = service.getDateDebut(typeSaisi, dateDebSaisie, false, true);
+	    
+	    assertEquals(result, datedebutAttendue);
 	}
 	
 	@Test
 	public void calculMinutesAlimManuelleCompteur_ajoutMinutes() {
 		
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setDureeAAjouter(10);
+			compteurDto.setDureeAAjouter(10.0);
 		
 		HelperService service = new HelperService();
-		int minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
+		Double minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
 		
-		assertEquals(10, minutes);
+		assertEquals(10, minutes.intValue());
 	}
 	
 	@Test
 	public void calculMinutesAlimManuelleCompteur_retireMinutes() {
 		
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setDureeARetrancher(10);
+			compteurDto.setDureeARetrancher(10.0);
 		
 		HelperService service = new HelperService();
-		int minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
+		Double minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
 		
-		assertEquals(-10, minutes);
+		assertEquals(-10, minutes.intValue());
 	}
 	
 	@Test
@@ -102,9 +255,9 @@ public class HelperServiceTest {
 		CompteurDto compteurDto = new CompteurDto();
 		
 		HelperService service = new HelperService();
-		int minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
+		Double minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
 		
-		assertEquals(0, minutes);
+		assertEquals(0, minutes.intValue());
 	}
 	
 	@Test
@@ -118,5 +271,40 @@ public class HelperServiceTest {
 		Date result = service.getCurrentDateMoinsUnAn();
 		
 		assertEquals(sdf.format(result), sdf.format(calStr1.getTime()));
+	}
+	
+	@Test
+	public void calculNombreJourEntre2Dates_entier() {
+		
+		Date dateJ = new Date();
+		GregorianCalendar calDebut = new GregorianCalendar(); 
+			calDebut.setTime(dateJ); 
+			
+		GregorianCalendar calFin = new GregorianCalendar(); 
+			calFin.setTime(dateJ); 
+			calFin.add(Calendar.DAY_OF_YEAR, 8);
+			
+		HelperService service = new HelperService();
+		Double result = service.calculNombreJourEntre2Dates(calDebut.getTime(), calFin.getTime());
+		
+		assertEquals(result.intValue(), 8);
+	}
+	
+	@Test
+	public void calculNombreJourEntre2Dates_demiJournee() {
+		
+		Date dateJ = new Date();
+		GregorianCalendar calDebut = new GregorianCalendar(); 
+			calDebut.setTime(dateJ); 
+			
+		GregorianCalendar calFin = new GregorianCalendar(); 
+			calFin.setTime(dateJ); 
+			calFin.add(Calendar.DAY_OF_YEAR, 8);
+			calFin.add(Calendar.HOUR, 12);
+			
+		HelperService service = new HelperService();
+		Double result = service.calculNombreJourEntre2Dates(calDebut.getTime(), calFin.getTime());
+		
+		assertEquals(result.floatValue(), 8,5);
 	}
 }

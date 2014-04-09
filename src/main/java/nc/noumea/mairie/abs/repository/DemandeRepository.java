@@ -209,16 +209,21 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 	
 	@Override
-	public List<RefTypeSaisi> findRefTypeSaisi(Integer idRefTypeAbsence) {
+	public RefTypeSaisi findRefTypeSaisi(Integer idRefTypeAbsence) {
 		
 		TypedQuery<RefTypeSaisi> query = null;
+		query = absEntityManager.createNamedQuery("getRefTypeSaisiByIdTypeDemande", RefTypeSaisi.class);
+		query.setParameter("idRefTypeAbsence", idRefTypeAbsence);
+		query.setMaxResults(1);
 		
-		if(null == idRefTypeAbsence) {
-			query = absEntityManager.createNamedQuery("getAllRefTypeSaisi", RefTypeSaisi.class);
-		}else{
-			query = absEntityManager.createNamedQuery("getRefTypeSaisiByIdTypeDemande", RefTypeSaisi.class);
-			query.setParameter("idRefTypeAbsence", idRefTypeAbsence);
-		}
+		return query.getSingleResult();
+	}
+	
+	@Override
+	public List<RefTypeSaisi> findAllRefTypeSaisi() {
+		
+		TypedQuery<RefTypeSaisi> query = null;
+		query = absEntityManager.createNamedQuery("getAllRefTypeSaisi", RefTypeSaisi.class);
 		
 		return query.getResultList();
 	}

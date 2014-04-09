@@ -68,8 +68,8 @@ public class AbsenceService implements IAbsenceService {
 	private IAbsenceDataConsistencyRules absReposCompDataConsistencyRules;
 	
 	@Autowired
-	@Qualifier("AbsASADataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absASADataConsistencyRulesImpl;
+	@Qualifier("AbsAsaA48DataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl;
 
 	@Autowired
 	private HelperService helperService;
@@ -110,14 +110,34 @@ public class AbsenceService implements IAbsenceService {
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
 				demandeReposComp.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
-				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+				
+				if(null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+				
+				demande.setDateFin(helperService.getDateFin(
+						demande.getType().getTypeSaisi(), 
+						demandeDto.getDateFin(), 
+						demandeDto.getDateDebut(), 
+						demandeDto.getDuree(), 
+						demandeDto.isDateFinAM(), 
+						demandeDto.isDateFinPM()));
 				rules = absReposCompDataConsistencyRules;
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
 				demandeRecup.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
-				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+				
+				if(null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+				
+				demande.setDateFin(helperService.getDateFin(
+						demande.getType().getTypeSaisi(), 
+						demandeDto.getDateFin(), 
+						demandeDto.getDateDebut(), 
+						demandeDto.getDuree(), 
+						demandeDto.isDateFinAM(), 
+						demandeDto.isDateFinPM()));
 				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA_A48:
@@ -143,7 +163,17 @@ public class AbsenceService implements IAbsenceService {
 				demande = new Demande();
 			}
 			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
-			demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+			
+			if(null == demande.getType().getTypeSaisi())
+				demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+			
+			demande.setDateFin(helperService.getDateFin(
+					demande.getType().getTypeSaisi(), 
+					demandeDto.getDateFin(), 
+					demandeDto.getDateDebut(), 
+					demandeDto.getDuree(), 
+					demandeDto.isDateFinAM(), 
+					demandeDto.isDateFinPM()));
 		}
 
 		rules.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
@@ -516,27 +546,61 @@ public class AbsenceService implements IAbsenceService {
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
 				demandeReposComp.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
-				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+				
+				if(null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+				
+				demande.setDateFin(helperService.getDateFin(
+						demande.getType().getTypeSaisi(), 
+						demandeDto.getDateFin(), 
+						demandeDto.getDateDebut(), 
+						demandeDto.getDuree(), 
+						demandeDto.isDateFinAM(), 
+						demandeDto.isDateFinPM()));
 				rules = absReposCompDataConsistencyRules;
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
 				demandeRecup.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
-				demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+				
+				if(null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+				
+				demande.setDateFin(helperService.getDateFin(
+						demande.getType().getTypeSaisi(), 
+						demandeDto.getDateFin(), 
+						demandeDto.getDateDebut(), 
+						demandeDto.getDuree(), 
+						demandeDto.isDateFinAM(), 
+						demandeDto.isDateFinPM()));
 				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA_A48:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
-				demandeAsa.setDuree(demandeDto.getDuree());
-				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
-				demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
-				demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
-				demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
-				//TODO
-				demandeAsa.setDateFin(null);
+					demandeAsa.setDuree(demandeDto.getDuree());
+					demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
+					demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
+					demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
+					demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
-				rules = absASADataConsistencyRulesImpl;
+				
+				if(null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+				
+				demande.setDateFin(helperService.getDateFin(
+						demande.getType().getTypeSaisi(), 
+						demandeDto.getDateFin(), 
+						demandeDto.getDateDebut(), 
+						demandeDto.getDuree(), 
+						demandeDto.isDateFinAM(), 
+						demandeDto.isDateFinPM()));
+				demande.setDateDebut(helperService.getDateDebut(
+						demande.getType().getTypeSaisi(), 
+						demandeDto.getDateDebut(), 
+						demandeDto.isDateDebutAM(), 
+						demandeDto.isDateDebutPM()));
+				rules = absAsaA48DataConsistencyRulesImpl;
 				break;
 			case AUTRES:
 				// TODO
@@ -558,7 +622,13 @@ public class AbsenceService implements IAbsenceService {
 				demande = new Demande();
 			}
 			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
-			demande.setDateFin(helperService.getDateFin(demandeDto.getDateDebut(), demandeDto.getDuree()));
+			demande.setDateFin(helperService.getDateFin(
+					demande.getType().getTypeSaisi(), 
+					demandeDto.getDateFin(), 
+					demandeDto.getDateDebut(), 
+					demandeDto.getDuree(), 
+					demandeDto.isDateFinAM(), 
+					demandeDto.isDateFinPM()));
 		}
 
 		rules.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);

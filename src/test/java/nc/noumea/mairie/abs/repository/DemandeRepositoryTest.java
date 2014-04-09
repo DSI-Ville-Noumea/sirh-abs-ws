@@ -876,7 +876,7 @@ public class DemandeRepositoryTest {
 	
 	@Test
 	@Transactional("absTransactionManager")
-	public void findRefTypeSaisi_all() {
+	public void findAllRefTypeSaisi() {
 		
 		RefTypeAbsence type = new RefTypeAbsence();
 			type.setIdRefTypeAbsence(1);
@@ -900,7 +900,7 @@ public class DemandeRepositoryTest {
 			rts2.setCalendarHeureFin(true);
 		absEntityManager.persist(rts2);
 		
-		List<RefTypeSaisi> result = repository.findRefTypeSaisi(null);
+		List<RefTypeSaisi> result = repository.findAllRefTypeSaisi();
 		
 		// Then
 		assertEquals(2, result.size());
@@ -935,14 +935,13 @@ public class DemandeRepositoryTest {
 			rts2.setCalendarHeureFin(true);
 		absEntityManager.persist(rts2);
 		
-		List<RefTypeSaisi> result = repository.findRefTypeSaisi(1);
+		RefTypeSaisi result = repository.findRefTypeSaisi(1);
 		
 		// Then
-		assertEquals(1, result.size());
-		assertTrue(result.get(0).isCalendarDateDebut());
-		assertTrue(result.get(0).isCalendarHeureDebut());
-		assertFalse(result.get(0).isCalendarDateFin());
-		assertFalse(result.get(0).isCalendarHeureFin());
+		assertTrue(result.isCalendarDateDebut());
+		assertTrue(result.isCalendarHeureDebut());
+		assertFalse(result.isCalendarDateFin());
+		assertFalse(result.isCalendarHeureFin());
 		
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -974,14 +973,13 @@ public class DemandeRepositoryTest {
 			rts2.setCalendarHeureFin(true);
 		absEntityManager.persist(rts2);
 		
-		List<RefTypeSaisi> result = repository.findRefTypeSaisi(2);
+		RefTypeSaisi result = repository.findRefTypeSaisi(2);
 		
 		// Then
-		assertEquals(1, result.size());
-		assertFalse(result.get(0).isCalendarDateDebut());
-		assertFalse(result.get(0).isCalendarHeureDebut());
-		assertTrue(result.get(0).isCalendarDateFin());
-		assertTrue(result.get(0).isCalendarHeureFin());
+		assertFalse(result.isCalendarDateDebut());
+		assertFalse(result.isCalendarHeureDebut());
+		assertTrue(result.isCalendarDateFin());
+		assertTrue(result.isCalendarHeureFin());
 		
 		absEntityManager.flush();
 		absEntityManager.clear();

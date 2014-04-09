@@ -113,10 +113,18 @@ public class FiltresService implements IFiltresService {
 	public List<RefTypeSaisiDto> getRefTypeSaisi(Integer idRefTypeAbsence) {
 		
 		List<RefTypeSaisiDto> resultDto = new ArrayList<RefTypeSaisiDto>();
-		List<RefTypeSaisi> result = demandeRepository.findRefTypeSaisi(idRefTypeAbsence);
-		if(null != result) {
-			for(RefTypeSaisi typeSaisi : result) {
-				RefTypeSaisiDto dto = new RefTypeSaisiDto(typeSaisi);
+		if(null == idRefTypeAbsence) {
+			List<RefTypeSaisi> result = demandeRepository.findAllRefTypeSaisi();
+			if(null != result) {
+				for(RefTypeSaisi typeSaisi : result) {
+					RefTypeSaisiDto dto = new RefTypeSaisiDto(typeSaisi);
+					resultDto.add(dto);
+				}
+			}
+		} else {
+			RefTypeSaisi result = demandeRepository.findRefTypeSaisi(idRefTypeAbsence);
+			if(null != result) {
+				RefTypeSaisiDto dto = new RefTypeSaisiDto(result);
 				resultDto.add(dto);
 			}
 		}

@@ -25,6 +25,7 @@ import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -323,7 +324,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeRecup.class));
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getDateFin(dto.getDateDebut(), dto.getDuree())).thenReturn(dateFin);
+		Mockito.when(helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -413,7 +414,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeRecup.class));
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getDateFin(dto.getDateDebut(), dto.getDuree())).thenReturn(dateFin);
+		Mockito.when(helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -498,7 +499,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeRecup.class));
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getDateFin(dto.getDateDebut(), dto.getDuree())).thenReturn(dateFin);
+		Mockito.when(helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -1405,7 +1406,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeReposComp.class));
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getDateFin(dto.getDateDebut(), dto.getDuree())).thenReturn(dateFin);
+		Mockito.when(helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -1495,7 +1496,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeReposComp.class));
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getDateFin(dto.getDateDebut(), dto.getDuree())).thenReturn(dateFin);
+		Mockito.when(helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -1580,7 +1581,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeReposComp.class));
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getDateFin(dto.getDateDebut(), dto.getDuree())).thenReturn(dateFin);
+		Mockito.when(helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {

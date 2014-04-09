@@ -44,5 +44,7 @@ public interface IDemandeRepository {
 
 	List<OrganisationSyndicale> findAllOrganisationActives();
 	
-	List<RefTypeSaisi> findRefTypeSaisi(Integer idRefTypeAbsence);
+	RefTypeSaisi findRefTypeSaisi(Integer idRefTypeAbsence);
+	
+	List<RefTypeSaisi> findAllRefTypeSaisi();
 }

@@ -160,7 +160,7 @@ public class DemandeController {
 
 		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
 
-		SoldeDto soldeDto = soldeService.getAgentSolde(demandeDto.getIdAgent(), null, null);
+		SoldeDto soldeDto = soldeService.getAgentSolde(demandeDto.getIdAgent(), null);
 
 		AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(demandeDto.getIdAgent(),
 				helperService.getCurrentDate());

@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -23,7 +24,7 @@ public class RefTypeAbsence {
 	@Column(name = "GROUPE", columnDefinition = "NVARCHAR2")
 	private String groupe;
 	
-	@OneToOne(optional = true)
+	@OneToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
 	private RefTypeSaisi typeSaisi;
 
