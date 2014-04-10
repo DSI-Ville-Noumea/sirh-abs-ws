@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
@@ -11,7 +10,6 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
@@ -267,10 +265,4 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 
 		return srm;
 	}
-
-	@Override
-	public List<CompteurAsaDto> getListeCompteur() {
-		return null;
-	}
-
 }

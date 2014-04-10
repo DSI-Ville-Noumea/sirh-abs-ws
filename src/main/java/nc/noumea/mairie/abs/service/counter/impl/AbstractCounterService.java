@@ -7,6 +7,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -58,14 +59,19 @@ public abstract class AbstractCounterService implements ICounterService {
 	 * pointages
 	 */
 	@Override
-	public abstract int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes);
-
+	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes) {
+		return 0;
+	}
+	
 	/**
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public abstract ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Integer minutes);
-
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Integer minutes) {
+		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
+		return srm;
+	}
+	
 	/**
 	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
 	 * mise a jour
@@ -160,4 +166,10 @@ public abstract class AbstractCounterService implements ICounterService {
 
 		return minutes;
 	}
+
+	@Override
+	public List<CompteurAsaDto> getListeCompteur() {
+		return null;
+	}
+
 }

@@ -2,12 +2,10 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
-import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
@@ -56,7 +54,7 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 	}
 
 	/**
-	 * Mise à jour manuelle du compteur de récup
+	 * Mise à jour manuelle du compteur de ASA A48
 	 * 
 	 * @param T1
 	 *            inherits BaseAgentCount
@@ -127,18 +125,6 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 		counterRepository.persistEntity(histo);
 
 		return srm;
-	}
-
-	@Override
-	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Integer minutes) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
