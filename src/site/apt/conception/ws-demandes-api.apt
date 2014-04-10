@@ -393,3 +393,58 @@ HTTP Code 200 : OK
 HTTP Code 400 : Bad Request
 HTTP Code 409 : CONFLICT
 +-------------------------+
+
+
+* saisie et modification d'une demande d'absence depuis SIRH
+
+ <<PROJET>> : SIRH-ABS-WS
+
+ <<URL>> : /demandes/demandeSIRH
+ 
+ <<Accepted Methods>> : POST 
+ 
+  <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la saisie de la demande
+ 
+ <<Content>>
+ 
++-------------------------+
+{
+	"idDemande": 1 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
+	"idAgent": 9004568,
+	"idTypeDemande": 1 (1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies, 7:ASA_A48),
+	"dateDebut": "/Date(1368450000000+1100)/",
+	"dateFin": "/Date(1368450000000+1100)/",
+    "duree": 30 (en minutes),
+    "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)),
+	"dateDemande": "/Date(1368450000000+1100)/",
+	"affichageBoutonModifier": false,
+	"affichageBoutonSupprimer": false,
+	"affichageBoutonImprimer": false,
+	"affichageVisa": false,
+	"affichageApprobation": false,
+	"affichageBoutonAnnuler": false,
+    "modifierApprobation": false,
+    "motif": null,
+    "modifierVisa": false,
+	"valeurVisa": false/null,
+	"valeurApprobation": false/null,
+	"nomAgent": null,
+	"prenomAgent": null,
+	"service": null,
+	"codeService": null,
+	"dateFinAM":true,
+	"dateDebutAM":true,
+	"dateFinPM":false,
+	"dateDebutPM":false
+}
++-------------------------+
+
+ <<Response>> : 
+
++-------------------------+
+HTTP Code 200 : OK
+HTTP Code 400 : Bad Request (si un des paramètres est manquant, si l'agent n'existe pas)
+HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
++-------------------------+
