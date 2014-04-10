@@ -1,9 +1,11 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.springframework.stereotype.Service;
@@ -29,12 +31,30 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 			srm.getErrors().add(AUCUN_DROITS_ASA_MSG);
 			return srm;
 		}
+		
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande);
+		
 		// on signale par un message d info que le compteur est epuise, mais on ne bloque pas la demande
-		if(0 > soldeAsaA48.getTotalJours() - helperService.calculNombreJourEntre2Dates(demande.getDateDebut(), demande.getDateFin())) {
+		if(0 > soldeAsaA48.getTotalJours() - sommeDemandeEnCours - helperService.calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ASA_MSG));
 			srm.getInfos().add(DEPASSEMENT_DROITS_ASA_MSG);
 		}
 		
 		return srm;
+	}
+	
+	private double getSommeDureeDemandeAsaEnCours(Demande demande) {
+		
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(
+				demande.getIdAgent(), demande.getIdDemande());
+		
+		double somme = 0.0;
+		
+		if(null != listAsa) {
+			for(DemandeAsa asa : listAsa) {
+				somme += helperService.calculNombreJoursArrondiDemiJournee(asa.getDateDebut(), asa.getDateFin());
+			}
+		}
+		return somme;
 	}
 }

@@ -121,7 +121,7 @@ public class HelperServiceTest {
 	    java.util.Date dateFinAttendue = new java.util.Date();
 	    try {
 	    	dateFinSaisie = sdf.parse("2013-12-17 00:00:00");
-	    	dateFinAttendue = sdf.parse("2013-12-17 12:00:00");
+	    	dateFinAttendue = sdf.parse("2013-12-17 11:59:59");
 	    } catch (ParseException pe){
 	        pe.printStackTrace();
 	    }
@@ -146,7 +146,7 @@ public class HelperServiceTest {
 	    java.util.Date dateFinAttendue = new java.util.Date();
 	    try {
 	    	dateFinSaisie = sdf.parse("2013-12-17 00:00:00");
-	    	dateFinAttendue = sdf.parse("2013-12-17 23:59:00");
+	    	dateFinAttendue = sdf.parse("2013-12-17 23:59:59");
 	    } catch (ParseException pe){
 	        pe.printStackTrace();
 	    }
@@ -285,7 +285,7 @@ public class HelperServiceTest {
 			calFin.add(Calendar.DAY_OF_YEAR, 8);
 			
 		HelperService service = new HelperService();
-		Double result = service.calculNombreJourEntre2Dates(calDebut.getTime(), calFin.getTime());
+		Double result = service.calculNombreJoursArrondiDemiJournee(calDebut.getTime(), calFin.getTime());
 		
 		assertEquals(result.intValue(), 8);
 	}
@@ -303,7 +303,43 @@ public class HelperServiceTest {
 			calFin.add(Calendar.HOUR, 12);
 			
 		HelperService service = new HelperService();
-		Double result = service.calculNombreJourEntre2Dates(calDebut.getTime(), calFin.getTime());
+		Double result = service.calculNombreJoursArrondiDemiJournee(calDebut.getTime(), calFin.getTime());
+		
+		assertEquals(result.floatValue(), 8,5);
+	}
+	
+	@Test
+	public void calculNombreJourEntre2Dates_demiJourneeArrondiInferieur() {
+		
+		Date dateJ = new Date();
+		GregorianCalendar calDebut = new GregorianCalendar(); 
+			calDebut.setTime(dateJ); 
+			
+		GregorianCalendar calFin = new GregorianCalendar(); 
+			calFin.setTime(dateJ); 
+			calFin.add(Calendar.DAY_OF_YEAR, 8);
+			calFin.add(Calendar.HOUR, 14);
+			
+		HelperService service = new HelperService();
+		Double result = service.calculNombreJoursArrondiDemiJournee(calDebut.getTime(), calFin.getTime());
+		
+		assertEquals(result.floatValue(), 8,5);
+	}
+	
+	@Test
+	public void calculNombreJourEntre2Dates_demiJourneeArrondiSuperieur() {
+		
+		Date dateJ = new Date();
+		GregorianCalendar calDebut = new GregorianCalendar(); 
+			calDebut.setTime(dateJ); 
+			
+		GregorianCalendar calFin = new GregorianCalendar(); 
+			calFin.setTime(dateJ); 
+			calFin.add(Calendar.DAY_OF_YEAR, 8);
+			calFin.add(Calendar.HOUR, 10);
+			
+		HelperService service = new HelperService();
+		Double result = service.calculNombreJoursArrondiDemiJournee(calDebut.getTime(), calFin.getTime());
 		
 		assertEquals(result.floatValue(), 8,5);
 	}

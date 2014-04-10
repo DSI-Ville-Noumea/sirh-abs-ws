@@ -20,10 +20,14 @@ public class HelperService {
 	private static SimpleDateFormat mairieDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	private static int HEURE_JOUR_DEBUT_AM = 0;
-	private static int HEURE_JOUR_FIN_AM = 12;
+	private static int HEURE_JOUR_FIN_AM = 11;
 	private static int HEURE_JOUR_DEBUT_PM = 12;
 	private static int HEURE_JOUR_FIN_PM = 23;
-	private static int MINUTES_JOUR_FIN_PM = 59;
+	private static int MINUTES_JOUR_FIN = 59;
+	private static int MINUTES_JOUR_DEBUT = 0;
+	private static int SECONDS_DEBUT = 0;
+	private static int SECONDS_FIN = 59;
+	private static int MILLISECONDS = 0;
 	
 	private final static long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 	
@@ -62,14 +66,19 @@ public class HelperService {
 			if(dateFinAM && !dateFinPM) {
 				Calendar cal = Calendar.getInstance();
 					cal.setTime(dateFin);
-					cal.set(Calendar.HOUR, HEURE_JOUR_FIN_AM);
+					cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_AM);
+					cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+					cal.set(Calendar.SECOND, SECONDS_FIN);
+					cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
 			}
 			if(dateFinPM) {
 				Calendar cal = Calendar.getInstance();
 					cal.setTime(dateFin);
-					cal.set(Calendar.HOUR, HEURE_JOUR_FIN_PM);
-					cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN_PM);
+					cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
+					cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+					cal.set(Calendar.SECOND, SECONDS_FIN);
+					cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
 			}
 		}
@@ -94,13 +103,19 @@ public class HelperService {
 			if(dateDebutAM && !dateDebutPM) {
 				Calendar cal = Calendar.getInstance();
 					cal.setTime(dateDeb);
-					cal.set(Calendar.HOUR, HEURE_JOUR_DEBUT_AM);
+					cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_AM);
+					cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
+					cal.set(Calendar.SECOND, SECONDS_DEBUT);
+					cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
 			}
-			if(!dateDebutAM && dateDebutPM) {
+			if(dateDebutPM) {
 				Calendar cal = Calendar.getInstance();
 					cal.setTime(dateDeb);
-					cal.set(Calendar.HOUR, HEURE_JOUR_DEBUT_PM);
+					cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_PM);
+					cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
+					cal.set(Calendar.SECOND, SECONDS_DEBUT);
+					cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
 			}
 		}
@@ -136,9 +151,12 @@ public class HelperService {
 		return minutes;
 	}
 	
-	public double calculNombreJourEntre2Dates(Date dateDebut, Date dateFin) {
+	public double calculNombreJoursArrondiDemiJournee(Date dateDebut, Date dateFin) {
 		
 		double diff = dateFin.getTime() - dateDebut.getTime();
-		return diff / MILLISECONDS_PER_DAY;
+		// calcul nombre jour
+		double nbrJour = diff / MILLISECONDS_PER_DAY;
+		// arrondi a 0.5
+		return ((double)Math.round(nbrJour * 2) / 2);
 	}
 }
