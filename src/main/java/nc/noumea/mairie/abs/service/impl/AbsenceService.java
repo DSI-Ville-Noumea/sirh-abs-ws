@@ -141,7 +141,30 @@ public class AbsenceService implements IAbsenceService {
 				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA_A48:
-				// TODO
+				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
+					demandeAsa.setDuree(demandeDto.getDuree());
+					demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
+					demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
+					demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
+					demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
+				
+				if(null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+				
+				demande.setDateFin(helperService.getDateFin(
+						demande.getType().getTypeSaisi(), 
+						demandeDto.getDateFin(), 
+						demandeDto.getDateDebut(), 
+						demandeDto.getDuree(), 
+						demandeDto.isDateFinAM(), 
+						demandeDto.isDateFinPM()));
+				demande.setDateDebut(helperService.getDateDebut(
+						demande.getType().getTypeSaisi(), 
+						demandeDto.getDateDebut(), 
+						demandeDto.isDateDebutAM(), 
+						demandeDto.isDateDebutPM()));
+				rules = absAsaA48DataConsistencyRulesImpl;
 				break;
 			case AUTRES:
 				// TODO
