@@ -373,12 +373,24 @@ public class AbsRecuperationDataConsistencyRulesImplTest {
 	}
 	
 	@Test
-	public void checkChampMotifPourEtatDonne_motifVide() {
+	public void checkChampMotifPourEtatDonne_motifVide_Refuse() {
 		
 		ReturnMessageDto srm = new ReturnMessageDto();
 		
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), null);
+		
+		assertEquals(1, srm.getErrors().size());
+		assertEquals("Le motif est obligatoire pour un avis Refusé.", srm.getErrors().get(0).toString());
+	}
+	
+	@Test
+	public void checkChampMotifPourEtatDonne_motifVide_ViseeD() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
+		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), null);
 		
 		assertEquals(1, srm.getErrors().size());
 		assertEquals("Le motif est obligatoire pour un avis Refusé.", srm.getErrors().get(0).toString());
