@@ -6,7 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.service.IOrganisationSyndicaleService;
 
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 	private Logger logger = LoggerFactory.getLogger(OrganisationSyndicaleService.class);
 
 	@Autowired
-	private IDemandeRepository demandeRepository;
+	private IOrganisationSyndicaleRepository organisationRepository;
 
 	@Override
 	public ReturnMessageDto saveOrganisation(OrganisationSyndicaleDto dto) {
@@ -40,7 +40,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 		organisationSyndicale.setActif(dto.isActif());
 
 		// insert nouvelle ligne Organisation syndicale
-		demandeRepository.persistEntity(organisationSyndicale);
+		organisationRepository.persistEntity(organisationSyndicale);
 
 		logger.info("Updated/Added OrganisationSyndicale id {}.", organisationSyndicale.getIdOrganisationSyndicale());
 
@@ -49,7 +49,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 
 	protected <T> T getOrganisationSyndicale(Class<T> Tclass, Integer idOrganisation) {
 		if (null != idOrganisation) {
-			return demandeRepository.getEntity(Tclass, idOrganisation);
+			return organisationRepository.getEntity(Tclass, idOrganisation);
 		}
 
 		try {
@@ -62,7 +62,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 	@Override
 	public List<OrganisationSyndicaleDto> getListOrganisationSyndicale() {
 		List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
-		List<OrganisationSyndicale> listOrganisation = demandeRepository.findAllOrganisation();
+		List<OrganisationSyndicale> listOrganisation = organisationRepository.findAllOrganisation();
 
 		for (OrganisationSyndicale org : listOrganisation) {
 
@@ -76,7 +76,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 	@Override
 	public List<OrganisationSyndicaleDto> getListOrganisationSyndicaleActives() {
 		List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
-		List<OrganisationSyndicale> listOrganisation = demandeRepository.findAllOrganisationActives();
+		List<OrganisationSyndicale> listOrganisation = organisationRepository.findAllOrganisationActives();
 
 		for (OrganisationSyndicale org : listOrganisation) {
 

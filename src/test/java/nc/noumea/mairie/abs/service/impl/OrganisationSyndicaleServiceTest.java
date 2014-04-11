@@ -8,7 +8,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -25,12 +25,12 @@ public class OrganisationSyndicaleServiceTest {
 		dto.setSigle("sigle");
 		dto.setActif(true);
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.getEntity(OrganisationSyndicale.class, null)).thenReturn(
+		IOrganisationSyndicaleRepository organisationRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationRepository.getEntity(OrganisationSyndicale.class, null)).thenReturn(
 				new OrganisationSyndicale());
 
 		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "organisationRepository", organisationRepository);
 
 		ReturnMessageDto result = service.saveOrganisation(dto);
 
@@ -53,11 +53,11 @@ public class OrganisationSyndicaleServiceTest {
 		org.setSigle("sigle");
 		org.setActif(true);
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.getEntity(OrganisationSyndicale.class, 1)).thenReturn(org);
+		IOrganisationSyndicaleRepository organisationRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationRepository.getEntity(OrganisationSyndicale.class, 1)).thenReturn(org);
 
 		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "organisationRepository", organisationRepository);
 
 		ReturnMessageDto result = service.saveOrganisation(dto);
 
@@ -77,11 +77,11 @@ public class OrganisationSyndicaleServiceTest {
 		List<OrganisationSyndicale> listOrg = new ArrayList<OrganisationSyndicale>();
 		listOrg.add(org);
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllOrganisation()).thenReturn(listOrg);
+		IOrganisationSyndicaleRepository organisationRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationRepository.findAllOrganisation()).thenReturn(listOrg);
 
 		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "organisationRepository", organisationRepository);
 
 		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicale();
 
@@ -96,11 +96,12 @@ public class OrganisationSyndicaleServiceTest {
 	public void getListOrganisationSyndicaleActives_ReturnEmptyList() {
 		// Given
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllOrganisationActives()).thenReturn(new ArrayList<OrganisationSyndicale>());
+		IOrganisationSyndicaleRepository organisationRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationRepository.findAllOrganisationActives()).thenReturn(
+				new ArrayList<OrganisationSyndicale>());
 
 		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "organisationRepository", organisationRepository);
 
 		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives();
 
@@ -119,11 +120,11 @@ public class OrganisationSyndicaleServiceTest {
 		List<OrganisationSyndicale> listOrg = new ArrayList<OrganisationSyndicale>();
 		listOrg.add(org);
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllOrganisationActives()).thenReturn(listOrg);
+		IOrganisationSyndicaleRepository organisationRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationRepository.findAllOrganisationActives()).thenReturn(listOrg);
 
 		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "organisationRepository", organisationRepository);
 
 		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives();
 

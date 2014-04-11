@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 
 public interface IDemandeRepository {
 
@@ -28,10 +27,6 @@ public interface IDemandeRepository {
 	List<Integer> getListViseursDemandesSaisiesJourDonne(List<Integer> listeTypes);
 
 	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(List<Integer> listeTypes);
-
-	List<OrganisationSyndicale> findAllOrganisation();
-
-	List<OrganisationSyndicale> findAllOrganisationActives();
 
 	List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			Integer idAgentRecherche);

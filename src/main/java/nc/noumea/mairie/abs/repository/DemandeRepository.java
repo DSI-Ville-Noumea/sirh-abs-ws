@@ -9,7 +9,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 
@@ -159,18 +158,6 @@ public class DemandeRepository implements IDemandeRepository {
 				.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()).getResultList();
 
 		return result;
-	}
-
-	@Override
-	public List<OrganisationSyndicale> findAllOrganisation() {
-		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o", OrganisationSyndicale.class)
-				.getResultList();
-	}
-
-	@Override
-	public List<OrganisationSyndicale> findAllOrganisationActives() {
-		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o where o.actif = true",
-				OrganisationSyndicale.class).getResultList();
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,7 +19,6 @@ import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.EtatDemande;
-import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -682,77 +680,6 @@ public class DemandeRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void findAllOrganisation_NoOrganisation() {
-		// Given
-
-		// When
-		List<OrganisationSyndicale> result = repository.findAllOrganisation();
-
-		// Then
-		assertEquals(0, result.size());
-		assertNotNull(result);
-
-		absEntityManager.flush();
-		absEntityManager.clear();
-	}
-
-	@Test
-	@Transactional("absTransactionManager")
-	public void findAllOrganisation() {
-		// Given
-		OrganisationSyndicale org1 = new OrganisationSyndicale();
-		org1.setLibelle("PROVISOIRE");
-		org1.setIdOrganisationSyndicale(1);
-		org1.setSigle("sigle1");
-		org1.setActif(true);
-		absEntityManager.persist(org1);
-		OrganisationSyndicale org2 = new OrganisationSyndicale();
-		org2.setLibelle("SAISIE");
-		org2.setIdOrganisationSyndicale(2);
-		org2.setSigle("sigle2");
-		org2.setActif(false);
-		absEntityManager.persist(org2);
-
-		// When
-		List<OrganisationSyndicale> result = repository.findAllOrganisation();
-
-		// Then
-		assertEquals(2, result.size());
-
-		absEntityManager.flush();
-		absEntityManager.clear();
-	}
-
-	@Test
-	@Transactional("absTransactionManager")
-	public void findAllOrganisationActives() {
-		// Given
-		OrganisationSyndicale org1 = new OrganisationSyndicale();
-		org1.setLibelle("PROVISOIRE");
-		org1.setIdOrganisationSyndicale(1);
-		org1.setSigle("sigle1");
-		org1.setActif(true);
-		absEntityManager.persist(org1);
-		OrganisationSyndicale org2 = new OrganisationSyndicale();
-		org2.setLibelle("SAISIE");
-		org2.setIdOrganisationSyndicale(2);
-		org2.setSigle("sigle2");
-		org2.setActif(false);
-		absEntityManager.persist(org2);
-
-		// When
-		List<OrganisationSyndicale> result = repository.findAllOrganisationActives();
-
-		// Then
-		assertEquals(1, result.size());
-		assertEquals(org1.getSigle(), result.get(0).getSigle());
-
-		absEntityManager.flush();
-		absEntityManager.clear();
-	}
-
-	@Test
-	@Transactional("absTransactionManager")
 	public void listeDemandesSIRH_NoFilter_Return2Demande() {
 		// Given
 		DemandeRecup dr = new DemandeRecup();
@@ -777,6 +704,218 @@ public class DemandeRepositoryTest {
 		assertEquals(2, result.size());
 		assertEquals("30", ((DemandeRecup) result.get(1)).getDuree().toString());
 		assertEquals("15", ((DemandeReposComp) result.get(0)).getDuree().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesSIRH_TypeFilter_Return0Demande() throws ParseException {
+		// Given
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		RefTypeAbsence typeMaladie = new RefTypeAbsence();
+		typeMaladie.setIdRefTypeAbsence(6);
+		typeMaladie.setLabel("Maladies");
+		absEntityManager.persist(typeMaladie);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.setType(typeMaladie);
+		absEntityManager.persist(d);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/06/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.setType(typeMaladie);
+		absEntityManager.persist(d2);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("15/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.setType(typeMaladie);
+		absEntityManager.persist(drp);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.setType(typeMaladie);
+		absEntityManager.persist(drp2);
+
+		// When
+		List<Demande> result = repository.listeDemandesSIRH(null, null, null, 3, null);
+
+		// Then
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesSIRH_TypeFilter_Return2Demande() throws ParseException {
+		// Given
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		RefTypeAbsence typeMaladie = new RefTypeAbsence();
+		typeMaladie.setIdRefTypeAbsence(6);
+		typeMaladie.setLabel("Maladies");
+		absEntityManager.persist(typeMaladie);
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setIdRefTypeAbsence(3);
+		typeRecup.setLabel("Récupération");
+		absEntityManager.persist(typeRecup);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.setType(typeMaladie);
+		absEntityManager.persist(d);
+
+		DemandeRecup dR2 = new DemandeRecup();
+		dR2.setIdAgent(9005138);
+		dR2.setDateDebut(sdf.parse("15/06/2013"));
+		dR2.setDateFin(null);
+		dR2.setDuree(40);
+		dR2.setType(typeRecup);
+		absEntityManager.persist(dR2);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("15/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.setType(typeMaladie);
+		absEntityManager.persist(drp);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.setType(typeRecup);
+		absEntityManager.persist(drp2);
+
+		// When
+		List<Demande> result = repository.listeDemandesSIRH(null, null, null, 3, null);
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals("40", ((DemandeRecup) result.get(1)).getDuree().toString());
+		assertEquals("20", ((DemandeReposComp) result.get(0)).getDuree().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesSIRH_DateFilter_Return2Demande() throws ParseException {
+		// Given
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/06/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		absEntityManager.persist(d);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/05/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		absEntityManager.persist(d2);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("02/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		absEntityManager.persist(drp);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		absEntityManager.persist(drp2);
+
+		// When
+		List<Demande> result = repository.listeDemandesSIRH(sdf.parse("01/06/2013"), null, null, null, null);
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals("20", ((DemandeReposComp) result.get(0)).getDuree().toString());
+		assertEquals("30", ((DemandeRecup) result.get(1)).getDuree().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesSIRH_DateFinFilter_Return2Demande() throws ParseException {
+		// Given
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		absEntityManager.persist(d);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/06/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		absEntityManager.persist(d2);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("15/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		absEntityManager.persist(drp);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		absEntityManager.persist(drp2);
+
+		// When
+		List<Demande> result = repository.listeDemandesSIRH(sdf.parse("01/06/2013"), sdf.parse("16/06/2013"), null,
+				null, null);
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals("40", ((DemandeRecup) result.get(1)).getDuree().toString());
+		assertEquals("20", ((DemandeReposComp) result.get(0)).getDuree().toString());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
