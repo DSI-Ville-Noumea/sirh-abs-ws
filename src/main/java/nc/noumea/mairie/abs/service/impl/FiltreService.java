@@ -10,20 +10,19 @@ import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
-import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
-import nc.noumea.mairie.abs.service.IFiltresService;
+import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.domain.Spcarr;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FiltresService implements IFiltresService {
-
+public class FiltreService implements IFiltreService {
 
 	@Autowired
-	private IDemandeRepository demandeRepository;
+	private IFiltreRepository filtreRepository;
 
 	@Autowired
 	private ISirhRepository sirhRepository;
@@ -51,7 +50,7 @@ public class FiltresService implements IFiltresService {
 	@Override
 	public List<RefTypeAbsenceDto> getRefTypesAbsence(Integer idAgentConcerne) {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
-		List<RefTypeAbsence> refTypeAbs = demandeRepository.findAllRefTypeAbsences();
+		List<RefTypeAbsence> refTypeAbs = filtreRepository.findAllRefTypeAbsences();
 
 		Spcarr carr = null;
 		if (null != idAgentConcerne) {
@@ -78,57 +77,57 @@ public class FiltresService implements IFiltresService {
 		List<RefEtat> etats = new ArrayList<RefEtat>();
 
 		if (null == ongletDemande) {
-			etats = demandeRepository.findAllRefEtats();
+			etats = filtreRepository.findAllRefEtats();
 			return etats;
 		}
 
 		switch (ongletDemande) {
 			case ONGLET_NON_PRISES:
 				if (idRefEtat != null) {
-					etats.add(demandeRepository.getEntity(RefEtat.class, idRefEtat));
+					etats.add(filtreRepository.getEntity(RefEtat.class, idRefEtat));
 				} else {
-					etats = demandeRepository.findRefEtatNonPris();
+					etats = filtreRepository.findRefEtatNonPris();
 				}
 				break;
 			case ONGLET_EN_COURS:
 				if (idRefEtat != null) {
-					etats.add(demandeRepository.getEntity(RefEtat.class, idRefEtat));
+					etats.add(filtreRepository.getEntity(RefEtat.class, idRefEtat));
 				} else {
-					etats = demandeRepository.findRefEtatEnCours();
+					etats = filtreRepository.findRefEtatEnCours();
 				}
 				break;
 			case ONGLET_TOUTES:
 				if (idRefEtat != null) {
-					etats.add(demandeRepository.getEntity(RefEtat.class, idRefEtat));
+					etats.add(filtreRepository.getEntity(RefEtat.class, idRefEtat));
 				} else {
-					etats = demandeRepository.findAllRefEtats();
+					etats = filtreRepository.findAllRefEtats();
 				}
 				break;
 		}
 
 		return etats;
 	}
-	
+
 	@Override
 	public List<RefTypeSaisiDto> getRefTypeSaisi(Integer idRefTypeAbsence) {
-		
+
 		List<RefTypeSaisiDto> resultDto = new ArrayList<RefTypeSaisiDto>();
-		if(null == idRefTypeAbsence) {
-			List<RefTypeSaisi> result = demandeRepository.findAllRefTypeSaisi();
-			if(null != result) {
-				for(RefTypeSaisi typeSaisi : result) {
+		if (null == idRefTypeAbsence) {
+			List<RefTypeSaisi> result = filtreRepository.findAllRefTypeSaisi();
+			if (null != result) {
+				for (RefTypeSaisi typeSaisi : result) {
 					RefTypeSaisiDto dto = new RefTypeSaisiDto(typeSaisi);
 					resultDto.add(dto);
 				}
 			}
 		} else {
-			RefTypeSaisi result = demandeRepository.findRefTypeSaisi(idRefTypeAbsence);
-			if(null != result) {
+			RefTypeSaisi result = filtreRepository.findRefTypeSaisi(idRefTypeAbsence);
+			if (null != result) {
 				RefTypeSaisiDto dto = new RefTypeSaisiDto(result);
 				resultDto.add(dto);
 			}
 		}
-		
+
 		return resultDto;
 	}
 

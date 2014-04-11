@@ -1,6 +1,8 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +17,7 @@ import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
-import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.domain.Spcarr;
 
@@ -23,7 +25,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class FiltresServiceTest {
+public class FiltreServiceTest {
 
 	@Test
 	public void getRefTypesAbsence_noIdAgent() {
@@ -44,11 +46,11 @@ public class FiltresServiceTest {
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
 		refTypeAbs.addAll(Arrays.asList(ASA, AUTRES, CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(null);
 
@@ -77,8 +79,8 @@ public class FiltresServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(24);
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
@@ -86,8 +88,8 @@ public class FiltresServiceTest {
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(9005138, helperService.getCurrentDate())).thenReturn(carr);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
@@ -118,8 +120,8 @@ public class FiltresServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(4);
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
@@ -127,8 +129,8 @@ public class FiltresServiceTest {
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(9005138, helperService.getCurrentDate())).thenReturn(carr);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
@@ -159,8 +161,8 @@ public class FiltresServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(7);
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
@@ -168,8 +170,8 @@ public class FiltresServiceTest {
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(9005138, helperService.getCurrentDate())).thenReturn(carr);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
@@ -196,12 +198,12 @@ public class FiltresServiceTest {
 		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
 		listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
-		Mockito.when(demandeRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
+		Mockito.when(filtreRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefEtat> result = service.getListeEtatsByOnglet("NON_PRISES", null);
 
@@ -228,12 +230,12 @@ public class FiltresServiceTest {
 		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
 		listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
-		Mockito.when(demandeRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
+		Mockito.when(filtreRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefEtat> result = service.getListeEtatsByOnglet("EN_COURS", null);
 
@@ -263,13 +265,13 @@ public class FiltresServiceTest {
 		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
 		listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
-		Mockito.when(demandeRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
-		Mockito.when(demandeRepository.getEntity(RefEtat.class, idRefEtat)).thenReturn(etatProvisoire);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
+		Mockito.when(filtreRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
+		Mockito.when(filtreRepository.getEntity(RefEtat.class, idRefEtat)).thenReturn(etatProvisoire);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefEtat> result = service.getListeEtatsByOnglet("TOUTES", idRefEtat);
 
@@ -295,11 +297,11 @@ public class FiltresServiceTest {
 		List<RefEtat> listRefEtatToutes = new ArrayList<RefEtat>();
 		listRefEtatToutes.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllRefEtats()).thenReturn(listRefEtatToutes);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefEtats()).thenReturn(listRefEtatToutes);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefEtat> result = service.getListeEtatsByOnglet("TOUTES", idRefEtat);
 
@@ -325,11 +327,11 @@ public class FiltresServiceTest {
 		List<RefEtat> listRefEtat = new ArrayList<RefEtat>();
 		listRefEtat.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllRefEtats()).thenReturn(listRefEtat);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefEtats()).thenReturn(listRefEtat);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefEtat> result = service.getListeEtatsByOnglet(null, null);
 
@@ -357,12 +359,12 @@ public class FiltresServiceTest {
 		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
 		listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
-		Mockito.when(demandeRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
+		Mockito.when(filtreRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefEtatDto> result = service.getRefEtats("NON_PRISES");
 
@@ -389,12 +391,12 @@ public class FiltresServiceTest {
 		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
 		listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
-		Mockito.when(demandeRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefEtatNonPris()).thenReturn(listRefEtatNonPris);
+		Mockito.when(filtreRepository.findRefEtatEnCours()).thenReturn(listRefEtatEnCours);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefEtatDto> result = service.getRefEtats("EN_COURS");
 
@@ -420,11 +422,11 @@ public class FiltresServiceTest {
 		List<RefEtat> listRefEtatToutes = new ArrayList<RefEtat>();
 		listRefEtatToutes.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllRefEtats()).thenReturn(listRefEtatToutes);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefEtats()).thenReturn(listRefEtatToutes);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefEtatDto> result = service.getRefEtats("TOUTES");
 
@@ -450,11 +452,11 @@ public class FiltresServiceTest {
 		List<RefEtat> listRefEtat = new ArrayList<RefEtat>();
 		listRefEtat.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
 
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.findAllRefEtats()).thenReturn(listRefEtat);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefEtats()).thenReturn(listRefEtat);
 
-		FiltresService service = new FiltresService();
-		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
 		List<RefEtatDto> result = service.getRefEtats(null);
 
@@ -463,40 +465,40 @@ public class FiltresServiceTest {
 		assertEquals(1, result.get(1).getIdRefEtat().intValue());
 		assertEquals(6, result.get(2).getIdRefEtat().intValue());
 	}
-	
+
 	@Test
 	public void getRefTypeSaisi_all() {
-		
+
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(1);
-	
+		type.setIdRefTypeAbsence(1);
+
 		RefTypeSaisi rts = new RefTypeSaisi();
-			rts.setType(type);
-			rts.setIdRefTypeAbsence(1);
-			rts.setCalendarDateDebut(true);
-			rts.setCalendarHeureDebut(true);
-			rts.setChkDateDebut(true);
-			rts.setDuree(true);
-		
+		rts.setType(type);
+		rts.setIdRefTypeAbsence(1);
+		rts.setCalendarDateDebut(true);
+		rts.setCalendarHeureDebut(true);
+		rts.setChkDateDebut(true);
+		rts.setDuree(true);
+
 		RefTypeSaisi rts2 = new RefTypeSaisi();
-			rts2.setType(type);
-			rts2.setIdRefTypeAbsence(2);
-			rts2.setCalendarDateFin(true);
-			rts2.setCalendarHeureFin(true);
-			rts2.setChkDateFin(true);
-			rts2.setPieceJointe(true);
-	
+		rts2.setType(type);
+		rts2.setIdRefTypeAbsence(2);
+		rts2.setCalendarDateFin(true);
+		rts2.setCalendarHeureFin(true);
+		rts2.setChkDateFin(true);
+		rts2.setPieceJointe(true);
+
 		List<RefTypeSaisi> listRefTypeSaisi = new ArrayList<RefTypeSaisi>();
-			listRefTypeSaisi.addAll(Arrays.asList(rts, rts2));
-		
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-			Mockito.when(demandeRepository.findAllRefTypeSaisi()).thenReturn(listRefTypeSaisi);
-		
-		FiltresService service = new FiltresService();
-			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		
+		listRefTypeSaisi.addAll(Arrays.asList(rts, rts2));
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefTypeSaisi()).thenReturn(listRefTypeSaisi);
+
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+
 		List<RefTypeSaisiDto> result = service.getRefTypeSaisi(null);
-		
+
 		assertEquals(2, result.size());
 		assertTrue(result.get(0).isCalendarDateDebut());
 		assertTrue(result.get(0).isCalendarHeureDebut());
@@ -516,29 +518,29 @@ public class FiltresServiceTest {
 		assertTrue(result.get(1).isChkDateFin());
 		assertTrue(result.get(1).isPieceJointe());
 	}
-	
+
 	@Test
 	public void getRefTypeSaisi_one() {
-		
+
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(1);
-	
+		type.setIdRefTypeAbsence(1);
+
 		RefTypeSaisi rts = new RefTypeSaisi();
-			rts.setType(type);
-			rts.setIdRefTypeAbsence(1);
-			rts.setCalendarDateDebut(true);
-			rts.setCalendarHeureDebut(true);
-			rts.setChkDateDebut(true);
-			rts.setDuree(true);
-		
-		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-			Mockito.when(demandeRepository.findRefTypeSaisi(1)).thenReturn(rts);
-		
-		FiltresService service = new FiltresService();
-			ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		
+		rts.setType(type);
+		rts.setIdRefTypeAbsence(1);
+		rts.setCalendarDateDebut(true);
+		rts.setCalendarHeureDebut(true);
+		rts.setChkDateDebut(true);
+		rts.setDuree(true);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(1)).thenReturn(rts);
+
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+
 		List<RefTypeSaisiDto> result = service.getRefTypeSaisi(1);
-		
+
 		assertEquals(1, result.size());
 		assertTrue(result.get(0).isCalendarDateDebut());
 		assertTrue(result.get(0).isCalendarHeureDebut());

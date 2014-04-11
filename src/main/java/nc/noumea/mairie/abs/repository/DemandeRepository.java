@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.repository;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,10 +11,7 @@ import javax.persistence.TypedQuery;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
-import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeAbsence;
-import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 
 import org.springframework.stereotype.Repository;
 
@@ -110,32 +106,6 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public List<RefEtat> findRefEtatNonPris() {
-		List<RefEtat> res = new ArrayList<RefEtat>();
-		res = findAllRefEtats();
-		RefEtat etatPris = absEntityManager.find(RefEtat.class, (RefEtatEnum.PRISE.getCodeEtat()));
-		res.remove(etatPris);
-		return res;
-	}
-
-	@Override
-	public List<RefEtat> findRefEtatEnCours() {
-		List<RefEtat> res = new ArrayList<RefEtat>();
-		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.SAISIE.getCodeEtat())));
-		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())));
-		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())));
-		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.APPROUVEE.getCodeEtat())));
-		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VALIDEE.getCodeEtat())));
-		return res;
-	}
-
-	@Override
-	public List<RefEtat> findAllRefEtats() {
-
-		return absEntityManager.createQuery("SELECT o FROM RefEtat o", RefEtat.class).getResultList();
-	}
-
-	@Override
 	public List<Integer> getListViseursDemandesSaisiesJourDonne(List<Integer> listeTypes) {
 
 		StringBuilder sb = new StringBuilder();
@@ -192,11 +162,6 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public List<RefTypeAbsence> findAllRefTypeAbsences() {
-		return absEntityManager.createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).getResultList();
-	}
-
-	@Override
 	public List<OrganisationSyndicale> findAllOrganisation() {
 		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o", OrganisationSyndicale.class)
 				.getResultList();
@@ -207,24 +172,51 @@ public class DemandeRepository implements IDemandeRepository {
 		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o where o.actif = true",
 				OrganisationSyndicale.class).getResultList();
 	}
-	
+
 	@Override
-	public RefTypeSaisi findRefTypeSaisi(Integer idRefTypeAbsence) {
-		
-		TypedQuery<RefTypeSaisi> query = null;
-		query = absEntityManager.createNamedQuery("getRefTypeSaisiByIdTypeDemande", RefTypeSaisi.class);
-		query.setParameter("idRefTypeAbsence", idRefTypeAbsence);
-		query.setMaxResults(1);
-		
-		return query.getSingleResult();
-	}
-	
-	@Override
-	public List<RefTypeSaisi> findAllRefTypeSaisi() {
-		
-		TypedQuery<RefTypeSaisi> query = null;
-		query = absEntityManager.createNamedQuery("getAllRefTypeSaisi", RefTypeSaisi.class);
-		
+	public List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
+			Integer idAgentRecherche) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from Demande d ");
+		sb.append("where 1=1 ");
+		// date
+		if (fromDate != null && toDate == null) {
+			sb.append("and d.dateDebut >= :fromDate ");
+		} else if (fromDate == null && toDate != null) {
+			sb.append("and d.dateDebut <= :toDate ");
+		} else if (fromDate != null && toDate != null) {
+			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
+		}
+		// agent
+		if (idAgentRecherche != null) {
+			sb.append("and d.idAgent = :idAgentRecherche ");
+		}
+		// type
+		if (idRefType != null) {
+			sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
+		}
+
+		sb.append("order by d.idDemande desc ");
+
+		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
+
+		// date
+		if (fromDate != null && toDate == null) {
+			query.setParameter("fromDate", fromDate);
+		} else if (fromDate == null && toDate != null) {
+			query.setParameter("toDate", toDate);
+		} else if (fromDate != null && toDate != null) {
+			query.setParameter("fromDate", fromDate);
+			query.setParameter("toDate", toDate);
+		}
+		// agent
+		if (idAgentRecherche != null) {
+			query.setParameter("idAgentRecherche", idAgentRecherche);
+		}
+		// type
+		if (idRefType != null) {
+			query.setParameter("idRefTypeAbsence", idRefType);
+		}
 		return query.getResultList();
 	}
 }

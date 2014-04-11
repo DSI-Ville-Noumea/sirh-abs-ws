@@ -20,12 +20,13 @@ import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
-import nc.noumea.mairie.abs.service.IFiltresService;
+import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -44,6 +45,9 @@ public class AbsenceService implements IAbsenceService {
 	private IDemandeRepository demandeRepository;
 
 	@Autowired
+	private IFiltreRepository filtreRepository;
+
+	@Autowired
 	private IAccessRightsRepository accessRightsRepository;
 
 	@Autowired
@@ -53,7 +57,7 @@ public class AbsenceService implements IAbsenceService {
 	private ISirhRepository sirhRepository;
 
 	@Autowired
-	private IFiltresService filtresService;
+	private IFiltreService filtresService;
 
 	@Autowired
 	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
@@ -66,7 +70,7 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absReposCompDataConsistencyRules;
-	
+
 	@Autowired
 	@Qualifier("AbsAsaA48DataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl;
@@ -110,16 +114,12 @@ public class AbsenceService implements IAbsenceService {
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
 				demandeReposComp.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
-				
-				if(null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
-				
-				demande.setDateFin(helperService.getDateFin(
-						demande.getType().getTypeSaisi(), 
-						demandeDto.getDateFin(), 
-						demandeDto.getDateDebut(), 
-						demandeDto.getDuree(), 
-						demandeDto.isDateFinAM(), 
+
+				if (null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				rules = absReposCompDataConsistencyRules;
 				break;
@@ -127,43 +127,32 @@ public class AbsenceService implements IAbsenceService {
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
 				demandeRecup.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
-				
-				if(null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
-				
-				demande.setDateFin(helperService.getDateFin(
-						demande.getType().getTypeSaisi(), 
-						demandeDto.getDateFin(), 
-						demandeDto.getDateDebut(), 
-						demandeDto.getDuree(), 
-						demandeDto.isDateFinAM(), 
+
+				if (null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA_A48:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
-					demandeAsa.setDuree(demandeDto.getDuree());
-					demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
-					demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
-					demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
-					demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
+				demandeAsa.setDuree(demandeDto.getDuree());
+				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
+				demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
+				demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
+				demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
-				
-				if(null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
-				
-				demande.setDateFin(helperService.getDateFin(
-						demande.getType().getTypeSaisi(), 
-						demandeDto.getDateFin(), 
-						demandeDto.getDateDebut(), 
-						demandeDto.getDuree(), 
-						demandeDto.isDateFinAM(), 
+
+				if (null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
-				demande.setDateDebut(helperService.getDateDebut(
-						demande.getType().getTypeSaisi(), 
-						demandeDto.getDateDebut(), 
-						demandeDto.isDateDebutAM(), 
-						demandeDto.isDateDebutPM()));
+				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
+						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
 				rules = absAsaA48DataConsistencyRulesImpl;
 				break;
 			case AUTRES:
@@ -186,16 +175,12 @@ public class AbsenceService implements IAbsenceService {
 				demande = new Demande();
 			}
 			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
-			
-			if(null == demande.getType().getTypeSaisi())
-				demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
-			
-			demande.setDateFin(helperService.getDateFin(
-					demande.getType().getTypeSaisi(), 
-					demandeDto.getDateFin(), 
-					demandeDto.getDateDebut(), 
-					demandeDto.getDuree(), 
-					demandeDto.isDateFinAM(), 
+
+			if (null == demande.getType().getTypeSaisi())
+				demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+			demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+					demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 					demandeDto.isDateFinPM()));
 		}
 
@@ -540,8 +525,7 @@ public class AbsenceService implements IAbsenceService {
 
 		return result;
 	}
-	
-	
+
 	@Override
 	public ReturnMessageDto saveDemandeSIRH(Integer idAgent, DemandeDto demandeDto) {
 
@@ -571,16 +555,12 @@ public class AbsenceService implements IAbsenceService {
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
 				demandeReposComp.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
-				
-				if(null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
-				
-				demande.setDateFin(helperService.getDateFin(
-						demande.getType().getTypeSaisi(), 
-						demandeDto.getDateFin(), 
-						demandeDto.getDateDebut(), 
-						demandeDto.getDuree(), 
-						demandeDto.isDateFinAM(), 
+
+				if (null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				rules = absReposCompDataConsistencyRules;
 				break;
@@ -588,43 +568,32 @@ public class AbsenceService implements IAbsenceService {
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
 				demandeRecup.setDuree(demandeDto.getDuree());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
-				
-				if(null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
-				
-				demande.setDateFin(helperService.getDateFin(
-						demande.getType().getTypeSaisi(), 
-						demandeDto.getDateFin(), 
-						demandeDto.getDateDebut(), 
-						demandeDto.getDuree(), 
-						demandeDto.isDateFinAM(), 
+
+				if (null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA_A48:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
-					demandeAsa.setDuree(demandeDto.getDuree());
-					demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
-					demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
-					demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
-					demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
+				demandeAsa.setDuree(demandeDto.getDuree());
+				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
+				demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
+				demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
+				demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
-				
-				if(null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(demandeRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
-				
-				demande.setDateFin(helperService.getDateFin(
-						demande.getType().getTypeSaisi(), 
-						demandeDto.getDateFin(), 
-						demandeDto.getDateDebut(), 
-						demandeDto.getDuree(), 
-						demandeDto.isDateFinAM(), 
+
+				if (null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
-				demande.setDateDebut(helperService.getDateDebut(
-						demande.getType().getTypeSaisi(), 
-						demandeDto.getDateDebut(), 
-						demandeDto.isDateDebutAM(), 
-						demandeDto.isDateDebutPM()));
+				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
+						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
 				rules = absAsaA48DataConsistencyRulesImpl;
 				break;
 			case AUTRES:
@@ -639,7 +608,8 @@ public class AbsenceService implements IAbsenceService {
 				demandeRepository.clear();
 				return returnDto;
 		}
-		// dans le cas des types de demande non geres ==> //TODO a supprimer par la suite
+		// dans le cas des types de demande non geres ==> //TODO a supprimer par
+		// la suite
 		if (null == rules) {
 			rules = defaultAbsenceDataConsistencyRulesImpl;
 			demande = getDemande(Demande.class, demandeDto.getIdDemande());
@@ -647,12 +617,8 @@ public class AbsenceService implements IAbsenceService {
 				demande = new Demande();
 			}
 			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
-			demande.setDateFin(helperService.getDateFin(
-					demande.getType().getTypeSaisi(), 
-					demandeDto.getDateFin(), 
-					demandeDto.getDateDebut(), 
-					demandeDto.getDuree(), 
-					demandeDto.isDateFinAM(), 
+			demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+					demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 					demandeDto.isDateFinPM()));
 		}
 
@@ -676,4 +642,19 @@ public class AbsenceService implements IAbsenceService {
 		return returnDto;
 	}
 
+	@Override
+	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
+			Integer idAgentRecherche) {
+
+		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
+				idAgentRecherche);
+		List<RefEtat> listEtats = null;
+		if (idRefEtat != null) {
+			RefEtat etat = demandeRepository.getEntity(RefEtat.class, idRefEtat);
+			listEtats.add(etat);
+		}
+
+		return defaultAbsenceDataConsistencyRulesImpl
+				.filtreDateAndEtatDemandeFromList(listeSansFiltre, listEtats, null);
+	}
 }

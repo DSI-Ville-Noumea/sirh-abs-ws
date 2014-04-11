@@ -7,7 +7,7 @@ import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 
-public interface IFiltresService {
+public interface IFiltreService {
 
 	List<RefEtatDto> getRefEtats(String ongletDemande);
 

@@ -7,9 +7,6 @@ import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
-import nc.noumea.mairie.abs.domain.RefEtat;
-import nc.noumea.mairie.abs.domain.RefTypeAbsence;
-import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 
 public interface IDemandeRepository {
 
@@ -26,25 +23,16 @@ public interface IDemandeRepository {
 	List<Demande> listeDemandesAgent(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate, Date toDate,
 			Integer idRefType);
 
-	List<RefEtat> findRefEtatNonPris();
-
-	List<RefEtat> findRefEtatEnCours();
-
 	void removeEntity(Object obj);
-
-	List<RefEtat> findAllRefEtats();
 
 	List<Integer> getListViseursDemandesSaisiesJourDonne(List<Integer> listeTypes);
 
 	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(List<Integer> listeTypes);
 
-	List<RefTypeAbsence> findAllRefTypeAbsences();
-
 	List<OrganisationSyndicale> findAllOrganisation();
 
 	List<OrganisationSyndicale> findAllOrganisationActives();
-	
-	RefTypeSaisi findRefTypeSaisi(Integer idRefTypeAbsence);
-	
-	List<RefTypeSaisi> findAllRefTypeSaisi();
+
+	List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
+			Integer idAgentRecherche);
 }

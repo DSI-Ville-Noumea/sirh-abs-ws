@@ -58,7 +58,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Autowired
 	protected IAccessRightsRepository accessRightsRepository;
-	
+
 	@Autowired
 	protected IAsaRepository asaRepository;
 
@@ -297,7 +297,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	}
 
-	protected List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
+	@Override
+	public List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
 			Date dateDemande) {
 		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
 		if (listeSansFiltre.size() == 0)

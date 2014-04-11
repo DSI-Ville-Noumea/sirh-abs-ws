@@ -9,7 +9,7 @@ import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.abs.service.IFiltresService;
+import nc.noumea.mairie.abs.service.IFiltreService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class FiltreController {
 	private Logger logger = LoggerFactory.getLogger(FiltreController.class);
 
 	@Autowired
-	private IFiltresService filtresService;
+	private IFiltreService filtresService;
 
 	@Autowired
 	private IAgentMatriculeConverterService converterService;

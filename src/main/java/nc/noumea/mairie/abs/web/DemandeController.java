@@ -299,16 +299,15 @@ public class DemandeController {
 
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
-	
-	
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/demandeSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> setDemandeAbsenceSIRH(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String demandeDto) {
 
-		logger.debug("entered POST [demandes/demandeSIRH] => setDemandeAbsenceSIRH for SIRH with parameters idAgent = {}",
+		logger.debug(
+				"entered POST [demandes/demandeSIRH] => setDemandeAbsenceSIRH for SIRH with parameters idAgent = {}",
 				idAgent);
 
 		DemandeDto dto = new JSONDeserializer<DemandeDto>().use(Date.class, new MSDateTransformer()).deserializeInto(
@@ -324,5 +323,30 @@ public class DemandeController {
 		} else {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/listeDemandesSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getListeDemandesAbsenceSIRH(
+			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
+			@RequestParam(value = "etat", required = false) Integer idRefEtat,
+			@RequestParam(value = "type", required = false) Integer idRefType,
+			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche) {
+
+		logger.debug(
+				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters  from = {}, to = {},  etat = {}, type = {} and idAgentConcerne= {}",
+				fromDate, toDate, idRefEtat, idRefType, idAgentRecherche);
+
+		List<DemandeDto> result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
+				idAgentRecherche);
+
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
+				.deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 }

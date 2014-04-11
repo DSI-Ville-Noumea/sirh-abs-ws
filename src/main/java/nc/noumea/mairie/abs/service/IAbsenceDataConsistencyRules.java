@@ -26,4 +26,7 @@ public interface IAbsenceDataConsistencyRules {
 
 	List<DemandeDto> filtreListDemande(Integer idAgentConnecte, Integer idAgentConcerne, List<Demande> listeSansFiltre,
 			List<RefEtat> etats, Date dateDemande);
+
+	List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
+			Date dateDemande);
 }

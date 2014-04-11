@@ -33,6 +33,7 @@ import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
@@ -355,7 +356,13 @@ public class AbsenceServiceTest {
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -445,7 +452,12 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				null);
 
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -1519,7 +1531,13 @@ public class AbsenceServiceTest {
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -1609,7 +1627,13 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				null);
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -1786,7 +1810,13 @@ public class AbsenceServiceTest {
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -1876,7 +1906,13 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				null);
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -2196,7 +2232,13 @@ public class AbsenceServiceTest {
 			}
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -2277,8 +2319,14 @@ public class AbsenceServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(
 				sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
-		
+
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -2446,7 +2494,13 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -2528,7 +2582,13 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -2696,7 +2756,13 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -2779,7 +2845,13 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande()))
+				.thenReturn(new RefTypeSaisi());
+
 		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
