@@ -614,7 +614,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		// Then
 		assertEquals(1, result.size());
-		assertEquals("50", result.get(0).getDuree().toString());
+		assertEquals("50.0", result.get(0).getDuree().toString());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
@@ -691,7 +691,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		// Then
 		assertEquals(1, result.size());
-		assertEquals("50", result.get(0).getDuree().toString());
+		assertEquals("50.0", result.get(0).getDuree().toString());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
@@ -769,7 +769,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		// Then
 		assertEquals(1, result.size());
-		assertEquals("50", result.get(0).getDuree().toString());
+		assertEquals("50.0", result.get(0).getDuree().toString());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
@@ -845,11 +845,11 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		// Then
 		assertEquals(2, result.size());
-		assertEquals("30", result.get(0).getDuree().toString());
+		assertEquals("30.0", result.get(0).getDuree().toString());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
-		assertEquals("50", result.get(1).getDuree().toString());
+		assertEquals("50.0", result.get(1).getDuree().toString());
 		assertFalse(result.get(1).isAffichageBoutonImprimer());
 		assertFalse(result.get(1).isAffichageBoutonModifier());
 		assertFalse(result.get(1).isAffichageBoutonSupprimer());
@@ -1038,7 +1038,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		// Then
 		assertEquals(4, result.size());
-		assertEquals("30", result.get(0).getDuree().toString());
+		assertEquals("30.0", result.get(0).getDuree().toString());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
@@ -1115,7 +1115,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		// Then
 		assertEquals(1, result.size());
-		assertEquals("30", result.get(0).getDuree().toString());
+		assertEquals("30.0", result.get(0).getDuree().toString());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());

@@ -10,24 +10,25 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "ABS_DEMANDE_ASA")
 @PersistenceUnit(unitName = "absPersistenceUnit")
-@PrimaryKeyJoinColumn(name = "ID_DEMANDE") 
+@PrimaryKeyJoinColumn(name = "ID_DEMANDE")
 public class DemandeAsa extends Demande {
-	
-	@Column(name = "DUREE")
-	private Integer duree;
-	
+
+	@NotNull
+	@Column(name = "DUREE", columnDefinition = "numeric")
+	private Double duree;
+
 	@NotNull
 	@Column(name = "DATE_DEBUT_AM")
 	private boolean dateDebutAM;
-	
+
 	@NotNull
 	@Column(name = "DATE_DEBUT_PM")
 	private boolean dateDebutPM;
-	
+
 	@NotNull
 	@Column(name = "DATE_FIN_AM")
 	private boolean dateFinAM;
-	
+
 	@NotNull
 	@Column(name = "DATE_FIN_PM")
 	private boolean dateFinPM;
@@ -64,13 +65,12 @@ public class DemandeAsa extends Demande {
 		this.dateFinPM = dateFinPM;
 	}
 
-	public Integer getDuree() {
+	public Double getDuree() {
 		return duree;
 	}
 
-	public void setDuree(Integer duree) {
+	public void setDuree(Double duree) {
 		this.duree = duree;
 	}
-	
-	
+
 }

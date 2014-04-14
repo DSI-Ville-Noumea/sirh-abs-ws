@@ -152,19 +152,19 @@ public abstract class AbstractCounterService implements ICounterService {
 
 	@Override
 	public int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
-		int minutes = 0;
+		int duree = 0;
 		// si on approuve, le compteur decremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
-			minutes = 0 - ((DemandeRecup) demande).getDuree();
+			duree = 0 - ((DemandeRecup) demande).getDuree();
 		}
 		// si on passe de Approuve a Refuse, le compteur incremente
 		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()) || demandeEtatChangeDto
 				.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))
 				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
-			minutes = ((DemandeRecup) demande).getDuree();
+			duree = ((DemandeRecup) demande).getDuree();
 		}
 
-		return minutes;
+		return duree;
 	}
 
 	@Override

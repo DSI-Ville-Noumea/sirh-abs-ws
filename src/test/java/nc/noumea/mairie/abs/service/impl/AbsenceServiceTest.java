@@ -193,7 +193,7 @@ public class AbsenceServiceTest {
 
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
-		assertEquals(result.getDuree(), dr.getDuree());
+		assertEquals(result.getDuree().toString(), "10.0");
 		assertEquals(result.getIdDemande(), idDemande);
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.SAISIE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.RECUP.getValue());
@@ -264,7 +264,7 @@ public class AbsenceServiceTest {
 
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
-		assertEquals(result.getDuree(), dr.getDuree());
+		assertEquals(result.getDuree().toString(),"10.0");
 		assertEquals(result.getIdDemande(), idDemande);
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.APPROUVEE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.RECUP.getValue());
@@ -285,7 +285,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -328,7 +328,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -388,7 +388,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -427,7 +427,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -488,7 +488,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(9005139);
@@ -521,7 +521,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -1525,7 +1525,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -1568,7 +1568,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -1628,7 +1628,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -1667,7 +1667,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -1728,7 +1728,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(9005139);
@@ -1761,7 +1761,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -1815,7 +1815,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -1857,7 +1857,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -1917,7 +1917,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -1955,7 +1955,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2016,7 +2016,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(9005139);
@@ -2049,7 +2049,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2155,7 +2155,7 @@ public class AbsenceServiceTest {
 
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
-		assertEquals(result.getDuree().toString(), "20");
+		assertEquals(result.getDuree().toString(), "20.0");
 		assertEquals(result.getIdDemande(), idDemande);
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.SAISIE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue());
@@ -2229,7 +2229,7 @@ public class AbsenceServiceTest {
 
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
-		assertEquals(result.getDuree().toString(), "20");
+		assertEquals(result.getDuree().toString(), "20.0");
 		assertEquals(result.getIdDemande(), idDemande);
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.APPROUVEE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue());
@@ -2251,7 +2251,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -2293,7 +2293,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2345,7 +2345,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -2380,7 +2380,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2436,7 +2436,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(9005139);
@@ -2469,7 +2469,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2521,7 +2521,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -2559,7 +2559,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2614,7 +2614,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -2648,7 +2648,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2704,7 +2704,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(9005139);
@@ -2737,7 +2737,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2789,7 +2789,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -2828,7 +2828,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2883,7 +2883,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -2921,7 +2921,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -2974,7 +2974,7 @@ public class AbsenceServiceTest {
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
-		dto.setDuree(10);
+		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(9005139);
@@ -3007,7 +3007,7 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);

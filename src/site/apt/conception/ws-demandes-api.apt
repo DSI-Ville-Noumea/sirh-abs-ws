@@ -47,7 +47,7 @@ SIRH-ABS-WS API et définition des services concernant les demandes d'absences d
        "dateFinAM": false,
        "dateFinPM": false,
        "dateSaisie": "/Date(1397190848000+1100)/",
-       "duree": 60 (en minutes),
+       "duree": 60.0 (double)(en minutes ou en jour ou en demi_journée suivant le type),
        "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
        "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
        "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),
@@ -112,7 +112,7 @@ HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
        "dateFinAM": false,
        "dateFinPM": false,
        "dateSaisie": "/Date(1397190848000+1100)/",
-       "duree": 60 (en minutes),
+       "duree": 60.0 (double)(en minutes ou en jour ou en demi_journée suivant le type),
        "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
        "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
        "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),
@@ -194,7 +194,7 @@ HTTP Code 403 : Accès non autorisé
     <dateFinAM>false</dateFinAM>
     <dateFinPM>false</dateFinPM>
     <dateSaisie>2014-04-11T15:34:08+11:00</dateSaisie>
-    <duree>60</duree>
+    <duree>60.0</duree>
     <idDemande>3</idDemande>
     <idRefEtat>0</idRefEtat>
     <idTypeDemande>3</idTypeDemande>
@@ -279,7 +279,7 @@ HTTP Code 403 : Accès non autorisé
        "dateFinAM": false,
        "dateFinPM": false,
        "dateSaisie": "/Date(1397190848000+1100)/",
-       "duree": 60 (en minutes),
+       "duree": 60.0 (double)(en minutes ou en jour ou en demi_journée suivant le type),
        "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
        "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
        "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),
@@ -360,7 +360,7 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
        "dateFinAM": false,
        "dateFinPM": false,
        "dateSaisie": "/Date(1397190848000+1100)/",
-       "duree": 60 (en minutes),
+       "duree": 60.0 (double)(en minutes ou en jour ou en demi_journée suivant le type),
        "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
        "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
        "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),
@@ -503,7 +503,7 @@ HTTP Code 409 : CONFLICT
        "dateFinAM": false,
        "dateFinPM": false,
        "dateSaisie": "/Date(1397190848000+1100)/",
-       "duree": 60 (en minutes),
+       "duree": 60.0 (double)(en minutes ou en jour ou en demi_journée suivant le type),
        "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
        "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
        "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),

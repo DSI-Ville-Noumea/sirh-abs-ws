@@ -113,7 +113,7 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case REPOS_COMP:
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
-				demandeReposComp.setDuree(demandeDto.getDuree());
+				demandeReposComp.setDuree(demandeDto.getDuree().intValue());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
 
 				if (null == demande.getType().getTypeSaisi())
@@ -126,7 +126,7 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
-				demandeRecup.setDuree(demandeDto.getDuree());
+				demandeRecup.setDuree(demandeDto.getDuree().intValue());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
 
 				if (null == demande.getType().getTypeSaisi())
@@ -567,7 +567,7 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case REPOS_COMP:
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
-				demandeReposComp.setDuree(demandeDto.getDuree());
+				demandeReposComp.setDuree(demandeDto.getDuree().intValue());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
 
 				if (null == demande.getType().getTypeSaisi())
@@ -580,7 +580,7 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
-				demandeRecup.setDuree(demandeDto.getDuree());
+				demandeRecup.setDuree(demandeDto.getDuree().intValue());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
 
 				if (null == demande.getType().getTypeSaisi())

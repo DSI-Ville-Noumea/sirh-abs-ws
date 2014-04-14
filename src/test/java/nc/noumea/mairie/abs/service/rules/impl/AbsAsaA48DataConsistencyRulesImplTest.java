@@ -76,10 +76,11 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		Demande demande = new Demande();
+		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(new Date());
+		demande.setDuree(10.5);
 
 		srm = impl.checkDroitCompteurAsaA48(srm, demande);
 
@@ -117,10 +118,11 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		Demande demande = new Demande();
+		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(new Date());
+		demande.setDuree(10.5);
 
 		srm = impl.checkDroitCompteurAsaA48(srm, demande);
 
@@ -158,10 +160,11 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		Demande demande = new Demande();
+		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(new Date());
+		demande.setDuree(10.5);
 
 		srm = impl.checkDroitCompteurAsaA48(srm, demande);
 

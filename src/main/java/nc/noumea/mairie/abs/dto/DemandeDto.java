@@ -23,7 +23,7 @@ public class DemandeDto {
 	private Date dateFin;
 	private boolean isDateFinAM;
 	private boolean isDateFinPM;
-	private Integer duree;
+	private Double duree;
 
 	private Integer idRefEtat;
 	private Date dateSaisie;
@@ -90,10 +90,10 @@ public class DemandeDto {
 				Integer dureeAnnee = ((DemandeReposComp) d).getDuree() == null ? 0 : ((DemandeReposComp) d).getDuree();
 				Integer dureeAnneePrec = ((DemandeReposComp) d).getDureeAnneeN1() == null ? 0 : ((DemandeReposComp) d)
 						.getDureeAnneeN1();
-				this.duree = dureeAnnee + dureeAnneePrec;
+				this.duree = (double) (dureeAnnee + dureeAnneePrec);
 				break;
 			case RECUP:
-				this.duree = ((DemandeRecup) d).getDuree();
+				this.duree = (double) (((DemandeRecup) d).getDuree());
 				break;
 			case ASA_A48:
 				this.duree = ((DemandeAsa) d).getDuree();
@@ -140,11 +140,11 @@ public class DemandeDto {
 		this.dateDebut = dateDebut;
 	}
 
-	public Integer getDuree() {
+	public Double getDuree() {
 		return duree;
 	}
 
-	public void setDuree(Integer duree) {
+	public void setDuree(Double duree) {
 		this.duree = duree;
 	}
 

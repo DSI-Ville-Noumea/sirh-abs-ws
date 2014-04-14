@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.springframework.stereotype.Service;
@@ -35,8 +36,7 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande
-		if (0 > soldeAsaA48.getTotalJours() - sommeDemandeEnCours
-				- helperService.calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())) {
+		if (0 > soldeAsaA48.getTotalJours() - sommeDemandeEnCours - ((DemandeAsa) demande).getDuree()) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ASA_MSG));
 			srm.getInfos().add(DEPASSEMENT_DROITS_ASA_MSG);
 		}

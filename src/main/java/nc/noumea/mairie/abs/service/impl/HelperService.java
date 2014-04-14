@@ -53,7 +53,7 @@ public class HelperService {
 	}
 
 	public Date getDateFin(
-			RefTypeSaisi typeSaisi, Date dateFin, Date dateDeb,	Integer duree, 
+RefTypeSaisi typeSaisi, Date dateFin, Date dateDeb, Double duree, 
 			boolean dateFinAM, boolean dateFinPM) {
 		
 		if(typeSaisi.isCalendarDateFin() && typeSaisi.isCalendarHeureFin()
@@ -84,7 +84,7 @@ public class HelperService {
 		}
 		if(!typeSaisi.isCalendarDateFin() &&  typeSaisi.isDuree()) {
 			DateTime recupDateFin = new DateTime(dateDeb);
-			return recupDateFin.plusMinutes(duree).toDate();
+			return recupDateFin.plusMinutes(duree.intValue()).toDate();
 		}
 
 		return null;
