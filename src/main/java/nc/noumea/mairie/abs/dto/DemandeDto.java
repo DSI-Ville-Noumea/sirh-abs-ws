@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.dto;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
@@ -24,6 +25,7 @@ public class DemandeDto {
 	private Date dateDebut;
 	private Integer duree;
 	private Integer idRefEtat;
+	private Date dateSaisie;
 	private Date dateDemande;
 	private String motif;
 
@@ -32,8 +34,7 @@ public class DemandeDto {
 	private boolean isDateDebutPM;
 	private boolean isDateFinAM;
 	private boolean isDateFinPM;
-	
-	
+
 	// permet d'afficher ou non les icones correspondants
 	private boolean isAffichageBoutonModifier;
 	private boolean isAffichageBoutonSupprimer;
@@ -71,7 +72,7 @@ public class DemandeDto {
 		this.idAgent = d.getIdAgent();
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
 		this.dateDebut = d.getDateDebut();
-		this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
+		this.dateFin = d.getDateFin();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
 		this.motif = d.getLatestEtatDemande().getMotif();
 
@@ -108,7 +109,11 @@ public class DemandeDto {
 				this.duree = ((DemandeRecup) d).getDuree();
 				break;
 			case ASA_A48:
-				// TODO
+				this.duree = ((DemandeAsa) d).getDuree();
+				this.isDateDebutAM = ((DemandeAsa) d).isDateDebutAM();
+				this.isDateDebutPM = ((DemandeAsa) d).isDateDebutPM();
+				this.isDateFinAM = ((DemandeAsa) d).isDateFinAM();
+				this.isDateFinPM = ((DemandeAsa) d).isDateFinPM();
 				break;
 			case AUTRES:
 				// TODO
@@ -117,6 +122,11 @@ public class DemandeDto {
 				// TODO
 				break;
 		}
+	}
+
+	public void updateEtat(EtatDemande etat) {
+		idRefEtat = etat.getEtat().getCodeEtat();
+		dateSaisie = etat.getDate();
 	}
 
 	public Integer getIdDemande() {
@@ -354,6 +364,14 @@ public class DemandeDto {
 
 	public void setDateFinPM(boolean isDateFinPM) {
 		this.isDateFinPM = isDateFinPM;
+	}
+
+	public Date getDateSaisie() {
+		return dateSaisie;
+	}
+
+	public void setDateSaisie(Date dateSaisie) {
+		this.dateSaisie = dateSaisie;
 	}
 
 }

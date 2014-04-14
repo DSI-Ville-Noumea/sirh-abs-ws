@@ -349,4 +349,20 @@ public class DemandeController {
 				.deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "/historiqueSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getDemandesArchives(@RequestParam("idDemande") Integer idDemande) {
+
+		logger.debug("entered GET [demandes/historiqueSIRH] => getDemandesArchives with parameter idDemande = {}",
+				idDemande);
+
+		List<DemandeDto> result = absenceService.getDemandesArchives(idDemande);
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
+				.deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
 }

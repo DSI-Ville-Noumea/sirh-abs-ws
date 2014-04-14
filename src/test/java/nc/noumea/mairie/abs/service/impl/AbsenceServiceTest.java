@@ -34,10 +34,12 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
+import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
+import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -3038,5 +3040,65 @@ public class AbsenceServiceTest {
 		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
+	}
+
+	@Test
+	public void getDemandesArchives_return1Liste() {
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+		listdemande.add(new Demande());
+
+		List<DemandeDto> listdemandeDto = new ArrayList<DemandeDto>();
+		listdemandeDto.add(new DemandeDto());
+
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+		Date dateMaj = new Date();
+		Date dateMaj2 = new Date();
+		Integer idDemande = 1;
+
+		RefTypeAbsence rta = new RefTypeAbsence();
+		rta.setIdRefTypeAbsence(3);
+
+
+		DemandeRecup dr = new DemandeRecup();
+
+		EtatDemande ed = new EtatDemande();
+		ed.setDate(dateMaj);
+		ed.setDemande((Demande) dr);
+		ed.setEtat(RefEtatEnum.PROVISOIRE);
+		ed.setIdAgent(9005138);
+		ed.setIdEtatDemande(1);
+		EtatDemande ed2 = new EtatDemande();
+		ed2.setDate(dateMaj2);
+		ed2.setDemande((Demande) dr);
+		ed2.setEtat(RefEtatEnum.SAISIE);
+		ed2.setIdAgent(9005138);
+		ed2.setIdEtatDemande(2);
+		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
+		listEtatDemande.addAll(Arrays.asList(ed2, ed));
+
+		dr.setDateDebut(dateDebut);
+		dr.setDateFin(dateFin);
+		dr.setDuree(10);
+		dr.setEtatsDemande(listEtatDemande);
+		dr.setIdAgent(9005138);
+		dr.setIdDemande(idDemande);
+		dr.setType(rta);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(dr);
+		
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgent(dr.getIdAgent())).thenReturn(new Agent());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+
+		List<DemandeDto> listResult = service.getDemandesArchives(idDemande);
+
+		assertEquals(2, listResult.size());
 	}
 }

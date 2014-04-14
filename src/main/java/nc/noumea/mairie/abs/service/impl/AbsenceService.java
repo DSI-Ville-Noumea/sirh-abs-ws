@@ -238,6 +238,7 @@ public class AbsenceService implements IAbsenceService {
 
 				demandeDto = new DemandeDto(demandeReposComp, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
+				demandeDto.updateEtat(demandeReposComp.getLatestEtatDemande());
 				break;
 			case RECUP:
 
@@ -248,6 +249,7 @@ public class AbsenceService implements IAbsenceService {
 
 				demandeDto = new DemandeDto(demandeRecup, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
+				demandeDto.updateEtat(demandeRecup.getLatestEtatDemande());
 				break;
 			case ASA_A48:
 				// TODO
@@ -265,6 +267,7 @@ public class AbsenceService implements IAbsenceService {
 		if (null == demandeDto && null != demande) {
 			demandeDto = new DemandeDto(demande, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 					helperService.getCurrentDate()));
+			demandeDto.updateEtat(demande.getLatestEtatDemande());
 		}
 
 		return demandeDto;
@@ -660,6 +663,21 @@ public class AbsenceService implements IAbsenceService {
 
 		return defaultAbsenceDataConsistencyRulesImpl
 				.filtreDateAndEtatDemandeFromList(listeSansFiltre, listEtats, null);
+	}
+
+	@Override
+	public List<DemandeDto> getDemandesArchives(Integer idDemande) {
+
+		List<DemandeDto> result = new ArrayList<DemandeDto>();
+		Demande dem = demandeRepository.getEntity(Demande.class, idDemande);
+
+		for (EtatDemande etat : dem.getEtatsDemande()) {
+			DemandeDto dto = new DemandeDto(dem, sirhRepository.getAgent(etat.getIdAgent()));
+			dto.updateEtat(etat);
+			result.add(dto);
+		}
+
+		return result;
 	}
 
 }
