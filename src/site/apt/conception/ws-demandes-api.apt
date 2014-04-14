@@ -22,30 +22,43 @@ SIRH-ABS-WS API et définition des services concernant les demandes d'absences d
  <<Content>>
  
 +-------------------------+
-{
-	"idDemande": 1 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
-	"idAgent": 9004568,
-	"idTypeDemande": 1 (1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies),
-	"dateDebut": "/Date(1368450000000+1100)/",
-    "duree": 30 (en minutes),
-    "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)),
-	"dateDemande": "/Date(1368450000000+1100)/",
-	"affichageBoutonModifier": false,
-	"affichageBoutonSupprimer": false,
-	"affichageBoutonImprimer": false,
-	"affichageVisa": false,
-	"affichageApprobation": false,
-	"affichageBoutonAnnuler": false,
-    "modifierApprobation": false,
-    "motif": null,
-    "modifierVisa": false,
-	"valeurVisa": false/null,
-	"valeurApprobation": false/null,
-	"nomAgent": null,
-	"prenomAgent": null,
-	"service": null,
-	"codeService": null
-}
+    {
+       "affichageApprobation": false,
+       "affichageBoutonAnnuler": false,
+       "affichageBoutonImprimer": false,
+       "affichageBoutonModifier": false,
+       "affichageBoutonSupprimer": false,
+       "affichageVisa": false,
+       "agentWithServiceDto":
+       {
+           "codeService": "DCCA",
+           "direction": "Direction des Systèmes d'Information",
+           "idAgent": 9005138,
+           "nom": "CHARVET",
+           "prenom": "TATIANA",
+           "service": "DSI Service Etudes et Développement",
+           "statut": null
+       },
+       "dateDebut": "/Date(1396306800000+1100)/",
+       "dateDebutAM": false,
+       "dateDebutPM": false,
+       "dateDemande": "/Date(1397190848000+1100)/",
+       "dateFin": "/Date(1396310400000+1100)/",
+       "dateFinAM": false,
+       "dateFinPM": false,
+       "dateSaisie": "/Date(1397190848000+1100)/",
+       "duree": 60 (en minutes),
+       "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
+       "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
+       "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),
+       "isValeurApprobation": null,
+       "isValeurVisa": null,
+       "modifierApprobation": false,
+       "modifierVisa": false,
+       "motif": null,
+       "valeurApprobation": null,
+       "valeurVisa": null
+    }
 +-------------------------+
 
  <<Response>> : 
@@ -74,30 +87,43 @@ HTTP Code 409 : CONFLICT (si l'agent n'est pas opérateur de l'agent saisi)
  <<Content>>
  
 +-------------------------+
-{
-    "idDemande": 1 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
-	"idAgent": 9004568,
-	"idTypeDemande": 1 (1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies),
-	"dateDebut": "/Date(1368450000000+1100)/",
-    "duree": 30 (en minutes),
-    "idRefEtat": 0 (0:provisoire, 1:saisie(définitif), 2:VISEE_F, ...), 
-	"dateDemande": "/Date(1368450000000+1100)/",
-	"affichageBoutonModifer": false,
-	"affichageBoutonSupprimer": false,
-	"affichageBoutonImprimer": false,
-	"affichageVisa": false,
-	"affichageApprobation": false,
-	"affichageBoutonAnnuler": false,
-    "modifierApprobation": false,
-    "modifierVisa": false,
-    "motif": null,
-	"valeurVisa": false/null,
-	"valeurApprobation": false/null
-	"nomAgent": "CHARVET",
-	"prenomAgent": "TATIANA",
-	"service": "DSI Service Etudes et Développement",
-	"codeService": "DCCA"
-}
+    {
+       "affichageApprobation": false,
+       "affichageBoutonAnnuler": false,
+       "affichageBoutonImprimer": false,
+       "affichageBoutonModifier": false,
+       "affichageBoutonSupprimer": false,
+       "affichageVisa": false,
+       "agentWithServiceDto":
+       {
+           "codeService": "DCCA",
+           "direction": "Direction des Systèmes d'Information",
+           "idAgent": 9005138,
+           "nom": "CHARVET",
+           "prenom": "TATIANA",
+           "service": "DSI Service Etudes et Développement",
+           "statut": null
+       },
+       "dateDebut": "/Date(1396306800000+1100)/",
+       "dateDebutAM": false,
+       "dateDebutPM": false,
+       "dateDemande": "/Date(1397190848000+1100)/",
+       "dateFin": "/Date(1396310400000+1100)/",
+       "dateFinAM": false,
+       "dateFinPM": false,
+       "dateSaisie": "/Date(1397190848000+1100)/",
+       "duree": 60 (en minutes),
+       "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
+       "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
+       "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),
+       "isValeurApprobation": null,
+       "isValeurVisa": null,
+       "modifierApprobation": false,
+       "modifierVisa": false,
+       "motif": null,
+       "valeurApprobation": null,
+       "valeurVisa": null
+    }
 +-------------------------+
 
  <<Response>> : 
@@ -128,48 +154,66 @@ HTTP Code 403 : Accès non autorisé
  
 +-------------------------+
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<editionDemandeDto>
-	<agent>
-		<idAgent>9005138</idAgent>
-		<nom>CHARVET</nom>
-		<prenom>TATIANA</prenom>
-		<codeService>DCCA</codeService>
-		<direction>Direction des Systèmes d'Information</direction>
-		<service>DSI Service Etudes et Développement</service>
+    <editionDemandeDto>
+    <agent>
+    <idAgent>9005138</idAgent>
+    <nom>CHARVET</nom>
+    <prenom>TATIANA</prenom>
+    <codeService>DCCA</codeService>
+    <direction>Direction des Systèmes d'Information</direction>
+    <service>DSI Service Etudes et Développement</service>
     </agent>
     <approbateur>
-		<idAgent>9005138</idAgent>
-		<nom>CHARVET</nom>
-		<prenom>TATIANA</prenom>
-		<codeService>DCCA</codeService>
-		<direction>Direction des Systèmes d'Information</direction>
-		<service>DSI Service Etudes et Développement</service>
+    <idAgent>9005131</idAgent>
+    <nom>SALES</nom>
+    <prenom>ADRIEN</prenom>
+    <codeService>DCCB</codeService>
+    <direction>Direction des Systèmes d'Information</direction>
+    <service>SED Département Maintenance et Développement</service>
     </approbateur>
     <demande>
-		<affichageApprobation>false</affichageApprobation>
-		<affichageBoutonAnnuler>false</affichageBoutonAnnuler>
-		<affichageBoutonImprimer>false</affichageBoutonImprimer>
-		<affichageBoutonModifier>false</affichageBoutonModifier>
-		<affichageBoutonSupprimer>false</affichageBoutonSupprimer>
-		<affichageVisa>false</affichageVisa>
-		<dateDebut>2016-04-24T09:20:00+11:00</dateDebut>
-		<dateDemande>2013-05-14T00:00:00+11:00</dateDemande>
-		<duree>100</duree>
-		<idAgent>9005138</idAgent>
-		<idDemande>6</idDemande>
-		<idRefEtat>5</idRefEtat>
-		<idTypeDemande>3</idTypeDemande>
-		<modifierApprobation>false</modifierApprobation>
-		<modifierVisa>false</modifierVisa>
-		<valeurApprobation>false</valeurApprobation>
-		<valeurVisa>true</valeurVisa>
+    <affichageApprobation>false</affichageApprobation>
+    <affichageBoutonAnnuler>false</affichageBoutonAnnuler>
+    <affichageBoutonImprimer>false</affichageBoutonImprimer>
+    <affichageBoutonModifier>false</affichageBoutonModifier>
+    <affichageBoutonSupprimer>false</affichageBoutonSupprimer>
+    <affichageVisa>false</affichageVisa>
+    <agentWithServiceDto>
+    <idAgent>9005138</idAgent>
+    <nom>CHARVET</nom>
+    <prenom>TATIANA</prenom>
+    <codeService>DCCA</codeService>
+    <direction>Direction des Systèmes d'Information</direction>
+    <service>DSI Service Etudes et Développement</service>
+    </agentWithServiceDto>
+    <dateDebut>2014-04-01T10:00:00+11:00</dateDebut>
+    <dateDebutAM>false</dateDebutAM>
+    <dateDebutPM>false</dateDebutPM>
+    <dateDemande>2014-04-11T15:34:08+11:00</dateDemande>
+    <dateFin>2014-04-01T11:00:00+11:00</dateFin>
+    <dateFinAM>false</dateFinAM>
+    <dateFinPM>false</dateFinPM>
+    <dateSaisie>2014-04-11T15:34:08+11:00</dateSaisie>
+    <duree>60</duree>
+    <idDemande>3</idDemande>
+    <idRefEtat>0</idRefEtat>
+    <idTypeDemande>3</idTypeDemande>
+    <modifierApprobation>false</modifierApprobation>
+    <modifierVisa>false</modifierVisa>
     </demande>
     <solde>
-		<soldeCongeAnnee>0.0</soldeCongeAnnee>
-		<soldeCongeAnneePrec>24.5</soldeCongeAnneePrec>
-		<soldeRecup>370.0</soldeRecup>
+    <afficheSoldeAsaA48>false</afficheSoldeAsaA48>
+    <afficheSoldeConge>true</afficheSoldeConge>
+    <afficheSoldeRecup>true</afficheSoldeRecup>
+    <afficheSoldeReposComp>false</afficheSoldeReposComp>
+    <soldeAsaA48>0.0</soldeAsaA48>
+    <soldeCongeAnnee>7.5</soldeCongeAnnee>
+    <soldeCongeAnneePrec>23.5</soldeCongeAnneePrec>
+    <soldeRecup>0.0</soldeRecup>
+    <soldeReposCompAnnee>0.0</soldeReposCompAnnee>
+    <soldeReposCompAnneePrec>0.0</soldeReposCompAnneePrec>
     </solde>
-</editionDemandeDto>
+    </editionDemandeDto>
 +-------------------------+
 
  <<Response>> : 
@@ -210,31 +254,43 @@ HTTP Code 403 : Accès non autorisé
  
 +-------------------------+
     [
+           {
+       "affichageApprobation": false,
+       "affichageBoutonAnnuler": false,
+       "affichageBoutonImprimer": false,
+       "affichageBoutonModifier": false,
+       "affichageBoutonSupprimer": false,
+       "affichageVisa": false,
+       "agentWithServiceDto":
        {
-            "idDemande": 1 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
-			"idAgent": 9004568,
-			"idTypeDemande": 1 (1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies),
-			"dateDebut": "/Date(1368450000000+1100)/",
-			"duree": 30 (en minutes),
-			"idRefEtat": 0 (0:provisoire, 1:saisie(définitif), 2:VISEE_F, ...),
-			"etatDefinitif": true (true ou false selon le radio bouton),
-			"dateDemande": "/Date(1368450000000+1100)/",
-			"affichageBoutonModifier": false,
-			"affichageBoutonSupprimer": false,
-			"affichageBoutonImprimer": false,
-			"affichageVisa": false,
-			"affichageApprobation": false,
-			"affichageBoutonAnnuler": false,
-			"modifierApprobation": false,
-			"motif": null,
-			"modifierVisa": false,
-			"valeurVisa": false/null,
-			"valeurApprobation": false/null,
-			"nomAgent": null,
-			"prenomAgent": null,
-			"service": null,
-			"codeService": null
-       },....
+           "codeService": "DCCA",
+           "direction": "Direction des Systèmes d'Information",
+           "idAgent": 9005138,
+           "nom": "CHARVET",
+           "prenom": "TATIANA",
+           "service": "DSI Service Etudes et Développement",
+           "statut": null
+       },
+       "dateDebut": "/Date(1396306800000+1100)/",
+       "dateDebutAM": false,
+       "dateDebutPM": false,
+       "dateDemande": "/Date(1397190848000+1100)/",
+       "dateFin": "/Date(1396310400000+1100)/",
+       "dateFinAM": false,
+       "dateFinPM": false,
+       "dateSaisie": "/Date(1397190848000+1100)/",
+       "duree": 60 (en minutes),
+       "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
+       "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
+       "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),
+       "isValeurApprobation": null,
+       "isValeurVisa": null,
+       "modifierApprobation": false,
+       "modifierVisa": false,
+       "motif": null,
+       "valeurApprobation": null,
+       "valeurVisa": null
+		},.....
     ]
 +-------------------------+
 
@@ -279,31 +335,43 @@ HTTP Code 404 : Not Found (si l'agent connecté ne fait pas partie des agents ma
  
 +-------------------------+
     [
+          {
+       "affichageApprobation": false,
+       "affichageBoutonAnnuler": false,
+       "affichageBoutonImprimer": false,
+       "affichageBoutonModifier": false,
+       "affichageBoutonSupprimer": false,
+       "affichageVisa": false,
+       "agentWithServiceDto":
        {
-            "idDemande": 1 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
-			"idAgent": 9004568,
-			"idTypeDemande": 1 (1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies),
-			"dateDebut": "/Date(1368450000000+1100)/",
-			"duree": 30 (en minutes),
-			"idRefEtat": 0 (0:provisoire, 1:saisie(définitif), 2:VISEE_F, ...),
-			"etatDefinitif": true (true ou false selon le radio bouton),
-			"dateDemande": "/Date(1368450000000+1100)/",
-			"affichageBoutonModifier": false,
-			"affichageBoutonSupprimer": false,
-			"affichageBoutonImprimer": false,
-			"affichageVisa": false,
-			"motif": null,
-			"affichageApprobation": false,
-			"affichageBoutonAnnuler": false,
-			"modifierApprobation": false,
-			"modifierVisa": false,
-			"valeurVisa": false/null,
-			"valeurApprobation": false/null,
-			"nomAgent": null,
-			"prenomAgent": null,
-			"service": null,
-			"codeService": null
-       },....
+           "codeService": "DCCA",
+           "direction": "Direction des Systèmes d'Information",
+           "idAgent": 9005138,
+           "nom": "CHARVET",
+           "prenom": "TATIANA",
+           "service": "DSI Service Etudes et Développement",
+           "statut": null
+       },
+       "dateDebut": "/Date(1396306800000+1100)/",
+       "dateDebutAM": false,
+       "dateDebutPM": false,
+       "dateDemande": "/Date(1397190848000+1100)/",
+       "dateFin": "/Date(1396310400000+1100)/",
+       "dateFinAM": false,
+       "dateFinPM": false,
+       "dateSaisie": "/Date(1397190848000+1100)/",
+       "duree": 60 (en minutes),
+       "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
+       "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
+       "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),
+       "isValeurApprobation": null,
+       "isValeurVisa": null,
+       "modifierApprobation": false,
+       "modifierVisa": false,
+       "motif": null,
+       "valeurApprobation": null,
+       "valeurVisa": null
+		},.....
     ]
 +-------------------------+
 
@@ -410,35 +478,43 @@ HTTP Code 409 : CONFLICT
  <<Content>>
  
 +-------------------------+
-{
-	"idDemande": 1 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
-	"idAgent": 9004568,
-	"idTypeDemande": 1 (1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies, 7:ASA_A48),
-	"dateDebut": "/Date(1368450000000+1100)/",
-	"dateFin": "/Date(1368450000000+1100)/",
-    "duree": 30 (en minutes),
-    "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)),
-	"dateDemande": "/Date(1368450000000+1100)/",
-	"affichageBoutonModifier": false,
-	"affichageBoutonSupprimer": false,
-	"affichageBoutonImprimer": false,
-	"affichageVisa": false,
-	"affichageApprobation": false,
-	"affichageBoutonAnnuler": false,
-    "modifierApprobation": false,
-    "motif": null,
-    "modifierVisa": false,
-	"valeurVisa": false/null,
-	"valeurApprobation": false/null,
-	"nomAgent": null,
-	"prenomAgent": null,
-	"service": null,
-	"codeService": null,
-	"dateFinAM":true,
-	"dateDebutAM":true,
-	"dateFinPM":false,
-	"dateDebutPM":false
-}
+    {
+       "affichageApprobation": false,
+       "affichageBoutonAnnuler": false,
+       "affichageBoutonImprimer": false,
+       "affichageBoutonModifier": false,
+       "affichageBoutonSupprimer": false,
+       "affichageVisa": false,
+       "agentWithServiceDto":
+       {
+           "codeService": "DCCA",
+           "direction": "Direction des Systèmes d'Information",
+           "idAgent": 9005138,
+           "nom": "CHARVET",
+           "prenom": "TATIANA",
+           "service": "DSI Service Etudes et Développement",
+           "statut": null
+       },
+       "dateDebut": "/Date(1396306800000+1100)/",
+       "dateDebutAM": false,
+       "dateDebutPM": false,
+       "dateDemande": "/Date(1397190848000+1100)/",
+       "dateFin": "/Date(1396310400000+1100)/",
+       "dateFinAM": false,
+       "dateFinPM": false,
+       "dateSaisie": "/Date(1397190848000+1100)/",
+       "duree": 60 (en minutes),
+       "idDemande": 3 (si création null, si modification reprendre l'identifiant de la demande envoyé initialement),
+       "idRefEtat": 0 (0:provisoire, 1:saisie(définitif)...),
+       "idTypeDemande": 3(1:Congé annuel, 2:Repos compensateur, 3:Récupération, 4:ASA, 5:Autres congés, 6:Maladies....),
+       "isValeurApprobation": null,
+       "isValeurVisa": null,
+       "modifierApprobation": false,
+       "modifierVisa": false,
+       "motif": null,
+       "valeurApprobation": null,
+       "valeurVisa": null
+    }
 +-------------------------+
 
  <<Response>> : 

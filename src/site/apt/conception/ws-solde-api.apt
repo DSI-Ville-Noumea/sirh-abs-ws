@@ -26,7 +26,7 @@ SIRH-ABS-WS API et définition des services concernant les soldes que l'agent pe
        "afficheSoldeConge": true,
        "afficheSoldeRecup": true,
        "afficheSoldeReposComp": false,
-       "soldeAsaA48": 0, (integer)
+       "soldeAsaA48": 0, (double)
        "soldeCongeAnnee": 12.5, (double)
        "soldeCongeAnneePrec": 26, (double)
        "soldeRecup": 97, (double)
