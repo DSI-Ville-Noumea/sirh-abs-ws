@@ -34,12 +34,10 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
-import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
-import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -1032,7 +1030,7 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtat_setDemandeEtatApprouve_ok() {
@@ -3092,7 +3090,6 @@ public class AbsenceServiceTest {
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(3);
 
-
 		DemandeRecup dr = new DemandeRecup();
 
 		EtatDemande ed = new EtatDemande();
@@ -3120,14 +3117,18 @@ public class AbsenceServiceTest {
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(dr);
-		
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(dr.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(dr.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		List<DemandeDto> listResult = service.getDemandesArchives(idDemande);
 

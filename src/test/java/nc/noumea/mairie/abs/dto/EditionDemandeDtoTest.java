@@ -19,7 +19,7 @@ public class EditionDemandeDtoTest {
 
 		// Given
 		Date dateDemande = new Date();
-		
+
 		Agent ag = new Agent();
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
@@ -45,7 +45,7 @@ public class EditionDemandeDtoTest {
 		d.setType(type);
 		d.getEtatsDemande().add(etatDemande);
 
-		DemandeDto demandeDto = new DemandeDto(d, ag);
+		DemandeDto demandeDto = new DemandeDto(d, agDto);
 		demandeDto.updateEtat(d.getLatestEtatDemande());
 
 		SoldeDto soldeDto = new SoldeDto();
@@ -62,19 +62,19 @@ public class EditionDemandeDtoTest {
 		AgentWithServiceDto approbateurDto = new AgentWithServiceDto(agAppro);
 
 		// When
-		EditionDemandeDto result = new EditionDemandeDto(demandeDto, agDto, soldeDto, approbateurDto);
+		EditionDemandeDto result = new EditionDemandeDto(demandeDto, soldeDto, approbateurDto);
 
 		// Then
 		assertEquals("CHARVET", result.getApprobateur().getNom());
 		assertEquals("Tatiana", result.getApprobateur().getPrenom());
 		assertEquals(9005138, (int) result.getApprobateur().getIdAgent());
 
-		assertEquals("RAYNAUD", result.getAgent().getNom());
-		assertEquals("Nicolas", result.getAgent().getPrenom());
-		assertEquals(9006765, (int) result.getAgent().getIdAgent());
-		assertEquals("DIR", result.getAgent().getDirection());
-		assertEquals("SERV", result.getAgent().getService());
-		assertEquals("F", result.getAgent().getStatut());
+		assertEquals("RAYNAUD", result.getDemande().getAgentWithServiceDto().getNom());
+		assertEquals("Nicolas", result.getDemande().getAgentWithServiceDto().getPrenom());
+		assertEquals(9006765, (int) result.getDemande().getAgentWithServiceDto().getIdAgent());
+		assertEquals("DIR", result.getDemande().getAgentWithServiceDto().getDirection());
+		assertEquals("SERV", result.getDemande().getAgentWithServiceDto().getService());
+		assertEquals("F", result.getDemande().getAgentWithServiceDto().getStatut());
 
 		assertEquals(52, (int) result.getDemande().getDuree());
 		assertEquals(9006765, (int) result.getDemande().getAgentWithServiceDto().getIdAgent());

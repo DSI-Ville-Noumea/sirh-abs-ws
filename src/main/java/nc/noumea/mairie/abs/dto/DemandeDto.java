@@ -9,7 +9,6 @@ import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 public class DemandeDto {
 
@@ -50,11 +49,6 @@ public class DemandeDto {
 	public DemandeDto(Demande d, AgentWithServiceDto agentWithServiceDto) {
 		this(d);
 		this.agentWithServiceDto = agentWithServiceDto;
-	}
-
-	public DemandeDto(Demande d, Agent agent) {
-		this(d);
-		this.agentWithServiceDto = new AgentWithServiceDto(agent);
 	}
 
 	public DemandeDto(Demande d) {

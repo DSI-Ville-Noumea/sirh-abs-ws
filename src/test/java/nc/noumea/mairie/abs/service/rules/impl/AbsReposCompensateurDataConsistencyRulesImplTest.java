@@ -39,6 +39,7 @@ import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -528,13 +529,18 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PROVISOIRE.getCodeEtat())).thenReturn(etatProvisoire);
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PRISE.getCodeEtat())).thenReturn(etatPris);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		// When
 		List<DemandeDto> result = service.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatPris),
@@ -589,13 +595,18 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat())).thenReturn(etatSaisie);
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PROVISOIRE.getCodeEtat())).thenReturn(etatProvisoire);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		// When
 		List<DemandeDto> result = service.filtreDateAndEtatDemandeFromList(listeDemande,
@@ -661,13 +672,18 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat())).thenReturn(etatSaisie);
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PROVISOIRE.getCodeEtat())).thenReturn(etatProvisoire);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		// When
 		List<DemandeDto> result = service.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire),
@@ -734,13 +750,18 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat())).thenReturn(etatSaisie);
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PROVISOIRE.getCodeEtat())).thenReturn(etatProvisoire);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		// When
 		List<DemandeDto> result = service.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire),
@@ -806,13 +827,18 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat())).thenReturn(etatSaisie);
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PROVISOIRE.getCodeEtat())).thenReturn(etatProvisoire);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		// When
 		List<DemandeDto> result = service.filtreDateAndEtatDemandeFromList(listeDemande, null, null);
@@ -993,13 +1019,18 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PRISE.getCodeEtat())).thenReturn(etatPrise);
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.ANNULEE.getCodeEtat())).thenReturn(etatAnnulee);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		// When
 		List<DemandeDto> result = service.filtreDateAndEtatDemandeFromList(listeDemande,
@@ -1065,13 +1096,18 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat())).thenReturn(etatSaisie);
 		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.PRISE.getCodeEtat())).thenReturn(etatPris);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(d.getIdAgent())).thenReturn(new Agent());
-		Mockito.when(sirhRepository.getAgent(d2.getIdAgent())).thenReturn(new Agent());
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
 		AbsReposCompensateurDataConsistencyRulesImpl service = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(service, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		// When
 		List<DemandeDto> result = service.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatSaisie),

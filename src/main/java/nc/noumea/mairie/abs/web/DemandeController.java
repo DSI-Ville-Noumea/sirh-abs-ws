@@ -162,12 +162,10 @@ public class DemandeController {
 
 		SoldeDto soldeDto = soldeService.getAgentSolde(demandeDto.getAgentWithServiceDto().getIdAgent(), null);
 
-		AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(demandeDto.getAgentWithServiceDto().getIdAgent(),
-				helperService.getCurrentDate());
+		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(demandeDto
+				.getAgentWithServiceDto().getIdAgent());
 
-		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
-
-		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, agentDto, soldeDto, approbateurDto);
+		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, soldeDto, approbateurDto);
 
 		return new ModelAndView("xmlView", "object", dtoFinal);
 	}

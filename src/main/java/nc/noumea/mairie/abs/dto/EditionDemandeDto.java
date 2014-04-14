@@ -7,8 +7,6 @@ public class EditionDemandeDto {
 
 	private DemandeDto demande;
 
-	private AgentWithServiceDto agent;
-
 	private AgentWithServiceDto approbateur;
 
 	private SoldeDto solde;
@@ -16,10 +14,8 @@ public class EditionDemandeDto {
 	public EditionDemandeDto() {
 	}
 
-	public EditionDemandeDto(DemandeDto demandeDto, AgentWithServiceDto agentDto, SoldeDto soldeDto,
-			AgentWithServiceDto approbateurDto) {
+	public EditionDemandeDto(DemandeDto demandeDto, SoldeDto soldeDto, AgentWithServiceDto approbateurDto) {
 		demande = demandeDto;
-		agent = agentDto;
 		solde = soldeDto;
 		approbateur = approbateurDto;
 	}
@@ -30,14 +26,6 @@ public class EditionDemandeDto {
 
 	public void setDemande(DemandeDto demande) {
 		this.demande = demande;
-	}
-
-	public AgentWithServiceDto getAgent() {
-		return agent;
-	}
-
-	public void setAgent(AgentWithServiceDto agent) {
-		this.agent = agent;
 	}
 
 	public SoldeDto getSolde() {

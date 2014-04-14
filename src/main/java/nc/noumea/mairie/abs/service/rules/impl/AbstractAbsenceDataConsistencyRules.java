@@ -29,6 +29,7 @@ import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Autowired
 	protected IAsaRepository asaRepository;
+
+	@Autowired
+	private ISirhWSConsumer sirhWSConsumer;
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
@@ -148,7 +152,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			logger.warn(String.format(MOTIF_OBLIGATOIRE));
 			srm.getErrors().add(MOTIF_OBLIGATOIRE);
 		}
-		
+
 		if (null == motif && etat.equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())) {
 			logger.warn(String.format(MOTIF_OBLIGATOIRE));
 			srm.getErrors().add(MOTIF_OBLIGATOIRE);
@@ -291,6 +295,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		if (RefTypeAbsenceEnum.RECUP.getValue() == demandeDto.getIdTypeDemande()
 				|| RefTypeAbsenceEnum.REPOS_COMP.getValue() == demandeDto.getIdTypeDemande()) {
 			return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
+		} else if (RefTypeAbsenceEnum.ASA_A48.getValue() == demandeDto.getIdTypeDemande()) {
+			return demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat());
 		} else {
 			return false;
 		}
@@ -306,7 +312,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d, sirhRepository.getAgent(d.getIdAgent()));
+				DemandeDto dto = new DemandeDto(d, sirhWSConsumer.getAgentService(d.getIdAgent(),
+						helperService.getCurrentDate()));
 				dto.updateEtat(d.getLatestEtatDemande());
 				listeDemandeDto.add(dto);
 			}
@@ -321,7 +328,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
-					DemandeDto dto = new DemandeDto(d, sirhRepository.getAgent(d.getIdAgent()));
+					DemandeDto dto = new DemandeDto(d, sirhWSConsumer.getAgentService(d.getIdAgent(),
+							helperService.getCurrentDate()));
 					dto.updateEtat(d.getLatestEtatDemande());
 					listeDemandeDto.add(dto);
 				}
@@ -332,7 +340,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d, sirhRepository.getAgent(d.getIdAgent()));
+				DemandeDto dto = new DemandeDto(d, sirhWSConsumer.getAgentService(d.getIdAgent(),
+						helperService.getCurrentDate()));
 				dto.updateEtat(d.getLatestEtatDemande());
 				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 						.getCodeEtat()))) {

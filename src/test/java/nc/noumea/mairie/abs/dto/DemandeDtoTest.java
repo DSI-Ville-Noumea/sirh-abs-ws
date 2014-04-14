@@ -41,7 +41,7 @@ public class DemandeDtoTest {
 		d.getEtatsDemande().add(etatDemande);
 
 		// When
-		DemandeDto result = new DemandeDto(d, ag);
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
 		result.updateEtat(etatDemande);
 
 		// Then

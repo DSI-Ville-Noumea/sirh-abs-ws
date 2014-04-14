@@ -95,7 +95,8 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		// verification des droits
-		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getAgentWithServiceDto().getIdAgent(), returnDto);
+		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getAgentWithServiceDto()
+				.getIdAgent(), returnDto);
 		if (!returnDto.getErrors().isEmpty())
 			return returnDto;
 
@@ -252,7 +253,14 @@ public class AbsenceService implements IAbsenceService {
 				demandeDto.updateEtat(demandeRecup.getLatestEtatDemande());
 				break;
 			case ASA_A48:
-				// TODO
+				DemandeAsa demandeAsaA48 = demandeRepository.getEntity(DemandeAsa.class, idDemande);
+				if (null == demandeAsaA48) {
+					return demandeDto;
+				}
+
+				demandeDto = new DemandeDto(demandeAsaA48, sirhWSConsumer.getAgentService(demande.getIdAgent(),
+						helperService.getCurrentDate()));
+				demandeDto.updateEtat(demandeAsaA48.getLatestEtatDemande());
 				break;
 			case AUTRES:
 				// TODO
@@ -672,7 +680,8 @@ public class AbsenceService implements IAbsenceService {
 		Demande dem = demandeRepository.getEntity(Demande.class, idDemande);
 
 		for (EtatDemande etat : dem.getEtatsDemande()) {
-			DemandeDto dto = new DemandeDto(dem, sirhRepository.getAgent(etat.getIdAgent()));
+			DemandeDto dto = new DemandeDto(dem, sirhWSConsumer.getAgentService(etat.getIdAgent(),
+					helperService.getCurrentDate()));
 			dto.updateEtat(etat);
 			result.add(dto);
 		}
