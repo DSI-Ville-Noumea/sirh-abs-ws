@@ -27,6 +27,7 @@ import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -398,15 +399,15 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertEquals(1, srm.getErrors().size());
 		assertEquals("Le motif est obligatoire.", srm.getErrors().get(0).toString());
 	}
-	
+
 	@Test
 	public void checkChampMotifPourEtatDonne_motifVide_ViseeD() {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), null);
-		
+
 		assertEquals(1, srm.getErrors().size());
 		assertEquals("Le motif est obligatoire.", srm.getErrors().get(0).toString());
 	}
@@ -1089,38 +1090,40 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 
 		Integer idAgentConnecte = 9005138;
 		Integer idAgentConcerne = 9005138;
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005138);
 
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
 		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		demandeDtoProvisoire.setIdAgent(9005138);
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto);
 		demandeDtoProvisoire.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoSaisie = new DemandeDto();
 		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		demandeDtoSaisie.setIdAgent(9005138);
+		demandeDtoSaisie.setAgentWithServiceDto(agDto);
 		demandeDtoSaisie.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoApprouve = new DemandeDto();
 		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		demandeDtoApprouve.setIdAgent(9005138);
+		demandeDtoApprouve.setAgentWithServiceDto(agDto);
 		demandeDtoApprouve.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoRefusee = new DemandeDto();
 		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		demandeDtoRefusee.setIdAgent(9005138);
+		demandeDtoRefusee.setAgentWithServiceDto(agDto);
 		demandeDtoRefusee.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
 		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-		demandeDtoVisee_F.setIdAgent(9005138);
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto);
 		demandeDtoVisee_F.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
 		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		demandeDtoVisee_D.setIdAgent(9005138);
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto);
 		demandeDtoVisee_D.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoPrise = new DemandeDto();
 		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		demandeDtoPrise.setIdAgent(9005138);
+		demandeDtoPrise.setAgentWithServiceDto(agDto);
 		demandeDtoPrise.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
 		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		demandeDtoAnnulee.setIdAgent(9005138);
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto);
 		demandeDtoAnnulee.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		List<DemandeDto> resultListDto = new ArrayList<DemandeDto>();
 		resultListDto.addAll(Arrays.asList(demandeDtoProvisoire, demandeDtoSaisie, demandeDtoApprouve,
@@ -1236,39 +1239,55 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 	public void filtreDroitOfListeDemandesByDemande_Operateur() {
 
 		Integer idAgentConnecte = 9005138;
+		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
+		agDto8.setIdAgent(9005137);
+		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
+		agDto7.setIdAgent(9005136);
+		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
+		agDto6.setIdAgent(9005135);
+		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
+		agDto5.setIdAgent(9005134);
+		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
+		agDto4.setIdAgent(9005133);
+		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
+		agDto3.setIdAgent(9005132);
+		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
+		agDto2.setIdAgent(9005131);
+		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
+		agDto1.setIdAgent(9005130);
 
 		// les demandes
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
 		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		demandeDtoProvisoire.setIdAgent(9005130);
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
 		demandeDtoProvisoire.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoSaisie = new DemandeDto();
 		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		demandeDtoSaisie.setIdAgent(9005131);
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
 		demandeDtoSaisie.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoApprouve = new DemandeDto();
 		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		demandeDtoApprouve.setIdAgent(9005132);
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
 		demandeDtoApprouve.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoRefusee = new DemandeDto();
 		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		demandeDtoRefusee.setIdAgent(9005133);
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
 		demandeDtoRefusee.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
 		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-		demandeDtoVisee_F.setIdAgent(9005134);
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
 		demandeDtoVisee_F.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
 		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		demandeDtoVisee_D.setIdAgent(9005135);
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
 		demandeDtoVisee_D.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoPrise = new DemandeDto();
 		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		demandeDtoPrise.setIdAgent(9005136);
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
 		demandeDtoPrise.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
 		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		demandeDtoAnnulee.setIdAgent(9005137);
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
 		demandeDtoAnnulee.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		List<DemandeDto> resultListDto = new ArrayList<DemandeDto>();
 		resultListDto.addAll(Arrays.asList(demandeDtoProvisoire, demandeDtoSaisie, demandeDtoApprouve,
@@ -1329,7 +1348,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertEquals(8, result.size());
 
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result.get(0).getIdRefEtat().intValue());
-		assertEquals(9005130, result.get(0).getIdAgent().intValue());
+		assertEquals(9005130, result.get(0).getAgentWithServiceDto().getIdAgent().intValue());
 		assertFalse(result.get(0).isAffichageApprobation());
 		assertFalse(result.get(0).isAffichageBoutonAnnuler());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
@@ -1342,7 +1361,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(0).getValeurVisa());
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result.get(1).getIdRefEtat().intValue());
-		assertEquals(9005131, result.get(1).getIdAgent().intValue());
+		assertEquals(9005131, result.get(1).getAgentWithServiceDto().getIdAgent().intValue());
 		assertFalse(result.get(1).isAffichageApprobation());
 		assertFalse(result.get(1).isAffichageBoutonAnnuler());
 		assertFalse(result.get(1).isAffichageBoutonImprimer());
@@ -1355,7 +1374,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(1).getValeurVisa());
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result.get(2).getIdRefEtat().intValue());
-		assertEquals(9005132, result.get(2).getIdAgent().intValue());
+		assertEquals(9005132, result.get(2).getAgentWithServiceDto().getIdAgent().intValue());
 		assertFalse(result.get(2).isAffichageApprobation());
 		assertTrue(result.get(2).isAffichageBoutonAnnuler());
 		assertTrue(result.get(2).isAffichageBoutonImprimer());
@@ -1368,7 +1387,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(2).getValeurVisa());
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result.get(3).getIdRefEtat().intValue());
-		assertEquals(9005133, result.get(3).getIdAgent().intValue());
+		assertEquals(9005133, result.get(3).getAgentWithServiceDto().getIdAgent().intValue());
 		assertFalse(result.get(3).isAffichageApprobation());
 		assertFalse(result.get(3).isAffichageBoutonAnnuler());
 		assertFalse(result.get(3).isAffichageBoutonImprimer());
@@ -1381,7 +1400,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(3).getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result.get(4).getIdRefEtat().intValue());
-		assertEquals(9005134, result.get(4).getIdAgent().intValue());
+		assertEquals(9005134, result.get(4).getAgentWithServiceDto().getIdAgent().intValue());
 		assertFalse(result.get(4).isAffichageApprobation());
 		assertTrue(result.get(4).isAffichageBoutonAnnuler());
 		assertFalse(result.get(4).isAffichageBoutonImprimer());
@@ -1394,7 +1413,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(4).getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result.get(5).getIdRefEtat().intValue());
-		assertEquals(9005135, result.get(5).getIdAgent().intValue());
+		assertEquals(9005135, result.get(5).getAgentWithServiceDto().getIdAgent().intValue());
 		assertFalse(result.get(5).isAffichageApprobation());
 		assertTrue(result.get(5).isAffichageBoutonAnnuler());
 		assertFalse(result.get(5).isAffichageBoutonImprimer());
@@ -1407,7 +1426,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(5).getValeurVisa());
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result.get(6).getIdRefEtat().intValue());
-		assertEquals(9005136, result.get(6).getIdAgent().intValue());
+		assertEquals(9005136, result.get(6).getAgentWithServiceDto().getIdAgent().intValue());
 		assertFalse(result.get(6).isAffichageApprobation());
 		assertFalse(result.get(6).isAffichageBoutonAnnuler());
 		assertFalse(result.get(6).isAffichageBoutonImprimer());
@@ -1420,7 +1439,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(6).getValeurVisa());
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result.get(7).getIdRefEtat().intValue());
-		assertEquals(9005137, result.get(7).getIdAgent().intValue());
+		assertEquals(9005137, result.get(7).getAgentWithServiceDto().getIdAgent().intValue());
 		assertFalse(result.get(7).isAffichageApprobation());
 		assertFalse(result.get(7).isAffichageBoutonAnnuler());
 		assertFalse(result.get(7).isAffichageBoutonImprimer());
@@ -1437,32 +1456,48 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 	public void filtreDroitOfListeDemandesByDemande_Viseur() {
 
 		Integer idAgentConnecte = 9005138;
+		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
+		agDto8.setIdAgent(9005137);
+		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
+		agDto7.setIdAgent(9005136);
+		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
+		agDto6.setIdAgent(9005135);
+		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
+		agDto5.setIdAgent(9005134);
+		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
+		agDto4.setIdAgent(9005133);
+		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
+		agDto3.setIdAgent(9005132);
+		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
+		agDto2.setIdAgent(9005131);
+		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
+		agDto1.setIdAgent(9005130);
 
 		// les demandes
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
 		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		demandeDtoProvisoire.setIdAgent(9005130);
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
 		DemandeDto demandeDtoSaisie = new DemandeDto();
 		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		demandeDtoSaisie.setIdAgent(9005131);
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
 		DemandeDto demandeDtoApprouve = new DemandeDto();
 		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		demandeDtoApprouve.setIdAgent(9005132);
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
 		DemandeDto demandeDtoRefusee = new DemandeDto();
 		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		demandeDtoRefusee.setIdAgent(9005133);
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
 		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-		demandeDtoVisee_F.setIdAgent(9005134);
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
 		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		demandeDtoVisee_D.setIdAgent(9005135);
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
 		DemandeDto demandeDtoPrise = new DemandeDto();
 		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		demandeDtoPrise.setIdAgent(9005136);
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
 		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		demandeDtoAnnulee.setIdAgent(9005137);
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
 		List<DemandeDto> resultListDto = new ArrayList<DemandeDto>();
 		resultListDto.addAll(Arrays.asList(demandeDtoProvisoire, demandeDtoSaisie, demandeDtoApprouve,
 				demandeDtoRefusee, demandeDtoVisee_F, demandeDtoVisee_D, demandeDtoPrise, demandeDtoAnnulee));
@@ -1522,7 +1557,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertEquals(8, result.size());
 
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result.get(0).getIdRefEtat().intValue());
-		assertEquals(9005130, result.get(0).getIdAgent().intValue());
+		assertEquals(9005130, result.get(0).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(0).isAffichageApprobation());
 		assertFalse(result.get(0).isAffichageBoutonAnnuler());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
@@ -1535,7 +1570,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(0).getValeurVisa());
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result.get(1).getIdRefEtat().intValue());
-		assertEquals(9005131, result.get(1).getIdAgent().intValue());
+		assertEquals(9005131, result.get(1).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(1).isAffichageApprobation());
 		assertFalse(result.get(1).isAffichageBoutonAnnuler());
 		assertFalse(result.get(1).isAffichageBoutonImprimer());
@@ -1548,7 +1583,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(1).getValeurVisa());
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result.get(2).getIdRefEtat().intValue());
-		assertEquals(9005132, result.get(2).getIdAgent().intValue());
+		assertEquals(9005132, result.get(2).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(2).isAffichageApprobation());
 		assertFalse(result.get(2).isAffichageBoutonAnnuler());
 		assertFalse(result.get(2).isAffichageBoutonImprimer());
@@ -1561,7 +1596,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(2).getValeurVisa());
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result.get(3).getIdRefEtat().intValue());
-		assertEquals(9005133, result.get(3).getIdAgent().intValue());
+		assertEquals(9005133, result.get(3).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(3).isAffichageApprobation());
 		assertFalse(result.get(3).isAffichageBoutonAnnuler());
 		assertFalse(result.get(3).isAffichageBoutonImprimer());
@@ -1574,7 +1609,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(3).getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result.get(4).getIdRefEtat().intValue());
-		assertEquals(9005134, result.get(4).getIdAgent().intValue());
+		assertEquals(9005134, result.get(4).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(4).isAffichageApprobation());
 		assertFalse(result.get(4).isAffichageBoutonAnnuler());
 		assertFalse(result.get(4).isAffichageBoutonImprimer());
@@ -1587,7 +1622,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(4).getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result.get(5).getIdRefEtat().intValue());
-		assertEquals(9005135, result.get(5).getIdAgent().intValue());
+		assertEquals(9005135, result.get(5).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(5).isAffichageApprobation());
 		assertFalse(result.get(5).isAffichageBoutonAnnuler());
 		assertFalse(result.get(5).isAffichageBoutonImprimer());
@@ -1600,7 +1635,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(5).getValeurVisa());
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result.get(6).getIdRefEtat().intValue());
-		assertEquals(9005136, result.get(6).getIdAgent().intValue());
+		assertEquals(9005136, result.get(6).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(6).isAffichageApprobation());
 		assertFalse(result.get(6).isAffichageBoutonAnnuler());
 		assertFalse(result.get(6).isAffichageBoutonImprimer());
@@ -1613,7 +1648,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(6).getValeurVisa());
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result.get(7).getIdRefEtat().intValue());
-		assertEquals(9005137, result.get(7).getIdAgent().intValue());
+		assertEquals(9005137, result.get(7).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(7).isAffichageApprobation());
 		assertFalse(result.get(7).isAffichageBoutonAnnuler());
 		assertFalse(result.get(7).isAffichageBoutonImprimer());
@@ -1630,32 +1665,48 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 	public void filtreDroitOfListeDemandesByDemande_Approbateur() {
 
 		Integer idAgentConnecte = 9005138;
+		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
+		agDto8.setIdAgent(9005137);
+		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
+		agDto7.setIdAgent(9005136);
+		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
+		agDto6.setIdAgent(9005135);
+		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
+		agDto5.setIdAgent(9005134);
+		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
+		agDto4.setIdAgent(9005133);
+		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
+		agDto3.setIdAgent(9005132);
+		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
+		agDto2.setIdAgent(9005131);
+		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
+		agDto1.setIdAgent(9005130);
 
 		// les demandes
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
 		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		demandeDtoProvisoire.setIdAgent(9005130);
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
 		DemandeDto demandeDtoSaisie = new DemandeDto();
 		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		demandeDtoSaisie.setIdAgent(9005131);
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
 		DemandeDto demandeDtoApprouve = new DemandeDto();
 		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		demandeDtoApprouve.setIdAgent(9005132);
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
 		DemandeDto demandeDtoRefusee = new DemandeDto();
 		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		demandeDtoRefusee.setIdAgent(9005133);
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
 		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-		demandeDtoVisee_F.setIdAgent(9005134);
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
 		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		demandeDtoVisee_D.setIdAgent(9005135);
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
 		DemandeDto demandeDtoPrise = new DemandeDto();
 		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		demandeDtoPrise.setIdAgent(9005136);
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
 		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		demandeDtoAnnulee.setIdAgent(9005137);
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
 		List<DemandeDto> resultListDto = new ArrayList<DemandeDto>();
 		resultListDto.addAll(Arrays.asList(demandeDtoProvisoire, demandeDtoSaisie, demandeDtoApprouve,
 				demandeDtoRefusee, demandeDtoVisee_F, demandeDtoVisee_D, demandeDtoPrise, demandeDtoAnnulee));
@@ -1715,7 +1766,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertEquals(8, result.size());
 
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result.get(0).getIdRefEtat().intValue());
-		assertEquals(9005130, result.get(0).getIdAgent().intValue());
+		assertEquals(9005130, result.get(0).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(0).isAffichageApprobation());
 		assertFalse(result.get(0).isAffichageBoutonAnnuler());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
@@ -1728,7 +1779,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(0).getValeurVisa());
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result.get(1).getIdRefEtat().intValue());
-		assertEquals(9005131, result.get(1).getIdAgent().intValue());
+		assertEquals(9005131, result.get(1).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(1).isAffichageApprobation());
 		assertFalse(result.get(1).isAffichageBoutonAnnuler());
 		assertFalse(result.get(1).isAffichageBoutonImprimer());
@@ -1741,7 +1792,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(1).getValeurVisa());
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result.get(2).getIdRefEtat().intValue());
-		assertEquals(9005132, result.get(2).getIdAgent().intValue());
+		assertEquals(9005132, result.get(2).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(2).isAffichageApprobation());
 		assertFalse(result.get(2).isAffichageBoutonAnnuler());
 		assertFalse(result.get(2).isAffichageBoutonImprimer());
@@ -1754,7 +1805,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(2).getValeurVisa());
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result.get(3).getIdRefEtat().intValue());
-		assertEquals(9005133, result.get(3).getIdAgent().intValue());
+		assertEquals(9005133, result.get(3).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(3).isAffichageApprobation());
 		assertFalse(result.get(3).isAffichageBoutonAnnuler());
 		assertFalse(result.get(3).isAffichageBoutonImprimer());
@@ -1767,7 +1818,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(3).getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result.get(4).getIdRefEtat().intValue());
-		assertEquals(9005134, result.get(4).getIdAgent().intValue());
+		assertEquals(9005134, result.get(4).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(4).isAffichageApprobation());
 		assertFalse(result.get(4).isAffichageBoutonAnnuler());
 		assertFalse(result.get(4).isAffichageBoutonImprimer());
@@ -1780,7 +1831,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(4).getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result.get(5).getIdRefEtat().intValue());
-		assertEquals(9005135, result.get(5).getIdAgent().intValue());
+		assertEquals(9005135, result.get(5).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(5).isAffichageApprobation());
 		assertFalse(result.get(5).isAffichageBoutonAnnuler());
 		assertFalse(result.get(5).isAffichageBoutonImprimer());
@@ -1793,7 +1844,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(5).getValeurVisa());
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result.get(6).getIdRefEtat().intValue());
-		assertEquals(9005136, result.get(6).getIdAgent().intValue());
+		assertEquals(9005136, result.get(6).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(6).isAffichageApprobation());
 		assertFalse(result.get(6).isAffichageBoutonAnnuler());
 		assertFalse(result.get(6).isAffichageBoutonImprimer());
@@ -1806,7 +1857,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(6).getValeurVisa());
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result.get(7).getIdRefEtat().intValue());
-		assertEquals(9005137, result.get(7).getIdAgent().intValue());
+		assertEquals(9005137, result.get(7).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(7).isAffichageApprobation());
 		assertFalse(result.get(7).isAffichageBoutonAnnuler());
 		assertFalse(result.get(7).isAffichageBoutonImprimer());
@@ -1823,32 +1874,48 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 	public void filtreDroitOfListeDemandesByDemande_Delegataire() {
 
 		Integer idAgentConnecte = 9005138;
+		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
+		agDto8.setIdAgent(9005137);
+		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
+		agDto7.setIdAgent(9005136);
+		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
+		agDto6.setIdAgent(9005135);
+		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
+		agDto5.setIdAgent(9005134);
+		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
+		agDto4.setIdAgent(9005133);
+		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
+		agDto3.setIdAgent(9005132);
+		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
+		agDto2.setIdAgent(9005131);
+		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
+		agDto1.setIdAgent(9005130);
 
 		// les demandes
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
 		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		demandeDtoProvisoire.setIdAgent(9005130);
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
 		DemandeDto demandeDtoSaisie = new DemandeDto();
 		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		demandeDtoSaisie.setIdAgent(9005131);
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
 		DemandeDto demandeDtoApprouve = new DemandeDto();
 		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		demandeDtoApprouve.setIdAgent(9005132);
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
 		DemandeDto demandeDtoRefusee = new DemandeDto();
 		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		demandeDtoRefusee.setIdAgent(9005133);
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
 		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-		demandeDtoVisee_F.setIdAgent(9005134);
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
 		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		demandeDtoVisee_D.setIdAgent(9005135);
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
 		DemandeDto demandeDtoPrise = new DemandeDto();
 		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		demandeDtoPrise.setIdAgent(9005136);
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
 		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		demandeDtoAnnulee.setIdAgent(9005137);
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
 		List<DemandeDto> resultListDto = new ArrayList<DemandeDto>();
 		resultListDto.addAll(Arrays.asList(demandeDtoProvisoire, demandeDtoSaisie, demandeDtoApprouve,
 				demandeDtoRefusee, demandeDtoVisee_F, demandeDtoVisee_D, demandeDtoPrise, demandeDtoAnnulee));
@@ -1908,7 +1975,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertEquals(8, result.size());
 
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result.get(0).getIdRefEtat().intValue());
-		assertEquals(9005130, result.get(0).getIdAgent().intValue());
+		assertEquals(9005130, result.get(0).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(0).isAffichageApprobation());
 		assertFalse(result.get(0).isAffichageBoutonAnnuler());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
@@ -1921,7 +1988,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(0).getValeurVisa());
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result.get(1).getIdRefEtat().intValue());
-		assertEquals(9005131, result.get(1).getIdAgent().intValue());
+		assertEquals(9005131, result.get(1).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(1).isAffichageApprobation());
 		assertFalse(result.get(1).isAffichageBoutonAnnuler());
 		assertFalse(result.get(1).isAffichageBoutonImprimer());
@@ -1934,7 +2001,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(1).getValeurVisa());
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result.get(2).getIdRefEtat().intValue());
-		assertEquals(9005132, result.get(2).getIdAgent().intValue());
+		assertEquals(9005132, result.get(2).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(2).isAffichageApprobation());
 		assertFalse(result.get(2).isAffichageBoutonAnnuler());
 		assertFalse(result.get(2).isAffichageBoutonImprimer());
@@ -1947,7 +2014,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(2).getValeurVisa());
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result.get(3).getIdRefEtat().intValue());
-		assertEquals(9005133, result.get(3).getIdAgent().intValue());
+		assertEquals(9005133, result.get(3).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(3).isAffichageApprobation());
 		assertFalse(result.get(3).isAffichageBoutonAnnuler());
 		assertFalse(result.get(3).isAffichageBoutonImprimer());
@@ -1960,7 +2027,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(3).getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result.get(4).getIdRefEtat().intValue());
-		assertEquals(9005134, result.get(4).getIdAgent().intValue());
+		assertEquals(9005134, result.get(4).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(4).isAffichageApprobation());
 		assertFalse(result.get(4).isAffichageBoutonAnnuler());
 		assertFalse(result.get(4).isAffichageBoutonImprimer());
@@ -1973,7 +2040,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(4).getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result.get(5).getIdRefEtat().intValue());
-		assertEquals(9005135, result.get(5).getIdAgent().intValue());
+		assertEquals(9005135, result.get(5).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(5).isAffichageApprobation());
 		assertFalse(result.get(5).isAffichageBoutonAnnuler());
 		assertFalse(result.get(5).isAffichageBoutonImprimer());
@@ -1986,7 +2053,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(5).getValeurVisa());
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result.get(6).getIdRefEtat().intValue());
-		assertEquals(9005136, result.get(6).getIdAgent().intValue());
+		assertEquals(9005136, result.get(6).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(6).isAffichageApprobation());
 		assertFalse(result.get(6).isAffichageBoutonAnnuler());
 		assertFalse(result.get(6).isAffichageBoutonImprimer());
@@ -1999,7 +2066,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest {
 		assertNull(result.get(6).getValeurVisa());
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result.get(7).getIdRefEtat().intValue());
-		assertEquals(9005137, result.get(7).getIdAgent().intValue());
+		assertEquals(9005137, result.get(7).getAgentWithServiceDto().getIdAgent().intValue());
 		assertTrue(result.get(7).isAffichageApprobation());
 		assertFalse(result.get(7).isAffichageBoutonAnnuler());
 		assertFalse(result.get(7).isAffichageBoutonImprimer());

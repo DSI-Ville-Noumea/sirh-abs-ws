@@ -46,12 +46,12 @@ public class DemandeDtoTest {
 
 		// Then
 
-		assertEquals("RAYNAUD", result.getNomAgent());
-		assertEquals("Nicolas", result.getPrenomAgent());
-		assertEquals(9006765, (int) result.getIdAgent());
+		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
+		assertEquals("Nicolas", result.getAgentWithServiceDto().getPrenom());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
 
 		assertNull(result.getDuree());
-		assertEquals(9006765, (int) result.getIdAgent());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
 		assertEquals(1, (int) result.getIdDemande());
 		assertEquals(7, (int) result.getIdTypeDemande());
 		assertEquals(4, (int) result.getIdRefEtat());

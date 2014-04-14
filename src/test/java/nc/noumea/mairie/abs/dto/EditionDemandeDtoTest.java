@@ -77,7 +77,7 @@ public class EditionDemandeDtoTest {
 		assertEquals("F", result.getAgent().getStatut());
 
 		assertEquals(52, (int) result.getDemande().getDuree());
-		assertEquals(9006765, (int) result.getDemande().getIdAgent());
+		assertEquals(9006765, (int) result.getDemande().getAgentWithServiceDto().getIdAgent());
 		assertEquals(1, (int) result.getDemande().getIdDemande());
 		assertEquals(2, (int) result.getDemande().getIdTypeDemande());
 		assertEquals(4, (int) result.getDemande().getIdRefEtat());

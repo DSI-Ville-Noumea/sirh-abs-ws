@@ -209,7 +209,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		for (DemandeDto demandeDto : resultListDto) {
 			// test 1
-			if (demandeDto.getIdAgent().equals(idAgentConnecte)) {
+			if (demandeDto.getAgentWithServiceDto().getIdAgent().equals(idAgentConnecte)) {
 				demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(
 						RefEtatEnum.PROVISOIRE.getCodeEtat())
 						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
@@ -228,7 +228,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 			for (DroitsAgent droitsAgent : listDroitAgent) {
 
-				if (demandeDto.getIdAgent().equals(droitsAgent.getIdAgent())) {
+				if (demandeDto.getAgentWithServiceDto().getIdAgent().equals(droitsAgent.getIdAgent())) {
 
 					for (DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
 

@@ -89,7 +89,7 @@ public class Demande {
 
 		// on mappe le DTO dans la Demande generique
 		demande.setDateDebut(demandeDto.getDateDebut());
-		demande.setIdAgent(demandeDto.getIdAgent());
+		demande.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(demandeDto.getIdTypeDemande());
 		demande.setType(rta);

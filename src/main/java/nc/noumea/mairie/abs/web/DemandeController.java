@@ -160,12 +160,12 @@ public class DemandeController {
 
 		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
 
-		SoldeDto soldeDto = soldeService.getAgentSolde(demandeDto.getIdAgent(), null);
+		SoldeDto soldeDto = soldeService.getAgentSolde(demandeDto.getAgentWithServiceDto().getIdAgent(), null);
 
-		AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(demandeDto.getIdAgent(),
+		AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(demandeDto.getAgentWithServiceDto().getIdAgent(),
 				helperService.getCurrentDate());
 
-		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(demandeDto.getIdAgent());
+		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
 
 		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, agentDto, soldeDto, approbateurDto);
 

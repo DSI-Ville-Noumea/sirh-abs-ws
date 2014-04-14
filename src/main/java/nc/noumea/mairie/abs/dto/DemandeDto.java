@@ -13,27 +13,22 @@ import nc.noumea.mairie.sirh.domain.Agent;
 
 public class DemandeDto {
 
+	private AgentWithServiceDto agentWithServiceDto;
+
 	private Integer idDemande;
-
-	private Integer idAgent;
-	private String nomAgent;
-	private String prenomAgent;
-	private String service;
-	private String codeService;
-
 	private Integer idTypeDemande;
-	private Date dateDebut;
-	private Integer duree;
-	private Integer idRefEtat;
-	private Date dateSaisie;
 	private Date dateDemande;
-	private String motif;
-
-	private Date dateFin;
+	private Date dateDebut;
 	private boolean isDateDebutAM;
 	private boolean isDateDebutPM;
+	private Date dateFin;
 	private boolean isDateFinAM;
 	private boolean isDateFinPM;
+	private Integer duree;
+
+	private Integer idRefEtat;
+	private Date dateSaisie;
+	private String motif;
 
 	// permet d'afficher ou non les icones correspondants
 	private boolean isAffichageBoutonModifier;
@@ -52,24 +47,22 @@ public class DemandeDto {
 	public DemandeDto() {
 	}
 
-	public DemandeDto(Demande d, AgentWithServiceDto agent) {
+	public DemandeDto(Demande d, AgentWithServiceDto agentWithServiceDto) {
 		this(d);
-		this.nomAgent = agent.getNom();
-		this.prenomAgent = agent.getPrenom();
-		this.codeService = agent.getCodeService();
-		this.service = agent.getService();
+		this.agentWithServiceDto = agentWithServiceDto;
 	}
 
 	public DemandeDto(Demande d, Agent agent) {
 		this(d);
-		this.nomAgent = agent.getDisplayNom();
-		this.prenomAgent = agent.getDisplayPrenom();
+		this.agentWithServiceDto = new AgentWithServiceDto(agent);
 	}
 
 	public DemandeDto(Demande d) {
 		super();
+		AgentWithServiceDto agentDto = new AgentWithServiceDto();
+		agentDto.setIdAgent(d.getIdAgent());
+		this.agentWithServiceDto = agentDto;
 		this.idDemande = d.getIdDemande();
-		this.idAgent = d.getIdAgent();
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
 		this.dateDebut = d.getDateDebut();
 		this.dateFin = d.getDateFin();
@@ -135,30 +128,6 @@ public class DemandeDto {
 
 	public void setIdDemande(Integer idDemande) {
 		this.idDemande = idDemande;
-	}
-
-	public Integer getIdAgent() {
-		return idAgent;
-	}
-
-	public void setIdAgent(Integer idAgent) {
-		this.idAgent = idAgent;
-	}
-
-	public String getNomAgent() {
-		return nomAgent;
-	}
-
-	public void setNomAgent(String nomAgent) {
-		this.nomAgent = nomAgent;
-	}
-
-	public String getPrenomAgent() {
-		return prenomAgent;
-	}
-
-	public void setPrenomAgent(String prenomAgent) {
-		this.prenomAgent = prenomAgent;
 	}
 
 	public Integer getIdTypeDemande() {
@@ -286,22 +255,6 @@ public class DemandeDto {
 		this.isModifierApprobation = isModifierApprobation;
 	}
 
-	public String getService() {
-		return service;
-	}
-
-	public void setService(String service) {
-		this.service = service;
-	}
-
-	public String getCodeService() {
-		return codeService;
-	}
-
-	public void setCodeService(String codeService) {
-		this.codeService = codeService;
-	}
-
 	public String getMotif() {
 		return motif;
 	}
@@ -372,6 +325,14 @@ public class DemandeDto {
 
 	public void setDateSaisie(Date dateSaisie) {
 		this.dateSaisie = dateSaisie;
+	}
+
+	public AgentWithServiceDto getAgentWithServiceDto() {
+		return agentWithServiceDto;
+	}
+
+	public void setAgentWithServiceDto(AgentWithServiceDto agentWithServiceDto) {
+		this.agentWithServiceDto = agentWithServiceDto;
 	}
 
 }

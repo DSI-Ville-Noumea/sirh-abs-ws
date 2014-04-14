@@ -196,7 +196,6 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
 		assertEquals(result.getDuree(), dr.getDuree());
-		assertEquals(result.getIdAgent(), new Integer(9005138));
 		assertEquals(result.getIdDemande(), idDemande);
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.SAISIE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.RECUP.getValue());
@@ -268,7 +267,6 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
 		assertEquals(result.getDuree(), dr.getDuree());
-		assertEquals(result.getIdAgent(), new Integer(9005138));
 		assertEquals(result.getIdDemande(), idDemande);
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.APPROUVEE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.RECUP.getValue());
@@ -291,7 +289,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(0);
 		dto.setDateDemande(new Date());
 		dto.setAffichageBoutonModifier(false);
@@ -392,7 +392,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 
 		Droit droitOperateur = new Droit();
@@ -490,7 +492,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
-		dto.setIdAgent(9005139);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005139);
+		dto.setAgentWithServiceDto(agDto);
 
 		Droit droitOperateur = new Droit();
 		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
@@ -1525,7 +1529,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(0);
 		dto.setDateDemande(new Date());
 		dto.setAffichageBoutonModifier(false);
@@ -1626,7 +1632,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 
 		Droit droitOperateur = new Droit();
@@ -1724,7 +1732,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-		dto.setIdAgent(9005139);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005139);
+		dto.setAgentWithServiceDto(agDto);
 
 		Droit droitOperateur = new Droit();
 		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
@@ -1809,7 +1819,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(0);
 		dto.setDateDemande(new Date());
 		dto.setAffichageBoutonModifier(false);
@@ -1909,7 +1921,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 
 		Droit droitOperateur = new Droit();
@@ -2006,7 +2020,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-		dto.setIdAgent(9005139);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005139);
+		dto.setAgentWithServiceDto(agDto);
 
 		Droit droitOperateur = new Droit();
 		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
@@ -2142,7 +2158,6 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
 		assertEquals(result.getDuree().toString(), "20");
-		assertEquals(result.getIdAgent(), new Integer(9005138));
 		assertEquals(result.getIdDemande(), idDemande);
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.SAISIE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue());
@@ -2217,7 +2232,6 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(result.getDateDebut(), dateDebut);
 		assertEquals(result.getDuree().toString(), "20");
-		assertEquals(result.getIdAgent(), new Integer(9005138));
 		assertEquals(result.getIdDemande(), idDemande);
 		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.APPROUVEE.getCodeEtat());
 		assertEquals(result.getIdTypeDemande().intValue(), RefTypeAbsenceEnum.REPOS_COMP.getValue());
@@ -2241,7 +2255,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(0);
 		dto.setDateDemande(new Date());
 		dto.setAffichageBoutonModifier(false);
@@ -2333,7 +2349,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 
 		Droit droitOperateur = new Droit();
@@ -2422,7 +2440,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-		dto.setIdAgent(9005139);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005139);
+		dto.setAgentWithServiceDto(agDto);
 
 		Droit droitOperateur = new Droit();
 		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
@@ -2505,7 +2525,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(0);
 		dto.setDateDemande(new Date());
 		dto.setAffichageBoutonModifier(false);
@@ -2596,7 +2618,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 
 		Droit droitOperateur = new Droit();
@@ -2684,7 +2708,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-		dto.setIdAgent(9005139);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005139);
+		dto.setAgentWithServiceDto(agDto);
 
 		Droit droitOperateur = new Droit();
 		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
@@ -2767,7 +2793,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(0);
 		dto.setDateDemande(new Date());
 		dto.setAffichageBoutonModifier(false);
@@ -2859,7 +2887,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
-		dto.setIdAgent(idAgent);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
 		dto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 
 		Droit droitOperateur = new Droit();
@@ -2948,7 +2978,9 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
-		dto.setIdAgent(9005139);
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005139);
+		dto.setAgentWithServiceDto(agDto);
 
 		Droit droitOperateur = new Droit();
 		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();

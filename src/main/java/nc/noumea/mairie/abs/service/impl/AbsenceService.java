@@ -95,7 +95,7 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		// verification des droits
-		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getIdAgent(), returnDto);
+		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getAgentWithServiceDto().getIdAgent(), returnDto);
 		if (!returnDto.getErrors().isEmpty())
 			return returnDto;
 
