@@ -87,7 +87,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
-	
+
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
 	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyé n'est pas correcte.";
@@ -694,47 +694,53 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto) {
+	public ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, List<DemandeEtatChangeDto> listDemandeEtatChangeDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
+		for (DemandeEtatChangeDto demandeEtatChangeDto : listDemandeEtatChangeDto) {
 
-		if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
-				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
-				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
+			if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
+					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
 
-			logger.warn(ETAT_DEMANDE_INCORRECT);
-			result.getErrors().add(String.format(ETAT_DEMANDE_INCORRECT));
-			return result;
+				logger.warn(ETAT_DEMANDE_INCORRECT);
+				result.getErrors().add(String.format(ETAT_DEMANDE_INCORRECT));
+				continue;
+			}
+
+			Demande demande = getDemande(Demande.class, demandeEtatChangeDto.getIdDemande());
+
+			if (null == demande) {
+				logger.warn(DEMANDE_INEXISTANTE);
+				result.getErrors().add(String.format(DEMANDE_INEXISTANTE));
+				continue;
+			}
+
+			if (null != demande.getLatestEtatDemande()
+					&& demandeEtatChangeDto.getIdRefEtat().equals(
+							demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
+				logger.warn(ETAT_DEMANDE_INCHANGE);
+				result.getErrors().add(String.format(ETAT_DEMANDE_INCHANGE));
+				continue;
+			}
+
+			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+					|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
+
+				return setDemandeEtatValide(idAgent, demandeEtatChangeDto, demande, result);
+			}
+
+			// if
+			// (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()))
+			// {
+			// return setDemandeEtatEnAttente(idAgent, demandeEtatChangeDto,
+			// demande, result);
+			// }
 		}
-
-		Demande demande = getDemande(Demande.class, demandeEtatChangeDto.getIdDemande());
-
-		if (null == demande) {
-			logger.warn(DEMANDE_INEXISTANTE);
-			result.getErrors().add(String.format(DEMANDE_INEXISTANTE));
-			return result;
-		}
-
-		if (null != demande.getLatestEtatDemande()
-				&& demandeEtatChangeDto.getIdRefEtat().equals(demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
-			logger.warn(ETAT_DEMANDE_INCHANGE);
-			result.getErrors().add(String.format(ETAT_DEMANDE_INCHANGE));
-			return result;
-		}
-
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
-				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
-
-			return setDemandeEtatValide(idAgent, demandeEtatChangeDto, demande, result);
-		}
-
-//		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
-//			return setDemandeEtatEnAttente(idAgent, demandeEtatChangeDto, demande, result);
-//		}
 
 		return result;
 	}
-	
+
 	protected ReturnMessageDto setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
 			Demande demande, ReturnMessageDto result) {
 
@@ -747,15 +753,16 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
-				RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE));
+		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
+				Arrays.asList(RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE));
 
 		if (0 < result.getErrors().size()) {
 			return result;
 		}
 
 		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
-		Double jours = helperService.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(), demande.getDateFin());
+		Double jours = helperService.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(),
+				demande.getDateFin());
 		if (0 != jours) {
 			result = counterService.majCompteurToAgent(result, demande, jours);
 		}

@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.web;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -363,20 +364,20 @@ public class DemandeController {
 				.deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/changerEtatsSIRH", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
 	public ResponseEntity<String> setAbsencesEtatSIRH(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String demandeEtatChangeDtoString) {
 
-		logger.debug("entered POST [demandes/changerEtatsSIRH] => setAbsencesEtatSIRH with parameters idAgent = {}", idAgent);
+		logger.debug("entered POST [demandes/changerEtatsSIRH] => setAbsencesEtatSIRH with parameters idAgent = {}",
+				idAgent);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		DemandeEtatChangeDto dto = new JSONDeserializer<DemandeEtatChangeDto>()
-				.use(Date.class, new MSDateTransformer()).deserializeInto(demandeEtatChangeDtoString,
-						new DemandeEtatChangeDto());
+		List<DemandeEtatChangeDto> dto = new JSONDeserializer<List<DemandeEtatChangeDto>>().use(null, ArrayList.class)
+				.use("values", DemandeEtatChangeDto.class).deserialize(demandeEtatChangeDtoString);
 
 		ReturnMessageDto result = absenceService.setDemandeEtatSIRH(convertedIdAgent, dto);
 
