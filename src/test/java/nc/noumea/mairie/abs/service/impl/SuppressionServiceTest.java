@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -762,6 +764,168 @@ public class SuppressionServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+
+		result = service.supprimerDemande(idAgent, idDemande);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void supprimerDemandeAsa_ok_etatSaisie() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		Integer idDemande = 1;
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setEtat(RefEtatEnum.SAISIE);
+		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
+		listEtat.add(etatDemande);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+
+		DemandeAsa demande = new DemandeAsa();
+			demande.setIdAgent(9005138);
+			demande.setEtatsDemande(listEtat);
+			demande.setIdDemande(1);
+			demande.setType(type);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(demande);
+		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, idDemande)).thenReturn(demande);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).removeEntity(Mockito.isA(Demande.class));
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				Demande obj = (Demande) args[0];
+				ReturnMessageDto result = (ReturnMessageDto) args[1];
+				if (null == obj) {
+					result.getErrors().add("La demande n'existe pas.");
+				}
+				return result;
+			}
+		}).when(absDataConsistencyRules)
+				.verifDemandeExiste(Mockito.any(Demande.class), Mockito.isA(ReturnMessageDto.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				Demande demande = (Demande) args[1];
+				List<RefEtatEnum> listEtatsAcceptes = (List<RefEtatEnum>) args[2];
+
+				if (null != demande.getLatestEtatDemande()
+						&& !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
+					result.getErrors().add("Erreur etat incorrect");
+				}
+
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(
+				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
+						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
+
+		SuppressionService service = new SuppressionService();
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absDataConsistencyRules);
+
+		result = service.supprimerDemande(idAgent, idDemande);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void supprimerDemandeAsa_ok_etatProvisoire() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		Integer idDemande = 1;
+
+		EtatDemande etatDemande = new EtatDemande();
+			etatDemande.setEtat(RefEtatEnum.PROVISOIRE);
+		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
+			listEtat.add(etatDemande);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+
+		DemandeAsa demande = new DemandeAsa();
+			demande.setIdAgent(9005138);
+			demande.setEtatsDemande(listEtat);
+			demande.setIdDemande(1);
+			demande.setType(type);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(demande);
+		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, idDemande)).thenReturn(demande);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).removeEntity(Mockito.isA(Demande.class));
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				Demande obj = (Demande) args[0];
+				ReturnMessageDto result = (ReturnMessageDto) args[1];
+				if (null == obj) {
+					result.getErrors().add("La demande n'existe pas.");
+				}
+				return result;
+			}
+		}).when(absDataConsistencyRules)
+				.verifDemandeExiste(Mockito.any(Demande.class), Mockito.isA(ReturnMessageDto.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				Demande demande = (Demande) args[1];
+				List<RefEtatEnum> listEtatsAcceptes = (List<RefEtatEnum>) args[2];
+
+				if (null != demande.getLatestEtatDemande()
+						&& !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
+					result.getErrors().add("Erreur etat incorrect");
+				}
+
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(
+				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
+						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
+
+		SuppressionService service = new SuppressionService();
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "defaultAbsenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absDataConsistencyRules);
 
 		result = service.supprimerDemande(idAgent, idDemande);
 

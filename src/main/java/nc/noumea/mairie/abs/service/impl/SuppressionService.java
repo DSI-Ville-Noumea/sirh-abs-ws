@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.service.impl;
 import java.util.Arrays;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -41,6 +42,10 @@ public class SuppressionService implements ISuppressionService {
 	@Autowired
 	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absReposCompDataConsistencyRules;
+
+	@Autowired
+	@Qualifier("AbsAsaA48DataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl;
 
 	@Override
 	public ReturnMessageDto supprimerDemandeEtatProvisoire(Integer idDemande) {
@@ -101,7 +106,8 @@ public class SuppressionService implements ISuppressionService {
 				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA_A48:
-				// TODO
+				demande = getDemande(DemandeAsa.class, idDemande);
+				rules = absAsaA48DataConsistencyRulesImpl;
 				break;
 			case AUTRES:
 				// TODO

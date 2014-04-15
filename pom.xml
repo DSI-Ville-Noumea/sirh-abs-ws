@@ -269,6 +269,12 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+        
+        <dependency>
+			<groupId>wadlGenerator</groupId>
+			<artifactId>wadlGenerator</artifactId>
+			<version>1.1-SNAPSHOT</version>
+		</dependency>
     </dependencies>
     <build>
 		<finalName>sirh-abs-ws##${maven.build.timestamp}-${project.version}</finalName>
