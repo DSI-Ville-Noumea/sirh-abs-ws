@@ -377,7 +377,7 @@ public class DemandeController {
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		List<DemandeEtatChangeDto> dto = new JSONDeserializer<List<DemandeEtatChangeDto>>().use(null, ArrayList.class)
-				.use("values", DemandeEtatChangeDto.class).deserialize(demandeEtatChangeDtoString);
+				.use("values", DemandeEtatChangeDto.class).use(Date.class, new MSDateTransformer()).deserialize(demandeEtatChangeDtoString);
 
 		ReturnMessageDto result = absenceService.setDemandeEtatSIRH(convertedIdAgent, dto);
 

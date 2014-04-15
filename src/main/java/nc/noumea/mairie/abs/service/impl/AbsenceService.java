@@ -87,7 +87,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
-
+	
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
 	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyé n'est pas correcte.";
@@ -497,12 +497,12 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
+		
 		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setDate(demandeEtatChangeDto.getDateAvis());
-		etatDemande.setMotif(demandeEtatChangeDto.getMotif());
-
-		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
-		etatDemande.setIdAgent(idAgent);
+			etatDemande.setDate(demandeEtatChangeDto.getDateAvis());
+			etatDemande.setMotif(demandeEtatChangeDto.getMotif());
+			etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
+			etatDemande.setIdAgent(idAgent);
 		demande.addEtatDemande(etatDemande);
 	}
 
@@ -697,53 +697,7 @@ public class AbsenceService implements IAbsenceService {
 	public ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, List<DemandeEtatChangeDto> listDemandeEtatChangeDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		for (DemandeEtatChangeDto demandeEtatChangeDto : listDemandeEtatChangeDto) {
-
-			if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
-					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
-					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
-
-				logger.warn(ETAT_DEMANDE_INCORRECT);
-				result.getErrors().add(String.format(ETAT_DEMANDE_INCORRECT));
-				continue;
-			}
-
-			Demande demande = getDemande(Demande.class, demandeEtatChangeDto.getIdDemande());
-
-			if (null == demande) {
-				logger.warn(DEMANDE_INEXISTANTE);
-				result.getErrors().add(String.format(DEMANDE_INEXISTANTE));
-				continue;
-			}
-
-			if (null != demande.getLatestEtatDemande()
-					&& demandeEtatChangeDto.getIdRefEtat().equals(
-							demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
-				logger.warn(ETAT_DEMANDE_INCHANGE);
-				result.getErrors().add(String.format(ETAT_DEMANDE_INCHANGE));
-				continue;
-			}
-
-			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
-					|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
-
-				return setDemandeEtatValide(idAgent, demandeEtatChangeDto, demande, result);
-			}
-
-			// if
-			// (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()))
-			// {
-			// return setDemandeEtatEnAttente(idAgent, demandeEtatChangeDto,
-			// demande, result);
-			// }
-		}
-
-		return result;
-	}
-
-	protected ReturnMessageDto setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
-			Demande demande, ReturnMessageDto result) {
-
+		
 		// verification des droits SIRH
 		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
 		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
@@ -752,12 +706,57 @@ public class AbsenceService implements IAbsenceService {
 					String.format("L'agent n'est pas habilité à valider ou rejeter la demande de cet agent."));
 			return result;
 		}
+					
+		for (DemandeEtatChangeDto demandeEtatChangeDto : listDemandeEtatChangeDto) {
+
+			if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
+					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
+	
+				logger.warn(ETAT_DEMANDE_INCORRECT);
+				result.getErrors().add(String.format(ETAT_DEMANDE_INCORRECT));
+				continue;
+			}
+	
+			Demande demande = getDemande(Demande.class, demandeEtatChangeDto.getIdDemande());
+	
+			if (null == demande) {
+				logger.warn(DEMANDE_INEXISTANTE);
+				result.getErrors().add(String.format(DEMANDE_INEXISTANTE));
+				continue;
+			}
+	
+			if (null != demande.getLatestEtatDemande()
+						&& demandeEtatChangeDto.getIdRefEtat().equals(
+								demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
+				logger.warn(ETAT_DEMANDE_INCHANGE);
+				result.getErrors().add(String.format(ETAT_DEMANDE_INCHANGE));
+				continue;
+			}
+	
+			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+					|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
+				setDemandeEtatValide(idAgent, demandeEtatChangeDto, demande, result);
+				continue;
+			}
+	
+			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
+				setDemandeEtatEnAttente(idAgent, demandeEtatChangeDto, demande, result);
+				continue;
+			}
+		}
+
+		return result;
+	}
+	
+	protected void setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
+			Demande demande, ReturnMessageDto result) {
 
 		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
 				Arrays.asList(RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE));
 
 		if (0 < result.getErrors().size()) {
-			return result;
+			return;
 		}
 
 		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
@@ -768,7 +767,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		if (0 < result.getErrors().size()) {
-			return result;
+			return;
 		}
 
 		// maj de la demande
@@ -780,8 +779,22 @@ public class AbsenceService implements IAbsenceService {
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
 			result.getInfos().add(String.format("La demande est validée."));
 		}
+	}
+	
+	protected void setDemandeEtatEnAttente(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
+			Demande demande, ReturnMessageDto result) {
+		
+		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
+				RefEtatEnum.APPROUVEE));
 
-		return result;
+		if (0 < result.getErrors().size()) {
+			return;
+		}
+
+		// maj de la demande
+		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+
+		result.getInfos().add(String.format("La demande est en attente."));
 	}
 
 }
