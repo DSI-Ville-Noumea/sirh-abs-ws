@@ -43,6 +43,7 @@ public abstract class AbstractCounterService implements ICounterService {
 
 	protected static final String MOTIF_COMPTEUR_INEXISTANT = "Le motif n'existe pas.";
 	protected static final String SOLDE_COMPTEUR_NEGATIF = "Le solde du compteur de l'agent ne peut pas être négatif.";
+	protected static final String SOLDE_COMPTEUR_NEGATIF_AUTORISE = "Le solde du compteur de l'agent est négatif.";
 	protected static final String OPERATEUR_INEXISTANT = "Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.";
 	protected static final String DUREE_A_SAISIR = "La durée à ajouter ou retrancher n'est pas saisie.";
 	protected static final String ERREUR_DUREE_SAISIE = "Un seul des champs Durée à ajouter ou Durée à retrancher doit être saisi.";
@@ -67,7 +68,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Integer minutes) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double dMinutes) {
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 		return srm;
 	}

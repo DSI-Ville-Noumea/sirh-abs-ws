@@ -9,6 +9,8 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.BaseAgentCount;
+import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
@@ -282,6 +284,92 @@ public class AsaA48CounterServiceImplTest {
 
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA48Count.class));
+	}
+	
+	@Test
+	public void majCompteurAsaA48ToAgent_compteurInexistant() {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		Demande demande = new Demande();
+			demande.setIdAgent(9008765);
+		Double minutes = 10.0;
+		
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		
+		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(rr.getAgentCounter(AgentAsaA48Count.class, demande.getIdAgent())).thenReturn(null);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		
+		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "counterRepository", rr);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		result = service.majCompteurToAgent(result, demande, minutes);
+		
+		assertEquals(1, result.getErrors().size());
+		Mockito.verify(rr, Mockito.times(0)).persistEntity(Mockito.isA(BaseAgentCount.class));
+	}
+	
+	@Test
+	public void majCompteurAsaA48ToAgent_compteurNegatif_debit() {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		Demande demande = new Demande();
+			demande.setIdAgent(9008765);
+		Double minutes = -11.0;
+		
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		
+		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
+		AgentAsaA48Count arc = new AgentAsaA48Count();
+		arc.setTotalJours(10.0);
+		Mockito.when(rr.getAgentCounter(AgentAsaA48Count.class, demande.getIdAgent())).thenReturn(arc);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		
+		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "counterRepository", rr);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		result = service.majCompteurToAgent(result, demande, minutes);
+		
+		assertEquals(1, result.getInfos().size());
+		assertEquals("Le solde du compteur de l'agent est négatif.", result.getInfos().get(0));
+		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(BaseAgentCount.class));
+	}
+	
+	@Test
+	public void majCompteurAsaA48ToAgent_debitOk() {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		Demande demande = new Demande();
+			demande.setIdAgent(9008765);
+		Double minutes = -11.0;
+		
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		
+		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
+		AgentAsaA48Count arc = new AgentAsaA48Count();
+		arc.setTotalJours(12.0);
+		Mockito.when(rr.getAgentCounter(AgentAsaA48Count.class, demande.getIdAgent())).thenReturn(arc);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		
+		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "counterRepository", rr);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		result = service.majCompteurToAgent(result, demande, minutes);
+		
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(BaseAgentCount.class));
 	}
 
 }

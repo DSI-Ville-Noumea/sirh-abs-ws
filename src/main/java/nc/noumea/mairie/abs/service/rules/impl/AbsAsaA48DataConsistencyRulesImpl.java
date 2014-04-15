@@ -6,7 +6,6 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
-import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.springframework.stereotype.Service;

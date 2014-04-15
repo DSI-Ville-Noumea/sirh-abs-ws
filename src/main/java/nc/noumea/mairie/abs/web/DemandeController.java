@@ -334,7 +334,7 @@ public class DemandeController {
 			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche) {
 
 		logger.debug(
-				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters  from = {}, to = {},  etat = {}, type = {} and idAgentConcerne= {}",
+				"entered GET [demandes/listeDemandesSIRH] => getListeDemandesAbsenceSIRH with parameters  from = {}, to = {},  etat = {}, type = {} and idAgentConcerne= {}",
 				fromDate, toDate, idRefEtat, idRefType, idAgentRecherche);
 
 		List<DemandeDto> result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
@@ -361,6 +361,30 @@ public class DemandeController {
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
 				.deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/changerEtatsSIRH", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "absTransactionManager")
+	public ResponseEntity<String> setAbsencesEtatSIRH(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) String demandeEtatChangeDtoString) {
+
+		logger.debug("entered POST [demandes/changerEtatsSIRH] => setAbsencesEtatSIRH with parameters idAgent = {}", idAgent);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		DemandeEtatChangeDto dto = new JSONDeserializer<DemandeEtatChangeDto>()
+				.use(Date.class, new MSDateTransformer()).deserializeInto(demandeEtatChangeDtoString,
+						new DemandeEtatChangeDto());
+
+		ReturnMessageDto result = absenceService.setDemandeEtatSIRH(convertedIdAgent, dto);
+
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 }

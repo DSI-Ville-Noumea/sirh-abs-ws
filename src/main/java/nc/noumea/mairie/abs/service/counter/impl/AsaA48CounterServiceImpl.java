@@ -6,6 +6,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
@@ -137,5 +138,71 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 			result.add(dto);
 		}
 		return result;
+	}
+	
+	/**
+	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
+	 */
+	@Override
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double jours) {
+
+		logger.info("Trying to update recuperation counters for Agent [{}] with {} jours...", demande.getIdAgent(),
+				jours);
+
+		try {
+			return majCompteurToAgent(demande.getIdAgent(), jours, srm);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+		}
+	}
+	
+	/**
+	 * Mets à jour le compteur de minutes désiré (en fonction des types passés
+	 * en paramètre) sans mettre a jour l historique
+	 * 
+	 * Dans le cas des ReposComp, il faut gérer l'année N-1 et N dans le debit
+	 * et le credit
+	 * 
+	 * @param T1
+	 *            inherits BaseAgentCount
+	 * @param idAgent
+	 * @param minutes
+	 *            : negatif pour debiter, positif pour crediter
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Double jours,
+			ReturnMessageDto srm) throws InstantiationException, IllegalAccessException {
+
+		if (sirhRepository.getAgent(idAgent) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+			throw new AgentNotFoundException();
+		}
+
+		logger.info("updating counters for Agent [{}] with {} jours...", idAgent, jours);
+
+		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounter(AgentAsaA48Count.class,
+				idAgent);
+
+		if (arc == null) {
+			logger.warn(COMPTEUR_INEXISTANT);
+			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
+			return srm;
+		}
+
+		// on verifie que le solde est positif seulement si on debite le
+		// compteur
+		if (0.0 > jours && 0.0 > arc.getTotalJours() + jours) {
+			logger.warn(SOLDE_COMPTEUR_NEGATIF_AUTORISE);
+			srm.getInfos().add(String.format(SOLDE_COMPTEUR_NEGATIF_AUTORISE));
+		}
+		
+		arc.setTotalJours(arc.getTotalJours() + jours);
+		arc.setLastModification(helperService.getCurrentDate());
+
+		counterRepository.persistEntity(arc);
+
+		return srm;
 	}
 }

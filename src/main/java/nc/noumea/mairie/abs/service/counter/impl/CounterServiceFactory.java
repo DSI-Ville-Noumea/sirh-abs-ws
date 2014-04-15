@@ -22,6 +22,10 @@ public class CounterServiceFactory {
 	@Qualifier("ReposCompCounterServiceImpl")
 	private ICounterService reposCompCounterServiceImpl;
 	
+	@Autowired
+	@Qualifier("AsaA48CounterServiceImpl")
+	private ICounterService asaA48CounterServiceImpl;
+	
 	//Méthode permettant de récupérer les Factory
 	public ICounterService getFactory(int type){
 		
@@ -34,8 +38,7 @@ public class CounterServiceFactory {
 			case RECUP:
 				return recupCounterServiceImpl;
 			case ASA_A48:
-				// TODO
-				break;
+				return asaA48CounterServiceImpl;
 			case AUTRES:
 				// TODO
 				break;

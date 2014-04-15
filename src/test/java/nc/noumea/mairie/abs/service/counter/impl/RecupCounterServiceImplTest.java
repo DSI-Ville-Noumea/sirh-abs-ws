@@ -190,7 +190,7 @@ public class RecupCounterServiceImplTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 		Demande demande = new Demande();
 			demande.setIdAgent(9008765);
-		int minutes = 10;
+		Double minutes = 10.0;
 		
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -217,7 +217,7 @@ public class RecupCounterServiceImplTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 		Demande demande = new Demande();
 			demande.setIdAgent(9008765);
-		int minutes = -11;
+		Double minutes = -11.0;
 		
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -247,7 +247,7 @@ public class RecupCounterServiceImplTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 		Demande demande = new Demande();
 			demande.setIdAgent(9008765);
-		int minutes = 11;
+		Double minutes = 11.0;
 		
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -276,7 +276,7 @@ public class RecupCounterServiceImplTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 		Demande demande = new Demande();
 			demande.setIdAgent(9008765);
-		int minutes = -11;
+		Double minutes = -11.0;
 		
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());

@@ -26,4 +26,6 @@ public interface IAbsenceService {
 			Integer idAgentRecherche);
 
 	List<DemandeDto> getDemandesArchives(Integer idDemande);
+	
+	ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);
 }

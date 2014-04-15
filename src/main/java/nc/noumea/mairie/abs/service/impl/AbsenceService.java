@@ -87,6 +87,10 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
+	
+	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
+	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
+	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyé n'est pas correcte.";
 
 	@Override
 	public ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto) {
@@ -337,23 +341,23 @@ public class AbsenceService implements IAbsenceService {
 				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
 				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
 
-			logger.warn("L'état de la demande envoyé n'est pas correcte.");
-			result.getErrors().add(String.format("L'état de la demande envoyé n'est pas correcte."));
+			logger.warn(ETAT_DEMANDE_INCORRECT);
+			result.getErrors().add(String.format(ETAT_DEMANDE_INCORRECT));
 			return result;
 		}
 
 		Demande demande = getDemande(Demande.class, demandeEtatChangeDto.getIdDemande());
 
 		if (null == demande) {
-			logger.warn("La demande n'existe pas.");
-			result.getErrors().add(String.format("La demande n'existe pas."));
+			logger.warn(DEMANDE_INEXISTANTE);
+			result.getErrors().add(String.format(DEMANDE_INEXISTANTE));
 			return result;
 		}
 
 		if (null != demande.getLatestEtatDemande()
 				&& demandeEtatChangeDto.getIdRefEtat().equals(demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
-			logger.warn("L'état de la demande est inchangé.");
-			result.getErrors().add(String.format("L'état de la demande est inchangé."));
+			logger.warn(ETAT_DEMANDE_INCHANGE);
+			result.getErrors().add(String.format(ETAT_DEMANDE_INCHANGE));
 			return result;
 		}
 
@@ -437,7 +441,7 @@ public class AbsenceService implements IAbsenceService {
 			counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
 			int minutes = counterService.calculMinutesCompteur(demandeEtatChangeDto, demande);
 			if (0 != minutes) {
-				result = counterService.majCompteurToAgent(result, demande, minutes);
+				result = counterService.majCompteurToAgent(result, demande, new Double(minutes));
 			}
 
 			if (0 < result.getErrors().size()) {
@@ -477,7 +481,7 @@ public class AbsenceService implements IAbsenceService {
 		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
 		int minutes = counterService.calculMinutesCompteur(demandeEtatChangeDto, demande);
 		if (0 != minutes) {
-			result = counterService.majCompteurToAgent(result, demande, minutes);
+			result = counterService.majCompteurToAgent(result, demande, new Double(minutes));
 		}
 
 		if (0 < result.getErrors().size()) {
@@ -684,6 +688,90 @@ public class AbsenceService implements IAbsenceService {
 					helperService.getCurrentDate()));
 			dto.updateEtat(etat);
 			result.add(dto);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto) {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
+				&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
+
+			logger.warn(ETAT_DEMANDE_INCORRECT);
+			result.getErrors().add(String.format(ETAT_DEMANDE_INCORRECT));
+			return result;
+		}
+
+		Demande demande = getDemande(Demande.class, demandeEtatChangeDto.getIdDemande());
+
+		if (null == demande) {
+			logger.warn(DEMANDE_INEXISTANTE);
+			result.getErrors().add(String.format(DEMANDE_INEXISTANTE));
+			return result;
+		}
+
+		if (null != demande.getLatestEtatDemande()
+				&& demandeEtatChangeDto.getIdRefEtat().equals(demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
+			logger.warn(ETAT_DEMANDE_INCHANGE);
+			result.getErrors().add(String.format(ETAT_DEMANDE_INCHANGE));
+			return result;
+		}
+
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
+
+			return setDemandeEtatValide(idAgent, demandeEtatChangeDto, demande, result);
+		}
+
+//		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
+//			return setDemandeEtatEnAttente(idAgent, demandeEtatChangeDto, demande, result);
+//		}
+
+		return result;
+	}
+	
+	protected ReturnMessageDto setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
+			Demande demande, ReturnMessageDto result) {
+
+		// verification des droits SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			logger.warn("L'agent n'est pas habilité à valider ou rejeter la demande de cet agent.");
+			result.getErrors().add(
+					String.format("L'agent n'est pas habilité à valider ou rejeter la demande de cet agent."));
+			return result;
+		}
+
+		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
+				RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE));
+
+		if (0 < result.getErrors().size()) {
+			return result;
+		}
+
+		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		Double jours = helperService.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(), demande.getDateFin());
+		if (0 != jours) {
+			result = counterService.majCompteurToAgent(result, demande, jours);
+		}
+
+		if (0 < result.getErrors().size()) {
+			return result;
+		}
+
+		// maj de la demande
+		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
+			result.getInfos().add(String.format("La demande est rejetée."));
+		}
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
+			result.getInfos().add(String.format("La demande est validée."));
 		}
 
 		return result;

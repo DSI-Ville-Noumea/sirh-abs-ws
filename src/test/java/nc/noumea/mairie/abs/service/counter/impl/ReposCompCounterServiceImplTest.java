@@ -544,7 +544,7 @@ public class ReposCompCounterServiceImplTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 		DemandeReposComp demande = new DemandeReposComp();
 		demande.setIdAgent(9008765);
-		int minutes = 10;
+		Double minutes = 10.0;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(null);
@@ -574,7 +574,7 @@ public class ReposCompCounterServiceImplTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 		DemandeReposComp demande = new DemandeReposComp();
 		demande.setIdAgent(9008765);
-		int minutes = 10;
+		Double minutes = 10.0;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -602,7 +602,7 @@ public class ReposCompCounterServiceImplTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 		DemandeReposComp demande = new DemandeReposComp();
 		demande.setIdAgent(9008765);
-		int minutes = -11;
+		Double minutes = -11.0;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -642,7 +642,7 @@ public class ReposCompCounterServiceImplTest {
 		arc.setTotalMinutes(11);
 		arc.setTotalMinutesAnneeN1(0);
 
-		int minutes = 17;
+		Double minutes = 17.0;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -703,7 +703,7 @@ public class ReposCompCounterServiceImplTest {
 		arc.setTotalMinutes(11);
 		arc.setTotalMinutesAnneeN1(0);
 
-		int minutes = 17;
+		Double minutes = 17.0;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -764,7 +764,7 @@ public class ReposCompCounterServiceImplTest {
 		arc.setTotalMinutes(11);
 		arc.setTotalMinutesAnneeN1(0);
 
-		int minutes = 17;
+		Double minutes = 17.0;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -819,7 +819,7 @@ public class ReposCompCounterServiceImplTest {
 		demande.setIdAgent(9008765);
 		demande.setDuree(11);
 
-		int minutes = -11;
+		Double minutes = -11.0;
 
 		AgentReposCompCount arc = new AgentReposCompCount();
 		arc.setTotalMinutes(12);
@@ -877,7 +877,7 @@ public class ReposCompCounterServiceImplTest {
 		demande.setIdAgent(9008765);
 		demande.setDuree(11);
 
-		int minutes = -11;
+		Double minutes = -11.0;
 
 		AgentReposCompCount arc = new AgentReposCompCount();
 		arc.setTotalMinutes(12);

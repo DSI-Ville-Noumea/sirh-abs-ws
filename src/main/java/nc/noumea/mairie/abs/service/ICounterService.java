@@ -12,8 +12,8 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 public interface ICounterService {
 
 	int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes);
-
-	ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Integer minutes);
+	
+	ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double dMinutes);
 
 	ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto);
 

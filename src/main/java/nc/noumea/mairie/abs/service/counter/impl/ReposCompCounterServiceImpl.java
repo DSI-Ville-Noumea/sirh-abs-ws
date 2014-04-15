@@ -342,11 +342,11 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	}
 
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Integer minutes) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double dMinutes) {
 
 		logger.info("Trying to update recuperation counters for Agent [{}] with {} minutes...", demande.getIdAgent(),
-				minutes);
-
+				dMinutes);
+		Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
 		try {
 			return majCompteurToAgent((DemandeReposComp) demande, minutes, srm);
 		} catch (InstantiationException | IllegalAccessException e) {

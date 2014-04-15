@@ -76,11 +76,11 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Integer minutes) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double dMinutes) {
 
 		logger.info("Trying to update recuperation counters for Agent [{}] with {} minutes...", demande.getIdAgent(),
-				minutes);
-
+				dMinutes);
+		Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
 		try {
 			return majCompteurToAgent(demande.getIdAgent(), minutes, srm);
 		} catch (InstantiationException | IllegalAccessException e) {
