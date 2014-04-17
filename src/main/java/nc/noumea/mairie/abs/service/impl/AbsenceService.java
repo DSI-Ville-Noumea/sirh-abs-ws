@@ -90,7 +90,7 @@ public class AbsenceService implements IAbsenceService {
 	
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
-	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyé n'est pas correcte.";
+	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyée n'est pas correct.";
 
 	@Override
 	public ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto) {
@@ -499,7 +499,7 @@ public class AbsenceService implements IAbsenceService {
 	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		
 		EtatDemande etatDemande = new EtatDemande();
-			etatDemande.setDate(demandeEtatChangeDto.getDateAvis());
+			etatDemande.setDate(new Date());
 			etatDemande.setMotif(demandeEtatChangeDto.getMotif());
 			etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
 			etatDemande.setIdAgent(idAgent);
