@@ -1,6 +1,8 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +14,8 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAsaRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -173,15 +177,15 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(0, srm.getInfos().size());
 	}
-	
+
 	@Test
 	public void checkEtatsDemandeAnnulee_isValidee() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
-			demande.setIdDemande(1);
+		demande.setIdDemande(1);
 		EtatDemande etat = new EtatDemande();
-			etat.setEtat(RefEtatEnum.VALIDEE);
+		etat.setEtat(RefEtatEnum.VALIDEE);
 		demande.getEtatsDemande().add(etat);
 
 		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
@@ -190,15 +194,15 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 
 		assertEquals(0, srm.getErrors().size());
 	}
-	
+
 	@Test
 	public void checkEtatsDemandeAnnulee_isAttente() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
-			demande.setIdDemande(1);
+		demande.setIdDemande(1);
 		EtatDemande etat = new EtatDemande();
-			etat.setEtat(RefEtatEnum.EN_ATTENTE);
+		etat.setEtat(RefEtatEnum.EN_ATTENTE);
 		demande.getEtatsDemande().add(etat);
 
 		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
@@ -207,15 +211,15 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 
 		assertEquals(0, srm.getErrors().size());
 	}
-	
+
 	@Test
 	public void checkEtatsDemandeAnnulee_isPrise() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
-			demande.setIdDemande(1);
+		demande.setIdDemande(1);
 		EtatDemande etat = new EtatDemande();
-			etat.setEtat(RefEtatEnum.PRISE);
+		etat.setEtat(RefEtatEnum.PRISE);
 		demande.getEtatsDemande().add(etat);
 
 		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
@@ -224,15 +228,15 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 
 		assertEquals(0, srm.getErrors().size());
 	}
-	
+
 	@Test
 	public void checkEtatsDemandeAnnulee_isRejete() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
-			demande.setIdDemande(1);
+		demande.setIdDemande(1);
 		EtatDemande etat = new EtatDemande();
-			etat.setEtat(RefEtatEnum.REJETE);
+		etat.setEtat(RefEtatEnum.REJETE);
 		demande.getEtatsDemande().add(etat);
 
 		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
@@ -240,5 +244,113 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
 		assertEquals(1, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkDepassementCompteurAgent_aucunCompteur() {
+
+		Date dateDebut = new Date();
+		AgentAsaA48Count soldeAsaA48 = null;
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA48);
+
+		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
+
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005138);
+		DemandeDto demande = new DemandeDto();
+		demande.setAgentWithServiceDto(agDto);
+		demande.setDateDebut(dateDebut);
+
+		boolean srm = impl.checkDepassementCompteurAgent(demande);
+
+		assertTrue(srm);
+	}
+
+	@Test
+	public void checkDepassementCompteurAgent_compteurNegatif() {
+
+		Date dateDebut = new Date();
+		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
+		soldeAsaA48.setTotalJours(0.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA48);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(
+				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
+				.thenReturn(10.0);
+
+		List<DemandeAsa> listDemandeAsa = new ArrayList<DemandeAsa>();
+		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
+
+		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				listDemandeAsa);
+
+		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
+
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005138);
+		DemandeDto demande = new DemandeDto();
+		demande.setAgentWithServiceDto(agDto);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(new Date());
+		demande.setDuree(10.5);
+		demande.setIdTypeDemande(7);
+
+		boolean srm = impl.checkDepassementCompteurAgent(demande);
+
+		assertTrue(srm);
+	}
+
+	@Test
+	public void checkDepassementCompteurAgent_compteurOk() {
+
+		Date dateDebut = new Date();
+		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
+		soldeAsaA48.setTotalJours(3.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA48);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(
+				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
+				.thenReturn(1.0);
+
+		List<DemandeAsa> listDemandeAsa = new ArrayList<DemandeAsa>();
+		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
+
+		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				listDemandeAsa);
+
+		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
+
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9005138);
+		DemandeDto demande = new DemandeDto();
+		demande.setAgentWithServiceDto(agDto);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(new Date());
+		demande.setDuree(1.5);
+		demande.setIdTypeDemande(7);
+
+		boolean srm = impl.checkDepassementCompteurAgent(demande);
+
+		assertFalse(srm);
 	}
 }

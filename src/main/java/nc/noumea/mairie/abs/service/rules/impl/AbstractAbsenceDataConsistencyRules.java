@@ -177,7 +177,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		return checkEtatsDemandeAcceptes(srm, demande, listEtatsAcceptes);
 	}
-	
+
 	@Override
 	public ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande,
 			List<RefEtatEnum> listEtatsAcceptes) {
@@ -362,5 +362,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		}
 
 		return listeDemandeDto;
+	}
+
+	@Override
+	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+		return false;
 	}
 }

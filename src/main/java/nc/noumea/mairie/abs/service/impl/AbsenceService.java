@@ -62,7 +62,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private DataConsistencyRulesFactory dataConsistencyRulesFactory;
-	
+
 	@Autowired
 	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl;
@@ -79,7 +79,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
-	
+
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
 	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyée n'est pas correct.";
@@ -289,8 +289,8 @@ public class AbsenceService implements IAbsenceService {
 
 		List<RefEtat> etats = filtresService.getListeEtatsByOnglet(ongletDemande, idRefEtat);
 
-		return absenceDataConsistencyRulesImpl.filtreListDemande(idAgentConnecte, idAgentConcerne,
-				listeSansFiltre, etats, dateDemande);
+		return absenceDataConsistencyRulesImpl.filtreListDemande(idAgentConnecte, idAgentConcerne, listeSansFiltre,
+				etats, dateDemande);
 	}
 
 	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate,
@@ -367,7 +367,7 @@ public class AbsenceService implements IAbsenceService {
 			result = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), result);
 			if (!result.getErrors().isEmpty())
 				return result;
-			
+
 			return setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result);
 		}
 
@@ -454,7 +454,8 @@ public class AbsenceService implements IAbsenceService {
 	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
 			Demande demande, ReturnMessageDto result) {
 
-		absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande.getType()
+				.getIdRefTypeAbsence());
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
 				Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
 
@@ -464,7 +465,7 @@ public class AbsenceService implements IAbsenceService {
 
 		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
-		
+
 		if (0 < result.getErrors().size()) {
 			return result;
 		}
@@ -478,12 +479,12 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
-		
+
 		EtatDemande etatDemande = new EtatDemande();
-			etatDemande.setDate(new Date());
-			etatDemande.setMotif(demandeEtatChangeDto.getMotif());
-			etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
-			etatDemande.setIdAgent(idAgent);
+		etatDemande.setDate(new Date());
+		etatDemande.setMotif(demandeEtatChangeDto.getMotif());
+		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
+		etatDemande.setIdAgent(idAgent);
 		demande.addEtatDemande(etatDemande);
 	}
 
@@ -603,7 +604,7 @@ public class AbsenceService implements IAbsenceService {
 				demandeRepository.clear();
 				return returnDto;
 		}
-		
+
 		absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
 		// dans le cas des types de demande non geres ==> //TODO a supprimer par
 		// la suite
@@ -651,8 +652,14 @@ public class AbsenceService implements IAbsenceService {
 			listEtats.add(etat);
 		}
 
-		return absenceDataConsistencyRulesImpl
-				.filtreDateAndEtatDemandeFromList(listeSansFiltre, listEtats, null);
+		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
+				listEtats, null);
+		for (DemandeDto dto : listeDto) {
+			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(dto.getIdTypeDemande());
+			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto));
+		}
+
+		return listeDto;
 	}
 
 	@Override
@@ -675,7 +682,7 @@ public class AbsenceService implements IAbsenceService {
 	public ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, List<DemandeEtatChangeDto> listDemandeEtatChangeDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		// verification des droits SIRH
 		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
 		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
@@ -684,46 +691,46 @@ public class AbsenceService implements IAbsenceService {
 					String.format("L'agent n'est pas habilité à valider ou rejeter la demande de cet agent."));
 			return result;
 		}
-					
+
 		for (DemandeEtatChangeDto demandeEtatChangeDto : listDemandeEtatChangeDto) {
 
 			if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
 					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
 					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
 					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
-	
+
 				logger.warn(ETAT_DEMANDE_INCORRECT);
 				result.getErrors().add(String.format(ETAT_DEMANDE_INCORRECT));
 				continue;
 			}
-	
+
 			Demande demande = getDemande(Demande.class, demandeEtatChangeDto.getIdDemande());
-	
+
 			if (null == demande) {
 				logger.warn(DEMANDE_INEXISTANTE);
 				result.getErrors().add(String.format(DEMANDE_INEXISTANTE));
 				continue;
 			}
-	
+
 			if (null != demande.getLatestEtatDemande()
-						&& demandeEtatChangeDto.getIdRefEtat().equals(
-								demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
+					&& demandeEtatChangeDto.getIdRefEtat().equals(
+							demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
 				logger.warn(ETAT_DEMANDE_INCHANGE);
 				result.getErrors().add(String.format(ETAT_DEMANDE_INCHANGE));
 				continue;
 			}
-	
+
 			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
 					|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
 				setDemandeEtatValide(idAgent, demandeEtatChangeDto, demande, result);
 				continue;
 			}
-	
+
 			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
 				setDemandeEtatEnAttente(idAgent, demandeEtatChangeDto, demande, result);
 				continue;
 			}
-			
+
 			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
 				setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result);
 				continue;
@@ -732,9 +739,9 @@ public class AbsenceService implements IAbsenceService {
 
 		return result;
 	}
-	
-	protected void setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
-			Demande demande, ReturnMessageDto result) {
+
+	protected void setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
+			ReturnMessageDto result) {
 
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
 				Arrays.asList(RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE));
@@ -745,7 +752,7 @@ public class AbsenceService implements IAbsenceService {
 
 		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
-		
+
 		if (0 < result.getErrors().size()) {
 			return;
 		}
@@ -760,12 +767,12 @@ public class AbsenceService implements IAbsenceService {
 			result.getInfos().add(String.format("La demande est validée."));
 		}
 	}
-	
-	protected void setDemandeEtatEnAttente(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
-			Demande demande, ReturnMessageDto result) {
-		
-		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
-				RefEtatEnum.APPROUVEE));
+
+	protected void setDemandeEtatEnAttente(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
+			ReturnMessageDto result) {
+
+		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
+				Arrays.asList(RefEtatEnum.APPROUVEE));
 
 		if (0 < result.getErrors().size()) {
 			return;

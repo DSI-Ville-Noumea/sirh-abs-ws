@@ -9,6 +9,7 @@ import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 		checkDroitCompteurAsaA48(srm, demande);
 	}
 
-	protected ReturnMessageDto checkDroitCompteurAsaA48(ReturnMessageDto srm, Demande demande) {
+	public ReturnMessageDto checkDroitCompteurAsaA48(ReturnMessageDto srm, Demande demande) {
 
 		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class,
 				demande.getIdAgent(), demande.getDateDebut());
@@ -34,7 +35,7 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 			return srm;
 		}
 
-		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande);
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande
@@ -46,9 +47,9 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 		return srm;
 	}
 
-	private double getSommeDureeDemandeAsaEnCours(Demande demande) {
+	private double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent) {
 
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(demande.getIdAgent(), demande.getIdDemande());
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande);
 
 		double somme = 0.0;
 
@@ -59,15 +60,38 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 		}
 		return somme;
 	}
-	
+
 	@Override
 	public ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande,
 			List<RefEtatEnum> listEtatsAcceptes) {
-		
+
 		List<RefEtatEnum> listEtats = new ArrayList<RefEtatEnum>();
-			listEtats.addAll(listEtatsAcceptes);
-			listEtats.addAll(Arrays.asList(RefEtatEnum.VALIDEE, RefEtatEnum.EN_ATTENTE, RefEtatEnum.PRISE));
-		// dans le cas des ASA A48, on peut annuler en plus les demandes a l etat VALIDEE et EN_ATTENTE
+		listEtats.addAll(listEtatsAcceptes);
+		listEtats.addAll(Arrays.asList(RefEtatEnum.VALIDEE, RefEtatEnum.EN_ATTENTE, RefEtatEnum.PRISE));
+		// dans le cas des ASA A48, on peut annuler en plus les demandes a l
+		// etat VALIDEE et EN_ATTENTE
 		return super.checkEtatsDemandeAnnulee(srm, demande, listEtats);
+	}
+
+	@Override
+	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+
+		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, demandeDto
+				.getAgentWithServiceDto().getIdAgent(), demandeDto.getDateDebut());
+
+		if (null == soldeAsaA48) {
+			return true;
+		}
+
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto
+				.getAgentWithServiceDto().getIdAgent());
+
+		// on signale par un message d info que le compteur est epuise, mais on
+		// ne bloque pas la demande
+		if (0 > soldeAsaA48.getTotalJours() - sommeDemandeEnCours - demandeDto.getDuree()) {
+			return true;
+		}
+
+		return false;
 	}
 }

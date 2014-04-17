@@ -42,6 +42,8 @@ public class DemandeDto {
 	// valeur du visa et approbation de la demande
 	private Boolean isValeurVisa = null;
 	private Boolean isValeurApprobation = null;
+	// depassement de droits
+	private boolean isDepassementCompteur;
 
 	public DemandeDto() {
 	}
@@ -114,6 +116,7 @@ public class DemandeDto {
 	public void updateEtat(EtatDemande etat) {
 		idRefEtat = etat.getEtat().getCodeEtat();
 		dateSaisie = etat.getDate();
+		motif = etat.getMotif();
 	}
 
 	public Integer getIdDemande() {
@@ -327,6 +330,14 @@ public class DemandeDto {
 
 	public void setAgentWithServiceDto(AgentWithServiceDto agentWithServiceDto) {
 		this.agentWithServiceDto = agentWithServiceDto;
+	}
+
+	public boolean isDepassementCompteur() {
+		return isDepassementCompteur;
+	}
+
+	public void setDepassementCompteur(boolean isDepassementCompteur) {
+		this.isDepassementCompteur = isDepassementCompteur;
 	}
 
 }

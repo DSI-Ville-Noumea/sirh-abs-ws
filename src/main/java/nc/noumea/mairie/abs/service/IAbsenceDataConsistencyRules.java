@@ -32,4 +32,6 @@ public interface IAbsenceDataConsistencyRules {
 
 	List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
 			Date dateDemande);
+
+	boolean checkDepassementCompteurAgent(DemandeDto demandeDto);
 }
