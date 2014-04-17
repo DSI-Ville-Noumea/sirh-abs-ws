@@ -11,12 +11,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.EtatDemande;
-import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.CompteurDto;
-import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -348,112 +344,5 @@ public class HelperServiceTest {
 		assertEquals(result.floatValue(), 8,5);
 	}
 	
-	@Test
-	public void calculJoursAlimAutoCompteur_etatValide() {
-
-		Date dateJ = new Date();
-		GregorianCalendar calDebut = new GregorianCalendar(); 
-			calDebut.setTime(dateJ); 
-			
-		GregorianCalendar calFin = new GregorianCalendar(); 
-			calFin.setTime(dateJ); 
-			calFin.add(Calendar.DAY_OF_YEAR, 8);
-			calFin.add(Calendar.HOUR, 10);
-			
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-
-		Demande demande = new Demande();
-
-		HelperService service = new HelperService();
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, calDebut.getTime(), calFin.getTime());
-
-		assertEquals(result.floatValue(), -8,5);
-	}
-
-	@Test
-	public void calculJoursAlimAutoCompteur_etatRejete_and_etatPrcdValide() {
-
-		Date dateJ = new Date();
-		GregorianCalendar calDebut = new GregorianCalendar(); 
-			calDebut.setTime(dateJ); 
-			
-		GregorianCalendar calFin = new GregorianCalendar(); 
-			calFin.setTime(dateJ); 
-			calFin.add(Calendar.DAY_OF_YEAR, 8);
-			calFin.add(Calendar.HOUR, 10);
-			
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.VALIDEE);
-
-		Demande demande = new Demande();
-			demande.addEtatDemande(etatDemande);
-
-		HelperService service = new HelperService();
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, calDebut.getTime(), calFin.getTime());
-
-		assertEquals(result.floatValue(), 8,5);
-	}
 	
-	@Test
-	public void calculJoursAlimAutoCompteur_etatEnAttente_and_etatPrcdValide() {
-
-		Date dateJ = new Date();
-		GregorianCalendar calDebut = new GregorianCalendar(); 
-			calDebut.setTime(dateJ); 
-			
-		GregorianCalendar calFin = new GregorianCalendar(); 
-			calFin.setTime(dateJ); 
-			calFin.add(Calendar.DAY_OF_YEAR, 8);
-			calFin.add(Calendar.HOUR, 10);
-			
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.VALIDEE);
-
-		Demande demande = new Demande();
-			demande.addEtatDemande(etatDemande);
-
-		HelperService service = new HelperService();
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, calDebut.getTime(), calFin.getTime());
-
-		assertEquals(result.floatValue(), 8,5);
-	}
-
-
-	@Test
-	public void calculJoursAlimAutoCompteur_etatRejete_and_etatPrcdApprouve() {
-
-		Date dateJ = new Date();
-		GregorianCalendar calDebut = new GregorianCalendar(); 
-			calDebut.setTime(dateJ); 
-			
-		GregorianCalendar calFin = new GregorianCalendar(); 
-			calFin.setTime(dateJ); 
-			calFin.add(Calendar.DAY_OF_YEAR, 8);
-			calFin.add(Calendar.HOUR, 10);
-			
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
-
-		Demande demande = new Demande();
-			demande.addEtatDemande(etatDemande);
-
-		HelperService service = new HelperService();
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, calDebut.getTime(), calFin.getTime());
-
-		assertEquals(result.floatValue(), 0,0);
-	}
 }

@@ -2,16 +2,19 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 
@@ -144,16 +147,20 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double jours) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
 
-		logger.info("Trying to update recuperation counters for Agent [{}] with {} jours...", demande.getIdAgent(),
-				jours);
+		logger.info("Trying to update recuperation counters for Agent [{}] ...", demande.getIdAgent());
 
-		try {
-			return majCompteurToAgent(demande.getIdAgent(), jours, srm);
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+		Double jours = calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(),
+				demande.getDateFin());
+		if (0.0 != jours) {
+			try {
+				srm = majCompteurToAgent(demande.getIdAgent(), jours, srm);
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+			}
 		}
+		return srm;
 	}
 	
 	/**
@@ -204,5 +211,29 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 		counterRepository.persistEntity(arc);
 
 		return srm;
+	}
+	
+	/**
+	 * 
+	 * @param demandeEtatChangeDto
+	 * @param demande
+	 * @param dateDebut
+	 * @param dateFin
+	 * @return Double nombre jour a incrementer/decrementer du compteur
+	 */
+	protected Double calculJoursAlimAutoCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, Date dateDebut, Date dateFin) {
+		Double jours = 0.0;
+		// si on approuve, le compteur decremente
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
+			jours = 0.0 - helperService.calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
+		}
+		// si on passe de Approuve a Refuse, le compteur incremente
+		if ( demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())
+				&& (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE)
+					|| demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.PRISE) )) {
+			jours = helperService.calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
+		}
+
+		return jours;
 	}
 }

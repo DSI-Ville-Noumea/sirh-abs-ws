@@ -15,6 +15,9 @@ public interface IAbsenceDataConsistencyRules {
 
 	ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande,
 			List<RefEtatEnum> listEtatsAcceptes);
+	
+	ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande,
+			List<RefEtatEnum> listEtatsAcceptes);
 
 	ReturnMessageDto checkDemandeDejaSaisieSurMemePeriode(ReturnMessageDto srm, Demande demande);
 

@@ -13,7 +13,7 @@ public interface ICounterService {
 
 	int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes);
 	
-	ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double dMinutes);
+	ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto);
 
 	ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto);
 

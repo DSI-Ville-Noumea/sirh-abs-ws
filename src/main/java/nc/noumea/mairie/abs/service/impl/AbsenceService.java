@@ -28,6 +28,7 @@ import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
+import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -60,20 +61,11 @@ public class AbsenceService implements IAbsenceService {
 	private IFiltreService filtresService;
 
 	@Autowired
+	private DataConsistencyRulesFactory dataConsistencyRulesFactory;
+	
+	@Autowired
 	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules defaultAbsenceDataConsistencyRulesImpl;
-
-	@Autowired
-	@Qualifier("AbsRecuperationDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absRecupDataConsistencyRules;
-
-	@Autowired
-	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absReposCompDataConsistencyRules;
-
-	@Autowired
-	@Qualifier("AbsAsaA48DataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl;
 
 	@Autowired
 	private HelperService helperService;
@@ -105,7 +97,6 @@ public class AbsenceService implements IAbsenceService {
 			return returnDto;
 
 		Demande demande = null;
-		IAbsenceDataConsistencyRules rules = null;
 		Date dateJour = new Date();
 
 		// selon le type de demande, on mappe les donnees specifiques de la
@@ -126,7 +117,6 @@ public class AbsenceService implements IAbsenceService {
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
 						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
-				rules = absReposCompDataConsistencyRules;
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
@@ -139,7 +129,6 @@ public class AbsenceService implements IAbsenceService {
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
 						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
-				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA_A48:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
@@ -158,7 +147,6 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
-				rules = absAsaA48DataConsistencyRulesImpl;
 				break;
 			case AUTRES:
 				// TODO
@@ -172,9 +160,9 @@ public class AbsenceService implements IAbsenceService {
 				demandeRepository.clear();
 				return returnDto;
 		}
+		absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
 		// dans le cas des types de demande non geres
-		if (null == rules) {
-			rules = defaultAbsenceDataConsistencyRulesImpl;
+		if (null == demande) {
 			demande = getDemande(Demande.class, demandeDto.getIdDemande());
 			if (null == demande) {
 				demande = new Demande();
@@ -189,7 +177,7 @@ public class AbsenceService implements IAbsenceService {
 					demandeDto.isDateFinPM()));
 		}
 
-		rules.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
@@ -301,7 +289,7 @@ public class AbsenceService implements IAbsenceService {
 
 		List<RefEtat> etats = filtresService.getListeEtatsByOnglet(ongletDemande, idRefEtat);
 
-		return defaultAbsenceDataConsistencyRulesImpl.filtreListDemande(idAgentConnecte, idAgentConcerne,
+		return absenceDataConsistencyRulesImpl.filtreListDemande(idAgentConnecte, idAgentConcerne,
 				listeSansFiltre, etats, dateDemande);
 	}
 
@@ -374,6 +362,12 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+			// on verifie les droits
+			// verification des droits
+			result = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), result);
+			if (!result.getErrors().isEmpty())
+				return result;
+			
 			return setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result);
 		}
 
@@ -392,10 +386,10 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// on verifie l etat de la demande
-		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
+		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
 				Arrays.asList(RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE));
 
-		result = defaultAbsenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
+		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
 		if (0 < result.getErrors().size()) {
@@ -426,27 +420,22 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
+		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
 				RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE,
 				RefEtatEnum.REFUSEE));
 
-		result = defaultAbsenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
+		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
 		if (0 < result.getErrors().size()) {
 			return result;
 		}
 
-		if (!demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.ASA_A48.getValue())) {
-			counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
-			int minutes = counterService.calculMinutesCompteur(demandeEtatChangeDto, demande);
-			if (0 != minutes) {
-				result = counterService.majCompteurToAgent(result, demande, new Double(minutes));
-			}
+		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
-			if (0 < result.getErrors().size()) {
-				return result;
-			}
+		if (0 < result.getErrors().size()) {
+			return result;
 		}
 
 		// maj de la demande
@@ -465,13 +454,8 @@ public class AbsenceService implements IAbsenceService {
 	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
 			Demande demande, ReturnMessageDto result) {
 
-		// on verifie les droits
-		// verification des droits
-		result = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), result);
-		if (!result.getErrors().isEmpty())
-			return result;
-
-		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
+		absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
 				Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
 
 		if (0 < result.getErrors().size()) {
@@ -479,11 +463,8 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
-		int minutes = counterService.calculMinutesCompteur(demandeEtatChangeDto, demande);
-		if (0 != minutes) {
-			result = counterService.majCompteurToAgent(result, demande, new Double(minutes));
-		}
-
+		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
+		
 		if (0 < result.getErrors().size()) {
 			return result;
 		}
@@ -559,7 +540,6 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		Demande demande = null;
-		IAbsenceDataConsistencyRules rules = null;
 		Date dateJour = new Date();
 
 		// selon le type de demande, on mappe les donnees specifiques de la
@@ -580,7 +560,6 @@ public class AbsenceService implements IAbsenceService {
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
 						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
-				rules = absReposCompDataConsistencyRules;
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
@@ -593,7 +572,6 @@ public class AbsenceService implements IAbsenceService {
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
 						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
-				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA_A48:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
@@ -612,7 +590,6 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
-				rules = absAsaA48DataConsistencyRulesImpl;
 				break;
 			case AUTRES:
 				// TODO
@@ -626,10 +603,11 @@ public class AbsenceService implements IAbsenceService {
 				demandeRepository.clear();
 				return returnDto;
 		}
+		
+		absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
 		// dans le cas des types de demande non geres ==> //TODO a supprimer par
 		// la suite
-		if (null == rules) {
-			rules = defaultAbsenceDataConsistencyRulesImpl;
+		if (null == demande) {
 			demande = getDemande(Demande.class, demandeDto.getIdDemande());
 			if (null == demande) {
 				demande = new Demande();
@@ -640,7 +618,7 @@ public class AbsenceService implements IAbsenceService {
 					demandeDto.isDateFinPM()));
 		}
 
-		rules.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
@@ -673,7 +651,7 @@ public class AbsenceService implements IAbsenceService {
 			listEtats.add(etat);
 		}
 
-		return defaultAbsenceDataConsistencyRulesImpl
+		return absenceDataConsistencyRulesImpl
 				.filtreDateAndEtatDemandeFromList(listeSansFiltre, listEtats, null);
 	}
 
@@ -711,7 +689,8 @@ public class AbsenceService implements IAbsenceService {
 
 			if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
 					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
-					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) {
+					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
+					&& !demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
 	
 				logger.warn(ETAT_DEMANDE_INCORRECT);
 				result.getErrors().add(String.format(ETAT_DEMANDE_INCORRECT));
@@ -744,6 +723,11 @@ public class AbsenceService implements IAbsenceService {
 				setDemandeEtatEnAttente(idAgent, demandeEtatChangeDto, demande, result);
 				continue;
 			}
+			
+			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+				setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result);
+				continue;
+			}
 		}
 
 		return result;
@@ -752,7 +736,7 @@ public class AbsenceService implements IAbsenceService {
 	protected void setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
 			Demande demande, ReturnMessageDto result) {
 
-		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
+		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
 				Arrays.asList(RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE));
 
 		if (0 < result.getErrors().size()) {
@@ -760,12 +744,8 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
-		Double jours = helperService.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(),
-				demande.getDateFin());
-		if (0 != jours) {
-			result = counterService.majCompteurToAgent(result, demande, jours);
-		}
-
+		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
+		
 		if (0 < result.getErrors().size()) {
 			return;
 		}
@@ -784,7 +764,7 @@ public class AbsenceService implements IAbsenceService {
 	protected void setDemandeEtatEnAttente(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
 			Demande demande, ReturnMessageDto result) {
 		
-		result = defaultAbsenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
+		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, Arrays.asList(
 				RefEtatEnum.APPROUVEE));
 
 		if (0 < result.getErrors().size()) {

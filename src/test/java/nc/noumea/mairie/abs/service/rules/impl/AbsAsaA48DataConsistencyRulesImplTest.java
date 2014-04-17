@@ -10,6 +10,8 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAsaRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -170,5 +172,73 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(0, srm.getInfos().size());
+	}
+	
+	@Test
+	public void checkEtatsDemandeAnnulee_isValidee() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+			demande.setIdDemande(1);
+		EtatDemande etat = new EtatDemande();
+			etat.setEtat(RefEtatEnum.VALIDEE);
+		demande.getEtatsDemande().add(etat);
+
+		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+
+		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		assertEquals(0, srm.getErrors().size());
+	}
+	
+	@Test
+	public void checkEtatsDemandeAnnulee_isAttente() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+			demande.setIdDemande(1);
+		EtatDemande etat = new EtatDemande();
+			etat.setEtat(RefEtatEnum.EN_ATTENTE);
+		demande.getEtatsDemande().add(etat);
+
+		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+
+		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		assertEquals(0, srm.getErrors().size());
+	}
+	
+	@Test
+	public void checkEtatsDemandeAnnulee_isPrise() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+			demande.setIdDemande(1);
+		EtatDemande etat = new EtatDemande();
+			etat.setEtat(RefEtatEnum.PRISE);
+		demande.getEtatsDemande().add(etat);
+
+		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+
+		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		assertEquals(0, srm.getErrors().size());
+	}
+	
+	@Test
+	public void checkEtatsDemandeAnnulee_isRejete() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+			demande.setIdDemande(1);
+		EtatDemande etat = new EtatDemande();
+			etat.setEtat(RefEtatEnum.REJETE);
+		demande.getEtatsDemande().add(etat);
+
+		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+
+		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		assertEquals(1, srm.getErrors().size());
 	}
 }

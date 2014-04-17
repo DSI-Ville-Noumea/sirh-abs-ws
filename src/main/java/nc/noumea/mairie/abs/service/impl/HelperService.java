@@ -6,11 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.CompteurDto;
-import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -152,22 +149,6 @@ RefTypeSaisi typeSaisi, Date dateFin, Date dateDeb, Double duree,
 			minutes = compteurDto.getDureeAAjouter();
 		}
 		return minutes;
-	}
-	
-	public Double calculJoursAlimAutoCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, Date dateDebut, Date dateFin) {
-		Double jours = 0.0;
-		// si on approuve, le compteur decremente
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
-			jours = 0.0 - calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
-		}
-		// si on passe de Approuve a Refuse, le compteur incremente
-		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat()) || demandeEtatChangeDto
-				.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()))
-				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE)) {
-			jours = calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
-		}
-
-		return jours;
 	}
 	
 	public double calculNombreJoursArrondiDemiJournee(Date dateDebut, Date dateFin) {

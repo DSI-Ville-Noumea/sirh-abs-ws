@@ -1,11 +1,14 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.springframework.stereotype.Service;
@@ -55,5 +58,16 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 			}
 		}
 		return somme;
+	}
+	
+	@Override
+	public ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande,
+			List<RefEtatEnum> listEtatsAcceptes) {
+		
+		List<RefEtatEnum> listEtats = new ArrayList<RefEtatEnum>();
+			listEtats.addAll(listEtatsAcceptes);
+			listEtats.addAll(Arrays.asList(RefEtatEnum.VALIDEE, RefEtatEnum.EN_ATTENTE, RefEtatEnum.PRISE));
+		// dans le cas des ASA A48, on peut annuler en plus les demandes a l etat VALIDEE et EN_ATTENTE
+		return super.checkEtatsDemandeAnnulee(srm, demande, listEtats);
 	}
 }

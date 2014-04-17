@@ -342,16 +342,19 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	}
 
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double dMinutes) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
 
-		logger.info("Trying to update recuperation counters for Agent [{}] with {} minutes...", demande.getIdAgent(),
-				dMinutes);
-		Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
-		try {
-			return majCompteurToAgent((DemandeReposComp) demande, minutes, srm);
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+		logger.info("Trying to update recuperation counters for Agent [{}] ...", demande.getIdAgent());
+		
+		int minutes = calculMinutesCompteur(demandeEtatChangeDto, demande);
+		if(0 != minutes) {
+			try {
+				return majCompteurToAgent((DemandeReposComp) demande, minutes, srm);
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+			}
 		}
+		return srm;
 	}
 
 	@Override

@@ -172,6 +172,13 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	@Override
+	public ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande,
+			List<RefEtatEnum> listEtatsAcceptes) {
+
+		return checkEtatsDemandeAcceptes(srm, demande, listEtatsAcceptes);
+	}
+	
+	@Override
 	public ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande,
 			List<RefEtatEnum> listEtatsAcceptes) {
 

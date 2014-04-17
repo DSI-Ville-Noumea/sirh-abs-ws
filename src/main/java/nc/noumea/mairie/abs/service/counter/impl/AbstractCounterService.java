@@ -68,7 +68,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double dMinutes) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 		return srm;
 	}

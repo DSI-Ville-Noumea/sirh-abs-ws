@@ -11,6 +11,7 @@ import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.NotAMondayException;
@@ -76,16 +77,20 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, Double dMinutes) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
 
-		logger.info("Trying to update recuperation counters for Agent [{}] with {} minutes...", demande.getIdAgent(),
-				dMinutes);
-		Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
-		try {
-			return majCompteurToAgent(demande.getIdAgent(), minutes, srm);
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+		logger.info("Trying to update recuperation counters for Agent [{}] ...", demande.getIdAgent());
+		
+		Integer minutes = calculMinutesCompteur(demandeEtatChangeDto, demande);
+
+		if(0 != minutes) {
+			try {
+				return majCompteurToAgent(demande.getIdAgent(), minutes, srm);
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+			}
 		}
+		return srm;
 	}
 
 	/**

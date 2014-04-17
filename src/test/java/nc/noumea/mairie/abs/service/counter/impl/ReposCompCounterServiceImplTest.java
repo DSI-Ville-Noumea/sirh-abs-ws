@@ -541,10 +541,13 @@ public class ReposCompCounterServiceImplTest {
 	@Test
 	public void majCompteurToAgent_AgentNotFound() {
 
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		
 		ReturnMessageDto result = new ReturnMessageDto();
 		DemandeReposComp demande = new DemandeReposComp();
-		demande.setIdAgent(9008765);
-		Double minutes = 10.0;
+			demande.setIdAgent(9008765);
+			demande.setDuree(10);
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(null);
@@ -558,7 +561,7 @@ public class ReposCompCounterServiceImplTest {
 
 		boolean isException = false;
 		try {
-			service.majCompteurToAgent(result, demande, minutes);
+			service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 		} catch (AgentNotFoundException e) {
 			isException = true;
 		}
@@ -571,10 +574,20 @@ public class ReposCompCounterServiceImplTest {
 	@Test
 	public void majCompteurToAgent_compteurInexistant() {
 
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+
+		EtatDemande e = new EtatDemande();
+			e.setEtat(RefEtatEnum.APPROUVEE);
+		List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
+			etatsDemande.add(e);
+			
 		ReturnMessageDto result = new ReturnMessageDto();
 		DemandeReposComp demande = new DemandeReposComp();
-		demande.setIdAgent(9008765);
-		Double minutes = 10.0;
+			demande.setIdAgent(9008765);
+			demande.setDuree(10);
+			demande.setDureeAnneeN1(0);
+			demande.setEtatsDemande(etatsDemande);
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -589,7 +602,7 @@ public class ReposCompCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		result = service.majCompteurToAgent(result, demande, minutes);
+		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
@@ -599,10 +612,14 @@ public class ReposCompCounterServiceImplTest {
 	@Test
 	public void majCompteurToAgent_compteurNegatif_debit() {
 
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+
 		ReturnMessageDto result = new ReturnMessageDto();
+	
 		DemandeReposComp demande = new DemandeReposComp();
-		demande.setIdAgent(9008765);
-		Double minutes = -11.0;
+			demande.setIdAgent(9008765);
+			demande.setDuree(11);
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -620,7 +637,7 @@ public class ReposCompCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		result = service.majCompteurToAgent(result, demande, minutes);
+		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0));
@@ -631,18 +648,25 @@ public class ReposCompCounterServiceImplTest {
 	@Test
 	public void majCompteurToAgent_compteurNegatif_credit() {
 
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+	
 		ReturnMessageDto result = new ReturnMessageDto();
+	
+		EtatDemande e = new EtatDemande();
+			e.setEtat(RefEtatEnum.APPROUVEE);
+		List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
+			etatsDemande.add(e);
 
 		DemandeReposComp demande = new DemandeReposComp();
-		demande.setIdAgent(9008765);
-		demande.setDuree(8);
-		demande.setDureeAnneeN1(9);
+			demande.setIdAgent(9008765);
+			demande.setDuree(8);
+			demande.setDureeAnneeN1(9);
+			demande.setEtatsDemande(etatsDemande);
 
 		AgentReposCompCount arc = new AgentReposCompCount();
-		arc.setTotalMinutes(11);
-		arc.setTotalMinutesAnneeN1(0);
-
-		Double minutes = 17.0;
+			arc.setTotalMinutes(11);
+			arc.setTotalMinutesAnneeN1(0);
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -682,7 +706,7 @@ public class ReposCompCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		result = service.majCompteurToAgent(result, demande, minutes);
+		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
@@ -692,18 +716,25 @@ public class ReposCompCounterServiceImplTest {
 	@Test
 	public void majCompteurToAgent_compteurNegatif_credit_2eCas() {
 
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+
 		ReturnMessageDto result = new ReturnMessageDto();
 
+		EtatDemande e = new EtatDemande();
+			e.setEtat(RefEtatEnum.APPROUVEE);
+		List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
+			etatsDemande.add(e);
+		
 		DemandeReposComp demande = new DemandeReposComp();
-		demande.setIdAgent(9008765);
-		demande.setDuree(0);
-		demande.setDureeAnneeN1(17);
+			demande.setIdAgent(9008765);
+			demande.setDuree(0);
+			demande.setDureeAnneeN1(17);
+			demande.setEtatsDemande(etatsDemande);
 
 		AgentReposCompCount arc = new AgentReposCompCount();
-		arc.setTotalMinutes(11);
-		arc.setTotalMinutesAnneeN1(0);
-
-		Double minutes = 17.0;
+			arc.setTotalMinutes(11);
+			arc.setTotalMinutesAnneeN1(0);
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -743,7 +774,7 @@ public class ReposCompCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		result = service.majCompteurToAgent(result, demande, minutes);
+		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
@@ -754,17 +785,24 @@ public class ReposCompCounterServiceImplTest {
 	public void majCompteurToAgent_compteurNegatif_credit_3eCas() {
 
 		ReturnMessageDto result = new ReturnMessageDto();
+		
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+
+		EtatDemande e = new EtatDemande();
+			e.setEtat(RefEtatEnum.APPROUVEE);
+		List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
+			etatsDemande.add(e);
 
 		DemandeReposComp demande = new DemandeReposComp();
-		demande.setIdAgent(9008765);
-		demande.setDuree(17);
-		demande.setDureeAnneeN1(0);
+			demande.setIdAgent(9008765);
+			demande.setDuree(17);
+			demande.setDureeAnneeN1(0);
+			demande.setEtatsDemande(etatsDemande);
 
 		AgentReposCompCount arc = new AgentReposCompCount();
 		arc.setTotalMinutes(11);
 		arc.setTotalMinutesAnneeN1(0);
-
-		Double minutes = 17.0;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -804,7 +842,7 @@ public class ReposCompCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		result = service.majCompteurToAgent(result, demande, minutes);
+		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
@@ -815,11 +853,13 @@ public class ReposCompCounterServiceImplTest {
 	public void majCompteurToAgent_debitOk() {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		DemandeReposComp demande = new DemandeReposComp();
-		demande.setIdAgent(9008765);
-		demande.setDuree(11);
+		
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
-		Double minutes = -11.0;
+		DemandeReposComp demande = new DemandeReposComp();
+			demande.setIdAgent(9008765);
+			demande.setDuree(11);
 
 		AgentReposCompCount arc = new AgentReposCompCount();
 		arc.setTotalMinutes(12);
@@ -862,7 +902,7 @@ public class ReposCompCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		result = service.majCompteurToAgent(result, demande, minutes);
+		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
@@ -872,12 +912,14 @@ public class ReposCompCounterServiceImplTest {
 	@Test
 	public void majCompteurToAgent_debitOk_2eCas() {
 
-		ReturnMessageDto result = new ReturnMessageDto();
-		DemandeReposComp demande = new DemandeReposComp();
-		demande.setIdAgent(9008765);
-		demande.setDuree(11);
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
-		Double minutes = -11.0;
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		DemandeReposComp demande = new DemandeReposComp();
+			demande.setIdAgent(9008765);
+			demande.setDuree(11);
 
 		AgentReposCompCount arc = new AgentReposCompCount();
 		arc.setTotalMinutes(12);
@@ -920,7 +962,7 @@ public class ReposCompCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		result = service.majCompteurToAgent(result, demande, minutes);
+		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentReposCompCount.class));
