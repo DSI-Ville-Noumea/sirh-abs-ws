@@ -14,6 +14,8 @@ public class SoldeDto implements IJSONSerialize {
 	private Double soldeReposCompAnneePrec;
 	private boolean afficheSoldeAsaA48;
 	private Double soldeAsaA48;
+	private boolean afficheSoldeAsaA54;
+	private Double soldeAsaA54;
 
 	@Override
 	public String serializeInJSON() {
@@ -98,6 +100,22 @@ public class SoldeDto implements IJSONSerialize {
 
 	public void setSoldeAsaA48(Double soldeAsaA48) {
 		this.soldeAsaA48 = soldeAsaA48;
+	}
+
+	public boolean isAfficheSoldeAsaA54() {
+		return afficheSoldeAsaA54;
+	}
+
+	public void setAfficheSoldeAsaA54(boolean afficheSoldeAsaA54) {
+		this.afficheSoldeAsaA54 = afficheSoldeAsaA54;
+	}
+
+	public Double getSoldeAsaA54() {
+		return soldeAsaA54;
+	}
+
+	public void setSoldeAsaA54(Double soldeAsaA54) {
+		this.soldeAsaA54 = soldeAsaA54;
 	}
 
 }
