@@ -65,11 +65,11 @@ public class AsaA54Controller {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/listeCompteurA48", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@RequestMapping(value = "/listeCompteurA54", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getListeCompteur() {
 
-		logger.debug("entered GET [asaA48/listeCompteurA48] => getListeCompteur ");
+		logger.debug("entered GET [asaA54/listeCompteurA54] => getListeCompteur ");
 
 		List<CompteurAsaDto> result = counterService.getListeCompteur();
 
