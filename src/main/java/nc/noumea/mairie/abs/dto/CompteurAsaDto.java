@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.dto;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 
 public class CompteurAsaDto {
 
@@ -15,6 +16,13 @@ public class CompteurAsaDto {
 	private Date dateFin;
 
 	public CompteurAsaDto(AgentAsaA48Count arc) {
+		this.idAgent = arc.getIdAgent();
+		this.nb = arc.getTotalJours();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+	}
+
+	public CompteurAsaDto(AgentAsaA54Count arc) {
 		this.idAgent = arc.getIdAgent();
 		this.nb = arc.getTotalJours();
 		this.dateDebut = arc.getDateDebut();

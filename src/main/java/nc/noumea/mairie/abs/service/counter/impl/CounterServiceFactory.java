@@ -13,7 +13,7 @@ public class CounterServiceFactory {
 	@Autowired
 	@Qualifier("DefaultCounterServiceImpl")
 	private ICounterService defaultCounterServiceImpl;
-	
+
 	@Autowired
 	@Qualifier("RecupCounterServiceImpl")
 	private ICounterService recupCounterServiceImpl;
@@ -21,14 +21,18 @@ public class CounterServiceFactory {
 	@Autowired
 	@Qualifier("ReposCompCounterServiceImpl")
 	private ICounterService reposCompCounterServiceImpl;
-	
+
 	@Autowired
 	@Qualifier("AsaA48CounterServiceImpl")
 	private ICounterService asaA48CounterServiceImpl;
-	
-	//Méthode permettant de récupérer les Factory
-	public ICounterService getFactory(int type){
-		
+
+	@Autowired
+	@Qualifier("AsaA54CounterServiceImpl")
+	private ICounterService asaA54CounterServiceImpl;
+
+	// Méthode permettant de récupérer les Factory
+	public ICounterService getFactory(int type) {
+
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
 			case CONGE_ANNUEL:
 				// TODO
@@ -39,6 +43,8 @@ public class CounterServiceFactory {
 				return recupCounterServiceImpl;
 			case ASA_A48:
 				return asaA48CounterServiceImpl;
+			case ASA_A54:
+				return asaA54CounterServiceImpl;
 			case AUTRES:
 				// TODO
 				break;
