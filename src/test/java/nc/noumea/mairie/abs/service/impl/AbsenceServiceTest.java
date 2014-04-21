@@ -1484,7 +1484,7 @@ public class AbsenceServiceTest {
 	}
 
 	@Test
-	public void setDemandeEtatPris_EtatIncorrect_ReturnError() {
+	public void setDemandeEtatPris_EtatIncorrect_ReturnError_RecupReposComp() {
 
 		RefTypeAbsence typeRecup = new RefTypeAbsence();
 		typeRecup.setLabel("Récupération");
@@ -1533,7 +1533,7 @@ public class AbsenceServiceTest {
 	}
 
 	@Test
-	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande() {
+	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_Recup_ReposComp() {
 
 		RefTypeAbsence typeRecup = new RefTypeAbsence();
 		typeRecup.setLabel("Récupération");
@@ -4592,5 +4592,85 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.getErrors().size());
 		// assertEquals("La demande est validée.", result.getInfos().get(0));
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
+	}
+
+
+	@Test
+	public void setDemandeEtatPris_EtatIncorrect_ReturnError_A48_A54() {
+
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setLabel("ASA");
+		typeRecup.setIdRefTypeAbsence(7);
+
+		EtatDemande etat1 = new EtatDemande();
+		DemandeRecup demande1 = new DemandeRecup();
+		etat1.setDemande(demande1);
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		demande1.getEtatsDemande().add(etat1);
+		demande1.setType(typeRecup);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(demande1);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		// When
+		ReturnMessageDto result = service.setDemandeEtatPris(1);
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("La demande 1 n'est pas à l'état VALIDEE mais SAISIE.", result.getErrors().get(0).toString());
+		Mockito.verify(demandeRepository, Mockito.never()).removeEntity(Mockito.isA(Demande.class));
+	}
+
+	@Test
+	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_A48_A54() {
+
+		RefTypeAbsence typeA54 = new RefTypeAbsence();
+		typeA54.setLabel("ASA");
+		typeA54.setIdRefTypeAbsence(8);
+
+		EtatDemande etat1 = new EtatDemande();
+		final DemandeRecup demande1 = new DemandeRecup();
+		etat1.setDemande(demande1);
+		etat1.setEtat(RefEtatEnum.VALIDEE);
+		demande1.getEtatsDemande().add(etat1);
+		demande1.setType(typeA54);
+		demande1.setIdAgent(9006565);
+
+		final Date date = new DateTime(2014, 1, 26, 15, 16, 35).toDate();
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(demande1);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				EtatDemande etat = (EtatDemande) args[0];
+
+				assertEquals(date, etat.getDate());
+				assertEquals(demande1, etat.getDemande());
+				assertEquals(RefEtatEnum.PRISE, etat.getEtat());
+				assertEquals(9006565, (int) etat.getIdAgent());
+				assertNull(etat.getMotif());
+				return null;
+			}
+		}).when(demandeRepository).persistEntity(Mockito.isA(EtatDemande.class));
+
+		HelperService helper = Mockito.mock(HelperService.class);
+		Mockito.when(helper.getCurrentDate()).thenReturn(date);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "helperService", helper);
+
+		// When
+		ReturnMessageDto result = service.setDemandeEtatPris(1);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(EtatDemande.class));
 	}
 }

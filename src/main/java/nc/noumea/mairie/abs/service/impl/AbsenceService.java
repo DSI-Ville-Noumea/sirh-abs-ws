@@ -504,13 +504,42 @@ public class AbsenceService implements IAbsenceService {
 			logger.error("Demande id {} does not exists. Stopping process.", idDemande);
 			return result;
 		}
-		if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
-			result.getErrors().add(
-					String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
-							RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat().toString()));
-			logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
-					RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
-			return result;
+
+		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getType().getIdRefTypeAbsence())) {
+			case CONGE_ANNUEL:
+				// TODO
+				break;
+			case REPOS_COMP:
+			case RECUP:
+				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
+					result.getErrors().add(
+							String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
+									RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat()
+											.toString()));
+					logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
+							RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
+					return result;
+				}
+				break;
+			case ASA_A48:
+			case ASA_A54:
+				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.VALIDEE) {
+					result.getErrors()
+							.add(String
+									.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
+											RefEtatEnum.VALIDEE.toString(), demande.getLatestEtatDemande().getEtat()
+													.toString()));
+					logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
+							RefEtatEnum.VALIDEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
+					return result;
+				}
+				break;
+			case AUTRES:
+				// TODO
+				break;
+			case MALADIES:
+				// TODO
+				break;
 		}
 
 		EtatDemande epNew = new EtatDemande();
