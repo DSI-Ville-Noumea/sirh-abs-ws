@@ -3712,7 +3712,7 @@ public class AbsenceServiceTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void setDemandeEtatSIRH_setDemandeEtatAnnule_checkEtatDemande() {
+	public void setDemandeEtatSIRH_setDemandeA48EtatAnnule_checkEtatDemande() {
 
 		Integer idAgent = 9005138;
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -3940,6 +3940,657 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals("La demande est annulée.", result.getInfos().get(0));
+		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
+	}
+
+	@Test
+	public void saveDemandeAsa54_OK_avecEtatProvisoire() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		Integer idAgent = 9005138;
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+
+		DemandeDto dto = new DemandeDto();
+		dto.setIdDemande(1);
+		dto.setDateDebut(dateDebut);
+		dto.setDuree(10.5);
+		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
+		dto.setIdRefEtat(0);
+		dto.setDateDemande(new Date());
+		dto.setAffichageBoutonModifier(false);
+		dto.setAffichageBoutonSupprimer(false);
+		dto.setAffichageBoutonImprimer(false);
+
+		Droit droitOperateur = new Droit();
+		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(idAgent);
+		droitDroitAgent.setDroitsAgent(droitsAgent);
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.add(droitDroitAgent);
+		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isUserOperateur(idAgent)).thenReturn(true);
+		Mockito.when(accessRightsRepository.getAgentDroitFetchAgents(idAgent)).thenReturn(droitOperateur);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				DemandeAsa obj = (DemandeAsa) args[0];
+
+				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
+				assertEquals(9005138, obj.getIdAgent().intValue());
+				assertEquals(10, obj.getDuree().intValue());
+
+				return true;
+			}
+		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeAsa.class));
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(
+				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+				.thenReturn(dateFin);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).clear();
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				null);
+		Mockito.when(
+				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
+						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande())).thenReturn(new RefTypeSaisi());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		result = service.saveDemande(idAgent, dto);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(Demande.class));
+	}
+
+	@Test
+	public void saveDemandeAsa54_OK_avecEtatSaisie() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		Integer idAgent = 9005138;
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+
+		DemandeDto dto = new DemandeDto();
+		dto.setIdDemande(1);
+		dto.setDateDebut(dateDebut);
+		dto.setDuree(10.0);
+		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
+		dto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+
+		Droit droitOperateur = new Droit();
+		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(idAgent);
+		droitDroitAgent.setDroitsAgent(droitsAgent);
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.add(droitDroitAgent);
+		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isUserOperateur(idAgent)).thenReturn(true);
+		Mockito.when(accessRightsRepository.getAgentDroitFetchAgents(idAgent)).thenReturn(droitOperateur);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				DemandeAsa obj = (DemandeAsa) args[0];
+
+				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
+				assertEquals(9005138, obj.getIdAgent().intValue());
+				assertEquals(10, obj.getDuree().intValue());
+
+				return true;
+			}
+		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeAsa.class));
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(
+				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+				.thenReturn(dateFin);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).clear();
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(
+				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
+						Mockito.isA(ReturnMessageDto.class))).thenReturn(result);
+		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				null);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande())).thenReturn(new RefTypeSaisi());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		result = service.saveDemande(idAgent, dto);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(Demande.class));
+	}
+
+	@Test
+	public void saveDemandeSIRHAsa54_OK_avecEtatProvisoire() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		Integer idAgent = 9005138;
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+
+		DemandeDto dto = new DemandeDto();
+		dto.setIdDemande(1);
+		dto.setDateDebut(dateDebut);
+		dto.setDuree(10.5);
+		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
+		dto.setIdRefEtat(0);
+		dto.setDateDemande(new Date());
+		dto.setAffichageBoutonModifier(false);
+		dto.setAffichageBoutonSupprimer(false);
+		dto.setAffichageBoutonImprimer(false);
+
+		Droit droitOperateur = new Droit();
+		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(idAgent);
+		droitDroitAgent.setDroitsAgent(droitsAgent);
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.add(droitDroitAgent);
+		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				DemandeAsa obj = (DemandeAsa) args[0];
+
+				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
+				assertEquals(9005138, obj.getIdAgent().intValue());
+				assertEquals(10, obj.getDuree().intValue());
+
+				return true;
+			}
+		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeAsa.class));
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(
+				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+				.thenReturn(dateFin);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).clear();
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande())).thenReturn(new RefTypeSaisi());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		result = service.saveDemandeSIRH(idAgent, dto);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(Demande.class));
+	}
+
+	@Test
+	public void saveDemandeSIRHAsa54_OK_avecEtatSaisie() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		Integer idAgent = 9005138;
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+
+		DemandeDto dto = new DemandeDto();
+		dto.setIdDemande(1);
+		dto.setDateDebut(dateDebut);
+		dto.setDuree(10.5);
+		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
+		dto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+
+		Droit droitOperateur = new Droit();
+		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(idAgent);
+		droitDroitAgent.setDroitsAgent(droitsAgent);
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.add(droitDroitAgent);
+		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				DemandeAsa obj = (DemandeAsa) args[0];
+
+				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
+				assertEquals(9005138, obj.getIdAgent().intValue());
+				assertEquals(10, obj.getDuree().intValue());
+
+				return true;
+			}
+		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeAsa.class));
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(
+				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+				.thenReturn(dateFin);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).clear();
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande())).thenReturn(new RefTypeSaisi());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		result = service.saveDemandeSIRH(idAgent, dto);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(Demande.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void setDemandeEtat_setDemandeEtatApprouve_OK_noMajCompteur_ASA54() {
+
+		Integer idAgent = 9005138;
+		ReturnMessageDto result = null;
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		dto.setIdDemande(1);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+
+		DemandeRecup demande = Mockito.spy(new DemandeRecup());
+		demande.setDuree(10);
+		demande.setType(type);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
+				.thenReturn(true);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return new ReturnMessageDto();
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return new ReturnMessageDto();
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+						Mockito.anyString());
+
+		ICounterService counterService = Mockito.mock(ICounterService.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		})
+				.when(counterService)
+				.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(DemandeEtatChangeDto.class));
+
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+				counterService);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "counterService", counterService);
+		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
+
+		result = service.setDemandeEtat(idAgent, dto);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void setDemandeEtatSIRH_setDemandeA54EtatAnnule_checkEtatDemande() {
+
+		Integer idAgent = 9005138;
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		dto.setIdDemande(1);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+
+		Demande demande = Mockito.spy(new Demande());
+		demande.setIdAgent(idAgent);
+		demande.setType(type);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+
+		ReturnMessageDto messageAgent = new ReturnMessageDto();
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(messageAgent);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				result.getErrors().add("Erreur etat incorrect");
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAnnulee(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Erreur etat incorrect", result.getErrors().get(0).toString());
+		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void setDemandeEtatSIRH_setDemandeEtatValide_OK_noMajCompteur_ASA54() {
+
+		Integer idAgent = 9005138;
+		ReturnMessageDto result = null;
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		dto.setIdDemande(1);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+
+		DemandeRecup demande = Mockito.spy(new DemandeRecup());
+		demande.setDuree(10);
+		demande.setType(type);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		ReturnMessageDto message = new ReturnMessageDto();
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(message);
+
+		ICounterService counterService = Mockito.mock(ICounterService.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		})
+				.when(counterService)
+				.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(DemandeEtatChangeDto.class));
+
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+				counterService);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
+		ReflectionTestUtils.setField(service, "counterService", counterService);
+
+		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals("La demande est validée.", result.getInfos().get(0));
+		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void setDemandeEtatSIRH_setDemandeEtatValide_ok_A54() {
+
+		Integer idAgent = 9005138;
+		ReturnMessageDto result = null;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		dto.setIdDemande(1);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		DemandeRecup demande = Mockito.spy(new DemandeRecup());
+		demande.setDuree(10);
+		demande.setType(type);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return new ReturnMessageDto();
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		ICounterService counterService = Mockito.mock(ICounterService.class);
+		Mockito.when(
+				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
+
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+				counterService);
+
+		ReturnMessageDto messageAgent = new ReturnMessageDto();
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(messageAgent);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "counterService", counterService);
+		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
+
+		assertEquals(0, result.getErrors().size());
+		// assertEquals("La demande est validée.", result.getInfos().get(0));
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 }

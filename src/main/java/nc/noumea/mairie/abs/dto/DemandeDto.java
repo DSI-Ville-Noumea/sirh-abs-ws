@@ -98,6 +98,7 @@ public class DemandeDto {
 				this.duree = (double) (((DemandeRecup) d).getDuree());
 				break;
 			case ASA_A48:
+			case ASA_A54:
 				this.duree = ((DemandeAsa) d).getDuree();
 				this.isDateDebutAM = ((DemandeAsa) d).isDateDebutAM();
 				this.isDateDebutPM = ((DemandeAsa) d).isDateDebutPM();

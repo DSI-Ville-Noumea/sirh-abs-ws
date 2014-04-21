@@ -47,6 +47,10 @@ public class SuppressionService implements ISuppressionService {
 	@Qualifier("AbsAsaA48DataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl;
 
+	@Autowired
+	@Qualifier("AbsAsaA54DataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl;
+
 	@Override
 	public ReturnMessageDto supprimerDemandeEtatProvisoire(Integer idDemande) {
 
@@ -108,6 +112,10 @@ public class SuppressionService implements ISuppressionService {
 			case ASA_A48:
 				demande = getDemande(DemandeAsa.class, idDemande);
 				rules = absAsaA48DataConsistencyRulesImpl;
+				break;
+			case ASA_A54:
+				demande = getDemande(DemandeAsa.class, idDemande);
+				rules = absAsaA54DataConsistencyRulesImpl;
 				break;
 			case AUTRES:
 				// TODO

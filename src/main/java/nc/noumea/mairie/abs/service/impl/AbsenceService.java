@@ -131,6 +131,7 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 				break;
 			case ASA_A48:
+			case ASA_A54:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
 				demandeAsa.setDuree(demandeDto.getDuree());
 				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
@@ -245,14 +246,15 @@ public class AbsenceService implements IAbsenceService {
 				demandeDto.updateEtat(demandeRecup.getLatestEtatDemande());
 				break;
 			case ASA_A48:
-				DemandeAsa demandeAsaA48 = demandeRepository.getEntity(DemandeAsa.class, idDemande);
-				if (null == demandeAsaA48) {
+			case ASA_A54:
+				DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
+				if (null == demandeAsa) {
 					return demandeDto;
 				}
 
-				demandeDto = new DemandeDto(demandeAsaA48, sirhWSConsumer.getAgentService(demande.getIdAgent(),
+				demandeDto = new DemandeDto(demandeAsa, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
-				demandeDto.updateEtat(demandeAsaA48.getLatestEtatDemande());
+				demandeDto.updateEtat(demandeAsa.getLatestEtatDemande());
 				break;
 			case AUTRES:
 				// TODO
@@ -575,6 +577,7 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 				break;
 			case ASA_A48:
+			case ASA_A54:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
 				demandeAsa.setDuree(demandeDto.getDuree());
 				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
