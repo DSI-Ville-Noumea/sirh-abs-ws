@@ -1,9 +1,10 @@
 package nc.noumea.mairie.abs.web;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -17,7 +18,6 @@ import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.ISuppressionService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
-import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 import nc.noumea.mairie.sirh.service.ISirhService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -25,8 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,9 +33,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
 
 @Controller
 @RequestMapping("/demandes")
@@ -69,34 +64,39 @@ public class DemandeController {
 	@Autowired
 	private ISirhService sirhService;
 
+	/**
+	 * Creation/modification d'une demande : SI idDemande IS NULL ALORS creation SINON modification
+	 * <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> setDemandeAbsence(@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) String demandeDto) {
+	public ReturnMessageDto setDemandeAbsence(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) DemandeDto demandeDto, 
+			HttpServletResponse response) {
 
 		logger.debug("entered POST [demandes/demande] => setDemandeAbsence for Kiosque with parameters idAgent = {}",
 				idAgent);
-
-		DemandeDto dto = new JSONDeserializer<DemandeDto>().use(Date.class, new MSDateTransformer()).deserializeInto(
-				demandeDto, new DemandeDto());
-
+		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		ReturnMessageDto srm = absenceService.saveDemande(convertedIdAgent, dto);
-
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+		ReturnMessageDto srm = absenceService.saveDemande(convertedIdAgent, demandeDto);
 
 		if (!srm.getErrors().isEmpty()) {
-			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-		} else {
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
 		}
+		return srm;
 	}
 
+	/**
+	 * Recuperation d une demande
+	 * <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getDemandeAbsence(@RequestParam("idAgent") int idAgent,
+	public DemandeDto getDemandeAbsence(@RequestParam("idAgent") int idAgent,
 			@RequestParam("idDemande") int idDemande) {
 
 		logger.debug(
@@ -104,19 +104,24 @@ public class DemandeController {
 				idAgent, idDemande);
 
 		DemandeDto result = absenceService.getDemandeDto(idDemande);
-
+		
 		if (null == result)
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			throw new NoContentException();
 
-		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(result);
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+		return result;
 	}
 
+	/**
+	 * Liste des demandes d un agent
+	 * <br />
+	 * Parametres en entree : format du type timestamp  : YYYYMMdd
+	 * <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListeDemandesAbsenceAgent(
+	public List<DemandeDto> getListeDemandesAbsenceAgent(
 			@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
@@ -138,13 +143,14 @@ public class DemandeController {
 				fromDate, toDate, dateDemande, idRefEtat, idRefType);
 
 		if (result.size() == 0)
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			throw new NoContentException();
 
-		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(result);
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+		return result;
 	}
 
+	/**
+	 * Retourne une demande au format XML pour le report
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/xml/getDemande", produces = "application/xml", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
@@ -171,10 +177,17 @@ public class DemandeController {
 		return new ModelAndView("xmlView", "object", dtoFinal);
 	}
 
+	/**
+	 * Gestion des demandes
+	 * <br />
+	 * Parametres en entree : format du type timestamp  : YYYYMMdd
+	 * <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListeDemandesAbsence(
+	public List<DemandeDto> getListeDemandesAbsence(
 			@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
@@ -198,51 +211,52 @@ public class DemandeController {
 			ReturnMessageDto srm = new ReturnMessageDto();
 			if (!accessRightService.verifAccessRightListDemande(convertedIdAgent, idAgentRecherche, srm)) {
 				if (!srm.getErrors().isEmpty()) {
-					String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
-					return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+					throw new AccessForbiddenException();
 				}
 			}
 		}
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, idAgentRecherche, ongletDemande,
 				fromDate, toDate, dateDemande, idRefEtat, idRefType);
-
+		
 		if (result.size() == 0)
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			throw new NoContentException();
 
-		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(result);
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+		return result;
 	}
 
+	/**
+	 * changer l etat d une demande depuis le kiosque pour le VISA et l'APPROBATION
+	 * <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/changerEtats", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> setAbsencesEtat(@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) String demandeEtatChangeDtoString) {
+	public ReturnMessageDto setAbsencesEtat(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) DemandeEtatChangeDto dto,
+			HttpServletResponse response) {
 
 		logger.debug("entered POST [demandes/changerEtats] => setAbsencesEtat with parameters idAgent = {}", idAgent);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		DemandeEtatChangeDto dto = new JSONDeserializer<DemandeEtatChangeDto>()
-				.use(Date.class, new MSDateTransformer()).deserializeInto(demandeEtatChangeDtoString,
-						new DemandeEtatChangeDto());
-
 		ReturnMessageDto result = absenceService.setDemandeEtat(convertedIdAgent, dto);
 
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
-
 		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+		return result;
 	}
 
+	/**
+	 * Modifier l etat d une demande pour le PRISE --> utile à SIRH-JOBS
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/updateToEtatPris", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> setAbsencesEtatPris(@RequestParam("idDemande") Integer idDemande) {
+	public ReturnMessageDto setAbsencesEtatPris(@RequestParam("idDemande") Integer idDemande,
+			HttpServletResponse response) {
 
 		logger.debug(
 				"entered POST [demandes/updateToEtatPris] => setAbsencesEtatPris for SIRH-JOBS with parameters idDemande = {}",
@@ -250,19 +264,21 @@ public class DemandeController {
 
 		ReturnMessageDto result = absenceService.setDemandeEtatPris(idDemande);
 
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
-
 		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+		return result;
 	}
 
+	/**
+	 * Supprime une demande
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/deleteDemande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> supprimerDemande(@RequestParam("idAgent") int idAgent,
-			@RequestParam("idDemande") int idDemande) {
+	public ReturnMessageDto supprimerDemande(@RequestParam("idAgent") int idAgent,
+			@RequestParam("idDemande") int idDemande,
+			HttpServletResponse response) {
 
 		logger.debug(
 				"entered GET [demandes/deleteDemande] => supprimerDemande with parameters idAgent = {}, idDemande = {}",
@@ -272,18 +288,22 @@ public class DemandeController {
 
 		ReturnMessageDto result = suppressionService.supprimerDemande(convertedIdAgent, idDemande);
 
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
-
 		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+		return result;
 	}
 
+	/**
+	 * Supprime les demandes a l etat Provisoire avec date >= DateDuJour
+	 * <br />
+	 * Utile à SIRH-JOBS
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/supprimerDemandeProvisoire", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> supprimerAbsenceProvisoire(@RequestParam("idDemande") Integer idDemande) {
+	public ReturnMessageDto supprimerAbsenceProvisoire(@RequestParam("idDemande") Integer idDemande,
+			HttpServletResponse response) {
 
 		logger.debug(
 				"entered POST [demandes/supprimerDemandeProvisoire] => supprimerAbsenceProvisoire for SIRH-JOBS with parameters idDemande = {}",
@@ -291,43 +311,48 @@ public class DemandeController {
 
 		ReturnMessageDto result = suppressionService.supprimerDemandeEtatProvisoire(idDemande);
 
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
-
 		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+		return result;
 	}
 
+	/**
+	 * Saisie et modification d une demande d absence depuis SIRH : SI idDemande IS NULL ALORS creation SINON modification
+	 * <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/demandeSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> setDemandeAbsenceSIRH(@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) String demandeDto) {
+	public ReturnMessageDto setDemandeAbsenceSIRH(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) DemandeDto demandeDto,
+			HttpServletResponse response) {
 
 		logger.debug(
 				"entered POST [demandes/demandeSIRH] => setDemandeAbsenceSIRH for SIRH with parameters idAgent = {}",
 				idAgent);
 
-		DemandeDto dto = new JSONDeserializer<DemandeDto>().use(Date.class, new MSDateTransformer()).deserializeInto(
-				demandeDto, new DemandeDto());
-
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		ReturnMessageDto srm = absenceService.saveDemandeSIRH(convertedIdAgent, dto);
+		ReturnMessageDto result = absenceService.saveDemandeSIRH(convertedIdAgent, demandeDto);
+		
+		if (result.getErrors().size() != 0)
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
-
-		if (!srm.getErrors().isEmpty()) {
-			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-		} else {
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
+		return result;
 	}
 
+	/**
+	 * Liste des demandes pour SIRH
+	 * <br />
+	 * Parametres en entree : format du type timestamp  : YYYYMMdd
+	 * <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListeDemandesAbsenceSIRH(
+	public List<DemandeDto> getListeDemandesAbsenceSIRH(
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
@@ -342,50 +367,54 @@ public class DemandeController {
 				idAgentRecherche);
 
 		if (result.size() == 0)
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			throw new NoContentException();
 
-		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(result);
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+		return result;
 	}
 
+	/**
+	 * Historique d une demande
+	 * <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/historiqueSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getDemandesArchives(@RequestParam("idDemande") Integer idDemande) {
+	public List<DemandeDto> getDemandesArchives(@RequestParam("idDemande") Integer idDemande) {
 
 		logger.debug("entered GET [demandes/historiqueSIRH] => getDemandesArchives with parameter idDemande = {}",
 				idDemande);
 
 		List<DemandeDto> result = absenceService.getDemandesArchives(idDemande);
+		
 		if (result.size() == 0)
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(result);
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+			throw new NoContentException();
+
+		return result;
 	}
 
+	/**
+	 * Change l etat d une demande depuis SIRH pour VALIDER ou REJETER 
+	 * <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/changerEtatsSIRH", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "absTransactionManager")
-	public ResponseEntity<String> setAbsencesEtatSIRH(@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) String demandeEtatChangeDtoString) {
+	public ReturnMessageDto setAbsencesEtatSIRH(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) List<DemandeEtatChangeDto> dto,
+			HttpServletResponse response) {
 
 		logger.debug("entered POST [demandes/changerEtatsSIRH] => setAbsencesEtatSIRH with parameters idAgent = {}",
 				idAgent);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<DemandeEtatChangeDto> dto = new JSONDeserializer<List<DemandeEtatChangeDto>>().use(null, ArrayList.class)
-				.use("values", DemandeEtatChangeDto.class).use(Date.class, new MSDateTransformer()).deserialize(demandeEtatChangeDtoString);
-
 		ReturnMessageDto result = absenceService.setDemandeEtatSIRH(convertedIdAgent, dto);
-
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
-
+		
 		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-		return new ResponseEntity<String>(response, HttpStatus.OK);
-	}
+		return result;
+	} 
 }

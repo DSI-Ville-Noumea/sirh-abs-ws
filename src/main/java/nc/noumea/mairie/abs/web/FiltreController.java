@@ -14,16 +14,12 @@ import nc.noumea.mairie.abs.service.IFiltreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import flexjson.JSONSerializer;
 
 @Controller
 @RequestMapping("/filtres")
@@ -40,39 +36,44 @@ public class FiltreController {
 	@Autowired
 	private IAccessRightsService accessRightsService;
 
+	/**
+	 * Liste des etats possibles selon l onglet selectionne
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/getEtats", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getEtats(@RequestParam(value = "ongletDemande", required = false) String ongletDemande) {
+	public List<RefEtatDto> getEtats(@RequestParam(value = "ongletDemande", required = false) String ongletDemande) {
 
 		logger.debug("entered GET [filtres/getEtats] => getEtats");
 
 		List<RefEtatDto> etats = filtresService.getRefEtats(ongletDemande);
 
-		String json = new JSONSerializer().exclude("*.class").serialize(etats);
-
-		return new ResponseEntity<String>(json, HttpStatus.OK);
+		return etats;
 	}
 
+	/**
+	 * Liste des types d absence possibles pour un agent donne
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getTypes(
+	public List<RefTypeAbsenceDto> getTypes(
 			@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
 
 		logger.debug("entered GET [filtres/getTypes] => getTypes");
 
 		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsence(idAgentConcerne);
 
-		String json = new JSONSerializer().exclude("*.class").serialize(types);
-
-		return new ResponseEntity<String>(json, HttpStatus.OK);
+		return types;
 	}
 
+	/**
+	 * Liste des services pour un agent donne
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/services", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getServices(@RequestParam("idAgent") Integer idAgent) {
+	public List<ServiceDto> getServices(@RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug("entered GET [filtres/services] => getServices with parameter idAgent = {}", idAgent);
 
@@ -83,15 +84,16 @@ public class FiltreController {
 		if (services.size() == 0)
 			throw new NoContentException();
 
-		String json = new JSONSerializer().exclude("*.class").serialize(services);
-
-		return new ResponseEntity<String>(json, HttpStatus.OK);
+		return services;
 	}
 
+	/**
+	 * Liste des agents affectes a un operateur, viseur ou approbateur selon son service
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getAgents(@RequestParam("idAgent") Integer idAgent,
+	public List<AgentDto> getAgents(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam(value = "codeService", required = false) String codeService) {
 
 		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and codeService = {}",
@@ -104,23 +106,22 @@ public class FiltreController {
 		if (services.size() == 0)
 			throw new NoContentException();
 
-		String json = new JSONSerializer().exclude("*.class").serialize(services);
-
-		return new ResponseEntity<String>(json, HttpStatus.OK);
+		return services;
 	}
 	
+	/**
+	 * Retourne les types de saisie (champs de saisie, checkbox, etc) d une absence donnee
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypesSaisi", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getTypesSaisi(
+	public List<RefTypeSaisiDto> getTypesSaisi(
 			@RequestParam(value = "idRefTypeAbsence", required = false) Integer idRefTypeAbsence) {
 
 		logger.debug("entered GET [filtres/getTypesSaisi] => getTypesSaisi");
 
 		List<RefTypeSaisiDto> typesSaisi = filtresService.getRefTypeSaisi(idRefTypeAbsence);
 
-		String json = new JSONSerializer().exclude("*.class").serialize(typesSaisi);
-
-		return new ResponseEntity<String>(json, HttpStatus.OK);
+		return typesSaisi;
 	}
 }

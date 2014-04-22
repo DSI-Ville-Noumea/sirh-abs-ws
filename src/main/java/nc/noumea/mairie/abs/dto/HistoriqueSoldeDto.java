@@ -2,10 +2,15 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 
 public class HistoriqueSoldeDto {
 
+	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonDeserialize(using=JsonDateDeserializer.class)
 	private Date dateModifcation;
 	private MotifCompteurDto motif;
 	private Integer idAgentModification;

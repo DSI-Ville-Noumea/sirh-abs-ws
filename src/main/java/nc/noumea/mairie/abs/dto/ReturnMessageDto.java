@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ReturnMessageDto {
 
 	private List<String> errors;

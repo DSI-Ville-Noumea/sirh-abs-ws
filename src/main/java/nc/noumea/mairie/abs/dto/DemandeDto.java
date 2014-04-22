@@ -10,16 +10,25 @@ import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 public class DemandeDto {
 
 	private AgentWithServiceDto agentWithServiceDto;
 
 	private Integer idDemande;
 	private Integer idTypeDemande;
+	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonDeserialize(using=JsonDateDeserializer.class)
 	private Date dateDemande;
+	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonDeserialize(using=JsonDateDeserializer.class)
 	private Date dateDebut;
 	private boolean isDateDebutAM;
 	private boolean isDateDebutPM;
+	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonDeserialize(using=JsonDateDeserializer.class)
 	private Date dateFin;
 	private boolean isDateFinAM;
 	private boolean isDateFinPM;

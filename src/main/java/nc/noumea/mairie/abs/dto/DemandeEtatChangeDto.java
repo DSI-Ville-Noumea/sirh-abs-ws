@@ -2,10 +2,15 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 public class DemandeEtatChangeDto {
 
 	private Integer idDemande;
 	private Integer idRefEtat;
+	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonDeserialize(using=JsonDateDeserializer.class)
 	private Date dateAvis;
 	private String motif;
 

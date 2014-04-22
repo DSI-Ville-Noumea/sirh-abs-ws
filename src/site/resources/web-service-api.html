@@ -1,0 +1,3157 @@
+<!--
+ ~ Copyright 2011 TaskDock, Inc.
+ ~
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~ you may not use this file except in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing, software
+ ~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~ See the License for the specific language governing permissions and
+ ~ limitations under the License.
+-->
+
+
+<html>
+    <head>
+        <title>REST Endpoint Documentation</title>
+        <style type="text/css">
+            div.section-title { font-size: 18px; font-weight: bold; }
+            div.resource-summary { font-family: monospace; padding-top: 10px; }
+            .resource-summary div { padding-left: 15px }
+
+            div.resource { border-top: 1px solid gray; padding-top: 5px; margin-top: 15px; }
+            div.resource-header { font-family: monospace; font-size: 18px; font-weight: bold; padding-bottom: 15px; }
+            div.resource-docs { padding-bottom: 20px; }
+
+            div.url-info { padding-bottom: 20px; }
+            div.url-info table { width: 400px; border-spacing: 0px; }
+            div.url-info thead td { border-bottom: 1px dashed gray; }
+            .url-info-key { font-family: monospace; }
+            .url-info-expected-type { font-family: monospace; }
+
+            div.request-body { padding-bottom: 20px; }
+            div.response-body { padding-bottom: 20px; }
+
+            div.body-title { width: 400px; border-bottom: 1px dashed gray; }
+
+            div.body-contents { font-family: monospace; }
+            div.json-field { padding-left: 15px; }
+            span.json-field-name { font-weight: bold; }
+            span.json-primitive-type { color: gray; }
+            div.json-primitive-restrictions { color: gray; padding-left: 30px; }
+            div.json-field-comment { color: gray; padding-left: 30px; }
+        </style>
+    </head>
+    <body>
+
+        <div class="section-title">Overview</div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/droits/listeDroitsAgent</span>
+                    <div>
+                            <a href="#/droits/listeDroitsAgent_GET_idAgent">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/droits/approbateurs</span>
+                    <div>
+                            <a href="#/droits/approbateurs_GET">GET</a>
+                            <a href="#/droits/approbateurs_POST">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/droits/inputter</span>
+                    <div>
+                            <a href="#/droits/inputter_GET_idAgent">GET</a>
+                            <a href="#/droits/inputter_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/droits/viseur</span>
+                    <div>
+                            <a href="#/droits/viseur_GET_idAgent">GET</a>
+                            <a href="#/droits/viseur_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/droits/agentsApprouves</span>
+                    <div>
+                            <a href="#/droits/agentsApprouves_GET_idAgent">GET</a>
+                            <a href="#/droits/agentsApprouves_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/droits/agentsSaisis</span>
+                    <div>
+                            <a href="#/droits/agentsSaisis_GET_idAgent_idOperateurOrViseur">GET</a>
+                            <a href="#/droits/agentsSaisis_POST_idAgent_idOperateurOrViseur">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/asaA48/addManual</span>
+                    <div>
+                            <a href="#/asaA48/addManual_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/asaA48/listeCompteurA48</span>
+                    <div>
+                            <a href="#/asaA48/listeCompteurA48_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/asaA54/addManual</span>
+                    <div>
+                            <a href="#/asaA54/addManual_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/asaA54/listeCompteurA54</span>
+                    <div>
+                            <a href="#/asaA54/listeCompteurA54_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/demande</span>
+                    <div>
+                            <a href="#/demandes/demande_GET_idAgent_idDemande">GET</a>
+                            <a href="#/demandes/demande_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/listeDemandesAgent</span>
+                    <div>
+                            <a href="#/demandes/listeDemandesAgent_GET_idAgent_ongletDemande_from_to_dateDemande_etat_type">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/xml/getDemande</span>
+                    <div>
+                            <a href="#/demandes/xml/getDemande_GET_idAgent_idDemande">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/listeDemandes</span>
+                    <div>
+                            <a href="#/demandes/listeDemandes_GET_idAgent_ongletDemande_from_to_dateDemande_etat_type_idAgentRecherche">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/changerEtats</span>
+                    <div>
+                            <a href="#/demandes/changerEtats_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/updateToEtatPris</span>
+                    <div>
+                            <a href="#/demandes/updateToEtatPris_POST_idDemande">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/deleteDemande</span>
+                    <div>
+                            <a href="#/demandes/deleteDemande_GET_idAgent_idDemande">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/supprimerDemandeProvisoire</span>
+                    <div>
+                            <a href="#/demandes/supprimerDemandeProvisoire_POST_idDemande">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/demandeSIRH</span>
+                    <div>
+                            <a href="#/demandes/demandeSIRH_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/listeDemandesSIRH</span>
+                    <div>
+                            <a href="#/demandes/listeDemandesSIRH_GET_from_to_etat_type_idAgentRecherche">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/historiqueSIRH</span>
+                    <div>
+                            <a href="#/demandes/historiqueSIRH_GET_idDemande">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/demandes/changerEtatsSIRH</span>
+                    <div>
+                            <a href="#/demandes/changerEtatsSIRH_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/edition/downloadTitreDemande</span>
+                    <div>
+                            <a href="#/edition/downloadTitreDemande_GET_idAgent_idDemande">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/email/listDestinatairesEmailInfo</span>
+                    <div>
+                            <a href="#/email/listDestinatairesEmailInfo_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/filtres/getEtats</span>
+                    <div>
+                            <a href="#/filtres/getEtats_GET_ongletDemande">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/filtres/getTypes</span>
+                    <div>
+                            <a href="#/filtres/getTypes_GET_idAgentConcerne">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/filtres/services</span>
+                    <div>
+                            <a href="#/filtres/services_GET_idAgent">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/filtres/agents</span>
+                    <div>
+                            <a href="#/filtres/agents_GET_idAgent_codeService">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/filtres/getTypesSaisi</span>
+                    <div>
+                            <a href="#/filtres/getTypesSaisi_GET_idRefTypeAbsence">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/motifCompteur/getListeMotifCompteur</span>
+                    <div>
+                            <a href="#/motifCompteur/getListeMotifCompteur_GET_idRefType">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/motifCompteur/setMotifCompteur</span>
+                    <div>
+                            <a href="#/motifCompteur/setMotifCompteur_POST">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/motif/getListeMotif</span>
+                    <div>
+                            <a href="#/motif/getListeMotif_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/motif/setMotif</span>
+                    <div>
+                            <a href="#/motif/setMotif_POST">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/organisation/addOS</span>
+                    <div>
+                            <a href="#/organisation/addOS_POST">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/organisation/listOrganisation</span>
+                    <div>
+                            <a href="#/organisation/listOrganisation_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/organisation/listOrganisationActif</span>
+                    <div>
+                            <a href="#/organisation/listOrganisationActif_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/recuperations/addForPTG</span>
+                    <div>
+                            <a href="#/recuperations/addForPTG_POST_idAgent_dateLundi_minutes">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/recuperations/addManual</span>
+                    <div>
+                            <a href="#/recuperations/addManual_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/reposcomps/addForPTG</span>
+                    <div>
+                            <a href="#/reposcomps/addForPTG_POST_idAgent_dateLundi_minutes">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/reposcomps/addManual</span>
+                    <div>
+                            <a href="#/reposcomps/addManual_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/reposcomps/resetCompteurAnneePrecedente</span>
+                    <div>
+                            <a href="#/reposcomps/resetCompteurAnneePrecedente_GET_idAgentReposCompCount">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/reposcomps/resetCompteurAnneenCours</span>
+                    <div>
+                            <a href="#/reposcomps/resetCompteurAnneenCours_GET_idAgentReposCompCount">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/reposcomps/getListeCompteurAnneePrecedente</span>
+                    <div>
+                            <a href="#/reposcomps/getListeCompteurAnneePrecedente_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/reposcomps/getListeCompteurAnneeEnCours</span>
+                    <div>
+                            <a href="#/reposcomps/getListeCompteurAnneeEnCours_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/solde/soldeAgent</span>
+                    <div>
+                            <a href="#/solde/soldeAgent_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/solde/historiqueSolde</span>
+                    <div>
+                            <a href="#/solde/historiqueSolde_GET_idAgent_codeRefTypeAbsence">GET</a>
+                    </div>
+                </div>
+
+                    <a id="/droits/listeDroitsAgent_GET_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/droits/listeDroitsAgent</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne les droits d un agent 
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">saisie</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modification</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">suppression</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">impression</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">viserVisu</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">viserModif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">approuverVisu</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">approuverModif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">annuler</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">visuSolde</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">majSolde</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">droitAcces</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/approbateurs_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/droits/approbateurs</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne la liste des approbateurs
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/approbateurs_POST"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/droits/approbateurs</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Cree/modifie les approbateurs
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/inputter_GET_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/droits/inputter</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne le delegataire et les operateurs d un approbateur
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">delegataire</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">operateurs</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/inputter_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/droits/inputter</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Saisie/modification du delegataire et les operateurs d un approbateur
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">delegataire</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">operateurs</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/viseur_GET_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/droits/viseur</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne les viseurs d un approbateur
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">viseurs</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/viseur_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/droits/viseur</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Saisie/modification des viseurs d un approbateur
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">viseurs</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/agentsApprouves_GET_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/droits/agentsApprouves</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne la liste des agents que l approbateur doit approuver
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/agentsApprouves_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/droits/agentsApprouves</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Saisie/modifie la liste des agents que l approbateur doit approuver
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/agentsSaisis_GET_idAgent_idOperateurOrViseur"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/droits/agentsSaisis</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idOperateurOrViseur</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne la liste des agents affectes a un operateur ou viseur
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/agentsSaisis_POST_idAgent_idOperateurOrViseur"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/droits/agentsSaisis</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idOperateurOrViseur</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Saisie/modifie la liste des agents affectes a un operateur ou viseur
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/asaA48/addManual_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/asaA48/addManual</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Modifie manuellement le compteur ASA A48 d un agent
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeAAjouter</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeARetrancher</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">anneePrecedente</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/asaA48/listeCompteurA48_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/asaA48/listeCompteurA48</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des compteurs ASA A48
+ ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">nb</span>
+<span class="json-primitive-type">double</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/asaA54/addManual_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/asaA54/addManual</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents"><span class="json-primitive-type">string</span></div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">headers</span>
+    <span class="json-dict">[
+<span class="json-primitive-type">object</span>        -&gt;
+<span class="json-primitive-type">object</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">body</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statusCode</span>
+<span class="json-primitive-type">string</span><div class="json-primitive-restrictions">one of [ CONTINUE, SWITCHING_PROTOCOLS, PROCESSING, CHECKPOINT, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION, NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTI_STATUS, ALREADY_REPORTED, IM_USED, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND, MOVED_TEMPORARILY, SEE_OTHER, NOT_MODIFIED, USE_PROXY, TEMPORARY_REDIRECT, RESUME_INCOMPLETE, BAD_REQUEST, UNAUTHORIZED, PAYMENT_REQUIRED, FORBIDDEN, NOT_FOUND, METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, PROXY_AUTHENTICATION_REQUIRED, REQUEST_TIMEOUT, CONFLICT, GONE, LENGTH_REQUIRED, PRECONDITION_FAILED, REQUEST_ENTITY_TOO_LARGE, REQUEST_URI_TOO_LONG, UNSUPPORTED_MEDIA_TYPE, REQUESTED_RANGE_NOT_SATISFIABLE, EXPECTATION_FAILED, I_AM_A_TEAPOT, INSUFFICIENT_SPACE_ON_RESOURCE, METHOD_FAILURE, DESTINATION_LOCKED, UNPROCESSABLE_ENTITY, LOCKED, FAILED_DEPENDENCY, UPGRADE_REQUIRED, PRECONDITION_REQUIRED, TOO_MANY_REQUESTS, REQUEST_HEADER_FIELDS_TOO_LARGE, INTERNAL_SERVER_ERROR, NOT_IMPLEMENTED, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT, HTTP_VERSION_NOT_SUPPORTED, VARIANT_ALSO_NEGOTIATES, INSUFFICIENT_STORAGE, LOOP_DETECTED, BANDWIDTH_LIMIT_EXCEEDED, NOT_EXTENDED, NETWORK_AUTHENTICATION_REQUIRED ]</div>            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/asaA54/listeCompteurA54_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/asaA54/listeCompteurA54</span>                        </div>
+
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">headers</span>
+    <span class="json-dict">[
+<span class="json-primitive-type">object</span>        -&gt;
+<span class="json-primitive-type">object</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">body</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statusCode</span>
+<span class="json-primitive-type">string</span><div class="json-primitive-restrictions">one of [ CONTINUE, SWITCHING_PROTOCOLS, PROCESSING, CHECKPOINT, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION, NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTI_STATUS, ALREADY_REPORTED, IM_USED, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND, MOVED_TEMPORARILY, SEE_OTHER, NOT_MODIFIED, USE_PROXY, TEMPORARY_REDIRECT, RESUME_INCOMPLETE, BAD_REQUEST, UNAUTHORIZED, PAYMENT_REQUIRED, FORBIDDEN, NOT_FOUND, METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, PROXY_AUTHENTICATION_REQUIRED, REQUEST_TIMEOUT, CONFLICT, GONE, LENGTH_REQUIRED, PRECONDITION_FAILED, REQUEST_ENTITY_TOO_LARGE, REQUEST_URI_TOO_LONG, UNSUPPORTED_MEDIA_TYPE, REQUESTED_RANGE_NOT_SATISFIABLE, EXPECTATION_FAILED, I_AM_A_TEAPOT, INSUFFICIENT_SPACE_ON_RESOURCE, METHOD_FAILURE, DESTINATION_LOCKED, UNPROCESSABLE_ENTITY, LOCKED, FAILED_DEPENDENCY, UPGRADE_REQUIRED, PRECONDITION_REQUIRED, TOO_MANY_REQUESTS, REQUEST_HEADER_FIELDS_TOO_LARGE, INTERNAL_SERVER_ERROR, NOT_IMPLEMENTED, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT, HTTP_VERSION_NOT_SUPPORTED, VARIANT_ALSO_NEGOTIATES, INSUFFICIENT_STORAGE, LOOP_DETECTED, BANDWIDTH_LIMIT_EXCEEDED, NOT_EXTENDED, NETWORK_AUTHENTICATION_REQUIRED ]</div>            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/demande_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/demandes/demande</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Creation/modification d'une demande : SI idDemande IS NULL ALORS creation SINON modification
+ <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idTypeDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">duree</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDemande</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonModifier</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonSupprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonImprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonAnnuler</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateSaisie</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agentWithServiceDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementCompteur</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/demande_GET_idAgent_idDemande"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/demandes/demande</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Recuperation d une demande
+ <br />
+ ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idTypeDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">duree</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDemande</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonModifier</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonSupprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonImprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonAnnuler</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateSaisie</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agentWithServiceDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementCompteur</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/listeDemandesAgent_GET_idAgent_ongletDemande_from_to_dateDemande_etat_type"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/demandes/listeDemandesAgent</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">ongletDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">string</span></span>&<span class="url-param-key">from</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">to</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">etat</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">type</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des demandes d un agent
+ <br />
+ Parametres en entree : format du type timestamp  : YYYYMMdd
+ <br />
+ ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idTypeDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">duree</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDemande</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonModifier</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonSupprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonImprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonAnnuler</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateSaisie</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agentWithServiceDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementCompteur</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/xml/getDemande_GET_idAgent_idDemande"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/demandes/xml/getDemande</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne une demande au format XML pour le report
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/listeDemandes_GET_idAgent_ongletDemande_from_to_dateDemande_etat_type_idAgentRecherche"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/demandes/listeDemandes</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">ongletDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">string</span></span>&<span class="url-param-key">from</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">to</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">etat</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">type</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idAgentRecherche</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Gestion des demandes
+ <br />
+ Parametres en entree : format du type timestamp  : YYYYMMdd
+ <br />
+ ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idTypeDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">duree</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDemande</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonModifier</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonSupprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonImprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonAnnuler</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateSaisie</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agentWithServiceDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementCompteur</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/changerEtats_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/demandes/changerEtats</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 changer l etat d une demande depuis le kiosque pour le VISA et l'APPROBATION
+ <br />
+ ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateAvis</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/updateToEtatPris_POST_idDemande"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/demandes/updateToEtatPris</span>?<span class="url-param-key">idDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Modifier l etat d une demande pour le PRISE --> utile à SIRH-JOBS
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/deleteDemande_GET_idAgent_idDemande"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/demandes/deleteDemande</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Supprime une demande
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/supprimerDemandeProvisoire_POST_idDemande"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/demandes/supprimerDemandeProvisoire</span>?<span class="url-param-key">idDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Supprime les demandes a l etat Provisoire avec date >= DateDuJour
+ <br />
+ Utile à SIRH-JOBS
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/demandeSIRH_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/demandes/demandeSIRH</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Saisie et modification d une demande d absence depuis SIRH : SI idDemande IS NULL ALORS creation SINON modification
+ <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idTypeDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">duree</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDemande</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonModifier</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonSupprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonImprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonAnnuler</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateSaisie</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agentWithServiceDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementCompteur</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/listeDemandesSIRH_GET_from_to_etat_type_idAgentRecherche"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/demandes/listeDemandesSIRH</span>?<span class="url-param-key">from</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">to</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">etat</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">type</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idAgentRecherche</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des demandes pour SIRH
+ <br />
+ Parametres en entree : format du type timestamp  : YYYYMMdd
+ <br />
+ ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idTypeDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">duree</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDemande</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonModifier</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonSupprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonImprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonAnnuler</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateSaisie</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agentWithServiceDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementCompteur</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/historiqueSIRH_GET_idDemande"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/demandes/historiqueSIRH</span>?<span class="url-param-key">idDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Historique d une demande
+ <br />
+ ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idTypeDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">duree</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDemande</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonModifier</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonSupprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonImprimer</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">affichageBoutonAnnuler</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">modifierApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurVisa</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">isValeurApprobation</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebutPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinAM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFinPM</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateSaisie</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agentWithServiceDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">statut</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">direction</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementCompteur</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/demandes/changerEtatsSIRH_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/demandes/changerEtatsSIRH</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Change l etat d une demande depuis SIRH pour VALIDER ou REJETER 
+ <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateAvis</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/edition/downloadTitreDemande_GET_idAgent_idDemande"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/edition/downloadTitreDemande</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">headers</span>
+    <span class="json-dict">[
+<span class="json-primitive-type">object</span>        -&gt;
+<span class="json-primitive-type">object</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">statusCode</span>
+<span class="json-primitive-type">string</span><div class="json-primitive-restrictions">one of [ CONTINUE, SWITCHING_PROTOCOLS, PROCESSING, CHECKPOINT, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION, NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTI_STATUS, ALREADY_REPORTED, IM_USED, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND, MOVED_TEMPORARILY, SEE_OTHER, NOT_MODIFIED, USE_PROXY, TEMPORARY_REDIRECT, RESUME_INCOMPLETE, BAD_REQUEST, UNAUTHORIZED, PAYMENT_REQUIRED, FORBIDDEN, NOT_FOUND, METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, PROXY_AUTHENTICATION_REQUIRED, REQUEST_TIMEOUT, CONFLICT, GONE, LENGTH_REQUIRED, PRECONDITION_FAILED, REQUEST_ENTITY_TOO_LARGE, REQUEST_URI_TOO_LONG, UNSUPPORTED_MEDIA_TYPE, REQUESTED_RANGE_NOT_SATISFIABLE, EXPECTATION_FAILED, I_AM_A_TEAPOT, INSUFFICIENT_SPACE_ON_RESOURCE, METHOD_FAILURE, DESTINATION_LOCKED, UNPROCESSABLE_ENTITY, LOCKED, FAILED_DEPENDENCY, UPGRADE_REQUIRED, PRECONDITION_REQUIRED, TOO_MANY_REQUESTS, REQUEST_HEADER_FIELDS_TOO_LARGE, INTERNAL_SERVER_ERROR, NOT_IMPLEMENTED, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT, HTTP_VERSION_NOT_SUPPORTED, VARIANT_ALSO_NEGOTIATES, INSUFFICIENT_STORAGE, LOOP_DETECTED, BANDWIDTH_LIMIT_EXCEEDED, NOT_EXTENDED, NETWORK_AUTHENTICATION_REQUIRED ]</div>            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/email/listDestinatairesEmailInfo_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/email/listDestinatairesEmailInfo</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des destinataires pour l envoi d emails d information aux viseurs et approbateurs
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">listViseurs</span>
+    <span class="json-array">[
+<span class="json-primitive-type">int</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">listApprobateurs</span>
+    <span class="json-array">[
+<span class="json-primitive-type">int</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/filtres/getEtats_GET_ongletDemande"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/filtres/getEtats</span>?<span class="url-param-key">ongletDemande</span>=<span class="url-param-expected-type"><span class="json-primitive-type">string</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des etats possibles selon l onglet selectionne
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idRefEtat</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/filtres/getTypes_GET_idAgentConcerne"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/filtres/getTypes</span>?<span class="url-param-key">idAgentConcerne</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des types d absence possibles pour un agent donne
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">groupe</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/filtres/services_GET_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/filtres/services</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des services pour un agent donne
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/filtres/agents_GET_idAgent_codeService"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/filtres/agents</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">codeService</span>=<span class="url-param-expected-type"><span class="json-primitive-type">string</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des agents affectes a un operateur, viseur ou approbateur selon son service
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/filtres/getTypesSaisi_GET_idRefTypeAbsence"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/filtres/getTypesSaisi</span>?<span class="url-param-key">idRefTypeAbsence</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne les types de saisie (champs de saisie, checkbox, etc) d une absence donnee
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">calendarDateDebut</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">calendarHeureDebut</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">chkDateDebut</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">calendarDateFin</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">calendarHeureFin</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">chkDateFin</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">duree</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">pieceJointe</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/motifCompteur/getListeMotifCompteur_GET_idRefType"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/motifCompteur/getListeMotifCompteur</span>?<span class="url-param-key">idRefType</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne la liste des motifs lors de la saisie d un compteur donne
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/motifCompteur/setMotifCompteur_POST"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/motifCompteur/setMotifCompteur</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Saisie/modification d un motif compteur
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/motif/getListeMotif_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/motif/getListeMotif</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne la liste des motifs pour un refus par exemple
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idMotif</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/motif/setMotif_POST"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/motif/setMotif</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Saisie/modification d un motif
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idMotif</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/organisation/addOS_POST"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/organisation/addOS</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Saisie/modification d une organisation syndicale 
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/organisation/listOrganisation_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/organisation/listOrganisation</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des organisations syndicales
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/organisation/listOrganisationActif_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/organisation/listOrganisationActif</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des organisations syndicales actives
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/recuperations/addForPTG_POST_idAgent_dateLundi_minutes"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/recuperations/addForPTG</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateLundi</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">minutes</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Ajoute des minutes au compteur de recuperation a un agent pour une semaine donnee
+ <br />
+ utile a SIRH-PTG-WS
+ <br />
+ Parametres en entree : format du type timestamp  : YYYYMMdd
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents"><span class="json-primitive-type">void</span></div>
+                            </div>
+                    </div>
+                    <a id="/recuperations/addManual_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/recuperations/addManual</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Ajout/retire manuel au compteur de recuperation pour un agent
+ <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeAAjouter</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeARetrancher</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">anneePrecedente</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/reposcomps/addForPTG_POST_idAgent_dateLundi_minutes"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/reposcomps/addForPTG</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateLundi</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">minutes</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Ajoute des minutes au compteur de repos compensateur a un agent pour une semaine donnee
+ <br />
+ utile a SIRH-PTG-WS
+ <br />
+ Parametres en entree : format du type timestamp  : YYYYMMdd
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents"><span class="json-primitive-type">void</span></div>
+                            </div>
+                    </div>
+                    <a id="/reposcomps/addManual_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/reposcomps/addManual</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Ajout/retire manuel au compteur de repos compensateur pour un agent
+ <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeAAjouter</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeARetrancher</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">anneePrecedente</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/reposcomps/resetCompteurAnneePrecedente_GET_idAgentReposCompCount"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/reposcomps/resetCompteurAnneePrecedente</span>?<span class="url-param-key">idAgentReposCompCount</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Remise a zero des compteurs de repos compensateur de l annee precedente
+ <br />
+ utile a SIRH-JOBS le 31/08
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/reposcomps/resetCompteurAnneenCours_GET_idAgentReposCompCount"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/reposcomps/resetCompteurAnneenCours</span>?<span class="url-param-key">idAgentReposCompCount</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Remise a zero des compteurs de repos compensateur de l annee en cours
+ <br />
+ utile a SIRH-JOBS le 31/12
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/reposcomps/getListeCompteurAnneePrecedente_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/reposcomps/getListeCompteurAnneePrecedente</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des compteurs de l annee precedente a remettre a zero
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+<span class="json-primitive-type">int</span>    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/reposcomps/getListeCompteurAnneeEnCours_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/reposcomps/getListeCompteurAnneeEnCours</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des compteurs de l annee en cours a remettre a zero
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+<span class="json-primitive-type">int</span>    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/solde/soldeAgent_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/solde/soldeAgent</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Retourne tous les compteurs d un agent
+ <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">soldeCongeAnnee</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">soldeCongeAnneePrec</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">soldeRecup</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">soldeReposCompAnnee</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">soldeReposCompAnneePrec</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">afficheSoldeConge</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">afficheSoldeRecup</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">afficheSoldeReposComp</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">afficheSoldeAsaA48</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">soldeAsaA48</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">afficheSoldeAsaA54</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">soldeAsaA54</span>
+<span class="json-primitive-type">double</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/solde/historiqueSolde_GET_idAgent_codeRefTypeAbsence"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/solde/historiqueSolde</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">codeRefTypeAbsence</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Historique d un compteur de type absence donne pour un agent
+ <br />
+ ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">dateModifcation</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgentModification</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">textModification</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+    </body>
+</html>
+

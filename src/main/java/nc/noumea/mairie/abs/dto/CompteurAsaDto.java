@@ -2,6 +2,9 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 
@@ -11,8 +14,11 @@ public class CompteurAsaDto {
 
 	private Double nb;
 
+	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonDeserialize(using=JsonDateDeserializer.class)
 	private Date dateDebut;
-
+	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonDeserialize(using=JsonDateDeserializer.class)
 	private Date dateFin;
 
 	public CompteurAsaDto(AgentAsaA48Count arc) {
