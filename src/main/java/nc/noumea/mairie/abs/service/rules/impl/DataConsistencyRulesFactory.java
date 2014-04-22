@@ -25,10 +25,14 @@ public class DataConsistencyRulesFactory {
 	@Autowired
 	@Qualifier("AbsAsaA48DataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl;
-	
-	//Méthode permettant de récupérer les Factory
-	public IAbsenceDataConsistencyRules getFactory(int type){
-		
+
+	@Autowired
+	@Qualifier("AbsAsaA54DataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl;
+
+	// Méthode permettant de récupérer les Factory
+	public IAbsenceDataConsistencyRules getFactory(int type) {
+
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
 			case CONGE_ANNUEL:
 				// TODO
@@ -39,6 +43,8 @@ public class DataConsistencyRulesFactory {
 				return absRecupDataConsistencyRules;
 			case ASA_A48:
 				return absAsaA48DataConsistencyRulesImpl;
+			case ASA_A54:
+				return absAsaA54DataConsistencyRulesImpl;
 			case AUTRES:
 				// TODO
 				break;
