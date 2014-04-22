@@ -302,7 +302,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		if (RefTypeAbsenceEnum.RECUP.getValue() == demandeDto.getIdTypeDemande()
 				|| RefTypeAbsenceEnum.REPOS_COMP.getValue() == demandeDto.getIdTypeDemande()) {
 			return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
-		} else if (RefTypeAbsenceEnum.ASA_A48.getValue() == demandeDto.getIdTypeDemande()) {
+		} else if (RefTypeAbsenceEnum.ASA_A48.getValue() == demandeDto.getIdTypeDemande()
+				|| RefTypeAbsenceEnum.ASA_A54.getValue() == demandeDto.getIdTypeDemande()) {
 			return demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat());
 		} else {
 			return false;
