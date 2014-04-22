@@ -3160,7 +3160,7 @@ public class AbsenceServiceTest {
 	}
 
 	@Test
-	public void getListeDemandesSIRH_return1Liste() {
+	public void getListeDemandesSIRH_return1Liste_WithA48() {
 
 		List<Demande> listdemande = new ArrayList<Demande>();
 		Demande d = new Demande();
@@ -4672,5 +4672,43 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(EtatDemande.class));
+	}
+
+
+	@Test
+	public void getListeDemandesSIRH_return1Liste_WithA54() {
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+		Demande d = new Demande();
+		d.setIdDemande(1);
+		listdemande.add(d);
+
+		List<DemandeDto> listdemandeDto = new ArrayList<DemandeDto>();
+		DemandeDto dto = new DemandeDto();
+		dto.setIdDemande(1);
+		dto.setIdTypeDemande(8);
+		listdemandeDto.add(dto);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.listeDemandesSIRH(null, null, null, null, null)).thenReturn(listdemande);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, null, null)).thenReturn(
+				listdemandeDto);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null);
+
+		assertEquals(1, listResult.size());
+		assertTrue(listResult.get(0).isDepassementCompteur());
+
 	}
 }
