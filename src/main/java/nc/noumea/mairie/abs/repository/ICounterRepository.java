@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
-import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 
 public interface ICounterRepository {
 
@@ -17,8 +16,6 @@ public interface ICounterRepository {
 	void persistEntity(Object entity);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
-
-	AgentReposCompCount getAgentReposCompCountByIdCounter(Integer IdCounter);
 
 	List<Integer> getListAgentReposCompCountForResetAnneePrcd();
 

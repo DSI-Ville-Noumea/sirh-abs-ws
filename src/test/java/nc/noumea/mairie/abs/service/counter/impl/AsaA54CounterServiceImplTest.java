@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
+import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
-import nc.noumea.mairie.abs.domain.BaseAgentCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
@@ -321,7 +321,7 @@ public class AsaA54CounterServiceImplTest {
 		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		assertEquals(1, result.getErrors().size());
-		Mockito.verify(rr, Mockito.times(0)).persistEntity(Mockito.isA(BaseAgentCount.class));
+		Mockito.verify(rr, Mockito.times(0)).persistEntity(Mockito.isA(AgentCount.class));
 	}
 
 	@Test
@@ -359,7 +359,7 @@ public class AsaA54CounterServiceImplTest {
 
 		assertEquals(1, result.getInfos().size());
 		assertEquals("Le solde du compteur de l'agent est négatif.", result.getInfos().get(0));
-		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(BaseAgentCount.class));
+		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentCount.class));
 	}
 
 	@Test
@@ -396,7 +396,7 @@ public class AsaA54CounterServiceImplTest {
 		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		assertEquals(0, result.getErrors().size());
-		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(BaseAgentCount.class));
+		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentCount.class));
 	}
 
 	@Test

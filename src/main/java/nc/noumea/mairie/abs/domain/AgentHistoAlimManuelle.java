@@ -52,6 +52,10 @@ public class AgentHistoAlimManuelle {
 	@Column(name = "TEXT", columnDefinition = "text")
 	private String text;
 
+	@OneToOne(optional = true)
+	@JoinColumn(name = "ID_AGENT_COUNT")
+	private AgentCount compteurAgent;
+
 	@Version
 	@Column(name = "version")
 	private Integer version;
@@ -126,6 +130,14 @@ public class AgentHistoAlimManuelle {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public AgentCount getCompteurAgent() {
+		return compteurAgent;
+	}
+
+	public void setCompteurAgent(AgentCount compteurAgent) {
+		this.compteurAgent = compteurAgent;
 	}
 
 }

@@ -135,41 +135,6 @@ public class CounterRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getAgentReposCompCountByIdCounter_KO() {
-
-		AgentReposCompCount arcc = new AgentReposCompCount();
-		arcc.setIdAgent(9005138);
-		arcc.setLastModification(new Date());
-		absEntityManager.persist(arcc);
-
-		AgentReposCompCount result = repository.getAgentReposCompCountByIdCounter(3);
-
-		assertNull(result);
-
-		absEntityManager.clear();
-		absEntityManager.flush();
-	}
-
-	@Test
-	@Transactional("absTransactionManager")
-	public void getAgentReposCompCountByIdCounter_OK() {
-
-		AgentReposCompCount arcc = new AgentReposCompCount();
-		arcc.setIdAgentReposCompCount(2);
-		arcc.setIdAgent(9005138);
-		arcc.setLastModification(new Date());
-		absEntityManager.persist(arcc);
-
-		AgentReposCompCount result = repository.getAgentReposCompCountByIdCounter(2);
-
-		assertNotNull(result);
-
-		absEntityManager.flush();
-		absEntityManager.clear();
-	}
-
-	@Test
-	@Transactional("absTransactionManager")
 	public void getListAgentReposCompCountForResetAnneePrcd() {
 
 		AgentReposCompCount arcc = new AgentReposCompCount();

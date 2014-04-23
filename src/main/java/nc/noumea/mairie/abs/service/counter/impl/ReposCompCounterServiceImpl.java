@@ -129,13 +129,13 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		return arc.getTotalMinutes();
 	}
 
-	public ReturnMessageDto resetCompteurRCAnneePrecedente(Integer idAgentReposCompCount) {
+	public ReturnMessageDto resetCompteurRCAnneePrecedente(Integer idAgentCount) {
 
-		logger.info("reset CompteurRCAnneePrecedente for idAgentReposCompCount {} ...", idAgentReposCompCount);
+		logger.info("reset CompteurRCAnneePrecedente for idAgentCount {} ...", idAgentCount);
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
-		AgentReposCompCount arc = counterRepository.getAgentReposCompCountByIdCounter(idAgentReposCompCount);
+		AgentReposCompCount arc = counterRepository.getEntity(AgentReposCompCount.class, idAgentCount);
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
@@ -167,13 +167,13 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		return srm;
 	}
 
-	public ReturnMessageDto resetCompteurRCAnneenCours(Integer idAgentReposCompCount) {
+	public ReturnMessageDto resetCompteurRCAnneenCours(Integer idAgentCount) {
 
-		logger.info("reset CompteurRCAnneePrecedente for idAgentReposCompCount {} ...", idAgentReposCompCount);
+		logger.info("reset CompteurRCAnneePrecedente for idAgentCount {} ...", idAgentCount);
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
-		AgentReposCompCount arc = counterRepository.getAgentReposCompCountByIdCounter(idAgentReposCompCount);
+		AgentReposCompCount arc = counterRepository.getEntity(AgentReposCompCount.class, idAgentCount);
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
@@ -342,12 +342,13 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	}
 
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande,
+			DemandeEtatChangeDto demandeEtatChangeDto) {
 
 		logger.info("Trying to update recuperation counters for Agent [{}] ...", demande.getIdAgent());
-		
+
 		int minutes = calculMinutesCompteur(demandeEtatChangeDto, demande);
-		if(0 != minutes) {
+		if (0 != minutes) {
 			try {
 				return majCompteurToAgent((DemandeReposComp) demande, minutes, srm);
 			} catch (InstantiationException | IllegalAccessException e) {

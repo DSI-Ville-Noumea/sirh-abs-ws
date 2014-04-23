@@ -12,7 +12,6 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
-import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 
 import org.springframework.stereotype.Repository;
 
@@ -79,15 +78,10 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public AgentReposCompCount getAgentReposCompCountByIdCounter(Integer IdCounter) {
-		return absEntityManager.find(AgentReposCompCount.class, IdCounter);
-	}
-
-	@Override
 	public List<Integer> getListAgentReposCompCountForResetAnneePrcd() {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("select c.idAgentReposCompCount from AgentReposCompCount c ");
+		sb.append("select c.idAgentCount from AgentReposCompCount c ");
 		sb.append("where c.totalMinutesAnneeN1 <> 0 ");
 
 		TypedQuery<Integer> query = absEntityManager.createQuery(sb.toString(), Integer.class);
@@ -99,7 +93,7 @@ public class CounterRepository implements ICounterRepository {
 	public List<Integer> getListAgentReposCompCountForResetAnneeEnCours() {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("select c.idAgentReposCompCount from AgentReposCompCount c ");
+		sb.append("select c.idAgentCount from AgentReposCompCount c ");
 		sb.append("where c.totalMinutes <> 0 ");
 
 		TypedQuery<Integer> query = absEntityManager.createQuery(sb.toString(), Integer.class);
@@ -117,8 +111,9 @@ public class CounterRepository implements ICounterRepository {
 		cq.select(c);
 		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idAgent");
 		ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateDebut");
-		cq.where(cb.and(cb.equal(c.get("idAgent"), p), cb.between(p2, c.<Date>get("dateDebut"), c.<Date>get("dateFin"))));
-		
+		cq.where(cb.and(cb.equal(c.get("idAgent"), p),
+				cb.between(p2, c.<Date> get("dateDebut"), c.<Date> get("dateFin"))));
+
 		// Build query
 		TypedQuery<T> q = absEntityManager.createQuery(cq);
 		q.setParameter("idAgent", idAgent);

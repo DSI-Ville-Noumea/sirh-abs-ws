@@ -4,10 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,12 +14,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "ABS_AGENT_ASA_A54_COUNT")
 @PersistenceUnit(unitName = "absPersistenceUnit")
-public class AgentAsaA54Count extends BaseAgentCount {
-
-	@Id
-	@Column(name = "ID_AGENT_ASA_A54_COUNT")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idAgentAsaA54Count;
+@PrimaryKeyJoinColumn(name = "ID_AGENT_COUNT")
+public class AgentAsaA54Count extends AgentCount {
 
 	@NotNull
 	@Column(name = "TOTAL_JOURS", columnDefinition = "numeric")
@@ -57,14 +51,6 @@ public class AgentAsaA54Count extends BaseAgentCount {
 
 	public void setDateFin(Date dateFin) {
 		this.dateFin = dateFin;
-	}
-
-	public Integer getIdAgentAsaA54Count() {
-		return idAgentAsaA54Count;
-	}
-
-	public void setIdAgentAsaA54Count(Integer idAgentAsaA54Count) {
-		this.idAgentAsaA54Count = idAgentAsaA54Count;
 	}
 
 }
