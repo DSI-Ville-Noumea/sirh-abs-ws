@@ -13,6 +13,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
@@ -483,24 +484,31 @@ public class SoldeServiceTest {
 
 	@Test
 	public void getHistoriqueSoldeAgentByTypeAbsence_returnEmptyListe() {
+		AgentCount compteurAgent = new AgentCount();
+		compteurAgent.setIdAgentCount(1);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListHistoByRefTypeAbsenceAndAgent(9005138, 7)).thenReturn(
+		Mockito.when(counterRepository.getListHisto(9005138, compteurAgent)).thenReturn(
 				new ArrayList<AgentHistoAlimManuelle>());
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgentByTypeAbsence(9005138, 7);
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 7, new Date());
 
 		assertEquals(0, listResult.size());
 	}
 
 	@Test
-	public void getHistoriqueSoldeAgentByTypeAbsence_return1Liste() {
+	public void getHistoriqueSoldeAgent_return1Liste() {
 		// Given
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(7);
+		AgentAsaA48Count compteurAgent = new AgentAsaA48Count();
+		compteurAgent.setIdAgentCount(1);
+		compteurAgent.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		compteurAgent.setDateFin(new DateTime(2014, 1, 31, 0, 0, 0).toDate());
 		MotifCompteur motifCompteur = new MotifCompteur();
 		motifCompteur.setLibelle("lib motif");
 		motifCompteur.setRefTypeAbsence(type);
@@ -510,16 +518,21 @@ public class SoldeServiceTest {
 		e.setType(type);
 		e.setText("texte test");
 		e.setMotifCompteur(motifCompteur);
+		e.setCompteurAgent(compteurAgent);
 		List<AgentHistoAlimManuelle> list = new ArrayList<AgentHistoAlimManuelle>();
 		list.add(e);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListHistoByRefTypeAbsenceAndAgent(9005138, 7)).thenReturn(list);
+		Mockito.when(counterRepository.getListHisto(9005138, compteurAgent)).thenReturn(list);
+		Mockito.when(
+				counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, new DateTime(2014, 1, 24, 0,
+						0, 0).toDate())).thenReturn(compteurAgent);
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgentByTypeAbsence(9005138, 7);
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 7, new DateTime(2014, 1, 24, 0,
+				0, 0).toDate());
 
 		assertEquals(1, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());

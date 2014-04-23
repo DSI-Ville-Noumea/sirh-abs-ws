@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
@@ -47,6 +48,9 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -247,6 +251,9 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -284,38 +291,54 @@ public class CounterRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getListHistoByRefTypeAbsence_ReturnEmptyList() {
-
+	public void getListHisto_ReturnEmptyList() {
+		AgentCount count = new AgentCount();
+		count.setIdAgentCount(1);
 		// When
-		List<AgentHistoAlimManuelle> result = repository.getListHistoByRefTypeAbsenceAndAgent(9005138, 1);
+		List<AgentHistoAlimManuelle> result = repository.getListHisto(9005138, count);
 
 		// Then
 		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getListHistoByRefTypeAbsence_ReturnListCompteur() {
+	public void getListHisto_ReturnListCompteur() {
 
 		// Given
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(7);
 		absEntityManager.persist(type);
+
+		AgentAsaA48Count count = new AgentAsaA48Count();
+		count.setTotalJours(10.0);
+		count.setIdAgent(9005138);
+		count.setDateDebut(new Date());
+		count.setDateFin(new Date());
+		count.setLastModification(new Date());
+		absEntityManager.persist(count);
+
 		AgentHistoAlimManuelle record = new AgentHistoAlimManuelle();
 		record.setIdAgent(9005138);
 		record.setIdAgentConcerne(9001767);
 		record.setText("1er text");
 		record.setType(type);
+		record.setCompteurAgent(count);
 		absEntityManager.persist(record);
+
 		AgentHistoAlimManuelle record2 = new AgentHistoAlimManuelle();
 		record2.setIdAgent(9005138);
 		record2.setIdAgentConcerne(9001768);
 		record2.setText("2eme text");
 		record2.setType(type);
+		record2.setCompteurAgent(count);
 		absEntityManager.persist(record2);
 
 		// When
-		List<AgentHistoAlimManuelle> result = repository.getListHistoByRefTypeAbsenceAndAgent(9001767, 7);
+		List<AgentHistoAlimManuelle> result = repository.getListHisto(9001767, count);
 
 		// Then
 		assertNotNull(result);
@@ -382,6 +405,9 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -473,6 +499,9 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test

@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.repository;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 
 public interface ICounterRepository {
@@ -23,5 +24,5 @@ public interface ICounterRepository {
 
 	<T> List<T> getListCounter(Class<T> T);
 
-	List<AgentHistoAlimManuelle> getListHistoByRefTypeAbsenceAndAgent(Integer idAgent, Integer codeRefTypeAbsence);
+	List<AgentHistoAlimManuelle> getListHisto(Integer idAgent, AgentCount compteurAgent);
 }

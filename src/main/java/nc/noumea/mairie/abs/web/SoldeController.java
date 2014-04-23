@@ -36,8 +36,7 @@ public class SoldeController {
 	private ISirhService sirhService;
 
 	/**
-	 * Retourne tous les compteurs d un agent
-	 * <br />
+	 * Retourne tous les compteurs d un agent <br />
 	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
@@ -57,15 +56,16 @@ public class SoldeController {
 	}
 
 	/**
-	 * Historique d un compteur de type absence donne pour un agent
-	 * <br />
+	 * Historique d un compteur de type absence donne pour un agent <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
 	@RequestMapping(value = "historiqueSolde", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public List<HistoriqueSoldeDto> getHistoriqueSolde(@RequestParam(value = "idAgent", required = true) Integer idAgent,
-			@RequestParam(value = "codeRefTypeAbsence", required = true) Integer codeRefTypeAbsence) {
+	public List<HistoriqueSoldeDto> getHistoriqueSolde(
+			@RequestParam(value = "idAgent", required = true) Integer idAgent,
+			@RequestParam(value = "codeRefTypeAbsence", required = true) Integer codeRefTypeAbsence,
+			@RequestBody(required = true) FiltreSoldeDto filtreSoldeDto) {
 
 		logger.debug(
 				"entered GET [solde/historiqueSolde] => getHistoriqueSolde with parameter codeRefTypeAbsence = {}",
@@ -73,8 +73,8 @@ public class SoldeController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<HistoriqueSoldeDto> result = soldeService.getHistoriqueSoldeAgentByTypeAbsence(convertedIdAgent,
-				codeRefTypeAbsence);
+		List<HistoriqueSoldeDto> result = soldeService.getHistoriqueSoldeAgent(convertedIdAgent, codeRefTypeAbsence,
+				filtreSoldeDto.getDateDebut());
 
 		return result;
 	}

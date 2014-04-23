@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
+import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 
 import org.springframework.stereotype.Repository;
@@ -146,12 +147,12 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public List<AgentHistoAlimManuelle> getListHistoByRefTypeAbsenceAndAgent(Integer idAgent, Integer codeRefTypeAbsence) {
+	public List<AgentHistoAlimManuelle> getListHisto(Integer idAgent, AgentCount compteurAgent) {
 		TypedQuery<AgentHistoAlimManuelle> q = absEntityManager
 				.createQuery(
-						"from AgentHistoAlimManuelle h where h.type.idRefTypeAbsence = :codeRefTypeAbsence and h.idAgentConcerne = :idAgent order by h.dateModification desc ",
+						"from AgentHistoAlimManuelle h where h.compteurAgent.idAgentCount = :idAgentCount and h.idAgentConcerne = :idAgent order by h.dateModification desc ",
 						AgentHistoAlimManuelle.class);
-		q.setParameter("codeRefTypeAbsence", codeRefTypeAbsence);
+		q.setParameter("idAgentCount", compteurAgent.getIdAgentCount());
 		q.setParameter("idAgent", idAgent);
 
 		return q.getResultList();
