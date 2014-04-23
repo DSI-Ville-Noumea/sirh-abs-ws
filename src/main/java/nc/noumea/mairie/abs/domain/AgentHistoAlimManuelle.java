@@ -52,6 +52,7 @@ public class AgentHistoAlimManuelle {
 	@Column(name = "TEXT", columnDefinition = "text")
 	private String text;
 
+	@NotNull
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_AGENT_COUNT")
 	private AgentCount compteurAgent;

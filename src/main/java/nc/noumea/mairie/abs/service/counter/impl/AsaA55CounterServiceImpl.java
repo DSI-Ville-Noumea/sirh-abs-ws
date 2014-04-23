@@ -113,6 +113,7 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
 		}
 		histo.setText(textLog);
+		histo.setCompteurAgent(arc);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(idRefTypeAbsence);

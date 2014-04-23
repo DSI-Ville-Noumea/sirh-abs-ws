@@ -119,6 +119,7 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(idRefTypeAbsence);
 		histo.setType(rta);
+		histo.setCompteurAgent(arc);
 
 		arc.setTotalJours(nbJours);
 		arc.setDateDebut(compteurDto.getDateDebut());

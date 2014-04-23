@@ -154,6 +154,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		histo.setMotifTechnique(RESET_COMPTEUR_ANNEE_PRECEDENTE);
 		String textLog = "Retrait de " + (0 - arc.getTotalMinutesAnneeN1()) + " minutes sur l'année précédente.";
 		histo.setText(textLog);
+		histo.setCompteurAgent(arc);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
@@ -190,6 +191,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		String textLog = "Retrait de " + (0 - arc.getTotalMinutes()) + " minutes sur l'année.";
 
 		histo.setText(textLog);
+		histo.setCompteurAgent(arc);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
@@ -322,6 +324,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 			}
 		}
 		histo.setText(textLog);
+		histo.setCompteurAgent(arc);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(idRefTypeAbsence);

@@ -115,6 +115,7 @@ public class AsaA54CounterServiceImpl extends AbstractCounterService {
 			textLog = "Mise en place de " + nbJours + " jours pour l'année " + annee + ".";
 		}
 		histo.setText(textLog);
+		histo.setCompteurAgent(arc);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(idRefTypeAbsence);

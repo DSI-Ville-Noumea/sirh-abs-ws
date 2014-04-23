@@ -257,6 +257,7 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 			textLog = "Retrait de " + minutes + " minutes.";
 		}
 		histo.setText(textLog);
+		histo.setCompteurAgent(arc);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(idRefTypeAbsence);

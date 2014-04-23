@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 public class AgentAsaA55Count extends AgentCount {
 
 	@NotNull
-	@Column(name = "TOTAL_HEURE", columnDefinition = "numeric")
+	@Column(name = "TOTAL_HEURES", columnDefinition = "numeric")
 	private Double totalHeures;
 
 	@Column(name = "DATE_DEBUT")
