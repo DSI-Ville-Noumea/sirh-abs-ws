@@ -35,6 +35,8 @@ public class DemandeDto {
 	private Double duree;
 
 	private Integer idRefEtat;
+	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonDeserialize(using=JsonDateDeserializer.class)
 	private Date dateSaisie;
 	private String motif;
 
