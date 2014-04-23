@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
@@ -409,7 +410,7 @@ public class CounterRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getListCounterA48_ReturnEmptyList() {
+	public void getListCounterA54_ReturnEmptyList() {
 
 		// When
 		List<AgentAsaA54Count> result = repository.getListCounter(AgentAsaA54Count.class);
@@ -445,6 +446,97 @@ public class CounterRepositoryTest {
 		assertEquals(record.getTotalJours(), result.get(0).getTotalJours());
 		assertEquals(record.getIdAgent(), result.get(0).getIdAgent());
 		assertEquals(record2.getTotalJours(), result.get(1).getTotalJours());
+		assertEquals(record2.getIdAgent(), result.get(1).getIdAgent());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getAgentCounterA55ByDate_NoAgent_ReturnNull() {
+
+		// Given
+		AgentAsaA55Count record = new AgentAsaA55Count();
+		record.setIdAgent(9008767);
+		record.setTotalHeures(7.0);
+		record.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		record.setDateFin(new DateTime(2013, 1, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record);
+
+		// When
+		AgentAsaA55Count result = repository.getAgentCounterByDate(AgentAsaA55Count.class, 9008767, new DateTime(2014,
+				1, 1, 0, 0, 0).toDate());
+
+		// Then
+		assertNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getAgentCounterA55ByDate_1Agent_ReturnRecord() {
+
+		// Given
+		AgentAsaA55Count record = new AgentAsaA55Count();
+		record.setIdAgent(9008767);
+		record.setTotalHeures(7.0);
+		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		record.setDateFin(new DateTime(2014, 12, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record);
+
+		// When
+		AgentAsaA55Count result = repository.getAgentCounterByDate(AgentAsaA55Count.class, 9008767, new DateTime(2014,
+				1, 1, 0, 0, 0).toDate());
+
+		// Then
+		assertNotNull(result);
+		assertEquals(result, record);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListCounterA55_ReturnEmptyList() {
+
+		// When
+		List<AgentAsaA55Count> result = repository.getListCounter(AgentAsaA55Count.class);
+
+		// Then
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListCounterA55_ReturnListCompteur() {
+
+		// Given
+		AgentAsaA55Count record = new AgentAsaA55Count();
+		record.setIdAgent(9001767);
+		record.setTotalHeures(7.0);
+		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		record.setDateFin(new DateTime(2014, 1, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record);
+		AgentAsaA55Count record2 = new AgentAsaA55Count();
+		record2.setIdAgent(9005138);
+		record2.setTotalHeures(10.0);
+		record2.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
+		record2.setDateFin(new DateTime(2014, 3, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record2);
+
+		// When
+		List<AgentAsaA55Count> result = repository.getListCounter(AgentAsaA55Count.class);
+
+		// Then
+		assertNotNull(result);
+		assertEquals(2, result.size());
+		assertEquals(record.getTotalHeures(), result.get(0).getTotalHeures());
+		assertEquals(record.getIdAgent(), result.get(0).getIdAgent());
+		assertEquals(record2.getTotalHeures(), result.get(1).getTotalHeures());
 		assertEquals(record2.getIdAgent(), result.get(1).getIdAgent());
 
 		absEntityManager.flush();

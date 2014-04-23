@@ -6,6 +6,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
@@ -64,17 +65,23 @@ public class SoldeService implements ISoldeService {
 		dto.setSoldeReposCompAnnee((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutes()));
 		dto.setSoldeReposCompAnneePrec((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutesAnneeN1()));
 
-		// on traite les ASA A48 pour l'année en parametre
+		// on traite les ASA A48 pour la date en parametre
 		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, idAgent,
 				dateDebutDemande);
 		dto.setAfficheSoldeAsaA48(soldeAsaA48 == null ? false : true);
 		dto.setSoldeAsaA48(soldeAsaA48 == null ? 0 : soldeAsaA48.getTotalJours());
 
-		// on traite les ASA A54 pour l'année en parametre
+		// on traite les ASA A54 pour la date en parametre
 		AgentAsaA54Count soldeAsaA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, idAgent,
 				dateDebutDemande);
 		dto.setAfficheSoldeAsaA54(soldeAsaA54 == null ? false : true);
 		dto.setSoldeAsaA54(soldeAsaA54 == null ? 0 : soldeAsaA54.getTotalJours());
+
+		// on traite les ASA A55 pour la date en parametre
+		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, idAgent,
+				dateDebutDemande);
+		dto.setAfficheSoldeAsaA55(soldeAsaA55 == null ? false : true);
+		dto.setSoldeAsaA55(soldeAsaA55 == null ? 0 : soldeAsaA55.getTotalHeures());
 
 		return dto;
 	}

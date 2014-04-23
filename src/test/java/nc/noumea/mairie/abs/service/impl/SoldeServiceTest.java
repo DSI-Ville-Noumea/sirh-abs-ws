@@ -12,6 +12,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
@@ -51,6 +52,9 @@ public class SoldeServiceTest {
 		Mockito.when(
 				cr.getAgentCounterByDate(AgentAsaA54Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(null);
+		Mockito.when(
+				cr.getAgentCounterByDate(AgentAsaA55Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate()))
+				.thenReturn(null);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(null);
@@ -81,11 +85,13 @@ public class SoldeServiceTest {
 		assertEquals("0.0", dto.getSoldeReposCompAnneePrec().toString());
 		assertEquals("0.0", dto.getSoldeAsaA48().toString());
 		assertEquals("0.0", dto.getSoldeAsaA54().toString());
+		assertEquals("0.0", dto.getSoldeAsaA55().toString());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA48());
 		assertFalse(dto.isAfficheSoldeAsaA54());
+		assertFalse(dto.isAfficheSoldeAsaA55());
 	}
 
 	@Test
@@ -117,6 +123,12 @@ public class SoldeServiceTest {
 		arc54.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arc54.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
 
+		AgentAsaA55Count arc55 = new AgentAsaA55Count();
+		arc55.setIdAgent(idAgent);
+		arc55.setTotalHeures(12.0);
+		arc55.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		arc55.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
+
 		SpSold solde = new SpSold();
 		solde.setNomatr(8765);
 		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
@@ -131,6 +143,9 @@ public class SoldeServiceTest {
 		Mockito.when(
 				cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(arc54);
+		Mockito.when(
+				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
+				.thenReturn(arc55);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
@@ -164,11 +179,13 @@ public class SoldeServiceTest {
 		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
 		assertEquals(12, dto.getSoldeAsaA48().intValue());
 		assertEquals(12, dto.getSoldeAsaA54().intValue());
+		assertEquals(12, dto.getSoldeAsaA55().intValue());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
 		assertTrue(dto.isAfficheSoldeAsaA48());
 		assertTrue(dto.isAfficheSoldeAsaA54());
+		assertTrue(dto.isAfficheSoldeAsaA55());
 	}
 
 	@Test
@@ -200,6 +217,12 @@ public class SoldeServiceTest {
 		arcc54.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arcc54.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
 
+		AgentAsaA55Count arcc55 = new AgentAsaA55Count();
+		arcc55.setIdAgent(idAgent);
+		arcc55.setTotalHeures(12.0);
+		arcc55.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		arcc55.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
+
 		SpSold solde = new SpSold();
 		solde.setNomatr(8765);
 		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
@@ -214,6 +237,9 @@ public class SoldeServiceTest {
 		Mockito.when(
 				cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(arcc54);
+		Mockito.when(
+				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
+				.thenReturn(arcc55);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
@@ -245,11 +271,13 @@ public class SoldeServiceTest {
 		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
 		assertEquals(0, dto.getSoldeAsaA48().intValue());
 		assertEquals(0, dto.getSoldeAsaA54().intValue());
+		assertEquals(0, dto.getSoldeAsaA55().intValue());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA48());
 		assertFalse(dto.isAfficheSoldeAsaA54());
+		assertFalse(dto.isAfficheSoldeAsaA55());
 	}
 
 	@Test
@@ -384,6 +412,73 @@ public class SoldeServiceTest {
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertFalse(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA54());
+	}
+
+	@Test
+	public void getAgentSolde_AgentExists_NoAsaA55() {
+
+		// Given
+		Integer idAgent = 9008765;
+		double cotaSoldeAnnee = 62.0;
+		double cotaSoldeAnneePrec = 25.5;
+		ReturnMessageDto srm = new ReturnMessageDto();
+		srm.getErrors().add("erreur");
+
+		AgentRecupCount arc = new AgentRecupCount();
+		arc.setIdAgent(idAgent);
+		arc.setTotalMinutes(72);
+
+		AgentReposCompCount arcc = new AgentReposCompCount();
+		arcc.setIdAgent(idAgent);
+		arcc.setTotalMinutes(12);
+		arcc.setTotalMinutesAnneeN1(10);
+
+		SpSold solde = new SpSold();
+		solde.setNomatr(8765);
+		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
+		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+
+		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
+		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+		Mockito.when(
+				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
+				.thenReturn(null);
+
+		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
+
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
+				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				result.getErrors()
+						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
+				return result;
+			}
+		}).when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+
+		SoldeService service = new SoldeService();
+		ReflectionTestUtils.setField(service, "counterRepository", cr);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+
+		// When
+		SoldeDto dto = service.getAgentSolde(idAgent, null);
+
+		assertEquals("72.0", dto.getSoldeRecup().toString());
+		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
+		assertEquals("25.5", dto.getSoldeCongeAnneePrec().toString());
+		assertEquals("12.0", dto.getSoldeReposCompAnnee().toString());
+		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
+		assertEquals(0, dto.getSoldeAsaA55().intValue());
+		assertTrue(dto.isAfficheSoldeConge());
+		assertTrue(dto.isAfficheSoldeRecup());
+		assertFalse(dto.isAfficheSoldeReposComp());
+		assertFalse(dto.isAfficheSoldeAsaA55());
 	}
 
 	@Test

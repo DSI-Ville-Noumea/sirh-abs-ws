@@ -1,9 +1,8 @@
 package nc.noumea.mairie.abs.dto;
 
 import nc.noumea.mairie.sirh.domain.Agent;
-import flexjson.JSONDeserializer;
 
-public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJSONDeserialize<AgentWithServiceDto> {
+public class AgentWithServiceDto extends AgentDto {
 
 	private String service;
 	private String codeService;
@@ -40,17 +39,6 @@ public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJS
 
 	public void setStatut(String statut) {
 		this.statut = statut;
-	}
-
-	@Override
-	public String serializeInJSON() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public AgentWithServiceDto deserializeFromJSON(String json) {
-		return new JSONDeserializer<AgentWithServiceDto>().deserializeInto(json, this);
 	}
 
 	public String getDirection() {

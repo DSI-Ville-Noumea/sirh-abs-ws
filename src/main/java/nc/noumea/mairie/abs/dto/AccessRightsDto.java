@@ -1,8 +1,6 @@
 package nc.noumea.mairie.abs.dto;
 
-import flexjson.JSONSerializer;
-
-public class AccessRightsDto implements IJSONSerialize {
+public class AccessRightsDto {
 
 	private boolean saisie;
 	private boolean modification;
@@ -16,11 +14,6 @@ public class AccessRightsDto implements IJSONSerialize {
 	private boolean visuSolde;
 	private boolean majSolde;
 	private boolean droitAcces;
-
-	@Override
-	public String serializeInJSON() {
-		return new JSONSerializer().exclude("*.class").serialize(this);
-	}
 
 	public boolean isSaisie() {
 		return saisie;
