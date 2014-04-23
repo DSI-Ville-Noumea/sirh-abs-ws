@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -106,9 +107,10 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 		histo.setDateModification(helperService.getCurrentDate());
 		histo.setMotifCompteur(motifCompteur);
 		String textLog = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Mise en place de " + nbHeures + " heures pour la période du " + compteurDto.getDateDebut()
-					+ " au " + compteurDto.getDateFin() + ".";
+			textLog = "Mise en place de " + nbHeures + " heures pour la période du "
+					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
 		}
 		histo.setText(textLog);
 
