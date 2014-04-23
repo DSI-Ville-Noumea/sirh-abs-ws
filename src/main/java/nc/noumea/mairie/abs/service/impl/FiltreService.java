@@ -58,14 +58,24 @@ public class FiltreService implements IFiltreService {
 		}
 
 		for (RefTypeAbsence type : refTypeAbs) {
-			if (null == carr
-					|| carr.getCdcate() == 4
-					|| carr.getCdcate() == 7
-					|| !RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type.getIdRefTypeAbsence()).equals(
-							RefTypeAbsenceEnum.REPOS_COMP)) {
+			if (null != carr) {
+				boolean ajout = true;
+				if (carr.getCdcate() == 4 || carr.getCdcate() == 7) {
+					if (type.getIdRefTypeAbsence() == RefTypeAbsenceEnum.ASA_A55.getValue()) {
+						// si contractuel ou convention
+						ajout = false;
+					}
 
-				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
-				res.add(dto);
+				} else {
+					// si fonctionanire
+					if (type.getIdRefTypeAbsence() == RefTypeAbsenceEnum.REPOS_COMP.getValue()) {
+						ajout = false;
+					}
+				}
+				if (ajout) {
+					RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
+					res.add(dto);
+				}
 			}
 		}
 		return res;

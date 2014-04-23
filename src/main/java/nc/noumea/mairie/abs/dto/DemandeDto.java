@@ -114,6 +114,9 @@ public class DemandeDto {
 				this.isDateFinAM = ((DemandeAsa) d).isDateFinAM();
 				this.isDateFinPM = ((DemandeAsa) d).isDateFinPM();
 				break;
+			case ASA_A55:
+				this.duree = ((DemandeAsa) d).getDuree();
+				break;
 			case AUTRES:
 				// TODO
 				break;

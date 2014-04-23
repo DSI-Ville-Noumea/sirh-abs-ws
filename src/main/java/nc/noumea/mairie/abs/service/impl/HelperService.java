@@ -28,9 +28,10 @@ public class HelperService {
 	private static int SECONDS_DEBUT = 0;
 	private static int SECONDS_FIN = 59;
 	private static int MILLISECONDS = 0;
-	
+
 	private final static long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
-	
+	private final static long MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
+
 	public Date getCurrentDate() {
 		return new Date();
 	}
@@ -52,70 +53,64 @@ public class HelperService {
 		return null;
 	}
 
-	public Date getDateFin(
-RefTypeSaisi typeSaisi, Date dateFin, Date dateDeb, Double duree, 
-			boolean dateFinAM, boolean dateFinPM) {
-		
-		if(typeSaisi.isCalendarDateFin() && typeSaisi.isCalendarHeureFin()
-				&& !typeSaisi.isChkDateFin()) {
+	public Date getDateFin(RefTypeSaisi typeSaisi, Date dateFin, Date dateDeb, Double duree, boolean dateFinAM,
+			boolean dateFinPM) {
+
+		if (typeSaisi.isCalendarDateFin() && typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin()) {
 			return dateFin;
 		}
-		if(typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin()
-				&& typeSaisi.isChkDateFin()) {
-			
-			if(dateFinAM && !dateFinPM) {
+		if (typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() && typeSaisi.isChkDateFin()) {
+
+			if (dateFinAM && !dateFinPM) {
 				Calendar cal = Calendar.getInstance();
-					cal.setTime(dateFin);
-					cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_AM);
-					cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
-					cal.set(Calendar.SECOND, SECONDS_FIN);
-					cal.set(Calendar.MILLISECOND, MILLISECONDS);
+				cal.setTime(dateFin);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_AM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+				cal.set(Calendar.SECOND, SECONDS_FIN);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
 			}
-			if(dateFinPM) {
+			if (dateFinPM) {
 				Calendar cal = Calendar.getInstance();
-					cal.setTime(dateFin);
-					cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
-					cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
-					cal.set(Calendar.SECOND, SECONDS_FIN);
-					cal.set(Calendar.MILLISECOND, MILLISECONDS);
+				cal.setTime(dateFin);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+				cal.set(Calendar.SECOND, SECONDS_FIN);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
 			}
 		}
-		if(!typeSaisi.isCalendarDateFin() &&  typeSaisi.isDuree()) {
+		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
 			DateTime recupDateFin = new DateTime(dateDeb);
 			return recupDateFin.plusMinutes(duree.intValue()).toDate();
 		}
 
 		return null;
 	}
-	
-	public Date getDateDebut(
-			RefTypeSaisi typeSaisi, Date dateDeb, boolean dateDebutAM, boolean dateDebutPM) {
-		
-		if(typeSaisi.isCalendarDateDebut() && typeSaisi.isCalendarHeureDebut()
-				&& !typeSaisi.isChkDateDebut()) {
+
+	public Date getDateDebut(RefTypeSaisi typeSaisi, Date dateDeb, boolean dateDebutAM, boolean dateDebutPM) {
+
+		if (typeSaisi.isCalendarDateDebut() && typeSaisi.isCalendarHeureDebut() && !typeSaisi.isChkDateDebut()) {
 			return dateDeb;
 		}
-		if(typeSaisi.isCalendarDateDebut() && !typeSaisi.isCalendarHeureDebut()
-				&& typeSaisi.isChkDateDebut()) {
-			
-			if(dateDebutAM && !dateDebutPM) {
+		if (typeSaisi.isCalendarDateDebut() && !typeSaisi.isCalendarHeureDebut() && typeSaisi.isChkDateDebut()) {
+
+			if (dateDebutAM && !dateDebutPM) {
 				Calendar cal = Calendar.getInstance();
-					cal.setTime(dateDeb);
-					cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_AM);
-					cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
-					cal.set(Calendar.SECOND, SECONDS_DEBUT);
-					cal.set(Calendar.MILLISECOND, MILLISECONDS);
+				cal.setTime(dateDeb);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_AM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
+				cal.set(Calendar.SECOND, SECONDS_DEBUT);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
 			}
-			if(dateDebutPM) {
+			if (dateDebutPM) {
 				Calendar cal = Calendar.getInstance();
-					cal.setTime(dateDeb);
-					cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_PM);
-					cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
-					cal.set(Calendar.SECOND, SECONDS_DEBUT);
-					cal.set(Calendar.MILLISECOND, MILLISECONDS);
+				cal.setTime(dateDeb);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_PM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
+				cal.set(Calendar.SECOND, SECONDS_DEBUT);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
 			}
 		}
@@ -150,13 +145,22 @@ RefTypeSaisi typeSaisi, Date dateFin, Date dateDeb, Double duree,
 		}
 		return minutes;
 	}
-	
+
 	public double calculNombreJoursArrondiDemiJournee(Date dateDebut, Date dateFin) {
-		
+
 		double diff = dateFin.getTime() - dateDebut.getTime();
 		// calcul nombre jour
 		double nbrJour = diff / MILLISECONDS_PER_DAY;
 		// arrondi a 0.5
-		return ((double)Math.round(nbrJour * 2) / 2);
+		return ((double) Math.round(nbrJour * 2) / 2);
+	}
+
+	public double calculNombreHeures(Date dateDebut, Date dateFin) {
+
+		double diff = dateFin.getTime() - dateDebut.getTime();
+		// calcul nombre heures
+		double nbrHeure = diff / MILLISECONDS_PER_HOUR;
+		// arrondi a 0.5
+		return ((double) Math.round(nbrHeure * 2) / 2);
 	}
 }

@@ -29,6 +29,7 @@
       	<class>nc.noumea.mairie.abs.domain.RefTypeSaisi</class>
       	<class>nc.noumea.mairie.abs.domain.DemandeAsa</class>
        <class>nc.noumea.mairie.abs.domain.AgentAsaA54Count</class>
+       <class>nc.noumea.mairie.abs.domain.AgentAsaA55Count</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
