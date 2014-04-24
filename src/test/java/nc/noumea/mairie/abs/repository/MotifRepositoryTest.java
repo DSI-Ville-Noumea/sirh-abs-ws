@@ -99,4 +99,46 @@ public class MotifRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeMotifCompteur_NoType() {
+		// Given
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setIdRefTypeAbsence(3);
+		typeRecup.setLabel("Récupération");
+		absEntityManager.persist(typeRecup);
+
+		RefTypeAbsence typeConge = new RefTypeAbsence();
+		typeConge.setIdRefTypeAbsence(1);
+		typeConge.setLabel("Congé annuel");
+		absEntityManager.persist(typeConge);
+
+		MotifCompteur refus1 = new MotifCompteur();
+		refus1.setLibelle("motif1 compteur recup");
+		refus1.setRefTypeAbsence(typeRecup);
+		absEntityManager.persist(refus1);
+
+		MotifCompteur refus2 = new MotifCompteur();
+		refus2.setLibelle("motif2 compteur congé");
+		refus2.setRefTypeAbsence(typeConge);
+		absEntityManager.persist(refus2);
+
+		MotifCompteur refus3 = new MotifCompteur();
+		refus3.setLibelle("motif3 compteur recup");
+		refus3.setRefTypeAbsence(typeRecup);
+		absEntityManager.persist(refus3);
+
+		// When
+		List<MotifCompteur> result = repository.getListeMotifCompteur(null);
+
+		// Then
+		assertEquals(3, result.size());
+		assertEquals(refus1.getLibelle(), result.get(0).getLibelle());
+		assertEquals(refus2.getLibelle(), result.get(1).getLibelle());
+		assertEquals(refus3.getLibelle(), result.get(2).getLibelle());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 }

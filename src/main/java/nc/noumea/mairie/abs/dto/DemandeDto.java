@@ -19,24 +19,24 @@ public class DemandeDto {
 
 	private Integer idDemande;
 	private Integer idTypeDemande;
-	@JsonSerialize(using=JsonDateSerializer.class)
-	@JsonDeserialize(using=JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateDemande;
-	@JsonSerialize(using=JsonDateSerializer.class)
-	@JsonDeserialize(using=JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateDebut;
 	private boolean isDateDebutAM;
 	private boolean isDateDebutPM;
-	@JsonSerialize(using=JsonDateSerializer.class)
-	@JsonDeserialize(using=JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateFin;
 	private boolean isDateFinAM;
 	private boolean isDateFinPM;
 	private Double duree;
 
 	private Integer idRefEtat;
-	@JsonSerialize(using=JsonDateSerializer.class)
-	@JsonDeserialize(using=JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateSaisie;
 	private String motif;
 
@@ -110,14 +110,12 @@ public class DemandeDto {
 				break;
 			case ASA_A48:
 			case ASA_A54:
+			case ASA_A55:
 				this.duree = ((DemandeAsa) d).getDuree();
 				this.isDateDebutAM = ((DemandeAsa) d).isDateDebutAM();
 				this.isDateDebutPM = ((DemandeAsa) d).isDateDebutPM();
 				this.isDateFinAM = ((DemandeAsa) d).isDateFinAM();
 				this.isDateFinPM = ((DemandeAsa) d).isDateFinPM();
-				break;
-			case ASA_A55:
-				this.duree = ((DemandeAsa) d).getDuree();
 				break;
 			case AUTRES:
 				// TODO
