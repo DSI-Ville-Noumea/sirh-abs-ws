@@ -22,6 +22,7 @@ import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.NotAMondayException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("ReposCompCounterServiceImpl")
 public class ReposCompCounterServiceImpl extends AbstractCounterService {
@@ -32,6 +33,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	 * pointages
 	 */
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes) {
 
 		logger.info("Trying to update repos compensateurs counters for Agent [{}] and date [{}] with {} minutes...",
@@ -129,6 +131,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		return arc.getTotalMinutes();
 	}
 
+	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto resetCompteurRCAnneePrecedente(Integer idAgentCount) {
 
 		logger.info("reset CompteurRCAnneePrecedente for idAgentCount {} ...", idAgentCount);
@@ -168,6 +172,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		return srm;
 	}
 
+	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto resetCompteurRCAnneenCours(Integer idAgentCount) {
 
 		logger.info("reset CompteurRCAnneePrecedente for idAgentCount {} ...", idAgentCount);
@@ -206,10 +212,14 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		return srm;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
 	public List<Integer> getListAgentReposCompCountForResetAnneePrcd() {
 		return counterRepository.getListAgentReposCompCountForResetAnneePrcd();
 	}
 
+	@Override
+	@Transactional(readOnly = true)
 	public List<Integer> getListAgentReposCompCountForResetAnneeEnCours() {
 		return counterRepository.getListAgentReposCompCountForResetAnneeEnCours();
 	}
@@ -219,6 +229,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	 * mise a jour
 	 */
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto) {
 
 		logger.info("Trying to update Repos Compensateur manually counters for Agent {} ...", compteurDto.getIdAgent());

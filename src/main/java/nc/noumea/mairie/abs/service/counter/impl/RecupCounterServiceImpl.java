@@ -17,11 +17,13 @@ import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.NotAMondayException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("RecupCounterServiceImpl")
 public class RecupCounterServiceImpl extends AbstractCounterService {
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto) {
 
 		logger.info("Trying to update Recuperation manually counters for Agent {} ...", compteurDto.getIdAgent());
@@ -61,6 +63,7 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 	 * pointages
 	 */
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes) {
 
 		logger.info("Trying to update recuperation counters for Agent [{}] and date [{}] with {} minutes...", idAgent,

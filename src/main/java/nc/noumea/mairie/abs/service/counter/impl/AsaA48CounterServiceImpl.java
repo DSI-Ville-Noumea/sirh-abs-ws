@@ -19,11 +19,13 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("AsaA48CounterServiceImpl")
 public class AsaA48CounterServiceImpl extends AbstractCounterService {
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto) {
 
 		logger.info("Trying to update ASA A48 manually counters for Agent {} ...", compteurDto.getIdAgent());
@@ -133,6 +135,7 @@ public class AsaA48CounterServiceImpl extends AbstractCounterService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<CompteurAsaDto> getListeCompteur() {
 		List<CompteurAsaDto> result = new ArrayList<>();
 

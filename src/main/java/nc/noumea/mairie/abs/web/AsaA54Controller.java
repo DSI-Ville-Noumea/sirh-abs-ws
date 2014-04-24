@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,7 +40,6 @@ public class AsaA54Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addManual", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto addAsaA54ManuelForAgent(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) CompteurDto compteurDto, HttpServletResponse response) {
 
@@ -64,7 +62,6 @@ public class AsaA54Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurA54", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<CompteurAsaDto> getListeCompteur() {
 
 		logger.debug("entered GET [asaA54/listeCompteurA54] => getListeCompteur ");

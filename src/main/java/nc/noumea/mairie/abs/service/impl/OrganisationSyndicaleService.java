@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrganisationSyndicaleService implements IOrganisationSyndicaleService {
@@ -23,6 +24,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 	private IOrganisationSyndicaleRepository organisationRepository;
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto saveOrganisation(OrganisationSyndicaleDto dto) {
 
 		logger.info("Trying to save organisation sigle {} ...", dto.getSigle());
@@ -60,6 +62,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<OrganisationSyndicaleDto> getListOrganisationSyndicale() {
 		List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
 		List<OrganisationSyndicale> listOrganisation = organisationRepository.findAllOrganisation();
@@ -74,6 +77,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<OrganisationSyndicaleDto> getListOrganisationSyndicaleActives() {
 		List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
 		List<OrganisationSyndicale> listOrganisation = organisationRepository.findAllOrganisationActives();

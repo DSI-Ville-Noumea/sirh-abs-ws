@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MotifService implements IMotifService {
@@ -34,6 +35,7 @@ public class MotifService implements IMotifService {
 	private IMotifRepository motifRepository;
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<MotifDto> getListeMotif() {
 
 		List<MotifDto> res = new ArrayList<MotifDto>();
@@ -48,6 +50,7 @@ public class MotifService implements IMotifService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<MotifCompteurDto> getListeMotifCompteur(Integer idRefType) {
 
 		List<MotifCompteurDto> res = new ArrayList<MotifCompteurDto>();
@@ -63,6 +66,7 @@ public class MotifService implements IMotifService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setMotif(MotifDto motifDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -94,6 +98,7 @@ public class MotifService implements IMotifService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setMotifCompteur(MotifCompteurDto motifCompteurDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -124,7 +129,8 @@ public class MotifService implements IMotifService {
 		motifCompteur.setRefTypeAbsence(refTypeAbsence);
 
 		motifRepository.persistEntity(motifCompteur);
-
+		motifRepository.flush();
+		
 		addMessageConfirmation(motifCompteurDto.getIdMotifCompteur(), result);
 
 		return result;

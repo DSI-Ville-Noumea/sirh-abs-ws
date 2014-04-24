@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AbsenceService implements IAbsenceService {
@@ -85,6 +86,7 @@ public class AbsenceService implements IAbsenceService {
 	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyée n'est pas correct.";
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto) {
 
 		demandeRepository.setFlushMode(FlushModeType.COMMIT);
@@ -210,6 +212,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public DemandeDto getDemandeDto(Integer idDemande) {
 		DemandeDto demandeDto = null;
 
@@ -276,6 +279,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
 			Date fromDate, Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
 
@@ -321,6 +325,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -491,6 +496,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setDemandeEtatPris(Integer idDemande) {
 
 		logger.info("Trying to update demande id {} to Etat PRISE...", idDemande);
@@ -558,6 +564,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto saveDemandeSIRH(Integer idAgent, DemandeDto demandeDto) {
 
 		demandeRepository.setFlushMode(FlushModeType.COMMIT);
@@ -672,6 +679,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			Integer idAgentRecherche) {
 
@@ -695,6 +703,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<DemandeDto> getDemandesArchives(Integer idDemande) {
 
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
@@ -711,6 +720,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, List<DemandeEtatChangeDto> listDemandeEtatChangeDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();

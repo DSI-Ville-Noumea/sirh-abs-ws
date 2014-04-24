@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,7 +70,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setDemandeAbsence(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) DemandeDto demandeDto, HttpServletResponse response) {
 
@@ -93,7 +91,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public DemandeDto getDemandeAbsence(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande) {
 
 		logger.debug(
@@ -115,7 +112,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesAbsenceAgent(
 			@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
@@ -148,7 +144,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/xml/getDemande", produces = "application/xml", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public ModelAndView getXmlDemande(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande)
 			throws ParseException {
 
@@ -180,7 +175,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesAbsence(
 			@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
@@ -226,7 +220,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/changerEtats", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setAbsencesEtat(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) DemandeEtatChangeDto dto, HttpServletResponse response) {
 
@@ -247,7 +240,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/updateToEtatPris", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setAbsencesEtatPris(@RequestParam("idDemande") Integer idDemande,
 			HttpServletResponse response) {
 
@@ -268,7 +260,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deleteDemande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto supprimerDemande(@RequestParam("idAgent") int idAgent,
 			@RequestParam("idDemande") int idDemande, HttpServletResponse response) {
 
@@ -292,7 +283,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/supprimerDemandeProvisoire", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto supprimerAbsenceProvisoire(@RequestParam("idDemande") Integer idDemande,
 			HttpServletResponse response) {
 
@@ -315,7 +305,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/demandeSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setDemandeAbsenceSIRH(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) DemandeDto demandeDto, HttpServletResponse response) {
 
@@ -339,7 +328,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesAbsenceSIRH(
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
@@ -366,7 +354,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/historiqueSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<DemandeDto> getDemandesArchives(@RequestParam("idDemande") Integer idDemande) {
 
 		logger.debug("entered GET [demandes/historiqueSIRH] => getDemandesArchives with parameter idDemande = {}",
@@ -386,7 +373,6 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/changerEtatsSIRH", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setAbsencesEtatSIRH(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) List<DemandeEtatChangeDto> dto, HttpServletResponse response) {
 

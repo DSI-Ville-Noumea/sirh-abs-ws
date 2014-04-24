@@ -11,7 +11,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +33,6 @@ public class EditionController {
 
 	@ResponseBody
 	@RequestMapping(value = "/downloadTitreDemande", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public ResponseEntity<byte[]> downloadTitreDemande(@RequestParam("idAgent") int idAgent,
 			@RequestParam("idDemande") int idDemande) {
 

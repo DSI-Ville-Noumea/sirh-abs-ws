@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,7 +40,6 @@ public class SoldeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "soldeAgent", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(readOnly = true)
 	public SoldeDto getSoldeAgent(@RequestParam(value = "idAgent", required = true) Integer idAgent,
 			@RequestBody(required = true) FiltreSoldeDto filtreSoldeDto) {
 
@@ -61,15 +59,14 @@ public class SoldeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "historiqueSolde", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(readOnly = true)
 	public List<HistoriqueSoldeDto> getHistoriqueSolde(
 			@RequestParam(value = "idAgent", required = true) Integer idAgent,
 			@RequestParam(value = "codeRefTypeAbsence", required = true) Integer codeRefTypeAbsence,
 			@RequestBody(required = true) FiltreSoldeDto filtreSoldeDto) {
 
 		logger.debug(
-				"entered GET [solde/historiqueSolde] => getHistoriqueSolde with parameter codeRefTypeAbsence = {}",
-				codeRefTypeAbsence);
+				"entered GET [solde/historiqueSolde] => getHistoriqueSolde with parameter idAgent = {}, codeRefTypeAbsence = {}",
+				idAgent, codeRefTypeAbsence);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 

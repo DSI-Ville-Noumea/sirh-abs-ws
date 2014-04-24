@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,7 +40,6 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getEtats", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<RefEtatDto> getEtats(@RequestParam(value = "ongletDemande", required = false) String ongletDemande) {
 
 		logger.debug("entered GET [filtres/getEtats] => getEtats");
@@ -56,7 +54,6 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<RefTypeAbsenceDto> getTypes(
 			@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
 
@@ -72,7 +69,6 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/services", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<ServiceDto> getServices(@RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug("entered GET [filtres/services] => getServices with parameter idAgent = {}", idAgent);
@@ -92,7 +88,6 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<AgentDto> getAgents(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam(value = "codeService", required = false) String codeService) {
 
@@ -114,7 +109,6 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypesSaisi", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<RefTypeSaisiDto> getTypesSaisi(
 			@RequestParam(value = "idRefTypeAbsence", required = false) Integer idRefTypeAbsence) {
 

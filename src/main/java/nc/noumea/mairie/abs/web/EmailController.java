@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,7 +25,6 @@ public class EmailController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listDestinatairesEmailInfo", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public EmailInfoDto getListIdDestinatairesEmailInfo() {
 
 		logger.debug("entered GET [email/listDestinatairesEmailInfo] => getListIdDestinatairesEmailInfo");

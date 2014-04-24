@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,7 +44,6 @@ public class ReposCompController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addForPTG", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public void addReposCompForAgentAndWeek(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("dateLundi") @DateTimeFormat(pattern = "YYYYMMdd") Date dateMonday,
 			@RequestParam("minutes") int minutes) {
@@ -64,7 +62,6 @@ public class ReposCompController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addManual", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto addRecuperationManuelForAgent(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) CompteurDto compteurDto, 
 			HttpServletResponse response) {
@@ -91,7 +88,6 @@ public class ReposCompController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/resetCompteurAnneePrecedente", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto resetCompteurAnneePrecedente(
 			@RequestParam("idAgentReposCompCount") int idAgentReposCompCount, 
 			HttpServletResponse response) {
@@ -116,7 +112,6 @@ public class ReposCompController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/resetCompteurAnneenCours", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto resetCompteurRCAnneenCours(
 			@RequestParam("idAgentReposCompCount") int idAgentReposCompCount, 
 			HttpServletResponse response) {
@@ -139,7 +134,6 @@ public class ReposCompController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getListeCompteurAnneePrecedente", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<Integer> getListeCompteurAnneePrecedente() {
 
 		logger.debug("entered GET [reposcomps/getListeCompteurAnneePrecedente] => getListeCompteurAnneePrecedente");
@@ -154,7 +148,6 @@ public class ReposCompController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getListeCompteurAnneeEnCours", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<Integer> getListeCompteurAnneeEnCours() {
 
 		logger.debug("entered GET [reposcomps/getListeCompteurAnneeEnCours] => getListeCompteurAnneeEnCours");

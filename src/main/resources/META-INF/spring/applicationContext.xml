@@ -54,7 +54,7 @@
 	<jee:jndi-lookup id="sirhDb400DataSource" jndi-name="jdbc/ABS_WS_DS2"
 		resource-ref="true" />
 
-	<tx:annotation-driven mode="aspectj"
+	<tx:annotation-driven 
 		transaction-manager="absTransactionManager" />
 	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
 		id="absTransactionManager" primary="false">
@@ -68,7 +68,7 @@
 		<property name="dataSource" ref="absOracleDataSource" />
 	</bean>
 
-	<tx:annotation-driven mode="aspectj"
+	<tx:annotation-driven 
 		transaction-manager="sirhTransactionManager" />
 	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
 		id="sirhTransactionManager" primary="false">

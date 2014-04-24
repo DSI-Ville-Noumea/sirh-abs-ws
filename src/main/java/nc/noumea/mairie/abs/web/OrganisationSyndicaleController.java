@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +31,6 @@ public class OrganisationSyndicaleController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addOS", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setOrganisationSyndicale(@RequestBody(required = true) OrganisationSyndicaleDto organisationDto, 
 			HttpServletResponse response) {
 
@@ -52,7 +50,6 @@ public class OrganisationSyndicaleController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listOrganisation", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<OrganisationSyndicaleDto> listOrganisationSyndicale() {
 
 		logger.debug("entered GET [organisation/listOrganisation] => listOrganisationSyndicale");
@@ -67,7 +64,6 @@ public class OrganisationSyndicaleController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listOrganisationActif", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<OrganisationSyndicaleDto> listOrganisationSyndicaleActives() {
 
 		logger.debug("entered GET [organisation/listOrganisationActif] => listOrganisationSyndicaleActives");

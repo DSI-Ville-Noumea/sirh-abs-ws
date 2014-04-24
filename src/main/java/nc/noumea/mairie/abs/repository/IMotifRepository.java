@@ -15,4 +15,5 @@ public interface IMotifRepository {
 
 	List<MotifCompteur> getListeMotifCompteur(Integer idType);
 
+	void flush();
 }

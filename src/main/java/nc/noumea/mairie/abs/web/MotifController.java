@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +31,6 @@ public class MotifController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getListeMotif", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<MotifDto> getListeMotif() {
 
 		logger.debug("entered GET [motif/getListeMotif] => getListeMotif");
@@ -47,7 +45,6 @@ public class MotifController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/setMotif", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setMotif(@RequestBody(required = true) MotifDto motifDto, 
 			HttpServletResponse response) {
 

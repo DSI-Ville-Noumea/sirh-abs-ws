@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SoldeService implements ISoldeService {
@@ -44,6 +45,7 @@ public class SoldeService implements ISoldeService {
 	private AbsReposCompensateurDataConsistencyRulesImpl absReposCompDataConsistencyRules;
 
 	@Override
+	@Transactional(readOnly = true)
 	public SoldeDto getAgentSolde(Integer idAgent, Date dateDeb, Date dateFin) {
 
 		logger.info("Read getAgentSolde for Agent {}, and date {} ...", idAgent, dateDeb);
@@ -103,6 +105,7 @@ public class SoldeService implements ISoldeService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<HistoriqueSoldeDto> getHistoriqueSoldeAgent(Integer idAgent, Integer codeRefTypeAbsence, Date dateDeb,
 			Date dateFin) {
 		logger.info(

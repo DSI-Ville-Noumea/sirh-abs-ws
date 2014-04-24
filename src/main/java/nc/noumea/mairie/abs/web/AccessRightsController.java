@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,7 +45,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "listeDroitsAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public AccessRightsDto listAgentAccessRights(@RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug("entered GET [droits/listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}",
@@ -65,7 +63,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<AgentWithServiceDto> listApprobateurs() {
 
 		logger.debug("entered GET [droits/approbateurs] => listApprobateurs with no parameter --> for SIRH ");
@@ -78,7 +75,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public List<AgentWithServiceDto> setApprobateur(@RequestBody List<AgentWithServiceDto> agDtos) {
 		logger.debug("entered POST [droits/approbateurs] => setApprobateur --> for SIRH ");
 
@@ -97,7 +93,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "inputter", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public InputterDto getInputter(@RequestParam("idAgent") Integer idAgent) {
 		logger.debug("entered GET [droits/inputter] => getInputter with parameter idAgent = {}", idAgent);
 
@@ -114,7 +109,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "inputter", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setInputter(@RequestParam("idAgent") Integer idAgent,
 			@RequestBody InputterDto inputterDto,
 			HttpServletResponse response) {
@@ -140,7 +134,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public ViseursDto getViseurs(@RequestParam("idAgent") Integer idAgent) {
 		logger.debug("entered GET [droits/viseur] => getViseurs with parameter idAgent = {}", idAgent);
 
@@ -157,7 +150,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setViseurs(@RequestParam("idAgent") Integer idAgent,
 			@RequestBody ViseursDto viseursDto,
 			HttpServletResponse response) {
@@ -183,7 +175,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsApprouves", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<AgentDto> getApprovedAgents(@RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug("entered GET [droits/agentsApprouves] => getApprovedAgents with parameter idAgent = {}", idAgent);
@@ -206,7 +197,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsApprouves", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setApprovedAgents(@RequestParam("idAgent") Integer idAgent,
 			@RequestBody List<AgentDto> agDtos,
 			HttpServletResponse response) {
@@ -231,7 +221,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisis", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
 	public List<AgentDto> getInputAgents(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam(value = "idOperateurOrViseur") Integer idOperateurOrViseur) {
 
@@ -260,7 +249,6 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisis", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setInputAgents(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("idOperateurOrViseur") Integer idOperateurOrViseur, @RequestBody List<AgentDto> agentsApprouves,
 			HttpServletResponse response) {

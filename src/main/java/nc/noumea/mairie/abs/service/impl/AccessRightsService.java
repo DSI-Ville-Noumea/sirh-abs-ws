@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AccessRightsService implements IAccessRightsService {
@@ -50,6 +51,7 @@ public class AccessRightsService implements IAccessRightsService {
 	private ISirhRepository sirhRepository;
 	
 	@Override
+	@Transactional(readOnly = true)
 	public AccessRightsDto getAgentAccessRights(Integer idAgent) {
 
 		AccessRightsDto result = new AccessRightsDto();
@@ -86,6 +88,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<AgentWithServiceDto> getApprobateurs() {
 		List<AgentWithServiceDto> agentDtos = new ArrayList<AgentWithServiceDto>();
 		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
@@ -98,6 +101,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> listeDto) {
 
 		List<AgentWithServiceDto> listeAgentErreur = new ArrayList<AgentWithServiceDto>();
@@ -199,11 +203,13 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean canUserAccessAccessRights(Integer idAgent) {
 		return accessRightsRepository.isUserApprobateur(idAgent);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public InputterDto getInputter(int idAgent) {
 
 		InputterDto result = new InputterDto();
@@ -240,6 +246,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setInputter(Integer idAgentAppro, InputterDto dto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -502,6 +509,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent) {
 		return getAgentsToApproveOrInput(idAgentApprobateur, idAgent, null);
 	}
@@ -559,6 +567,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur,
 			List<AgentDto> agents) {
 
@@ -647,6 +656,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -722,6 +732,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ViseursDto getViseurs(int idAgent) {
 
 		ViseursDto result = new ViseursDto();
@@ -749,6 +760,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setViseurs(Integer idAgentAppro, ViseursDto dto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -769,6 +781,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public AgentWithServiceDto getApprobateurOfAgent(Integer idAgent) {
 		DroitsAgent droitAgent = accessRightsRepository.getDroitsAgent(idAgent);
 		Droit droitApprobateur = accessRightsRepository.getApprobateurOfAgent(droitAgent);
@@ -778,6 +791,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public boolean verifAccessRightListDemande(Integer idAgentConnecte, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
 		
 		boolean res = true;
@@ -804,6 +818,7 @@ public class AccessRightsService implements IAccessRightsService {
 	 * Used to build the filters (by service)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
 		
 		List<ServiceDto> result = new ArrayList<ServiceDto>();
@@ -830,6 +845,7 @@ public class AccessRightsService implements IAccessRightsService {
 	 * to Input. This service also filters by service
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SuppressionService implements ISuppressionService {
@@ -52,6 +53,7 @@ public class SuppressionService implements ISuppressionService {
 	private IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl;
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto supprimerDemandeEtatProvisoire(Integer idDemande) {
 
 		logger.info("Trying to delete demande id {} ...", idDemande);
@@ -82,6 +84,7 @@ public class SuppressionService implements ISuppressionService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto supprimerDemande(Integer idAgent, Integer idDemande) {
 
 		ReturnMessageDto returnDto = new ReturnMessageDto();

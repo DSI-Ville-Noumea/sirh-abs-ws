@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -100,6 +101,7 @@ public class ReportingService implements IReportingService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public byte[] getDemandeReportAsByteArray(Integer idAgent, Integer idDemande) throws Exception {
 
 		ReturnMessageDto returnDto = new ReturnMessageDto();

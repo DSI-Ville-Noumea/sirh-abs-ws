@@ -21,6 +21,11 @@ public class MotifRepository implements IMotifRepository {
 	public void persistEntity(Object obj) {
 		absEntityManager.persist(obj);
 	}
+	
+	@Override
+	public void flush() {
+		absEntityManager.flush();
+	}
 
 	@Override
 	public <T> T getEntity(Class<T> Tclass, Object Id) {

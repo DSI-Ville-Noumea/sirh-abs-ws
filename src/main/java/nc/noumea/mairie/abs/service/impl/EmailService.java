@@ -10,6 +10,7 @@ import nc.noumea.mairie.abs.service.IEmailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmailService implements IEmailService {
@@ -18,6 +19,7 @@ public class EmailService implements IEmailService {
 	private IDemandeRepository demandeRepository;
 
 	@Override
+	@Transactional(readOnly = true)
 	public EmailInfoDto getListIdDestinatairesEmailInfo() {
 
 		EmailInfoDto dto = new EmailInfoDto();

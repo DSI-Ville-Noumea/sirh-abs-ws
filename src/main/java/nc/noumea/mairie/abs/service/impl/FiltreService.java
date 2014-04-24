@@ -17,6 +17,7 @@ import nc.noumea.mairie.domain.Spcarr;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FiltreService implements IFiltreService {
@@ -35,6 +36,7 @@ public class FiltreService implements IFiltreService {
 	public static final String ONGLET_TOUTES = "TOUTES";
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<RefEtatDto> getRefEtats(String ongletDemande) {
 
 		List<RefEtatDto> res = new ArrayList<RefEtatDto>();
@@ -48,6 +50,7 @@ public class FiltreService implements IFiltreService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<RefTypeAbsenceDto> getRefTypesAbsence(Integer idAgentConcerne) {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
 		List<RefTypeAbsence> refTypeAbs = filtreRepository.findAllRefTypeAbsences();
@@ -119,6 +122,7 @@ public class FiltreService implements IFiltreService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<RefTypeSaisiDto> getRefTypeSaisi(Integer idRefTypeAbsence) {
 
 		List<RefTypeSaisiDto> resultDto = new ArrayList<RefTypeSaisiDto>();
