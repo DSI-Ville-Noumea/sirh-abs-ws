@@ -134,6 +134,7 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case ASA_A48:
 			case ASA_A54:
+			case ASA_A55:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
 				demandeAsa.setDuree(demandeDto.getDuree());
 				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
@@ -614,6 +615,7 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case ASA_A48:
 			case ASA_A54:
+			case ASA_A55:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
 				demandeAsa.setDuree(demandeDto.getDuree());
 				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
