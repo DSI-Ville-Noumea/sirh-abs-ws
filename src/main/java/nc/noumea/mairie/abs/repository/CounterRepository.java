@@ -164,7 +164,7 @@ public class CounterRepository implements ICounterRepository {
 
 		TypedQuery<AgentAsaA55Count> q = absEntityManager
 				.createQuery(
-						"from AgentAsaA55Count h where h.idAgent = :idAgent and h.dateDebut BETWEEN :dateDebut and :dateFin order by h.dateDebut desc ",
+						"from AgentAsaA55Count h where h.idAgent = :idAgent and h.dateDebut BETWEEN :dateDebut and :dateFin order by h.dateDebut asc ",
 						AgentAsaA55Count.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateDebut", dateDebut);

@@ -518,7 +518,7 @@ public class SoldeServiceTest {
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 7, new Date());
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 7, new Date(), null);
 
 		assertEquals(0, listResult.size());
 	}
@@ -556,7 +556,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
 		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 7, new DateTime(2014, 1, 24, 0,
-				0, 0).toDate());
+				0, 0).toDate(), null);
 
 		assertEquals(1, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());

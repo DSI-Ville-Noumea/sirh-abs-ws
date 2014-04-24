@@ -74,7 +74,7 @@ public class SoldeController {
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		List<HistoriqueSoldeDto> result = soldeService.getHistoriqueSoldeAgent(convertedIdAgent, codeRefTypeAbsence,
-				filtreSoldeDto.getDateDebut());
+				filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin());
 
 		return result;
 	}

@@ -103,11 +103,13 @@ public class SoldeService implements ISoldeService {
 	}
 
 	@Override
-	public List<HistoriqueSoldeDto> getHistoriqueSoldeAgent(Integer idAgent, Integer codeRefTypeAbsence, Date date) {
-		logger.info("Read getHistoriqueSoldeAgent for Agent {}, and date {}, and typeAbsence {} ...", idAgent, date,
-				RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence));
+	public List<HistoriqueSoldeDto> getHistoriqueSoldeAgent(Integer idAgent, Integer codeRefTypeAbsence, Date dateDeb,
+			Date dateFin) {
+		logger.info(
+				"Read getHistoriqueSoldeAgent for Agent {}, and dateDeb {}, and dateFin {}, and typeAbsence {} ...",
+				idAgent, dateDeb, dateFin, RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence));
 
-		AgentCount agentCount = null;
+		List<AgentCount> listAgentCount = new ArrayList<AgentCount>();
 		// on recupere le compteur correspondant
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence)) {
 			case CONGE_ANNUEL:
@@ -116,26 +118,26 @@ public class SoldeService implements ISoldeService {
 			case REPOS_COMP:
 				AgentReposCompCount countReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
 						idAgent);
-				agentCount = countReposComp;
+				listAgentCount.add(countReposComp);
 				break;
 			case RECUP:
 				AgentRecupCount countRecup = counterRepository.getAgentCounter(AgentRecupCount.class, idAgent);
-				agentCount = countRecup;
+				listAgentCount.add(countRecup);
 				break;
 			case ASA_A48:
 				AgentAsaA48Count countA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, idAgent,
-						date);
-				agentCount = countA48;
+						dateDeb);
+				listAgentCount.add(countA48);
 				break;
 			case ASA_A54:
 				AgentAsaA54Count countA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, idAgent,
-						date);
-				agentCount = countA54;
+						dateDeb);
+				listAgentCount.add(countA54);
 				break;
 			case ASA_A55:
-				AgentAsaA55Count countA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, idAgent,
-						date);
-				agentCount = countA55;
+				List<AgentAsaA55Count> countA55 = counterRepository
+						.getListAgentCounterByDate(idAgent, dateDeb, dateFin);
+				listAgentCount.addAll(countA55);
 				break;
 			case AUTRES:
 				// TODO
@@ -147,7 +149,7 @@ public class SoldeService implements ISoldeService {
 				break;
 		}
 		List<HistoriqueSoldeDto> result = new ArrayList<HistoriqueSoldeDto>();
-		if (agentCount != null) {
+		for (AgentCount agentCount : listAgentCount) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(idAgent, agentCount);
 			for (AgentHistoAlimManuelle aha : list) {
 				HistoriqueSoldeDto dto = new HistoriqueSoldeDto(aha);
