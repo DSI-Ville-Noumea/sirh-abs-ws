@@ -2,12 +2,12 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 public class CompteurAsaDto {
 
@@ -15,11 +15,11 @@ public class CompteurAsaDto {
 
 	private Double nb;
 
-	@JsonSerialize(using=JsonDateSerializer.class)
-	@JsonDeserialize(using=JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateDebut;
-	@JsonSerialize(using=JsonDateSerializer.class)
-	@JsonDeserialize(using=JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateFin;
 
 	public CompteurAsaDto(AgentAsaA48Count arc) {
@@ -38,7 +38,7 @@ public class CompteurAsaDto {
 
 	public CompteurAsaDto(AgentAsaA55Count arc) {
 		this.idAgent = arc.getIdAgent();
-		this.nb = arc.getTotalHeures();
+		this.nb = (double) arc.getTotalMinutes();
 		this.dateDebut = arc.getDateDebut();
 		this.dateFin = arc.getDateFin();
 	}

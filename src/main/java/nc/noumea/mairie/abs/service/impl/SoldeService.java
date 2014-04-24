@@ -87,14 +87,14 @@ public class SoldeService implements ISoldeService {
 		AgentAsaA55Count soldeAsaA55 = counterRepository
 				.getAgentCounterByDate(AgentAsaA55Count.class, idAgent, dateDeb);
 		dto.setAfficheSoldeAsaA55(soldeAsaA55 == null ? false : true);
-		dto.setSoldeAsaA55(soldeAsaA55 == null ? 0 : soldeAsaA55.getTotalHeures());
+		dto.setSoldeAsaA55((double) (soldeAsaA55 == null ? 0 : soldeAsaA55.getTotalMinutes()));
 		// on affiche tous les soldes de l'année
 		List<AgentAsaA55Count> listeSoldeAsaA55 = counterRepository
 				.getListAgentCounterByDate(idAgent, dateDeb, dateFin);
 		List<SoldeMonthDto> listDto = new ArrayList<SoldeMonthDto>();
 		for (AgentAsaA55Count arc : listeSoldeAsaA55) {
 			SoldeMonthDto dtoMonth = new SoldeMonthDto();
-			dtoMonth.setSoldeAsaA55(arc.getTotalHeures());
+			dtoMonth.setSoldeAsaA55(arc.getTotalMinutes());
 			dtoMonth.setDateDebut(arc.getDateDebut());
 			dtoMonth.setDateFin(arc.getDateFin());
 			listDto.add(dtoMonth);

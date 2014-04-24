@@ -76,7 +76,7 @@ public class AsaA55CounterServiceImplTest {
 		compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
 
 		AgentAsaA55Count arc = new AgentAsaA55Count();
-		arc.setTotalHeures(15.0);
+		arc.setTotalMinutes(15 * 60);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
@@ -161,7 +161,7 @@ public class AsaA55CounterServiceImplTest {
 		compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
 
 		AgentAsaA55Count arc = new AgentAsaA55Count();
-		arc.setTotalHeures(15.0);
+		arc.setTotalMinutes(15 * 60);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
@@ -270,7 +270,7 @@ public class AsaA55CounterServiceImplTest {
 
 		List<CompteurAsaDto> result = new ArrayList<CompteurAsaDto>();
 		AgentAsaA55Count e = new AgentAsaA55Count();
-		e.setTotalHeures(12.0);
+		e.setTotalMinutes(12 * 60);
 		List<AgentAsaA55Count> list = new ArrayList<AgentAsaA55Count>();
 		list.add(e);
 
@@ -283,7 +283,7 @@ public class AsaA55CounterServiceImplTest {
 		result = service.getListeCompteur();
 
 		assertEquals(1, result.size());
-		assertEquals(12, result.get(0).getNb().intValue());
+		assertEquals(12 * 60, result.get(0).getNb().intValue());
 
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA55Count.class));
@@ -300,7 +300,7 @@ public class AsaA55CounterServiceImplTest {
 		demande.setIdAgent(9008765);
 		demande.setDateDebut(new Date());
 		demande.setDateFin(new Date());
-		Double minutes = 10.0;
+		int minutes = 10 * 60;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
@@ -309,9 +309,8 @@ public class AsaA55CounterServiceImplTest {
 		Mockito.when(rr.getAgentCounter(AgentAsaA55Count.class, demande.getIdAgent())).thenReturn(null);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreHeures(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(minutes);
+		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
+				minutes);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
@@ -335,20 +334,19 @@ public class AsaA55CounterServiceImplTest {
 		demande.setIdAgent(9008765);
 		demande.setDateDebut(new Date());
 		demande.setDateFin(new Date());
-		Double minutes = 11.0;
+		int minutes = 11 * 60;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
 
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 		AgentAsaA55Count arc = new AgentAsaA55Count();
-		arc.setTotalHeures(10.0);
+		arc.setTotalMinutes(10 * 60);
 		Mockito.when(rr.getAgentCounter(AgentAsaA55Count.class, demande.getIdAgent())).thenReturn(arc);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreHeures(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(minutes);
+		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
+				minutes);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
@@ -373,20 +371,19 @@ public class AsaA55CounterServiceImplTest {
 		demande.setIdAgent(9008765);
 		demande.setDateDebut(new Date());
 		demande.setDateFin(new Date());
-		Double minutes = 11.0;
+		int minutes = 11 * 60;
 
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
 
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 		AgentAsaA55Count arc = new AgentAsaA55Count();
-		arc.setTotalHeures(12.0);
+		arc.setTotalMinutes(12 * 60);
 		Mockito.when(rr.getAgentCounter(AgentAsaA55Count.class, demande.getIdAgent())).thenReturn(arc);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreHeures(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(minutes);
+		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
+				minutes);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
@@ -408,16 +405,15 @@ public class AsaA55CounterServiceImplTest {
 		Demande demande = new Demande();
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreHeures(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
+		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
+				10 * 60);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		Double result = service.calculHeuresAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
+		int result = service.calculMinutesAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
 
-		assertEquals(result.floatValue(), -8, 5);
+		assertEquals(result, -10 * 60);
 	}
 
 	@Test
@@ -433,16 +429,15 @@ public class AsaA55CounterServiceImplTest {
 		demande.addEtatDemande(etatDemande);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreHeures(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
+		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
+				10 * 60);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		Double result = service.calculHeuresAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
+		int result = service.calculMinutesAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
 
-		assertEquals(result.floatValue(), 8, 5);
+		assertEquals(result, 10 * 60);
 	}
 
 	@Test
@@ -458,16 +453,15 @@ public class AsaA55CounterServiceImplTest {
 		demande.addEtatDemande(etatDemande);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreHeures(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
+		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
+				10 * 60);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		Double result = service.calculHeuresAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
+		int result = service.calculMinutesAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
 
-		assertEquals(result.floatValue(), 8, 5);
+		assertEquals(result, 10 * 60);
 	}
 
 	@Test
@@ -483,16 +477,15 @@ public class AsaA55CounterServiceImplTest {
 		demande.addEtatDemande(etatDemande);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreHeures(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
+		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
+				10 * 60);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		Double result = service.calculHeuresAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
+		int result = service.calculMinutesAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
 
-		assertEquals(result.floatValue(), 0, 0);
+		assertEquals(result, 0);
 	}
 
 }

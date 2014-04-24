@@ -30,7 +30,7 @@ public class HelperService {
 	private static int MILLISECONDS = 0;
 
 	private final static long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
-	private final static long MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
+	private final static long MILLISECONDS_PER_MINUTES = 1000 * 60;
 
 	public Date getCurrentDate() {
 		return new Date();
@@ -155,12 +155,11 @@ public class HelperService {
 		return ((double) Math.round(nbrJour * 2) / 2);
 	}
 
-	public double calculNombreHeures(Date dateDebut, Date dateFin) {
+	public int calculNombreMinutes(Date dateDebut, Date dateFin) {
 
-		double diff = dateFin.getTime() - dateDebut.getTime();
-		// calcul nombre heures
-		double nbrHeure = diff / MILLISECONDS_PER_HOUR;
-		// arrondi a 0.5
-		return ((double) Math.round(nbrHeure * 2) / 2);
+		long diff = dateFin.getTime() - dateDebut.getTime();
+		// calcul nombre minutes
+		int nbrMinutes = (int) (diff / MILLISECONDS_PER_MINUTES);
+		return nbrMinutes;
 	}
 }

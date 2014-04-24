@@ -18,8 +18,8 @@ import javax.validation.constraints.NotNull;
 public class AgentAsaA55Count extends AgentCount {
 
 	@NotNull
-	@Column(name = "TOTAL_HEURES", columnDefinition = "numeric")
-	private Double totalHeures;
+	@Column(name = "TOTAL_MINUTES", columnDefinition = "numeric")
+	private int totalMinutes;
 
 	@Column(name = "DATE_DEBUT")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -45,12 +45,12 @@ public class AgentAsaA55Count extends AgentCount {
 		this.dateFin = dateFin;
 	}
 
-	public Double getTotalHeures() {
-		return totalHeures;
+	public int getTotalMinutes() {
+		return totalMinutes;
 	}
 
-	public void setTotalHeures(Double totalHeures) {
-		this.totalHeures = totalHeures;
+	public void setTotalMinutes(int totalMinutes) {
+		this.totalMinutes = totalMinutes;
 	}
 
 }

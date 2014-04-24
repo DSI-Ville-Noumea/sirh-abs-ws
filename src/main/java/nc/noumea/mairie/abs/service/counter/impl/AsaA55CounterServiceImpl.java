@@ -53,7 +53,10 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 		Double nbHeures = helperService.calculJoursAlimManuelleCompteur(compteurDto);
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, nbHeures, idRefTypeAbsence, result);
+
+			Double dMinutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+			Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
+			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, idRefTypeAbsence, result);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -72,7 +75,7 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 	 * @throws IllegalAccessException
 	 */
 	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Double nbHeures, Integer idRefTypeAbsence, ReturnMessageDto srm) throws InstantiationException,
+			int nbMinutes, Integer idRefTypeAbsence, ReturnMessageDto srm) throws InstantiationException,
 			IllegalAccessException {
 
 		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
@@ -80,8 +83,8 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} heures for dateDeb {} and dateFin {}...",
-				compteurDto.getIdAgent(), nbHeures, compteurDto.getDateDebut(), compteurDto.getDateFin());
+		logger.info("updating counters for Agent [{}] with {} minutes for dateDeb {} and dateFin {}...",
+				compteurDto.getIdAgent(), nbMinutes, compteurDto.getDateDebut(), compteurDto.getDateFin());
 
 		AgentAsaA55Count arc = (AgentAsaA55Count) counterRepository.getAgentCounterByDate(AgentAsaA55Count.class,
 				compteurDto.getIdAgent(), compteurDto.getDateDebut());
@@ -111,7 +114,7 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 		String textLog = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Mise en place de " + nbHeures + " heures pour la période du "
+			textLog = "Mise en place de " + nbMinutes + " minutes pour la période du "
 					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
 		}
 		histo.setText(textLog);
@@ -121,7 +124,7 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 		rta.setIdRefTypeAbsence(idRefTypeAbsence);
 		histo.setType(rta);
 
-		arc.setTotalHeures(nbHeures);
+		arc.setTotalMinutes(nbMinutes);
 		arc.setDateDebut(compteurDto.getDateDebut());
 		arc.setDateFin(compteurDto.getDateFin());
 		arc.setLastModification(helperService.getCurrentDate());
@@ -154,11 +157,11 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 
 		logger.info("Trying to update ASA_A55 counters for Agent [{}] ...", demande.getIdAgent());
 
-		Double heures = calculHeuresAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(),
+		int minutes = calculMinutesAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(),
 				demande.getDateFin());
-		if (0.0 != heures) {
+		if (0 != minutes) {
 			try {
-				srm = majCompteurToAgent(demande.getIdAgent(), heures, srm);
+				srm = majCompteurToAgent(demande.getIdAgent(), minutes, srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update ASA_A55 counters :", e);
 			}
@@ -182,7 +185,7 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Double heures, ReturnMessageDto srm)
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, int minutes, ReturnMessageDto srm)
 			throws InstantiationException, IllegalAccessException {
 
 		if (sirhRepository.getAgent(idAgent) == null) {
@@ -190,7 +193,7 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} heures...", idAgent, heures);
+		logger.info("updating counters for Agent [{}] with {} minutes...", idAgent, minutes);
 
 		AgentAsaA55Count arc = (AgentAsaA55Count) counterRepository.getAgentCounter(AgentAsaA55Count.class, idAgent);
 
@@ -202,12 +205,12 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 
 		// on verifie que le solde est positif seulement si on debite le
 		// compteur
-		if (0.0 > heures && 0.0 > arc.getTotalHeures() + heures) {
+		if (0 > minutes && 0.0 > arc.getTotalMinutes() + minutes) {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF_AUTORISE);
 			srm.getInfos().add(String.format(SOLDE_COMPTEUR_NEGATIF_AUTORISE));
 		}
 
-		arc.setTotalHeures(arc.getTotalHeures() + heures);
+		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
@@ -221,22 +224,23 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 	 * @param demande
 	 * @param dateDebut
 	 * @param dateFin
-	 * @return Double nombre heures a incrementer/decrementer du compteur
+	 * @return int nombre minutes a incrementer/decrementer du compteur
 	 */
-	protected Double calculHeuresAlimAutoCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
+	protected int calculMinutesAlimAutoCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
 			Date dateDebut, Date dateFin) {
-		Double heures = 0.0;
+		int minutes = 0;
 		// si on approuve, le compteur decremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
-			heures = 0.0 - helperService.calculNombreHeures(dateDebut, dateFin);
+
+			minutes = 0 - helperService.calculNombreMinutes(dateDebut, dateFin);
 		}
 		// si on passe de Approuve a Refuse, le compteur incremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())
 				&& (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE) || demande
 						.getLatestEtatDemande().getEtat().equals(RefEtatEnum.PRISE))) {
-			heures = helperService.calculNombreHeures(dateDebut, dateFin);
+			minutes = helperService.calculNombreMinutes(dateDebut, dateFin);
 		}
 
-		return heures;
+		return minutes;
 	}
 }

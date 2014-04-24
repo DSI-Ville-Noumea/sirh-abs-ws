@@ -450,7 +450,7 @@ public class CounterRepositoryTest {
 		// Given
 		AgentAsaA55Count record = new AgentAsaA55Count();
 		record.setIdAgent(9008767);
-		record.setTotalHeures(7.0);
+		record.setTotalMinutes(7 * 60);
 		record.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
 		record.setDateFin(new DateTime(2013, 1, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record);
@@ -473,7 +473,7 @@ public class CounterRepositoryTest {
 		// Given
 		AgentAsaA55Count record = new AgentAsaA55Count();
 		record.setIdAgent(9008767);
-		record.setTotalHeures(7.0);
+		record.setTotalMinutes(7 * 60);
 		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		record.setDateFin(new DateTime(2014, 12, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record);
@@ -511,13 +511,13 @@ public class CounterRepositoryTest {
 		// Given
 		AgentAsaA55Count record = new AgentAsaA55Count();
 		record.setIdAgent(9001767);
-		record.setTotalHeures(7.0);
+		record.setTotalMinutes(7 * 60);
 		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		record.setDateFin(new DateTime(2014, 1, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record);
 		AgentAsaA55Count record2 = new AgentAsaA55Count();
 		record2.setIdAgent(9005138);
-		record2.setTotalHeures(10.0);
+		record2.setTotalMinutes(10 * 60);
 		record2.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
 		record2.setDateFin(new DateTime(2014, 3, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record2);
@@ -528,9 +528,9 @@ public class CounterRepositoryTest {
 		// Then
 		assertNotNull(result);
 		assertEquals(2, result.size());
-		assertEquals(record.getTotalHeures(), result.get(0).getTotalHeures());
+		assertEquals(record.getTotalMinutes(), result.get(0).getTotalMinutes());
 		assertEquals(record.getIdAgent(), result.get(0).getIdAgent());
-		assertEquals(record2.getTotalHeures(), result.get(1).getTotalHeures());
+		assertEquals(record2.getTotalMinutes(), result.get(1).getTotalMinutes());
 		assertEquals(record2.getIdAgent(), result.get(1).getIdAgent());
 
 		absEntityManager.flush();

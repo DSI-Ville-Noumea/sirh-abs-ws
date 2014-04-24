@@ -129,13 +129,13 @@ public class SoldeServiceTest {
 
 		AgentAsaA55Count arc55 = new AgentAsaA55Count();
 		arc55.setIdAgent(idAgent);
-		arc55.setTotalHeures(12.0);
+		arc55.setTotalMinutes(12 * 60);
 		arc55.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arc55.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
 
 		AgentAsaA55Count arc55bis = new AgentAsaA55Count();
 		arc55bis.setIdAgent(idAgent);
-		arc55bis.setTotalHeures(2.0);
+		arc55bis.setTotalMinutes(2 * 60);
 		arc55bis.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
 		arc55bis.setDateFin(new DateTime(2014, 3, 31, 23, 59, 0).toDate());
 
@@ -185,7 +185,7 @@ public class SoldeServiceTest {
 		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
 		assertEquals(12, dto.getSoldeAsaA48().intValue());
 		assertEquals(12, dto.getSoldeAsaA54().intValue());
-		assertEquals(12, dto.getSoldeAsaA55().intValue());
+		assertEquals(12 * 60, dto.getSoldeAsaA55().intValue());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
@@ -226,13 +226,13 @@ public class SoldeServiceTest {
 
 		AgentAsaA55Count arcc55 = new AgentAsaA55Count();
 		arcc55.setIdAgent(idAgent);
-		arcc55.setTotalHeures(12.0);
+		arcc55.setTotalMinutes(12 * 60);
 		arcc55.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arcc55.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
 
 		AgentAsaA55Count arc55bis = new AgentAsaA55Count();
 		arc55bis.setIdAgent(idAgent);
-		arc55bis.setTotalHeures(2.0);
+		arc55bis.setTotalMinutes(2 * 60);
 		arc55bis.setDateDebut(new DateTime(2013, 3, 1, 0, 0, 0).toDate());
 		arc55bis.setDateFin(new DateTime(2013, 3, 31, 23, 59, 0).toDate());
 
