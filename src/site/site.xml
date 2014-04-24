@@ -32,7 +32,7 @@
         	<item name="WebApp Context" href="exploitation/context.html"/>
         </menu>
 		<menu name="Conception">
-        	<item name="WS API Doc" href="conception/ws-api.html"/>
+        	<item name="WS API Doc" href="web-service-api.html"/>
 		</menu>
         <menu ref="reports"/>
     </body>
