@@ -664,15 +664,111 @@ public class DemandeRepositoryTest {
 		etatDemande2.setIdAgent(9000001);
 		etatDemande2.setEtat(RefEtatEnum.VISEE_FAVORABLE);
 		absEntityManager.persist(etatDemande2);
+		
+		// ASA A48
+		Droit droitAppro3 = new Droit();
+		droitAppro3.setIdAgent(9000002);
+		absEntityManager.persist(droitAppro3);
+		DroitProfil droitProfil3 = new DroitProfil();
+		droitProfil3.setProfil(profil2);
+		droitProfil3.setDroit(droitAppro3);
+		absEntityManager.persist(droitProfil3);
+
+		DroitsAgent droitsAgent3 = new DroitsAgent();
+		droitsAgent3.setIdAgent(9000012);
+		absEntityManager.persist(droitsAgent3);
+		DroitDroitsAgent dda3 = new DroitDroitsAgent();
+		dda3.setDroit(droitAppro3);
+		dda3.setDroitProfil(droitProfil3);
+		dda3.setDroitsAgent(droitsAgent3);
+		absEntityManager.persist(dda3);
+
+		RefTypeAbsence rta3 = new RefTypeAbsence();
+		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		absEntityManager.persist(rta3);
+		Demande demande3 = new Demande();
+		demande3.setIdAgent(9000012);
+		demande3.setType(rta3);
+		absEntityManager.persist(demande3);
+		EtatDemande etatDemande3 = new EtatDemande();
+		etatDemande3.setDemande(demande3);
+		etatDemande3.setIdAgent(9000001);
+		etatDemande3.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		absEntityManager.persist(etatDemande3);
+		
+		// ASA A54
+		Droit droitAppro4 = new Droit();
+		droitAppro4.setIdAgent(9000002);
+		absEntityManager.persist(droitAppro4);
+		DroitProfil droitProfil4 = new DroitProfil();
+		droitProfil4.setProfil(profil2);
+		droitProfil4.setDroit(droitAppro4);
+		absEntityManager.persist(droitProfil4);
+
+		DroitsAgent droitsAgent4 = new DroitsAgent();
+		droitsAgent4.setIdAgent(9000012);
+		absEntityManager.persist(droitsAgent4);
+		DroitDroitsAgent dda4 = new DroitDroitsAgent();
+		dda4.setDroit(droitAppro4);
+		dda4.setDroitProfil(droitProfil4);
+		dda4.setDroitsAgent(droitsAgent4);
+		absEntityManager.persist(dda4);
+
+		RefTypeAbsence rta4 = new RefTypeAbsence();
+		rta4.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		absEntityManager.persist(rta4);
+		Demande demande4 = new Demande();
+		demande4.setIdAgent(9000012);
+		demande4.setType(rta4);
+		absEntityManager.persist(demande4);
+		EtatDemande etatDemande4 = new EtatDemande();
+		etatDemande4.setDemande(demande4);
+		etatDemande4.setIdAgent(9000001);
+		etatDemande4.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		absEntityManager.persist(etatDemande4);
+		
+		// ASA A55
+		Droit droitAppro5 = new Droit();
+		droitAppro4.setIdAgent(9000002);
+		absEntityManager.persist(droitAppro5);
+		DroitProfil droitProfil5 = new DroitProfil();
+		droitProfil5.setProfil(profil2);
+		droitProfil5.setDroit(droitAppro5);
+		absEntityManager.persist(droitProfil5);
+
+		DroitsAgent droitsAgent5 = new DroitsAgent();
+		droitsAgent5.setIdAgent(9000012);
+		absEntityManager.persist(droitsAgent5);
+		DroitDroitsAgent dda5 = new DroitDroitsAgent();
+		dda5.setDroit(droitAppro5);
+		dda5.setDroitProfil(droitProfil5);
+		dda5.setDroitsAgent(droitsAgent5);
+		absEntityManager.persist(dda5);
+
+		RefTypeAbsence rta5 = new RefTypeAbsence();
+		rta5.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		absEntityManager.persist(rta5);
+		Demande demande5 = new Demande();
+		demande5.setIdAgent(9000012);
+		demande5.setType(rta5);
+		absEntityManager.persist(demande5);
+		EtatDemande etatDemande5 = new EtatDemande();
+		etatDemande5.setDemande(demande5);
+		etatDemande5.setIdAgent(9000001);
+		etatDemande5.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		absEntityManager.persist(etatDemande5);
 
 		List<Integer> listeTypes = new ArrayList<Integer>();
 		listeTypes.add(RefTypeAbsenceEnum.RECUP.getValue());
 		listeTypes.add(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.ASA_A48.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.ASA_A54.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.ASA_A55.getValue());
 
 		// When
 		List<Integer> result = repository.getListApprobateursDemandesSaisiesViseesJourDonne(listeTypes);
 
-		assertEquals(2, result.size());
+		assertEquals(5, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

@@ -29,6 +29,7 @@ public class EmailService implements IEmailService {
 		listeTypes.add(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		listeTypes.add(RefTypeAbsenceEnum.ASA_A48.getValue());
 		listeTypes.add(RefTypeAbsenceEnum.ASA_A54.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.ASA_A55.getValue());
 
 		dto.setListViseurs(demandeRepository.getListViseursDemandesSaisiesJourDonne(listeTypes));
 
