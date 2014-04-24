@@ -530,6 +530,7 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case ASA_A48:
 			case ASA_A54:
+			case ASA_A55:
 				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.VALIDEE) {
 					result.getErrors()
 							.add(String
