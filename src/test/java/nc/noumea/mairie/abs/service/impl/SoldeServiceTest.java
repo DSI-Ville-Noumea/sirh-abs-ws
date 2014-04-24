@@ -77,7 +77,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
 
 		assertEquals("0.0", dto.getSoldeCongeAnnee().toString());
 		assertEquals("0.0", dto.getSoldeCongeAnneePrec().toString());
@@ -99,6 +99,9 @@ public class SoldeServiceTest {
 	public void getAgentSolde_GetAllSolde() throws ParseException {
 
 		// Given
+
+		Date dateDeb = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
 		Integer idAgent = 9008765;
 		double cotaSoldeAnnee = 62.0;
 		double cotaSoldeAnneePrec = 25.5;
@@ -115,20 +118,30 @@ public class SoldeServiceTest {
 		AgentAsaA48Count arccc = new AgentAsaA48Count();
 		arccc.setIdAgent(idAgent);
 		arccc.setTotalJours(12.0);
-		arccc.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
-		arccc.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
+		arccc.setDateDebut(dateDeb);
+		arccc.setDateFin(dateFin);
 
 		AgentAsaA54Count arc54 = new AgentAsaA54Count();
 		arc54.setIdAgent(idAgent);
 		arc54.setTotalJours(12.0);
-		arc54.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
-		arc54.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
+		arc54.setDateDebut(dateDeb);
+		arc54.setDateFin(dateFin);
 
 		AgentAsaA55Count arc55 = new AgentAsaA55Count();
 		arc55.setIdAgent(idAgent);
 		arc55.setTotalHeures(12.0);
 		arc55.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arc55.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
+
+		AgentAsaA55Count arc55bis = new AgentAsaA55Count();
+		arc55bis.setIdAgent(idAgent);
+		arc55bis.setTotalHeures(2.0);
+		arc55bis.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
+		arc55bis.setDateFin(new DateTime(2014, 3, 31, 23, 59, 0).toDate());
+
+		List<AgentAsaA55Count> listeArc55 = new ArrayList<AgentAsaA55Count>();
+		listeArc55.add(arc55);
+		listeArc55.add(arc55bis);
 
 		SpSold solde = new SpSold();
 		solde.setNomatr(8765);
@@ -138,15 +151,10 @@ public class SoldeServiceTest {
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(arccc);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(arc54);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(arc55);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, dateDeb)).thenReturn(arccc);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, dateDeb)).thenReturn(arc54);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateDeb)).thenReturn(arc55);
+		Mockito.when(cr.getListAgentCounterByDate(9008765, dateDeb, dateFin)).thenReturn(listeArc55);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
@@ -167,11 +175,8 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
-
-		Date dateDeb = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
-		// Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb);
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -187,6 +192,7 @@ public class SoldeServiceTest {
 		assertTrue(dto.isAfficheSoldeAsaA48());
 		assertTrue(dto.isAfficheSoldeAsaA54());
 		assertTrue(dto.isAfficheSoldeAsaA55());
+		assertEquals(2, dto.getListeSoldeAsaA55().size());
 	}
 
 	@Test
@@ -224,6 +230,16 @@ public class SoldeServiceTest {
 		arcc55.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arcc55.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
 
+		AgentAsaA55Count arc55bis = new AgentAsaA55Count();
+		arc55bis.setIdAgent(idAgent);
+		arc55bis.setTotalHeures(2.0);
+		arc55bis.setDateDebut(new DateTime(2013, 3, 1, 0, 0, 0).toDate());
+		arc55bis.setDateFin(new DateTime(2013, 3, 31, 23, 59, 0).toDate());
+
+		List<AgentAsaA55Count> listeArc55 = new ArrayList<AgentAsaA55Count>();
+		listeArc55.add(arcc55);
+		listeArc55.add(arc55bis);
+
 		SpSold solde = new SpSold();
 		solde.setNomatr(8765);
 		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
@@ -241,6 +257,9 @@ public class SoldeServiceTest {
 		Mockito.when(
 				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(arcc55);
+		Mockito.when(
+				cr.getListAgentCounterByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
+						12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
 
 		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
@@ -263,7 +282,8 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
-		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb);
+		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -279,6 +299,7 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeAsaA48());
 		assertFalse(dto.isAfficheSoldeAsaA54());
 		assertFalse(dto.isAfficheSoldeAsaA55());
+		assertEquals(0, dto.getListeSoldeAsaA55().size());
 	}
 
 	@Test
@@ -334,7 +355,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -346,6 +367,7 @@ public class SoldeServiceTest {
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertFalse(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA48());
+		assertEquals(0, dto.getListeSoldeAsaA55().size());
 	}
 
 	@Test
@@ -401,7 +423,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -413,6 +435,7 @@ public class SoldeServiceTest {
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertFalse(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA54());
+		assertEquals(0, dto.getListeSoldeAsaA55().size());
 	}
 
 	@Test
@@ -468,7 +491,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -480,6 +503,7 @@ public class SoldeServiceTest {
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertFalse(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA55());
+		assertEquals(0, dto.getListeSoldeAsaA55().size());
 	}
 
 	@Test

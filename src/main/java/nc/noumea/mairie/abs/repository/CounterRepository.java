@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
+import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 
@@ -103,7 +104,7 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public <T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date dateDebutDemande) {
+	public <T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date date) {
 
 		// Build query criteria
 		CriteriaBuilder cb = absEntityManager.getCriteriaBuilder();
@@ -118,7 +119,7 @@ public class CounterRepository implements ICounterRepository {
 		// Build query
 		TypedQuery<T> q = absEntityManager.createQuery(cq);
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("dateDebut", dateDebutDemande);
+		q.setParameter("dateDebut", date);
 		q.setMaxResults(1);
 
 		// Exec query
@@ -154,6 +155,20 @@ public class CounterRepository implements ICounterRepository {
 						AgentHistoAlimManuelle.class);
 		q.setParameter("idAgentCount", compteurAgent.getIdAgentCount());
 		q.setParameter("idAgent", idAgent);
+
+		return q.getResultList();
+	}
+
+	@Override
+	public List<AgentAsaA55Count> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin) {
+
+		TypedQuery<AgentAsaA55Count> q = absEntityManager
+				.createQuery(
+						"from AgentAsaA55Count h where h.idAgent = :idAgent and h.dateDebut BETWEEN :dateDebut and :dateFin order by h.dateDebut desc ",
+						AgentAsaA55Count.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateDebut", dateDebut);
+		q.setParameter("dateFin", dateFin);
 
 		return q.getResultList();
 	}

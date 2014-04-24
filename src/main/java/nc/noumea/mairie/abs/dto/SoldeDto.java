@@ -1,5 +1,8 @@
 package nc.noumea.mairie.abs.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SoldeDto {
 
 	private boolean afficheSoldeConge;
@@ -16,6 +19,11 @@ public class SoldeDto {
 	private Double soldeAsaA54;
 	private boolean afficheSoldeAsaA55;
 	private Double soldeAsaA55;
+	private List<SoldeMonthDto> listeSoldeAsaA55;
+
+	public SoldeDto() {
+		listeSoldeAsaA55 = new ArrayList<SoldeMonthDto>();
+	}
 
 	public Double getSoldeCongeAnnee() {
 		return soldeCongeAnnee;
@@ -119,6 +127,14 @@ public class SoldeDto {
 
 	public void setAfficheSoldeAsaA55(boolean afficheSoldeAsaA55) {
 		this.afficheSoldeAsaA55 = afficheSoldeAsaA55;
+	}
+
+	public List<SoldeMonthDto> getListeSoldeAsaA55() {
+		return listeSoldeAsaA55;
+	}
+
+	public void setListeSoldeAsaA55(List<SoldeMonthDto> listeSoldeAsaA55) {
+		this.listeSoldeAsaA55 = listeSoldeAsaA55;
 	}
 
 	public Double getSoldeAsaA55() {

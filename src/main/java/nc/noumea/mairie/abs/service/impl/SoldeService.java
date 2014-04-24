@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
+import nc.noumea.mairie.abs.dto.SoldeMonthDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.ISoldeService;
@@ -43,9 +44,9 @@ public class SoldeService implements ISoldeService {
 	private AbsReposCompensateurDataConsistencyRulesImpl absReposCompDataConsistencyRules;
 
 	@Override
-	public SoldeDto getAgentSolde(Integer idAgent, Date date) {
+	public SoldeDto getAgentSolde(Integer idAgent, Date dateDeb, Date dateFin) {
 
-		logger.info("Read getAgentSolde for Agent {}, and date {} ...", idAgent, date);
+		logger.info("Read getAgentSolde for Agent {}, and date {} ...", idAgent, dateDeb);
 		ReturnMessageDto msg = new ReturnMessageDto();
 		SoldeDto dto = new SoldeDto();
 
@@ -68,19 +69,35 @@ public class SoldeService implements ISoldeService {
 		dto.setSoldeReposCompAnneePrec((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutesAnneeN1()));
 
 		// on traite les ASA A48 pour la date en parametre
-		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, idAgent, date);
+		AgentAsaA48Count soldeAsaA48 = counterRepository
+				.getAgentCounterByDate(AgentAsaA48Count.class, idAgent, dateDeb);
 		dto.setAfficheSoldeAsaA48(soldeAsaA48 == null ? false : true);
 		dto.setSoldeAsaA48(soldeAsaA48 == null ? 0 : soldeAsaA48.getTotalJours());
 
 		// on traite les ASA A54 pour la date en parametre
-		AgentAsaA54Count soldeAsaA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, idAgent, date);
+		AgentAsaA54Count soldeAsaA54 = counterRepository
+				.getAgentCounterByDate(AgentAsaA54Count.class, idAgent, dateDeb);
 		dto.setAfficheSoldeAsaA54(soldeAsaA54 == null ? false : true);
 		dto.setSoldeAsaA54(soldeAsaA54 == null ? 0 : soldeAsaA54.getTotalJours());
 
 		// on traite les ASA A55 pour la date en parametre
-		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, idAgent, date);
+		// on affiche le solde courant
+		AgentAsaA55Count soldeAsaA55 = counterRepository
+				.getAgentCounterByDate(AgentAsaA55Count.class, idAgent, dateDeb);
 		dto.setAfficheSoldeAsaA55(soldeAsaA55 == null ? false : true);
 		dto.setSoldeAsaA55(soldeAsaA55 == null ? 0 : soldeAsaA55.getTotalHeures());
+		// on affiche tous les soldes de l'année
+		List<AgentAsaA55Count> listeSoldeAsaA55 = counterRepository
+				.getListAgentCounterByDate(idAgent, dateDeb, dateFin);
+		List<SoldeMonthDto> listDto = new ArrayList<SoldeMonthDto>();
+		for (AgentAsaA55Count arc : listeSoldeAsaA55) {
+			SoldeMonthDto dtoMonth = new SoldeMonthDto();
+			dtoMonth.setSoldeAsaA55(arc.getTotalHeures());
+			dtoMonth.setDateDebut(arc.getDateDebut());
+			dtoMonth.setDateFin(arc.getDateFin());
+			listDto.add(dtoMonth);
+		}
+		dto.setListeSoldeAsaA55(listDto);
 
 		return dto;
 	}

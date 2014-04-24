@@ -52,7 +52,7 @@ public class SoldeController {
 		if (sirhService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		return soldeService.getAgentSolde(convertedIdAgent, filtreSoldeDto.getDateDebut());
+		return soldeService.getAgentSolde(convertedIdAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin());
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class SoldeController {
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
-	@RequestMapping(value = "historiqueSolde", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@RequestMapping(value = "historiqueSolde", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(readOnly = true)
 	public List<HistoriqueSoldeDto> getHistoriqueSolde(
 			@RequestParam(value = "idAgent", required = true) Integer idAgent,
