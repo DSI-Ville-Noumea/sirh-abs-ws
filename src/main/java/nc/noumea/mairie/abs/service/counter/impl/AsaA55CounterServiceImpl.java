@@ -50,8 +50,6 @@ public class AsaA55CounterServiceImpl extends AbstractCounterService {
 
 		logger.info("Trying to update manually ASA A55 counters for Agent {} ...", compteurDto.getIdAgent());
 
-		Double nbHeures = helperService.calculJoursAlimManuelleCompteur(compteurDto);
-
 		try {
 
 			Double dMinutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
