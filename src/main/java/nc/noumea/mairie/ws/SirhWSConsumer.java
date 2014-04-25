@@ -22,7 +22,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private String sirhWsBaseUrl;
 
 	private static final String sirhAgentServiceUrl = "services/agent";
-	
+
 	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
 
 	@Override
@@ -42,7 +42,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		return readResponse(AgentWithServiceDto.class, res, url);
 	}
-	
+
 	@Override
 	public ReturnMessageDto isUtilisateurSIRH(Integer idAgent) {
 
@@ -50,16 +50,16 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
-		
+
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		try {
 			result = readResponse(ReturnMessageDto.class, res, url);
-		}catch(WSConsumerException e) {
-			result.getErrors().add("L'agent n'existe pas dans SIIDMA.");
+		} catch (WSConsumerException e) {
+			result.getErrors().add("L'agent n'existe pas dans l'AD.");
 		}
-		
+
 		return result;
 	}
 }

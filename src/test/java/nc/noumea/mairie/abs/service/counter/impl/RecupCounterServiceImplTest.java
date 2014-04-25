@@ -326,7 +326,7 @@ public class RecupCounterServiceImplTest {
 	public void majManuelleCompteurRecupToAgent_OperateurNonHabilite() {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		result.getErrors().add("L'agent 9005138 n'existe pas dans SIIDMA.");
+		result.getErrors().add("L'agent 9005138 n'existe pas dans l'AD.");
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
