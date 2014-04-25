@@ -13,6 +13,7 @@ import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +34,7 @@ public class AsaRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getListDemandeAsaEnCours() {
+	public void getListDemandeAsaEnCours_testEtatDemande() {
 
 		Date dateJour = new Date();
 
@@ -48,7 +49,7 @@ public class AsaRepositoryTest {
 		listEtatDemande.add(et);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
+			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		absEntityManager.persist(rta);
 		// Given
 
@@ -231,7 +232,7 @@ public class AsaRepositoryTest {
 		absEntityManager.persist(dr11);
 
 		// When
-		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, null);
+		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, null, RefTypeAbsenceEnum.ASA_A48);
 
 		assertEquals(5, result.size());
 	}
@@ -253,7 +254,7 @@ public class AsaRepositoryTest {
 		listEtatDemande.add(et);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
+		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		absEntityManager.persist(rta);
 		// Given
 
@@ -266,8 +267,117 @@ public class AsaRepositoryTest {
 		absEntityManager.persist(dr1);
 
 		// When
-		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, dr1.getIdDemande());
+		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, dr1.getIdDemande(), RefTypeAbsenceEnum.ASA_A48);
 
 		assertEquals(0, result.size());
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListDemandeAsaEnCours_testTypeDemande() {
+
+		Date dateJour = new Date();
+
+		DemandeAsa dr1 = new DemandeAsa();
+		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
+
+		EtatDemande et = new EtatDemande();
+		et.setDate(dateJour);
+		et.setEtat(RefEtatEnum.SAISIE);
+		et.setIdAgent(9005168);
+		et.setDemande(dr1);
+		listEtatDemande.add(et);
+
+		RefTypeAbsence rta = new RefTypeAbsence();
+		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		absEntityManager.persist(rta);
+		// Given
+
+		dr1.setDateDebut(dateJour);
+		dr1.setDateFin(dateJour);
+		dr1.setDuree(10.0);
+		dr1.setIdAgent(9005168);
+		dr1.setType(rta);
+		dr1.setEtatsDemande(listEtatDemande);
+		absEntityManager.persist(dr1);
+		
+		DemandeAsa dr2 = new DemandeAsa();
+		List<EtatDemande> listEtatDemande2 = new ArrayList<EtatDemande>();
+
+		EtatDemande et2 = new EtatDemande();
+		et2.setDate(dateJour);
+		et2.setEtat(RefEtatEnum.SAISIE);
+		et2.setIdAgent(9005168);
+		et2.setDemande(dr2);
+		listEtatDemande2.add(et2);
+
+		RefTypeAbsence rta2 = new RefTypeAbsence();
+		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		absEntityManager.persist(rta2);
+		// Given
+
+		dr2.setDateDebut(dateJour);
+		dr2.setDateFin(dateJour);
+		dr2.setDuree(10.0);
+		dr2.setIdAgent(9005168);
+		dr2.setType(rta2);
+		dr2.setEtatsDemande(listEtatDemande2);
+		absEntityManager.persist(dr2);
+		
+		DemandeAsa dr3 = new DemandeAsa();
+		List<EtatDemande> listEtatDemande3 = new ArrayList<EtatDemande>();
+
+		EtatDemande et3 = new EtatDemande();
+		et3.setDate(dateJour);
+		et3.setEtat(RefEtatEnum.SAISIE);
+		et3.setIdAgent(9005168);
+		et3.setDemande(dr3);
+		listEtatDemande3.add(et3);
+
+		RefTypeAbsence rta3 = new RefTypeAbsence();
+		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
+		absEntityManager.persist(rta3);
+		// Given
+
+		dr3.setDateDebut(dateJour);
+		dr3.setDateFin(dateJour);
+		dr3.setDuree(10.0);
+		dr3.setIdAgent(9005168);
+		dr3.setType(rta3);
+		dr3.setEtatsDemande(listEtatDemande3);
+		absEntityManager.persist(dr3);
+		
+		DemandeAsa dr4 = new DemandeAsa();
+		List<EtatDemande> listEtatDemande4 = new ArrayList<EtatDemande>();
+
+		EtatDemande et4 = new EtatDemande();
+		et4.setDate(dateJour);
+		et4.setEtat(RefEtatEnum.SAISIE);
+		et4.setIdAgent(9005168);
+		et4.setDemande(dr1);
+		listEtatDemande4.add(et4);
+
+		RefTypeAbsence rta4 = new RefTypeAbsence();
+		rta4.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		absEntityManager.persist(rta4);
+		// Given
+
+		dr4.setDateDebut(dateJour);
+		dr4.setDateFin(dateJour);
+		dr4.setDuree(10.0);
+		dr4.setIdAgent(9005168);
+		dr4.setType(rta4);
+		dr4.setEtatsDemande(listEtatDemande4);
+		absEntityManager.persist(dr4);
+
+		// When
+		List<DemandeAsa> result_ASA_A48 = repository.getListDemandeAsaEnCours(9005168, null, RefTypeAbsenceEnum.ASA_A48);
+		assertEquals(1, result_ASA_A48.size());
+		
+		List<DemandeAsa> result_ASA_A54 = repository.getListDemandeAsaEnCours(9005168, null, RefTypeAbsenceEnum.ASA_A54);
+		assertEquals(1, result_ASA_A54.size());
+		
+		List<DemandeAsa> result_ASA_A55 = repository.getListDemandeAsaEnCours(9005168, null, RefTypeAbsenceEnum.ASA_A55);
+		assertEquals(1, result_ASA_A55.size());
 	}
 }

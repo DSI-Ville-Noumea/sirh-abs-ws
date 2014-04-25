@@ -8,6 +8,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
 import org.springframework.stereotype.Repository;
 
@@ -18,10 +19,11 @@ public class AsaRepository implements IAsaRepository {
     private EntityManager absEntityManager;
 	
 	@Override
-	public List<DemandeAsa> getListDemandeAsaEnCours(Integer idAgent, Integer idDemande) {
+	public List<DemandeAsa> getListDemandeAsaEnCours(Integer idAgent, Integer idDemande, RefTypeAbsenceEnum type) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select da from DemandeAsa da inner join da.etatsDemande ed where da.idAgent = :idAgent ");
+		sb.append(" and da.type.idRefTypeAbsence = :type ");
 		sb.append(" and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgent group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :SAISIE, :VISEE_F, :VISEE_D, :APPROUVE, :EN_ATTENTE ) ");
 		if(null != idDemande){
@@ -31,6 +33,7 @@ public class AsaRepository implements IAsaRepository {
 		TypedQuery<DemandeAsa> q = absEntityManager.createQuery(sb.toString(), DemandeAsa.class);
 		
 		q.setParameter("idAgent", idAgent);
+		q.setParameter("type", type.getValue());
 		q.setParameter("SAISIE", RefEtatEnum.SAISIE);
 		q.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE);
 		q.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE);

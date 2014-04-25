@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.EtatDemande;
@@ -28,19 +28,19 @@ import org.springframework.mock.staticmock.MockStaticEntityMethods;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @MockStaticEntityMethods
-public class AbsAsaA48DataConsistencyRulesImplTest {
+public class AbsAsaA55DataConsistencyRulesImplTest {
 
 	@Test
-	public void checkDroitCompteurAsaA48_aucunDroit() {
+	public void checkDroitCompteurAsaA54_aucunDroit() {
 
 		Date dateDebut = new Date();
-		AgentAsaA48Count soldeAsaA48 = null;
+		AgentAsaA55Count soldeAsaA55 = null;
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA48);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA55);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 
 		ReturnMessageDto srm = new ReturnMessageDto();
@@ -48,22 +48,22 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		demande.setIdAgent(9005138);
 		demande.setDateDebut(dateDebut);
 
-		srm = impl.checkDroitCompteurAsaA48(srm, demande);
+		srm = impl.checkDroitCompteurAsaA55(srm, demande);
 
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(srm.getErrors().get(0), "L'agent [9005138] ne possède pas de droit ASA.");
 	}
 
 	@Test
-	public void checkDroitCompteurAsaA48_compteurNegatif() {
+	public void checkDroitCompteurAsaA54_compteurNegatif() {
 
 		Date dateDebut = new Date();
-		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
-		soldeAsaA48.setTotalJours(0.0);
+		AgentAsaA55Count soldeAsaA55 = new AgentAsaA55Count();
+		soldeAsaA55.setTotalMinutes(0);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA48);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA55);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
@@ -77,7 +77,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(
 				listDemandeAsa);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
@@ -89,7 +89,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		demande.setDateFin(new Date());
 		demande.setDuree(10.5);
 
-		srm = impl.checkDroitCompteurAsaA48(srm, demande);
+		srm = impl.checkDroitCompteurAsaA55(srm, demande);
 
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(1, srm.getInfos().size());
@@ -97,15 +97,15 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 	}
 
 	@Test
-	public void checkDroitCompteurAsaA48_compteurNegatifBis() {
+	public void checkDroitCompteurAsaA54_compteurNegatifBis() {
 
 		Date dateDebut = new Date();
-		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
-		soldeAsaA48.setTotalJours(9.0);
+		AgentAsaA55Count soldeAsaA55 = new AgentAsaA55Count();
+		soldeAsaA55.setTotalMinutes(9);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA48);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA55);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
@@ -119,7 +119,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(
 				listDemandeAsa);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
@@ -129,9 +129,9 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		demande.setIdAgent(9005138);
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(new Date());
-		demande.setDuree(10.5);
+		demande.setDuree(10.0);
 
-		srm = impl.checkDroitCompteurAsaA48(srm, demande);
+		srm = impl.checkDroitCompteurAsaA55(srm, demande);
 
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(1, srm.getInfos().size());
@@ -139,15 +139,15 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 	}
 
 	@Test
-	public void checkDroitCompteurAsaA48_ok() {
+	public void checkDroitCompteurAsaA54_ok() {
 
 		Date dateDebut = new Date();
-		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
-		soldeAsaA48.setTotalJours(10.5);
+		AgentAsaA55Count soldeAsaA55 = new AgentAsaA55Count();
+		soldeAsaA55.setTotalMinutes(12);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA48);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA55);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
@@ -161,7 +161,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(
 				listDemandeAsa);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
@@ -171,9 +171,9 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		demande.setIdAgent(9005138);
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(new Date());
-		demande.setDuree(10.5);
+		demande.setDuree(11.0);
 
-		srm = impl.checkDroitCompteurAsaA48(srm, demande);
+		srm = impl.checkDroitCompteurAsaA55(srm, demande);
 
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(0, srm.getInfos().size());
@@ -189,7 +189,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		etat.setEtat(RefEtatEnum.VALIDEE);
 		demande.getEtatsDemande().add(etat);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
@@ -206,7 +206,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		etat.setEtat(RefEtatEnum.EN_ATTENTE);
 		demande.getEtatsDemande().add(etat);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
@@ -223,7 +223,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		etat.setEtat(RefEtatEnum.PRISE);
 		demande.getEtatsDemande().add(etat);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
@@ -240,7 +240,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		etat.setEtat(RefEtatEnum.REJETE);
 		demande.getEtatsDemande().add(etat);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
@@ -251,13 +251,13 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 	public void checkDepassementCompteurAgent_aucunCompteur() {
 
 		Date dateDebut = new Date();
-		AgentAsaA48Count soldeAsaA48 = null;
+		AgentAsaA55Count soldeAsaA55 = null;
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA48);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA55);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
@@ -275,12 +275,12 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 	public void checkDepassementCompteurAgent_compteurNegatif() {
 
 		Date dateDebut = new Date();
-		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
-		soldeAsaA48.setTotalJours(0.0);
+		AgentAsaA55Count soldeAsaA55 = new AgentAsaA55Count();
+		soldeAsaA55.setTotalMinutes(0);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA48);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA55);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
@@ -294,7 +294,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(
 				listDemandeAsa);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
@@ -306,7 +306,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(new Date());
 		demande.setDuree(10.5);
-		demande.setIdTypeDemande(7);
+		demande.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A55.getValue());
 
 		boolean srm = impl.checkDepassementCompteurAgent(demande);
 
@@ -317,12 +317,12 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 	public void checkDepassementCompteurAgent_compteurOk() {
 
 		Date dateDebut = new Date();
-		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
-		soldeAsaA48.setTotalJours(3.0);
+		AgentAsaA55Count soldeAsaA55 = new AgentAsaA55Count();
+		soldeAsaA55.setTotalMinutes(3);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA48);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA55);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(
@@ -336,7 +336,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(
 				listDemandeAsa);
 
-		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
@@ -348,7 +348,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(new Date());
 		demande.setDuree(1.5);
-		demande.setIdTypeDemande(7);
+		demande.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A55.getValue());
 
 		boolean srm = impl.checkDepassementCompteurAgent(demande);
 

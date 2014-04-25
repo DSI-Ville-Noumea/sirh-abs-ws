@@ -14,7 +14,7 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
-		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.SAISIE));
+		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
 	}
 
