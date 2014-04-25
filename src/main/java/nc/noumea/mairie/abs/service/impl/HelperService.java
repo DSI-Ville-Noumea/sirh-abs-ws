@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,19 +37,6 @@ public class HelperService {
 
 	public boolean isDateAMonday(Date dateMonday) {
 		return new LocalDate(dateMonday).getDayOfWeek() == DateTimeConstants.MONDAY;
-	}
-
-	public Date getDateFromMairieInteger(Integer dateAsInteger) {
-		if (dateAsInteger == null || dateAsInteger.equals(0))
-			return null;
-
-		try {
-			return mairieDateFormat.parse(String.valueOf(dateAsInteger));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
 	public Date getDateFin(RefTypeSaisi typeSaisi, Date dateFin, Date dateDeb, Double duree, boolean dateFinAM,

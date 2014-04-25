@@ -229,6 +229,37 @@ public class FiltreServiceTest {
 	}
 
 	@Test
+	public void getListeEtatsByOnglet_NON_PRISES_WithIdRefEtat() {
+		Integer idRefEtat = 1;
+
+		RefEtat etatProvisoire = new RefEtat();
+		etatProvisoire.setIdRefEtat(0);
+		etatProvisoire.setLabel(RefEtatEnum.PROVISOIRE.name());
+		RefEtat etatPris = new RefEtat();
+		etatPris.setIdRefEtat(6);
+		etatPris.setLabel(RefEtatEnum.PRISE.name());
+		RefEtat etatSaisie = new RefEtat();
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel(RefEtatEnum.SAISIE.name());
+
+		List<RefEtat> listRefEtatNonPris = new ArrayList<RefEtat>();
+		listRefEtatNonPris.addAll(Arrays.asList(etatProvisoire, etatSaisie));
+		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
+		listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.getEntity(RefEtat.class, idRefEtat)).thenReturn(etatProvisoire);
+
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+
+		List<RefEtat> result = service.getListeEtatsByOnglet("NON_PRISES", idRefEtat);
+
+		assertEquals(1, result.size());
+		assertEquals(0, result.get(0).getIdRefEtat().intValue());
+	}
+
+	@Test
 	public void getListeEtatsByOnglet_EN_COURS() {
 
 		RefEtat etatProvisoire = new RefEtat();
@@ -259,6 +290,37 @@ public class FiltreServiceTest {
 		assertEquals(0, result.get(0).getIdRefEtat().intValue());
 		assertEquals(1, result.get(1).getIdRefEtat().intValue());
 		assertEquals(6, result.get(2).getIdRefEtat().intValue());
+	}
+
+	@Test
+	public void getListeEtatsByOnglet_EN_COURS_WithIdRefEtat() {
+		Integer idRefEtat = 1;
+
+		RefEtat etatProvisoire = new RefEtat();
+		etatProvisoire.setIdRefEtat(0);
+		etatProvisoire.setLabel(RefEtatEnum.PROVISOIRE.name());
+		RefEtat etatPris = new RefEtat();
+		etatPris.setIdRefEtat(6);
+		etatPris.setLabel(RefEtatEnum.PRISE.name());
+		RefEtat etatSaisie = new RefEtat();
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel(RefEtatEnum.SAISIE.name());
+
+		List<RefEtat> listRefEtatNonPris = new ArrayList<RefEtat>();
+		listRefEtatNonPris.addAll(Arrays.asList(etatProvisoire, etatSaisie));
+		List<RefEtat> listRefEtatEnCours = new ArrayList<RefEtat>();
+		listRefEtatEnCours.addAll(Arrays.asList(etatProvisoire, etatSaisie, etatPris));
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.getEntity(RefEtat.class, idRefEtat)).thenReturn(etatProvisoire);
+
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+
+		List<RefEtat> result = service.getListeEtatsByOnglet("EN_COURS", idRefEtat);
+
+		assertEquals(1, result.size());
+		assertEquals(0, result.get(0).getIdRefEtat().intValue());
 	}
 
 	@Test
