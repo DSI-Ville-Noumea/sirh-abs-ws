@@ -251,6 +251,7 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			case ASA_A48:
 			case ASA_A54:
+			case ASA_A55:
 				DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
 				if (null == demandeAsa) {
 					return demandeDto;
