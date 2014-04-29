@@ -7,6 +7,7 @@ import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.springframework.stereotype.Service;
@@ -42,5 +43,10 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 		}
 
 		return srm;
+	}
+	
+	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+		
+		return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
 	}
 }

@@ -11,6 +11,7 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
+import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -295,10 +296,25 @@ public class AbsenceService implements IAbsenceService {
 		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
 				idRefType);
 
-		List<RefEtat> etats = filtresService.getListeEtatsByOnglet(ongletDemande, idRefEtat);
+		List<RefEtat> listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, idRefEtat);
 
-		return absenceDataConsistencyRulesImpl.filtreListDemande(idAgentConnecte, idAgentConcerne, listeSansFiltre,
-				etats, dateDemande);
+		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
+				listEtats, dateDemande);
+		
+		// si idAgentConnecte == idAgentConcerne, alors nous sommes dans le cas
+		// du WS listeDemandesAgent
+		// donc inutile de recuperer les droits en bdd
+		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
+		if (null != idAgentConnecte && !idAgentConnecte.equals(idAgentConcerne)) {
+			listDroitAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null);
+		}
+		
+		for (DemandeDto demandeDto : listeDto) {
+			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
+			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto, listDroitAgent);
+			demandeDto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
+		}
+		return listeDto;
 	}
 
 	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate,
@@ -700,6 +716,7 @@ public class AbsenceService implements IAbsenceService {
 				listEtats, null);
 		for (DemandeDto dto : listeDto) {
 			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(dto.getIdTypeDemande());
+			dto = absenceDataConsistencyRulesImpl.filtreDroitOfDemandeSIRH(dto);
 			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto));
 		}
 

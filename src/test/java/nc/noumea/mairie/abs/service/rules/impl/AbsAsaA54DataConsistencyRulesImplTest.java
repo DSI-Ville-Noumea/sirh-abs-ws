@@ -354,4 +354,106 @@ public class AbsAsaA54DataConsistencyRulesImplTest {
 
 		assertFalse(srm);
 	}
+	
+	@Test
+	public void isAfficherBoutonImprimer() {
+		
+		DemandeDto demandeDto = new DemandeDto();
+			demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+			
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
+		boolean result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+	}
+	
+	@Test
+	public void isAfficherBoutonAnnuler() {
+		
+		DemandeDto demandeDto = new DemandeDto();
+			demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		
+		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
+		boolean result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertFalse(result);
+	}
 }

@@ -276,6 +276,7 @@ public class DemandeDtoTest {
 		assertEquals("motif approuve", result.getMotif());
 		assertTrue(result.getIsValeurApprobation());
 		assertTrue(result.getIsValeurVisa());
+		assertNull(result.getValeurValidation());
 		assertFalse(result.isDateDebutAM());
 		assertFalse(result.isDateDebutPM());
 		assertFalse(result.isDateFinAM());
@@ -317,6 +318,16 @@ public class DemandeDtoTest {
 			etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
 			etatDemandeVisaD.setDate(dateDemande);
 			etatDemandeVisaD.setMotif("motif visa d");
+			
+		EtatDemande etatDemandeValide = new EtatDemande();
+			etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
+			etatDemandeValide.setDate(dateDemande);
+			etatDemandeValide.setMotif("motif valide");
+			
+		EtatDemande etatDemandeRejete = new EtatDemande();
+			etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
+			etatDemandeRejete.setDate(dateDemande);
+			etatDemandeRejete.setMotif("motif rejete");
 
 		DemandeAsa d = new DemandeAsa();
 			d.setDateDebut(dateDebut);
@@ -328,6 +339,8 @@ public class DemandeDtoTest {
 			d.getEtatsDemande().add(etatDemandeVisaF);
 			d.getEtatsDemande().add(etatDemandeRefuse);
 			d.getEtatsDemande().add(etatDemandeVisaD);
+			d.getEtatsDemande().add(etatDemandeRejete);
+			d.getEtatsDemande().add(etatDemandeValide);
 			d.setDateDebutAM(true);
 			d.setDateDebutPM(true);
 			d.setDateFinAM(true);
@@ -350,6 +363,7 @@ public class DemandeDtoTest {
 		assertEquals(dateFin, result.getDateFin());
 		assertEquals("motif approuve", result.getMotif());
 		assertTrue(result.getIsValeurApprobation());
+		assertFalse(result.getValeurValidation());
 		assertTrue(result.getIsValeurVisa());
 		assertTrue(result.isDateDebutAM());
 		assertTrue(result.isDateDebutPM());
@@ -392,6 +406,16 @@ public class DemandeDtoTest {
 			etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
 			etatDemandeVisaD.setDate(dateDemande);
 			etatDemandeVisaD.setMotif("motif visa d");
+			
+		EtatDemande etatDemandeValide = new EtatDemande();
+			etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
+			etatDemandeValide.setDate(dateDemande);
+			etatDemandeValide.setMotif("motif valide");
+			
+		EtatDemande etatDemandeRejete = new EtatDemande();
+			etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
+			etatDemandeRejete.setDate(dateDemande);
+			etatDemandeRejete.setMotif("motif rejete");
 
 		DemandeAsa d = new DemandeAsa();
 			d.setDateDebut(dateDebut);
@@ -403,6 +427,8 @@ public class DemandeDtoTest {
 			d.getEtatsDemande().add(etatDemandeVisaF);
 			d.getEtatsDemande().add(etatDemandeRefuse);
 			d.getEtatsDemande().add(etatDemandeVisaD);
+			d.getEtatsDemande().add(etatDemandeValide);
+			d.getEtatsDemande().add(etatDemandeRejete);
 			d.setDuree(10.0);
 
 		// When
@@ -422,6 +448,7 @@ public class DemandeDtoTest {
 		assertEquals("motif approuve", result.getMotif());
 		assertTrue(result.getIsValeurApprobation());
 		assertTrue(result.getIsValeurVisa());
+		assertTrue(result.getValeurValidation());
 		assertFalse(result.isDateDebutAM());
 		assertFalse(result.isDateDebutPM());
 		assertFalse(result.isDateFinAM());

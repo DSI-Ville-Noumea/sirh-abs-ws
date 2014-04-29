@@ -15,7 +15,6 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -193,122 +192,101 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		return srm;
 	}
-
+	
 	@Override
-	public List<DemandeDto> filtreListDemande(Integer idAgentConnecte, Integer idAgentConcerne,
-			List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande) {
-		List<DemandeDto> resultListDto = filtreDateAndEtatDemandeFromList(listeSansFiltre, etats, dateDemande);
+	public DemandeDto filtreDroitOfDemande(Integer idAgentConnecte, 
+			DemandeDto demandeDto, List<DroitsAgent> listDroitAgent) {
+		
+		// test 1
+		if (demandeDto.getAgentWithServiceDto().getIdAgent().equals(idAgentConnecte)) {
+			demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(
+					RefEtatEnum.PROVISOIRE.getCodeEtat())
+					|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+			demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(
+					RefEtatEnum.PROVISOIRE.getCodeEtat())
+					|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+			demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
+			demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto));
 
-		if (null != resultListDto && !resultListDto.isEmpty()) {
-			resultListDto = filtreDroitOfListeDemandesByDemande(idAgentConnecte, idAgentConcerne, resultListDto);
+			return demandeDto;
 		}
 
-		return resultListDto;
-	}
+		for (DroitsAgent droitsAgent : listDroitAgent) {
 
-	protected List<DemandeDto> filtreDroitOfListeDemandesByDemande(Integer idAgentConnecte, Integer idAgentConcerne,
-			List<DemandeDto> resultListDto) {
+			if (demandeDto.getAgentWithServiceDto().getIdAgent().equals(droitsAgent.getIdAgent())) {
 
-		// si idAgentConnecte == idAgentConcerne, alors nous sommes dans le cas
-		// du WS listeDemandesAgent
-		// donc inutile de recuperer les droits en bdd
-		// le test 1 sera toujours vrai
-		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
-		if (null != idAgentConnecte && !idAgentConnecte.equals(idAgentConcerne)) {
-			listDroitAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null);
-		}
+				for (DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
 
-		for (DemandeDto demandeDto : resultListDto) {
-			// test 1
-			if (demandeDto.getAgentWithServiceDto().getIdAgent().equals(idAgentConnecte)) {
-				demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(
-						RefEtatEnum.PROVISOIRE.getCodeEtat())
-						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
-				demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(
-						RefEtatEnum.PROVISOIRE.getCodeEtat())
-						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
-				demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
+					if (dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.OPERATEUR.toString())) {
 
-				demandeDto.setAffichageBoutonAnnuler(demandeDto.getIdRefEtat().equals(
-						RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
-
-				continue;
-			}
-
-			for (DroitsAgent droitsAgent : listDroitAgent) {
-
-				if (demandeDto.getAgentWithServiceDto().getIdAgent().equals(droitsAgent.getIdAgent())) {
-
-					for (DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
-
-						if (dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.OPERATEUR.toString())) {
-
-							demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(
-									RefEtatEnum.PROVISOIRE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
-							demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(
-									RefEtatEnum.PROVISOIRE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
-							demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
-
-							demandeDto.setAffichageBoutonAnnuler(demandeDto.getIdRefEtat().equals(
-									RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
-
-							continue;
-						}
-						if (dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.VISEUR.toString())) {
-
-							demandeDto.setModifierVisa(demandeDto.getIdRefEtat().equals(
-									RefEtatEnum.SAISIE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()));
-							demandeDto.setAffichageVisa(true);
-							demandeDto.setAffichageApprobation(true);
-
-							continue;
-						}
-						if (dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.APPROBATEUR.toString())
-								|| dda.getDroitProfil().getProfil().getLibelle()
-										.equals(ProfilEnum.DELEGATAIRE.toString())) {
-
-							demandeDto.setAffichageVisa(true);
-							demandeDto.setAffichageApprobation(true);
-							demandeDto.setModifierApprobation(demandeDto.getIdRefEtat().equals(
-									RefEtatEnum.SAISIE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
-									|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()));
-
-							continue;
-						}
+						demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(
+								RefEtatEnum.PROVISOIRE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+						demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(
+								RefEtatEnum.PROVISOIRE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+						demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
+						demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto));
+						demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(
+								RefEtatEnum.ANNULEE.getCodeEtat()));
+						continue;
 					}
+					if (dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.VISEUR.toString())) {
 
-					break;
+						demandeDto.setModifierVisa(demandeDto.getIdRefEtat().equals(
+								RefEtatEnum.SAISIE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()));
+						demandeDto.setAffichageVisa(true);
+						demandeDto.setAffichageApprobation(true);
+
+						continue;
+					}
+					if (dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.APPROBATEUR.toString())
+							|| dda.getDroitProfil().getProfil().getLibelle()
+									.equals(ProfilEnum.DELEGATAIRE.toString())) {
+
+						demandeDto.setAffichageVisa(true);
+						demandeDto.setAffichageApprobation(true);
+						demandeDto.setModifierApprobation(demandeDto.getIdRefEtat().equals(
+								RefEtatEnum.SAISIE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()));
+
+						continue;
+					}
 				}
+
+				break;
 			}
 		}
 
-		return resultListDto;
+		return demandeDto;
+	}
+	
+	@Override
+	public DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto) {
+		
+		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto));
+		demandeDto.setAffichageValidation(false);
+		demandeDto.setModifierValidation(false);
+		demandeDto.setAffichageEnAttente(false);
+		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(
+				RefEtatEnum.APPROUVEE.getCodeEtat()));
+		
+		return demandeDto;
 	}
 
-	private boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
-		// a completer au fur et à mesure des developpements
-		// TODO
-		if (RefTypeAbsenceEnum.RECUP.getValue() == demandeDto.getIdTypeDemande()
-				|| RefTypeAbsenceEnum.REPOS_COMP.getValue() == demandeDto.getIdTypeDemande()) {
-			return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
-		} else if (RefTypeAbsenceEnum.ASA_A48.getValue() == demandeDto.getIdTypeDemande()
-				|| RefTypeAbsenceEnum.ASA_A54.getValue() == demandeDto.getIdTypeDemande()) {
-			return demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat());
-		} else {
-			return false;
-		}
-
+	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+		return false;
+	}
+	
+	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto) {
+		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
 	}
 
 	@Override

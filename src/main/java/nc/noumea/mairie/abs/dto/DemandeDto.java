@@ -47,12 +47,17 @@ public class DemandeDto {
 	private boolean isAffichageBoutonAnnuler;
 	private boolean isAffichageVisa;
 	private boolean isAffichageApprobation;
+	private boolean isAffichageValidation;
+	private boolean isAffichageEnAttente;
+	private boolean isAffichageBoutonDupliquer;
 	// permet de viser ou approuver
 	private boolean isModifierVisa;
 	private boolean isModifierApprobation;
+	private boolean isModifierValidation;
 	// valeur du visa et approbation de la demande
 	private Boolean isValeurVisa = null;
 	private Boolean isValeurApprobation = null;
+	private Boolean isValeurValidation = null;
 	// depassement de droits
 	private boolean isDepassementCompteur;
 
@@ -91,6 +96,14 @@ public class DemandeDto {
 			}
 			if (this.isValeurApprobation == null && etat.getEtat().equals(RefEtatEnum.REFUSEE)) {
 				this.isValeurApprobation = Boolean.FALSE;
+				continue;
+			}
+			if (this.isValeurValidation == null && etat.getEtat().equals(RefEtatEnum.VALIDEE)) {
+				this.isValeurValidation = Boolean.TRUE;
+				continue;
+			}
+			if (this.isValeurValidation == null && etat.getEtat().equals(RefEtatEnum.REJETE)) {
+				this.isValeurValidation = Boolean.FALSE;
 				continue;
 			}
 		}
@@ -351,6 +364,46 @@ public class DemandeDto {
 
 	public void setDepassementCompteur(boolean isDepassementCompteur) {
 		this.isDepassementCompteur = isDepassementCompteur;
+	}
+
+	public boolean isAffichageValidation() {
+		return isAffichageValidation;
+	}
+
+	public void setAffichageValidation(boolean isAffichageValidation) {
+		this.isAffichageValidation = isAffichageValidation;
+	}
+
+	public boolean isModifierValidation() {
+		return isModifierValidation;
+	}
+
+	public void setModifierValidation(boolean isModifierValidation) {
+		this.isModifierValidation = isModifierValidation;
+	}
+
+	public Boolean getValeurValidation() {
+		return isValeurValidation;
+	}
+
+	public void setValeurValidation(Boolean isValeurValidation) {
+		this.isValeurValidation = isValeurValidation;
+	}
+
+	public boolean isAffichageEnAttente() {
+		return isAffichageEnAttente;
+	}
+
+	public void setAffichageEnAttente(boolean isAffichageEnAttente) {
+		this.isAffichageEnAttente = isAffichageEnAttente;
+	}
+
+	public boolean isAffichageBoutonDupliquer() {
+		return isAffichageBoutonDupliquer;
+	}
+
+	public void setAffichageBoutonDupliquer(boolean isAffichageBoutonDupliquer) {
+		this.isAffichageBoutonDupliquer = isAffichageBoutonDupliquer;
 	}
 
 }

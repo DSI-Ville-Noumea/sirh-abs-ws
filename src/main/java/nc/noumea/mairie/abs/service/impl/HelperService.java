@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class HelperService {
-
-	private static SimpleDateFormat mairieDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	private static int HEURE_JOUR_DEBUT_AM = 0;
 	private static int HEURE_JOUR_FIN_AM = 11;

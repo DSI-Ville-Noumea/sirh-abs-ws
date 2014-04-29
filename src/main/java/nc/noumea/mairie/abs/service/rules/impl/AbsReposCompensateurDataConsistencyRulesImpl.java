@@ -7,6 +7,7 @@ import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.domain.Spcarr;
 
@@ -57,5 +58,10 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 		}
 
 		return srm;
+	}
+	
+	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+		
+		return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
 	}
 }
