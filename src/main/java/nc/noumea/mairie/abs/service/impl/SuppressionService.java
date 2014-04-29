@@ -13,6 +13,7 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ISuppressionService;
+import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,24 +34,11 @@ public class SuppressionService implements ISuppressionService {
 	private IAccessRightsService accessRightsService;
 
 	@Autowired
+	private DataConsistencyRulesFactory dataConsistencyRulesFactory;
+	
+	@Autowired
 	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules defaultAbsenceDataConsistencyRulesImpl;
-
-	@Autowired
-	@Qualifier("AbsRecuperationDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absRecupDataConsistencyRules;
-
-	@Autowired
-	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absReposCompDataConsistencyRules;
-
-	@Autowired
-	@Qualifier("AbsAsaA48DataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl;
-
-	@Autowired
-	@Qualifier("AbsAsaA54DataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl;
 
 	@Override
 	@Transactional(value = "absTransactionManager")
@@ -90,10 +78,12 @@ public class SuppressionService implements ISuppressionService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
-		IAbsenceDataConsistencyRules rules = defaultAbsenceDataConsistencyRulesImpl;
-
+		if(null != demande) {
+			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		}
+		
 		// on verifie si la demande existe
-		returnDto = rules.verifDemandeExiste(demande, returnDto);
+		returnDto = absenceDataConsistencyRulesImpl.verifDemandeExiste(demande, returnDto);
 		if (0 < returnDto.getErrors().size())
 			return returnDto;
 
@@ -106,19 +96,14 @@ public class SuppressionService implements ISuppressionService {
 				break;
 			case REPOS_COMP:
 				demande = getDemande(DemandeReposComp.class, idDemande);
-				rules = absReposCompDataConsistencyRules;
 				break;
 			case RECUP:
 				demande = getDemande(DemandeRecup.class, idDemande);
-				rules = absRecupDataConsistencyRules;
 				break;
 			case ASA_A48:
-				demande = getDemande(DemandeAsa.class, idDemande);
-				rules = absAsaA48DataConsistencyRulesImpl;
-				break;
 			case ASA_A54:
+			case ASA_A55:
 				demande = getDemande(DemandeAsa.class, idDemande);
-				rules = absAsaA54DataConsistencyRulesImpl;
 				break;
 			case AUTRES:
 				// TODO
@@ -135,7 +120,7 @@ public class SuppressionService implements ISuppressionService {
 		}
 
 		// on verifie si la demande existe
-		returnDto = rules.verifDemandeExiste(demande, returnDto);
+		returnDto = absenceDataConsistencyRulesImpl.verifDemandeExiste(demande, returnDto);
 		if (0 < returnDto.getErrors().size())
 			return returnDto;
 
@@ -145,7 +130,7 @@ public class SuppressionService implements ISuppressionService {
 			return returnDto;
 
 		// verifier l etat de la demande
-		returnDto = rules.checkEtatsDemandeAcceptes(returnDto, demande,
+		returnDto = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(returnDto, demande,
 				Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
 		if (0 < returnDto.getErrors().size()) {
