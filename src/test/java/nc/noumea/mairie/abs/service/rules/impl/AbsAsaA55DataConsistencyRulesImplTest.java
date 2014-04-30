@@ -12,8 +12,6 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
-import nc.noumea.mairie.abs.domain.EtatDemande;
-import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -28,8 +26,15 @@ import org.springframework.mock.staticmock.MockStaticEntityMethods;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @MockStaticEntityMethods
-public class AbsAsaA55DataConsistencyRulesImplTest {
+public class AbsAsaA55DataConsistencyRulesImplTest extends AbsAsaDataConsistencyRulesImplTest {
 
+	@Test
+	public void testMethodeParenteHeritage() throws Throwable {
+		
+		super.impl = new AbsAsaA55DataConsistencyRulesImpl();
+		super.allTest();
+	}
+	
 	@Test
 	public void checkDroitCompteurAsaA55_aucunDroit() {
 
@@ -182,74 +187,6 @@ public class AbsAsaA55DataConsistencyRulesImplTest {
 	}
 
 	@Test
-	public void checkEtatsDemandeAnnulee_isValidee() {
-
-		ReturnMessageDto srm = new ReturnMessageDto();
-		Demande demande = new Demande();
-		demande.setIdDemande(1);
-		EtatDemande etat = new EtatDemande();
-		etat.setEtat(RefEtatEnum.VALIDEE);
-		demande.getEtatsDemande().add(etat);
-
-		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
-
-		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-
-		assertEquals(0, srm.getErrors().size());
-	}
-
-	@Test
-	public void checkEtatsDemandeAnnulee_isAttente() {
-
-		ReturnMessageDto srm = new ReturnMessageDto();
-		Demande demande = new Demande();
-		demande.setIdDemande(1);
-		EtatDemande etat = new EtatDemande();
-		etat.setEtat(RefEtatEnum.EN_ATTENTE);
-		demande.getEtatsDemande().add(etat);
-
-		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
-
-		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-
-		assertEquals(0, srm.getErrors().size());
-	}
-
-	@Test
-	public void checkEtatsDemandeAnnulee_isPrise() {
-
-		ReturnMessageDto srm = new ReturnMessageDto();
-		Demande demande = new Demande();
-		demande.setIdDemande(1);
-		EtatDemande etat = new EtatDemande();
-		etat.setEtat(RefEtatEnum.PRISE);
-		demande.getEtatsDemande().add(etat);
-
-		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
-
-		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-
-		assertEquals(0, srm.getErrors().size());
-	}
-
-	@Test
-	public void checkEtatsDemandeAnnulee_isRejete() {
-
-		ReturnMessageDto srm = new ReturnMessageDto();
-		Demande demande = new Demande();
-		demande.setIdDemande(1);
-		EtatDemande etat = new EtatDemande();
-		etat.setEtat(RefEtatEnum.REJETE);
-		demande.getEtatsDemande().add(etat);
-
-		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
-
-		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-
-		assertEquals(1, srm.getErrors().size());
-	}
-
-	@Test
 	public void checkDepassementCompteurAgent_aucunCompteur() {
 
 		Date dateDebut = new Date();
@@ -357,107 +294,5 @@ public class AbsAsaA55DataConsistencyRulesImplTest {
 		boolean srm = impl.checkDepassementCompteurAgent(demande);
 
 		assertFalse(srm);
-	}
-	
-	@Test
-	public void isAfficherBoutonImprimer() {
-		
-		DemandeDto demandeDto = new DemandeDto();
-			demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-			
-		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
-		boolean result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-	}
-	
-	@Test
-	public void isAfficherBoutonAnnuler() {
-		
-		DemandeDto demandeDto = new DemandeDto();
-			demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-		
-		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
-		boolean result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertTrue(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertTrue(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertTrue(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertTrue(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertTrue(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertTrue(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertFalse(result);
-		
-		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
-		assertFalse(result);
 	}
 }
