@@ -26,7 +26,7 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
 	 * mise a jour
 	 */
-	protected ReturnMessageDto majManuelleCompteurAsaA54ToAgent(Integer idAgent, CompteurDto compteurDto,
+	protected ReturnMessageDto majManuelleCompteurAsaToAgent(Integer idAgent, CompteurDto compteurDto,
 			ReturnMessageDto result, MotifCompteur motifCompteur) {
 
 		logger.info("Trying to update manually ASA A54 counters for Agent {} ...", compteurDto.getIdAgent());

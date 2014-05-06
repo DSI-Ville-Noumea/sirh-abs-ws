@@ -110,43 +110,6 @@ public class AsaA48CounterServiceImplTest {
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA48Count.class));
 	}
 
-	@Test
-	public void majManuelleCompteurAsaA48ToAgent_agentInexistant() {
-		ReturnMessageDto result = new ReturnMessageDto();
-
-		Integer idAgent = 9005138;
-		CompteurDto compteurDto = new CompteurDto();
-		compteurDto.setIdAgent(9005151);
-		compteurDto.setDureeAAjouter(10.0);
-		compteurDto.setDateDebut(new DateTime(2013, 4, 2, 0, 0, 0).toDate());
-
-		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
-
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(null);
-
-		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
-
-		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
-
-		boolean isAgentNotFoundException = false;
-		try {
-			service.majManuelleCompteurToAgent(idAgent, compteurDto);
-		} catch (AgentNotFoundException e) {
-			isAgentNotFoundException = true;
-		}
-
-		assertTrue(isAgentNotFoundException);
-	}
 
 	@Test
 	public void majManuelleCompteurAsaA48ToAgent_OK_avecCompteurExistant() {
