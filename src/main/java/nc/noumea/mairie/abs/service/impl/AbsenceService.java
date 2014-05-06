@@ -300,7 +300,7 @@ public class AbsenceService implements IAbsenceService {
 
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				listEtats, dateDemande);
-		
+
 		// si idAgentConnecte == idAgentConcerne, alors nous sommes dans le cas
 		// du WS listeDemandesAgent
 		// donc inutile de recuperer les droits en bdd
@@ -308,11 +308,13 @@ public class AbsenceService implements IAbsenceService {
 		if (null != idAgentConnecte && !idAgentConnecte.equals(idAgentConcerne)) {
 			listDroitAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null);
 		}
-		
+
 		for (DemandeDto demandeDto : listeDto) {
 			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
-			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto, listDroitAgent);
-			demandeDto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
+			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto,
+					listDroitAgent);
+			demandeDto
+					.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
 		}
 		return listeDto;
 	}
@@ -548,6 +550,8 @@ public class AbsenceService implements IAbsenceService {
 			case ASA_A48:
 			case ASA_A54:
 			case ASA_A55:
+			case ASA_A53:
+			case ASA_A52:
 				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.VALIDEE) {
 					result.getErrors()
 							.add(String
