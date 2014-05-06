@@ -17,13 +17,15 @@ public class CompteurDto {
 
 	private boolean isAnneePrecedente;
 
-	@JsonSerialize(using=JsonDateSerializer.class)
-	@JsonDeserialize(using=JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateDebut;
 
-	@JsonSerialize(using=JsonDateSerializer.class)
-	@JsonDeserialize(using=JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateFin;
+
+	private Integer idOrganisationSyndicale;
 
 	public Integer getIdAgent() {
 		return idAgent;
@@ -79,6 +81,14 @@ public class CompteurDto {
 
 	public void setDateFin(Date dateFin) {
 		this.dateFin = dateFin;
+	}
+
+	public Integer getIdOrganisationSyndicale() {
+		return idOrganisationSyndicale;
+	}
+
+	public void setIdOrganisationSyndicale(Integer idOrganisationSyndicale) {
+		this.idOrganisationSyndicale = idOrganisationSyndicale;
 	}
 
 }
