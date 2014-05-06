@@ -1,10 +1,10 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
@@ -19,29 +19,30 @@ import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("AsaA48CounterServiceImpl")
-public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
+@Service("AsaA52CounterServiceImpl")
+public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 
 	/**
 	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
 	 * mise a jour
 	 */
-	protected ReturnMessageDto majManuelleCompteurAsaA48ToAgent(Integer idAgent, CompteurDto compteurDto,
+	protected ReturnMessageDto majManuelleCompteurAsaToAgent(Integer idAgent, CompteurDto compteurDto,
 			ReturnMessageDto result, MotifCompteur motifCompteur) {
 
-		logger.info("Trying to update manually ASA A48 counters for Agent {} ...", compteurDto.getIdAgent());
-
-		Double nbJours = helperService.calculJoursAlimManuelleCompteur(compteurDto);
+		logger.info("Trying to update manually ASA A52 counters for Agent {} ...", compteurDto.getIdAgent());
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A48.getValue(), result, motifCompteur);
+
+			Double dMinutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+			Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
+			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, RefTypeAbsenceEnum.ASA_A52.getValue(), result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
 	}
 
 	/**
-	 * Mise à jour manuelle du compteur de ASA A48
+	 * Mise à jour manuelle du compteur de ASA A52
 	 * 
 	 * @param T1
 	 *            inherits BaseAgentCount
@@ -52,27 +53,18 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
+	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
+			double nbMinutes, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
 			IllegalAccessException {
 
-		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
-			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
-			throw new AgentNotFoundException();
-		}
+		logger.info("updating counters for Agent [{}] with {} heures for dateDeb {} and dateFin {}...",
+				compteurDto.getIdAgent(), nbMinutes, compteurDto.getDateDebut(), compteurDto.getDateFin());
 
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(compteurDto.getDateDebut());
-		int annee = cal.get(Calendar.YEAR);
-
-		logger.info("updating counters for Agent [{}] with {} nbJours for Year {}...", compteurDto.getIdAgent(),
-				nbJours, annee);
-
-		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounterByDate(AgentAsaA48Count.class,
+		AgentAsaA52Count arc = (AgentAsaA52Count) counterRepository.getAgentCounterByDate(AgentAsaA52Count.class,
 				compteurDto.getIdAgent(), compteurDto.getDateDebut());
 
 		if (arc == null) {
-			arc = new AgentAsaA48Count();
+			arc = new AgentAsaA52Count();
 			arc.setIdAgent(compteurDto.getIdAgent());
 		}
 
@@ -86,17 +78,19 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 		histo.setDateModification(helperService.getCurrentDate());
 		histo.setMotifCompteur(motifCompteur);
 		String textLog = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Mise en place de " + nbJours + " jours pour l'année " + annee + ".";
+			textLog = "Mise en place de " + nbMinutes + " minutes pour la période du "
+					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
 		}
 		histo.setText(textLog);
+		histo.setCompteurAgent(arc);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(idRefTypeAbsence);
 		histo.setType(rta);
-		histo.setCompteurAgent(arc);
 
-		arc.setTotalJours(nbJours);
+		arc.setTotalMinutes(nbMinutes);
 		arc.setDateDebut(compteurDto.getDateDebut());
 		arc.setDateFin(compteurDto.getDateFin());
 		arc.setLastModification(helperService.getCurrentDate());
@@ -112,34 +106,35 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	public List<CompteurAsaDto> getListeCompteur() {
 		List<CompteurAsaDto> result = new ArrayList<>();
 
-		List<AgentAsaA48Count> listeArc = counterRepository.getListCounter(AgentAsaA48Count.class);
-		for (AgentAsaA48Count arc : listeArc) {
+		List<AgentAsaA52Count> listeArc = counterRepository.getListCounter(AgentAsaA52Count.class);
+		for (AgentAsaA52Count arc : listeArc) {
 			CompteurAsaDto dto = new CompteurAsaDto(arc);
 			result.add(dto);
 		}
 		return result;
 	}
-	
+
 	/**
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande,
+			DemandeEtatChangeDto demandeEtatChangeDto) {
 
-		logger.info("Trying to update recuperation counters for Agent [{}] ...", demande.getIdAgent());
+		logger.info("Trying to update ASA_A52 counters for Agent [{}] ...", demande.getIdAgent());
 
-		Double jours = calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(),
+		int minutes = calculMinutesAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(),
 				demande.getDateFin());
-		if (0.0 != jours) {
+		if (0 != minutes) {
 			try {
-				srm = majCompteurToAgent(demande.getIdAgent(), jours, srm);
+				srm = majCompteurToAgent(demande.getIdAgent(), minutes, srm);
 			} catch (InstantiationException | IllegalAccessException e) {
-				throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+				throw new RuntimeException("An error occured while trying to update ASA_A52 counters :", e);
 			}
 		}
 		return srm;
 	}
-	
+
 	/**
 	 * Mets à jour le compteur de minutes désiré (en fonction des types passés
 	 * en paramètre) sans mettre a jour l historique
@@ -156,18 +151,17 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Double jours,
-			ReturnMessageDto srm) throws InstantiationException, IllegalAccessException {
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, int minutes, ReturnMessageDto srm)
+			throws InstantiationException, IllegalAccessException {
 
 		if (sirhRepository.getAgent(idAgent) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} jours...", idAgent, jours);
+		logger.info("updating counters for Agent [{}] with {} minutes...", idAgent, minutes);
 
-		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounter(AgentAsaA48Count.class,
-				idAgent);
+		AgentAsaA52Count arc = (AgentAsaA52Count) counterRepository.getAgentCounter(AgentAsaA52Count.class, idAgent);
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
@@ -177,12 +171,12 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 
 		// on verifie que le solde est positif seulement si on debite le
 		// compteur
-		if (0.0 > jours && 0.0 > arc.getTotalJours() + jours) {
+		if (0 > minutes && 0.0 > arc.getTotalMinutes() + minutes) {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF_AUTORISE);
 			srm.getInfos().add(String.format(SOLDE_COMPTEUR_NEGATIF_AUTORISE));
 		}
-		
-		arc.setTotalJours(arc.getTotalJours() + jours);
+
+		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);

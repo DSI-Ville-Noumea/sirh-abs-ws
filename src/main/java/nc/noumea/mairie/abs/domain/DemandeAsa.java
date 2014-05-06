@@ -2,6 +2,8 @@ package nc.noumea.mairie.abs.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -32,6 +34,10 @@ public class DemandeAsa extends Demande {
 	@NotNull
 	@Column(name = "DATE_FIN_PM")
 	private boolean dateFinPM;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "ID_ORGANISATION_SYNDICALE")
+	private OrganisationSyndicale organisationSyndicale;
 
 	public boolean isDateDebutAM() {
 		return dateDebutAM;
@@ -71,6 +77,14 @@ public class DemandeAsa extends Demande {
 
 	public void setDuree(Double duree) {
 		this.duree = duree;
+	}
+
+	public OrganisationSyndicale getOrganisationSyndicale() {
+		return organisationSyndicale;
+	}
+
+	public void setOrganisationSyndicale(OrganisationSyndicale organisationSyndicale) {
+		this.organisationSyndicale = organisationSyndicale;
 	}
 
 }

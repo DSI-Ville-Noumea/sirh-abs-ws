@@ -2,14 +2,12 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
@@ -22,38 +20,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("AsaA54CounterServiceImpl")
-public class AsaA54CounterServiceImpl extends AbstractCounterService {
-
-	@Override
-	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto) {
-
-		logger.info("Trying to update ASA A54 manually counters for Agent {} ...", compteurDto.getIdAgent());
-
-		ReturnMessageDto result = new ReturnMessageDto();
-
-		result = super.majManuelleCompteurToAgent(idAgent, compteurDto);
-		if (!result.getErrors().isEmpty())
-			return result;
-
-		result = majManuelleCompteurAsaA54ToAgent(idAgent, compteurDto, result, RefTypeAbsenceEnum.ASA_A54.getValue());
-
-		return result;
-	}
+public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 
 	/**
 	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
 	 * mise a jour
 	 */
-	private ReturnMessageDto majManuelleCompteurAsaA54ToAgent(Integer idAgent, CompteurDto compteurDto,
-			ReturnMessageDto result, Integer idRefTypeAbsence) {
+	protected ReturnMessageDto majManuelleCompteurAsaA54ToAgent(Integer idAgent, CompteurDto compteurDto,
+			ReturnMessageDto result, MotifCompteur motifCompteur) {
 
 		logger.info("Trying to update manually ASA A54 counters for Agent {} ...", compteurDto.getIdAgent());
 
 		Double nbJours = helperService.calculJoursAlimManuelleCompteur(compteurDto);
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, idRefTypeAbsence, result);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A54.getValue(), result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -72,7 +53,7 @@ public class AsaA54CounterServiceImpl extends AbstractCounterService {
 	 * @throws IllegalAccessException
 	 */
 	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm) throws InstantiationException,
+			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
 			IllegalAccessException {
 
 		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
@@ -96,14 +77,6 @@ public class AsaA54CounterServiceImpl extends AbstractCounterService {
 		}
 
 		if (!srm.getErrors().isEmpty()) {
-			return srm;
-		}
-
-		MotifCompteur motifCompteur = counterRepository
-				.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur());
-		if (null == motifCompteur) {
-			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
-			srm.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
 			return srm;
 		}
 
@@ -217,28 +190,5 @@ public class AsaA54CounterServiceImpl extends AbstractCounterService {
 		return srm;
 	}
 
-	/**
-	 * 
-	 * @param demandeEtatChangeDto
-	 * @param demande
-	 * @param dateDebut
-	 * @param dateFin
-	 * @return Double nombre jour a incrementer/decrementer du compteur
-	 */
-	protected Double calculJoursAlimAutoCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
-			Date dateDebut, Date dateFin) {
-		Double jours = 0.0;
-		// si on approuve, le compteur decremente
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
-			jours = 0.0 - helperService.calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
-		}
-		// si on passe de Approuve a Refuse, le compteur incremente
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())
-				&& (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE) || demande
-						.getLatestEtatDemande().getEtat().equals(RefEtatEnum.PRISE))) {
-			jours = helperService.calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
-		}
-
-		return jours;
-	}
+	
 }

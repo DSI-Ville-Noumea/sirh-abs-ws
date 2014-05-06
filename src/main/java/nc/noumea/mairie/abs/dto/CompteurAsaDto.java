@@ -3,6 +3,8 @@ package nc.noumea.mairie.abs.dto;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 
@@ -21,6 +23,8 @@ public class CompteurAsaDto {
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateFin;
+	
+	private OrganisationSyndicaleDto organisationSyndicaleDto;
 
 	public CompteurAsaDto(AgentAsaA48Count arc) {
 		this.idAgent = arc.getIdAgent();
@@ -41,6 +45,24 @@ public class CompteurAsaDto {
 		this.nb = (double) arc.getTotalMinutes();
 		this.dateDebut = arc.getDateDebut();
 		this.dateFin = arc.getDateFin();
+	}
+	
+	public CompteurAsaDto(AgentAsaA52Count arc) {
+		this.idAgent = arc.getIdAgent();
+		this.nb = (double) arc.getTotalMinutes();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+		if(null != arc)
+			this.organisationSyndicaleDto = new OrganisationSyndicaleDto(arc.getOrganisationSyndicale());
+	}
+	
+	public CompteurAsaDto(AgentAsaA53Count arc) {
+		this.idAgent = arc.getIdAgent();
+		this.nb = (double) arc.getTotalJours();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+		if(null != arc)
+			this.organisationSyndicaleDto = new OrganisationSyndicaleDto(arc.getOrganisationSyndicale());
 	}
 
 	public Integer getIdAgent() {
@@ -73,6 +95,15 @@ public class CompteurAsaDto {
 
 	public void setNb(Double nb) {
 		this.nb = nb;
+	}
+
+	public OrganisationSyndicaleDto getOrganisationSyndicaleDto() {
+		return organisationSyndicaleDto;
+	}
+
+	public void setOrganisationSyndicaleDto(
+			OrganisationSyndicaleDto organisationSyndicaleDto) {
+		this.organisationSyndicaleDto = organisationSyndicaleDto;
 	}
 
 }
