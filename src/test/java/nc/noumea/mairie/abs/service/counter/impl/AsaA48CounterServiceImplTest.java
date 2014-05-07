@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,7 +10,6 @@ import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
@@ -21,7 +19,6 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
-import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -31,8 +28,15 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class AsaA48CounterServiceImplTest {
+public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 
+	@Test
+	public void testMethodeParenteHeritage() throws Throwable {
+		
+		super.service = new AsaA48CounterServiceImpl();
+		super.allTest();
+	}
+	
 	@Test
 	public void majManuelleCompteurAsaA48ToAgent_NonHabilite() {
 
@@ -116,15 +120,16 @@ public class AsaA48CounterServiceImplTest {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138;
+		
 		CompteurDto compteurDto = new CompteurDto();
-		compteurDto.setIdAgent(9005151);
-		compteurDto.setDureeAAjouter(10.0);
-		compteurDto.setIdMotifCompteur(1);
-		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
-		compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeAAjouter(10.0);
+			compteurDto.setIdMotifCompteur(1);
+			compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+			compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
 
 		AgentAsaA48Count arc = new AgentAsaA48Count();
-		arc.setTotalJours(15.0);
+			arc.setTotalJours(15.0);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
@@ -356,92 +361,6 @@ public class AsaA48CounterServiceImplTest {
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentCount.class));
 	}
 	
-	@Test
-	public void calculJoursAlimAutoCompteur_etatValide() {
-
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-
-		Demande demande = new Demande();
-		
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(10.0);
 	
-		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
-
-		assertEquals(result.floatValue(), -8,5);
-	}
-
-	@Test
-	public void calculJoursAlimAutoCompteur_etatPrise_and_etatPrcdValide() {
-
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.PRISE);
-
-		Demande demande = new Demande();
-			demande.addEtatDemande(etatDemande);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(10.0);
-		
-		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
-
-		assertEquals(result.floatValue(), 8,5);
-	}
-	
-	@Test
-	public void calculJoursAlimAutoCompteur_etatAnnule_and_etatPrcdValide() {
-		
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.VALIDEE);
-
-		Demande demande = new Demande();
-			demande.addEtatDemande(etatDemande);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(10.0);
-		
-		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
-
-		assertEquals(result.floatValue(), 8,5);
-	}
-
-	@Test
-	public void calculJoursAlimAutoCompteur_etatRejete_and_etatPrcdApprouve() {
-
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
-
-		Demande demande = new Demande();
-			demande.addEtatDemande(etatDemande);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-			Mockito.when(helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(10.0);
-		
-		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
-
-		assertEquals(result.floatValue(), 0,0);
-	}
 
 }

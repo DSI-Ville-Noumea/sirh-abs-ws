@@ -992,7 +992,6 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
-		Mockito.when(counterService.calculMinutesCompteur(dto, demande)).thenReturn(10);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
 		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
@@ -1134,7 +1133,6 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
-		Mockito.when(counterService.calculMinutesCompteur(dto, demande)).thenReturn(10);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
 		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
@@ -1371,7 +1369,6 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
-		Mockito.when(counterService.calculMinutesCompteur(dto, demande)).thenReturn(10);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
 		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
@@ -1458,7 +1455,6 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
-		Mockito.when(counterService.calculMinutesCompteur(dto, demande)).thenReturn(10);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
 		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(

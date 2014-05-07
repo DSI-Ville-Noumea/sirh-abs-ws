@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
-import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
@@ -26,7 +24,8 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
 	 * mise a jour
 	 */
-	protected ReturnMessageDto majManuelleCompteurAsaToAgent(Integer idAgent, CompteurDto compteurDto,
+	@Override
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
 			ReturnMessageDto result, MotifCompteur motifCompteur) {
 
 		logger.info("Trying to update manually ASA A55 counters for Agent {} ...", compteurDto.getIdAgent());
@@ -72,27 +71,12 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 			arc.setIdAgent(compteurDto.getIdAgent());
 		}
 
-		if (!srm.getErrors().isEmpty()) {
-			return srm;
-		}
-
-		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
-		histo.setIdAgent(idAgentOperateur);
-		histo.setIdAgentConcerne(compteurDto.getIdAgent());
-		histo.setDateModification(helperService.getCurrentDate());
-		histo.setMotifCompteur(motifCompteur);
 		String textLog = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (null != compteurDto.getDureeAAjouter()) {
 			textLog = "Mise en place de " + nbMinutes + " minutes pour la période du "
 					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
 		}
-		histo.setText(textLog);
-		histo.setCompteurAgent(arc);
-
-		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(idRefTypeAbsence);
-		histo.setType(rta);
 
 		arc.setTotalMinutes(nbMinutes);
 		arc.setDateDebut(compteurDto.getDateDebut());
@@ -100,7 +84,7 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		counterRepository.persistEntity(histo);
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
 
 		return srm;
 	}

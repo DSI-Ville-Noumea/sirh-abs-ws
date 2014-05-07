@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.AgentCount;
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.DemandeRecup;
-import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.MotifCompteur;
+import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -48,6 +50,8 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected static final String DUREE_A_SAISIR = "La durée à ajouter ou retrancher n'est pas saisie.";
 	protected static final String ERREUR_DUREE_SAISIE = "Un seul des champs Durée à ajouter ou Durée à retrancher doit être saisi.";
 	protected static final String COMPTEUR_INEXISTANT = "Le compteur n'existe pas.";
+	protected static final String TYPE_COMPTEUR_INEXISTANT = "Le type de compteur n'existe pas.";
+	protected static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
 
 	protected static final String RESET_COMPTEUR_ANNEE_PRECEDENTE = "Remise à 0 du compteur Année précédente";
 	protected static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur Année en cours";
@@ -96,7 +100,28 @@ public abstract class AbstractCounterService implements ICounterService {
 		}
 
 		controlSaisieAlimManuelleCompteur(compteurDto, result);
-
+		
+		MotifCompteur motifCompteur = counterRepository
+				.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur());
+		if (null == motifCompteur) {
+			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
+			result.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
+		}
+		
+		if (!result.getErrors().isEmpty()) {
+			return result;
+		}
+		
+		majManuelleCompteurToAgent(idAgent, compteurDto, result, motifCompteur);
+		
+		return result;
+	}
+	
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
+			ReturnMessageDto result, MotifCompteur motifCompteur) {
+		
+		logger.debug(TYPE_COMPTEUR_INEXISTANT);
+		result.getErrors().add(String.format(TYPE_COMPTEUR_INEXISTANT));
 		return result;
 	}
 
@@ -116,11 +141,30 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected void controlCompteurPositif(Integer minutes, Integer totalMinutes, ReturnMessageDto srm) {
 		controlCompteurPositif(minutes, new Double(totalMinutes), srm);
 	}
+	
 	protected void controlCompteurPositif(Integer minutes, Double totalMinutes, ReturnMessageDto srm) {
 		if (null != minutes && 0 > totalMinutes + minutes) {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF);
 			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
 		}
+	}
+	
+	protected void majAgentHistoAlimManuelle(Integer idAgentOperateur, Integer idAgentConcerne, MotifCompteur motifCompteur,
+			String textLog, AgentCount compteurAgent, Integer idRefTypeAbsence) {
+		
+		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
+			histo.setIdAgent(idAgentOperateur);
+			histo.setIdAgentConcerne(idAgentConcerne);
+			histo.setDateModification(helperService.getCurrentDate());
+			histo.setMotifCompteur(motifCompteur);
+			histo.setText(textLog);
+			histo.setCompteurAgent(compteurAgent);
+	
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(idRefTypeAbsence);
+		histo.setType(rta);
+	
+		counterRepository.persistEntity(histo);
 	}
 
 	@Override
@@ -149,23 +193,6 @@ public abstract class AbstractCounterService implements ICounterService {
 	@Override
 	public List<Integer> getListAgentReposCompCountForResetAnneeEnCours() {
 		return new ArrayList<Integer>();
-	}
-
-	@Override
-	public int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
-		int duree = 0;
-		// si on approuve, le compteur decremente
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
-			duree = 0 - ((DemandeRecup) demande).getDuree();
-		}
-		// si on passe de Approuve a Refuse, le compteur incremente
-		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()) || demandeEtatChangeDto
-				.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))
-				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
-			duree = ((DemandeRecup) demande).getDuree();
-		}
-
-		return duree;
 	}
 
 	@Override

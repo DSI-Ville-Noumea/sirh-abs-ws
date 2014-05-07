@@ -26,7 +26,6 @@ import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.NotAMondayException;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.sirh.domain.Agent;
-import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -34,8 +33,65 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class RecupCounterServiceImplTest {
+public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 
+	private RecupCounterServiceImpl service = new RecupCounterServiceImpl();
+	
+	@Test
+	public void testMethodeParenteHeritage() {
+		super.allTest(new RecupCounterServiceImpl());
+	}
+	
+	@Test
+	public void calculMinutesCompteur_etatApprouve() {
+
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+
+		DemandeRecup demande = new DemandeRecup();
+		demande.setDuree(10);
+
+		int minutes = service.calculMinutesCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(-10, minutes);
+	}
+
+	@Test
+	public void calculMinutesCompteur_etatRefuse_and_etatPrcdApprouve() {
+
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup demande = new DemandeRecup();
+		demande.setDuree(10);
+		demande.addEtatDemande(etatDemande);
+		
+		int minutes = service.calculMinutesCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(10, minutes);
+	}
+
+	@Test
+	public void calculMinutesCompteur_etatRefuse_and_etatPrcdVisee() {
+
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+
+		DemandeRecup demande = new DemandeRecup();
+		demande.setDuree(10);
+		demande.addEtatDemande(etatDemande);
+
+		int minutes = service.calculMinutesCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(0, minutes);
+	}
+	
 	@Test
 	public void addRecuperationToAgent_AgentDoesNotExists_ThrowAgentNotFoundException() {
 
@@ -46,7 +102,6 @@ public class RecupCounterServiceImplTest {
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(idAgent)).thenReturn(null);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 
 		// When
@@ -72,7 +127,6 @@ public class RecupCounterServiceImplTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(false);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
@@ -104,7 +158,6 @@ public class RecupCounterServiceImplTest {
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
@@ -140,7 +193,6 @@ public class RecupCounterServiceImplTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -175,7 +227,6 @@ public class RecupCounterServiceImplTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.isDateAMonday(dateMonday)).thenReturn(true);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -208,7 +259,6 @@ public class RecupCounterServiceImplTest {
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -240,7 +290,6 @@ public class RecupCounterServiceImplTest {
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -279,7 +328,6 @@ public class RecupCounterServiceImplTest {
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -311,7 +359,6 @@ public class RecupCounterServiceImplTest {
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -323,44 +370,17 @@ public class RecupCounterServiceImplTest {
 	}
 
 	@Test
-	public void majManuelleCompteurRecupToAgent_OperateurNonHabilite() {
-
-		ReturnMessageDto result = new ReturnMessageDto();
-		result.getErrors().add("L'agent 9005138 n'existe pas dans l'AD.");
-		Integer idAgent = 9005138;
-		CompteurDto compteurDto = new CompteurDto();
-		compteurDto.setIdAgent(9005151);
-
-		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
-
-		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
-
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
-
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
-
-		assertEquals(1, result.getErrors().size());
-		assertEquals("Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.", result.getErrors().get(0)
-				.toString());
-	}
-
-	@Test
 	public void majManuelleCompteurRecupToAgent_agentInexistant() {
 
+		super.service = new RecupCounterServiceImpl();
+		super.majManuelleCompteurToAgent_prepareData();
+		
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
-		compteurDto.setIdAgent(9005151);
-		compteurDto.setDureeARetrancher(10.0);
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeARetrancher(10.0);
+			compteurDto.setIdMotifCompteur(1);
 
-		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -369,10 +389,10 @@ public class RecupCounterServiceImplTest {
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(null);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
 		boolean isAgentNotFoundException = false;
 		try {
@@ -386,14 +406,17 @@ public class RecupCounterServiceImplTest {
 
 	@Test
 	public void majManuelleCompteurRecupToAgent_CompteurInexistant_And_SoldeNegatif() {
-
+		
+		super.service = new RecupCounterServiceImpl();
+		super.majManuelleCompteurToAgent_prepareData();
+		
 		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
-		compteurDto.setIdAgent(9005151);
-		compteurDto.setDureeARetrancher(10.0);
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeARetrancher(10.0);
+			compteurDto.setIdMotifCompteur(1);
 
-		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -402,11 +425,9 @@ public class RecupCounterServiceImplTest {
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
 
-		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(
 				null);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -423,16 +444,19 @@ public class RecupCounterServiceImplTest {
 	@Test
 	public void majManuelleCompteurRecupToAgent_CompteurExistant_And_SoldeNegatif() {
 
+		super.service = new RecupCounterServiceImpl();
+		super.majManuelleCompteurToAgent_prepareData();
+		
 		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
+		compteurDto.setIdMotifCompteur(1);
 
 		AgentRecupCount arc = new AgentRecupCount();
 		arc.setTotalMinutes(5);
 
-		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -441,11 +465,9 @@ public class RecupCounterServiceImplTest {
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
 
-		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent()))
 				.thenReturn(arc);
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -459,47 +481,7 @@ public class RecupCounterServiceImplTest {
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentRecupCount.class));
 	}
 
-	@Test
-	public void majManuelleCompteurRecupToAgent_MotifCompteurInexistant() {
-
-		ReturnMessageDto result = new ReturnMessageDto();
-		Integer idAgent = 9005138;
-		CompteurDto compteurDto = new CompteurDto();
-		compteurDto.setIdAgent(9005151);
-		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
-
-		AgentRecupCount arc = new AgentRecupCount();
-		arc.setTotalMinutes(15);
-
-		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
-
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
-
-		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent()))
-				.thenReturn(arc);
-		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
-				null);
-
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
-		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
-
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
-
-		assertEquals(1, result.getErrors().size());
-		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
-		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
-		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentRecupCount.class));
-	}
+	
 
 	@Test
 	public void majManuelleCompteurRecupToAgent_OK_avecCompteurExistant() {
@@ -530,7 +512,6 @@ public class RecupCounterServiceImplTest {
 		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -570,7 +551,6 @@ public class RecupCounterServiceImplTest {
 		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
-		RecupCounterServiceImpl service = new RecupCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);

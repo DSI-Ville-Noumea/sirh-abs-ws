@@ -127,6 +127,31 @@ public class CounterRepository implements ICounterRepository {
 
 		return (r.size() == 1 ? r.get(0) : null);
 	}
+	
+	@Override
+	public <T> T getOSCounterByDate(Class<T> T, Integer idOrganisationSyndicale, Date date) {
+
+		// Build query criteria
+		CriteriaBuilder cb = absEntityManager.getCriteriaBuilder();
+		CriteriaQuery<T> cq = cb.createQuery(T);
+		Root<T> c = cq.from(T);
+		cq.select(c);
+		ParameterExpression<Integer> p = cb.parameter(Integer.class, "organisationSyndicale.idOrganisationSyndicale");
+		ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateDebut");
+		cq.where(cb.and(cb.equal(c.get("organisationSyndicale.idOrganisationSyndicale"), p),
+				cb.between(p2, c.<Date> get("dateDebut"), c.<Date> get("dateFin"))));
+
+		// Build query
+		TypedQuery<T> q = absEntityManager.createQuery(cq);
+		q.setParameter("organisationSyndicale.idOrganisationSyndicale", idOrganisationSyndicale);
+		q.setParameter("dateDebut", date);
+		q.setMaxResults(1);
+
+		// Exec query
+		List<T> r = q.getResultList();
+
+		return (r.size() == 1 ? r.get(0) : null);
+	}
 
 	@Override
 	public <T> List<T> getListCounter(Class<T> T) {

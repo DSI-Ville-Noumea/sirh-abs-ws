@@ -25,7 +25,5 @@ public interface ICounterService {
 
 	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
 
-	int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande);
-
 	List<CompteurAsaDto> getListeCompteur();
 }

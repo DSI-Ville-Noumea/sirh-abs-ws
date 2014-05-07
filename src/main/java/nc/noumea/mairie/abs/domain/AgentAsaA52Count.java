@@ -21,7 +21,7 @@ public class AgentAsaA52Count extends AgentCount {
 
 	@NotNull
 	@Column(name = "TOTAL_MINUTES", columnDefinition = "numeric")
-	private Double totalMinutes;
+	private int totalMinutes;
 
 	@Column(name = "DATE_DEBUT")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -35,11 +35,11 @@ public class AgentAsaA52Count extends AgentCount {
 	@JoinColumn(name = "ID_ORGANISATION_SYNDICALE")
 	private OrganisationSyndicale organisationSyndicale;
 
-	public Double getTotalMinutes() {
+	public int getTotalMinutes() {
 		return totalMinutes;
 	}
 
-	public void setTotalMinutes(Double totalMinutes) {
+	public void setTotalMinutes(int totalMinutes) {
 		this.totalMinutes = totalMinutes;
 	}
 

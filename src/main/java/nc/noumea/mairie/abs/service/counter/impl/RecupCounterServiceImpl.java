@@ -2,13 +2,13 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import java.util.Date;
 
-import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.BaseAgentWeekHisto;
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -22,36 +22,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("RecupCounterServiceImpl")
 public class RecupCounterServiceImpl extends AbstractCounterService {
 
-	@Override
-	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto) {
-
-		logger.info("Trying to update Recuperation manually counters for Agent {} ...", compteurDto.getIdAgent());
-
-		ReturnMessageDto result = new ReturnMessageDto();
-
-		result = super.majManuelleCompteurToAgent(idAgent, compteurDto);
-		if (!result.getErrors().isEmpty())
-			return result;
-
-		result = majManuelleCompteurRecupToAgent(idAgent, compteurDto, result, RefTypeAbsenceEnum.RECUP.getValue());
-
-		return result;
-	}
-
 	/**
 	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
 	 * mise a jour
 	 */
-	private ReturnMessageDto majManuelleCompteurRecupToAgent(Integer idAgent, CompteurDto compteurDto,
-			ReturnMessageDto result, Integer idRefTypeAbsence) {
+	@Override
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
+			ReturnMessageDto result, MotifCompteur motifCompteur) {
 
 		logger.info("Trying to update manually recuperation counters for Agent {} ...", compteurDto.getIdAgent());
 
 		Double dMinutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
 		Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, idRefTypeAbsence, result);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, RefTypeAbsenceEnum.RECUP.getValue(), result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -94,6 +78,22 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 			}
 		}
 		return srm;
+	}
+	
+	protected int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
+		int duree = 0;
+		// si on approuve, le compteur decremente
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
+			duree = 0 - ((DemandeRecup) demande).getDuree();
+		}
+		// si on passe de Approuve a Refuse, le compteur incremente
+		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()) || demandeEtatChangeDto
+				.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))
+				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
+			duree = ((DemandeRecup) demande).getDuree();
+		}
+
+		return duree;
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 	 * @throws IllegalAccessException
 	 */
 	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Integer minutes, Integer idRefTypeAbsence, ReturnMessageDto srm) throws InstantiationException,
+			Integer minutes, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
 			IllegalAccessException {
 
 		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
@@ -239,19 +239,6 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 			return srm;
 		}
 
-		MotifCompteur motifCompteur = counterRepository
-				.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur());
-		if (null == motifCompteur) {
-			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
-			srm.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
-			return srm;
-		}
-
-		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
-		histo.setIdAgent(idAgentOperateur);
-		histo.setIdAgentConcerne(compteurDto.getIdAgent());
-		histo.setDateModification(helperService.getCurrentDate());
-		histo.setMotifCompteur(motifCompteur);
 		String textLog = "";
 		if (null != compteurDto.getDureeAAjouter()) {
 			textLog = "Ajout de " + minutes + " minutes.";
@@ -259,18 +246,12 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 		if (null != compteurDto.getDureeARetrancher()) {
 			textLog = "Retrait de " + minutes + " minutes.";
 		}
-		histo.setText(textLog);
-		histo.setCompteurAgent(arc);
-
-		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(idRefTypeAbsence);
-		histo.setType(rta);
 
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		counterRepository.persistEntity(histo);
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
 
 		return srm;
 	}

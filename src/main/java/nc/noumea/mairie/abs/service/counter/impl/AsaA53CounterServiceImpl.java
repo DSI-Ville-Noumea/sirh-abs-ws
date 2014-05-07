@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
-import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
@@ -22,13 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("AsaA53CounterServiceImpl")
 public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 
-	
-
 	/**
 	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
 	 * mise a jour
 	 */
-	protected ReturnMessageDto majManuelleCompteurAsaToAgent(Integer idAgent, CompteurDto compteurDto,
+	@Override
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
 			ReturnMessageDto result, MotifCompteur motifCompteur) {
 
 		logger.info("Trying to update manually ASA A53 counters for Agent {} ...", compteurDto.getIdAgent());
@@ -61,35 +59,27 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 		logger.info("updating counters for Agent [{}] with {} heures for dateDeb {} and dateFin {}...",
 				compteurDto.getIdAgent(), nbJours, compteurDto.getDateDebut(), compteurDto.getDateFin());
 
-		AgentAsaA53Count arc = (AgentAsaA53Count) counterRepository.getAgentCounterByDate(AgentAsaA53Count.class,
-				compteurDto.getIdAgent(), compteurDto.getDateDebut());
-
-		if (arc == null) {
-			arc = new AgentAsaA53Count();
-			arc.setIdAgent(compteurDto.getIdAgent());
-		}
-
-		if (!srm.getErrors().isEmpty()) {
+		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class,
+				compteurDto.getIdOrganisationSyndicale());
+		if (null == organisationSyndicale) {
+			logger.warn(OS_INEXISTANT);
+			srm.getErrors().add(String.format(OS_INEXISTANT));
 			return srm;
 		}
+		
+		AgentAsaA53Count arc = (AgentAsaA53Count) counterRepository.getOSCounterByDate(AgentAsaA53Count.class,
+				compteurDto.getIdOrganisationSyndicale(), compteurDto.getDateDebut());
+		if (arc == null) {
+			arc = new AgentAsaA53Count();
+			arc.setOrganisationSyndicale(organisationSyndicale);
+		}
 
-		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
-		histo.setIdAgent(idAgentOperateur);
-		histo.setIdAgentConcerne(compteurDto.getIdAgent());
-		histo.setDateModification(helperService.getCurrentDate());
-		histo.setMotifCompteur(motifCompteur);
 		String textLog = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (null != compteurDto.getDureeAAjouter()) {
 			textLog = "Mise en place de " + nbJours + " minutes pour la période du "
 					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
 		}
-		histo.setText(textLog);
-		histo.setCompteurAgent(arc);
-
-		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(idRefTypeAbsence);
-		histo.setType(rta);
 
 		arc.setTotalJours(nbJours);
 		arc.setDateDebut(compteurDto.getDateDebut());
@@ -97,7 +87,7 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		counterRepository.persistEntity(histo);
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
 
 		return srm;
 	}

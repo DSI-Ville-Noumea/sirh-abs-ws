@@ -229,24 +229,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	 * mise a jour
 	 */
 	@Override
-	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto) {
-
-		logger.info("Trying to update Repos Compensateur manually counters for Agent {} ...", compteurDto.getIdAgent());
-
-		ReturnMessageDto result = new ReturnMessageDto();
-
-		result = super.majManuelleCompteurToAgent(idAgent, compteurDto);
-		if (!result.getErrors().isEmpty())
-			return result;
-
-		result = majManuelleCompteurToAgent(idAgent, compteurDto, result, RefTypeAbsenceEnum.REPOS_COMP.getValue());
-
-		return result;
-	}
-
-	private ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto srm,
-			Integer idRefTypeAbsence) {
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto srm,
+			MotifCompteur motifCompteur) {
 
 		logger.info("Trying to update manually Repos Comp. counters for Agent {} ...", compteurDto.getIdAgent());
 
@@ -262,7 +246,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		}
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, minutesAnneeN1, idRefTypeAbsence, srm);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, minutesAnneeN1, RefTypeAbsenceEnum.REPOS_COMP.getValue(), srm, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -281,7 +265,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	 * @throws IllegalAccessException
 	 */
 	private ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Integer minutes, Integer minutesAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm)
+			Integer minutes, Integer minutesAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
 			throws InstantiationException, IllegalAccessException {
 
 		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
@@ -306,19 +290,6 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 			return srm;
 		}
 
-		MotifCompteur motifCompteur = counterRepository
-				.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur());
-		if (null == motifCompteur) {
-			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
-			srm.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
-			return srm;
-		}
-
-		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
-		histo.setIdAgent(idAgentOperateur);
-		histo.setIdAgentConcerne(compteurDto.getIdAgent());
-		histo.setDateModification(helperService.getCurrentDate());
-		histo.setMotifCompteur(motifCompteur);
 		String textLog = "";
 		if (null != compteurDto.getDureeAAjouter()) {
 			if (compteurDto.isAnneePrecedente()) {
@@ -334,12 +305,6 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 				textLog = "Retrait de " + minutes + " minutes sur le compteur de l'année.";
 			}
 		}
-		histo.setText(textLog);
-		histo.setCompteurAgent(arc);
-
-		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(idRefTypeAbsence);
-		histo.setType(rta);
 
 		if (null != minutes) {
 			arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
@@ -350,8 +315,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		counterRepository.persistEntity(histo);
-
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
+		
 		return srm;
 	}
 
@@ -372,8 +337,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		return srm;
 	}
 
-	@Override
-	public int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
+	protected int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		int minutes = 0;
 		// si on approuve, le compteur decremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {

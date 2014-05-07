@@ -11,7 +11,6 @@ import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
@@ -31,8 +30,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class AsaA54CounterServiceImplTest {
+public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 
+	@Test
+	public void testMethodeParenteHeritage() throws Throwable {
+		super.service = new AsaA54CounterServiceImpl();
+		super.allTest();
+	}
+	
 	@Test
 	public void majManuelleCompteurAsaA54ToAgent_NonHabilite() {
 
@@ -108,6 +113,50 @@ public class AsaA54CounterServiceImplTest {
 		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA54Count.class));
+	}
+
+	@Test
+	public void majManuelleCompteurAsaA54ToAgent_agentInexistant() {
+		
+		super.service = new AsaA48CounterServiceImpl();
+		super.majManuelleCompteurToAgent_prepareData();
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		Integer idAgent = 9005138;
+		CompteurDto compteurDto = new CompteurDto();
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeAAjouter(10.0);
+			compteurDto.setDateDebut(new DateTime(2013, 4, 2, 0, 0, 0).toDate());
+			compteurDto.setIdMotifCompteur(1);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(null);
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+
+		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+
+		boolean isAgentNotFoundException = false;
+		try {
+			service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		} catch (AgentNotFoundException e) {
+			isAgentNotFoundException = true;
+		}
+
+		assertTrue(isAgentNotFoundException);
 	}
 
 	@Test
@@ -361,100 +410,6 @@ public class AsaA54CounterServiceImplTest {
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentCount.class));
 	}
 
-	@Test
-	public void calculJoursAlimAutoCompteur_etatValide() {
-
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-
-		Demande demande = new Demande();
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
-
-		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
-
-		assertEquals(result.floatValue(), -8, 5);
-	}
-
-	@Test
-	public void calculJoursAlimAutoCompteur_etatPrise_and_etatPrcdValide() {
-
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.PRISE);
-
-		Demande demande = new Demande();
-		demande.addEtatDemande(etatDemande);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
-
-		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
-
-		assertEquals(result.floatValue(), 8, 5);
-	}
-
-	@Test
-	public void calculJoursAlimAutoCompteur_etatAnnule_and_etatPrcdValide() {
-
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.VALIDEE);
-
-		Demande demande = new Demande();
-		demande.addEtatDemande(etatDemande);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
-
-		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
-
-		assertEquals(result.floatValue(), 8, 5);
-	}
-
-	@Test
-	public void calculJoursAlimAutoCompteur_etatRejete_and_etatPrcdApprouve() {
-
-		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
-
-		Demande demande = new Demande();
-		demande.addEtatDemande(etatDemande);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
-
-		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "helperService", helperService);
-
-		Double result = service.calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, new Date(), new Date());
-
-		assertEquals(result.floatValue(), 0, 0);
-	}
+	
 
 }
