@@ -2,10 +2,12 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
@@ -32,9 +34,8 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 		logger.info("Trying to update manually ASA A53 counters for Agent {} ...", compteurDto.getIdAgent());
 
 		try {
-			Double dMinutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
-			Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
-			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, RefTypeAbsenceEnum.ASA_A53.getValue(), result, motifCompteur);
+			Double nbJours = helperService.calculJoursAlimManuelleCompteur(compteurDto);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A53.getValue(), result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -53,10 +54,10 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws IllegalAccessException
 	 */
 	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
+			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
 			IllegalAccessException {
 
-		logger.info("updating counters for Agent [{}] with {} heures for dateDeb {} and dateFin {}...",
+		logger.info("updating counters for Agent [{}] with {} nbJours for dateDeb {} and dateFin {}...",
 				compteurDto.getIdAgent(), nbJours, compteurDto.getDateDebut(), compteurDto.getDateFin());
 
 		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class,
@@ -77,7 +78,7 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 		String textLog = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Mise en place de " + nbJours + " minutes pour la période du "
+			textLog = "Mise en place de " + nbJours + " jours pour la période du "
 					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
 		}
 
@@ -118,7 +119,8 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 				demande.getDateFin());
 		if (0 != jours) {
 			try {
-				srm = majCompteurToAgent(demande.getIdAgent(), jours, srm);
+				srm = majCompteurToAgent(demande.getIdAgent(), ((DemandeAsa)demande).getOrganisationSyndicale().getIdOrganisationSyndicale(), 
+						jours, demande.getDateDebut(), srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update ASA_A53 counters :", e);
 			}
@@ -142,7 +144,8 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Double jours, ReturnMessageDto srm)
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Integer idOrganisationSyndicale,  
+			Double jours, Date dateDebutDemande, ReturnMessageDto srm)
 			throws InstantiationException, IllegalAccessException {
 
 		if (sirhRepository.getAgent(idAgent) == null) {
@@ -150,9 +153,18 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} minutes...", idAgent, jours);
+		logger.info("updating counters for Agent [{}] with {} jours...", idAgent, jours);
 
-		AgentAsaA53Count arc = (AgentAsaA53Count) counterRepository.getAgentCounter(AgentAsaA53Count.class, idAgent);
+		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class,
+				idOrganisationSyndicale);
+		if (null == organisationSyndicale) {
+			logger.warn(OS_INEXISTANT);
+			srm.getErrors().add(String.format(OS_INEXISTANT));
+			return srm;
+		}
+		
+		AgentAsaA53Count arc = (AgentAsaA53Count) counterRepository.getOSCounterByDate(AgentAsaA53Count.class,
+				idOrganisationSyndicale, dateDebutDemande);
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
