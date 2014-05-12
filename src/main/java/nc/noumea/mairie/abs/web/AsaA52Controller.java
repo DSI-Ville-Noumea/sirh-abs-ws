@@ -64,7 +64,7 @@ public class AsaA52Controller {
 	@RequestMapping(value = "/listeCompteurA52", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<CompteurAsaDto> getListeCompteur() {
 
-		logger.debug("entered GET [asaA55/listeCompteurA52] => getListeCompteur ");
+		logger.debug("entered GET [asaA52/listeCompteurA52] => getListeCompteur ");
 
 		List<CompteurAsaDto> result = counterService.getListeCompteur();
 

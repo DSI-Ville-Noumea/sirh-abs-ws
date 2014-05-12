@@ -69,16 +69,17 @@ public abstract class AbstractCounterService implements ICounterService {
 	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes) {
 		return 0;
 	}
-	
+
 	/**
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande,
+			DemandeEtatChangeDto demandeEtatChangeDto) {
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 		return srm;
 	}
-	
+
 	/**
 	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
 	 * mise a jour
@@ -91,11 +92,11 @@ public abstract class AbstractCounterService implements ICounterService {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		// seul l operateur peut mettre a jour les compteurs de ses agents
-		if (!accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())) {
-			// tester si agent est un utilisateur SIRH
-			ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
-			if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+		// tester si agent est un utilisateur SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			// seul l operateur peut mettre a jour les compteurs de ses agents
+			if (!accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())) {
 				logger.warn(OPERATEUR_INEXISTANT);
 				result.getErrors().add(String.format(OPERATEUR_INEXISTANT));
 				return result;
@@ -103,26 +104,26 @@ public abstract class AbstractCounterService implements ICounterService {
 		}
 
 		controlSaisieAlimManuelleCompteur(compteurDto, result);
-		
+
 		MotifCompteur motifCompteur = counterRepository
 				.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur());
 		if (null == motifCompteur) {
 			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
 			result.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
 		}
-		
+
 		if (!result.getErrors().isEmpty()) {
 			return result;
 		}
-		
+
 		majManuelleCompteurToAgent(idAgent, compteurDto, result, motifCompteur);
-		
+
 		return result;
 	}
-	
+
 	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
 			ReturnMessageDto result, MotifCompteur motifCompteur) {
-		
+
 		logger.debug(TYPE_COMPTEUR_INEXISTANT);
 		result.getErrors().add(String.format(TYPE_COMPTEUR_INEXISTANT));
 		return result;
@@ -144,29 +145,29 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected void controlCompteurPositif(Integer minutes, Integer totalMinutes, ReturnMessageDto srm) {
 		controlCompteurPositif(minutes, new Double(totalMinutes), srm);
 	}
-	
+
 	protected void controlCompteurPositif(Integer minutes, Double totalMinutes, ReturnMessageDto srm) {
 		if (null != minutes && 0 > totalMinutes + minutes) {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF);
 			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
 		}
 	}
-	
-	protected void majAgentHistoAlimManuelle(Integer idAgentOperateur, Integer idAgentConcerne, MotifCompteur motifCompteur,
-			String textLog, AgentCount compteurAgent, Integer idRefTypeAbsence) {
-		
+
+	protected void majAgentHistoAlimManuelle(Integer idAgentOperateur, Integer idAgentConcerne,
+			MotifCompteur motifCompteur, String textLog, AgentCount compteurAgent, Integer idRefTypeAbsence) {
+
 		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
-			histo.setIdAgent(idAgentOperateur);
-			histo.setIdAgentConcerne(idAgentConcerne);
-			histo.setDateModification(helperService.getCurrentDate());
-			histo.setMotifCompteur(motifCompteur);
-			histo.setText(textLog);
-			histo.setCompteurAgent(compteurAgent);
-	
+		histo.setIdAgent(idAgentOperateur);
+		histo.setIdAgentConcerne(idAgentConcerne);
+		histo.setDateModification(helperService.getCurrentDate());
+		histo.setMotifCompteur(motifCompteur);
+		histo.setText(textLog);
+		histo.setCompteurAgent(compteurAgent);
+
 		RefTypeAbsence rta = new RefTypeAbsence();
-			rta.setIdRefTypeAbsence(idRefTypeAbsence);
+		rta.setIdRefTypeAbsence(idRefTypeAbsence);
 		histo.setType(rta);
-	
+
 		counterRepository.persistEntity(histo);
 	}
 
