@@ -13,7 +13,6 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ABS_AGENT_COUNT")
@@ -26,7 +25,6 @@ public class AgentCount {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idAgentCount;
 
-	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 

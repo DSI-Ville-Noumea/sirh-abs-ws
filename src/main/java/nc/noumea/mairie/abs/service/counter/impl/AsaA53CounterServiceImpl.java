@@ -66,6 +66,10 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 			logger.warn(OS_INEXISTANT);
 			srm.getErrors().add(String.format(OS_INEXISTANT));
 			return srm;
+		} else if(!organisationSyndicale.isActif()) {
+			logger.warn(OS_INACTIVE);
+			srm.getErrors().add(String.format(OS_INACTIVE));
+			return srm;
 		}
 		
 		AgentAsaA53Count arc = (AgentAsaA53Count) counterRepository.getOSCounterByDate(AgentAsaA53Count.class,
@@ -160,6 +164,10 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 		if (null == organisationSyndicale) {
 			logger.warn(OS_INEXISTANT);
 			srm.getErrors().add(String.format(OS_INEXISTANT));
+			return srm;
+		} else if(!organisationSyndicale.isActif()) {
+			logger.warn(OS_INACTIVE);
+			srm.getErrors().add(String.format(OS_INACTIVE));
 			return srm;
 		}
 		

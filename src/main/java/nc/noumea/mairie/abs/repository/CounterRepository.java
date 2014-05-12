@@ -8,12 +8,14 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 
 import org.springframework.stereotype.Repository;
 
@@ -136,14 +138,18 @@ public class CounterRepository implements ICounterRepository {
 		CriteriaQuery<T> cq = cb.createQuery(T);
 		Root<T> c = cq.from(T);
 		cq.select(c);
-		ParameterExpression<Integer> p = cb.parameter(Integer.class, "organisationSyndicale.idOrganisationSyndicale");
+		Join<T, OrganisationSyndicale> j = c.join("organisationSyndicale");
+		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idOrganisationSyndicale");
 		ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateDebut");
-		cq.where(cb.and(cb.equal(c.get("organisationSyndicale.idOrganisationSyndicale"), p),
-				cb.between(p2, c.<Date> get("dateDebut"), c.<Date> get("dateFin"))));
+		cq.where(
+		cb.and(cb.equal(j.get("idOrganisationSyndicale"), p),
+				cb.between(p2, c.<Date> get("dateDebut"), c.<Date> get("dateFin")))
+				)
+				;
 
 		// Build query
 		TypedQuery<T> q = absEntityManager.createQuery(cq);
-		q.setParameter("organisationSyndicale.idOrganisationSyndicale", idOrganisationSyndicale);
+	    q.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
 		q.setParameter("dateDebut", date);
 		q.setMaxResults(1);
 

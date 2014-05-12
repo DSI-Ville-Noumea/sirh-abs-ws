@@ -79,7 +79,7 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 		if (null != compteurDto.getDureeAAjouter()) {
 			textLog = "Mise en place de " + nbJours + " jours pour l'année " + annee + ".";
 		}
-
+		
 		arc.setTotalJours(nbJours);
 		arc.setDateDebut(compteurDto.getDateDebut());
 		arc.setDateFin(compteurDto.getDateFin());

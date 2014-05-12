@@ -23,6 +23,7 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 public abstract class AbstractCounterService implements ICounterService {
 
@@ -52,6 +53,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected static final String COMPTEUR_INEXISTANT = "Le compteur n'existe pas.";
 	protected static final String TYPE_COMPTEUR_INEXISTANT = "Le type de compteur n'existe pas.";
 	protected static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
+	protected static final String OS_INACTIVE = "L'organisation syndicale n'est pas active.";
 
 	protected static final String RESET_COMPTEUR_ANNEE_PRECEDENTE = "Remise à 0 du compteur Année précédente";
 	protected static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur Année en cours";
@@ -82,6 +84,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	 * mise a jour
 	 */
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto) {
 
 		logger.info("Trying to update manually counters for Agent {} ...", compteurDto.getIdAgent());
