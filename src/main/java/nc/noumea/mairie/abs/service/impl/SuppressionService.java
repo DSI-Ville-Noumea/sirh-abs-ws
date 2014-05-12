@@ -101,6 +101,8 @@ public class SuppressionService implements ISuppressionService {
 				demande = getDemande(DemandeRecup.class, idDemande);
 				break;
 			case ASA_A48:
+			case ASA_A52:
+			case ASA_A53:
 			case ASA_A54:
 			case ASA_A55:
 				demande = getDemande(DemandeAsa.class, idDemande);

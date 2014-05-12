@@ -36,6 +36,10 @@ public enum RefTypeAbsenceEnum {
 				return ASA_A54;
 			case 9:
 				return ASA_A55;
+			case 10:
+				return ASA_A52;
+			case 11:
+				return ASA_A53;
 			default:
 				return null;
 		}
