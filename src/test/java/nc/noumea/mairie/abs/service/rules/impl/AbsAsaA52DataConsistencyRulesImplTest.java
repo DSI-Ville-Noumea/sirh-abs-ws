@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAsaRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -229,7 +230,7 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getOSCounterByDate(AgentAsaA52Count.class, 
-				demande.getIdOrganisationSyndicale(), dateDebut)).thenReturn(
+				demande.getOrganisationSyndicale().getIdOrganisation(), dateDebut)).thenReturn(
 				soldeAsaA52);
 
 		AbsAsaA52DataConsistencyRulesImpl impl = new AbsAsaA52DataConsistencyRulesImpl();
@@ -250,17 +251,20 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 			agDto.setIdAgent(9005138);
 		
+		OrganisationSyndicaleDto orgaDto = new OrganisationSyndicaleDto();
+			orgaDto.setIdOrganisation(1);
+		
 		DemandeDto demande = new DemandeDto();
 			demande.setAgentWithServiceDto(agDto);
 			demande.setDateDebut(dateDebut);
 			demande.setDateFin(new Date());
 			demande.setDuree(10.5);
 			demande.setIdTypeDemande(7);
-			demande.setIdOrganisationSyndicale(1);
+			demande.setOrganisationSyndicale(orgaDto);
 		
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getOSCounterByDate(AgentAsaA52Count.class, 
-				demande.getIdOrganisationSyndicale(), dateDebut)).thenReturn(
+				demande.getOrganisationSyndicale().getIdOrganisation(), dateDebut)).thenReturn(
 				soldeAsaA52);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -304,7 +308,7 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getOSCounterByDate(AgentAsaA52Count.class, 
-				demande.getIdOrganisationSyndicale(), dateDebut)).thenReturn(
+				demande.getOrganisationSyndicale().getIdOrganisation(), dateDebut)).thenReturn(
 				soldeAsaA52);
 
 		HelperService helperService = Mockito.mock(HelperService.class);

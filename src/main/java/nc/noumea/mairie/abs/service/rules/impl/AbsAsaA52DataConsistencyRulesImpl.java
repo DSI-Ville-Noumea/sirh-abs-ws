@@ -19,17 +19,17 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
-		super.checkOrganisationSyndicale(srm, (DemandeAsa)demande);
-		if(!srm.getErrors().isEmpty())
+		super.checkOrganisationSyndicale(srm, (DemandeAsa) demande);
+		if (!srm.getErrors().isEmpty())
 			return;
-		
-		checkDroitCompteurAsaA52(srm, (DemandeAsa)demande);
+
+		checkDroitCompteurAsaA52(srm, (DemandeAsa) demande);
 	}
 
 	public ReturnMessageDto checkDroitCompteurAsaA52(ReturnMessageDto srm, DemandeAsa demande) {
 
-		AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class,
-				demande.getOrganisationSyndicale().getIdOrganisationSyndicale(), demande.getDateDebut());
+		AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class, demande
+				.getOrganisationSyndicale().getIdOrganisationSyndicale(), demande.getDateDebut());
 
 		if (null == soldeAsaA52) {
 			logger.warn(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
@@ -51,7 +51,8 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 	private int getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent) {
 
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande, RefTypeAbsenceEnum.ASA_A52);
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande,
+				RefTypeAbsenceEnum.ASA_A52);
 
 		int somme = 0;
 
@@ -67,7 +68,7 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
 
 		AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class, demandeDto
-				.getIdOrganisationSyndicale(), demandeDto.getDateDebut());
+				.getOrganisationSyndicale().getIdOrganisation(), demandeDto.getDateDebut());
 
 		if (null == soldeAsaA52) {
 			return true;

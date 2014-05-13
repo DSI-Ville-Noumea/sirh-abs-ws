@@ -60,16 +60,8 @@ public class DemandeDto {
 	private Boolean isValeurValidation = null;
 	// depassement de droits
 	private boolean isDepassementCompteur;
-	
-	private Integer idOrganisationSyndicale;
 
-	public Integer getIdOrganisationSyndicale() {
-		return idOrganisationSyndicale;
-	}
-
-	public void setIdOrganisationSyndicale(Integer idOrganisationSyndicale) {
-		this.idOrganisationSyndicale = idOrganisationSyndicale;
-	}
+	private OrganisationSyndicaleDto organisationSyndicale;
 
 	public DemandeDto() {
 	}
@@ -141,8 +133,9 @@ public class DemandeDto {
 				this.isDateDebutPM = ((DemandeAsa) d).isDateDebutPM();
 				this.isDateFinAM = ((DemandeAsa) d).isDateFinAM();
 				this.isDateFinPM = ((DemandeAsa) d).isDateFinPM();
-				if(null != ((DemandeAsa) d).getOrganisationSyndicale()) 
-					this.idOrganisationSyndicale = ((DemandeAsa) d).getOrganisationSyndicale().getIdOrganisationSyndicale();
+				if (null != ((DemandeAsa) d).getOrganisationSyndicale())
+					this.organisationSyndicale = new OrganisationSyndicaleDto(
+							((DemandeAsa) d).getOrganisationSyndicale());
 				break;
 			case AUTRES:
 				// TODO
@@ -418,6 +411,14 @@ public class DemandeDto {
 
 	public void setAffichageBoutonDupliquer(boolean isAffichageBoutonDupliquer) {
 		this.isAffichageBoutonDupliquer = isAffichageBoutonDupliquer;
+	}
+
+	public OrganisationSyndicaleDto getOrganisationSyndicale() {
+		return organisationSyndicale;
+	}
+
+	public void setOrganisationSyndicale(OrganisationSyndicaleDto organisationSyndicale) {
+		this.organisationSyndicale = organisationSyndicale;
 	}
 
 }
