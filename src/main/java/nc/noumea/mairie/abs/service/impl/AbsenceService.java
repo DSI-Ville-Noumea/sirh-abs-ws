@@ -269,6 +269,8 @@ public class AbsenceService implements IAbsenceService {
 				demandeDto.updateEtat(demandeRecup.getLatestEtatDemande());
 				break;
 			case ASA_A48:
+			case ASA_A52:
+			case ASA_A53:
 			case ASA_A54:
 			case ASA_A55:
 				DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
