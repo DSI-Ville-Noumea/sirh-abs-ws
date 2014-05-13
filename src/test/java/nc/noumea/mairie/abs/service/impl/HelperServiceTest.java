@@ -350,5 +350,63 @@ public class HelperServiceTest {
 
 		assertEquals(result.floatValue(), 8, 5);
 	}
+	
+	@Test
+	public void getDuree_returnDuree() {
+		
+		Double duree = 1.0;
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setDuree(true);
+		
+		HelperService service = new HelperService();
+		Double result = service.getDuree(typeSaisi, new Date(), new Date(), duree);
+		
+		assertEquals(duree, result);
+	}
 
+	@Test
+	public void getDuree_returnMinutes() {
+
+		Double duree = 1.0;
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateFin(true);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+		
+		Date dateJ = new Date();
+			GregorianCalendar calDebut = new GregorianCalendar();
+			calDebut.setTime(dateJ);
+
+		GregorianCalendar calFin = new GregorianCalendar();
+			calFin.setTime(dateJ);
+			calFin.add(Calendar.HOUR, 12);
+		
+		HelperService service = new HelperService();
+		Double result = service.getDuree(typeSaisi, calDebut.getTime(), calFin.getTime(), duree);
+		
+		assertEquals(result, new Double(12*60));
+	}
+	
+	@Test
+	public void getDuree_returnJours() {
+		Double duree = 1.0;
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateFin(true);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+		
+		Date dateJ = new Date();
+		GregorianCalendar calDebut = new GregorianCalendar();
+			calDebut.setTime(dateJ);
+
+		GregorianCalendar calFin = new GregorianCalendar();
+			calFin.setTime(dateJ);
+			calFin.add(Calendar.HOUR, 12);
+		
+		HelperService service = new HelperService();
+		Double result = service.getDuree(typeSaisi, calDebut.getTime(), calFin.getTime(), duree);
+		
+		assertEquals(result, 0,5);
+	}
 }

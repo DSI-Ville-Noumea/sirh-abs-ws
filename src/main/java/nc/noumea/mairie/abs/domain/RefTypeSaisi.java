@@ -70,7 +70,14 @@ public class RefTypeSaisi {
 	@Type(type = "boolean")
 	private boolean pieceJointe;
 
+	@NotNull
+	@Column(name = "UNITE_DECOMPTE", nullable = false)
+	private String uniteDecompte;
 	
+	@NotNull
+	@Column(name = "COMPTEUR_COLLECTIF", nullable = false)
+	@Type(type = "boolean")
+	private boolean compteurCollectif;
 
 	public Integer getIdRefTypeAbsence() {
 		return idRefTypeAbsence;
@@ -150,6 +157,22 @@ public class RefTypeSaisi {
 
 	public void setPieceJointe(boolean pieceJointe) {
 		this.pieceJointe = pieceJointe;
+	}
+
+	public String getUniteDecompte() {
+		return uniteDecompte;
+	}
+
+	public void setUniteDecompte(String uniteDecompte) {
+		this.uniteDecompte = uniteDecompte;
+	}
+
+	public boolean isCompteurCollectif() {
+		return compteurCollectif;
+	}
+
+	public void setCompteurCollectif(boolean compteurCollectif) {
+		this.compteurCollectif = compteurCollectif;
 	}
 	
 }

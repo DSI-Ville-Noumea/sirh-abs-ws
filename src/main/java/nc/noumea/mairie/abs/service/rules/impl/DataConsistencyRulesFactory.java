@@ -27,6 +27,14 @@ public class DataConsistencyRulesFactory {
 	private IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl;
 
 	@Autowired
+	@Qualifier("AbsAsaA52DataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl;
+
+	@Autowired
+	@Qualifier("AbsAsaA53DataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absAsaA53DataConsistencyRulesImpl;
+	
+	@Autowired
 	@Qualifier("AbsAsaA54DataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl;
 
@@ -47,6 +55,10 @@ public class DataConsistencyRulesFactory {
 				return absRecupDataConsistencyRules;
 			case ASA_A48:
 				return absAsaA48DataConsistencyRulesImpl;
+			case ASA_A52:
+				return absAsaA52DataConsistencyRulesImpl;
+			case ASA_A53:
+				return absAsaA53DataConsistencyRulesImpl;
 			case ASA_A54:
 				return absAsaA54DataConsistencyRulesImpl;
 			case ASA_A55:

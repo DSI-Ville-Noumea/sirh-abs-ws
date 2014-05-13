@@ -60,6 +60,16 @@ public class DemandeDto {
 	private Boolean isValeurValidation = null;
 	// depassement de droits
 	private boolean isDepassementCompteur;
+	
+	private Integer idOrganisationSyndicale;
+
+	public Integer getIdOrganisationSyndicale() {
+		return idOrganisationSyndicale;
+	}
+
+	public void setIdOrganisationSyndicale(Integer idOrganisationSyndicale) {
+		this.idOrganisationSyndicale = idOrganisationSyndicale;
+	}
 
 	public DemandeDto() {
 	}
@@ -122,6 +132,8 @@ public class DemandeDto {
 				this.duree = (double) (((DemandeRecup) d).getDuree());
 				break;
 			case ASA_A48:
+			case ASA_A52:
+			case ASA_A53:
 			case ASA_A54:
 			case ASA_A55:
 				this.duree = ((DemandeAsa) d).getDuree();
@@ -129,6 +141,8 @@ public class DemandeDto {
 				this.isDateDebutPM = ((DemandeAsa) d).isDateDebutPM();
 				this.isDateFinAM = ((DemandeAsa) d).isDateFinAM();
 				this.isDateFinPM = ((DemandeAsa) d).isDateFinPM();
+				if(null != ((DemandeAsa) d).getOrganisationSyndicale()) 
+					this.idOrganisationSyndicale = ((DemandeAsa) d).getOrganisationSyndicale().getIdOrganisationSyndicale();
 				break;
 			case AUTRES:
 				// TODO

@@ -27,6 +27,9 @@ public class HelperService {
 
 	private final static long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 	private final static long MILLISECONDS_PER_MINUTES = 1000 * 60;
+	
+	public static String UNITE_DECOMPTE_JOURS = "jours";
+	public static String UNITE_DECOMPTE_MINUTES = "minutes";
 
 	public Date getCurrentDate() {
 		return new Date();
@@ -99,6 +102,24 @@ public class HelperService {
 		}
 
 		return null;
+	}
+	
+	public Double getDuree(RefTypeSaisi typeSaisi, Date dateDebut, Date dateFin, Double duree) {
+
+		if (typeSaisi.isCalendarDateFin()) {
+			if(UNITE_DECOMPTE_JOURS.equals(typeSaisi.getUniteDecompte())) {
+				return calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
+			}
+			if(UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
+				return new Double(calculNombreMinutes(dateDebut, dateFin));
+			}
+		}
+		
+		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
+			return duree;
+		}
+
+		return 0.0;
 	}
 
 	public Double calculMinutesAlimManuelleCompteur(CompteurDto compteurDto) {

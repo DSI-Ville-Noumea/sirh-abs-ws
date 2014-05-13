@@ -13,6 +13,7 @@ import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
@@ -22,6 +23,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
+import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
@@ -81,6 +83,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
+	
+	@Autowired
+	private IOrganisationSyndicaleRepository OSRepository;
 
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
@@ -134,14 +139,11 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 				break;
 			case ASA_A48:
+			case ASA_A52:
+			case ASA_A53:
 			case ASA_A54:
 			case ASA_A55:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
-				demandeAsa.setDuree(demandeDto.getDuree());
-				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
-				demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
-				demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
-				demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
 
 				if (null == demande.getType().getTypeSaisi())
@@ -152,6 +154,16 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+				
+				((DemandeAsa)demande).setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()));
+				((DemandeAsa)demande).setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
+				((DemandeAsa)demande).setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
+				((DemandeAsa)demande).setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM() : false);
+				((DemandeAsa)demande).setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM() : false);
+				
+				if(null != demandeDto.getIdOrganisationSyndicale()) {
+					((DemandeAsa)demande).setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class, demandeDto.getIdOrganisationSyndicale()));
+				}
 				break;
 			case AUTRES:
 				// TODO

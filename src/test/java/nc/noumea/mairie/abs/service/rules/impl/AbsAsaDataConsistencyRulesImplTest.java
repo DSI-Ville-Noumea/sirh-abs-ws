@@ -7,7 +7,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -30,6 +32,9 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		checkEtatsDemandeAnnulee_isAttente();
 		checkEtatsDemandeAnnulee_isPrise();
 		checkEtatsDemandeAnnulee_isRejete();
+		checkOrganisationSyndicale_OSInexistant();
+		checkOrganisationSyndicale_OSInactif();
+		checkOrganisationSyndicale_ok();
 		
 		super.impl = impl;
 		super.allTest(impl);
@@ -304,5 +309,48 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
 		assertEquals(1, srm.getErrors().size());
+	}
+	
+	@Test
+	public void checkOrganisationSyndicale_OSInexistant() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		DemandeAsa demande = new DemandeAsa();
+		
+		impl.checkOrganisationSyndicale(srm, demande);
+		
+		assertEquals(AbsAsaDataConsistencyRulesImpl.OS_INEXISTANT, srm.getErrors().get(0));
+	}
+	
+	@Test
+	public void checkOrganisationSyndicale_OSInactif() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+			organisationSyndicale.setActif(false);
+		
+		DemandeAsa demande = new DemandeAsa();
+		demande.setOrganisationSyndicale(organisationSyndicale);
+		
+		impl.checkOrganisationSyndicale(srm, demande);
+		
+		assertEquals(AbsAsaDataConsistencyRulesImpl.OS_INACTIVE, srm.getErrors().get(0));
+	}
+	
+	@Test
+	public void checkOrganisationSyndicale_ok() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+			organisationSyndicale.setActif(true);
+		
+		DemandeAsa demande = new DemandeAsa();
+		demande.setOrganisationSyndicale(organisationSyndicale);
+		
+		impl.checkOrganisationSyndicale(srm, demande);
+		
+		assertEquals(0, srm.getErrors().size());
 	}
 }
