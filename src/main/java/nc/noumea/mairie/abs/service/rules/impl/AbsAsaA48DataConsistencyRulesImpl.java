@@ -62,6 +62,11 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	@Override
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
 
+		// on verifie d abord l etat de la demande
+		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur 
+		if(!super.checkDepassementCompteurAgent(demandeDto))
+			return false;
+		
 		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, demandeDto
 				.getAgentWithServiceDto().getIdAgent(), demandeDto.getDateDebut());
 

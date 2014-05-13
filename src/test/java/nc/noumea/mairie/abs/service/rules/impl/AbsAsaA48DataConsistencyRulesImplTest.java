@@ -12,6 +12,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -202,6 +203,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		DemandeDto demande = new DemandeDto();
 		demande.setAgentWithServiceDto(agDto);
 		demande.setDateDebut(dateDebut);
+		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
 		boolean srm = impl.checkDepassementCompteurAgent(demande);
 
@@ -244,6 +246,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		demande.setDateFin(new Date());
 		demande.setDuree(10.5);
 		demande.setIdTypeDemande(7);
+		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
 		boolean srm = impl.checkDepassementCompteurAgent(demande);
 
@@ -286,6 +289,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		demande.setDateFin(new Date());
 		demande.setDuree(1.5);
 		demande.setIdTypeDemande(7);
+		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
 		boolean srm = impl.checkDepassementCompteurAgent(demande);
 

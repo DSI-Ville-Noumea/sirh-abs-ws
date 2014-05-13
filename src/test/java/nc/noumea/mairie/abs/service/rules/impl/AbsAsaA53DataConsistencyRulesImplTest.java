@@ -12,6 +12,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -221,6 +222,7 @@ public class AbsAsaA53DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 			demande.setAgentWithServiceDto(agDto);
 			demande.setDateDebut(dateDebut);
 			demande.setOrganisationSyndicale(orgaDto);
+			demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getOSCounterByDate(AgentAsaA53Count.class, demande.getOrganisationSyndicale().getIdOrganisation(), dateDebut)).thenReturn(
@@ -254,6 +256,7 @@ public class AbsAsaA53DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 			demande.setDuree(10.5);
 			demande.setIdTypeDemande(7);
 			demande.setOrganisationSyndicale(orgaDto);
+			demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getOSCounterByDate(AgentAsaA53Count.class, demande.getOrganisationSyndicale().getIdOrganisation(), dateDebut)).thenReturn(
@@ -301,6 +304,7 @@ public class AbsAsaA53DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 			demande.setDuree(1.5);
 			demande.setIdTypeDemande(7);
 			demande.setOrganisationSyndicale(orgaDto);
+			demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getOSCounterByDate(AgentAsaA53Count.class, demande.getOrganisationSyndicale().getIdOrganisation(), dateDebut)).thenReturn(

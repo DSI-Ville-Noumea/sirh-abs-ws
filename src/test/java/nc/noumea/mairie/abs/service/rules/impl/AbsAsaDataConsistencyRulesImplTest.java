@@ -3,8 +3,11 @@ package nc.noumea.mairie.abs.service.rules.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
@@ -352,5 +355,52 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		impl.checkOrganisationSyndicale(srm, demande);
 		
 		assertEquals(0, srm.getErrors().size());
+	}
+	
+	@Test
+	public void checkDepassementCompteurAgent() {
+		
+		DemandeDto demandeDtoVALIDEE = new DemandeDto();
+			demandeDtoVALIDEE.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		DemandeDto demandeDtoREJETE = new DemandeDto();
+			demandeDtoREJETE.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		DemandeDto demandeDtoANNULEE = new DemandeDto();
+			demandeDtoANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		DemandeDto demandeDtoPRISE = new DemandeDto();
+			demandeDtoPRISE.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		
+		List<DemandeDto> listDto = new ArrayList<DemandeDto>();
+		listDto.addAll(Arrays.asList(demandeDtoVALIDEE, demandeDtoREJETE, demandeDtoANNULEE, demandeDtoPRISE));
+			
+		for(DemandeDto demandeDto : listDto) {
+			if(impl.checkDepassementCompteurAgent(demandeDto)) {
+				fail("Bad Etat Demande for checkDepassementCompteurAgent");
+			}
+		}
+		
+		DemandeDto demandeDtoPROVISOIRE = new DemandeDto();
+			demandeDtoPROVISOIRE.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		DemandeDto demandeDtoSAISIE = new DemandeDto();
+			demandeDtoSAISIE.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		DemandeDto demandeDtoVISEE_FAVORABLE = new DemandeDto();
+			demandeDtoVISEE_FAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		DemandeDto demandeDtoVISEE_DEFAVORABLE = new DemandeDto();
+			demandeDtoVISEE_DEFAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		DemandeDto demandeDtoAPPROUVEE = new DemandeDto();
+			demandeDtoAPPROUVEE.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		DemandeDto demandeDtoREFUSEE = new DemandeDto();
+			demandeDtoREFUSEE.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		DemandeDto demandeDtoEN_ATTENTE = new DemandeDto();
+			demandeDtoEN_ATTENTE.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		
+		listDto = new ArrayList<DemandeDto>();
+		listDto.addAll(Arrays.asList(demandeDtoPROVISOIRE, demandeDtoSAISIE, demandeDtoVISEE_FAVORABLE, demandeDtoVISEE_DEFAVORABLE,
+				demandeDtoAPPROUVEE, demandeDtoREFUSEE, demandeDtoEN_ATTENTE));
+			
+		for(DemandeDto demandeDto : listDto) {
+			if(!impl.checkDepassementCompteurAgent(demandeDto)) {
+				fail("Bad Etat Demande for checkDepassementCompteurAgent");
+			}
+		}
 	}
 }

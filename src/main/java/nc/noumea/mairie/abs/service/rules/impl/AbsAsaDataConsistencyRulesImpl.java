@@ -81,5 +81,18 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 			srm.getErrors().add(String.format(OS_INACTIVE));
 		}
 	}
+	
+	@Override
+	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+		
+		if(demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+			|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
+			|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())
+			|| demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+			return false;
+		}
+		
+		return true;
+	}
 
 }
