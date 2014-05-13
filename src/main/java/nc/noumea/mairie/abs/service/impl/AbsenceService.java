@@ -669,15 +669,21 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
-				
-				((DemandeAsa)demande).setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()));
-				((DemandeAsa)demande).setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
-				((DemandeAsa)demande).setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
-				((DemandeAsa)demande).setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM() : false);
-				((DemandeAsa)demande).setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM() : false);
-				
-				if(null != demandeDto.getIdOrganisationSyndicale()) {
-					((DemandeAsa)demande).setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class, demandeDto.getIdOrganisationSyndicale()));
+
+				((DemandeAsa) demande).setDuree(helperService.getDuree(demande.getType().getTypeSaisi(),
+						demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()));
+				((DemandeAsa) demande).setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
+						.isDateDebutAM() : false);
+				((DemandeAsa) demande).setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
+						.isDateDebutPM() : false);
+				((DemandeAsa) demande).setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
+						.isDateFinAM() : false);
+				((DemandeAsa) demande).setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
+						.isDateFinPM() : false);
+
+				if (null != demandeDto.getOrganisationSyndicale().getIdOrganisation()) {
+					((DemandeAsa) demande).setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class,
+							demandeDto.getOrganisationSyndicale().getIdOrganisation()));
 				}
 				break;
 			case AUTRES:
