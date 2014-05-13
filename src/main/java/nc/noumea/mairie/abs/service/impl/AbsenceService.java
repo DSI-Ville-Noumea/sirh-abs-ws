@@ -681,7 +681,8 @@ public class AbsenceService implements IAbsenceService {
 				((DemandeAsa) demande).setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
 						.isDateFinPM() : false);
 
-				if (null != demandeDto.getOrganisationSyndicale().getIdOrganisation()) {
+				if (null != demandeDto.getOrganisationSyndicale()
+						&& null != demandeDto.getOrganisationSyndicale().getIdOrganisation()) {
 					((DemandeAsa) demande).setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class,
 							demandeDto.getOrganisationSyndicale().getIdOrganisation()));
 				}

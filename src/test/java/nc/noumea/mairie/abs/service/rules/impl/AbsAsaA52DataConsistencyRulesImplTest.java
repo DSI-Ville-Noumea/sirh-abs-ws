@@ -224,9 +224,14 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 			agDto.setIdAgent(9005138);
+			
+		OrganisationSyndicaleDto orgaDto = new OrganisationSyndicaleDto();
+			orgaDto.setIdOrganisation(1);
+			
 		DemandeDto demande = new DemandeDto();
 			demande.setAgentWithServiceDto(agDto);
 			demande.setDateDebut(dateDebut);
+			demande.setOrganisationSyndicale(orgaDto);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getOSCounterByDate(AgentAsaA52Count.class, 
@@ -299,12 +304,17 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 			agDto.setIdAgent(9005138);
+			
+		OrganisationSyndicaleDto orgaDto = new OrganisationSyndicaleDto();
+			orgaDto.setIdOrganisation(1);
+			
 		DemandeDto demande = new DemandeDto();
 			demande.setAgentWithServiceDto(agDto);
 			demande.setDateDebut(dateDebut);
 			demande.setDateFin(new Date());
 			demande.setDuree(1.5);
 			demande.setIdTypeDemande(7);
+			demande.setOrganisationSyndicale(orgaDto);
 		
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getOSCounterByDate(AgentAsaA52Count.class, 
