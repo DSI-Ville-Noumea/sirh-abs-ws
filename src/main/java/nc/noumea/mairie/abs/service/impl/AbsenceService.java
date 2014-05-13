@@ -648,14 +648,11 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 				break;
 			case ASA_A48:
+			case ASA_A52:
+			case ASA_A53:
 			case ASA_A54:
 			case ASA_A55:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
-				demandeAsa.setDuree(demandeDto.getDuree());
-				demandeAsa.setDateDebutAM(demandeDto.isDateDebutAM());
-				demandeAsa.setDateDebutPM(demandeDto.isDateDebutPM());
-				demandeAsa.setDateFinAM(demandeDto.isDateFinAM());
-				demandeAsa.setDateFinPM(demandeDto.isDateFinPM());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
 
 				if (null == demande.getType().getTypeSaisi())
@@ -666,6 +663,16 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+				
+				((DemandeAsa)demande).setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()));
+				((DemandeAsa)demande).setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
+				((DemandeAsa)demande).setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
+				((DemandeAsa)demande).setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM() : false);
+				((DemandeAsa)demande).setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM() : false);
+				
+				if(null != demandeDto.getIdOrganisationSyndicale()) {
+					((DemandeAsa)demande).setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class, demandeDto.getIdOrganisationSyndicale()));
+				}
 				break;
 			case AUTRES:
 				// TODO
