@@ -14,11 +14,11 @@ import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ISuppressionService;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
+import nc.noumea.mairie.abs.service.rules.impl.DefaultAbsenceDataConsistencyRulesImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +36,6 @@ public class SuppressionService implements ISuppressionService {
 	@Autowired
 	private DataConsistencyRulesFactory dataConsistencyRulesFactory;
 	
-	@Autowired
-	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl;
-
 	@Override
 	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto supprimerDemandeEtatProvisoire(Integer idDemande) {
@@ -78,6 +74,8 @@ public class SuppressionService implements ISuppressionService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
+		
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = new DefaultAbsenceDataConsistencyRulesImpl();
 		if(null != demande) {
 			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande.getType().getIdRefTypeAbsence());
 		}
@@ -101,6 +99,8 @@ public class SuppressionService implements ISuppressionService {
 				demande = getDemande(DemandeRecup.class, idDemande);
 				break;
 			case ASA_A48:
+			case ASA_A49:
+			case ASA_A50:
 			case ASA_A52:
 			case ASA_A53:
 			case ASA_A54:
