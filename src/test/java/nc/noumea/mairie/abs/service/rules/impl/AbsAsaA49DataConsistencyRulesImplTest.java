@@ -39,7 +39,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 				.thenReturn(10);
 		Mockito.when(helperService.getDateDebutMoisForOneDate(dateDemande)).thenReturn(
 				new DateTime(2014, 05, 1, 0, 0, 0).toDate());
-		Mockito.when(helperService.getDateDebutMoisForOneDate(dateDemande)).thenReturn(
+		Mockito.when(helperService.getDateFinMoisForOneDate(dateDemande)).thenReturn(
 				new DateTime(2014, 05, 31, 23, 59, 59).toDate());
 
 		DemandeAsa asa1 = new DemandeAsa();
@@ -80,7 +80,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(0);
 		Mockito.when(helperService.getDateDebutMoisForOneDate(dateDemande)).thenReturn(
 				new DateTime(2014, 05, 1, 0, 0, 0).toDate());
-		Mockito.when(helperService.getDateDebutMoisForOneDate(dateDemande)).thenReturn(
+		Mockito.when(helperService.getDateFinMoisForOneDate(dateDemande)).thenReturn(
 				new DateTime(2014, 05, 31, 23, 59, 59).toDate());
 
 		DemandeAsa asa1 = new DemandeAsa();
