@@ -14,6 +14,7 @@ import java.util.GregorianCalendar;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
@@ -350,18 +351,18 @@ public class HelperServiceTest {
 
 		assertEquals(result.floatValue(), 8, 5);
 	}
-	
+
 	@Test
 	public void getDuree_returnDuree() {
-		
+
 		Double duree = 1.0;
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setDuree(true);
-		
+		typeSaisi.setDuree(true);
+
 		HelperService service = new HelperService();
 		Double result = service.getDuree(typeSaisi, new Date(), new Date(), duree);
-		
+
 		assertEquals(duree, result);
 	}
 
@@ -369,44 +370,65 @@ public class HelperServiceTest {
 	public void getDuree_returnMinutes() {
 
 		Double duree = 1.0;
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setCalendarDateFin(true);
-			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
-		
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+
 		Date dateJ = new Date();
-			GregorianCalendar calDebut = new GregorianCalendar();
-			calDebut.setTime(dateJ);
+		GregorianCalendar calDebut = new GregorianCalendar();
+		calDebut.setTime(dateJ);
 
 		GregorianCalendar calFin = new GregorianCalendar();
-			calFin.setTime(dateJ);
-			calFin.add(Calendar.HOUR, 12);
-		
+		calFin.setTime(dateJ);
+		calFin.add(Calendar.HOUR, 12);
+
 		HelperService service = new HelperService();
 		Double result = service.getDuree(typeSaisi, calDebut.getTime(), calFin.getTime(), duree);
-		
-		assertEquals(result, new Double(12*60));
+
+		assertEquals(result, new Double(12 * 60));
 	}
-	
+
 	@Test
 	public void getDuree_returnJours() {
 		Double duree = 1.0;
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setCalendarDateFin(true);
-			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
-		
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+
 		Date dateJ = new Date();
 		GregorianCalendar calDebut = new GregorianCalendar();
-			calDebut.setTime(dateJ);
+		calDebut.setTime(dateJ);
 
 		GregorianCalendar calFin = new GregorianCalendar();
-			calFin.setTime(dateJ);
-			calFin.add(Calendar.HOUR, 12);
-		
+		calFin.setTime(dateJ);
+		calFin.add(Calendar.HOUR, 12);
+
 		HelperService service = new HelperService();
 		Double result = service.getDuree(typeSaisi, calDebut.getTime(), calFin.getTime(), duree);
-		
-		assertEquals(result, 0,5);
+
+		assertEquals(result, 0, 5);
+	}
+
+	@Test
+	public void getDateDebutMoisForOneDate_returnFirstDAy() {
+		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+
+		HelperService service = new HelperService();
+		Date result = service.getDateDebutMoisForOneDate(dateDemande);
+
+		assertEquals(result, new DateTime(2014, 05, 1, 0, 0, 0).toDate());
+	}
+
+	@Test
+	public void getDateFinMoisForOneDate_returnLastDAy() {
+
+		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+
+		HelperService service = new HelperService();
+		Date result = service.getDateFinMoisForOneDate(dateDemande);
+
+		assertEquals(result, new DateTime(2014, 05, 31, 23, 59, 59).toDate());
 	}
 }

@@ -63,7 +63,7 @@ public class DemandeDtoTest {
 		assertEquals(dateDemande, result.getDateSaisie());
 		assertEquals(dateDemande, result.getDateFin());
 	}
-	
+
 	@Test
 	public void ctor_DemandeAsaA48() {
 
@@ -73,48 +73,48 @@ public class DemandeDtoTest {
 		Date dateDemande = new Date();
 
 		Agent ag = new Agent();
-			ag.setNomUsage("RAYNAUD");
-			ag.setPrenomUsage("Nicolas");
-			ag.setIdAgent(9006765);
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
 
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
-			etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
-			etatDemandeApprouve.setDate(dateDemande);
-			etatDemandeApprouve.setMotif("motif approuve");
-			
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
 		EtatDemande etatDemandeRefuse = new EtatDemande();
-			etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
-			etatDemandeRefuse.setDate(dateDemande);
-			etatDemandeRefuse.setMotif("motif refuse");
-			
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
 		EtatDemande etatDemandeVisaF = new EtatDemande();
-			etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
-			etatDemandeVisaF.setDate(dateDemande);
-			etatDemandeVisaF.setMotif("motif visa f");
-			
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
 		EtatDemande etatDemandeVisaD = new EtatDemande();
-			etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
-			etatDemandeVisaD.setDate(dateDemande);
-			etatDemandeVisaD.setMotif("motif visa d");
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
 
 		DemandeAsa d = new DemandeAsa();
-			d.setDateDebut(dateDebut);
-			d.setDateFin(dateFin);
-			d.setIdDemande(1);
-			d.setIdAgent(ag.getIdAgent());
-			d.setType(type);
-			d.getEtatsDemande().add(etatDemandeApprouve);
-			d.getEtatsDemande().add(etatDemandeVisaF);
-			d.getEtatsDemande().add(etatDemandeRefuse);
-			d.getEtatsDemande().add(etatDemandeVisaD);
-			d.setDateDebutAM(true);
-			d.setDateDebutPM(true);
-			d.setDateFinAM(true);
-			d.setDateFinPM(true);
-			d.setDuree(10.0);
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.setDateDebutAM(true);
+		d.setDateDebutPM(true);
+		d.setDateFinAM(true);
+		d.setDateFinPM(true);
+		d.setDuree(10.0);
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
@@ -138,7 +138,7 @@ public class DemandeDtoTest {
 		assertTrue(result.isDateFinAM());
 		assertTrue(result.isDateFinPM());
 	}
-	
+
 	@Test
 	public void ctor_DemandeRecup() {
 
@@ -148,44 +148,44 @@ public class DemandeDtoTest {
 		Date dateDemande = new Date();
 
 		Agent ag = new Agent();
-			ag.setNomUsage("RAYNAUD");
-			ag.setPrenomUsage("Nicolas");
-			ag.setIdAgent(9006765);
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
 
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
-			etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
-			etatDemandeApprouve.setDate(dateDemande);
-			etatDemandeApprouve.setMotif("motif approuve");
-			
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
 		EtatDemande etatDemandeRefuse = new EtatDemande();
-			etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
-			etatDemandeRefuse.setDate(dateDemande);
-			etatDemandeRefuse.setMotif("motif refuse");
-			
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
 		EtatDemande etatDemandeVisaF = new EtatDemande();
-			etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
-			etatDemandeVisaF.setDate(dateDemande);
-			etatDemandeVisaF.setMotif("motif visa f");
-			
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
 		EtatDemande etatDemandeVisaD = new EtatDemande();
-			etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
-			etatDemandeVisaD.setDate(dateDemande);
-			etatDemandeVisaD.setMotif("motif visa d");
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
 
 		DemandeRecup d = new DemandeRecup();
-			d.setDateDebut(dateDebut);
-			d.setDateFin(dateFin);
-			d.setIdDemande(1);
-			d.setIdAgent(ag.getIdAgent());
-			d.setType(type);
-			d.getEtatsDemande().add(etatDemandeRefuse);
-			d.getEtatsDemande().add(etatDemandeApprouve);
-			d.getEtatsDemande().add(etatDemandeVisaD);
-			d.getEtatsDemande().add(etatDemandeVisaF);
-			d.setDuree(10);
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.setDuree(10);
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
@@ -209,7 +209,7 @@ public class DemandeDtoTest {
 		assertFalse(result.isDateFinAM());
 		assertFalse(result.isDateFinPM());
 	}
-	
+
 	@Test
 	public void ctor_DemandeRepoComp() {
 
@@ -219,45 +219,45 @@ public class DemandeDtoTest {
 		Date dateDemande = new Date();
 
 		Agent ag = new Agent();
-			ag.setNomUsage("RAYNAUD");
-			ag.setPrenomUsage("Nicolas");
-			ag.setIdAgent(9006765);
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
 
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
-			etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
-			etatDemandeApprouve.setDate(dateDemande);
-			etatDemandeApprouve.setMotif("motif approuve");
-			
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
 		EtatDemande etatDemandeRefuse = new EtatDemande();
-			etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
-			etatDemandeRefuse.setDate(dateDemande);
-			etatDemandeRefuse.setMotif("motif refuse");
-			
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
 		EtatDemande etatDemandeVisaF = new EtatDemande();
-			etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
-			etatDemandeVisaF.setDate(dateDemande);
-			etatDemandeVisaF.setMotif("motif visa f");
-			
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
 		EtatDemande etatDemandeVisaD = new EtatDemande();
-			etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
-			etatDemandeVisaD.setDate(dateDemande);
-			etatDemandeVisaD.setMotif("motif visa d");
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
 
 		DemandeReposComp d = new DemandeReposComp();
-			d.setDateDebut(dateDebut);
-			d.setDateFin(dateFin);
-			d.setIdDemande(1);
-			d.setIdAgent(ag.getIdAgent());
-			d.setType(type);
-			d.getEtatsDemande().add(etatDemandeApprouve);
-			d.getEtatsDemande().add(etatDemandeVisaF);
-			d.getEtatsDemande().add(etatDemandeRefuse);
-			d.getEtatsDemande().add(etatDemandeVisaD);
-			d.setDuree(10);
-			d.setDureeAnneeN1(10);
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.setDuree(10);
+		d.setDureeAnneeN1(10);
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
@@ -282,7 +282,7 @@ public class DemandeDtoTest {
 		assertFalse(result.isDateFinAM());
 		assertFalse(result.isDateFinPM());
 	}
-	
+
 	@Test
 	public void ctor_DemandeAsaA54() {
 
@@ -292,60 +292,60 @@ public class DemandeDtoTest {
 		Date dateDemande = new Date();
 
 		Agent ag = new Agent();
-			ag.setNomUsage("RAYNAUD");
-			ag.setPrenomUsage("Nicolas");
-			ag.setIdAgent(9006765);
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
 
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
-			etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
-			etatDemandeApprouve.setDate(dateDemande);
-			etatDemandeApprouve.setMotif("motif approuve");
-			
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
 		EtatDemande etatDemandeRefuse = new EtatDemande();
-			etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
-			etatDemandeRefuse.setDate(dateDemande);
-			etatDemandeRefuse.setMotif("motif refuse");
-			
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
 		EtatDemande etatDemandeVisaF = new EtatDemande();
-			etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
-			etatDemandeVisaF.setDate(dateDemande);
-			etatDemandeVisaF.setMotif("motif visa f");
-			
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
 		EtatDemande etatDemandeVisaD = new EtatDemande();
-			etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
-			etatDemandeVisaD.setDate(dateDemande);
-			etatDemandeVisaD.setMotif("motif visa d");
-			
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
+
 		EtatDemande etatDemandeValide = new EtatDemande();
-			etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
-			etatDemandeValide.setDate(dateDemande);
-			etatDemandeValide.setMotif("motif valide");
-			
+		etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
+		etatDemandeValide.setDate(dateDemande);
+		etatDemandeValide.setMotif("motif valide");
+
 		EtatDemande etatDemandeRejete = new EtatDemande();
-			etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
-			etatDemandeRejete.setDate(dateDemande);
-			etatDemandeRejete.setMotif("motif rejete");
+		etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
+		etatDemandeRejete.setDate(dateDemande);
+		etatDemandeRejete.setMotif("motif rejete");
 
 		DemandeAsa d = new DemandeAsa();
-			d.setDateDebut(dateDebut);
-			d.setDateFin(dateFin);
-			d.setIdDemande(1);
-			d.setIdAgent(ag.getIdAgent());
-			d.setType(type);
-			d.getEtatsDemande().add(etatDemandeApprouve);
-			d.getEtatsDemande().add(etatDemandeVisaF);
-			d.getEtatsDemande().add(etatDemandeRefuse);
-			d.getEtatsDemande().add(etatDemandeVisaD);
-			d.getEtatsDemande().add(etatDemandeRejete);
-			d.getEtatsDemande().add(etatDemandeValide);
-			d.setDateDebutAM(true);
-			d.setDateDebutPM(true);
-			d.setDateFinAM(true);
-			d.setDateFinPM(true);
-			d.setDuree(10.0);
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.getEtatsDemande().add(etatDemandeRejete);
+		d.getEtatsDemande().add(etatDemandeValide);
+		d.setDateDebutAM(true);
+		d.setDateDebutPM(true);
+		d.setDateFinAM(true);
+		d.setDateFinPM(true);
+		d.setDuree(10.0);
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
@@ -370,7 +370,7 @@ public class DemandeDtoTest {
 		assertTrue(result.isDateFinAM());
 		assertTrue(result.isDateFinPM());
 	}
-	
+
 	@Test
 	public void ctor_DemandeAsaA55() {
 
@@ -380,56 +380,56 @@ public class DemandeDtoTest {
 		Date dateDemande = new Date();
 
 		Agent ag = new Agent();
-			ag.setNomUsage("RAYNAUD");
-			ag.setPrenomUsage("Nicolas");
-			ag.setIdAgent(9006765);
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
 
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
-			etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
-			etatDemandeApprouve.setDate(dateDemande);
-			etatDemandeApprouve.setMotif("motif approuve");
-			
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
 		EtatDemande etatDemandeRefuse = new EtatDemande();
-			etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
-			etatDemandeRefuse.setDate(dateDemande);
-			etatDemandeRefuse.setMotif("motif refuse");
-			
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
 		EtatDemande etatDemandeVisaF = new EtatDemande();
-			etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
-			etatDemandeVisaF.setDate(dateDemande);
-			etatDemandeVisaF.setMotif("motif visa f");
-			
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
 		EtatDemande etatDemandeVisaD = new EtatDemande();
-			etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
-			etatDemandeVisaD.setDate(dateDemande);
-			etatDemandeVisaD.setMotif("motif visa d");
-			
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
+
 		EtatDemande etatDemandeValide = new EtatDemande();
-			etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
-			etatDemandeValide.setDate(dateDemande);
-			etatDemandeValide.setMotif("motif valide");
-			
+		etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
+		etatDemandeValide.setDate(dateDemande);
+		etatDemandeValide.setMotif("motif valide");
+
 		EtatDemande etatDemandeRejete = new EtatDemande();
-			etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
-			etatDemandeRejete.setDate(dateDemande);
-			etatDemandeRejete.setMotif("motif rejete");
+		etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
+		etatDemandeRejete.setDate(dateDemande);
+		etatDemandeRejete.setMotif("motif rejete");
 
 		DemandeAsa d = new DemandeAsa();
-			d.setDateDebut(dateDebut);
-			d.setDateFin(dateFin);
-			d.setIdDemande(1);
-			d.setIdAgent(ag.getIdAgent());
-			d.setType(type);
-			d.getEtatsDemande().add(etatDemandeApprouve);
-			d.getEtatsDemande().add(etatDemandeVisaF);
-			d.getEtatsDemande().add(etatDemandeRefuse);
-			d.getEtatsDemande().add(etatDemandeVisaD);
-			d.getEtatsDemande().add(etatDemandeValide);
-			d.getEtatsDemande().add(etatDemandeRejete);
-			d.setDuree(10.0);
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.getEtatsDemande().add(etatDemandeValide);
+		d.getEtatsDemande().add(etatDemandeRejete);
+		d.setDuree(10.0);
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
@@ -443,6 +443,342 @@ public class DemandeDtoTest {
 		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
 		assertEquals(1, (int) result.getIdDemande());
 		assertEquals(RefTypeAbsenceEnum.ASA_A55.getValue(), (int) result.getIdTypeDemande());
+		assertEquals(dateDebut, result.getDateDebut());
+		assertEquals(dateFin, result.getDateFin());
+		assertEquals("motif approuve", result.getMotif());
+		assertTrue(result.getIsValeurApprobation());
+		assertTrue(result.getIsValeurVisa());
+		assertTrue(result.getValeurValidation());
+		assertFalse(result.isDateDebutAM());
+		assertFalse(result.isDateDebutPM());
+		assertFalse(result.isDateFinAM());
+		assertFalse(result.isDateFinPM());
+	}
+
+	@Test
+	public void ctor_DemandeAsaA52() {
+
+		// Given
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+		Date dateDemande = new Date();
+
+		Agent ag = new Agent();
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
+
+		EtatDemande etatDemandeApprouve = new EtatDemande();
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
+		EtatDemande etatDemandeRefuse = new EtatDemande();
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
+		EtatDemande etatDemandeVisaF = new EtatDemande();
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
+		EtatDemande etatDemandeVisaD = new EtatDemande();
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
+
+		EtatDemande etatDemandeValide = new EtatDemande();
+		etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
+		etatDemandeValide.setDate(dateDemande);
+		etatDemandeValide.setMotif("motif valide");
+
+		EtatDemande etatDemandeRejete = new EtatDemande();
+		etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
+		etatDemandeRejete.setDate(dateDemande);
+		etatDemandeRejete.setMotif("motif rejete");
+
+		DemandeAsa d = new DemandeAsa();
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.getEtatsDemande().add(etatDemandeValide);
+		d.getEtatsDemande().add(etatDemandeRejete);
+		d.setDuree(10.0);
+
+		// When
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+
+		// Then
+		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
+		assertEquals("Nicolas", result.getAgentWithServiceDto().getPrenom());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+
+		assertEquals(new Double(10.0), result.getDuree());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+		assertEquals(1, (int) result.getIdDemande());
+		assertEquals(RefTypeAbsenceEnum.ASA_A52.getValue(), (int) result.getIdTypeDemande());
+		assertEquals(dateDebut, result.getDateDebut());
+		assertEquals(dateFin, result.getDateFin());
+		assertEquals("motif approuve", result.getMotif());
+		assertTrue(result.getIsValeurApprobation());
+		assertTrue(result.getIsValeurVisa());
+		assertTrue(result.getValeurValidation());
+		assertFalse(result.isDateDebutAM());
+		assertFalse(result.isDateDebutPM());
+		assertFalse(result.isDateFinAM());
+		assertFalse(result.isDateFinPM());
+	}
+
+	@Test
+	public void ctor_DemandeAsaA53() {
+
+		// Given
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+		Date dateDemande = new Date();
+
+		Agent ag = new Agent();
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
+
+		EtatDemande etatDemandeApprouve = new EtatDemande();
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
+		EtatDemande etatDemandeRefuse = new EtatDemande();
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
+		EtatDemande etatDemandeVisaF = new EtatDemande();
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
+		EtatDemande etatDemandeVisaD = new EtatDemande();
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
+
+		EtatDemande etatDemandeValide = new EtatDemande();
+		etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
+		etatDemandeValide.setDate(dateDemande);
+		etatDemandeValide.setMotif("motif valide");
+
+		EtatDemande etatDemandeRejete = new EtatDemande();
+		etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
+		etatDemandeRejete.setDate(dateDemande);
+		etatDemandeRejete.setMotif("motif rejete");
+
+		DemandeAsa d = new DemandeAsa();
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.getEtatsDemande().add(etatDemandeValide);
+		d.getEtatsDemande().add(etatDemandeRejete);
+		d.setDuree(10.0);
+
+		// When
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+
+		// Then
+		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
+		assertEquals("Nicolas", result.getAgentWithServiceDto().getPrenom());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+
+		assertEquals(new Double(10.0), result.getDuree());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+		assertEquals(1, (int) result.getIdDemande());
+		assertEquals(RefTypeAbsenceEnum.ASA_A53.getValue(), (int) result.getIdTypeDemande());
+		assertEquals(dateDebut, result.getDateDebut());
+		assertEquals(dateFin, result.getDateFin());
+		assertEquals("motif approuve", result.getMotif());
+		assertTrue(result.getIsValeurApprobation());
+		assertTrue(result.getIsValeurVisa());
+		assertTrue(result.getValeurValidation());
+		assertFalse(result.isDateDebutAM());
+		assertFalse(result.isDateDebutPM());
+		assertFalse(result.isDateFinAM());
+		assertFalse(result.isDateFinPM());
+	}
+
+	@Test
+	public void ctor_DemandeAsaA50() {
+
+		// Given
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+		Date dateDemande = new Date();
+
+		Agent ag = new Agent();
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
+
+		EtatDemande etatDemandeApprouve = new EtatDemande();
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
+		EtatDemande etatDemandeRefuse = new EtatDemande();
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
+		EtatDemande etatDemandeVisaF = new EtatDemande();
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
+		EtatDemande etatDemandeVisaD = new EtatDemande();
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
+
+		EtatDemande etatDemandeValide = new EtatDemande();
+		etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
+		etatDemandeValide.setDate(dateDemande);
+		etatDemandeValide.setMotif("motif valide");
+
+		EtatDemande etatDemandeRejete = new EtatDemande();
+		etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
+		etatDemandeRejete.setDate(dateDemande);
+		etatDemandeRejete.setMotif("motif rejete");
+
+		DemandeAsa d = new DemandeAsa();
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.getEtatsDemande().add(etatDemandeValide);
+		d.getEtatsDemande().add(etatDemandeRejete);
+		d.setDuree(10.0);
+
+		// When
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+
+		// Then
+		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
+		assertEquals("Nicolas", result.getAgentWithServiceDto().getPrenom());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+
+		assertEquals(new Double(10.0), result.getDuree());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+		assertEquals(1, (int) result.getIdDemande());
+		assertEquals(RefTypeAbsenceEnum.ASA_A50.getValue(), (int) result.getIdTypeDemande());
+		assertEquals(dateDebut, result.getDateDebut());
+		assertEquals(dateFin, result.getDateFin());
+		assertEquals("motif approuve", result.getMotif());
+		assertTrue(result.getIsValeurApprobation());
+		assertTrue(result.getIsValeurVisa());
+		assertTrue(result.getValeurValidation());
+		assertFalse(result.isDateDebutAM());
+		assertFalse(result.isDateDebutPM());
+		assertFalse(result.isDateFinAM());
+		assertFalse(result.isDateFinPM());
+	}
+
+	@Test
+	public void ctor_DemandeAsaA49() {
+
+		// Given
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+		Date dateDemande = new Date();
+
+		Agent ag = new Agent();
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
+
+		EtatDemande etatDemandeApprouve = new EtatDemande();
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
+		EtatDemande etatDemandeRefuse = new EtatDemande();
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
+		EtatDemande etatDemandeVisaF = new EtatDemande();
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
+		EtatDemande etatDemandeVisaD = new EtatDemande();
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
+
+		EtatDemande etatDemandeValide = new EtatDemande();
+		etatDemandeValide.setEtat(RefEtatEnum.VALIDEE);
+		etatDemandeValide.setDate(dateDemande);
+		etatDemandeValide.setMotif("motif valide");
+
+		EtatDemande etatDemandeRejete = new EtatDemande();
+		etatDemandeRejete.setEtat(RefEtatEnum.REJETE);
+		etatDemandeRejete.setDate(dateDemande);
+		etatDemandeRejete.setMotif("motif rejete");
+
+		DemandeAsa d = new DemandeAsa();
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.getEtatsDemande().add(etatDemandeValide);
+		d.getEtatsDemande().add(etatDemandeRejete);
+		d.setDuree(10.0);
+
+		// When
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+
+		// Then
+		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
+		assertEquals("Nicolas", result.getAgentWithServiceDto().getPrenom());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+
+		assertEquals(new Double(10.0), result.getDuree());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+		assertEquals(1, (int) result.getIdDemande());
+		assertEquals(RefTypeAbsenceEnum.ASA_A49.getValue(), (int) result.getIdTypeDemande());
 		assertEquals(dateDebut, result.getDateDebut());
 		assertEquals(dateFin, result.getDateFin());
 		assertEquals("motif approuve", result.getMotif());
