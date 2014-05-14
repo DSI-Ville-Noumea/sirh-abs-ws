@@ -23,9 +23,13 @@ public class CounterServiceFactory {
 	private ICounterService reposCompCounterServiceImpl;
 
 	@Autowired
+	@Qualifier("AsaCounterServiceImpl")
+	private ICounterService asaCounterServiceImpl;
+
+	@Autowired
 	@Qualifier("AsaA48CounterServiceImpl")
 	private ICounterService asaA48CounterServiceImpl;
-
+	
 	@Autowired
 	@Qualifier("AsaA52CounterServiceImpl")
 	private ICounterService asaA52CounterServiceImpl;
@@ -55,6 +59,10 @@ public class CounterServiceFactory {
 				return recupCounterServiceImpl;
 			case ASA_A48:
 				return asaA48CounterServiceImpl;
+			case ASA_A49:
+				return asaCounterServiceImpl;
+			case ASA_A50:
+				return asaCounterServiceImpl;
 			case ASA_A52:
 				return asaA52CounterServiceImpl;
 			case ASA_A53:

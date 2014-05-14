@@ -76,7 +76,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	@Override
 	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande,
 			DemandeEtatChangeDto demandeEtatChangeDto) {
-		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
+		// pas de maj de compteur, ex : ASA A49 et A50
 		return srm;
 	}
 
