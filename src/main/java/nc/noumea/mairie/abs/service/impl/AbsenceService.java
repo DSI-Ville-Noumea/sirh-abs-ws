@@ -75,10 +75,6 @@ public class AbsenceService implements IAbsenceService {
 	private HelperService helperService;
 
 	@Autowired
-	@Qualifier("DefaultCounterServiceImpl")
-	private ICounterService counterService;
-
-	@Autowired
 	private CounterServiceFactory counterServiceFactory;
 
 	@Autowired
@@ -485,7 +481,7 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {
@@ -517,7 +513,7 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {
@@ -865,7 +861,7 @@ public class AbsenceService implements IAbsenceService {
 			return;
 		}
 
-		counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {
