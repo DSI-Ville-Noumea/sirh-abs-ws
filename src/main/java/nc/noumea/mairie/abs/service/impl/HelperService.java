@@ -27,7 +27,7 @@ public class HelperService {
 
 	private final static long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 	private final static long MILLISECONDS_PER_MINUTES = 1000 * 60;
-	
+
 	public static String UNITE_DECOMPTE_JOURS = "jours";
 	public static String UNITE_DECOMPTE_MINUTES = "minutes";
 
@@ -103,18 +103,18 @@ public class HelperService {
 
 		return null;
 	}
-	
+
 	public Double getDuree(RefTypeSaisi typeSaisi, Date dateDebut, Date dateFin, Double duree) {
 
 		if (typeSaisi.isCalendarDateFin()) {
-			if(UNITE_DECOMPTE_JOURS.equals(typeSaisi.getUniteDecompte())) {
+			if (UNITE_DECOMPTE_JOURS.equals(typeSaisi.getUniteDecompte())) {
 				return calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
 			}
-			if(UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
+			if (UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
 				return new Double(calculNombreMinutes(dateDebut, dateFin));
 			}
 		}
-		
+
 		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
 			return duree;
 		}
@@ -165,5 +165,25 @@ public class HelperService {
 		// calcul nombre minutes
 		int nbrMinutes = (int) (diff / MILLISECONDS_PER_MINUTES);
 		return nbrMinutes;
+	}
+
+	public Date getDateDebutMoisForOneDate(Date dateDemande) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateDemande);
+		int minDay = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
+		int month = calendar.get(Calendar.MONTH) + 1;
+		int year = calendar.get(Calendar.YEAR);
+		// on recupere le 1er jour du mois de la demande
+		return new DateTime(year, month, minDay, 0, 0, 0).toDate();
+	}
+
+	public Date getDateFinMoisForOneDate(Date dateDemande) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateDemande);
+		int maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+		int month = calendar.get(Calendar.MONTH) + 1;
+		int year = calendar.get(Calendar.YEAR);
+		// on recupere le dernier jour du mois de la demande
+		return new DateTime(year, month, maxDay, 23, 59, 59).toDate();
 	}
 }

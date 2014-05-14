@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 @Service("AbsAsaA49DataConsistencyRulesImpl")
@@ -39,19 +37,10 @@ public class AbsAsaA49DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	}
 
 	private int getSommeDureeDemandeAsaPourMoisDemande(Integer idDemande, Integer idAgent, Date dateDemande) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(dateDemande);
-		int minDay = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
-		int maxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-		int month = calendar.get(Calendar.MONTH) + 1;
-		int year = calendar.get(Calendar.YEAR);
-		// on recupere le 1er jour du mois de la demande
-		DateTime dateDebMois = new DateTime(year, month, minDay, 0, 0, 0);
-		// on recupere le dernier jour du mois de la demande
-		DateTime dateFinMois = new DateTime(year, month, maxDay, 23, 59, 59);
 
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMois(idAgent, idDemande, dateDebMois.toDate(),
-				dateFinMois.toDate(), RefTypeAbsenceEnum.ASA_A49);
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMois(idAgent, idDemande,
+				helperService.getDateDebutMoisForOneDate(dateDemande),
+				helperService.getDateDebutMoisForOneDate(dateDemande), RefTypeAbsenceEnum.ASA_A49);
 
 		int somme = 0;
 

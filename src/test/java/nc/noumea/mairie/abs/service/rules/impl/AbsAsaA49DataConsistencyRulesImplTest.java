@@ -32,11 +32,15 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 	@Test
 	public void checkDroitCompteurAsaA49_compteurNegatif() {
 
-		Date dateDebut = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class)))
 				.thenReturn(10);
+		Mockito.when(helperService.getDateDebutMoisForOneDate(dateDemande)).thenReturn(
+				new DateTime(2014, 05, 1, 0, 0, 0).toDate());
+		Mockito.when(helperService.getDateDebutMoisForOneDate(dateDemande)).thenReturn(
+				new DateTime(2014, 05, 31, 23, 59, 59).toDate());
 
 		DemandeAsa asa1 = new DemandeAsa();
 		asa1.setDateDebut(new Date());
@@ -56,7 +60,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		ReturnMessageDto srm = new ReturnMessageDto();
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
-		demande.setDateDebut(dateDebut);
+		demande.setDateDebut(dateDemande);
 		demande.setDateFin(new Date());
 		demande.setDuree(1.0);
 
@@ -70,10 +74,14 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 	@Test
 	public void checkDroitCompteurAsaA49_ok() {
 
-		Date dateDebut = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(0);
+		Mockito.when(helperService.getDateDebutMoisForOneDate(dateDemande)).thenReturn(
+				new DateTime(2014, 05, 1, 0, 0, 0).toDate());
+		Mockito.when(helperService.getDateDebutMoisForOneDate(dateDemande)).thenReturn(
+				new DateTime(2014, 05, 31, 23, 59, 59).toDate());
 
 		DemandeAsa asa1 = new DemandeAsa();
 		asa1.setDateDebut(new Date());
@@ -93,7 +101,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		ReturnMessageDto srm = new ReturnMessageDto();
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
-		demande.setDateDebut(dateDebut);
+		demande.setDateDebut(dateDemande);
 		demande.setDateFin(new Date());
 		demande.setDuree(1.0);
 
