@@ -33,7 +33,7 @@ public class DataConsistencyRulesFactory {
 	@Autowired
 	@Qualifier("AbsAsaA53DataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absAsaA53DataConsistencyRulesImpl;
-	
+
 	@Autowired
 	@Qualifier("AbsAsaA54DataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl;
@@ -41,6 +41,14 @@ public class DataConsistencyRulesFactory {
 	@Autowired
 	@Qualifier("AbsAsaA55DataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl;
+
+	@Autowired
+	@Qualifier("AbsAsaA49DataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absAsaA49DataConsistencyRulesImpl;
+
+	@Autowired
+	@Qualifier("AbsAsaA50DataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absAsaA50DataConsistencyRulesImpl;
 
 	// Méthode permettant de récupérer les Factory
 	public IAbsenceDataConsistencyRules getFactory(int type) {
@@ -63,6 +71,10 @@ public class DataConsistencyRulesFactory {
 				return absAsaA54DataConsistencyRulesImpl;
 			case ASA_A55:
 				return absAsaA55DataConsistencyRulesImpl;
+			case ASA_A49:
+				return absAsaA49DataConsistencyRulesImpl;
+			case ASA_A50:
+				return absAsaA50DataConsistencyRulesImpl;
 			case AUTRES:
 				// TODO
 				break;

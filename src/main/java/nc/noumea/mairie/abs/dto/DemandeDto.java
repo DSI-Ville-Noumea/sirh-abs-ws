@@ -128,6 +128,8 @@ public class DemandeDto {
 			case ASA_A53:
 			case ASA_A54:
 			case ASA_A55:
+			case ASA_A49:
+			case ASA_A50:
 				this.duree = ((DemandeAsa) d).getDuree();
 				this.isDateDebutAM = ((DemandeAsa) d).isDateDebutAM();
 				this.isDateDebutPM = ((DemandeAsa) d).isDateDebutPM();
