@@ -5,12 +5,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
+@Service("AbsAsaDataConsistencyRulesImpl")
 public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
 
 	public static final String DEPASSEMENT_DROITS_ASA_MSG = "Les droits pour ce type d'absence ASA sont dépassés.";
