@@ -155,19 +155,20 @@ public class AbsenceService implements IAbsenceService {
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
 
-				((DemandeAsa) demande).setDuree(helperService.getDuree(demande.getType().getTypeSaisi(),
+				demandeAsa = (DemandeAsa)demande;
+				demandeAsa.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(),
 						demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()));
-				((DemandeAsa) demande).setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
+				demandeAsa.setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
 						.isDateDebutAM() : false);
-				((DemandeAsa) demande).setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
+				demandeAsa.setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
 						.isDateDebutPM() : false);
-				((DemandeAsa) demande).setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
+				demandeAsa.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
 						.isDateFinAM() : false);
-				((DemandeAsa) demande).setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
+				demandeAsa.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
 						.isDateFinPM() : false);
 
 				if (null != demandeDto.getOrganisationSyndicale()) {
-					((DemandeAsa) demande).setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class,
+					demandeAsa.setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class,
 							demandeDto.getOrganisationSyndicale().getIdOrganisation()));
 				}
 				break;
@@ -183,7 +184,7 @@ public class AbsenceService implements IAbsenceService {
 				demandeRepository.clear();
 				return returnDto;
 		}
-		absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
 		// dans le cas des types de demande non geres
 		if (null == demande) {
 			demande = getDemande(Demande.class, demandeDto.getIdDemande());
@@ -330,7 +331,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		for (DemandeDto demandeDto : listeDto) {
-			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
+			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
 			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto,
 					listDroitAgent);
 			demandeDto
@@ -501,7 +502,7 @@ public class AbsenceService implements IAbsenceService {
 	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
 			Demande demande, ReturnMessageDto result) {
 
-		absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande.getType()
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande.getType()
 				.getIdRefTypeAbsence());
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
 				Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
@@ -702,7 +703,7 @@ public class AbsenceService implements IAbsenceService {
 				return returnDto;
 		}
 
-		absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getIdTypeDemande());
 		// dans le cas des types de demande non geres ==> //TODO a supprimer par
 		// la suite
 		if (null == demande) {
@@ -753,7 +754,7 @@ public class AbsenceService implements IAbsenceService {
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				listEtats, null);
 		for (DemandeDto dto : listeDto) {
-			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(dto.getIdTypeDemande());
+			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(dto.getIdTypeDemande());
 			dto = absenceDataConsistencyRulesImpl.filtreDroitOfDemandeSIRH(dto);
 			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto));
 		}
