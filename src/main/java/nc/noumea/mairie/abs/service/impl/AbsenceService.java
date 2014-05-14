@@ -669,6 +669,8 @@ public class AbsenceService implements IAbsenceService {
 			case ASA_A53:
 			case ASA_A54:
 			case ASA_A55:
+			case ASA_A50:
+			case ASA_A49:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
 
@@ -681,20 +683,21 @@ public class AbsenceService implements IAbsenceService {
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
 
-				((DemandeAsa) demande).setDuree(helperService.getDuree(demande.getType().getTypeSaisi(),
-						demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()));
-				((DemandeAsa) demande).setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
+				demandeAsa = (DemandeAsa) demande;
+				demandeAsa.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
+						demande.getDateFin(), demandeDto.getDuree()));
+				demandeAsa.setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
 						.isDateDebutAM() : false);
-				((DemandeAsa) demande).setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
+				demandeAsa.setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
 						.isDateDebutPM() : false);
-				((DemandeAsa) demande).setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
-						.isDateFinAM() : false);
-				((DemandeAsa) demande).setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
-						.isDateFinPM() : false);
+				demandeAsa.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM()
+						: false);
+				demandeAsa.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM()
+						: false);
 
 				if (null != demandeDto.getOrganisationSyndicale()
 						&& null != demandeDto.getOrganisationSyndicale().getIdOrganisation()) {
-					((DemandeAsa) demande).setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class,
+					demandeAsa.setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class,
 							demandeDto.getOrganisationSyndicale().getIdOrganisation()));
 				}
 				break;
