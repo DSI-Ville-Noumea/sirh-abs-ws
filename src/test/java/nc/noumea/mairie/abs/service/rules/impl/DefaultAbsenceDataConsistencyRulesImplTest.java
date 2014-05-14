@@ -33,6 +33,7 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -98,6 +99,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		filtreDroitOfListeDemandesByDemande_Viseur();
 		filtreDroitOfListeDemandesByDemande_Operateur();
 		filtreDroitOfListeDemandesByDemande_DemandeOfAgent();
+		checkStatutAgentFonctionnaire_ok();
+		checkStatutAgentFonctionnaire_ko();
 	}
 	
 	@Test
@@ -2699,5 +2702,74 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result11.isModifierVisa());
 		assertNull(result11.getValeurApprobation());
 		assertNull(result11.getValeurVisa());
+	}
+	
+	@Test
+	public void checkStatutAgentFonctionnaire_ok() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
+		
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		
+		srm = impl.checkStatutAgentFonctionnaire(srm, idAgent);
+		
+		assertEquals(srm.getErrors().size(), 0);
+	}
+	
+	@Test
+	public void checkStatutAgentFonctionnaire_ko() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(4);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
+		
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		
+		srm = impl.checkStatutAgentFonctionnaire(srm, idAgent);
+		
+		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_FONCTIONNAIRE);
+	}
+	
+	@Test
+	public void checkStatutAgentFonctionnaire_koBis() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(7);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
+		
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		
+		srm = impl.checkStatutAgentFonctionnaire(srm, idAgent);
+		
+		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_FONCTIONNAIRE);
 	}
 }

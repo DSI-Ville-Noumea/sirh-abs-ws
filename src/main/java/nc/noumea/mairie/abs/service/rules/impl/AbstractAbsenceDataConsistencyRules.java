@@ -27,6 +27,7 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -75,6 +76,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String MOTIF_OBLIGATOIRE = "Le motif est obligatoire.";
 	public static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
 	public static final String STATUT_AGENT = "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
+	public static final String STATUT_AGENT_FONCTIONNAIRE = "Ce type de demande ne peut êter saisi que par les fonctionnaires.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
@@ -346,5 +348,17 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
 		return false;
+	}
+	
+	public ReturnMessageDto checkStatutAgentFonctionnaire(ReturnMessageDto srm, Integer idAgent) {
+		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
+		// contractuel,convention coll
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(idAgent, helperService.getCurrentDate());
+		if (carr.getCdcate() == 4 || carr.getCdcate() == 7) {
+			logger.warn(String.format(STATUT_AGENT_FONCTIONNAIRE, idAgent));
+			srm.getErrors().add(String.format(STATUT_AGENT_FONCTIONNAIRE, idAgent));
+		}
+
+		return srm;
 	}
 }

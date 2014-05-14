@@ -17,11 +17,11 @@ public class AbsAsaA55DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
-
+		super.checkStatutAgentFonctionnaire(srm, demande.getIdAgent());
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
 		checkDroitCompteurAsaA55(srm, demande);
 	}
-
+	
 	public ReturnMessageDto checkDroitCompteurAsaA55(ReturnMessageDto srm, Demande demande) {
 
 		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class,
