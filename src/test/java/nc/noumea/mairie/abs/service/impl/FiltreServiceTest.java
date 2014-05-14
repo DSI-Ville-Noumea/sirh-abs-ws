@@ -30,6 +30,14 @@ public class FiltreServiceTest {
 	@Test
 	public void getRefTypesAbsence_noIdAgent() {
 
+		RefTypeAbsence ASA_A49 = new RefTypeAbsence();
+		ASA_A49.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
+		RefTypeAbsence ASA_A50 = new RefTypeAbsence();
+		ASA_A50.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
+		RefTypeAbsence ASA_A52 = new RefTypeAbsence();
+		ASA_A52.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
+		RefTypeAbsence ASA_A53 = new RefTypeAbsence();
+		ASA_A53.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
 		RefTypeAbsence ASA_A55 = new RefTypeAbsence();
 		ASA_A55.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
 		RefTypeAbsence ASA_A54 = new RefTypeAbsence();
@@ -48,7 +56,8 @@ public class FiltreServiceTest {
 		REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-		refTypeAbs.addAll(Arrays.asList(ASA_A55, ASA_A54, ASA_A48, AUTRES, CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
+		refTypeAbs.addAll(Arrays.asList(ASA_A49, ASA_A50, ASA_A52, ASA_A53, ASA_A55, ASA_A54, ASA_A48, AUTRES,
+				CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
 
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
@@ -64,6 +73,14 @@ public class FiltreServiceTest {
 	@Test
 	public void getRefTypesAbsence_Fonctionnaire() {
 
+		RefTypeAbsence ASA_A49 = new RefTypeAbsence();
+		ASA_A49.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
+		RefTypeAbsence ASA_A50 = new RefTypeAbsence();
+		ASA_A50.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
+		RefTypeAbsence ASA_A52 = new RefTypeAbsence();
+		ASA_A52.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
+		RefTypeAbsence ASA_A53 = new RefTypeAbsence();
+		ASA_A53.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
 		RefTypeAbsence ASA_A55 = new RefTypeAbsence();
 		ASA_A55.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
 		RefTypeAbsence ASA_A54 = new RefTypeAbsence();
@@ -82,7 +99,8 @@ public class FiltreServiceTest {
 		REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-		refTypeAbs.addAll(Arrays.asList(ASA_A55, ASA_A54, ASA_A48, AUTRES, CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
+		refTypeAbs.addAll(Arrays.asList(ASA_A49, ASA_A50, ASA_A52, ASA_A53, ASA_A55, ASA_A54, ASA_A48, AUTRES,
+				CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(24);
@@ -103,12 +121,20 @@ public class FiltreServiceTest {
 
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
 
-		assertEquals(7, result.size());
+		assertEquals(11, result.size());
 	}
 
 	@Test
 	public void getRefTypesAbsence_CC() {
 
+		RefTypeAbsence ASA_A49 = new RefTypeAbsence();
+		ASA_A49.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
+		RefTypeAbsence ASA_A50 = new RefTypeAbsence();
+		ASA_A50.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
+		RefTypeAbsence ASA_A52 = new RefTypeAbsence();
+		ASA_A52.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
+		RefTypeAbsence ASA_A53 = new RefTypeAbsence();
+		ASA_A53.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
 		RefTypeAbsence ASA_A55 = new RefTypeAbsence();
 		ASA_A55.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
 		RefTypeAbsence ASA_A54 = new RefTypeAbsence();
@@ -127,7 +153,8 @@ public class FiltreServiceTest {
 		REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-		refTypeAbs.addAll(Arrays.asList(ASA_A55, ASA_A54, ASA_A48, AUTRES, CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
+		refTypeAbs.addAll(Arrays.asList(ASA_A49, ASA_A50, ASA_A52, ASA_A53, ASA_A55, ASA_A54, ASA_A48, AUTRES,
+				CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(4);
@@ -148,12 +175,20 @@ public class FiltreServiceTest {
 
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
 
-		assertEquals(7, result.size());
+		assertEquals(11, result.size());
 	}
 
 	@Test
 	public void getRefTypesAbsence_C() {
 
+		RefTypeAbsence ASA_A49 = new RefTypeAbsence();
+		ASA_A49.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
+		RefTypeAbsence ASA_A50 = new RefTypeAbsence();
+		ASA_A50.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
+		RefTypeAbsence ASA_A52 = new RefTypeAbsence();
+		ASA_A52.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
+		RefTypeAbsence ASA_A53 = new RefTypeAbsence();
+		ASA_A53.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
 		RefTypeAbsence ASA_A55 = new RefTypeAbsence();
 		ASA_A55.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
 		RefTypeAbsence ASA_A54 = new RefTypeAbsence();
@@ -172,7 +207,8 @@ public class FiltreServiceTest {
 		REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-		refTypeAbs.addAll(Arrays.asList(ASA_A55, ASA_A54, ASA_A48, AUTRES, CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
+		refTypeAbs.addAll(Arrays.asList(ASA_A49, ASA_A50, ASA_A52, ASA_A53, ASA_A55, ASA_A54, ASA_A48, AUTRES,
+				CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(7);
@@ -193,7 +229,7 @@ public class FiltreServiceTest {
 
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
 
-		assertEquals(7, result.size());
+		assertEquals(11, result.size());
 	}
 
 	@Test
