@@ -6510,6 +6510,56 @@ public class AbsenceServiceTest {
 		assertEquals(1, listResult.size());
 		assertFalse(listResult.get(0).isDepassementCompteur());
 	}
+	
+	@Test
+	public void getListeDemandes_noResult() {
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+
+		List<DemandeDto> listdemandeDto = new ArrayList<DemandeDto>();
+
+		RefEtat etat = new RefEtat();
+			etat.setLabel("APPROUVE");
+		List<RefEtat> listEtat = new ArrayList<RefEtat>();
+			listEtat.add(etat);
+
+		Date date = new Date();
+
+		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.listeDemandesAgent(9005138, 9005131, date, null, null)).thenReturn(listdemande);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null)).thenReturn(
+				listdemandeDto);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDateMoinsUnAn()).thenReturn(date);
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				9005138);
+
+		IFiltreService filtresService = Mockito.mock(IFiltreService.class);
+		Mockito.when(filtresService.getListeEtatsByOnglet("TOUTES", null)).thenReturn(listEtat);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138, null)).thenReturn(listDroitAgent);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "filtresService", filtresService);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+
+		List<DemandeDto> listResult = service
+				.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null, null);
+
+		assertEquals(0, listResult.size());
+	}
 
 	@Test
 	public void saveDemandeAsa50_OK_avecEtatProvisoire() {
