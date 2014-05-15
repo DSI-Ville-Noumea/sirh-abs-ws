@@ -147,11 +147,13 @@ public class AbsenceService implements IAbsenceService {
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
-						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
-						demandeDto.isDateFinPM()));
+				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de fin, 3 - calcul duree
+				// car dependance entre ces 3 donnees pour les calculs
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+						demande.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
+						demandeDto.isDateFinPM()));
 
 				demandeAsa = (DemandeAsa) demande;
 				demandeAsa.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
@@ -673,11 +675,13 @@ public class AbsenceService implements IAbsenceService {
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
-						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
-						demandeDto.isDateFinPM()));
+				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de fin, 3 - calcul duree
+				// car dependance entre ces 3 donnees pour les calculs
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+						demande.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
+						demandeDto.isDateFinPM()));
 
 				demandeAsa = (DemandeAsa) demande;
 				demandeAsa.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
