@@ -1001,7 +1001,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 
 		result = service.setDemandeEtat(idAgent, dto);
@@ -1075,7 +1075,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 
 		result = service.setDemandeEtat(idAgent, dto);
@@ -1142,7 +1142,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 
 		result = service.setDemandeEtat(idAgent, dto);
@@ -1384,7 +1384,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
@@ -1470,7 +1470,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
@@ -3537,7 +3537,7 @@ public class AbsenceServiceTest {
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
@@ -3606,7 +3606,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
@@ -3663,7 +3663,7 @@ public class AbsenceServiceTest {
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
@@ -3901,7 +3901,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
@@ -3990,7 +3990,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
@@ -5455,7 +5455,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 
 		result = service.setDemandeEtat(idAgent, dto);
@@ -5528,7 +5528,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 
 		result = service.setDemandeEtat(idAgent, dto);
@@ -5649,7 +5649,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
@@ -5706,7 +5706,7 @@ public class AbsenceServiceTest {
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		ReflectionTestUtils.setField(service, "counterService", counterService);
+//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
