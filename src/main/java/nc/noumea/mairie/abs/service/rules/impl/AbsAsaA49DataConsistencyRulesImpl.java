@@ -28,7 +28,7 @@ public class AbsAsaA49DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 		// on signale par un message d info que l'agent a déjà pris son heure
 		// autorisée, mais on ne bloque pas la demande
-		if (1 < sommeDemandeEnCours + ((DemandeAsa) demande).getDuree()) {
+		if (60 < sommeDemandeEnCours + ((DemandeAsa) demande).getDuree()) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ASA_MSG));
 			srm.getInfos().add(DEPASSEMENT_DROITS_ASA_MSG);
 		}
@@ -66,7 +66,7 @@ public class AbsAsaA49DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 		// on signale par un message d info que l'agent a déjà pris son heure
 		// autorisée, mais on ne bloque pas la demande
-		if (1 < sommeDemandeEnCours + demandeDto.getDuree()) {
+		if (60 < sommeDemandeEnCours + demandeDto.getDuree()) {
 			return true;
 		}
 
