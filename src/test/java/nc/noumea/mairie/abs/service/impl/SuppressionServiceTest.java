@@ -59,7 +59,7 @@ public class SuppressionServiceTest {
 		
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -116,7 +116,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -197,7 +197,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -282,7 +282,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -367,7 +367,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -487,7 +487,7 @@ public class SuppressionServiceTest {
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -544,7 +544,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -625,7 +625,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -710,7 +710,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -794,7 +794,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -878,7 +878,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -962,7 +962,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -1046,7 +1046,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -1130,7 +1130,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -1214,7 +1214,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -1298,7 +1298,7 @@ public class SuppressionServiceTest {
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
