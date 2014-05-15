@@ -64,7 +64,7 @@ public class AbsAsaA55DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 		// on verifie d abord l etat de la demande
 		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur 
-		if(!super.checkDepassementCompteurAgent(demandeDto))
+		if(!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
 		
 		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, demandeDto

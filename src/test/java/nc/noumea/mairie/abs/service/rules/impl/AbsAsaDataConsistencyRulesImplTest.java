@@ -358,7 +358,7 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 	}
 	
 	@Test
-	public void checkDepassementCompteurAgent() {
+	public void checkEtatDemandePourDepassementCompteurAgent() {
 		
 		DemandeDto demandeDtoVALIDEE = new DemandeDto();
 			demandeDtoVALIDEE.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
@@ -373,7 +373,7 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		listDto.addAll(Arrays.asList(demandeDtoVALIDEE, demandeDtoREJETE, demandeDtoANNULEE, demandeDtoPRISE));
 			
 		for(DemandeDto demandeDto : listDto) {
-			if(impl.checkDepassementCompteurAgent(demandeDto)) {
+			if(impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
 				fail("Bad Etat Demande for checkDepassementCompteurAgent");
 			}
 		}
@@ -398,7 +398,7 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 				demandeDtoAPPROUVEE, demandeDtoREFUSEE, demandeDtoEN_ATTENTE));
 			
 		for(DemandeDto demandeDto : listDto) {
-			if(!impl.checkDepassementCompteurAgent(demandeDto)) {
+			if(!impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
 				fail("Bad Etat Demande for checkDepassementCompteurAgent");
 			}
 		}

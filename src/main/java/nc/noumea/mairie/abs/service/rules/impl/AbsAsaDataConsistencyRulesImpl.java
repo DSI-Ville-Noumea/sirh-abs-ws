@@ -85,8 +85,7 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 		}
 	}
 	
-	@Override
-	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+	public boolean checkEtatDemandePourDepassementCompteurAgent(DemandeDto demandeDto) {
 		
 		if(demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
 			|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
