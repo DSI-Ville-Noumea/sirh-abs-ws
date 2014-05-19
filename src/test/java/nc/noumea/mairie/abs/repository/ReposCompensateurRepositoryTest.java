@@ -10,10 +10,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.reposComp.domain.DemandeReposComp;
+import nc.noumea.mairie.abs.reposComp.repository.ReposCompensateurRepository;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

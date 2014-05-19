@@ -6,14 +6,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
-import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.reposComp.domain.AgentReposCompCount;
+import nc.noumea.mairie.abs.reposComp.domain.DemandeReposComp;
+import nc.noumea.mairie.abs.reposComp.repository.IReposCompensateurRepository;
+import nc.noumea.mairie.abs.reposComp.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
-import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spcarr;

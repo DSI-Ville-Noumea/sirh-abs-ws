@@ -4,11 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
-import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
-import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
-import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
-import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA52Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA53Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA54Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 
 import org.joda.time.DateTime;

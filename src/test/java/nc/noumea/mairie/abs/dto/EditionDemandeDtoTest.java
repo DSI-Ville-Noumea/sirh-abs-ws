@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 
-import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.reposComp.domain.DemandeReposComp;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.junit.Test;

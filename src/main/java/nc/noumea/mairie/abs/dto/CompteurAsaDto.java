@@ -2,11 +2,11 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
-import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
-import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
-import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
-import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
-import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA52Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA53Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA54Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA55Count;
 
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;

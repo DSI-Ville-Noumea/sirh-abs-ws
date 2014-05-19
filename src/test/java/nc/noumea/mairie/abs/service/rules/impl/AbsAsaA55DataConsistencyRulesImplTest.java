@@ -9,15 +9,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.asa.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.asa.domain.DemandeAsa;
+import nc.noumea.mairie.abs.asa.repository.IAsaRepository;
+import nc.noumea.mairie.abs.asa.service.rules.impl.AbsAsaA55DataConsistencyRulesImpl;
+import nc.noumea.mairie.abs.asa.service.rules.impl.AbsAsaDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.repository.IAsaRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 

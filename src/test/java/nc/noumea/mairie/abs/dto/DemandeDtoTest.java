@@ -7,13 +7,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
-import nc.noumea.mairie.abs.domain.DemandeAsa;
-import nc.noumea.mairie.abs.domain.DemandeRecup;
-import nc.noumea.mairie.abs.domain.DemandeReposComp;
+import nc.noumea.mairie.abs.asa.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.recup.domain.DemandeRecup;
+import nc.noumea.mairie.abs.reposComp.domain.DemandeReposComp;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.junit.Test;
