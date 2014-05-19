@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 public class AgentAsaA52Count extends AgentCount {
 
 	@NotNull
-	@Column(name = "TOTAL_MINUTES", columnDefinition = "numeric")
+	@Column(name = "TOTAL_MINUTES")
 	private int totalMinutes;
 
 	@Column(name = "DATE_DEBUT")
