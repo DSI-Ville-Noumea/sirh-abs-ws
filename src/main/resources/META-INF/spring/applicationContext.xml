@@ -48,7 +48,7 @@
     </context:component-scan>
     
 	<!-- Datasources and ORM -->
-	<jee:jndi-lookup id="absOracleDataSource" jndi-name="jdbc/ABS_WS_DS1"
+	<jee:jndi-lookup id="absPostgresDataSource" jndi-name="jdbc/ABS_WS_DS1"
 		resource-ref="true" />
 
 	<jee:jndi-lookup id="sirhDb400DataSource" jndi-name="jdbc/ABS_WS_DS2"
@@ -65,7 +65,7 @@
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
 		id="absEntityManagerFactory">
 		<property name="persistenceUnitName" value="absPersistenceUnit" />
-		<property name="dataSource" ref="absOracleDataSource" />
+		<property name="dataSource" ref="absPostgresDataSource" />
 	</bean>
 
 	<tx:annotation-driven 
