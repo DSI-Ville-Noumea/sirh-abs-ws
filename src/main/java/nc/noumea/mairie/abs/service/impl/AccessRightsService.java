@@ -7,13 +7,12 @@ import java.util.Set;
 
 import javax.persistence.NoResultException;
 
-import nc.noumea.mairie.abs.droit.domain.Droit;
-import nc.noumea.mairie.abs.droit.domain.DroitDroitsAgent;
-import nc.noumea.mairie.abs.droit.domain.DroitProfil;
-import nc.noumea.mairie.abs.droit.domain.DroitsAgent;
-import nc.noumea.mairie.abs.droit.domain.Profil;
-import nc.noumea.mairie.abs.droit.domain.ProfilEnum;
-import nc.noumea.mairie.abs.droit.repository.IAccessRightsRepository;
+import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
+import nc.noumea.mairie.abs.domain.DroitProfil;
+import nc.noumea.mairie.abs.domain.DroitsAgent;
+import nc.noumea.mairie.abs.domain.Profil;
+import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
@@ -21,6 +20,7 @@ import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
+import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;

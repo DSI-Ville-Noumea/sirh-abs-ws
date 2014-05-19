@@ -12,18 +12,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeRecup;
+import nc.noumea.mairie.abs.domain.DemandeReposComp;
+import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
+import nc.noumea.mairie.abs.domain.DroitProfil;
+import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.Profil;
+import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.abs.droit.domain.Droit;
-import nc.noumea.mairie.abs.droit.domain.DroitDroitsAgent;
-import nc.noumea.mairie.abs.droit.domain.DroitProfil;
-import nc.noumea.mairie.abs.droit.domain.DroitsAgent;
-import nc.noumea.mairie.abs.droit.domain.Profil;
-import nc.noumea.mairie.abs.droit.domain.ProfilEnum;
-import nc.noumea.mairie.abs.recup.domain.DemandeRecup;
-import nc.noumea.mairie.abs.reposComp.domain.DemandeReposComp;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

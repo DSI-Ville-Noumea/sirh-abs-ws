@@ -2,13 +2,13 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
-import nc.noumea.mairie.abs.asa.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeRecup;
+import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.abs.recup.domain.DemandeRecup;
-import nc.noumea.mairie.abs.reposComp.domain.DemandeReposComp;
 
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;

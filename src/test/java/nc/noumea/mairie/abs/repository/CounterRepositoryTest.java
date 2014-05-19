@@ -10,16 +10,16 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import nc.noumea.mairie.abs.asa.domain.AgentAsaA48Count;
-import nc.noumea.mairie.abs.asa.domain.AgentAsaA53Count;
-import nc.noumea.mairie.abs.asa.domain.AgentAsaA54Count;
-import nc.noumea.mairie.abs.asa.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentRecupCount;
+import nc.noumea.mairie.abs.domain.AgentReposCompCount;
+import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
-import nc.noumea.mairie.abs.recup.domain.AgentRecupCount;
-import nc.noumea.mairie.abs.recup.domain.AgentWeekRecup;
-import nc.noumea.mairie.abs.reposComp.domain.AgentReposCompCount;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;

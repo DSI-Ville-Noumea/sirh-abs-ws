@@ -3,7 +3,7 @@ package nc.noumea.mairie.abs.repository;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.abs.asa.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 

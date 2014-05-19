@@ -3,14 +3,13 @@ package nc.noumea.mairie.abs.service.rules.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import nc.noumea.mairie.abs.domain.AgentRecupCount;
+import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.recup.domain.AgentRecupCount;
-import nc.noumea.mairie.abs.recup.domain.DemandeRecup;
-import nc.noumea.mairie.abs.recup.repository.IRecuperationRepository;
-import nc.noumea.mairie.abs.recup.service.rules.impl.AbsRecuperationDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
+import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 
 import org.junit.Test;
 import org.mockito.Mockito;
