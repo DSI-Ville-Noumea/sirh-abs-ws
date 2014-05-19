@@ -25,7 +25,7 @@ public class AsaCounterServiceImpl extends AbstractCounterService {
 	 * @param dateFin
 	 * @return int nombre minutes a incrementer/decrementer du compteur
 	 */
-	protected int calculMinutesAlimAutoCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
+	public int calculMinutesAlimAutoCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
 			Date dateDebut, Date dateFin) {
 		int minutes = 0;
 		// si on approuve, le compteur decremente
@@ -51,7 +51,7 @@ public class AsaCounterServiceImpl extends AbstractCounterService {
 	 * @param dateFin
 	 * @return Double nombre jour a incrementer/decrementer du compteur
 	 */
-	protected Double calculJoursAlimAutoCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
+	public Double calculJoursAlimAutoCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
 			Date dateDebut, Date dateFin) {
 		Double jours = 0.0;
 		// si on approuve, le compteur decremente

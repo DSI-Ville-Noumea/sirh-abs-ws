@@ -230,8 +230,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	 * mise a jour
 	 */
 	@Override
-	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto srm,
-			MotifCompteur motifCompteur) {
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
+			ReturnMessageDto srm, MotifCompteur motifCompteur) {
 
 		logger.info("Trying to update manually Repos Comp. counters for Agent {} ...", compteurDto.getIdAgent());
 
@@ -247,7 +247,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		}
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, minutesAnneeN1, RefTypeAbsenceEnum.REPOS_COMP.getValue(), srm, motifCompteur);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, minutesAnneeN1,
+					RefTypeAbsenceEnum.REPOS_COMP.getValue(), srm, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -266,8 +267,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	 * @throws IllegalAccessException
 	 */
 	private ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Integer minutes, Integer minutesAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
-			throws InstantiationException, IllegalAccessException {
+			Integer minutes, Integer minutesAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm,
+			MotifCompteur motifCompteur) throws InstantiationException, IllegalAccessException {
 
 		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
@@ -316,8 +317,9 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
-		
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc,
+				idRefTypeAbsence);
+
 		return srm;
 	}
 
@@ -338,7 +340,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		return srm;
 	}
 
-	protected int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
+	public int calculMinutesCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		int minutes = 0;
 		// si on approuve, le compteur decremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {

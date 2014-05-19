@@ -19,8 +19,8 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 
 	public static final String DEPASSEMENT_DROITS_ASA_MSG = "Les droits pour ce type d'absence ASA sont dépassés.";
 	public static final String AUCUN_DROITS_ASA_MSG = "L'agent [%d] ne possède pas de droit ASA.";
-	protected static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
-	protected static final String OS_INACTIVE = "L'organisation syndicale n'est pas active.";
+	public static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
+	public static final String OS_INACTIVE = "L'organisation syndicale n'est pas active.";
 
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
@@ -28,12 +28,12 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
 	}
 	
-	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+	public boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
 		
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat());
 	}
 	
-	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto) {
+	public boolean isAfficherBoutonAnnuler(DemandeDto demandeDto) {
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
@@ -75,7 +75,7 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 		return super.checkEtatsDemandeAnnulee(srm, demande, listEtats);
 	}
 	
-	protected void checkOrganisationSyndicale(ReturnMessageDto srm, DemandeAsa demande) {
+	public void checkOrganisationSyndicale(ReturnMessageDto srm, DemandeAsa demande) {
 		
 		if (null == demande.getOrganisationSyndicale()) {
 			logger.warn(OS_INEXISTANT);

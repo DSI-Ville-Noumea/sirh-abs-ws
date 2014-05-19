@@ -29,7 +29,7 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
 	}
 
-	protected ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
 
 		// on recupere le solde de l agent
 		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent());
@@ -46,7 +46,7 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 		return srm;
 	}
 	
-	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+	public boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
 		
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
 	}

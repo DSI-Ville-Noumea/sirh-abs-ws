@@ -43,7 +43,7 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 		return srm;
 	}
 
-	protected ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
 		// on recupere le solde de l agent
 		AgentReposCompCount soldeReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
 				demande.getIdAgent());
@@ -61,7 +61,7 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 		return srm;
 	}
 	
-	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+	public boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
 		
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
 	}
