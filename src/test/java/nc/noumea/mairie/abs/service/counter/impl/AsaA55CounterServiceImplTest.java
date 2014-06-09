@@ -13,16 +13,15 @@ import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
-import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.impl.HelperService;
-import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -83,11 +82,9 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		AgentAsaA55Count arc = new AgentAsaA55Count();
 		arc.setTotalMinutes(15 * 60);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
-
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
@@ -104,7 +101,6 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
 		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
@@ -133,15 +129,12 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(null);
-
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(null);
 
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
@@ -177,9 +170,6 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
-
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(
 				counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, compteurDto.getIdAgent(),
@@ -189,11 +179,11 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
@@ -224,9 +214,6 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
-
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(
 				counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, compteurDto.getIdAgent(),
@@ -236,11 +223,11 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
@@ -309,8 +296,8 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		demande.setDateFin(new Date());
 		int minutes = 10 * 60;
 
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(rr.getAgentCounter(AgentAsaA55Count.class, demande.getIdAgent())).thenReturn(null);
@@ -320,7 +307,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 				minutes);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
@@ -343,8 +330,8 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		demande.setDateFin(new Date());
 		int minutes = 11 * 60;
 
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 		AgentAsaA55Count arc = new AgentAsaA55Count();
@@ -356,7 +343,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 				minutes);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
@@ -380,8 +367,8 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		demande.setDateFin(new Date());
 		int minutes = 11 * 60;
 
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 		AgentAsaA55Count arc = new AgentAsaA55Count();
@@ -393,7 +380,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 				minutes);
 
 		AsaA55CounterServiceImpl service = new AsaA55CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 

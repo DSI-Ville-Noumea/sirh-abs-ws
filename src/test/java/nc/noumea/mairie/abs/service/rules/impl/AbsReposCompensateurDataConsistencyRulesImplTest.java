@@ -10,6 +10,7 @@ import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -17,7 +18,6 @@ import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -211,8 +211,8 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		demande.setIdDemande(1);
 		demande.setIdAgent(9005131);
 
-		Agent ag = new Agent();
-		ag.setNomatr(5131);
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+			ag.setNomatr(5131);
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(4);
@@ -242,8 +242,8 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		demande.setIdDemande(1);
 		demande.setIdAgent(9005131);
 
-		Agent ag = new Agent();
-		ag.setNomatr(5131);
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+			ag.setNomatr(5131);
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(2);

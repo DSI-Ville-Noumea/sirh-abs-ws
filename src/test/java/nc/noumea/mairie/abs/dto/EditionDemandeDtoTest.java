@@ -8,7 +8,6 @@ import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ public class EditionDemandeDtoTest {
 		// Given
 		Date dateDemande = new Date();
 
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
@@ -55,7 +54,7 @@ public class EditionDemandeDtoTest {
 		soldeDto.setSoldeReposCompAnnee((double) 14);
 		soldeDto.setSoldeReposCompAnneePrec((double) 0);
 
-		Agent agAppro = new Agent();
+		AgentGeneriqueDto agAppro = new AgentGeneriqueDto();
 		agAppro.setNomUsage("CHARVET");
 		agAppro.setPrenomUsage("Tatiana");
 		agAppro.setIdAgent(9005138);

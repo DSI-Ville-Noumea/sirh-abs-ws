@@ -64,7 +64,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	protected <T1, T2> int addMinutesToAgent(Class<T1> T1, Class<T2> T2, Integer idAgent, Date dateMonday,
 			Integer minutes) throws InstantiationException, IllegalAccessException {
 
-		if (sirhRepository.getAgent(idAgent) == null) {
+		if (sirhWSConsumer.getAgent(idAgent) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
 			throw new AgentNotFoundException();
 		}
@@ -268,7 +268,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 			Integer minutes, Integer minutesAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
 			throws InstantiationException, IllegalAccessException {
 
-		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
+		if (sirhWSConsumer.getAgent(compteurDto.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
 			throw new AgentNotFoundException();
 		}
@@ -372,7 +372,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	protected <T1, T2> ReturnMessageDto majCompteurToAgent(DemandeReposComp demande, Integer minutes,
 			ReturnMessageDto srm) throws InstantiationException, IllegalAccessException {
 
-		if (sirhRepository.getAgent(demande.getIdAgent()) == null) {
+		if (sirhWSConsumer.getAgent(demande.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", demande.getIdAgent());
 			throw new AgentNotFoundException();
 		}

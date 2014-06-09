@@ -18,7 +18,6 @@ import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.ISuppressionService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
-import nc.noumea.mairie.sirh.service.ISirhService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -59,9 +58,6 @@ public class DemandeController {
 
 	@Autowired
 	private ISoldeService soldeService;
-
-	@Autowired
-	private ISirhService sirhService;
 
 	/**
 	 * Creation/modification d'une demande : SI idDemande IS NULL ALORS creation
@@ -127,7 +123,8 @@ public class DemandeController {
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhService.findAgent(convertedIdAgent) == null)
+		if (sirhWSConsumer.getAgent(convertedIdAgent) == null
+				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
 			throw new NotFoundException();
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande,
@@ -152,7 +149,8 @@ public class DemandeController {
 				idAgent, idDemande);
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhService.findAgent(convertedIdAgent) == null)
+		if (sirhWSConsumer.getAgent(convertedIdAgent) == null
+				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
 			throw new NotFoundException();
 
 		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
@@ -191,7 +189,8 @@ public class DemandeController {
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhService.findAgent(convertedIdAgent) == null)
+		if (sirhWSConsumer.getAgent(convertedIdAgent) == null
+				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
 			throw new NotFoundException();
 
 		// ON VERIFIE LES DROITS

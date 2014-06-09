@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
@@ -22,7 +23,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private String sirhWsBaseUrl;
 
 	private static final String sirhAgentServiceUrl = "services/agent";
-
+	private static final String sirhAgentUrl = "agents/getAgent";
 	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
 
 	@Override
@@ -61,5 +62,17 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		}
 
 		return result;
+	}
+
+	@Override
+	public AgentGeneriqueDto getAgent(Integer idAgent) {
+		String url = String.format(sirhWsBaseUrl + sirhAgentUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(AgentGeneriqueDto.class, res, url);
 	}
 }

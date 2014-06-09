@@ -55,7 +55,7 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
 			IllegalAccessException {
 
-		if (sirhRepository.getAgent(compteurDto.getIdAgent()) == null) {
+		if (sirhWSConsumer.getAgent(compteurDto.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
 			throw new AgentNotFoundException();
 		}
@@ -144,7 +144,7 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Double jours, ReturnMessageDto srm)
 			throws InstantiationException, IllegalAccessException {
 
-		if (sirhRepository.getAgent(idAgent) == null) {
+		if (sirhWSConsumer.getAgent(idAgent) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
 			throw new AgentNotFoundException();
 		}

@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.dto;
 
-import nc.noumea.mairie.sirh.domain.Agent;
 
 public class AgentWithServiceDto extends AgentDto {
 
@@ -13,7 +12,7 @@ public class AgentWithServiceDto extends AgentDto {
 
 	}
 
-	public AgentWithServiceDto(Agent agent) {
+	public AgentWithServiceDto(AgentGeneriqueDto agent) {
 		super(agent);
 	}
 

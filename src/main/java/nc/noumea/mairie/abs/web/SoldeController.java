@@ -7,7 +7,7 @@ import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
-import nc.noumea.mairie.sirh.service.ISirhService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class SoldeController {
 	private ISoldeService soldeService;
 
 	@Autowired
-	private ISirhService sirhService;
+	private ISirhWSConsumer sirhWSConsumer;
 
 	/**
 	 * Retourne tous les compteurs d un agent <br />
@@ -47,7 +47,8 @@ public class SoldeController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhService.findAgent(convertedIdAgent) == null)
+		if (sirhWSConsumer.getAgent(convertedIdAgent) == null
+				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
 			throw new NotFoundException();
 
 		return soldeService.getAgentSolde(convertedIdAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin());

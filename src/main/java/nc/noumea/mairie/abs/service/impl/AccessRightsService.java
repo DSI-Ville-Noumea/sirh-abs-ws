@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -24,7 +25,6 @@ import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
-import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private ISirhRepository sirhRepository;
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public AccessRightsDto getAgentAccessRights(Integer idAgent) {
@@ -151,7 +151,7 @@ public class AccessRightsService implements IAccessRightsService {
 			// in for
 			for (DroitDroitsAgent agentSaisiToDelete : droitToDelete.getDroitDroitsAgent()) {
 				accessRightsRepository.clear();
-				accessRightsRepository.removeEntity(agentSaisiToDelete); 
+				accessRightsRepository.removeEntity(agentSaisiToDelete);
 			}
 			for (DroitProfil dp : droitToDelete.getDroitProfils()) {
 				deleteDroitProfil(dp);
@@ -222,7 +222,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		for (Droit d : droit) {
 			if (accessRightsRepository.isUserDelegataireOfApprobateur(idAgent, d.getIdAgent())) {
-				Agent delegataire = sirhRepository.getAgent(d.getIdAgent());
+				AgentGeneriqueDto delegataire = sirhWSConsumer.getAgent(d.getIdAgent());
 
 				if (delegataire == null)
 					logger.warn("L'agent délégataire {} n'existe pas.", d.getIdAgent());
@@ -231,7 +231,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 			}
 			if (accessRightsRepository.isUserOperateurOfApprobateur(idAgent, d.getIdAgent())) {
-				Agent ope = sirhRepository.getAgent(d.getIdAgent());
+				AgentGeneriqueDto ope = sirhWSConsumer.getAgent(d.getIdAgent());
 				if (ope == null)
 					logger.warn("L'agent opérateur {} n'existe pas.", d.getIdAgent());
 				else {
@@ -291,7 +291,7 @@ public class AccessRightsService implements IAccessRightsService {
 			if (newViseur != null)
 				continue;
 
-			Agent ag = sirhRepository.getAgent(viseurDto.getIdAgent());
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(viseurDto.getIdAgent());
 			// on verifie que l idAgent existe
 			if (null == ag) {
 				logger.warn("L'agent viseur {} n'existe pas.", viseurDto.getIdAgent());
@@ -373,7 +373,7 @@ public class AccessRightsService implements IAccessRightsService {
 			if (newOperateur != null)
 				continue;
 
-			Agent ag = sirhRepository.getAgent(operateurDto.getIdAgent());
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(operateurDto.getIdAgent());
 			// on verifie que l idAgent existe
 			if (null == ag) {
 				logger.warn("L'agent opérateur {} n'existe pas.", operateurDto.getIdAgent());
@@ -463,7 +463,7 @@ public class AccessRightsService implements IAccessRightsService {
 			return;
 		}
 
-		Agent ag = sirhRepository.getAgent(dto.getDelegataire().getIdAgent());
+		AgentGeneriqueDto ag = sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
 		// on verifie que l idAgent existe
 		if (null == ag) {
 			logger.warn("L'agent délégataire {} n'existe pas.", dto.getDelegataire().getIdAgent());
@@ -533,7 +533,7 @@ public class AccessRightsService implements IAccessRightsService {
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService,
 				dp.getIdDroitProfil())) {
 			AgentDto agDto = new AgentDto();
-			Agent ag = sirhRepository.getAgent(da.getIdAgent());
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
 			if (null == ag) {
 				logger.warn("L'agent {} n'existe pas.", da.getIdAgent());
 				continue;
@@ -745,7 +745,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		for (Droit d : droit) {
 			if (accessRightsRepository.isUserViseurOfApprobateur(idAgent, d.getIdAgent())) {
-				Agent viseur = sirhRepository.getAgent(d.getIdAgent());
+				AgentGeneriqueDto viseur = sirhWSConsumer.getAgent(d.getIdAgent());
 				if (viseur == null)
 					logger.warn("L'agent viseur {} n'existe pas.", d.getIdAgent());
 				else {
@@ -789,47 +789,49 @@ public class AccessRightsService implements IAccessRightsService {
 				helperService.getCurrentDate());
 		return agentApprobateurDto;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
-	public boolean verifAccessRightListDemande(Integer idAgentConnecte, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
-		
+	public boolean verifAccessRightListDemande(Integer idAgentConnecte, Integer idAgentOfDemande,
+			ReturnMessageDto returnDto) {
+
 		boolean res = true;
-		
-		// l agent connecte a-t-il les droits de visualiser la liste de demande de l agent
+
+		// l agent connecte a-t-il les droits de visualiser la liste de demande
+		// de l agent
 		if (!idAgentConnecte.equals(idAgentOfDemande)) {
-			
-			if(!accessRightsRepository.isViseurOfAgent(idAgentConnecte, idAgentOfDemande)
+
+			if (!accessRightsRepository.isViseurOfAgent(idAgentConnecte, idAgentOfDemande)
 					&& !accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgentConnecte, idAgentOfDemande)
 					&& !accessRightsRepository.isOperateurOfAgent(idAgentConnecte, idAgentOfDemande)) {
-				
+
 				res = false;
 				logger.warn("Vous n'êtes pas habilité à consulter la liste des demandes de cet agent.");
 				returnDto.getErrors().add(
 						String.format("Vous n'êtes pas habilité à consulter la liste des demandes de cet agent."));
 			}
 		}
-		
+
 		return res;
 	}
-	
+
 	/**
-	 * Returns the list of distinct services approved/input agents have
-	 * Used to build the filters (by service)
+	 * Returns the list of distinct services approved/input agents have Used to
+	 * build the filters (by service)
 	 */
 	@Override
 	@Transactional(readOnly = true)
 	public List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
-		
+
 		List<ServiceDto> result = new ArrayList<ServiceDto>();
 
 		List<String> codeServices = new ArrayList<String>();
-		
+
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, null)) {
-			
+
 			if (codeServices.contains(da.getCodeService()))
 				continue;
-			
+
 			codeServices.add(da.getCodeService());
 			ServiceDto svDto = new ServiceDto();
 			svDto.setCodeService(da.getCodeService());
@@ -839,7 +841,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		return result;
 	}
-	
+
 	/**
 	 * Retrieves the agent an approbator is set to Approve or an Operator is set
 	 * to Input. This service also filters by service
@@ -852,7 +854,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
 			AgentDto agDto = new AgentDto();
-			Agent ag = sirhRepository.getAgent(da.getIdAgent());
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
 			agDto.setIdAgent(da.getIdAgent());
 			agDto.setNom(ag.getDisplayNom());
 			agDto.setPrenom(ag.getDisplayPrenom());
@@ -860,12 +862,13 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		return result;
-		
+
 	}
-	
+
 	@Override
-	public ReturnMessageDto verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
-		
+	public ReturnMessageDto verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande,
+			ReturnMessageDto returnDto) {
+
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits
 		// sur l'agent pour qui il effectue la demande
 		if (!idAgent.equals(idAgentOfDemande)) {
@@ -896,7 +899,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		return returnDto;
 	}
-	
+
 	@Override
 	public Integer getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne) {
 

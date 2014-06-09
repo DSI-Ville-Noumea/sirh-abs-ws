@@ -25,6 +25,7 @@ import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -34,7 +35,6 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.LocalDate;
@@ -281,16 +281,20 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Integer idAgent = 9005138;
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+			ag.setNomatr(5138);
 		Spadmn adm = new Spadmn();
 
 		Date date = new Date();
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(ag);
+		
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(idAgent)).thenReturn(ag);
-		Mockito.when(sirhRepository.getAgentCurrentPosition(ag, date)).thenReturn(adm);
+		Mockito.when(sirhRepository.getAgentCurrentPosition(ag.getNomatr(), date)).thenReturn(adm);
 		
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 
 		for (String codeAcivite : activitesCode) {
 			adm.setCdpadm(codeAcivite);
@@ -305,17 +309,21 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Integer idAgent = 9005138;
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+			ag.setNomatr(5138);
 		Spadmn adm = new Spadmn();
 		adm.setCdpadm("05");
 
 		Date date = new Date();
-
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(ag);
+		
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(idAgent)).thenReturn(ag);
-		Mockito.when(sirhRepository.getAgentCurrentPosition(ag, date)).thenReturn(adm);
+		Mockito.when(sirhRepository.getAgentCurrentPosition(ag.getNomatr(), date)).thenReturn(adm);
 		
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 
 		srm = impl.checkAgentInactivity(srm, idAgent, date);
 

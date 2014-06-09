@@ -14,6 +14,7 @@ import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -21,10 +22,8 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
-import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.impl.HelperService;
-import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -39,7 +38,7 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		super.service = new AsaA52CounterServiceImpl();
 		super.allTest();
 	}
-	
+
 	@Test
 	public void majManuelleCompteurAsaA52ToAgent_NonHabilite() {
 
@@ -85,11 +84,9 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		AgentAsaA52Count arc = new AgentAsaA52Count();
 		arc.setTotalMinutes(15 * 60);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
-
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
@@ -106,7 +103,6 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
 		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
@@ -119,31 +115,28 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 	@Test
 	public void majManuelleCompteurAsaA52ToAgent_agentInexistant() {
-		
+
 		super.service = new AsaA48CounterServiceImpl();
 		super.majManuelleCompteurToAgent_prepareData();
-		
+
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeAAjouter(10.0);
-			compteurDto.setDateDebut(new DateTime(2013, 4, 2, 0, 0, 0).toDate());
-			compteurDto.setIdMotifCompteur(1);
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeAAjouter(10.0);
+		compteurDto.setDateDebut(new DateTime(2013, 4, 2, 0, 0, 0).toDate());
+		compteurDto.setIdMotifCompteur(1);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(null);
-
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(null);
 
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
@@ -156,27 +149,27 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		assertTrue(isAgentNotFoundException);
 	}
-	
+
 	@Test
 	public void majManuelleCompteurAsaA52ToAgent_OSInexistant() {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeAAjouter(10.0);
-			compteurDto.setIdMotifCompteur(1);
-			compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
-			compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
-			compteurDto.setIdOrganisationSyndicale(1);
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeAAjouter(10.0);
+		compteurDto.setIdMotifCompteur(1);
+		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		compteurDto.setIdOrganisationSyndicale(1);
 
 		AgentAsaA52Count arc = new AgentAsaA52Count();
-			arc.setTotalMinutes(15 * 60);
-		
+		arc.setTotalMinutes(15 * 60);
+
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, compteurDto.getIdOrganisationSyndicale()))
-			.thenReturn(null);
-		
+				.thenReturn(null);
+
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
@@ -184,21 +177,18 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
-
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
@@ -210,27 +200,27 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA52Count.class));
 	}
-	
+
 	@Test
 	public void majManuelleCompteurAsaA52ToAgent_OSInactive() {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeAAjouter(10.0);
-			compteurDto.setIdMotifCompteur(1);
-			compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
-			compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
-			compteurDto.setIdOrganisationSyndicale(1);
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeAAjouter(10.0);
+		compteurDto.setIdMotifCompteur(1);
+		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		compteurDto.setIdOrganisationSyndicale(1);
 
 		AgentAsaA52Count arc = new AgentAsaA52Count();
-			arc.setTotalMinutes(15 * 60);
-		
+		arc.setTotalMinutes(15 * 60);
+
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, compteurDto.getIdOrganisationSyndicale()))
-			.thenReturn(new OrganisationSyndicale());
-		
+				.thenReturn(new OrganisationSyndicale());
+
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
@@ -238,21 +228,18 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
-
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
@@ -271,32 +258,29 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeAAjouter(10.0);
-			compteurDto.setIdMotifCompteur(1);
-			compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
-			compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
-			compteurDto.setIdOrganisationSyndicale(1);
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeAAjouter(10.0);
+		compteurDto.setIdMotifCompteur(1);
+		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		compteurDto.setIdOrganisationSyndicale(1);
 
 		AgentAsaA52Count arc = new AgentAsaA52Count();
-			arc.setTotalMinutes(15 * 60);
-		
+		arc.setTotalMinutes(15 * 60);
+
 		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-			organisationSyndicale.setActif(true);
-		
+		organisationSyndicale.setActif(true);
+
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, compteurDto.getIdOrganisationSyndicale()))
-			.thenReturn(organisationSyndicale);
-		
+				.thenReturn(organisationSyndicale);
+
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
-
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(
@@ -307,12 +291,12 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
@@ -330,29 +314,26 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		CompteurDto compteurDto = new CompteurDto();
-			compteurDto.setIdAgent(9005151);
-			compteurDto.setDureeAAjouter(10.0);
-			compteurDto.setIdMotifCompteur(1);
-			compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
-			compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
-			compteurDto.setIdOrganisationSyndicale(1);
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeAAjouter(10.0);
+		compteurDto.setIdMotifCompteur(1);
+		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		compteurDto.setIdOrganisationSyndicale(1);
 
 		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-			organisationSyndicale.setActif(true);
-		
+		organisationSyndicale.setActif(true);
+
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, compteurDto.getIdOrganisationSyndicale()))
-			.thenReturn(organisationSyndicale);
-		
+				.thenReturn(organisationSyndicale);
+
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
-
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgent(compteurDto.getIdAgent())).thenReturn(new Agent());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(
@@ -363,12 +344,12 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
@@ -405,7 +386,7 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
 		organisationSyndicale.setLibelle("libelle OS");
-		
+
 		List<CompteurAsaDto> result = new ArrayList<CompteurAsaDto>();
 		AgentAsaA52Count e = new AgentAsaA52Count();
 		e.setTotalMinutes(12 * 60);
@@ -433,33 +414,32 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 	public void majCompteurAsaA52ToAgent_AgentNotFound() {
 
 		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-			organisationSyndicale.setIdOrganisationSyndicale(1);
-		
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
 		DemandeAsa demande = new DemandeAsa();
-			demande.setIdAgent(9008765);
-			demande.setDateDebut(new Date());
-			demande.setDateFin(new Date());
-			demande.setOrganisationSyndicale(organisationSyndicale);
-			
+		demande.setIdAgent(9008765);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
+		demande.setOrganisationSyndicale(organisationSyndicale);
+
 		int minutes = 10 * 60;
 
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		ISirhWSConsumer sR = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(null);
-
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
 				minutes);
 
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
-		
+
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sR);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 
@@ -473,32 +453,33 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		assertTrue(isAgentNotFound);
 		Mockito.verify(rr, Mockito.times(0)).persistEntity(Mockito.isA(AgentCount.class));
 	}
-	
+
 	@Test
 	public void majCompteurAsaA52ToAgent_OSInexistant() {
 
 		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-			organisationSyndicale.setIdOrganisationSyndicale(1);
-		
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
 		DemandeAsa demande = new DemandeAsa();
-			demande.setIdAgent(9008765);
-			demande.setDateDebut(new Date());
-			demande.setDateFin(new Date());
-			demande.setOrganisationSyndicale(organisationSyndicale);
-			
+		demande.setIdAgent(9008765);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
+		demande.setOrganisationSyndicale(organisationSyndicale);
+
 		int minutes = 10 * 60;
 
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
-		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
-			.thenReturn(null);
-		
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(
+				OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(null);
+
+		ISirhWSConsumer sR = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 
@@ -507,7 +488,7 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 				minutes);
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sR);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
@@ -518,32 +499,33 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		assertEquals(AbstractCounterService.OS_INEXISTANT, result.getErrors().get(0));
 		Mockito.verify(rr, Mockito.times(0)).persistEntity(Mockito.isA(AgentCount.class));
 	}
-	
+
 	@Test
 	public void majCompteurAsaA52ToAgent_OSInactif() {
 
 		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-			organisationSyndicale.setIdOrganisationSyndicale(1);
-		
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
 		DemandeAsa demande = new DemandeAsa();
-			demande.setIdAgent(9008765);
-			demande.setDateDebut(new Date());
-			demande.setDateFin(new Date());
-			demande.setOrganisationSyndicale(organisationSyndicale);
-			
+		demande.setIdAgent(9008765);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
+		demande.setOrganisationSyndicale(organisationSyndicale);
+
 		int minutes = 10 * 60;
 
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
-		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
-			.thenReturn(new OrganisationSyndicale());
-		
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
-			Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(
+				OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(new OrganisationSyndicale());
+
+		ISirhWSConsumer sR = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 
@@ -552,7 +534,7 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 				minutes);
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sR);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
@@ -563,42 +545,45 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		assertEquals(AbstractCounterService.OS_INACTIVE, result.getErrors().get(0));
 		Mockito.verify(rr, Mockito.times(0)).persistEntity(Mockito.isA(AgentCount.class));
 	}
-	
+
 	@Test
 	public void majCompteurAsaA52ToAgent_compteurInexistant() {
 
 		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-			organisationSyndicale.setIdOrganisationSyndicale(1);
-		
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
 		DemandeAsa demande = new DemandeAsa();
-			demande.setIdAgent(9008765);
-			demande.setDateDebut(new Date());
-			demande.setDateFin(new Date());
-			demande.setOrganisationSyndicale(organisationSyndicale);
-			
+		demande.setIdAgent(9008765);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
+		demande.setOrganisationSyndicale(organisationSyndicale);
+
 		int minutes = 10 * 60;
 
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
-		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
-			.thenReturn(new OrganisationSyndicale());
-		
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		Mockito.when(
+				OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(new OrganisationSyndicale());
+
+		ISirhWSConsumer sR = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
-		Mockito.when(rr.getOSCounterByDate(AgentAsaA52Count.class, organisationSyndicale.getIdOrganisationSyndicale(), demande.getDateDebut())).thenReturn(null);
+		Mockito.when(
+				rr.getOSCounterByDate(AgentAsaA52Count.class, organisationSyndicale.getIdOrganisationSyndicale(),
+						demande.getDateDebut())).thenReturn(null);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
 				minutes);
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sR);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
@@ -613,40 +598,43 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 	public void majCompteurAsaA52ToAgent_compteurNegatif_debit() {
 
 		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-			organisationSyndicale.setIdOrganisationSyndicale(1);
-			organisationSyndicale.setActif(true);
-	
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+		organisationSyndicale.setActif(true);
+
 		DemandeAsa demande = new DemandeAsa();
-			demande.setIdAgent(9008765);
-			demande.setDateDebut(new Date());
-			demande.setDateFin(new Date());
-			demande.setOrganisationSyndicale(organisationSyndicale);
-			
+		demande.setIdAgent(9008765);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
+		demande.setOrganisationSyndicale(organisationSyndicale);
+
 		int minutes = 11 * 60;
 
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
+		ISirhWSConsumer sR = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
-		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
-			.thenReturn(organisationSyndicale);
-		
+		Mockito.when(
+				OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(organisationSyndicale);
+
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 		AgentAsaA52Count arc = new AgentAsaA52Count();
 		arc.setTotalMinutes(10 * 60);
-		Mockito.when(rr.getOSCounterByDate(AgentAsaA52Count.class, organisationSyndicale.getIdOrganisationSyndicale(), demande.getDateDebut())).thenReturn(arc);
+		Mockito.when(
+				rr.getOSCounterByDate(AgentAsaA52Count.class, organisationSyndicale.getIdOrganisationSyndicale(),
+						demande.getDateDebut())).thenReturn(arc);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
 				minutes);
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sR);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -665,37 +653,40 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-			organisationSyndicale.setIdOrganisationSyndicale(1);
-			organisationSyndicale.setActif(true);
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+		organisationSyndicale.setActif(true);
 
 		DemandeAsa demande = new DemandeAsa();
-			demande.setIdAgent(9008765);
-			demande.setDateDebut(new Date());
-			demande.setDateFin(new Date());
-			demande.setOrganisationSyndicale(organisationSyndicale);
-		
+		demande.setIdAgent(9008765);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
+		demande.setOrganisationSyndicale(organisationSyndicale);
+
 		int minutes = 11 * 60;
 
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new Agent());
-		
+		ISirhWSConsumer sR = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sR.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
-		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
-			.thenReturn(organisationSyndicale);
-		
+		Mockito.when(
+				OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(organisationSyndicale);
+
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 		AgentAsaA52Count arc = new AgentAsaA52Count();
 		arc.setTotalMinutes(12 * 60);
-		Mockito.when(rr.getOSCounterByDate(AgentAsaA52Count.class, organisationSyndicale.getIdOrganisationSyndicale(), demande.getDateDebut())).thenReturn(arc);
+		Mockito.when(
+				rr.getOSCounterByDate(AgentAsaA52Count.class, organisationSyndicale.getIdOrganisationSyndicale(),
+						demande.getDateDebut())).thenReturn(arc);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
 				minutes);
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sR);
 		ReflectionTestUtils.setField(service, "counterRepository", rr);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
@@ -705,7 +696,5 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentCount.class));
 	}
-
-	
 
 }

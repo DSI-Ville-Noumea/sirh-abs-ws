@@ -152,7 +152,7 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 			Double jours, Date dateDebutDemande, ReturnMessageDto srm)
 			throws InstantiationException, IllegalAccessException {
 
-		if (sirhRepository.getAgent(idAgent) == null) {
+		if (sirhWSConsumer.getAgent(idAgent) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
 			throw new AgentNotFoundException();
 		}

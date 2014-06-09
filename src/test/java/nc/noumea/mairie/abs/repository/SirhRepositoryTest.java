@@ -9,12 +9,12 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.SpadmnId;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.SpcarrId;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -33,44 +33,6 @@ public class SirhRepositoryTest {
 
 	@PersistenceContext(unitName = "sirhPersistenceUnit")
 	private EntityManager sirhEntityManager;
-
-	@Test
-	@Transactional("sirhTransactionManager")
-	public void getAgent_ReturnNull() {
-
-		// When
-		Agent result = repository.getAgent(9005138);
-
-		// Then
-		assertEquals(null, result);
-	}
-
-	@Test
-	@Transactional("sirhTransactionManager")
-	public void getAgent_ReturnResult() {
-
-		Agent ag = new Agent();
-		ag.setIdAgent(9005138);
-		ag.setNomatr(5138);
-		ag.setPrenom("NON");
-		ag.setDateNaissance(new Date());
-		ag.setNomPatronymique("TEST");
-		ag.setNomUsage("USAGE");
-		ag.setPrenomUsage("NONO");
-		sirhEntityManager.persist(ag);
-
-		sirhEntityManager.flush();
-
-		// When
-		Agent result = repository.getAgent(9005138);
-
-		// Then
-		assertEquals("9005138", result.getIdAgent().toString());
-		assertEquals("USAGE", result.getDisplayNom());
-
-		sirhEntityManager.flush();
-		sirhEntityManager.clear();
-	}
 
 	@Test
 	@Transactional("sirhTransactionManager")
@@ -121,10 +83,10 @@ public class SirhRepositoryTest {
 
 		sirhEntityManager.persist(adm);
 
-		Agent agent = new Agent();
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
 		agent.setNomatr(5138);
 
-		Spadmn result = repository.getAgentCurrentPosition(agent, new LocalDate(2013, 9, 22).toDate());
+		Spadmn result = repository.getAgentCurrentPosition(agent.getNomatr(), new LocalDate(2013, 9, 22).toDate());
 
 		assertNotNull(result);
 
@@ -146,10 +108,10 @@ public class SirhRepositoryTest {
 
 		sirhEntityManager.persist(adm);
 
-		Agent agent = new Agent();
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
 		agent.setNomatr(5138);
 
-		Spadmn result = repository.getAgentCurrentPosition(agent, new LocalDate(2013, 10, 22).toDate());
+		Spadmn result = repository.getAgentCurrentPosition(agent.getNomatr(), new LocalDate(2013, 10, 22).toDate());
 
 		assertNull(result);
 
@@ -162,25 +124,20 @@ public class SirhRepositoryTest {
 	public void getAgentCurrentCarriere_returnResult() {
 
 		SpcarrId id = new SpcarrId();
-		id.setDatdeb(20130901);
-		id.setNomatr(5138);
+			id.setDatdeb(20130901);
+			id.setNomatr(5138);
 		Spcarr adm = new Spcarr();
-		adm.setId(id);
-		adm.setCdcate(1);
-		adm.setDateFin(20130930);
+			adm.setId(id);
+			adm.setCdcate(1);
+			adm.setDateFin(20130930);
 
 		sirhEntityManager.persist(adm);
 
-		Agent agent = new Agent();
-		agent.setIdAgent(9005138);
-		agent.setNomatr(5138);
-		agent.setNomPatronymique("patro");
-		agent.setPrenom("prenom");
-		agent.setPrenomUsage("prenom");
-		agent.setDateNaissance(new Date());
-		sirhEntityManager.persist(agent);
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+			agent.setIdAgent(9005138);
+			agent.setNomatr(5138);
 
-		Spcarr result = repository.getAgentCurrentCarriere(agent.getIdAgent(), new LocalDate(2013, 9, 22).toDate());
+		Spcarr result = repository.getAgentCurrentCarriere(agent.getNomatr(), new LocalDate(2013, 9, 22).toDate());
 
 		assertNotNull(result);
 
@@ -193,22 +150,21 @@ public class SirhRepositoryTest {
 	public void getAgentCurrentCarriere_returnNoResult() {
 
 		SpcarrId id = new SpcarrId();
-		id.setDatdeb(20130901);
-		id.setNomatr(5138);
+			id.setDatdeb(20130901);
+			id.setNomatr(5138);
 		Spcarr adm = new Spcarr();
-		adm.setId(id);
-		adm.setCdcate(1);
-		adm.setDateFin(20130930);
+			adm.setId(id);
+			adm.setCdcate(1);
+			adm.setDateFin(20130930);
 		sirhEntityManager.persist(adm);
 
-		Agent agent = new Agent();
-		agent.setIdAgent(9005138);
-		agent.setNomatr(5138);
-		agent.setNomPatronymique("patro");
-		agent.setPrenom("prenom");
-		agent.setPrenomUsage("prenom");
-		agent.setDateNaissance(new Date());
-		sirhEntityManager.persist(agent);
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+			agent.setIdAgent(9005138);
+			agent.setNomatr(5138);
+			agent.setNomPatronymique("patro");
+			agent.setPrenom("prenom");
+			agent.setPrenomUsage("prenom");
+			agent.setDateNaissance(new Date());
 
 		Spcarr result = repository.getAgentCurrentCarriere(agent.getIdAgent(), new LocalDate(2013, 10, 22).toDate());
 

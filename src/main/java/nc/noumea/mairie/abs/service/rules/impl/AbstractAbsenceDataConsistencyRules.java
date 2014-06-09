@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -28,7 +29,6 @@ import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -134,9 +134,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi) {
 
-		Agent ag = sirhRepository.getAgent(idAgent);
+		AgentGeneriqueDto ag = sirhWSConsumer.getAgent(idAgent);
 
-		Spadmn adm = sirhRepository.getAgentCurrentPosition(ag, dateLundi);
+		Spadmn adm = sirhRepository.getAgentCurrentPosition(ag.getNomatr(), dateLundi);
 
 		if (null == adm || !ACTIVITE_CODES.contains(adm.getCdpadm())) {
 			logger.warn(String.format(INACTIVITE_MSG));
@@ -194,15 +194,15 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		return srm;
 	}
-	
+
 	@Override
-	public DemandeDto filtreDroitOfDemande(Integer idAgentConnecte, 
-			DemandeDto demandeDto, List<DroitsAgent> listDroitAgent) {
-		
+	public DemandeDto filtreDroitOfDemande(Integer idAgentConnecte, DemandeDto demandeDto,
+			List<DroitsAgent> listDroitAgent) {
+
 		// test 1
 		if (demandeDto.getAgentWithServiceDto().getIdAgent().equals(idAgentConnecte)) {
-			demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(
-					RefEtatEnum.PROVISOIRE.getCodeEtat())
+			demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat()
+					.equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
 					|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
 			demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(
 					RefEtatEnum.PROVISOIRE.getCodeEtat())
@@ -235,8 +235,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					}
 					if (dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.VISEUR.toString())) {
 
-						demandeDto.setModifierVisa(demandeDto.getIdRefEtat().equals(
-								RefEtatEnum.SAISIE.getCodeEtat())
+						demandeDto.setModifierVisa(demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
 								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()));
 						demandeDto.setAffichageVisa(true);
@@ -245,8 +244,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 						continue;
 					}
 					if (dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.APPROBATEUR.toString())
-							|| dda.getDroitProfil().getProfil().getLibelle()
-									.equals(ProfilEnum.DELEGATAIRE.toString())) {
+							|| dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.DELEGATAIRE.toString())) {
 
 						demandeDto.setAffichageVisa(true);
 						demandeDto.setAffichageApprobation(true);
@@ -267,24 +265,23 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		return demandeDto;
 	}
-	
+
 	@Override
 	public DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto) {
-		
+
 		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto));
 		demandeDto.setAffichageValidation(false);
 		demandeDto.setModifierValidation(false);
 		demandeDto.setAffichageEnAttente(false);
-		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(
-				RefEtatEnum.APPROUVEE.getCodeEtat()));
-		
+		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
+
 		return demandeDto;
 	}
 
 	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
 		return false;
 	}
-	
+
 	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto) {
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
@@ -349,7 +346,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
 		return false;
 	}
-	
+
 	public ReturnMessageDto checkStatutAgentFonctionnaire(ReturnMessageDto srm, Integer idAgent) {
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
