@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Date;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -164,7 +162,6 @@ public class SirhRepositoryTest {
 			agent.setNomPatronymique("patro");
 			agent.setPrenom("prenom");
 			agent.setPrenomUsage("prenom");
-			agent.setDateNaissance(new Date());
 
 		Spcarr result = repository.getAgentCurrentCarriere(agent.getIdAgent(), new LocalDate(2013, 10, 22).toDate());
 
