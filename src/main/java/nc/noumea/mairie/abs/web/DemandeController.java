@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -123,8 +124,9 @@ public class DemandeController {
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhWSConsumer.getAgent(convertedIdAgent) == null
-				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+		if (agent == null
+				|| agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande,
@@ -149,8 +151,9 @@ public class DemandeController {
 				idAgent, idDemande);
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhWSConsumer.getAgent(convertedIdAgent) == null
-				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+		if (agent == null
+				|| agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
@@ -189,8 +192,9 @@ public class DemandeController {
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhWSConsumer.getAgent(convertedIdAgent) == null
-				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+		if (agent == null
+				|| agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		// ON VERIFIE LES DROITS
