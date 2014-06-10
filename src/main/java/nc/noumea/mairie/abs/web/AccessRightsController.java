@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -52,8 +53,9 @@ public class AccessRightsController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhWSConsumer.getAgent(convertedIdAgent) == null
-				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+		if (agent == null
+				|| agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		return accessRightService.getAgentAccessRights(convertedIdAgent);
@@ -260,8 +262,9 @@ public class AccessRightsController {
 
 		int convertedIdOperateurOrViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateurOrViseur);
 
-		if (sirhWSConsumer.getAgent(convertedIdOperateurOrViseur) == null
-				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		if (agent == null
+				|| agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		ReturnMessageDto result = accessRightService.setAgentsToInput(convertedIdAgent, convertedIdOperateurOrViseur,

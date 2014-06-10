@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.web;
 
 import java.util.List;
 
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.FiltreSoldeDto;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
@@ -47,8 +48,9 @@ public class SoldeController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (sirhWSConsumer.getAgent(convertedIdAgent) == null
-				|| sirhWSConsumer.getAgent(convertedIdAgent).getIdAgent() == null)
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+		if (agent == null
+				|| agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		return soldeService.getAgentSolde(convertedIdAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin());
