@@ -32,6 +32,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
@@ -48,7 +49,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 	protected AbstractAbsenceDataConsistencyRules impl = new DefaultAbsenceDataConsistencyRulesImpl();
-	
+
 	protected DemandeDto result1 = null;
 	protected DemandeDto result2 = null;
 	protected DemandeDto result3 = null;
@@ -60,14 +61,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	protected DemandeDto result9 = null;
 	protected DemandeDto result10 = null;
 	protected DemandeDto result11 = null;
-	
+
 	public void allTest(AbstractAbsenceDataConsistencyRules pImpl) throws Throwable {
-		
+
 		impl = pImpl;
-		if(null == impl) {
+		if (null == impl) {
 			impl = new DefaultAbsenceDataConsistencyRulesImpl();
 		}
-		
+
 		checkDemandeDejaSaisieSurMemePeriode_withEtatExistantProvisoireAndRefuse();
 		checkDemandeDejaSaisieSurMemePeriode_Ok();
 		checkDemandeDejaSaisieSurMemePeriode_DateFinKo();
@@ -102,7 +103,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		checkStatutAgentFonctionnaire_ok();
 		checkStatutAgentFonctionnaire_ko();
 	}
-	
+
 	@Test
 	public void checkDemandeDejaSaisieSurMemePeriode_withEtatExistantProvisoireAndRefuse() {
 
@@ -132,7 +133,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null)).thenReturn(
 				listDemande);
-		
+
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
 		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
@@ -175,7 +176,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null)).thenReturn(
 				listDemande);
-		
+
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
 		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
@@ -218,7 +219,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null)).thenReturn(
 				listDemande);
-		
+
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
 		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
@@ -263,7 +264,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null)).thenReturn(
 				listDemande);
-		
+
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
 		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
@@ -282,17 +283,17 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
-			ag.setNomatr(5138);
+		ag.setNomatr(5138);
 		Spadmn adm = new Spadmn();
 
 		Date date = new Date();
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(ag);
-		
+
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentPosition(ag.getNomatr(), date)).thenReturn(adm);
-		
+
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 
@@ -310,18 +311,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
-			ag.setNomatr(5138);
+		ag.setNomatr(5138);
 		Spadmn adm = new Spadmn();
 		adm.setCdpadm("05");
 
 		Date date = new Date();
-		
+
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(ag);
-		
+
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentPosition(ag.getNomatr(), date)).thenReturn(adm);
-		
+
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 
@@ -346,7 +347,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void checkChampMotifPourEtatDonne_motifVide_ViseeD() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), null);
 
 		assertEquals(1, srm.getErrors().size());
@@ -357,7 +358,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void checkChampMotifPourEtatDonne_Ok_motifSaisi() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.REFUSEE.getCodeEtat(), "motif");
 
 		assertEquals(0, srm.getErrors().size());
@@ -367,7 +368,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void checkChampMotifPourEtatDonne_Ok_motifNonSaisi_EtatApprouve() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), null);
 
 		assertEquals(0, srm.getErrors().size());
@@ -377,7 +378,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void checkChampMotifPourEtatDonne_Ok_motifSaisi_EtatApprouve() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		srm = impl.checkChampMotifPourEtatDonne(srm, RefEtatEnum.APPROUVEE.getCodeEtat(), "motif");
 
 		assertEquals(0, srm.getErrors().size());
@@ -582,7 +583,6 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
-		
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
@@ -659,7 +659,6 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
-		
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
@@ -737,7 +736,6 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
 
-		
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
@@ -1108,68 +1106,68 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());
 	}
-	
+
 	@Test
 	public void filtreDroitOfDemandeSIRH() {
-		
+
 		AgentWithServiceDto agDto11 = new AgentWithServiceDto();
-			agDto11.setIdAgent(9005140);
+		agDto11.setIdAgent(9005140);
 		AgentWithServiceDto agDto10 = new AgentWithServiceDto();
-			agDto10.setIdAgent(9005139);
+		agDto10.setIdAgent(9005139);
 		AgentWithServiceDto agDto9 = new AgentWithServiceDto();
-			agDto9.setIdAgent(9005138);
+		agDto9.setIdAgent(9005138);
 		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
-			agDto8.setIdAgent(9005137);
+		agDto8.setIdAgent(9005137);
 		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
-			agDto7.setIdAgent(9005136);
+		agDto7.setIdAgent(9005136);
 		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
-			agDto6.setIdAgent(9005135);
+		agDto6.setIdAgent(9005135);
 		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
-			agDto5.setIdAgent(9005134);
+		agDto5.setIdAgent(9005134);
 		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
-			agDto4.setIdAgent(9005133);
+		agDto4.setIdAgent(9005133);
 		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
-			agDto3.setIdAgent(9005132);
+		agDto3.setIdAgent(9005132);
 		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
-			agDto2.setIdAgent(9005131);
+		agDto2.setIdAgent(9005131);
 		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
-			agDto1.setIdAgent(9005130);
-		
+		agDto1.setIdAgent(9005130);
+
 		// les demandes
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
-			demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-			demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
+		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
 		DemandeDto demandeDtoSaisie = new DemandeDto();
-			demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-			demandeDtoSaisie.setAgentWithServiceDto(agDto2);
+		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
 		DemandeDto demandeDtoApprouve = new DemandeDto();
-			demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-			demandeDtoApprouve.setAgentWithServiceDto(agDto3);
+		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
 		DemandeDto demandeDtoRefusee = new DemandeDto();
-			demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-			demandeDtoRefusee.setAgentWithServiceDto(agDto4);
+		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
-			demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-			demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
+		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
-			demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-			demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
+		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
 		DemandeDto demandeDtoPrise = new DemandeDto();
-			demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-			demandeDtoPrise.setAgentWithServiceDto(agDto7);
+		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
-			demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-			demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
+		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
 		DemandeDto demandeDtoValidee = new DemandeDto();
-			demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-			demandeDtoValidee.setAgentWithServiceDto(agDto9);
+		demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeDtoValidee.setAgentWithServiceDto(agDto9);
 		DemandeDto demandeDtoRejetee = new DemandeDto();
-			demandeDtoRejetee.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-			demandeDtoRejetee.setAgentWithServiceDto(agDto10);
+		demandeDtoRejetee.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		demandeDtoRejetee.setAgentWithServiceDto(agDto10);
 		DemandeDto demandeDtoEnAttente = new DemandeDto();
-			demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-			demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
-		
+		demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
+
 		// When
 		result1 = impl.filtreDroitOfDemandeSIRH(demandeDtoProvisoire);
 		result2 = impl.filtreDroitOfDemandeSIRH(demandeDtoSaisie);
@@ -1359,100 +1357,100 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertNull(result11.getValeurVisa());
 		assertNull(result11.getValeurValidation());
 	}
-	
+
 	@Test
 	public void isAfficherBoutonAnnuler() {
-		
+
 		DemandeDto demandeDto = new DemandeDto();
-			demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-		
+		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+
 		boolean result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertTrue(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertTrue(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertTrue(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertFalse(result);
 	}
-	
+
 	@Test
 	public void filtreDroitOfListeDemandesByDemande_DemandeOfAgent() {
 
 		Integer idAgentConnecte = 9005138;
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
-			agDto.setIdAgent(9005138);
+		agDto.setIdAgent(9005138);
 
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
-			demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-			demandeDtoProvisoire.setAgentWithServiceDto(agDto);
+		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoSaisie = new DemandeDto();
-			demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-			demandeDtoSaisie.setAgentWithServiceDto(agDto);
+		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		demandeDtoSaisie.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoApprouve = new DemandeDto();
-			demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-			demandeDtoApprouve.setAgentWithServiceDto(agDto);
+		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demandeDtoApprouve.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoRefusee = new DemandeDto();
-			demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-			demandeDtoRefusee.setAgentWithServiceDto(agDto);
+		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		demandeDtoRefusee.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
-			demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-			demandeDtoVisee_F.setAgentWithServiceDto(agDto);
+		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
-			demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-			demandeDtoVisee_D.setAgentWithServiceDto(agDto);
+		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoPrise = new DemandeDto();
-			demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-			demandeDtoPrise.setAgentWithServiceDto(agDto);
+		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		demandeDtoPrise.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
-			demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-			demandeDtoAnnulee.setAgentWithServiceDto(agDto);
+		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoValidee = new DemandeDto();
-			demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-			demandeDtoValidee.setAgentWithServiceDto(agDto);
+		demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeDtoValidee.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoRejete = new DemandeDto();
-			demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-			demandeDtoRejete.setAgentWithServiceDto(agDto);
+		demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		demandeDtoRejete.setAgentWithServiceDto(agDto);
 		DemandeDto demandeDtoEnAttente = new DemandeDto();
-			demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-			demandeDtoEnAttente.setAgentWithServiceDto(agDto);
+		demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		demandeDtoEnAttente.setAgentWithServiceDto(agDto);
 
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
-		
+
 		// When
 		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent);
 		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent);
@@ -1554,7 +1552,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result8.isModifierVisa());
 		assertNull(result8.getValeurApprobation());
 		assertNull(result8.getValeurVisa());
-		
+
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
 		assertFalse(result9.isAffichageApprobation());
 		assertFalse(result9.isAffichageBoutonModifier());
@@ -1565,7 +1563,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result9.isModifierVisa());
 		assertNull(result9.getValeurApprobation());
 		assertNull(result9.getValeurVisa());
-		
+
 		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
 		assertFalse(result10.isAffichageApprobation());
 		assertFalse(result10.isAffichageBoutonModifier());
@@ -1576,7 +1574,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result10.isModifierVisa());
 		assertNull(result10.getValeurApprobation());
 		assertNull(result10.getValeurVisa());
-		
+
 		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
 		assertFalse(result11.isAffichageApprobation());
 		assertFalse(result11.isAffichageBoutonModifier());
@@ -1594,112 +1592,112 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		Integer idAgentConnecte = 9005129;
 		AgentWithServiceDto agDto11 = new AgentWithServiceDto();
-			agDto11.setIdAgent(9005140);
+		agDto11.setIdAgent(9005140);
 		AgentWithServiceDto agDto10 = new AgentWithServiceDto();
-			agDto10.setIdAgent(9005139);
+		agDto10.setIdAgent(9005139);
 		AgentWithServiceDto agDto9 = new AgentWithServiceDto();
-			agDto9.setIdAgent(9005138);
+		agDto9.setIdAgent(9005138);
 		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
-			agDto8.setIdAgent(9005137);
+		agDto8.setIdAgent(9005137);
 		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
-			agDto7.setIdAgent(9005136);
+		agDto7.setIdAgent(9005136);
 		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
-			agDto6.setIdAgent(9005135);
+		agDto6.setIdAgent(9005135);
 		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
-			agDto5.setIdAgent(9005134);
+		agDto5.setIdAgent(9005134);
 		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
-			agDto4.setIdAgent(9005133);
+		agDto4.setIdAgent(9005133);
 		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
-			agDto3.setIdAgent(9005132);
+		agDto3.setIdAgent(9005132);
 		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
-			agDto2.setIdAgent(9005131);
+		agDto2.setIdAgent(9005131);
 		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
-			agDto1.setIdAgent(9005130);
+		agDto1.setIdAgent(9005130);
 
 		// les demandes
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
-			demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-			demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
+		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
 		DemandeDto demandeDtoSaisie = new DemandeDto();
-			demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-			demandeDtoSaisie.setAgentWithServiceDto(agDto2);
+		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
 		DemandeDto demandeDtoApprouve = new DemandeDto();
-			demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-			demandeDtoApprouve.setAgentWithServiceDto(agDto3);
+		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
 		DemandeDto demandeDtoRefusee = new DemandeDto();
-			demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-			demandeDtoRefusee.setAgentWithServiceDto(agDto4);
+		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
-			demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-			demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
+		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
-			demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-			demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
+		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
 		DemandeDto demandeDtoPrise = new DemandeDto();
-			demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-			demandeDtoPrise.setAgentWithServiceDto(agDto7);
+		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
-			demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-			demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
+		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
 		DemandeDto demandeDtoValidee = new DemandeDto();
-			demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-			demandeDtoValidee.setAgentWithServiceDto(agDto9);
+		demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeDtoValidee.setAgentWithServiceDto(agDto9);
 		DemandeDto demandeDtoRejete = new DemandeDto();
-			demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-			demandeDtoRejete.setAgentWithServiceDto(agDto10);
+		demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		demandeDtoRejete.setAgentWithServiceDto(agDto10);
 		DemandeDto demandeDtoEnAttente = new DemandeDto();
-			demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-			demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
+		demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
 
 		// les droits
 		Profil profil = new Profil();
-			profil.setLibelle(ProfilEnum.OPERATEUR.toString());
+		profil.setLibelle(ProfilEnum.OPERATEUR.toString());
 
 		DroitProfil droitProfil = new DroitProfil();
-			droitProfil.setProfil(profil);
+		droitProfil.setProfil(profil);
 
 		DroitDroitsAgent dda = new DroitDroitsAgent();
-			dda.setDroitProfil(droitProfil);
+		dda.setDroitProfil(droitProfil);
 
 		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
-			droitDroitsAgent.add(dda);
+		droitDroitsAgent.add(dda);
 
 		DroitsAgent da = new DroitsAgent();
-			da.setIdAgent(9005130);
-			da.setDroitDroitsAgent(droitDroitsAgent);
+		da.setIdAgent(9005130);
+		da.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da1 = new DroitsAgent();
-			da1.setIdAgent(9005131);
-			da1.setDroitDroitsAgent(droitDroitsAgent);
+		da1.setIdAgent(9005131);
+		da1.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da2 = new DroitsAgent();
-			da2.setIdAgent(9005132);
-			da2.setDroitDroitsAgent(droitDroitsAgent);
+		da2.setIdAgent(9005132);
+		da2.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da3 = new DroitsAgent();
-			da3.setIdAgent(9005133);
-			da3.setDroitDroitsAgent(droitDroitsAgent);
+		da3.setIdAgent(9005133);
+		da3.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da4 = new DroitsAgent();
-			da4.setIdAgent(9005134);
-			da4.setDroitDroitsAgent(droitDroitsAgent);
+		da4.setIdAgent(9005134);
+		da4.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da5 = new DroitsAgent();
-			da5.setIdAgent(9005135);
-			da5.setDroitDroitsAgent(droitDroitsAgent);
+		da5.setIdAgent(9005135);
+		da5.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da6 = new DroitsAgent();
-			da6.setIdAgent(9005136);
-			da6.setDroitDroitsAgent(droitDroitsAgent);
+		da6.setIdAgent(9005136);
+		da6.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da7 = new DroitsAgent();
-			da7.setIdAgent(9005137);
-			da7.setDroitDroitsAgent(droitDroitsAgent);
+		da7.setIdAgent(9005137);
+		da7.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da8 = new DroitsAgent();
-			da8.setIdAgent(9005138);
-			da8.setDroitDroitsAgent(droitDroitsAgent);
+		da8.setIdAgent(9005138);
+		da8.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da9 = new DroitsAgent();
-			da9.setIdAgent(9005139);
-			da9.setDroitDroitsAgent(droitDroitsAgent);
+		da9.setIdAgent(9005139);
+		da9.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da10 = new DroitsAgent();
-			da10.setIdAgent(9005140);
-			da10.setDroitDroitsAgent(droitDroitsAgent);
+		da10.setIdAgent(9005140);
+		da10.setDroitDroitsAgent(droitDroitsAgent);
 
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
-			listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10));
+		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
@@ -1816,7 +1814,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result8.isModifierVisa());
 		assertNull(result8.getValeurApprobation());
 		assertNull(result8.getValeurVisa());
-		
+
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
 		assertFalse(result9.isAffichageApprobation());
 		assertFalse(result9.isAffichageBoutonModifier());
@@ -1827,7 +1825,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result9.isModifierVisa());
 		assertNull(result9.getValeurApprobation());
 		assertNull(result9.getValeurVisa());
-		
+
 		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
 		assertFalse(result10.isAffichageApprobation());
 		assertFalse(result10.isAffichageBoutonModifier());
@@ -1838,7 +1836,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result10.isModifierVisa());
 		assertNull(result10.getValeurApprobation());
 		assertNull(result10.getValeurVisa());
-		
+
 		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
 		assertFalse(result11.isAffichageApprobation());
 		assertFalse(result11.isAffichageBoutonModifier());
@@ -1856,109 +1854,109 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		Integer idAgentConnecte = 9005129;
 		AgentWithServiceDto agDto11 = new AgentWithServiceDto();
-			agDto11.setIdAgent(9005140);
+		agDto11.setIdAgent(9005140);
 		AgentWithServiceDto agDto10 = new AgentWithServiceDto();
-			agDto10.setIdAgent(9005139);
+		agDto10.setIdAgent(9005139);
 		AgentWithServiceDto agDto9 = new AgentWithServiceDto();
-			agDto9.setIdAgent(9005138);
+		agDto9.setIdAgent(9005138);
 		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
-			agDto8.setIdAgent(9005137);
+		agDto8.setIdAgent(9005137);
 		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
-			agDto7.setIdAgent(9005136);
+		agDto7.setIdAgent(9005136);
 		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
-			agDto6.setIdAgent(9005135);
+		agDto6.setIdAgent(9005135);
 		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
-			agDto5.setIdAgent(9005134);
+		agDto5.setIdAgent(9005134);
 		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
-			agDto4.setIdAgent(9005133);
+		agDto4.setIdAgent(9005133);
 		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
-			agDto3.setIdAgent(9005132);
+		agDto3.setIdAgent(9005132);
 		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
-			agDto2.setIdAgent(9005131);
+		agDto2.setIdAgent(9005131);
 		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
-			agDto1.setIdAgent(9005130);
+		agDto1.setIdAgent(9005130);
 
 		// les demandes
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
-			demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-			demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
+		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
 		DemandeDto demandeDtoSaisie = new DemandeDto();
-			demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-			demandeDtoSaisie.setAgentWithServiceDto(agDto2);
+		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
 		DemandeDto demandeDtoApprouve = new DemandeDto();
-			demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-			demandeDtoApprouve.setAgentWithServiceDto(agDto3);
+		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
 		DemandeDto demandeDtoRefusee = new DemandeDto();
-			demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-			demandeDtoRefusee.setAgentWithServiceDto(agDto4);
+		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
-			demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-			demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
+		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
-			demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-			demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
+		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
 		DemandeDto demandeDtoPrise = new DemandeDto();
-			demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-			demandeDtoPrise.setAgentWithServiceDto(agDto7);
+		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
-			demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-			demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
+		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
 		DemandeDto demandeDtoValidee = new DemandeDto();
-			demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-			demandeDtoValidee.setAgentWithServiceDto(agDto9);
+		demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeDtoValidee.setAgentWithServiceDto(agDto9);
 		DemandeDto demandeDtoRejete = new DemandeDto();
-			demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-			demandeDtoRejete.setAgentWithServiceDto(agDto10);
+		demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		demandeDtoRejete.setAgentWithServiceDto(agDto10);
 		DemandeDto demandeDtoEnAttente = new DemandeDto();
-			demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-			demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
+		demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
 
 		// les droits
 		Profil profil = new Profil();
-			profil.setLibelle(ProfilEnum.VISEUR.toString());
+		profil.setLibelle(ProfilEnum.VISEUR.toString());
 
 		DroitProfil droitProfil = new DroitProfil();
-			droitProfil.setProfil(profil);
+		droitProfil.setProfil(profil);
 
 		DroitDroitsAgent dda = new DroitDroitsAgent();
-			dda.setDroitProfil(droitProfil);
+		dda.setDroitProfil(droitProfil);
 
 		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
-			droitDroitsAgent.add(dda);
+		droitDroitsAgent.add(dda);
 
 		DroitsAgent da = new DroitsAgent();
-			da.setIdAgent(9005130);
-			da.setDroitDroitsAgent(droitDroitsAgent);
+		da.setIdAgent(9005130);
+		da.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da1 = new DroitsAgent();
-			da1.setIdAgent(9005131);
-			da1.setDroitDroitsAgent(droitDroitsAgent);
+		da1.setIdAgent(9005131);
+		da1.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da2 = new DroitsAgent();
-			da2.setIdAgent(9005132);
-			da2.setDroitDroitsAgent(droitDroitsAgent);
+		da2.setIdAgent(9005132);
+		da2.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da3 = new DroitsAgent();
-			da3.setIdAgent(9005133);
-			da3.setDroitDroitsAgent(droitDroitsAgent);
+		da3.setIdAgent(9005133);
+		da3.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da4 = new DroitsAgent();
-			da4.setIdAgent(9005134);
-			da4.setDroitDroitsAgent(droitDroitsAgent);
+		da4.setIdAgent(9005134);
+		da4.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da5 = new DroitsAgent();
-			da5.setIdAgent(9005135);
-			da5.setDroitDroitsAgent(droitDroitsAgent);
+		da5.setIdAgent(9005135);
+		da5.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da6 = new DroitsAgent();
-			da6.setIdAgent(9005136);
-			da6.setDroitDroitsAgent(droitDroitsAgent);
+		da6.setIdAgent(9005136);
+		da6.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da7 = new DroitsAgent();
-			da7.setIdAgent(9005137);
-			da7.setDroitDroitsAgent(droitDroitsAgent);
+		da7.setIdAgent(9005137);
+		da7.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da8 = new DroitsAgent();
-			da8.setIdAgent(9005138);
-			da8.setDroitDroitsAgent(droitDroitsAgent);
+		da8.setIdAgent(9005138);
+		da8.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da9 = new DroitsAgent();
-			da9.setIdAgent(9005139);
-			da9.setDroitDroitsAgent(droitDroitsAgent);
+		da9.setIdAgent(9005139);
+		da9.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da10 = new DroitsAgent();
-			da10.setIdAgent(9005140);
-			da10.setDroitDroitsAgent(droitDroitsAgent);
+		da10.setIdAgent(9005140);
+		da10.setDroitDroitsAgent(droitDroitsAgent);
 
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10));
@@ -2143,112 +2141,112 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		Integer idAgentConnecte = 9005129;
 		AgentWithServiceDto agDto11 = new AgentWithServiceDto();
-			agDto11.setIdAgent(9005140);
+		agDto11.setIdAgent(9005140);
 		AgentWithServiceDto agDto10 = new AgentWithServiceDto();
-			agDto10.setIdAgent(9005139);
+		agDto10.setIdAgent(9005139);
 		AgentWithServiceDto agDto9 = new AgentWithServiceDto();
-			agDto9.setIdAgent(9005138);
+		agDto9.setIdAgent(9005138);
 		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
-			agDto8.setIdAgent(9005137);
+		agDto8.setIdAgent(9005137);
 		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
-			agDto7.setIdAgent(9005136);
+		agDto7.setIdAgent(9005136);
 		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
-			agDto6.setIdAgent(9005135);
+		agDto6.setIdAgent(9005135);
 		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
-			agDto5.setIdAgent(9005134);
+		agDto5.setIdAgent(9005134);
 		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
-			agDto4.setIdAgent(9005133);
+		agDto4.setIdAgent(9005133);
 		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
-			agDto3.setIdAgent(9005132);
+		agDto3.setIdAgent(9005132);
 		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
-			agDto2.setIdAgent(9005131);
+		agDto2.setIdAgent(9005131);
 		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
-			agDto1.setIdAgent(9005130);
+		agDto1.setIdAgent(9005130);
 
 		// les demandes
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
-			demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-			demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
+		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
 		DemandeDto demandeDtoSaisie = new DemandeDto();
-			demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-			demandeDtoSaisie.setAgentWithServiceDto(agDto2);
+		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
 		DemandeDto demandeDtoApprouve = new DemandeDto();
-			demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-			demandeDtoApprouve.setAgentWithServiceDto(agDto3);
+		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
 		DemandeDto demandeDtoRefusee = new DemandeDto();
-			demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-			demandeDtoRefusee.setAgentWithServiceDto(agDto4);
+		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
-			demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-			demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
+		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
-			demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-			demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
+		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
 		DemandeDto demandeDtoPrise = new DemandeDto();
-			demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-			demandeDtoPrise.setAgentWithServiceDto(agDto7);
+		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
-			demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-			demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
+		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
 		DemandeDto demandeDtoValidee = new DemandeDto();
-			demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-			demandeDtoValidee.setAgentWithServiceDto(agDto9);
+		demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeDtoValidee.setAgentWithServiceDto(agDto9);
 		DemandeDto demandeDtoRejete = new DemandeDto();
-			demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-			demandeDtoRejete.setAgentWithServiceDto(agDto10);
+		demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		demandeDtoRejete.setAgentWithServiceDto(agDto10);
 		DemandeDto demandeDtoEnAttente = new DemandeDto();
-			demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-			demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
+		demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
 
 		// les droits
 		Profil profil = new Profil();
-			profil.setLibelle(ProfilEnum.APPROBATEUR.toString());
+		profil.setLibelle(ProfilEnum.APPROBATEUR.toString());
 
 		DroitProfil droitProfil = new DroitProfil();
-			droitProfil.setProfil(profil);
+		droitProfil.setProfil(profil);
 
 		DroitDroitsAgent dda = new DroitDroitsAgent();
-			dda.setDroitProfil(droitProfil);
+		dda.setDroitProfil(droitProfil);
 
 		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
-			droitDroitsAgent.add(dda);
+		droitDroitsAgent.add(dda);
 
 		DroitsAgent da = new DroitsAgent();
-			da.setIdAgent(9005130);
-			da.setDroitDroitsAgent(droitDroitsAgent);
+		da.setIdAgent(9005130);
+		da.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da1 = new DroitsAgent();
-			da1.setIdAgent(9005131);
-			da1.setDroitDroitsAgent(droitDroitsAgent);
+		da1.setIdAgent(9005131);
+		da1.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da2 = new DroitsAgent();
-			da2.setIdAgent(9005132);
-			da2.setDroitDroitsAgent(droitDroitsAgent);
+		da2.setIdAgent(9005132);
+		da2.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da3 = new DroitsAgent();
-			da3.setIdAgent(9005133);
-			da3.setDroitDroitsAgent(droitDroitsAgent);
+		da3.setIdAgent(9005133);
+		da3.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da4 = new DroitsAgent();
-			da4.setIdAgent(9005134);
-			da4.setDroitDroitsAgent(droitDroitsAgent);
+		da4.setIdAgent(9005134);
+		da4.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da5 = new DroitsAgent();
-			da5.setIdAgent(9005135);
-			da5.setDroitDroitsAgent(droitDroitsAgent);
+		da5.setIdAgent(9005135);
+		da5.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da6 = new DroitsAgent();
-			da6.setIdAgent(9005136);
-			da6.setDroitDroitsAgent(droitDroitsAgent);
+		da6.setIdAgent(9005136);
+		da6.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da7 = new DroitsAgent();
-			da7.setIdAgent(9005137);
-			da7.setDroitDroitsAgent(droitDroitsAgent);
+		da7.setIdAgent(9005137);
+		da7.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da8 = new DroitsAgent();
-			da8.setIdAgent(9005138);
-			da8.setDroitDroitsAgent(droitDroitsAgent);
+		da8.setIdAgent(9005138);
+		da8.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da9 = new DroitsAgent();
-			da9.setIdAgent(9005139);
-			da9.setDroitDroitsAgent(droitDroitsAgent);
+		da9.setIdAgent(9005139);
+		da9.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da10 = new DroitsAgent();
-			da10.setIdAgent(9005140);
-			da10.setDroitDroitsAgent(droitDroitsAgent);
+		da10.setIdAgent(9005140);
+		da10.setDroitDroitsAgent(droitDroitsAgent);
 
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
-			listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10));
+		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
@@ -2430,112 +2428,112 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		Integer idAgentConnecte = 9005129;
 		AgentWithServiceDto agDto11 = new AgentWithServiceDto();
-			agDto11.setIdAgent(9005140);
+		agDto11.setIdAgent(9005140);
 		AgentWithServiceDto agDto10 = new AgentWithServiceDto();
-			agDto10.setIdAgent(9005139);
+		agDto10.setIdAgent(9005139);
 		AgentWithServiceDto agDto9 = new AgentWithServiceDto();
-			agDto9.setIdAgent(9005138);
+		agDto9.setIdAgent(9005138);
 		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
-			agDto8.setIdAgent(9005137);
+		agDto8.setIdAgent(9005137);
 		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
-			agDto7.setIdAgent(9005136);
+		agDto7.setIdAgent(9005136);
 		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
-			agDto6.setIdAgent(9005135);
+		agDto6.setIdAgent(9005135);
 		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
-			agDto5.setIdAgent(9005134);
+		agDto5.setIdAgent(9005134);
 		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
-			agDto4.setIdAgent(9005133);
+		agDto4.setIdAgent(9005133);
 		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
-			agDto3.setIdAgent(9005132);
+		agDto3.setIdAgent(9005132);
 		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
-			agDto2.setIdAgent(9005131);
+		agDto2.setIdAgent(9005131);
 		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
-			agDto1.setIdAgent(9005130);
+		agDto1.setIdAgent(9005130);
 
 		// les demandes
 		DemandeDto demandeDtoProvisoire = new DemandeDto();
-			demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-			demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
+		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
 		DemandeDto demandeDtoSaisie = new DemandeDto();
-			demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-			demandeDtoSaisie.setAgentWithServiceDto(agDto2);
+		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
 		DemandeDto demandeDtoApprouve = new DemandeDto();
-			demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-			demandeDtoApprouve.setAgentWithServiceDto(agDto3);
+		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
 		DemandeDto demandeDtoRefusee = new DemandeDto();
-			demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-			demandeDtoRefusee.setAgentWithServiceDto(agDto4);
+		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
 		DemandeDto demandeDtoVisee_F = new DemandeDto();
-			demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
-			demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
+		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
 		DemandeDto demandeDtoVisee_D = new DemandeDto();
-			demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-			demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
+		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
 		DemandeDto demandeDtoPrise = new DemandeDto();
-			demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-			demandeDtoPrise.setAgentWithServiceDto(agDto7);
+		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
 		DemandeDto demandeDtoAnnulee = new DemandeDto();
-			demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-			demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
+		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
 		DemandeDto demandeDtoValidee = new DemandeDto();
-			demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-			demandeDtoValidee.setAgentWithServiceDto(agDto9);
+		demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeDtoValidee.setAgentWithServiceDto(agDto9);
 		DemandeDto demandeDtoRejete = new DemandeDto();
-			demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-			demandeDtoRejete.setAgentWithServiceDto(agDto10);
+		demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		demandeDtoRejete.setAgentWithServiceDto(agDto10);
 		DemandeDto demandeDtoEnAttente = new DemandeDto();
-			demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-			demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
+		demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
 
 		// les droits
 		Profil profil = new Profil();
-			profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 
 		DroitProfil droitProfil = new DroitProfil();
-			droitProfil.setProfil(profil);
+		droitProfil.setProfil(profil);
 
 		DroitDroitsAgent dda = new DroitDroitsAgent();
-			dda.setDroitProfil(droitProfil);
+		dda.setDroitProfil(droitProfil);
 
 		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
-			droitDroitsAgent.add(dda);
+		droitDroitsAgent.add(dda);
 
 		DroitsAgent da = new DroitsAgent();
-			da.setIdAgent(9005130);
-			da.setDroitDroitsAgent(droitDroitsAgent);
+		da.setIdAgent(9005130);
+		da.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da1 = new DroitsAgent();
-			da1.setIdAgent(9005131);
-			da1.setDroitDroitsAgent(droitDroitsAgent);
+		da1.setIdAgent(9005131);
+		da1.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da2 = new DroitsAgent();
-			da2.setIdAgent(9005132);
-			da2.setDroitDroitsAgent(droitDroitsAgent);
+		da2.setIdAgent(9005132);
+		da2.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da3 = new DroitsAgent();
-			da3.setIdAgent(9005133);
-			da3.setDroitDroitsAgent(droitDroitsAgent);
+		da3.setIdAgent(9005133);
+		da3.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da4 = new DroitsAgent();
-			da4.setIdAgent(9005134);
-			da4.setDroitDroitsAgent(droitDroitsAgent);
+		da4.setIdAgent(9005134);
+		da4.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da5 = new DroitsAgent();
-			da5.setIdAgent(9005135);
-			da5.setDroitDroitsAgent(droitDroitsAgent);
+		da5.setIdAgent(9005135);
+		da5.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da6 = new DroitsAgent();
-			da6.setIdAgent(9005136);
-			da6.setDroitDroitsAgent(droitDroitsAgent);
+		da6.setIdAgent(9005136);
+		da6.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da7 = new DroitsAgent();
-			da7.setIdAgent(9005137);
-			da7.setDroitDroitsAgent(droitDroitsAgent);
+		da7.setIdAgent(9005137);
+		da7.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da8 = new DroitsAgent();
-			da8.setIdAgent(9005138);
-			da8.setDroitDroitsAgent(droitDroitsAgent);
+		da8.setIdAgent(9005138);
+		da8.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da9 = new DroitsAgent();
-			da9.setIdAgent(9005139);
-			da9.setDroitDroitsAgent(droitDroitsAgent);
+		da9.setIdAgent(9005139);
+		da9.setDroitDroitsAgent(droitDroitsAgent);
 		DroitsAgent da10 = new DroitsAgent();
-			da10.setIdAgent(9005140);
-			da10.setDroitDroitsAgent(droitDroitsAgent);
+		da10.setIdAgent(9005140);
+		da10.setDroitDroitsAgent(droitDroitsAgent);
 
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
-			listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10));
+		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
@@ -2711,73 +2709,88 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertNull(result11.getValeurApprobation());
 		assertNull(result11.getValeurVisa());
 	}
-	
+
 	@Test
 	public void checkStatutAgentFonctionnaire_ok() {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Integer idAgent = 9005138;
-		
+
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(1);
+		carr.setCdcate(1);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
-		
+
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
-		
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
-		
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
 		srm = impl.checkStatutAgentFonctionnaire(srm, idAgent);
-		
+
 		assertEquals(srm.getErrors().size(), 0);
 	}
-	
+
 	@Test
 	public void checkStatutAgentFonctionnaire_ko() {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Integer idAgent = 9005138;
-		
+
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(4);
+		carr.setCdcate(4);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
-		
+
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
-		
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
-		
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
 		srm = impl.checkStatutAgentFonctionnaire(srm, idAgent);
-		
+
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_FONCTIONNAIRE);
 	}
-	
+
 	@Test
 	public void checkStatutAgentFonctionnaire_koBis() {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Integer idAgent = 9005138;
-		
+
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(7);
+		carr.setCdcate(7);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
-		
+
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
-		
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
-		
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
 		srm = impl.checkStatutAgentFonctionnaire(srm, idAgent);
-		
+
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_FONCTIONNAIRE);
 	}
 }

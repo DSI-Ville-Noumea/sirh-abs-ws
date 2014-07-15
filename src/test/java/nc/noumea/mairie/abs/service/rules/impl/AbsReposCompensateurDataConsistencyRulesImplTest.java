@@ -16,6 +16,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spcarr;
 
@@ -33,7 +34,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		super.impl = new AbsReposCompensateurDataConsistencyRulesImpl();
 		super.allTest(impl);
 	}
-	
+
 	@Test
 	public void filtreDroitOfListeDemandesByDemande_DemandeOfAgent() {
 
@@ -116,34 +117,34 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		assertFalse(result11.isAffichageBoutonAnnuler());
 		assertFalse(result11.isAffichageBoutonImprimer());
 	}
-	
+
 	@Test
 	public void filtreDroitOfDemandeSIRH() {
-		
+
 		super.impl = new AbsReposCompensateurDataConsistencyRulesImpl();
 		super.filtreDroitOfDemandeSIRH();
-		
+
 		// APPROUVEE
 		assertFalse(result3.isAffichageValidation());
 		assertFalse(result3.isModifierValidation());
-		
+
 		// PRISE
 		assertFalse(result7.isAffichageBoutonAnnuler());
 		assertFalse(result7.isAffichageValidation());
-		
+
 		// VALIDEE
 		assertFalse(result9.isAffichageBoutonAnnuler());
 		assertFalse(result9.isAffichageValidation());
-		
+
 		// REJETEE
 		assertFalse(result10.isAffichageValidation());
-		
+
 		// EN ATTENTE
 		assertFalse(result11.isAffichageBoutonAnnuler());
 		assertFalse(result11.isAffichageValidation());
 		assertFalse(result11.isModifierValidation());
 	}
-	
+
 	@Test
 	public void checkDepassementDroitsAcquis_iOk() {
 
@@ -212,7 +213,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		demande.setIdAgent(9005131);
 
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
-			ag.setNomatr(5131);
+		ag.setNomatr(5131);
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(4);
@@ -220,7 +221,10 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		Date date = new LocalDate(2013, 9, 29).toDate();
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(demande.getIdAgent(), date)).thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5131, date)).thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent())).thenReturn(5131);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
@@ -228,6 +232,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		AbsReposCompensateurDataConsistencyRulesImpl impl = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
 
 		srm = impl.checkStatutAgent(srm, demande.getIdAgent());
 
@@ -243,7 +248,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		demande.setIdAgent(9005131);
 
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
-			ag.setNomatr(5131);
+		ag.setNomatr(5131);
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(2);
@@ -251,7 +256,10 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		Date date = new LocalDate(2013, 9, 29).toDate();
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(demande.getIdAgent(), date)).thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5131, date)).thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent())).thenReturn(5131);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
@@ -259,6 +267,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		AbsReposCompensateurDataConsistencyRulesImpl impl = new AbsReposCompensateurDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
 
 		srm = impl.checkStatutAgent(srm, demande.getIdAgent());
 
@@ -267,53 +276,53 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 				"L'agent [9005131] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.",
 				srm.getErrors().get(0).toString());
 	}
-	
+
 	@Test
 	public void isAfficherBoutonImprimer() {
-		
+
 		DemandeDto demandeDto = new DemandeDto();
-			demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-			
+		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+
 		AbsReposCompensateurDataConsistencyRulesImpl impl = new AbsReposCompensateurDataConsistencyRulesImpl();
 		boolean result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertTrue(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);

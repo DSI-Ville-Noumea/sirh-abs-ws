@@ -19,6 +19,7 @@ import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.domain.Spcarr;
 
 import org.junit.Test;
@@ -112,12 +113,16 @@ public class FiltreServiceTest {
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(9005138, helperService.getCurrentDate())).thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, helperService.getCurrentDate())).thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
 
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
 
@@ -166,12 +171,16 @@ public class FiltreServiceTest {
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(9005138, helperService.getCurrentDate())).thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, helperService.getCurrentDate())).thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
 
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
 
@@ -220,12 +229,16 @@ public class FiltreServiceTest {
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(9005138, helperService.getCurrentDate())).thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, helperService.getCurrentDate())).thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
 
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
 

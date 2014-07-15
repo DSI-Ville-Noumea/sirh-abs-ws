@@ -12,6 +12,7 @@ import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.domain.Spcarr;
 
@@ -30,6 +31,9 @@ public class FiltreService implements IFiltreService {
 
 	@Autowired
 	private HelperService helperService;
+
+	@Autowired
+	private IAgentMatriculeConverterService agentMatriculeService;
 
 	public static final String ONGLET_NON_PRISES = "NON_PRISES";
 	public static final String ONGLET_EN_COURS = "EN_COURS";
@@ -57,7 +61,9 @@ public class FiltreService implements IFiltreService {
 
 		Spcarr carr = null;
 		if (null != idAgentConcerne) {
-			carr = sirhRepository.getAgentCurrentCarriere(idAgentConcerne, helperService.getCurrentDate());
+			carr = sirhRepository
+					.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgentConcerne),
+							helperService.getCurrentDate());
 		}
 
 		for (RefTypeAbsence type : refTypeAbs) {

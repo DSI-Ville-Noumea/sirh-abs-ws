@@ -26,6 +26,7 @@ import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
@@ -65,6 +66,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
+
+	@Autowired
+	protected IAgentMatriculeConverterService agentMatriculeService;
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
@@ -350,7 +354,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public ReturnMessageDto checkStatutAgentFonctionnaire(ReturnMessageDto srm, Integer idAgent) {
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(idAgent, helperService.getCurrentDate());
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
 		if (carr.getCdcate() == 4 || carr.getCdcate() == 7) {
 			logger.warn(String.format(STATUT_AGENT_FONCTIONNAIRE, idAgent));
 			srm.getErrors().add(String.format(STATUT_AGENT_FONCTIONNAIRE, idAgent));

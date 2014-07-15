@@ -33,7 +33,8 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Integer idAgent) {
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(idAgent, helperService.getCurrentDate());
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
 		if (!(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
 			logger.warn(String.format(STATUT_AGENT, idAgent));
 			srm.getErrors().add(String.format(STATUT_AGENT, idAgent));
@@ -59,9 +60,9 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 
 		return srm;
 	}
-	
+
 	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
-		
+
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
 	}
 }

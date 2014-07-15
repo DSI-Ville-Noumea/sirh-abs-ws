@@ -37,4 +37,22 @@ public class AgentMatriculeConverterService implements IAgentMatriculeConverterS
 		return Integer.parseInt(newIdSb.toString());
 	}
 
+	@Override
+	public Integer fromIdAgentToSIRHNomatrAgent(Integer idAgent) throws AgentMatriculeConverterServiceException {
+
+		if (idAgent.toString().length() != 7)
+			throw new AgentMatriculeConverterServiceException(String.format(
+					"Impossible de convertir l'idAgent '%d' en matricule MAIRIE.", idAgent));
+
+		return removeDigit(idAgent);
+	}
+
+	private Integer removeDigit(Integer idAgent) {
+
+		StringBuilder newIdSb = new StringBuilder();
+		newIdSb.append(idAgent.toString().substring(3, 7));
+
+		return Integer.parseInt(newIdSb.toString());
+	}
+
 }
