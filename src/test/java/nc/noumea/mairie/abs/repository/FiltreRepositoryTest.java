@@ -11,8 +11,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.RefEtat;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -132,15 +134,19 @@ public class FiltreRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void findAllRefTypeAbsences() {
 		// Given
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(1);
+		groupe.setCode("A");
+		absEntityManager.persist(groupe);
 		RefTypeAbsence org1 = new RefTypeAbsence();
 		org1.setIdRefTypeAbsence(1);
 		org1.setLabel("lib1");
-		org1.setGroupe("A");
+		org1.setGroupe(groupe);
 		absEntityManager.persist(org1);
 		RefTypeAbsence org2 = new RefTypeAbsence();
 		org2.setIdRefTypeAbsence(2);
 		org2.setLabel("lib2");
-		org2.setGroupe("A");
+		org2.setGroupe(groupe);
 		absEntityManager.persist(org2);
 
 		// When
@@ -266,6 +272,94 @@ public class FiltreRepositoryTest {
 		assertTrue(result.isCalendarDateFin());
 		assertTrue(result.isCalendarHeureFin());
 
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void findAllRefGroupeAbsence() {
+		
+		RefGroupeAbsence rga = new RefGroupeAbsence();
+			rga.setIdRefGroupeAbsence(1);
+			rga.setCode("code 1");
+			rga.setLibelle("libelle 1");
+		absEntityManager.persist(rga);
+		
+		RefGroupeAbsence rga2 = new RefGroupeAbsence();
+			rga2.setIdRefGroupeAbsence(2);
+			rga2.setCode("code 2");
+			rga2.setLibelle("libelle 2");
+		absEntityManager.persist(rga2);
+		
+		List<RefGroupeAbsence> result = repository.findAllRefGroupeAbsence();
+
+		assertEquals(2, result.size());
+		assertEquals("code 1", result.get(0).getCode());
+		assertEquals("code 2", result.get(1).getCode());
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void findRefGroupeAbsence() {
+
+		RefGroupeAbsence rga = new RefGroupeAbsence();
+			rga.setIdRefGroupeAbsence(1);
+			rga.setCode("code 1");
+			rga.setLibelle("libelle 1");
+		absEntityManager.persist(rga);
+		
+		RefGroupeAbsence rga2 = new RefGroupeAbsence();
+			rga2.setIdRefGroupeAbsence(2);
+			rga2.setCode("code 2");
+			rga2.setLibelle("libelle 2");
+		absEntityManager.persist(rga2);
+	
+		RefGroupeAbsence result = repository.findRefGroupeAbsence(1);
+		
+		assertEquals("code 1", result.getCode());
+		assertEquals("libelle 1", result.getLibelle());
+		
+		result = repository.findRefGroupeAbsence(2);
+		
+		assertEquals("code 2", result.getCode());
+		assertEquals("libelle 2", result.getLibelle());
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void findAllRefUnitePeriodeQuota() {
+		
+		RefUnitePeriodeQuota rupq = new RefUnitePeriodeQuota();
+			rupq.setIdRefUnitePeriodeQuota(1);
+			rupq.setUnite("jours");
+			rupq.setValeur(10);
+			rupq.setGlissant(true);
+		absEntityManager.persist(rupq);
+		
+		RefUnitePeriodeQuota rupq2 = new RefUnitePeriodeQuota();
+			rupq2.setIdRefUnitePeriodeQuota(2);
+			rupq2.setUnite("minutes");
+			rupq2.setValeur(13);
+			rupq2.setGlissant(false);
+		absEntityManager.persist(rupq2);
+		
+		List<RefUnitePeriodeQuota> result = repository.findAllRefUnitePeriodeQuota();
+
+		assertEquals(2, result.size());
+		assertEquals("jours", result.get(0).getUnite());
+		assertEquals(10, result.get(0).getValeur().intValue());
+		assertTrue(result.get(0).isGlissant());
+		assertEquals("minutes", result.get(1).getUnite());
+		assertEquals(13, result.get(1).getValeur().intValue());
+		assertFalse(result.get(1).isGlissant());
+		
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}

@@ -262,7 +262,7 @@ public class AccessRightsController {
 
 		int convertedIdOperateurOrViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateurOrViseur);
 
-		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdOperateurOrViseur);
 		if (agent == null
 				|| agent.getIdAgent() == null)
 			throw new NotFoundException();

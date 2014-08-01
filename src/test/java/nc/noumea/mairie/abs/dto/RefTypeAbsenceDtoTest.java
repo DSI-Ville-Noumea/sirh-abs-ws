@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 
 import org.junit.Test;
 
@@ -14,18 +16,47 @@ public class RefTypeAbsenceDtoTest {
 	@Test
 	public void ctor_withRefTypeAbsence() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setCode("groupe");
+		
 		// Given
 		RefTypeAbsence ref = new RefTypeAbsence();
-		ref.setIdRefTypeAbsence(12);
-		ref.setLabel("test lib");
-		ref.setGroupe("grup");
+			ref.setIdRefTypeAbsence(12);
+			ref.setLabel("test lib");
+			ref.setGroupe(groupe);
 
 		// When
 		RefTypeAbsenceDto result = new RefTypeAbsenceDto(ref);
 
 		// Then
 		assertEquals(ref.getLabel(), result.getLibelle());
-		assertEquals(ref.getGroupe(), result.getGroupe());
+		assertEquals(ref.getGroupe().getCode(), result.getGroupe());
 		assertEquals(ref.getIdRefTypeAbsence(), result.getIdRefTypeAbsence());
+	}
+	
+	@Test
+	public void ctor_withRefTypeSaisi() {
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setCode("groupe");
+		
+		// Given
+		RefTypeAbsence ref = new RefTypeAbsence();
+			ref.setIdRefTypeAbsence(12);
+			ref.setLabel("test lib");
+			ref.setGroupe(groupe);
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setIdRefTypeAbsence(ref.getIdRefTypeAbsence());
+			typeSaisi.setType(ref);
+		
+		// When
+		RefTypeAbsenceDto result = new RefTypeAbsenceDto(ref, typeSaisi);
+
+		// Then
+		assertEquals(ref.getLabel(), result.getLibelle());
+		assertEquals(ref.getGroupe().getCode(), result.getGroupe());
+		assertEquals(ref.getIdRefTypeAbsence(), result.getIdRefTypeAbsence());
+		assertEquals(typeSaisi.getIdRefTypeAbsence(), result.getTypeSaisiDto().getIdRefTypeDemande());
 	}
 }

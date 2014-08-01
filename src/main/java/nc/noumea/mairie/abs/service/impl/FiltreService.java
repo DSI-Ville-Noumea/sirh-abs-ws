@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.RefEtat;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
+import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
+import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -148,6 +152,46 @@ public class FiltreService implements IFiltreService {
 			}
 		}
 
+		return resultDto;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<RefGroupeAbsenceDto> getRefGroupeAbsence(Integer idRefGroupeAbsence) {
+
+		List<RefGroupeAbsenceDto> resultDto = new ArrayList<RefGroupeAbsenceDto>();
+		if (null == idRefGroupeAbsence) {
+			List<RefGroupeAbsence> result = filtreRepository.findAllRefGroupeAbsence();
+			if (null != result) {
+				for (RefGroupeAbsence groupe : result) {
+					RefGroupeAbsenceDto dto = new RefGroupeAbsenceDto(groupe);
+					resultDto.add(dto);
+				}
+			}
+		} else {
+			RefGroupeAbsence result = filtreRepository.findRefGroupeAbsence(idRefGroupeAbsence);
+			if (null != result) {
+				RefGroupeAbsenceDto dto = new RefGroupeAbsenceDto(result);
+				resultDto.add(dto);
+			}
+		}
+
+		return resultDto;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<UnitePeriodeQuotaDto> getUnitePeriodeQuota() {
+		
+		List<UnitePeriodeQuotaDto> resultDto = new ArrayList<UnitePeriodeQuotaDto>();
+		
+		List<RefUnitePeriodeQuota> result = filtreRepository.findAllRefUnitePeriodeQuota();
+		if (null != result) {
+			for (RefUnitePeriodeQuota upq : result) {
+				UnitePeriodeQuotaDto dto = new UnitePeriodeQuotaDto(upq);
+				resultDto.add(dto);
+			}
+		}
 		return resultDto;
 	}
 

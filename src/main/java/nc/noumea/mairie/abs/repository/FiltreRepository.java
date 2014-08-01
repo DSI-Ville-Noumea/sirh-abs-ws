@@ -9,8 +9,10 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 
 import org.springframework.stereotype.Repository;
 
@@ -74,5 +76,26 @@ public class FiltreRepository implements IFiltreRepository {
 	@Override
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
 		return absEntityManager.find(Tclass, Id);
+	}
+	
+	@Override
+	public List<RefGroupeAbsence> findAllRefGroupeAbsence() {
+		return absEntityManager.createNamedQuery("getAllRefGroupeAbsence", RefGroupeAbsence.class).getResultList();
+	}
+	
+	@Override
+	public RefGroupeAbsence findRefGroupeAbsence(Integer idRefGroupeAbsence) {
+
+		TypedQuery<RefGroupeAbsence> query = null;
+		query = absEntityManager.createNamedQuery("getRefGroupeAbsenceById", RefGroupeAbsence.class);
+		query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
+		query.setMaxResults(1);
+
+		return query.getSingleResult();
+	}
+	
+	@Override
+	public List<RefUnitePeriodeQuota> findAllRefUnitePeriodeQuota() {
+		return absEntityManager.createNamedQuery("findAllRefUnitePeriodeQuota", RefUnitePeriodeQuota.class).getResultList();
 	}
 }

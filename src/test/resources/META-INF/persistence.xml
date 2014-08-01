@@ -6,7 +6,7 @@
 	
 	<persistence-unit name="absPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-       <class>nc.noumea.mairie.abs.domain.AgentRecupCount</class>
+        <class>nc.noumea.mairie.abs.domain.AgentRecupCount</class>
       	<class>nc.noumea.mairie.abs.domain.AgentWeekRecup</class>
       	<class>nc.noumea.mairie.abs.domain.Demande</class>
       	<class>nc.noumea.mairie.abs.domain.DemandeRecup</class>
@@ -24,14 +24,16 @@
       	<class>nc.noumea.mairie.abs.domain.Motif</class>
       	<class>nc.noumea.mairie.abs.domain.MotifCompteur</class>
       	<class>nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle</class>
-       <class>nc.noumea.mairie.abs.domain.AgentAsaA48Count</class>
+        <class>nc.noumea.mairie.abs.domain.AgentAsaA48Count</class>
       	<class>nc.noumea.mairie.abs.domain.OrganisationSyndicale</class>
       	<class>nc.noumea.mairie.abs.domain.RefTypeSaisi</class>
       	<class>nc.noumea.mairie.abs.domain.DemandeAsa</class>
-       <class>nc.noumea.mairie.abs.domain.AgentAsaA54Count</class>
-       <class>nc.noumea.mairie.abs.domain.AgentAsaA55Count</class>
+        <class>nc.noumea.mairie.abs.domain.AgentAsaA54Count</class>
+        <class>nc.noumea.mairie.abs.domain.AgentAsaA55Count</class>
       	<class>nc.noumea.mairie.abs.domain.AgentAsaA53Count</class>
       	<class>nc.noumea.mairie.abs.domain.AgentAsaA52Count</class>
+      	<class>nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota</class>
+      	<class>nc.noumea.mairie.abs.domain.RefGroupeAbsence</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>

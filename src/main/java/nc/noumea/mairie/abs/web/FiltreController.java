@@ -4,9 +4,11 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
+import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
+import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
@@ -117,5 +119,34 @@ public class FiltreController {
 		List<RefTypeSaisiDto> typesSaisi = filtresService.getRefTypeSaisi(idRefTypeAbsence);
 
 		return typesSaisi;
+	}
+	
+	/**
+	 * Retourne les groupes d absence
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getGroupesAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefGroupeAbsenceDto> getGroupesAbsence(
+			@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence) {
+
+		logger.debug("entered GET [filtres/getGroupesAbsence] => getGroupesAbsence");
+
+		List<RefGroupeAbsenceDto> groupes = filtresService.getRefGroupeAbsence(idRefGroupeAbsence);
+
+		return groupes;
+	}
+	
+	/**
+	 * Retourne les groupes d absence
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getUnitePeriodeQuota", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<UnitePeriodeQuotaDto> getUnitePeriodeQuota() {
+
+		logger.debug("entered GET [filtres/getUnitePeriodeQuota] => getUnitePeriodeQuota");
+
+		List<UnitePeriodeQuotaDto> upq = filtresService.getUnitePeriodeQuota();
+
+		return upq;
 	}
 }

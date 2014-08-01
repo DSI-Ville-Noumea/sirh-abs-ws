@@ -11,12 +11,16 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
+import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
+import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -677,5 +681,88 @@ public class FiltreServiceTest {
 		assertFalse(result.get(0).isCalendarHeureFin());
 		assertFalse(result.get(0).isChkDateFin());
 		assertFalse(result.get(0).isPieceJointe());
+	}
+	
+	@Test
+	public void getRefGroupeAbsence_return1result() {
+		
+		RefGroupeAbsence rga = new RefGroupeAbsence();
+			rga.setIdRefGroupeAbsence(1);
+			rga.setCode("code 1");
+			rga.setLibelle("libelle 1");
+		
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+			Mockito.when(filtreRepository.findRefGroupeAbsence(1)).thenReturn(rga);
+			
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		
+		List<RefGroupeAbsenceDto> result = service.getRefGroupeAbsence(1);
+		
+		assertEquals(1, result.size());
+		assertEquals("code 1", result.get(0).getCode());
+		assertEquals("libelle 1", result.get(0).getLibelle());
+		
+	}
+	
+	@Test
+	public void getRefGroupeAbsence_returnManyResult() {
+		
+		RefGroupeAbsence rga = new RefGroupeAbsence();
+			rga.setIdRefGroupeAbsence(1);
+			rga.setCode("code 1");
+			rga.setLibelle("libelle 1");
+		
+		RefGroupeAbsence rga2 = new RefGroupeAbsence();
+			rga2.setIdRefGroupeAbsence(2);
+			rga2.setCode("code 2");
+			rga2.setLibelle("libelle 2");
+			
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+			Mockito.when(filtreRepository.findAllRefGroupeAbsence()).thenReturn(Arrays.asList(rga, rga2));
+			
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		
+		List<RefGroupeAbsenceDto> result = service.getRefGroupeAbsence(null);
+		
+		assertEquals(2, result.size());
+		assertEquals("code 1", result.get(0).getCode());
+		assertEquals("libelle 1", result.get(0).getLibelle());
+		assertEquals("code 2", result.get(1).getCode());
+		assertEquals("libelle 2", result.get(1).getLibelle());
+	
+	}
+	
+	@Test
+	public void getUnitePeriodeQuota() {
+		
+		RefUnitePeriodeQuota rupq = new RefUnitePeriodeQuota();
+			rupq.setIdRefUnitePeriodeQuota(1);
+			rupq.setUnite("jours");
+			rupq.setValeur(10);
+			rupq.setGlissant(true);
+		
+		RefUnitePeriodeQuota rupq2 = new RefUnitePeriodeQuota();
+			rupq2.setIdRefUnitePeriodeQuota(2);
+			rupq2.setUnite("minutes");
+			rupq2.setValeur(13);
+			rupq2.setGlissant(false);
+			
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+			Mockito.when(filtreRepository.findAllRefUnitePeriodeQuota()).thenReturn(Arrays.asList(rupq, rupq2));
+			
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		
+		List<UnitePeriodeQuotaDto> result = service.getUnitePeriodeQuota();
+		
+		assertEquals(2, result.size());
+		assertEquals("jours", result.get(0).getUnite());
+		assertEquals(10, result.get(0).getValeur().intValue());
+		assertTrue(result.get(0).isGlissant());
+		assertEquals("minutes", result.get(1).getUnite());
+		assertEquals(13, result.get(1).getValeur().intValue());
+		assertFalse(result.get(1).isGlissant());
 	}
 }

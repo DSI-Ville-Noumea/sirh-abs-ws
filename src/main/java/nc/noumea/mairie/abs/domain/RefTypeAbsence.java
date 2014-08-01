@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,10 +22,11 @@ public class RefTypeAbsence {
 	@Column(name = "LABEL", columnDefinition = "NVARCHAR2")
 	private String label;
 
-	@Column(name = "GROUPE", columnDefinition = "NVARCHAR2")
-	private String groupe;
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "ID_REF_GROUPE_ABSENCE")
+	private RefGroupeAbsence groupe;
 	
-	@OneToOne(fetch = FetchType.LAZY, optional = true)
+	@OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
 	private RefTypeSaisi typeSaisi;
 
@@ -44,11 +46,11 @@ public class RefTypeAbsence {
 		this.label = label;
 	}
 
-	public String getGroupe() {
+	public RefGroupeAbsence getGroupe() {
 		return groupe;
 	}
 
-	public void setGroupe(String groupe) {
+	public void setGroupe(RefGroupeAbsence groupe) {
 		this.groupe = groupe;
 	}
 

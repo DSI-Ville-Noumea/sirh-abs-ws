@@ -29,6 +29,8 @@
       	<class>nc.noumea.mairie.abs.domain.AgentAsaA55Count</class>
       	<class>nc.noumea.mairie.abs.domain.AgentAsaA53Count</class>
       	<class>nc.noumea.mairie.abs.domain.AgentAsaA52Count</class>
+      	<class>nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota</class>
+      	<class>nc.noumea.mairie.abs.domain.RefGroupeAbsence</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

@@ -78,6 +78,47 @@ public class RefTypeSaisi {
 	@Column(name = "COMPTEUR_COLLECTIF", nullable = false)
 	@Type(type = "boolean")
 	private boolean compteurCollectif;
+	
+	@NotNull
+	@Column(name = "F", nullable = false)
+	@Type(type = "boolean")
+	private boolean fonctionnaire;
+	
+	@NotNull
+	@Column(name = "C", nullable = false)
+	@Type(type = "boolean")
+	private boolean contractuel;
+	
+	@NotNull
+	@Column(name = "CC", nullable = false)
+	@Type(type = "boolean")
+	private boolean conventionCollective;
+	
+	@NotNull
+	@Column(name = "SAISIE_KIOSQUE", nullable = false)
+	@Type(type = "boolean")
+	private boolean saisieKiosque;
+	
+	@Column(name = "DESCRIPTION", columnDefinition = "text")
+	private String description;
+	
+	@Column(name = "INFOS_COMPL")
+	private String infosComplementaires;
+	
+	@NotNull
+	@Column(name = "ALERTE", nullable = false)
+	@Type(type = "boolean")
+	private boolean alerte;
+	
+	@Column(name = "MESSAGE_ALERTE")
+	private String messageAlerte;
+	
+	@Column(name = "QUOTA_MAX")
+	private Integer quotaMax;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "ID_REF_UNITE_PERIODE_QUOTA")
+	private RefUnitePeriodeQuota refUnitePeriodeQuota;
 
 	public Integer getIdRefTypeAbsence() {
 		return idRefTypeAbsence;
@@ -174,5 +215,87 @@ public class RefTypeSaisi {
 	public void setCompteurCollectif(boolean compteurCollectif) {
 		this.compteurCollectif = compteurCollectif;
 	}
+
+	public boolean isFonctionnaire() {
+		return fonctionnaire;
+	}
+
+	public void setFonctionnaire(boolean fonctionnaire) {
+		this.fonctionnaire = fonctionnaire;
+	}
+
+	public boolean isContractuel() {
+		return contractuel;
+	}
+
+	public void setContractuel(boolean contractuel) {
+		this.contractuel = contractuel;
+	}
+
+	public boolean isConventionCollective() {
+		return conventionCollective;
+	}
+
+	public void setConventionCollective(boolean conventionCollective) {
+		this.conventionCollective = conventionCollective;
+	}
+
+	public boolean isSaisieKiosque() {
+		return saisieKiosque;
+	}
+
+	public void setSaisieKiosque(boolean saisieKiosque) {
+		this.saisieKiosque = saisieKiosque;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getInfosComplementaires() {
+		return infosComplementaires;
+	}
+
+	public void setInfosComplementaires(String infosComplementaires) {
+		this.infosComplementaires = infosComplementaires;
+	}
+
+	public boolean isAlerte() {
+		return alerte;
+	}
+
+	public void setAlerte(boolean alerte) {
+		this.alerte = alerte;
+	}
+
+	public String getMessageAlerte() {
+		return messageAlerte;
+	}
+
+	public void setMessageAlerte(String messageAlerte) {
+		this.messageAlerte = messageAlerte;
+	}
+
+	public Integer getQuotaMax() {
+		return quotaMax;
+	}
+
+	public void setQuotaMax(Integer quotaMax) {
+		this.quotaMax = quotaMax;
+	}
+
+	public RefUnitePeriodeQuota getRefUnitePeriodeQuota() {
+		return refUnitePeriodeQuota;
+	}
+
+	public void setRefUnitePeriodeQuota(RefUnitePeriodeQuota refUnitePeriodeQuota) {
+		this.refUnitePeriodeQuota = refUnitePeriodeQuota;
+	}
+	
+	
 	
 }
