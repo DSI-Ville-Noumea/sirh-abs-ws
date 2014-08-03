@@ -4,11 +4,12 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -19,6 +20,7 @@ public class DemandeDto {
 
 	private Integer idDemande;
 	private Integer idTypeDemande;
+	private RefGroupeAbsenceDto groupeAbsence;
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateDemande;
@@ -62,6 +64,8 @@ public class DemandeDto {
 	private boolean isDepassementCompteur;
 
 	private OrganisationSyndicaleDto organisationSyndicale;
+	
+	private String commentaire;
 
 	public DemandeDto() {
 	}
@@ -78,6 +82,9 @@ public class DemandeDto {
 		this.agentWithServiceDto = agentDto;
 		this.idDemande = d.getIdDemande();
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
+		if(null != d.getType().getGroupe()) {
+			this.groupeAbsence = new RefGroupeAbsenceDto(d.getType().getGroupe());
+		}
 		this.dateDebut = d.getDateDebut();
 		this.dateFin = d.getDateFin();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
@@ -110,7 +117,7 @@ public class DemandeDto {
 			}
 		}
 
-		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(idTypeDemande)) {
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(groupeAbsence.getIdRefGroupeAbsence())) {
 			case CONGE_ANNUEL:
 				// TODO
 				break;
@@ -123,13 +130,7 @@ public class DemandeDto {
 			case RECUP:
 				this.duree = (double) (((DemandeRecup) d).getDuree());
 				break;
-			case ASA_A48:
-			case ASA_A52:
-			case ASA_A53:
-			case ASA_A54:
-			case ASA_A55:
-			case ASA_A49:
-			case ASA_A50:
+			case ASA:
 				this.duree = ((DemandeAsa) d).getDuree();
 				this.isDateDebutAM = ((DemandeAsa) d).isDateDebutAM();
 				this.isDateDebutPM = ((DemandeAsa) d).isDateDebutPM();
@@ -138,6 +139,14 @@ public class DemandeDto {
 				if (null != ((DemandeAsa) d).getOrganisationSyndicale())
 					this.organisationSyndicale = new OrganisationSyndicaleDto(
 							((DemandeAsa) d).getOrganisationSyndicale());
+				break;
+			case CONGES_EXCEP:
+				this.duree = ((DemandeCongesExceptionnels) d).getDuree();
+				this.isDateDebutAM = ((DemandeCongesExceptionnels) d).isDateDebutAM();
+				this.isDateDebutPM = ((DemandeCongesExceptionnels) d).isDateDebutPM();
+				this.isDateFinAM = ((DemandeCongesExceptionnels) d).isDateFinAM();
+				this.isDateFinPM = ((DemandeCongesExceptionnels) d).isDateFinPM();
+				this.commentaire =  ((DemandeCongesExceptionnels) d).getCommentaire();
 				break;
 			case AUTRES:
 				// TODO
@@ -423,4 +432,21 @@ public class DemandeDto {
 		this.organisationSyndicale = organisationSyndicale;
 	}
 
+	public RefGroupeAbsenceDto getGroupeAbsence() {
+		return groupeAbsence;
+	}
+
+	public void setGroupeAbsence(RefGroupeAbsenceDto groupeAbsence) {
+		this.groupeAbsence = groupeAbsence;
+	}
+
+	public String getCommentaire() {
+		return commentaire;
+	}
+
+	public void setCommentaire(String commentaire) {
+		this.commentaire = commentaire;
+	}
+
+	
 }

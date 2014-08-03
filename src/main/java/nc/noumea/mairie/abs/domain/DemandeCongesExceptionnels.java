@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "ABS_DEMANDE_ASA")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @PrimaryKeyJoinColumn(name = "ID_DEMANDE")
-public class DemandeCongesExceptionnels {
+public class DemandeCongesExceptionnels extends Demande {
 
 	@NotNull
 	@Column(name = "DUREE", columnDefinition = "numeric")

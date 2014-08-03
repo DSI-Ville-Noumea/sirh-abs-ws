@@ -12,8 +12,10 @@ import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 
 import org.junit.Test;
 
@@ -30,8 +32,12 @@ public class DemandeDtoTest {
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(7);
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemande = new EtatDemande();
 		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
@@ -75,9 +81,13 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
 		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
@@ -151,8 +161,12 @@ public class DemandeDtoTest {
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
 		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
@@ -222,8 +236,12 @@ public class DemandeDtoTest {
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
 		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
@@ -294,9 +312,13 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
 		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
@@ -382,9 +404,13 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
 		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
@@ -466,9 +492,13 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
 		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
@@ -550,9 +580,13 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
 		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
@@ -635,8 +669,12 @@ public class DemandeDtoTest {
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
 		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
@@ -718,9 +756,13 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etatDemandeApprouve = new EtatDemande();
 		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);

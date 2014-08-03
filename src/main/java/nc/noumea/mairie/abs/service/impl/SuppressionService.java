@@ -4,10 +4,11 @@ import java.util.Arrays;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
@@ -88,7 +89,7 @@ public class SuppressionService implements ISuppressionService {
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande
 		// et on effectue les verifications appropriees
-		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getType().getIdRefTypeAbsence())) {
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
 			case CONGE_ANNUEL:
 				// TODO
 				break;
@@ -98,14 +99,11 @@ public class SuppressionService implements ISuppressionService {
 			case RECUP:
 				demande = getDemande(DemandeRecup.class, idDemande);
 				break;
-			case ASA_A48:
-			case ASA_A49:
-			case ASA_A50:
-			case ASA_A52:
-			case ASA_A53:
-			case ASA_A54:
-			case ASA_A55:
+			case ASA:
 				demande = getDemande(DemandeAsa.class, idDemande);
+				break;
+			case CONGES_EXCEP:
+				demande = getDemande(DemandeCongesExceptionnels.class, idDemande);
 				break;
 			case AUTRES:
 				// TODO

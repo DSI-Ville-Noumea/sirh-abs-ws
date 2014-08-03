@@ -11,8 +11,10 @@ import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -77,12 +79,16 @@ public class SuppressionServiceTest {
 		Integer idAgent = 9005138;
 		Integer idDemande = 1;
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(3);
+			type.setIdRefTypeAbsence(3);
+			type.setGroupe(groupe);
 
 		DemandeRecup demande = new DemandeRecup();
-		demande.setIdAgent(9005131);
-		demande.setType(type);
+			demande.setIdAgent(9005131);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, idDemande)).thenReturn(demande);
@@ -140,8 +146,12 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(3);
+		type.setGroupe(groupe);
 
 		DemandeRecup demande = new DemandeRecup();
 		demande.setIdAgent(9005138);
@@ -220,8 +230,12 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(3);
+		type.setGroupe(groupe);
 
 		DemandeRecup demande = new DemandeRecup();
 		demande.setIdAgent(9005138);
@@ -305,14 +319,18 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(3);
+			type.setIdRefTypeAbsence(3);
+			type.setGroupe(groupe);
 
 		DemandeRecup demande = new DemandeRecup();
-		demande.setIdAgent(9005138);
-		demande.setEtatsDemande(listEtat);
-		demande.setIdDemande(1);
-		demande.setType(type);
+			demande.setIdAgent(9005138);
+			demande.setEtatsDemande(listEtat);
+			demande.setIdDemande(1);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(demande);
@@ -505,8 +523,12 @@ public class SuppressionServiceTest {
 		Integer idAgent = 9005138;
 		Integer idDemande = 1;
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(2);
+			type.setIdRefTypeAbsence(2);
+			type.setGroupe(groupe);
 
 		DemandeReposComp demande = new DemandeReposComp();
 		demande.setIdAgent(9005131);
@@ -568,8 +590,12 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(2);
+		type.setGroupe(groupe);
 
 		DemandeReposComp demande = new DemandeReposComp();
 		demande.setIdAgent(9005138);
@@ -648,8 +674,12 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(2);
+		type.setGroupe(groupe);
 
 		DemandeReposComp demande = new DemandeReposComp();
 		demande.setIdAgent(9005138);
@@ -732,8 +762,12 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(2);
+		type.setGroupe(groupe);
 
 		DemandeReposComp demande = new DemandeReposComp();
 		demande.setIdAgent(9005138);
@@ -816,8 +850,12 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		type.setGroupe(groupe);
 
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
@@ -900,8 +938,12 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+			type.setGroupe(groupe);
 
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
@@ -983,9 +1025,13 @@ public class SuppressionServiceTest {
 		etatDemande.setEtat(RefEtatEnum.SAISIE);
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		type.setGroupe(groupe);
 
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
@@ -1068,8 +1114,12 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		type.setGroupe(groupe);
 
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
@@ -1152,8 +1202,12 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
+		type.setGroupe(groupe);
 
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
@@ -1236,14 +1290,18 @@ public class SuppressionServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
+			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
+			type.setGroupe(groupe);
 
 		DemandeAsa demande = new DemandeAsa();
-		demande.setIdAgent(9005138);
-		demande.setEtatsDemande(listEtat);
-		demande.setIdDemande(1);
-		demande.setType(type);
+			demande.setIdAgent(9005138);
+			demande.setEtatsDemande(listEtat);
+			demande.setIdDemande(1);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(demande);

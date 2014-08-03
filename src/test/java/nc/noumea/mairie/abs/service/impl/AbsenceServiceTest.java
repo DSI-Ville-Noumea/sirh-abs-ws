@@ -26,8 +26,10 @@ import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -144,8 +146,12 @@ public class AbsenceServiceTest {
 		Date dateMaj2 = new Date();
 		Integer idDemande = 1;
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
+			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+			rta.setGroupe(groupe);
 
 		Demande d = new Demande();
 		d.setType(rta);
@@ -153,19 +159,19 @@ public class AbsenceServiceTest {
 		DemandeRecup dr = new DemandeRecup();
 
 		EtatDemande ed = new EtatDemande();
-		ed.setDate(dateMaj);
-		ed.setDemande((Demande) dr);
-		ed.setEtat(RefEtatEnum.PROVISOIRE);
-		ed.setIdAgent(9005138);
-		ed.setIdEtatDemande(1);
+			ed.setDate(dateMaj);
+			ed.setDemande((Demande) dr);
+			ed.setEtat(RefEtatEnum.PROVISOIRE);
+			ed.setIdAgent(9005138);
+			ed.setIdEtatDemande(1);
 		EtatDemande ed2 = new EtatDemande();
-		ed2.setDate(dateMaj2);
-		ed2.setDemande((Demande) dr);
-		ed2.setEtat(RefEtatEnum.SAISIE);
-		ed2.setIdAgent(9005138);
-		ed2.setIdEtatDemande(2);
+			ed2.setDate(dateMaj2);
+			ed2.setDemande((Demande) dr);
+			ed2.setEtat(RefEtatEnum.SAISIE);
+			ed2.setIdAgent(9005138);
+			ed2.setIdEtatDemande(2);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
-		listEtatDemande.addAll(Arrays.asList(ed2, ed));
+			listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
 		dr.setDateDebut(dateDebut);
 		dr.setDateFin(dateFin);
@@ -215,8 +221,12 @@ public class AbsenceServiceTest {
 		Date dateMaj2 = new Date();
 		Integer idDemande = 1;
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+	
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
+			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+			rta.setGroupe(groupe);
 
 		Demande d = new Demande();
 		d.setType(rta);
@@ -2198,8 +2208,12 @@ public class AbsenceServiceTest {
 		Date dateMaj2 = new Date();
 		Integer idDemande = 1;
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
+			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+			rta.setGroupe(groupe);
 
 		Demande d = new Demande();
 		d.setType(rta);
@@ -2272,8 +2286,12 @@ public class AbsenceServiceTest {
 		Date dateMaj2 = new Date();
 		Integer idDemande = 1;
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+	
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
+			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+			rta.setGroupe(groupe);
 
 		Demande d = new Demande();
 		d.setType(rta);
@@ -3269,8 +3287,12 @@ public class AbsenceServiceTest {
 		Date dateMaj2 = new Date();
 		Integer idDemande = 1;
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
+			rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+			rta.setGroupe(groupe);
 
 		DemandeRecup dr = new DemandeRecup();
 
@@ -6316,8 +6338,12 @@ public class AbsenceServiceTest {
 		Date dateMaj2 = new Date();
 		Integer idDemande = 1;
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(8);
+		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		rta.setGroupe(groupe);
 
 		Demande d = new Demande();
 		d.setType(rta);

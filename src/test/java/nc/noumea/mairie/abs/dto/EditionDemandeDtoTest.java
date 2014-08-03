@@ -7,7 +7,9 @@ import java.util.Date;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 
 import org.junit.Test;
 
@@ -29,12 +31,16 @@ public class EditionDemandeDtoTest {
 		agDto.setService("SERV");
 		agDto.setStatut("F");
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(2);
+			type.setIdRefTypeAbsence(2);
+			type.setGroupe(groupe);
 
 		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
-		etatDemande.setDate(dateDemande);
+			etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+			etatDemande.setDate(dateDemande);
 
 		DemandeReposComp d = new DemandeReposComp();
 		d.setIdDemande(1);
