@@ -73,17 +73,19 @@ public class FiltreService implements IFiltreService {
 			if (null != carr) {
 				boolean ajout = false;
 				
-				if(helperService.isFonctionnaire(carr)
-						&& type.getTypeSaisi().isFonctionnaire()){
-					ajout = true;
-				}
-				if(helperService.isContractuel(carr)
-						&& type.getTypeSaisi().isContractuel()){
-					ajout = true;
-				}
-				if(helperService.isConventionCollective(carr)
-						&& type.getTypeSaisi().isConventionCollective()){
-					ajout = true;
+				if(null != type.getTypeSaisi()) {
+					if(helperService.isFonctionnaire(carr)
+							&& type.getTypeSaisi().isFonctionnaire()){
+						ajout = true;
+					}
+					if(helperService.isContractuel(carr)
+							&& type.getTypeSaisi().isContractuel()){
+						ajout = true;
+					}
+					if(helperService.isConventionCollective(carr)
+							&& type.getTypeSaisi().isConventionCollective()){
+						ajout = true;
+					}
 				}
 				if (ajout) {
 					RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
