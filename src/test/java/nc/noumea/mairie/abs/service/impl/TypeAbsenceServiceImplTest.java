@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;

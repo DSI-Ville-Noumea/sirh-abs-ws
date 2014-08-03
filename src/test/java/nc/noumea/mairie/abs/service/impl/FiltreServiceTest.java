@@ -78,159 +78,173 @@ public class FiltreServiceTest {
 	@Test
 	public void getRefTypesAbsence_Fonctionnaire() {
 
-		RefTypeAbsence ASA_A49 = new RefTypeAbsence();
-		ASA_A49.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
-		RefTypeAbsence ASA_A50 = new RefTypeAbsence();
-		ASA_A50.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
-		RefTypeAbsence ASA_A52 = new RefTypeAbsence();
-		ASA_A52.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
-		RefTypeAbsence ASA_A53 = new RefTypeAbsence();
-		ASA_A53.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
-		RefTypeAbsence ASA_A55 = new RefTypeAbsence();
-		ASA_A55.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
-		RefTypeAbsence ASA_A54 = new RefTypeAbsence();
-		ASA_A54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
-		RefTypeAbsence ASA_A48 = new RefTypeAbsence();
-		ASA_A48.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
-		RefTypeAbsence AUTRES = new RefTypeAbsence();
-		AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
-		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
-		CONGE_ANNUEL.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
-		RefTypeAbsence MALADIES = new RefTypeAbsence();
-		MALADIES.setIdRefTypeAbsence(RefTypeAbsenceEnum.MALADIES.getValue());
-		RefTypeAbsence RECUP = new RefTypeAbsence();
-		RECUP.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
-		RefTypeAbsence REPOS_COMP = new RefTypeAbsence();
-		REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-
+		RefTypeSaisi typeSaisiFonctionnaire = new RefTypeSaisi();
+			typeSaisiFonctionnaire.setFonctionnaire(true);
+			typeSaisiFonctionnaire.setContractuel(false);
+			typeSaisiFonctionnaire.setConventionCollective(false);
+		
+		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
+			typeAbsenceFonctionnaire.setLabel("fonctionnaire");
+			typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
+			
+		RefTypeSaisi typeSaisiContractuel = new RefTypeSaisi();
+			typeSaisiContractuel.setFonctionnaire(false);
+			typeSaisiContractuel.setContractuel(true);
+			typeSaisiContractuel.setConventionCollective(false);
+		
+		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
+			typeAbsenceContractuel.setLabel("contractuel");
+			typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
+			
+		RefTypeSaisi typeSaisiConventionCollective = new RefTypeSaisi();
+			typeSaisiConventionCollective.setFonctionnaire(false);
+			typeSaisiConventionCollective.setContractuel(false);
+			typeSaisiConventionCollective.setConventionCollective(true);
+		
+		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
+			typeAbsenceConventionCollective.setLabel("conventionCollective");
+			typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
+	
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-		refTypeAbs.addAll(Arrays.asList(ASA_A49, ASA_A50, ASA_A52, ASA_A53, ASA_A55, ASA_A54, ASA_A48, AUTRES,
-				CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
-
+			refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel, typeAbsenceConventionCollective));
+		
 		Spcarr carr = new Spcarr();
-		carr.setCdcate(24);
-
+			carr.setCdcate(4);
+		
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
-
+	
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
-
+		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(true);
+		Mockito.when(helperService.isContractuel(carr)).thenReturn(false);
+		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
+	
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, helperService.getCurrentDate())).thenReturn(carr);
-
+	
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
-
+	
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
-
+	
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
-
-		assertEquals(11, result.size());
+	
+		assertEquals(1, result.size());
+		assertEquals("fonctionnaire", result.get(0).getLibelle());
 	}
 
 	@Test
 	public void getRefTypesAbsence_CC() {
 
-		RefTypeAbsence ASA_A49 = new RefTypeAbsence();
-		ASA_A49.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
-		RefTypeAbsence ASA_A50 = new RefTypeAbsence();
-		ASA_A50.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
-		RefTypeAbsence ASA_A52 = new RefTypeAbsence();
-		ASA_A52.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
-		RefTypeAbsence ASA_A53 = new RefTypeAbsence();
-		ASA_A53.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
-		RefTypeAbsence ASA_A55 = new RefTypeAbsence();
-		ASA_A55.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
-		RefTypeAbsence ASA_A54 = new RefTypeAbsence();
-		ASA_A54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
-		RefTypeAbsence ASA_A48 = new RefTypeAbsence();
-		ASA_A48.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
-		RefTypeAbsence AUTRES = new RefTypeAbsence();
-		AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
-		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
-		CONGE_ANNUEL.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
-		RefTypeAbsence MALADIES = new RefTypeAbsence();
-		MALADIES.setIdRefTypeAbsence(RefTypeAbsenceEnum.MALADIES.getValue());
-		RefTypeAbsence RECUP = new RefTypeAbsence();
-		RECUP.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
-		RefTypeAbsence REPOS_COMP = new RefTypeAbsence();
-		REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
-
+		RefTypeSaisi typeSaisiFonctionnaire = new RefTypeSaisi();
+			typeSaisiFonctionnaire.setFonctionnaire(true);
+			typeSaisiFonctionnaire.setContractuel(false);
+			typeSaisiFonctionnaire.setConventionCollective(false);
+		
+		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
+			typeAbsenceFonctionnaire.setLabel("fonctionnaire");
+			typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
+			
+		RefTypeSaisi typeSaisiContractuel = new RefTypeSaisi();
+			typeSaisiContractuel.setFonctionnaire(false);
+			typeSaisiContractuel.setContractuel(true);
+			typeSaisiContractuel.setConventionCollective(false);
+		
+		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
+			typeAbsenceContractuel.setLabel("contractuel");
+			typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
+			
+		RefTypeSaisi typeSaisiConventionCollective = new RefTypeSaisi();
+			typeSaisiConventionCollective.setFonctionnaire(false);
+			typeSaisiConventionCollective.setContractuel(false);
+			typeSaisiConventionCollective.setConventionCollective(true);
+		
+		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
+			typeAbsenceConventionCollective.setLabel("conventionCollective");
+			typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
+	
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-		refTypeAbs.addAll(Arrays.asList(ASA_A49, ASA_A50, ASA_A52, ASA_A53, ASA_A55, ASA_A54, ASA_A48, AUTRES,
-				CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
-
+			refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel, typeAbsenceConventionCollective));
+		
 		Spcarr carr = new Spcarr();
-		carr.setCdcate(4);
-
+			carr.setCdcate(4);
+		
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
-
+	
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
-
+		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(false);
+		Mockito.when(helperService.isContractuel(carr)).thenReturn(false);
+		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(true);
+	
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, helperService.getCurrentDate())).thenReturn(carr);
-
+	
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
-
+	
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
-
+	
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
-
-		assertEquals(11, result.size());
+	
+		assertEquals(1, result.size());
+		assertEquals("conventionCollective", result.get(0).getLibelle());
 	}
 
 	@Test
-	public void getRefTypesAbsence_C() {
+	public void getRefTypesAbsence_Contractuels() {
 
-		RefTypeAbsence ASA_A49 = new RefTypeAbsence();
-		ASA_A49.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
-		RefTypeAbsence ASA_A50 = new RefTypeAbsence();
-		ASA_A50.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
-		RefTypeAbsence ASA_A52 = new RefTypeAbsence();
-		ASA_A52.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
-		RefTypeAbsence ASA_A53 = new RefTypeAbsence();
-		ASA_A53.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
-		RefTypeAbsence ASA_A55 = new RefTypeAbsence();
-		ASA_A55.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
-		RefTypeAbsence ASA_A54 = new RefTypeAbsence();
-		ASA_A54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
-		RefTypeAbsence ASA_A48 = new RefTypeAbsence();
-		ASA_A48.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
-		RefTypeAbsence AUTRES = new RefTypeAbsence();
-		AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
-		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
-		CONGE_ANNUEL.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
-		RefTypeAbsence MALADIES = new RefTypeAbsence();
-		MALADIES.setIdRefTypeAbsence(RefTypeAbsenceEnum.MALADIES.getValue());
-		RefTypeAbsence RECUP = new RefTypeAbsence();
-		RECUP.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
-		RefTypeAbsence REPOS_COMP = new RefTypeAbsence();
-		REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		RefTypeSaisi typeSaisiFonctionnaire = new RefTypeSaisi();
+			typeSaisiFonctionnaire.setFonctionnaire(true);
+			typeSaisiFonctionnaire.setContractuel(false);
+			typeSaisiFonctionnaire.setConventionCollective(false);
+		
+		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
+			typeAbsenceFonctionnaire.setLabel("fonctionnaire");
+			typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
+			
+		RefTypeSaisi typeSaisiContractuel = new RefTypeSaisi();
+			typeSaisiContractuel.setFonctionnaire(false);
+			typeSaisiContractuel.setContractuel(true);
+			typeSaisiContractuel.setConventionCollective(false);
+		
+		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
+			typeAbsenceContractuel.setLabel("contractuel");
+			typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
+			
+		RefTypeSaisi typeSaisiConventionCollective = new RefTypeSaisi();
+			typeSaisiConventionCollective.setFonctionnaire(false);
+			typeSaisiConventionCollective.setContractuel(false);
+			typeSaisiConventionCollective.setConventionCollective(true);
+		
+		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
+			typeAbsenceConventionCollective.setLabel("conventionCollective");
+			typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-		refTypeAbs.addAll(Arrays.asList(ASA_A49, ASA_A50, ASA_A52, ASA_A53, ASA_A55, ASA_A54, ASA_A48, AUTRES,
-				CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
-
+			refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel, typeAbsenceConventionCollective));
+		
 		Spcarr carr = new Spcarr();
-		carr.setCdcate(7);
-
+			carr.setCdcate(4);
+		
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(false);
+		Mockito.when(helperService.isContractuel(carr)).thenReturn(true);
+		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, helperService.getCurrentDate())).thenReturn(carr);
@@ -246,7 +260,8 @@ public class FiltreServiceTest {
 
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
 
-		assertEquals(11, result.size());
+		assertEquals(1, result.size());
+		assertEquals("contractuel", result.get(0).getLibelle());
 	}
 
 	@Test

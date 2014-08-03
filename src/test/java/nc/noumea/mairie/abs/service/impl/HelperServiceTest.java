@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.domain.Spcarr;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -430,5 +431,68 @@ public class HelperServiceTest {
 		Date result = service.getDateFinMoisForOneDate(dateDemande);
 
 		assertEquals(result, new DateTime(2014, 05, 31, 23, 59, 59).toDate());
+	}
+	
+	@Test 
+	public void isFonctionnaire_false() {
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(4);
+		
+		HelperService service = new HelperService();
+		assertFalse(service.isFonctionnaire(carr));
+	}
+	
+	@Test 
+	public void isFonctionnaire_falseBis() {
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(7);
+		
+		HelperService service = new HelperService();
+		assertFalse(service.isFonctionnaire(carr));
+	}
+	
+	@Test 
+	public void isFonctionnaire_true() {
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(1);
+		
+		HelperService service = new HelperService();
+		assertTrue(service.isFonctionnaire(carr));
+	}
+	
+	@Test 
+	public void isContractuel_false() {
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(2);
+		
+		HelperService service = new HelperService();
+		assertFalse(service.isContractuel(carr));
+	}
+
+	@Test 
+	public void isContractuel_true() {
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(4);
+		
+		HelperService service = new HelperService();
+		assertTrue(service.isContractuel(carr));
+	}
+	
+	@Test 
+	public void isConventionCollective_false() {
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(3);
+		
+		HelperService service = new HelperService();
+		assertFalse(service.isConventionCollective(carr));
+	}
+	
+	@Test 
+	public void isConventionCollective_true() {
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(7);
+		
+		HelperService service = new HelperService();
+		assertTrue(service.isConventionCollective(carr));
 	}
 }

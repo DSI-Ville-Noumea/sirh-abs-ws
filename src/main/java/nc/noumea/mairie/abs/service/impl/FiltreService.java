@@ -6,7 +6,6 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
@@ -72,18 +71,19 @@ public class FiltreService implements IFiltreService {
 
 		for (RefTypeAbsence type : refTypeAbs) {
 			if (null != carr) {
-				boolean ajout = true;
-				if (carr.getCdcate() == 4 || carr.getCdcate() == 7) {
-					if (type.getIdRefTypeAbsence() == RefTypeAbsenceEnum.ASA_A55.getValue()) {
-						// si contractuel ou convention
-						ajout = false;
-					}
-
-				} else {
-					// si fonctionanire
-					if (type.getIdRefTypeAbsence() == RefTypeAbsenceEnum.REPOS_COMP.getValue()) {
-						ajout = false;
-					}
+				boolean ajout = false;
+				
+				if(helperService.isFonctionnaire(carr)
+						&& type.getTypeSaisi().isFonctionnaire()){
+					ajout = true;
+				}
+				if(helperService.isContractuel(carr)
+						&& type.getTypeSaisi().isContractuel()){
+					ajout = true;
+				}
+				if(helperService.isConventionCollective(carr)
+						&& type.getTypeSaisi().isConventionCollective()){
+					ajout = true;
 				}
 				if (ajout) {
 					RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);

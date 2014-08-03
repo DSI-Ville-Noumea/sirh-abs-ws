@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.domain.Spcarr;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -185,5 +186,17 @@ public class HelperService {
 		int year = calendar.get(Calendar.YEAR);
 		// on recupere le dernier jour du mois de la demande
 		return new DateTime(year, month, maxDay, 23, 59, 59).toDate();
+	}
+	
+	public boolean isFonctionnaire(Spcarr carr) {
+		return (carr.getCdcate() != 4 && carr.getCdcate() != 7);
+	}
+	
+	public boolean isContractuel(Spcarr carr) {
+		return (carr.getCdcate() == 4);
+	}
+	
+	public boolean isConventionCollective(Spcarr carr) {
+		return (carr.getCdcate() == 7);
 	}
 }
