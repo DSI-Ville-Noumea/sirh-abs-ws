@@ -24,6 +24,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		checkChampMotifDemandeSaisi_ko_motifNull();
 		checkChampMotifDemandeSaisi_ko_motifVide();
 		isAfficherBoutonImprimer();
+		isAfficherBoutonAnnuler();
 		
 		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		super.allTest(impl);
@@ -164,6 +165,58 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+	}
+	
+	@Test
+	public void isAfficherBoutonAnnuler() {
+		
+		AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
+		
+		DemandeDto demandeDto = new DemandeDto();
+			demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		
+		boolean result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto);
 		assertFalse(result);
 	}
 }

@@ -40,4 +40,13 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat());
 	}
+	
+	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto) {
+		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat());
+	}
 }
