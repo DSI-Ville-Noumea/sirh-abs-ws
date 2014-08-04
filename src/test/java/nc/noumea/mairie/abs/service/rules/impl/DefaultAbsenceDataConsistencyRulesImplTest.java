@@ -97,7 +97,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		filtreDateAndEtatDemandeFromList_DemandesEnCours_4results();
 		filtreDateAndEtatDemandeFromList_DemandesNonPrises_1result();
 		filtreDroitOfDemandeSIRH();
-		isAfficherBoutonAnnuler();
+		isAfficherBoutonAnnuler_isOperateur();
+		isAfficherBoutonAnnuler_isNotOperateur();
 		filtreDroitOfListeDemandesByDemande_Delegataire();
 		filtreDroitOfListeDemandesByDemande_Approbateur();
 		filtreDroitOfListeDemandesByDemande_Viseur();
@@ -1398,52 +1399,102 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	}
 
 	@Test
-	public void isAfficherBoutonAnnuler() {
+	public void isAfficherBoutonAnnuler_isOperateur() {
 
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 
-		boolean result = impl.isAfficherBoutonAnnuler(demandeDto);
+		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		assertFalse(result);
+	}
+	
+	@Test
+	public void isAfficherBoutonAnnuler_isNotOperateur() {
+
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+
+		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertTrue(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertTrue(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertTrue(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertFalse(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertFalse(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertFalse(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertFalse(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertFalse(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertFalse(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertFalse(result);
+
+		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
 		assertFalse(result);
 	}
 

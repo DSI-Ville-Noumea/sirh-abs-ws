@@ -215,7 +215,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					RefEtatEnum.PROVISOIRE.getCodeEtat())
 					|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
 			demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
-			demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto));
+			demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, false));
 
 			return demandeDto;
 		}
@@ -235,7 +235,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 								RefEtatEnum.PROVISOIRE.getCodeEtat())
 								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
 						demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
-						demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto));
+						demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
 						demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(
 								RefEtatEnum.ANNULEE.getCodeEtat()));
 						continue;
@@ -276,7 +276,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto) {
 
-		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto));
+		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
 		demandeDto.setAffichageValidation(false);
 		demandeDto.setModifierValidation(false);
 		demandeDto.setAffichageEnAttente(false);
@@ -289,7 +289,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		return false;
 	}
 
-	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto) {
+	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
