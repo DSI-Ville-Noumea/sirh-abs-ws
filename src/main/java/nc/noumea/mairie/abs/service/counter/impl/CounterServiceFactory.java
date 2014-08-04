@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.service.ICounterService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,18 +46,41 @@ public class CounterServiceFactory {
 	@Autowired
 	@Qualifier("AsaA55CounterServiceImpl")
 	private ICounterService asaA55CounterServiceImpl;
-
+	
+	@Autowired
+	@Qualifier("CongesExcepCounterServiceImpl")
+	private ICounterService congesExcepCounterServiceImpl;
+	
 	// Méthode permettant de récupérer les Factory
-	public ICounterService getFactory(int type) {
+	public ICounterService getFactory(int groupe, int type) {
 
-		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
-			case CONGE_ANNUEL:
-				// TODO
-				break;
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(groupe)) {
 			case REPOS_COMP:
 				return reposCompCounterServiceImpl;
 			case RECUP:
 				return recupCounterServiceImpl;
+			case CONGE_ANNUEL:
+				// TODO
+				break;
+			case ASA:
+				return getFactoryAsa(type);
+			case CONGES_EXCEP:
+				return congesExcepCounterServiceImpl;
+			case AUTRES:
+				// TODO
+				break;
+			case MALADIES:
+				// TODO
+				break;
+		}
+		return defaultCounterServiceImpl;
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	private ICounterService getFactoryAsa(int type) {
+		
+		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
+			
 			case ASA_A48:
 				return asaA48CounterServiceImpl;
 			case ASA_A49:
@@ -71,12 +95,6 @@ public class CounterServiceFactory {
 				return asaA54CounterServiceImpl;
 			case ASA_A55:
 				return asaA55CounterServiceImpl;
-			case AUTRES:
-				// TODO
-				break;
-			case MALADIES:
-				// TODO
-				break;
 		}
 		return defaultCounterServiceImpl;
 	}

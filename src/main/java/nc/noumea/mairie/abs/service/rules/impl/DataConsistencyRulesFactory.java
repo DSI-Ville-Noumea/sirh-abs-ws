@@ -81,7 +81,7 @@ public class DataConsistencyRulesFactory {
 	}
 	
 	@SuppressWarnings("incomplete-switch")
-	public IAbsenceDataConsistencyRules getFactoryAsa(int type) {
+	private IAbsenceDataConsistencyRules getFactoryAsa(int type) {
 		
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
 			

@@ -507,7 +507,9 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {
@@ -540,7 +542,9 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {
@@ -891,7 +895,9 @@ public class AbsenceService implements IAbsenceService {
 			return;
 		}
 
-		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {

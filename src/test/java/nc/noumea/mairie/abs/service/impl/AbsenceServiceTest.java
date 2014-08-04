@@ -977,8 +977,12 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		dto.setIdDemande(1);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(2);
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		type.setGroupe(groupe);
 
 		DemandeRecup demande = Mockito.spy(new DemandeRecup());
 		demande.setDuree(10);
@@ -1016,7 +1020,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		AbsenceService service = new AbsenceService();
@@ -1043,9 +1049,13 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		dto.setIdDemande(1);
-
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+	
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		type.setGroupe(groupe);
 
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
 		demande.setDuree(10.0);
@@ -1090,7 +1100,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		AbsenceService service = new AbsenceService();
@@ -1118,12 +1130,17 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		dto.setIdDemande(1);
-
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+	
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+			type.setGroupe(groupe);
+			
 		DemandeRecup demande = Mockito.spy(new DemandeRecup());
-		demande.setDuree(10);
-		demande.setType(type);
+			demande.setDuree(10);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
@@ -1157,7 +1174,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		AbsenceService service = new AbsenceService();
@@ -1401,7 +1420,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
@@ -1491,7 +1512,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
@@ -3912,8 +3935,12 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		dto.setIdDemande(1);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(2);
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		type.setGroupe(groupe);
 
 		DemandeReposComp demande = Mockito.spy(new DemandeReposComp());
 		demande.setDuree(10);
@@ -3950,7 +3977,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		ReturnMessageDto messageAgent = new ReturnMessageDto();
@@ -3982,9 +4011,13 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		dto.setIdDemande(1);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
-
+		type.setGroupe(groupe);
+		
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
 		demande.setDuree(10.0);
 		demande.setType(type);
@@ -4021,7 +4054,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		AbsenceService service = new AbsenceService();
@@ -4050,12 +4085,17 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		dto.setIdDemande(1);
-
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+			type.setGroupe(groupe);
+		
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
-		demande.setDuree(10.0);
-		demande.setType(type);
+			demande.setDuree(10.0);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
@@ -4076,7 +4116,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		ReturnMessageDto messageAgent = new ReturnMessageDto();
@@ -4320,7 +4362,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		AbsenceService service = new AbsenceService();
@@ -4413,7 +4457,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		AbsenceService service = new AbsenceService();
@@ -5886,9 +5932,13 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		dto.setIdDemande(1);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+	
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
-
+		type.setGroupe(groupe);
+		
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
 		demande.setDuree(10.0);
 		demande.setType(type);
@@ -5932,7 +5982,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		AbsenceService service = new AbsenceService();
@@ -5958,10 +6010,14 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		dto.setIdDemande(1);
-
+	
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+	
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
-
+		type.setGroupe(groupe);
+		
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
 		demande.setDuree(10.0);
 		demande.setType(type);
@@ -6005,7 +6061,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		AbsenceService service = new AbsenceService();
@@ -6090,9 +6148,13 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		dto.setIdDemande(1);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
-
+		type.setGroupe(groupe);
+		
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
 		demande.setDuree(10.0);
 		demande.setType(type);
@@ -6129,7 +6191,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		AbsenceService service = new AbsenceService();
@@ -6159,11 +6223,16 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		dto.setIdDemande(1);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+			type.setGroupe(groupe);
+		
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
-		demande.setDuree(10.0);
-		demande.setType(type);
+			demande.setDuree(10.0);
+			demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
@@ -6184,7 +6253,9 @@ public class AbsenceServiceTest {
 						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
-		Mockito.when(counterServiceFactory.getFactory(demande.getType().getIdRefTypeAbsence())).thenReturn(
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
 		ReturnMessageDto messageAgent = new ReturnMessageDto();
