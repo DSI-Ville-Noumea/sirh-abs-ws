@@ -3,7 +3,12 @@ package nc.noumea.mairie.abs.service.rules.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+
+import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
+import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
@@ -16,6 +21,8 @@ import org.springframework.mock.staticmock.MockStaticEntityMethods;
 @MockStaticEntityMethods
 public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDataConsistencyRulesImplTest {
 
+	protected AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
+	
 	@Test
 	public void testMethodeParenteHeritage() throws Throwable {
 		
@@ -26,6 +33,10 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		isAfficherBoutonImprimer();
 		isAfficherBoutonAnnuler_isOperateur();
 		isAfficherBoutonAnnuler_isNotOperateur();
+		checkEtatsDemandeAnnulee_isValidee();
+		checkEtatsDemandeAnnulee_isAttente();
+		checkEtatsDemandeAnnulee_isPrise();
+		checkEtatsDemandeAnnulee_isRejete();
 		
 		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		super.allTest(impl);
@@ -46,7 +57,6 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		demande.setCommentaire(null);
 		demande.setType(type);
 		
-		AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		srm = impl.checkChampMotifDemandeSaisi(srm, demande);
 		
 		assertEquals(0, srm.getErrors().size());
@@ -67,7 +77,6 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		demande.setCommentaire("commentaire");
 		demande.setType(type);
 		
-		AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		srm = impl.checkChampMotifDemandeSaisi(srm, demande);
 		
 		assertEquals(0, srm.getErrors().size());
@@ -88,7 +97,6 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		demande.setCommentaire(null);
 		demande.setType(type);
 		
-		AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		srm = impl.checkChampMotifDemandeSaisi(srm, demande);
 		
 		assertEquals(1, srm.getErrors().size());
@@ -110,7 +118,6 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		demande.setCommentaire("");
 		demande.setType(type);
 		
-		AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		srm = impl.checkChampMotifDemandeSaisi(srm, demande);
 		
 		assertEquals(1, srm.getErrors().size());
@@ -119,8 +126,6 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	
 	@Test
 	public void isAfficherBoutonImprimer() {
-		
-		AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		
 		DemandeDto demandeDto = new DemandeDto();
 			demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
@@ -172,8 +177,6 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	@Test
 	public void isAfficherBoutonAnnuler_isOperateur() {
 		
-		AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
-		
 		DemandeDto demandeDto = new DemandeDto();
 			demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		
@@ -224,8 +227,6 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	@Test
 	public void isAfficherBoutonAnnuler_isNotOperateur() {
 		
-		AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
-		
 		DemandeDto demandeDto = new DemandeDto();
 			demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		
@@ -271,5 +272,65 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
 		assertFalse(result);
+	}
+	
+	@Test
+	public void checkEtatsDemandeAnnulee_isValidee() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.VALIDEE);
+		demande.getEtatsDemande().add(etat);
+
+		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkEtatsDemandeAnnulee_isAttente() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.EN_ATTENTE);
+		demande.getEtatsDemande().add(etat);
+
+		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkEtatsDemandeAnnulee_isPrise() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.PRISE);
+		demande.getEtatsDemande().add(etat);
+
+		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkEtatsDemandeAnnulee_isRejete() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.REJETE);
+		demande.getEtatsDemande().add(etat);
+
+		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		assertEquals(1, srm.getErrors().size());
 	}
 }
