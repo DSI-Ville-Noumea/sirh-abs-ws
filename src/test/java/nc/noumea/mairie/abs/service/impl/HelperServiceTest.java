@@ -164,6 +164,56 @@ public class HelperServiceTest {
 
 		assertEquals(result, dateFinAttendue);
 	}
+	
+	@Test
+	public void getDateFin_typeSaisiJustIsCalendarDateFin_resultOk() {
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setDuree(false);
+			typeSaisi.setCalendarDateFin(true);
+			typeSaisi.setCalendarHeureFin(false);
+			typeSaisi.setChkDateFin(false);
+
+		HelperService service = new HelperService();
+
+		java.util.Date dateFinSaisie = new java.util.Date();
+		java.util.Date dateFinAttendue = new java.util.Date();
+		try {
+			dateFinSaisie = sdf.parse("2013-12-17 00:00:00");
+			dateFinAttendue = sdf.parse("2013-12-17 23:59:59");
+		} catch (ParseException pe) {
+			pe.printStackTrace();
+		}
+
+		Date result = service.getDateFin(typeSaisi, dateFinSaisie, null, null, false, true);
+
+		assertEquals(result, dateFinAttendue);
+	}
+	
+	@Test
+	public void getDateFin_typeSaisiNoDateFinNoDuree_resultOk() {
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setDuree(false);
+			typeSaisi.setCalendarDateFin(false);
+			typeSaisi.setCalendarHeureFin(false);
+			typeSaisi.setChkDateFin(false);
+
+		HelperService service = new HelperService();
+
+		java.util.Date dateDebutSaisie = new java.util.Date();
+		java.util.Date dateFinAttendue = new java.util.Date();
+		try {
+			dateDebutSaisie = sdf.parse("2013-12-17 00:00:00");
+			dateFinAttendue = sdf.parse("2013-12-17 23:59:59");
+		} catch (ParseException pe) {
+			pe.printStackTrace();
+		}
+
+		Date result = service.getDateFin(typeSaisi, null, dateDebutSaisie, null, false, true);
+
+		assertEquals(result, dateFinAttendue);
+	}
 
 	@Test
 	public void getDateDebut_typeSaisiDateEtHeureFin_resultOk() {
@@ -225,6 +275,30 @@ public class HelperServiceTest {
 		try {
 			dateDebSaisie = sdf.parse("2013-12-17 00:00:00");
 			datedebutAttendue = sdf.parse("2013-12-17 12:00:00");
+		} catch (ParseException pe) {
+			pe.printStackTrace();
+		}
+
+		Date result = service.getDateDebut(typeSaisi, dateDebSaisie, false, true);
+
+		assertEquals(result, datedebutAttendue);
+	}
+	
+	@Test
+	public void getDateDebut_typeSaisiNoHeureNoChk_resultOk() {
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setChkDateDebut(false);
+			typeSaisi.setCalendarHeureDebut(false);
+
+		HelperService service = new HelperService();
+
+		java.util.Date dateDebSaisie = new java.util.Date();
+		java.util.Date datedebutAttendue = new java.util.Date();
+		try {
+			dateDebSaisie = sdf.parse("2013-12-17 00:00:00");
+			datedebutAttendue = sdf.parse("2013-12-17 00:00:00");
 		} catch (ParseException pe) {
 			pe.printStackTrace();
 		}

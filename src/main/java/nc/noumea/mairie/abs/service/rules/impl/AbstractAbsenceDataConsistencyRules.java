@@ -80,7 +80,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String MOTIF_OBLIGATOIRE = "Le motif est obligatoire.";
 	public static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
 	public static final String STATUT_AGENT = "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
-	public static final String STATUT_AGENT_FONCTIONNAIRE = "Ce type de demande ne peut êter saisi que par les fonctionnaires.";
+	public static final String STATUT_AGENT_FONCTIONNAIRE = "Ce type de demande ne peut pas être saisi par les fonctionnaires.";
+	public static final String STATUT_AGENT_CONTRACTUEL = "Ce type de demande ne peut pas être saisi par les contractuels.";
+	public static final String STATUT_AGENT_CONV_COLL = "Ce type de demande ne peut pas être saisi par les conventions collectives.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
@@ -95,6 +97,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 		checkAgentInactivity(srm, idAgent, dateLundi);
+		checkStatutAgent(srm, demande);
 	}
 
 	@Override
@@ -351,16 +354,34 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		return false;
 	}
 
-	public ReturnMessageDto checkStatutAgentFonctionnaire(ReturnMessageDto srm, Integer idAgent) {
+	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Demande demande) {
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
-		// contractuel,convention coll
+		// contractuel, convention coll
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
-		if (carr.getCdcate() == 4 || carr.getCdcate() == 7) {
-			logger.warn(String.format(STATUT_AGENT_FONCTIONNAIRE, idAgent));
-			srm.getErrors().add(String.format(STATUT_AGENT_FONCTIONNAIRE, idAgent));
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), helperService.getCurrentDate());
+		
+		if(null != demande.getType().getTypeSaisi()) {
+			if(helperService.isFonctionnaire(carr)
+					&& !demande.getType().getTypeSaisi().isFonctionnaire()){
+				logger.warn(String.format(STATUT_AGENT_FONCTIONNAIRE, demande.getIdAgent()));
+				srm.getErrors().add(String.format(STATUT_AGENT_FONCTIONNAIRE, demande.getIdAgent()));
+				return srm;
+			}
+			if(helperService.isContractuel(carr)
+					&& !demande.getType().getTypeSaisi().isContractuel()){
+				logger.warn(String.format(STATUT_AGENT_CONTRACTUEL, demande.getIdAgent()));
+				srm.getErrors().add(String.format(STATUT_AGENT_CONTRACTUEL, demande.getIdAgent()));
+				return srm;
+			}
+			if(helperService.isConventionCollective(carr)
+					&& !demande.getType().getTypeSaisi().isConventionCollective()){
+				logger.warn(String.format(STATUT_AGENT_CONV_COLL, demande.getIdAgent()));
+				srm.getErrors().add(String.format(STATUT_AGENT_CONV_COLL, demande.getIdAgent()));
+				return srm;
+			}
 		}
 
 		return srm;
 	}
+	
 }

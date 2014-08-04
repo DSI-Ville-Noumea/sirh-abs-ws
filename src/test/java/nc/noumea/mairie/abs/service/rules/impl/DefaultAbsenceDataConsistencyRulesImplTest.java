@@ -27,6 +27,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -102,8 +103,12 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		filtreDroitOfListeDemandesByDemande_Viseur();
 		filtreDroitOfListeDemandesByDemande_Operateur();
 		filtreDroitOfListeDemandesByDemande_DemandeOfAgent();
-		checkStatutAgentFonctionnaire_ok();
-		checkStatutAgentFonctionnaire_ko();
+		checkStatutAgent_Fonctionnaire_ok();
+		checkStatutAgent_Fonctionnaire_ko();
+		checkStatutAgent_Contractuel_ok();
+		checkStatutAgent_Contractuel_ko();
+		checkStatutAgent_ConventionCollective_ok();
+		checkStatutAgent_ConventionCollective_ko();
 	}
 
 	@Test
@@ -2745,16 +2750,30 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	}
 
 	@Test
-	public void checkStatutAgentFonctionnaire_ok() {
+	public void checkStatutAgent_Fonctionnaire_ok() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		Integer idAgent = 9005138;
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		typeSaisi.setFonctionnaire(true);
+		typeSaisi.setContractuel(true);
+		typeSaisi.setConventionCollective(true);
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisi(typeSaisi);
+		
+		Demande demande = new Demande();
+		demande.setIdAgent(9005138);
+		demande.setType(type);
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(1);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(true);
+		Mockito.when(helperService.isContractuel(carr)).thenReturn(false);
+		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
@@ -2767,50 +2786,36 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
 
-		srm = impl.checkStatutAgentFonctionnaire(srm, idAgent);
+		srm = impl.checkStatutAgent(srm, demande);
 
 		assertEquals(srm.getErrors().size(), 0);
 	}
 
 	@Test
-	public void checkStatutAgentFonctionnaire_ko() {
+	public void checkStatutAgent_Fonctionnaire_ko() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		Integer idAgent = 9005138;
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setFonctionnaire(false);
+			typeSaisi.setContractuel(true);
+			typeSaisi.setConventionCollective(true);
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisi(typeSaisi);
+		
+		Demande demande = new Demande();
+		demande.setIdAgent(9005138);
+		demande.setType(type);
 
 		Spcarr carr = new Spcarr();
-		carr.setCdcate(4);
+		carr.setCdcate(1);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
-
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
-				.thenReturn(carr);
-
-		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
-		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
-
-		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
-		ReflectionTestUtils.setField(impl, "helperService", helperService);
-		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
-
-		srm = impl.checkStatutAgentFonctionnaire(srm, idAgent);
-
-		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_FONCTIONNAIRE);
-	}
-
-	@Test
-	public void checkStatutAgentFonctionnaire_koBis() {
-
-		ReturnMessageDto srm = new ReturnMessageDto();
-		Integer idAgent = 9005138;
-
-		Spcarr carr = new Spcarr();
-		carr.setCdcate(7);
-
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(true);
+		Mockito.when(helperService.isContractuel(carr)).thenReturn(false);
+		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
@@ -2823,8 +2828,176 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
 
-		srm = impl.checkStatutAgentFonctionnaire(srm, idAgent);
+		srm = impl.checkStatutAgent(srm, demande);
 
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_FONCTIONNAIRE);
+	}
+
+	@Test
+	public void checkStatutAgent_Contractuel_ok() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setContractuel(true);
+			typeSaisi.setConventionCollective(true);
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisi(typeSaisi);
+		
+		Demande demande = new Demande();
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(false);
+		Mockito.when(helperService.isContractuel(carr)).thenReturn(true);
+		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
+		srm = impl.checkStatutAgent(srm, demande);
+
+		assertEquals(srm.getErrors().size(), 0);
+	}
+	
+	@Test
+	public void checkStatutAgent_Contractuel_ko() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setContractuel(false);
+			typeSaisi.setConventionCollective(true);
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisi(typeSaisi);
+		
+		Demande demande = new Demande();
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(false);
+		Mockito.when(helperService.isContractuel(carr)).thenReturn(true);
+		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
+		srm = impl.checkStatutAgent(srm, demande);
+
+		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_CONTRACTUEL);
+	}
+	
+	@Test
+	public void checkStatutAgent_ConventionCollective_ok() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setContractuel(true);
+			typeSaisi.setConventionCollective(true);
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisi(typeSaisi);
+		
+		Demande demande = new Demande();
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(false);
+		Mockito.when(helperService.isContractuel(carr)).thenReturn(false);
+		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(true);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
+		srm = impl.checkStatutAgent(srm, demande);
+
+		assertEquals(srm.getErrors().size(), 0);
+	}
+	
+	@Test
+	public void checkStatutAgent_ConventionCollective_ko() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setContractuel(true);
+			typeSaisi.setConventionCollective(false);
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisi(typeSaisi);
+		
+		Demande demande = new Demande();
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(false);
+		Mockito.when(helperService.isContractuel(carr)).thenReturn(false);
+		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(true);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
+		srm = impl.checkStatutAgent(srm, demande);
+
+		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_CONV_COLL);
 	}
 }

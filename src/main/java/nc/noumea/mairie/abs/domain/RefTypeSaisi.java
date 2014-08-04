@@ -98,6 +98,11 @@ public class RefTypeSaisi {
 	@Column(name = "SAISIE_KIOSQUE", nullable = false)
 	@Type(type = "boolean")
 	private boolean saisieKiosque;
+
+	@NotNull
+	@Column(name = "MOTIF", nullable = false)
+	@Type(type = "boolean")
+	private boolean motif;
 	
 	@Column(name = "DESCRIPTION", columnDefinition = "text")
 	private String description;
@@ -295,7 +300,13 @@ public class RefTypeSaisi {
 	public void setRefUnitePeriodeQuota(RefUnitePeriodeQuota refUnitePeriodeQuota) {
 		this.refUnitePeriodeQuota = refUnitePeriodeQuota;
 	}
-	
-	
+
+	public boolean isMotif() {
+		return motif;
+	}
+
+	public void setMotif(boolean motif) {
+		this.motif = motif;
+	}
 	
 }

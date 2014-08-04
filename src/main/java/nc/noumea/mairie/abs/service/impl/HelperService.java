@@ -71,6 +71,26 @@ public class HelperService {
 			DateTime recupDateFin = new DateTime(dateDeb);
 			return recupDateFin.plusMinutes(duree.intValue()).toDate();
 		}
+		if (typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin()) {
+			Calendar cal = Calendar.getInstance();
+				cal.setTime(dateFin);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+				cal.set(Calendar.SECOND, SECONDS_FIN);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+			return cal.getTime();
+		}
+		if (!typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() 
+				&& !typeSaisi.isChkDateFin()
+				&& !typeSaisi.isDuree()) {
+			Calendar cal = Calendar.getInstance();
+				cal.setTime(dateDeb);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+				cal.set(Calendar.SECOND, SECONDS_FIN);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+			return cal.getTime();
+		}
 
 		return null;
 	}
@@ -101,7 +121,16 @@ public class HelperService {
 				return cal.getTime();
 			}
 		}
-
+		
+		if (typeSaisi.isCalendarDateDebut() && !typeSaisi.isCalendarHeureDebut() && !typeSaisi.isChkDateDebut()) {
+			Calendar cal = Calendar.getInstance();
+				cal.setTime(dateDeb);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_AM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
+				cal.set(Calendar.SECOND, SECONDS_DEBUT);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+			return cal.getTime();
+		}
 		return null;
 	}
 

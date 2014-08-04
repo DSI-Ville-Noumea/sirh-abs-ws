@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
@@ -12,9 +13,26 @@ import org.springframework.stereotype.Service;
 @Service("AbsCongesExcepDataConsistencyRulesImpl")
 public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
 
+	public static final String CHAMP_COMMENTAIRE_OBLIGATOIRE = "Le champ Commentaire est obligatoire.";
+	
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+		checkChampMotifDemandeSaisi(srm, (DemandeCongesExceptionnels)demande);
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
+	}
+	
+	public ReturnMessageDto checkChampMotifDemandeSaisi(ReturnMessageDto srm, DemandeCongesExceptionnels demande) {
+		
+		if(null != demande.getType().getTypeSaisi()) {
+			if((null == demande.getCommentaire()
+					|| "".equals(demande.getCommentaire().trim()))
+					&& demande.getType().getTypeSaisi().isMotif()){
+				logger.warn(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
+				srm.getErrors().add(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
+			}
+		}
+
+		return srm;
 	}
 }

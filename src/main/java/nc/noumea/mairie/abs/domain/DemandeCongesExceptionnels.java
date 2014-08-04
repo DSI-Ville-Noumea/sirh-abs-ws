@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "ABS_DEMANDE_ASA")
+@Table(name = "ABS_DEMANDE_CONGES_EXCEPTIONNELS")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @PrimaryKeyJoinColumn(name = "ID_DEMANDE")
 public class DemandeCongesExceptionnels extends Demande {

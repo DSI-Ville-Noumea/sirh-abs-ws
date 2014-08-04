@@ -9,6 +9,7 @@ import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
@@ -17,6 +18,7 @@ import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -106,7 +108,7 @@ public class AbsenceService implements IAbsenceService {
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande
 		// et on effectue les verifications appropriees
-		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demandeDto.getIdTypeDemande())) {
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
 			case CONGE_ANNUEL:
 				// TODO
 				break;
@@ -134,13 +136,7 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				break;
-			case ASA_A48:
-			case ASA_A52:
-			case ASA_A53:
-			case ASA_A54:
-			case ASA_A55:
-			case ASA_A49:
-			case ASA_A50:
+			case ASA:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
 
@@ -171,6 +167,34 @@ public class AbsenceService implements IAbsenceService {
 					demandeAsa.setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class, demandeDto
 							.getOrganisationSyndicale().getIdOrganisation()));
 				}
+				break;
+			case CONGES_EXCEP:
+				DemandeCongesExceptionnels demandeCongesExcep = getDemande(DemandeCongesExceptionnels.class, demandeDto.getIdDemande());
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeCongesExcep, idAgent, dateJour);
+
+				if (null == demande.getType().getTypeSaisi())
+					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de fin, 3 - calcul duree
+				// car dependance entre ces 3 donnees pour les calculs
+				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
+						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+						demande.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
+						demandeDto.isDateFinPM()));
+
+				demandeCongesExcep = (DemandeCongesExceptionnels) demande;
+				demandeCongesExcep.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
+						demande.getDateFin(), demandeDto.getDuree()));
+				demandeCongesExcep.setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
+						.isDateDebutAM() : false);
+				demandeCongesExcep.setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
+						.isDateDebutPM() : false);
+				demandeCongesExcep.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM()
+						: false);
+				demandeCongesExcep.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM()
+						: false);
+				demandeCongesExcep.setCommentaire(demande.getType().getTypeSaisi().isMotif() ? demandeDto.getCommentaire() : null);
 				break;
 			case AUTRES:
 				// TODO
