@@ -6,6 +6,7 @@ import java.util.Date;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
 	}
 	
-	public ReturnMessageDto checkChampMotifDemandeSaisi(ReturnMessageDto srm, DemandeCongesExceptionnels demande) {
+	protected ReturnMessageDto checkChampMotifDemandeSaisi(ReturnMessageDto srm, DemandeCongesExceptionnels demande) {
 		
 		if(null != demande.getType().getTypeSaisi()) {
 			if((null == demande.getCommentaire()
@@ -34,5 +35,9 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 		}
 
 		return srm;
+	}
+	
+	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat());
 	}
 }

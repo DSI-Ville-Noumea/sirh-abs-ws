@@ -1,9 +1,13 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.junit.Test;
@@ -19,6 +23,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		checkChampMotifDemandeSaisi_ok_motifSaisi();
 		checkChampMotifDemandeSaisi_ko_motifNull();
 		checkChampMotifDemandeSaisi_ko_motifVide();
+		isAfficherBoutonImprimer();
 		
 		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		super.allTest(impl);
@@ -108,5 +113,57 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(srm.getErrors().get(0), AbsCongesExcepDataConsistencyRulesImpl.CHAMP_COMMENTAIRE_OBLIGATOIRE);
+	}
+	
+	@Test
+	public void isAfficherBoutonImprimer() {
+		
+		AbsCongesExcepDataConsistencyRulesImpl impl = new AbsCongesExcepDataConsistencyRulesImpl();
+		
+		DemandeDto demandeDto = new DemandeDto();
+			demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		
+		boolean result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertTrue(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
+		
+		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		result = impl.isAfficherBoutonImprimer(demandeDto);
+		assertFalse(result);
 	}
 }
