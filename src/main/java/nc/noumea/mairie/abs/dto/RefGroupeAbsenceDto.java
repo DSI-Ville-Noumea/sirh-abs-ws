@@ -14,6 +14,9 @@ public class RefGroupeAbsenceDto {
 		this.libelle = groupe.getLibelle();
 	}
 	
+	public RefGroupeAbsenceDto() {
+	}
+
 	public Integer getIdRefGroupeAbsence() {
 		return idRefGroupeAbsence;
 	}

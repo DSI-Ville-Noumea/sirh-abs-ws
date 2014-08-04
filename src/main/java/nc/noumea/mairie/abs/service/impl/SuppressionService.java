@@ -78,7 +78,9 @@ public class SuppressionService implements ISuppressionService {
 		
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = new DefaultAbsenceDataConsistencyRulesImpl();
 		if(null != demande) {
-			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande.getType().getIdRefTypeAbsence());
+			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+					demande.getType().getGroupe().getIdRefGroupeAbsence(), 
+					demande.getType().getIdRefTypeAbsence());
 		}
 		
 		// on verifie si la demande existe

@@ -34,6 +34,7 @@ import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -296,11 +297,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -367,7 +373,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -402,12 +408,17 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -470,7 +481,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(
@@ -1268,9 +1279,13 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		dto.setIdDemande(1);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		type.setGroupe(groupe);
 
 		Demande demande = Mockito.spy(new Demande());
 		demande.setIdAgent(idAgent);
@@ -1297,7 +1312,7 @@ public class AbsenceServiceTest {
 						Mockito.isA(List.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(
@@ -1337,8 +1352,12 @@ public class AbsenceServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(2);
+			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+			type.setGroupe(groupe);
 
 		DemandeReposComp demande = Mockito.spy(new DemandeReposComp());
 		demande.setDuree(10);
@@ -1373,7 +1392,7 @@ public class AbsenceServiceTest {
 						Mockito.anyString());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -1422,9 +1441,13 @@ public class AbsenceServiceTest {
 		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(2);
+		type.setGroupe(groupe);
 
 		DemandeReposComp demande = Mockito.spy(new DemandeReposComp());
 		demande.setDuree(10);
@@ -1459,7 +1482,7 @@ public class AbsenceServiceTest {
 						Mockito.anyString());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -1598,11 +1621,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -1669,7 +1697,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -1704,12 +1732,17 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -1772,7 +1805,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(
@@ -1895,12 +1928,16 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -1975,7 +2012,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -2011,11 +2048,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -2084,7 +2126,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(
@@ -2364,11 +2406,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -2434,7 +2481,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande())).thenReturn(new RefTypeSaisi());
@@ -2462,11 +2509,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -2525,7 +2577,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -2641,13 +2693,17 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDateFin(dateFin);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -2730,7 +2786,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -2761,11 +2817,15 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -2844,7 +2904,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -2961,11 +3021,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -3028,7 +3093,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -3058,12 +3123,17 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -3125,7 +3195,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande())).thenReturn(new RefTypeSaisi());
@@ -3215,7 +3285,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -3243,9 +3313,15 @@ public class AbsenceServiceTest {
 		listdemande.add(d);
 
 		List<DemandeDto> listdemandeDto = new ArrayList<DemandeDto>();
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+			groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
-		dto.setIdDemande(1);
-		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
+			dto.setIdDemande(1);
+			dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
+			dto.setGroupeAbsence(groupeAbsence);
+		
 		listdemandeDto.add(dto);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -3258,7 +3334,7 @@ public class AbsenceServiceTest {
 		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -3785,11 +3861,6 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
-	@Test
-	public void setDemandeEtatSIRH_setDemandeEtatAnnule() {
-
-	}
-
 	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtatSIRH_setDemandeA48EtatAnnule_checkEtatDemande() {
@@ -3800,10 +3871,14 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		dto.setIdDemande(1);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
-
+		type.setGroupe(groupe);
+		
 		Demande demande = Mockito.spy(new Demande());
 		demande.setIdAgent(idAgent);
 		demande.setType(type);
@@ -3829,7 +3904,7 @@ public class AbsenceServiceTest {
 						Mockito.isA(List.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -3860,8 +3935,12 @@ public class AbsenceServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(2);
+		type.setGroupe(groupe);
 
 		DemandeReposComp demande = Mockito.spy(new DemandeReposComp());
 		demande.setDuree(10);
@@ -3900,7 +3979,7 @@ public class AbsenceServiceTest {
 						Mockito.anyString());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -3950,8 +4029,12 @@ public class AbsenceServiceTest {
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(2);
+		type.setGroupe(groupe);
 
 		DemandeReposComp demande = Mockito.spy(new DemandeReposComp());
 		demande.setDuree(10);
@@ -3990,7 +4073,7 @@ public class AbsenceServiceTest {
 						Mockito.anyString());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -4032,11 +4115,15 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -4121,7 +4208,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -4157,11 +4244,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 
@@ -4241,7 +4333,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(
@@ -4276,12 +4368,16 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A52.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -4366,7 +4462,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -4402,11 +4498,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A52.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 
@@ -4486,7 +4587,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(
@@ -4522,11 +4623,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 
@@ -4596,7 +4702,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -4627,11 +4733,15 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -4701,7 +4811,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -4731,12 +4841,17 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A53.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 
@@ -4817,7 +4932,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -4848,11 +4963,15 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A53.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		dto.setDateDebutAM(true);
 		dto.setDateDebutPM(true);
@@ -4931,7 +5050,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -4962,11 +5081,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A49.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 
@@ -5047,7 +5171,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -5077,12 +5201,16 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A49.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		dto.setDateDebutAM(false);
 		dto.setDateDebutPM(false);
@@ -5161,7 +5289,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -5192,11 +5320,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A50.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 
@@ -5277,7 +5410,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -5307,12 +5440,16 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A50.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		dto.setDateDebutAM(true);
 		dto.setDateDebutPM(true);
@@ -5391,7 +5528,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
@@ -5570,9 +5707,13 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		dto.setIdDemande(1);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
-
+		type.setGroupe(groupe);
+		
 		Demande demande = Mockito.spy(new Demande());
 		demande.setIdAgent(idAgent);
 		demande.setType(type);
@@ -5598,7 +5739,7 @@ public class AbsenceServiceTest {
 						Mockito.isA(List.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -6301,9 +6442,15 @@ public class AbsenceServiceTest {
 		listdemande.add(d);
 
 		List<DemandeDto> listdemandeDto = new ArrayList<DemandeDto>();
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		listdemandeDto.add(dto);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -6316,7 +6463,7 @@ public class AbsenceServiceTest {
 		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -6482,9 +6629,14 @@ public class AbsenceServiceTest {
 		listdemande.add(d);
 
 		List<DemandeDto> listdemandeDto = new ArrayList<DemandeDto>();
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 		listdemandeDto.add(dto);
 
 		RefEtat etat = new RefEtat();
@@ -6504,7 +6656,7 @@ public class AbsenceServiceTest {
 				listdemandeDto);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent)).thenReturn(dto);
 		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(false);
 
@@ -6596,11 +6748,15 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A50.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -6685,7 +6841,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -6721,11 +6877,16 @@ public class AbsenceServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A50.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 
@@ -6805,7 +6966,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(
@@ -6840,12 +7001,16 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDuree(10.0);
 		dto.setDateDebut(dateDebut);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A49.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -6930,7 +7095,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -6965,12 +7130,17 @@ public class AbsenceServiceTest {
 		Integer idAgent = 9005138;
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
-
+		
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		DemandeDto dto = new DemandeDto();
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A49.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 
@@ -7050,7 +7220,7 @@ public class AbsenceServiceTest {
 		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(

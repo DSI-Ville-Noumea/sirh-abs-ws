@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,17 +51,40 @@ public class DataConsistencyRulesFactory {
 	@Qualifier("AbsAsaDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absAsaDataConsistencyRulesImpl;
 
-	// Méthode permettant de récupérer les Factory
-	public IAbsenceDataConsistencyRules getFactory(int type) {
+	@Autowired
+	@Qualifier("AbsCongesExcepDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absCongesExcepDataConsistencyRulesImpl;
 
-		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
-			case CONGE_ANNUEL:
-				// TODO
-				break;
+	// Méthode permettant de récupérer les Factory
+	public IAbsenceDataConsistencyRules getFactory(int groupe, int type) {
+
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(groupe)) {
 			case REPOS_COMP:
 				return absReposCompDataConsistencyRules;
 			case RECUP:
 				return absRecupDataConsistencyRules;
+			case CONGE_ANNUEL:
+				// TODO
+				break;
+			case ASA:
+				return getFactoryAsa(type);
+			case CONGES_EXCEP:
+				return absCongesExcepDataConsistencyRulesImpl;
+			case AUTRES:
+				// TODO
+				break;
+			case MALADIES:
+				// TODO
+				break;
+		}
+		return defaultAbsenceDataConsistencyRulesImpl;
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	public IAbsenceDataConsistencyRules getFactoryAsa(int type) {
+		
+		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
+			
 			case ASA_A48:
 				return absAsaA48DataConsistencyRulesImpl;
 			case ASA_A52:
@@ -75,12 +99,6 @@ public class DataConsistencyRulesFactory {
 				return absAsaA49DataConsistencyRulesImpl;
 			case ASA_A50:
 				return absAsaDataConsistencyRulesImpl;
-			case AUTRES:
-				// TODO
-				break;
-			case MALADIES:
-				// TODO
-				break;
 		}
 		return defaultAbsenceDataConsistencyRulesImpl;
 	}
