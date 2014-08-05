@@ -67,6 +67,20 @@ public class FiltreController {
 	}
 
 	/**
+	 * Liste des types d absence possibles pour un agent donne
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getTypesForSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefTypeAbsenceDto> getTypesForSIRH() {
+
+		logger.debug("entered GET [filtres/getTypesForSIRH] => getTypes");
+
+		List<RefTypeAbsenceDto> types = filtresService.getAllRefTypesAbsence();
+
+		return types;
+	}
+
+	/**
 	 * Liste des services pour un agent donne
 	 */
 	@ResponseBody

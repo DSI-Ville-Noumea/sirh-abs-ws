@@ -7,8 +7,8 @@ public class RefTypeAbsenceDto {
 
 	private Integer idRefTypeAbsence;
 	private String libelle;
-	private String groupe;
-	
+	private RefGroupeAbsenceDto groupeAbsence;
+
 	private RefTypeSaisiDto typeSaisiDto;
 
 	public RefTypeAbsenceDto() {
@@ -18,19 +18,19 @@ public class RefTypeAbsenceDto {
 		super();
 		this.idRefTypeAbsence = type.getIdRefTypeAbsence();
 		this.libelle = type.getLabel();
-		if(null != type.getGroupe()) {
-			this.groupe = type.getGroupe().getCode();
+		if (null != type.getGroupe()) {
+			this.groupeAbsence = new RefGroupeAbsenceDto(type.getGroupe());
 		}
 	}
-	
+
 	public RefTypeAbsenceDto(RefTypeAbsence type, RefTypeSaisi typeSaisi) {
 		super();
 		this.idRefTypeAbsence = type.getIdRefTypeAbsence();
 		this.libelle = type.getLabel();
-		if(null != type.getGroupe()) {
-			this.groupe = type.getGroupe().getCode();
+		if (null != type.getGroupe()) {
+			this.groupeAbsence = new RefGroupeAbsenceDto(type.getGroupe());
 		}
-		if(null != typeSaisi) {
+		if (null != typeSaisi) {
 			this.typeSaisiDto = new RefTypeSaisiDto(typeSaisi);
 		}
 	}
@@ -51,14 +51,6 @@ public class RefTypeAbsenceDto {
 		this.idRefTypeAbsence = idRefTypeAbsence;
 	}
 
-	public String getGroupe() {
-		return groupe;
-	}
-
-	public void setGroupe(String groupe) {
-		this.groupe = groupe;
-	}
-
 	public RefTypeSaisiDto getTypeSaisiDto() {
 		return typeSaisiDto;
 	}
@@ -66,5 +58,13 @@ public class RefTypeAbsenceDto {
 	public void setTypeSaisiDto(RefTypeSaisiDto typeSaisiDto) {
 		this.typeSaisiDto = typeSaisiDto;
 	}
-	
+
+	public RefGroupeAbsenceDto getGroupeAbsence() {
+		return groupeAbsence;
+	}
+
+	public void setGroupeAbsence(RefGroupeAbsenceDto groupeAbsence) {
+		this.groupeAbsence = groupeAbsence;
+	}
+
 }

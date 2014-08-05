@@ -30,7 +30,7 @@ public class RefTypeAbsenceDtoTest {
 
 		// Then
 		assertEquals(ref.getLabel(), result.getLibelle());
-		assertEquals(ref.getGroupe().getCode(), result.getGroupe());
+		assertEquals(ref.getGroupe().getCode(), result.getGroupeAbsence().getCode());
 		assertEquals(ref.getIdRefTypeAbsence(), result.getIdRefTypeAbsence());
 	}
 	
@@ -55,7 +55,7 @@ public class RefTypeAbsenceDtoTest {
 
 		// Then
 		assertEquals(ref.getLabel(), result.getLibelle());
-		assertEquals(ref.getGroupe().getCode(), result.getGroupe());
+		assertEquals(ref.getGroupe().getCode(), result.getGroupeAbsence().getCode());
 		assertEquals(ref.getIdRefTypeAbsence(), result.getIdRefTypeAbsence());
 		assertEquals(typeSaisi.getIdRefTypeAbsence(), result.getTypeSaisiDto().getIdRefTypeDemande());
 	}

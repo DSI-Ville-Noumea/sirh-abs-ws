@@ -28,25 +28,24 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 	public static final String UNITE_PERIODE_QUOTA_INEXISTANT = "L'unité pour la période quota n'existe pas";
 	public static final String TYPE_ABSENCE_INEXISTANT = "Le type d'absence n'existe pas";
 	public static final String TYPE_GROUPE_INEXISTANT = "Le type de groupe d'absence n'existe pas";
-	
+
 	public static final String TYPE_ABSENCE_CREE = "Le type d'absence est bien créé.";
 	public static final String TYPE_ABSENCE_MODIFIE = "Le type d'absence est bien modifié.";
 	public static final String TYPE_ABSENCE_SUPPRIME = "Le type d'absence est supprimé.";
 	public static final String AGENT_NON_HABILITE = "L'agent n'est pas habilité pour cette opération.";
-	
-	
+
 	@Autowired
 	private ITypeAbsenceRepository typeAbsenceRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<RefTypeAbsenceDto> getListeTypAbsence() {
 
 		List<RefTypeAbsence> listTypeAbsence = typeAbsenceRepository.getListeTypAbsence();
-		
+
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
 		if (listTypeAbsence != null) {
 			for (RefTypeAbsence typeAbsence : listTypeAbsence) {
@@ -60,9 +59,9 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 	@Override
 	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setTypAbsence(Integer idAgent, RefTypeAbsenceDto typeAbsenceDto) {
-		
+
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		// verification des droits SIRH
 		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
 		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
@@ -70,7 +69,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			result.getErrors().add(String.format(AGENT_NON_HABILITE));
 			return result;
 		}
-		
+
 		RefTypeAbsence typeAbsence = null;
 
 		if (null != typeAbsenceDto.getIdRefTypeAbsence()) {
@@ -81,35 +80,35 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 				return result;
 			}
 		}
-		
+
 		if (null == typeAbsence) {
 			typeAbsence = new RefTypeAbsence();
 		}
-		
-		if(null != typeAbsenceDto.getGroupe()
-				&& !"".equals(typeAbsenceDto.getGroupe().trim())) {
-			RefGroupeAbsence groupe = typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto.getGroupe());
-			
-			if(null == groupe) {
+
+		if (null != typeAbsenceDto.getGroupeAbsence() && !"".equals(typeAbsenceDto.getGroupeAbsence().getCode().trim())) {
+			RefGroupeAbsence groupe = typeAbsenceRepository.getEntity(RefGroupeAbsence.class,
+					typeAbsenceDto.getGroupeAbsence());
+
+			if (null == groupe) {
 				logger.debug(TYPE_GROUPE_INEXISTANT);
 				result.getErrors().add(TYPE_GROUPE_INEXISTANT);
 				return result;
 			}
 			typeAbsence.setGroupe(groupe);
 		}
-		
+
 		typeAbsence.setLabel(typeAbsenceDto.getLibelle());
-		
-		if(null != typeAbsenceDto.getTypeSaisiDto()) {
-			
+
+		if (null != typeAbsenceDto.getTypeSaisiDto()) {
+
 			RefTypeSaisiDto typeSaisiDto = typeAbsenceDto.getTypeSaisiDto();
-			
+
 			RefTypeSaisi typeSaisi = typeAbsence.getTypeSaisi();
-			
-			if(null == typeSaisi) {
+
+			if (null == typeSaisi) {
 				typeSaisi = new RefTypeSaisi();
 			}
-			
+
 			typeSaisi.setAlerte(typeSaisiDto.isAlerte());
 			typeSaisi.setCalendarDateDebut(typeSaisiDto.isCalendarDateDebut());
 			typeSaisi.setCalendarDateFin(typeSaisiDto.isCalendarDateFin());
@@ -128,16 +127,14 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			typeSaisi.setQuotaMax(typeSaisiDto.getQuotaMax());
 			typeSaisi.setSaisieKiosque(typeSaisiDto.isSaisieKiosque());
 			typeSaisi.setUniteDecompte(typeSaisiDto.getUniteDecompte());
-			
-			if(null != typeSaisiDto.getUnitePeriodeQuotaDto() 
+
+			if (null != typeSaisiDto.getUnitePeriodeQuotaDto()
 					&& null != typeSaisiDto.getUnitePeriodeQuotaDto().getIdRefUnitePeriodeQuota()) {
-				
-				RefUnitePeriodeQuota refUnitePeriodeQuota = 
-					typeAbsenceRepository.getEntity(
-						RefUnitePeriodeQuota.class, 
+
+				RefUnitePeriodeQuota refUnitePeriodeQuota = typeAbsenceRepository.getEntity(RefUnitePeriodeQuota.class,
 						typeSaisiDto.getUnitePeriodeQuotaDto().getIdRefUnitePeriodeQuota());
-				
-				if(null == refUnitePeriodeQuota) {
+
+				if (null == refUnitePeriodeQuota) {
 					logger.debug(UNITE_PERIODE_QUOTA_INEXISTANT);
 					result.getErrors().add(UNITE_PERIODE_QUOTA_INEXISTANT);
 					return result;
@@ -152,13 +149,13 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 
 		return result;
 	}
-	
+
 	@Override
 	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto deleteTypeAbsence(Integer idAgent, Integer idTypeDemande) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		// verification des droits SIRH
 		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
 		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
@@ -166,10 +163,10 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			result.getErrors().add(String.format(AGENT_NON_HABILITE));
 			return result;
 		}
-				
+
 		RefTypeAbsence typeAbsence = typeAbsenceRepository.getEntity(RefTypeAbsence.class, idTypeDemande);
-		
-		if(null == typeAbsence) {
+
+		if (null == typeAbsence) {
 			logger.debug(TYPE_ABSENCE_INEXISTANT);
 			result.getErrors().add(TYPE_ABSENCE_INEXISTANT);
 			return result;
@@ -181,7 +178,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 
 		return result;
 	}
-	
+
 	private void addMessageConfirmation(Integer idRefTypeAbsence, ReturnMessageDto result) {
 
 		if (null != idRefTypeAbsence) {

@@ -72,18 +72,15 @@ public class FiltreService implements IFiltreService {
 		for (RefTypeAbsence type : refTypeAbs) {
 			if (null != carr) {
 				boolean ajout = false;
-				
-				if(null != type.getTypeSaisi()) {
-					if(helperService.isFonctionnaire(carr)
-							&& type.getTypeSaisi().isFonctionnaire()){
+
+				if (null != type.getTypeSaisi()) {
+					if (helperService.isFonctionnaire(carr) && type.getTypeSaisi().isFonctionnaire()) {
 						ajout = true;
 					}
-					if(helperService.isContractuel(carr)
-							&& type.getTypeSaisi().isContractuel()){
+					if (helperService.isContractuel(carr) && type.getTypeSaisi().isContractuel()) {
 						ajout = true;
 					}
-					if(helperService.isConventionCollective(carr)
-							&& type.getTypeSaisi().isConventionCollective()){
+					if (helperService.isConventionCollective(carr) && type.getTypeSaisi().isConventionCollective()) {
 						ajout = true;
 					}
 				}
@@ -156,7 +153,7 @@ public class FiltreService implements IFiltreService {
 
 		return resultDto;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<RefGroupeAbsenceDto> getRefGroupeAbsence(Integer idRefGroupeAbsence) {
@@ -180,13 +177,13 @@ public class FiltreService implements IFiltreService {
 
 		return resultDto;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<UnitePeriodeQuotaDto> getUnitePeriodeQuota() {
-		
+
 		List<UnitePeriodeQuotaDto> resultDto = new ArrayList<UnitePeriodeQuotaDto>();
-		
+
 		List<RefUnitePeriodeQuota> result = filtreRepository.findAllRefUnitePeriodeQuota();
 		if (null != result) {
 			for (RefUnitePeriodeQuota upq : result) {
@@ -195,6 +192,18 @@ public class FiltreService implements IFiltreService {
 			}
 		}
 		return resultDto;
+	}
+
+	@Override
+	public List<RefTypeAbsenceDto> getAllRefTypesAbsence() {
+		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
+		List<RefTypeAbsence> refTypeAbs = filtreRepository.findAllRefTypeAbsences();
+
+		for (RefTypeAbsence type : refTypeAbs) {
+			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
+			res.add(dto);
+		}
+		return res;
 	}
 
 }
