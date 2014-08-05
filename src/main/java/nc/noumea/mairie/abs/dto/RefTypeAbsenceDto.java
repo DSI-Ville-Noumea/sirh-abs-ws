@@ -8,7 +8,6 @@ public class RefTypeAbsenceDto {
 	private Integer idRefTypeAbsence;
 	private String libelle;
 	private RefGroupeAbsenceDto groupeAbsence;
-
 	private RefTypeSaisiDto typeSaisiDto;
 
 	public RefTypeAbsenceDto() {
