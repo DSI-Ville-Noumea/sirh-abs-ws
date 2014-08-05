@@ -49,8 +49,6 @@ public class FiltreServiceTest {
 		ASA_A54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
 		RefTypeAbsence ASA_A48 = new RefTypeAbsence();
 		ASA_A48.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
-		RefTypeAbsence AUTRES = new RefTypeAbsence();
-		AUTRES.setIdRefTypeAbsence(RefTypeAbsenceEnum.AUTRES.getValue());
 		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
 		CONGE_ANNUEL.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
 		RefTypeAbsence MALADIES = new RefTypeAbsence();
@@ -61,8 +59,8 @@ public class FiltreServiceTest {
 		REPOS_COMP.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-		refTypeAbs.addAll(Arrays.asList(ASA_A49, ASA_A50, ASA_A52, ASA_A53, ASA_A55, ASA_A54, ASA_A48, AUTRES,
-				CONGE_ANNUEL, MALADIES, RECUP, REPOS_COMP));
+		refTypeAbs.addAll(Arrays.asList(ASA_A49, ASA_A50, ASA_A52, ASA_A53, ASA_A55, ASA_A54, ASA_A48, CONGE_ANNUEL,
+				MALADIES, RECUP, REPOS_COMP));
 
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
@@ -79,61 +77,62 @@ public class FiltreServiceTest {
 	public void getRefTypesAbsence_Fonctionnaire() {
 
 		RefTypeSaisi typeSaisiFonctionnaire = new RefTypeSaisi();
-			typeSaisiFonctionnaire.setFonctionnaire(true);
-			typeSaisiFonctionnaire.setContractuel(false);
-			typeSaisiFonctionnaire.setConventionCollective(false);
-		
+		typeSaisiFonctionnaire.setFonctionnaire(true);
+		typeSaisiFonctionnaire.setContractuel(false);
+		typeSaisiFonctionnaire.setConventionCollective(false);
+
 		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
-			typeAbsenceFonctionnaire.setLabel("fonctionnaire");
-			typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
-			
+		typeAbsenceFonctionnaire.setLabel("fonctionnaire");
+		typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
+
 		RefTypeSaisi typeSaisiContractuel = new RefTypeSaisi();
-			typeSaisiContractuel.setFonctionnaire(false);
-			typeSaisiContractuel.setContractuel(true);
-			typeSaisiContractuel.setConventionCollective(false);
-		
+		typeSaisiContractuel.setFonctionnaire(false);
+		typeSaisiContractuel.setContractuel(true);
+		typeSaisiContractuel.setConventionCollective(false);
+
 		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
-			typeAbsenceContractuel.setLabel("contractuel");
-			typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
-			
+		typeAbsenceContractuel.setLabel("contractuel");
+		typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
+
 		RefTypeSaisi typeSaisiConventionCollective = new RefTypeSaisi();
-			typeSaisiConventionCollective.setFonctionnaire(false);
-			typeSaisiConventionCollective.setContractuel(false);
-			typeSaisiConventionCollective.setConventionCollective(true);
-		
+		typeSaisiConventionCollective.setFonctionnaire(false);
+		typeSaisiConventionCollective.setContractuel(false);
+		typeSaisiConventionCollective.setConventionCollective(true);
+
 		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
-			typeAbsenceConventionCollective.setLabel("conventionCollective");
-			typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
-	
+		typeAbsenceConventionCollective.setLabel("conventionCollective");
+		typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
+
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-			refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel, typeAbsenceConventionCollective));
-		
+		refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel,
+				typeAbsenceConventionCollective));
+
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(4);
-		
+		carr.setCdcate(4);
+
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
-	
+
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(true);
 		Mockito.when(helperService.isContractuel(carr)).thenReturn(false);
 		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
-	
+
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, helperService.getCurrentDate())).thenReturn(carr);
-	
+
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
-	
+
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
-	
+
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
-	
+
 		assertEquals(1, result.size());
 		assertEquals("fonctionnaire", result.get(0).getLibelle());
 	}
@@ -142,61 +141,62 @@ public class FiltreServiceTest {
 	public void getRefTypesAbsence_CC() {
 
 		RefTypeSaisi typeSaisiFonctionnaire = new RefTypeSaisi();
-			typeSaisiFonctionnaire.setFonctionnaire(true);
-			typeSaisiFonctionnaire.setContractuel(false);
-			typeSaisiFonctionnaire.setConventionCollective(false);
-		
+		typeSaisiFonctionnaire.setFonctionnaire(true);
+		typeSaisiFonctionnaire.setContractuel(false);
+		typeSaisiFonctionnaire.setConventionCollective(false);
+
 		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
-			typeAbsenceFonctionnaire.setLabel("fonctionnaire");
-			typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
-			
+		typeAbsenceFonctionnaire.setLabel("fonctionnaire");
+		typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
+
 		RefTypeSaisi typeSaisiContractuel = new RefTypeSaisi();
-			typeSaisiContractuel.setFonctionnaire(false);
-			typeSaisiContractuel.setContractuel(true);
-			typeSaisiContractuel.setConventionCollective(false);
-		
+		typeSaisiContractuel.setFonctionnaire(false);
+		typeSaisiContractuel.setContractuel(true);
+		typeSaisiContractuel.setConventionCollective(false);
+
 		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
-			typeAbsenceContractuel.setLabel("contractuel");
-			typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
-			
+		typeAbsenceContractuel.setLabel("contractuel");
+		typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
+
 		RefTypeSaisi typeSaisiConventionCollective = new RefTypeSaisi();
-			typeSaisiConventionCollective.setFonctionnaire(false);
-			typeSaisiConventionCollective.setContractuel(false);
-			typeSaisiConventionCollective.setConventionCollective(true);
-		
+		typeSaisiConventionCollective.setFonctionnaire(false);
+		typeSaisiConventionCollective.setContractuel(false);
+		typeSaisiConventionCollective.setConventionCollective(true);
+
 		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
-			typeAbsenceConventionCollective.setLabel("conventionCollective");
-			typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
-	
+		typeAbsenceConventionCollective.setLabel("conventionCollective");
+		typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
+
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-			refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel, typeAbsenceConventionCollective));
-		
+		refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel,
+				typeAbsenceConventionCollective));
+
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(4);
-		
+		carr.setCdcate(4);
+
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
-	
+
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 		Mockito.when(helperService.isFonctionnaire(carr)).thenReturn(false);
 		Mockito.when(helperService.isContractuel(carr)).thenReturn(false);
 		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(true);
-	
+
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, helperService.getCurrentDate())).thenReturn(carr);
-	
+
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
-	
+
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
-	
+
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsence(9005138);
-	
+
 		assertEquals(1, result.size());
 		assertEquals("conventionCollective", result.get(0).getLibelle());
 	}
@@ -205,38 +205,39 @@ public class FiltreServiceTest {
 	public void getRefTypesAbsence_Contractuels() {
 
 		RefTypeSaisi typeSaisiFonctionnaire = new RefTypeSaisi();
-			typeSaisiFonctionnaire.setFonctionnaire(true);
-			typeSaisiFonctionnaire.setContractuel(false);
-			typeSaisiFonctionnaire.setConventionCollective(false);
-		
+		typeSaisiFonctionnaire.setFonctionnaire(true);
+		typeSaisiFonctionnaire.setContractuel(false);
+		typeSaisiFonctionnaire.setConventionCollective(false);
+
 		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
-			typeAbsenceFonctionnaire.setLabel("fonctionnaire");
-			typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
-			
+		typeAbsenceFonctionnaire.setLabel("fonctionnaire");
+		typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
+
 		RefTypeSaisi typeSaisiContractuel = new RefTypeSaisi();
-			typeSaisiContractuel.setFonctionnaire(false);
-			typeSaisiContractuel.setContractuel(true);
-			typeSaisiContractuel.setConventionCollective(false);
-		
+		typeSaisiContractuel.setFonctionnaire(false);
+		typeSaisiContractuel.setContractuel(true);
+		typeSaisiContractuel.setConventionCollective(false);
+
 		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
-			typeAbsenceContractuel.setLabel("contractuel");
-			typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
-			
+		typeAbsenceContractuel.setLabel("contractuel");
+		typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
+
 		RefTypeSaisi typeSaisiConventionCollective = new RefTypeSaisi();
-			typeSaisiConventionCollective.setFonctionnaire(false);
-			typeSaisiConventionCollective.setContractuel(false);
-			typeSaisiConventionCollective.setConventionCollective(true);
-		
+		typeSaisiConventionCollective.setFonctionnaire(false);
+		typeSaisiConventionCollective.setContractuel(false);
+		typeSaisiConventionCollective.setConventionCollective(true);
+
 		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
-			typeAbsenceConventionCollective.setLabel("conventionCollective");
-			typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
+		typeAbsenceConventionCollective.setLabel("conventionCollective");
+		typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-			refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel, typeAbsenceConventionCollective));
-		
+		refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel,
+				typeAbsenceConventionCollective));
+
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(4);
-		
+		carr.setCdcate(4);
+
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 		Mockito.when(filtreRepository.findAllRefTypeAbsences()).thenReturn(refTypeAbs);
 
@@ -697,81 +698,81 @@ public class FiltreServiceTest {
 		assertFalse(result.get(0).isChkDateFin());
 		assertFalse(result.get(0).isPieceJointe());
 	}
-	
+
 	@Test
 	public void getRefGroupeAbsence_return1result() {
-		
+
 		RefGroupeAbsence rga = new RefGroupeAbsence();
-			rga.setIdRefGroupeAbsence(1);
-			rga.setCode("code 1");
-			rga.setLibelle("libelle 1");
-		
+		rga.setIdRefGroupeAbsence(1);
+		rga.setCode("code 1");
+		rga.setLibelle("libelle 1");
+
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
-			Mockito.when(filtreRepository.findRefGroupeAbsence(1)).thenReturn(rga);
-			
+		Mockito.when(filtreRepository.findRefGroupeAbsence(1)).thenReturn(rga);
+
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
-		
+
 		List<RefGroupeAbsenceDto> result = service.getRefGroupeAbsence(1);
-		
+
 		assertEquals(1, result.size());
 		assertEquals("code 1", result.get(0).getCode());
 		assertEquals("libelle 1", result.get(0).getLibelle());
-		
+
 	}
-	
+
 	@Test
 	public void getRefGroupeAbsence_returnManyResult() {
-		
+
 		RefGroupeAbsence rga = new RefGroupeAbsence();
-			rga.setIdRefGroupeAbsence(1);
-			rga.setCode("code 1");
-			rga.setLibelle("libelle 1");
-		
+		rga.setIdRefGroupeAbsence(1);
+		rga.setCode("code 1");
+		rga.setLibelle("libelle 1");
+
 		RefGroupeAbsence rga2 = new RefGroupeAbsence();
-			rga2.setIdRefGroupeAbsence(2);
-			rga2.setCode("code 2");
-			rga2.setLibelle("libelle 2");
-			
+		rga2.setIdRefGroupeAbsence(2);
+		rga2.setCode("code 2");
+		rga2.setLibelle("libelle 2");
+
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
-			Mockito.when(filtreRepository.findAllRefGroupeAbsence()).thenReturn(Arrays.asList(rga, rga2));
-			
+		Mockito.when(filtreRepository.findAllRefGroupeAbsence()).thenReturn(Arrays.asList(rga, rga2));
+
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
-		
+
 		List<RefGroupeAbsenceDto> result = service.getRefGroupeAbsence(null);
-		
+
 		assertEquals(2, result.size());
 		assertEquals("code 1", result.get(0).getCode());
 		assertEquals("libelle 1", result.get(0).getLibelle());
 		assertEquals("code 2", result.get(1).getCode());
 		assertEquals("libelle 2", result.get(1).getLibelle());
-	
+
 	}
-	
+
 	@Test
 	public void getUnitePeriodeQuota() {
-		
+
 		RefUnitePeriodeQuota rupq = new RefUnitePeriodeQuota();
-			rupq.setIdRefUnitePeriodeQuota(1);
-			rupq.setUnite("jours");
-			rupq.setValeur(10);
-			rupq.setGlissant(true);
-		
+		rupq.setIdRefUnitePeriodeQuota(1);
+		rupq.setUnite("jours");
+		rupq.setValeur(10);
+		rupq.setGlissant(true);
+
 		RefUnitePeriodeQuota rupq2 = new RefUnitePeriodeQuota();
-			rupq2.setIdRefUnitePeriodeQuota(2);
-			rupq2.setUnite("minutes");
-			rupq2.setValeur(13);
-			rupq2.setGlissant(false);
-			
+		rupq2.setIdRefUnitePeriodeQuota(2);
+		rupq2.setUnite("minutes");
+		rupq2.setValeur(13);
+		rupq2.setGlissant(false);
+
 		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
-			Mockito.when(filtreRepository.findAllRefUnitePeriodeQuota()).thenReturn(Arrays.asList(rupq, rupq2));
-			
+		Mockito.when(filtreRepository.findAllRefUnitePeriodeQuota()).thenReturn(Arrays.asList(rupq, rupq2));
+
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
-		
+
 		List<UnitePeriodeQuotaDto> result = service.getUnitePeriodeQuota();
-		
+
 		assertEquals(2, result.size());
 		assertEquals("jours", result.get(0).getUnite());
 		assertEquals(10, result.get(0).getValeur().intValue());

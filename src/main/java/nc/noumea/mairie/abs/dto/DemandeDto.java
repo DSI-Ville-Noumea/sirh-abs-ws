@@ -64,7 +64,7 @@ public class DemandeDto {
 	private boolean isDepassementCompteur;
 
 	private OrganisationSyndicaleDto organisationSyndicale;
-	
+
 	private String commentaire;
 
 	public DemandeDto() {
@@ -82,7 +82,7 @@ public class DemandeDto {
 		this.agentWithServiceDto = agentDto;
 		this.idDemande = d.getIdDemande();
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
-		if(null != d.getType().getGroupe()) {
+		if (null != d.getType().getGroupe()) {
 			this.groupeAbsence = new RefGroupeAbsenceDto(d.getType().getGroupe());
 		}
 		this.dateDebut = d.getDateDebut();
@@ -118,9 +118,6 @@ public class DemandeDto {
 		}
 
 		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(groupeAbsence.getIdRefGroupeAbsence())) {
-			case CONGE_ANNUEL:
-				// TODO
-				break;
 			case REPOS_COMP:
 				Integer dureeAnnee = ((DemandeReposComp) d).getDuree() == null ? 0 : ((DemandeReposComp) d).getDuree();
 				Integer dureeAnneePrec = ((DemandeReposComp) d).getDureeAnneeN1() == null ? 0 : ((DemandeReposComp) d)
@@ -146,13 +143,9 @@ public class DemandeDto {
 				this.isDateDebutPM = ((DemandeCongesExceptionnels) d).isDateDebutPM();
 				this.isDateFinAM = ((DemandeCongesExceptionnels) d).isDateFinAM();
 				this.isDateFinPM = ((DemandeCongesExceptionnels) d).isDateFinPM();
-				this.commentaire =  ((DemandeCongesExceptionnels) d).getCommentaire();
+				this.commentaire = ((DemandeCongesExceptionnels) d).getCommentaire();
 				break;
-			case AUTRES:
-				// TODO
-				break;
-			case MALADIES:
-				// TODO
+			default:
 				break;
 		}
 	}
@@ -448,5 +441,4 @@ public class DemandeDto {
 		this.commentaire = commentaire;
 	}
 
-	
 }

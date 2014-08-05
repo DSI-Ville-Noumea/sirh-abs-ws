@@ -147,9 +147,6 @@ public class SoldeService implements ISoldeService {
 				if (countA55 != null)
 					listAgentCount.addAll(countA55);
 				break;
-			case AUTRES:
-				// TODO
-				break;
 			case MALADIES:
 				// TODO
 				break;

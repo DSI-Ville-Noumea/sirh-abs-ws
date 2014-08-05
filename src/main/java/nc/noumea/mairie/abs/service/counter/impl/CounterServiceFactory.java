@@ -30,15 +30,15 @@ public class CounterServiceFactory {
 	@Autowired
 	@Qualifier("AsaA48CounterServiceImpl")
 	private ICounterService asaA48CounterServiceImpl;
-	
+
 	@Autowired
 	@Qualifier("AsaA52CounterServiceImpl")
 	private ICounterService asaA52CounterServiceImpl;
-	
+
 	@Autowired
 	@Qualifier("AsaA53CounterServiceImpl")
 	private ICounterService asaA53CounterServiceImpl;
-	
+
 	@Autowired
 	@Qualifier("AsaA54CounterServiceImpl")
 	private ICounterService asaA54CounterServiceImpl;
@@ -46,11 +46,11 @@ public class CounterServiceFactory {
 	@Autowired
 	@Qualifier("AsaA55CounterServiceImpl")
 	private ICounterService asaA55CounterServiceImpl;
-	
+
 	@Autowired
 	@Qualifier("CongesExcepCounterServiceImpl")
 	private ICounterService congesExcepCounterServiceImpl;
-	
+
 	// Méthode permettant de récupérer les Factory
 	public ICounterService getFactory(int groupe, int type) {
 
@@ -59,28 +59,21 @@ public class CounterServiceFactory {
 				return reposCompCounterServiceImpl;
 			case RECUP:
 				return recupCounterServiceImpl;
-			case CONGE_ANNUEL:
-				// TODO
-				break;
 			case ASA:
 				return getFactoryAsa(type);
 			case CONGES_EXCEP:
 				return congesExcepCounterServiceImpl;
-			case AUTRES:
-				// TODO
-				break;
-			case MALADIES:
-				// TODO
+			default:
 				break;
 		}
 		return defaultCounterServiceImpl;
 	}
-	
+
 	@SuppressWarnings("incomplete-switch")
 	private ICounterService getFactoryAsa(int type) {
-		
+
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
-			
+
 			case ASA_A48:
 				return asaA48CounterServiceImpl;
 			case ASA_A49:

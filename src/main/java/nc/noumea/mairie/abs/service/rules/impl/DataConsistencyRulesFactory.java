@@ -63,28 +63,21 @@ public class DataConsistencyRulesFactory {
 				return absReposCompDataConsistencyRules;
 			case RECUP:
 				return absRecupDataConsistencyRules;
-			case CONGE_ANNUEL:
-				// TODO
-				break;
 			case ASA:
 				return getFactoryAsa(type);
 			case CONGES_EXCEP:
 				return absCongesExcepDataConsistencyRulesImpl;
-			case AUTRES:
-				// TODO
-				break;
-			case MALADIES:
-				// TODO
+			default:
 				break;
 		}
 		return defaultAbsenceDataConsistencyRulesImpl;
 	}
-	
+
 	@SuppressWarnings("incomplete-switch")
 	private IAbsenceDataConsistencyRules getFactoryAsa(int type) {
-		
+
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
-			
+
 			case ASA_A48:
 				return absAsaA48DataConsistencyRulesImpl;
 			case ASA_A52:

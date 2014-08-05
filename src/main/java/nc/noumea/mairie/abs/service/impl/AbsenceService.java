@@ -108,10 +108,8 @@ public class AbsenceService implements IAbsenceService {
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande
 		// et on effectue les verifications appropriees
-		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
-			case CONGE_ANNUEL:
-				// TODO
-				break;
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence()
+				.getIdRefGroupeAbsence())) {
 			case REPOS_COMP:
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
 				demandeReposComp.setDuree(demandeDto.getDuree().intValue());
@@ -143,7 +141,8 @@ public class AbsenceService implements IAbsenceService {
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de fin, 3 - calcul duree
+				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
+				// fin, 3 - calcul duree
 				// car dependance entre ces 3 donnees pour les calculs
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
@@ -169,13 +168,15 @@ public class AbsenceService implements IAbsenceService {
 				}
 				break;
 			case CONGES_EXCEP:
-				DemandeCongesExceptionnels demandeCongesExcep = getDemande(DemandeCongesExceptionnels.class, demandeDto.getIdDemande());
+				DemandeCongesExceptionnels demandeCongesExcep = getDemande(DemandeCongesExceptionnels.class,
+						demandeDto.getIdDemande());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeCongesExcep, idAgent, dateJour);
 
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de fin, 3 - calcul duree
+				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
+				// fin, 3 - calcul duree
 				// car dependance entre ces 3 donnees pour les calculs
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
@@ -184,23 +185,18 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.isDateFinPM()));
 
 				demandeCongesExcep = (DemandeCongesExceptionnels) demande;
-				demandeCongesExcep.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
-						demande.getDateFin(), demandeDto.getDuree()));
+				demandeCongesExcep.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(),
+						demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()));
 				demandeCongesExcep.setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
 						.isDateDebutAM() : false);
 				demandeCongesExcep.setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto
 						.isDateDebutPM() : false);
-				demandeCongesExcep.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM()
-						: false);
-				demandeCongesExcep.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM()
-						: false);
-				demandeCongesExcep.setCommentaire(demande.getType().getTypeSaisi().isMotif() ? demandeDto.getCommentaire() : null);
-				break;
-			case AUTRES:
-				// TODO
-				break;
-			case MALADIES:
-				// TODO
+				demandeCongesExcep.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
+						.isDateFinAM() : false);
+				demandeCongesExcep.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto
+						.isDateFinPM() : false);
+				demandeCongesExcep.setCommentaire(demande.getType().getTypeSaisi().isMotif() ? demandeDto
+						.getCommentaire() : null);
 				break;
 			default:
 				returnDto.getErrors().add(
@@ -208,8 +204,8 @@ public class AbsenceService implements IAbsenceService {
 				demandeRepository.clear();
 				return returnDto;
 		}
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
-				.getFactory(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 		// dans le cas des types de demande non geres
 		if (null == demande) {
 			demande = getDemande(Demande.class, demandeDto.getIdDemande());
@@ -310,9 +306,6 @@ public class AbsenceService implements IAbsenceService {
 						helperService.getCurrentDate()));
 				demandeDto.updateEtat(demandeAsa.getLatestEtatDemande());
 				break;
-			case AUTRES:
-				// TODO
-				break;
 			case MALADIES:
 				// TODO
 				break;
@@ -358,8 +351,8 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		for (DemandeDto demandeDto : listeDto) {
-			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
-					.getFactory(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
+			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+					demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto,
 					listDroitAgent);
 			demandeDto
@@ -507,9 +500,8 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		ICounterService counterService = counterServiceFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(),
-				demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
+				.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {
@@ -532,9 +524,8 @@ public class AbsenceService implements IAbsenceService {
 	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
 			Demande demande, ReturnMessageDto result) {
 
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(),
-				demande.getType().getIdRefTypeAbsence());
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande
+				.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
 				Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
 
@@ -542,9 +533,8 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		ICounterService counterService = counterServiceFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(),
-				demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
+				.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {
@@ -619,11 +609,10 @@ public class AbsenceService implements IAbsenceService {
 					return result;
 				}
 				break;
-			case AUTRES:
-				// TODO
-				break;
 			case MALADIES:
 				// TODO
+				break;
+			default:
 				break;
 		}
 
@@ -704,7 +693,8 @@ public class AbsenceService implements IAbsenceService {
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de fin, 3 - calcul duree
+				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
+				// fin, 3 - calcul duree
 				// car dependance entre ces 3 donnees pour les calculs
 				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(),
 						demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
@@ -726,12 +716,9 @@ public class AbsenceService implements IAbsenceService {
 
 				if (null != demandeDto.getOrganisationSyndicale()
 						&& null != demandeDto.getOrganisationSyndicale().getIdOrganisation()) {
-					demandeAsa.setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class,
-							demandeDto.getOrganisationSyndicale().getIdOrganisation()));
+					demandeAsa.setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class, demandeDto
+							.getOrganisationSyndicale().getIdOrganisation()));
 				}
-				break;
-			case AUTRES:
-				// TODO
 				break;
 			case MALADIES:
 				// TODO
@@ -743,8 +730,8 @@ public class AbsenceService implements IAbsenceService {
 				return returnDto;
 		}
 
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
-				.getFactory(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 		// dans le cas des types de demande non geres ==> //TODO a supprimer par
 		// la suite
 		if (null == demande) {
@@ -795,9 +782,8 @@ public class AbsenceService implements IAbsenceService {
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				listEtats, null);
 		for (DemandeDto dto : listeDto) {
-			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
-					dto.getGroupeAbsence().getIdRefGroupeAbsence(),
-					dto.getIdTypeDemande());
+			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(dto
+					.getGroupeAbsence().getIdRefGroupeAbsence(), dto.getIdTypeDemande());
 			dto = absenceDataConsistencyRulesImpl.filtreDroitOfDemandeSIRH(dto);
 			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto));
 		}
@@ -895,9 +881,8 @@ public class AbsenceService implements IAbsenceService {
 			return;
 		}
 
-		ICounterService counterService = counterServiceFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(),
-				demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
+				.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {

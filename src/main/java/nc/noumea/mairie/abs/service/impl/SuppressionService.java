@@ -36,7 +36,7 @@ public class SuppressionService implements ISuppressionService {
 
 	@Autowired
 	private DataConsistencyRulesFactory dataConsistencyRulesFactory;
-	
+
 	@Override
 	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto supprimerDemandeEtatProvisoire(Integer idDemande) {
@@ -75,14 +75,13 @@ public class SuppressionService implements ISuppressionService {
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 
 		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
-		
+
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = new DefaultAbsenceDataConsistencyRulesImpl();
-		if(null != demande) {
-			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
-					demande.getType().getGroupe().getIdRefGroupeAbsence(), 
-					demande.getType().getIdRefTypeAbsence());
+		if (null != demande) {
+			absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande.getType().getGroupe()
+					.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		}
-		
+
 		// on verifie si la demande existe
 		returnDto = absenceDataConsistencyRulesImpl.verifDemandeExiste(demande, returnDto);
 		if (0 < returnDto.getErrors().size())
@@ -91,10 +90,8 @@ public class SuppressionService implements ISuppressionService {
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande
 		// et on effectue les verifications appropriees
-		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
-			case CONGE_ANNUEL:
-				// TODO
-				break;
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe()
+				.getIdRefGroupeAbsence())) {
 			case REPOS_COMP:
 				demande = getDemande(DemandeReposComp.class, idDemande);
 				break;
@@ -106,12 +103,6 @@ public class SuppressionService implements ISuppressionService {
 				break;
 			case CONGES_EXCEP:
 				demande = getDemande(DemandeCongesExceptionnels.class, idDemande);
-				break;
-			case AUTRES:
-				// TODO
-				break;
-			case MALADIES:
-				// TODO
 				break;
 			default:
 				returnDto.getErrors().add(
