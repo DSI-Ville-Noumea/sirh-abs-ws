@@ -37,6 +37,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		checkEtatsDemandeAnnulee_isAttente();
 		checkEtatsDemandeAnnulee_isPrise();
 		checkEtatsDemandeAnnulee_isRejete();
+		filtreDroitOfDemandeSIRH();
 		
 		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		super.allTest(impl);
@@ -332,5 +333,32 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
 		assertEquals(1, srm.getErrors().size());
+	}
+	
+	@Test
+	public void filtreDroitOfDemandeSIRH() {
+		
+		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
+		super.filtreDroitOfDemandeSIRH();
+		
+		// APPROUVEE
+		assertTrue(result3.isAffichageValidation());
+		assertTrue(result3.isModifierValidation());
+		
+		// PRISE
+		assertTrue(result7.isAffichageBoutonAnnuler());
+		assertTrue(result7.isAffichageValidation());
+		
+		// VALIDEE
+		assertTrue(result9.isAffichageBoutonAnnuler());
+		assertTrue(result9.isAffichageValidation());
+		
+		// REJETEE
+		assertTrue(result10.isAffichageValidation());
+		
+		// EN ATTENTE
+		assertTrue(result11.isAffichageBoutonAnnuler());
+		assertTrue(result11.isAffichageValidation());
+		assertTrue(result11.isModifierValidation());
 	}
 }

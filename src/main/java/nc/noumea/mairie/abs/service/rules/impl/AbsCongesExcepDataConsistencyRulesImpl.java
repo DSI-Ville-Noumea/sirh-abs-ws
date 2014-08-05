@@ -63,4 +63,25 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 		// etat VALIDEE et EN_ATTENTE
 		return super.checkEtatsDemandeAnnulee(srm, demande, listEtats);
 	}
+	
+	@Override
+	public DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto) {
+		
+		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
+		demandeDto.setAffichageValidation(demandeDto.getIdRefEtat().equals(
+				RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()));
+		demandeDto.setModifierValidation(demandeDto.getIdRefEtat().equals(
+				RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()));
+		demandeDto.setAffichageEnAttente(demandeDto.getIdRefEtat().equals(
+				RefEtatEnum.APPROUVEE.getCodeEtat()));
+		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(
+				RefEtatEnum.APPROUVEE.getCodeEtat()));
+		
+		return demandeDto;
+	}
 }
