@@ -121,26 +121,31 @@ public class SoldeService implements ISoldeService {
 			case REPOS_COMP:
 				AgentReposCompCount countReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
 						idAgent);
-				listAgentCount.add(countReposComp);
+				if (countReposComp != null)
+					listAgentCount.add(countReposComp);
 				break;
 			case RECUP:
 				AgentRecupCount countRecup = counterRepository.getAgentCounter(AgentRecupCount.class, idAgent);
-				listAgentCount.add(countRecup);
+				if (countRecup != null)
+					listAgentCount.add(countRecup);
 				break;
 			case ASA_A48:
 				AgentAsaA48Count countA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, idAgent,
 						dateDeb);
-				listAgentCount.add(countA48);
+				if (countA48 != null)
+					listAgentCount.add(countA48);
 				break;
 			case ASA_A54:
 				AgentAsaA54Count countA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, idAgent,
 						dateDeb);
-				listAgentCount.add(countA54);
+				if (countA54 != null)
+					listAgentCount.add(countA54);
 				break;
 			case ASA_A55:
 				List<AgentAsaA55Count> countA55 = counterRepository
 						.getListAgentCounterByDate(idAgent, dateDeb, dateFin);
-				listAgentCount.addAll(countA55);
+				if (countA55 != null)
+					listAgentCount.addAll(countA55);
 				break;
 			case AUTRES:
 				// TODO
