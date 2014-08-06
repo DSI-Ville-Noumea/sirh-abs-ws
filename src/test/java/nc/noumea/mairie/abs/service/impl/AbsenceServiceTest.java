@@ -1035,7 +1035,13 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		dto.setIdDemande(1);
 
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisi(typeSaisi);
+		
 		Demande demande = Mockito.spy(new Demande());
+		demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
@@ -1068,6 +1074,17 @@ public class AbsenceServiceTest {
 				.when(absDataConsistencyRules)
 				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
 						Mockito.anyString());
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				result.getErrors().add("Erreur saisie kiosque incorrect");
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiKiosqueAutorisee(Mockito.isA(ReturnMessageDto.class), Mockito.isA(RefTypeSaisi.class), Mockito.eq(false));
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -1076,9 +1093,10 @@ public class AbsenceServiceTest {
 
 		result = service.setDemandeEtat(idAgent, dto);
 
-		assertEquals(2, result.getErrors().size());
+		assertEquals(3, result.getErrors().size());
 		assertEquals("Erreur etat incorrect", result.getErrors().get(0).toString());
 		assertEquals("Erreur motif incorrect", result.getErrors().get(1).toString());
+		assertEquals("Erreur saisie kiosque incorrect", result.getErrors().get(2).toString());
 		Mockito.verify(demande, Mockito.times(0)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
@@ -1099,9 +1117,12 @@ public class AbsenceServiceTest {
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
 
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		type.setGroupe(groupe);
+		type.setTypeSaisi(typeSaisi);
 
 		DemandeRecup demande = Mockito.spy(new DemandeRecup());
 		demande.setDuree(10);
@@ -1132,6 +1153,16 @@ public class AbsenceServiceTest {
 				.when(absDataConsistencyRules)
 				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
 						Mockito.anyString());
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiKiosqueAutorisee(Mockito.isA(ReturnMessageDto.class), Mockito.isA(RefTypeSaisi.class), Mockito.eq(false));
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -1172,9 +1203,12 @@ public class AbsenceServiceTest {
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 	
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		type.setGroupe(groupe);
+		type.setTypeSaisi(typeSaisi);
 
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
 		demande.setDuree(10.0);
@@ -1217,6 +1251,16 @@ public class AbsenceServiceTest {
 				.when(counterService)
 				.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.isA(DemandeEtatChangeDto.class));
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiKiosqueAutorisee(Mockito.isA(ReturnMessageDto.class), Mockito.isA(RefTypeSaisi.class), Mockito.eq(false));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
 		Mockito.when(counterServiceFactory.getFactory(
@@ -1253,9 +1297,12 @@ public class AbsenceServiceTest {
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 	
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
 			type.setGroupe(groupe);
+			type.setTypeSaisi(typeSaisi);
 			
 		DemandeRecup demande = Mockito.spy(new DemandeRecup());
 			demande.setDuree(10);
@@ -1286,6 +1333,16 @@ public class AbsenceServiceTest {
 				.when(absDataConsistencyRules)
 				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
 						Mockito.anyString());
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiKiosqueAutorisee(Mockito.isA(ReturnMessageDto.class), Mockito.isA(RefTypeSaisi.class), Mockito.eq(false));
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -6054,9 +6111,12 @@ public class AbsenceServiceTest {
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 	
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
 		type.setGroupe(groupe);
+		type.setTypeSaisi(typeSaisi);
 		
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
 		demande.setDuree(10.0);
@@ -6099,6 +6159,16 @@ public class AbsenceServiceTest {
 				.when(counterService)
 				.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
 						Mockito.isA(DemandeEtatChangeDto.class));
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiKiosqueAutorisee(Mockito.isA(ReturnMessageDto.class), Mockito.isA(RefTypeSaisi.class), Mockito.eq(false));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
 		Mockito.when(counterServiceFactory.getFactory(
@@ -6133,9 +6203,12 @@ public class AbsenceServiceTest {
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 	
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
 		type.setGroupe(groupe);
+		type.setTypeSaisi(typeSaisi);
 		
 		DemandeAsa demande = Mockito.spy(new DemandeAsa());
 		demande.setDuree(10.0);
@@ -6166,6 +6239,16 @@ public class AbsenceServiceTest {
 				.when(absDataConsistencyRules)
 				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
 						Mockito.anyString());
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiKiosqueAutorisee(Mockito.isA(ReturnMessageDto.class), Mockito.isA(RefTypeSaisi.class), Mockito.eq(false));
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.doAnswer(new Answer<Object>() {

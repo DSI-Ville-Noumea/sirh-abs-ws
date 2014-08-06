@@ -485,6 +485,8 @@ public class AbsenceService implements IAbsenceService {
 		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
+		result = absenceDataConsistencyRulesImpl.checkSaisiKiosqueAutorisee(result, demande.getType().getTypeSaisi(), false);
+		
 		if (0 < result.getErrors().size()) {
 			return result;
 		}
