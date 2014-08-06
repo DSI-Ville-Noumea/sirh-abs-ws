@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -71,6 +72,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String STATUT_AGENT_FONCTIONNAIRE = "Ce type de demande ne peut pas être saisi par les fonctionnaires.";
 	public static final String STATUT_AGENT_CONTRACTUEL = "Ce type de demande ne peut pas être saisi par les contractuels.";
 	public static final String STATUT_AGENT_CONV_COLL = "Ce type de demande ne peut pas être saisi par les conventions collectives.";
+	public static final String SAISIE_KIOSQUE_NON_AUTORISEE = "Ce type de demande ne peut pas être saisi depuis le Kiosque.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
@@ -81,8 +83,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
 
+		checkSaisiKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
 		checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 		checkAgentInactivity(srm, idAgent, dateLundi);
 		checkStatutAgent(srm, demande);
@@ -152,6 +155,17 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		if (null == motif && etat.equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())) {
 			logger.warn(String.format(MOTIF_OBLIGATOIRE));
 			srm.getErrors().add(MOTIF_OBLIGATOIRE);
+		}
+
+		return srm;
+	}
+	
+	@Override
+	public ReturnMessageDto checkSaisiKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi, boolean isProvenanceSIRH) {
+
+		if(!isProvenanceSIRH && !typeSaisi.isSaisieKiosque()) {
+			logger.warn(String.format(SAISIE_KIOSQUE_NON_AUTORISEE));
+			srm.getErrors().add(SAISIE_KIOSQUE_NON_AUTORISEE);
 		}
 
 		return srm;

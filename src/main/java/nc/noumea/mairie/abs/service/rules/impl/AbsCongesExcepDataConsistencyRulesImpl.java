@@ -25,10 +25,10 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 	protected ICongesExceptionnelsRepository congesExceptionnelsRepository;
 	
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkChampMotifDemandeSaisi(srm, (DemandeCongesExceptionnels)demande);
-		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
+		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
 	}
 	
 	protected ReturnMessageDto checkChampMotifDemandeSaisi(ReturnMessageDto srm, DemandeCongesExceptionnels demande) {

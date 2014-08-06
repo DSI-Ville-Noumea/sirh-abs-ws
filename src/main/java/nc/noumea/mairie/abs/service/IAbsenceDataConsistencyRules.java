@@ -7,12 +7,13 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface IAbsenceDataConsistencyRules {
 
-	void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi);
+	void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH);
 
 	ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande,
 			List<RefEtatEnum> listEtatsAcceptes);
@@ -37,4 +38,7 @@ public interface IAbsenceDataConsistencyRules {
 			List<DroitsAgent> listDroitAgent);
 	
 	DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto);
+
+	ReturnMessageDto checkSaisiKiosqueAutorisee(ReturnMessageDto srm,
+			RefTypeSaisi typeSaisi, boolean isProvenanceSIRH);
 }

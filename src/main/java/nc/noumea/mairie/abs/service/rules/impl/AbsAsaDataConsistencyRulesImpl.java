@@ -27,9 +27,9 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 	protected IAsaRepository asaRepository;
 	
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
+		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
 	}
 	
 	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {

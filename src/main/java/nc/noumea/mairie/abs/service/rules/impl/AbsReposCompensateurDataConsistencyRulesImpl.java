@@ -27,12 +27,12 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
 		checkStatutAgent(srm, demande.getIdAgent());
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkDepassementDroitsAcquis(srm, demande);
 
-		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi);
+		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
 	}
 
 	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Integer idAgent) {

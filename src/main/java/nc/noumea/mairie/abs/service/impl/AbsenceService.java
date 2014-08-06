@@ -204,25 +204,11 @@ public class AbsenceService implements IAbsenceService {
 				demandeRepository.clear();
 				return returnDto;
 		}
+		
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
-		// dans le cas des types de demande non geres
-		if (null == demande) {
-			demande = getDemande(Demande.class, demandeDto.getIdDemande());
-			if (null == demande) {
-				demande = new Demande();
-			}
-			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demande, idAgent, dateJour);
-
-			if (null == demande.getType().getTypeSaisi())
-				demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
-
-			demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
-					demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
-					demandeDto.isDateFinPM()));
-		}
-
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
+		
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour, false);
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
@@ -746,7 +732,7 @@ public class AbsenceService implements IAbsenceService {
 					demandeDto.isDateFinPM()));
 		}
 
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour);
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour, true);
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();

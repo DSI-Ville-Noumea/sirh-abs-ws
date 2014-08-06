@@ -360,7 +360,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -468,7 +468,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -566,7 +566,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -1707,7 +1707,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -1815,7 +1815,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -1913,7 +1913,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -2022,7 +2022,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -2136,7 +2136,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -2234,7 +2234,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -2343,7 +2343,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeCongesExceptionnels.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeCongesExceptionnels.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -2457,7 +2457,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -2558,7 +2558,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeCongesExceptionnels.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeCongesExceptionnels.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -2815,7 +2815,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -2911,7 +2911,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -3004,8 +3004,8 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class));
-
+						Mockito.isA(DemandeReposComp.class), Mockito.isA(Date.class), Mockito.anyBoolean());
+		
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return true;
@@ -3120,7 +3120,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -3238,7 +3238,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -3331,7 +3331,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -3427,7 +3427,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -3529,7 +3529,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -3619,7 +3619,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeRecup.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -4565,7 +4565,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -4690,7 +4690,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -4819,7 +4819,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -4944,7 +4944,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5059,7 +5059,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5168,7 +5168,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5289,7 +5289,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5407,7 +5407,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5528,7 +5528,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5646,7 +5646,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5767,7 +5767,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5885,7 +5885,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -7223,7 +7223,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -7348,7 +7348,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -7477,7 +7477,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -7602,7 +7602,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class));
+						Mockito.isA(DemandeAsa.class), Mockito.isA(Date.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
