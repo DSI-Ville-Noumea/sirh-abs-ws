@@ -67,20 +67,6 @@ public class FiltreController {
 	}
 
 	/**
-	 * Liste des types d absence possibles pour un agent donne
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/getTypesForSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<RefTypeAbsenceDto> getTypesForSIRH() {
-
-		logger.debug("entered GET [filtres/getTypesForSIRH] => getTypes");
-
-		List<RefTypeAbsenceDto> types = filtresService.getAllRefTypesAbsence();
-
-		return types;
-	}
-
-	/**
 	 * Liste des services pour un agent donne
 	 */
 	@ResponseBody
@@ -100,7 +86,8 @@ public class FiltreController {
 	}
 
 	/**
-	 * Liste des agents affectes a un operateur, viseur ou approbateur selon son service
+	 * Liste des agents affectes a un operateur, viseur ou approbateur selon son
+	 * service
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -119,9 +106,10 @@ public class FiltreController {
 
 		return services;
 	}
-	
+
 	/**
-	 * Retourne les types de saisie (champs de saisie, checkbox, etc) d une absence donnee
+	 * Retourne les types de saisie (champs de saisie, checkbox, etc) d une
+	 * absence donnee
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypesSaisi", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -134,7 +122,7 @@ public class FiltreController {
 
 		return typesSaisi;
 	}
-	
+
 	/**
 	 * Retourne les groupes d absence
 	 */
@@ -149,7 +137,7 @@ public class FiltreController {
 
 		return groupes;
 	}
-	
+
 	/**
 	 * Retourne les groupes d absence
 	 */

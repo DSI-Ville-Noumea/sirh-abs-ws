@@ -15,13 +15,11 @@ public interface IFiltreService {
 
 	List<RefTypeAbsenceDto> getRefTypesAbsence(Integer idAgentConcerne);
 
-	List<RefTypeAbsenceDto> getAllRefTypesAbsence();
-
 	List<RefEtat> getListeEtatsByOnglet(String ongletDemande, Integer idRefEtat);
-	
+
 	List<RefTypeSaisiDto> getRefTypeSaisi(Integer idRefTypeAbsence);
-	
+
 	List<RefGroupeAbsenceDto> getRefGroupeAbsence(Integer idRefGroupeAbsence);
-	
+
 	List<UnitePeriodeQuotaDto> getUnitePeriodeQuota();
 }

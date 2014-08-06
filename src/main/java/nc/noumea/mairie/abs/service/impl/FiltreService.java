@@ -194,16 +194,4 @@ public class FiltreService implements IFiltreService {
 		return resultDto;
 	}
 
-	@Override
-	public List<RefTypeAbsenceDto> getAllRefTypesAbsence() {
-		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
-		List<RefTypeAbsence> refTypeAbs = filtreRepository.findAllRefTypeAbsences();
-
-		for (RefTypeAbsence type : refTypeAbs) {
-			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
-			res.add(dto);
-		}
-		return res;
-	}
-
 }
