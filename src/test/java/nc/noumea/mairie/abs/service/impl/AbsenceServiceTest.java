@@ -4240,7 +4240,6 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
-//		ReflectionTestUtils.setField(service, "counterService", counterService);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
@@ -4279,7 +4278,9 @@ public class AbsenceServiceTest {
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
-				return new ReturnMessageDto();
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
 			}
 		})
 				.when(absDataConsistencyRules)
@@ -4287,9 +4288,15 @@ public class AbsenceServiceTest {
 						Mockito.isA(List.class));
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
-		Mockito.when(
-				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
-						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		}).when(counterService)
+				.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
 		Mockito.when(counterServiceFactory.getFactory(
@@ -4297,21 +4304,19 @@ public class AbsenceServiceTest {
 				demande.getType().getIdRefTypeAbsence())).thenReturn(
 				counterService);
 
-		ReturnMessageDto messageAgent = new ReturnMessageDto();
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(messageAgent);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(srm);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
 		assertEquals(0, result.getErrors().size());
-		// assertEquals("La demande est validée.", result.getInfos().get(0));
+		assertEquals("La demande est validée.", result.getInfos().get(0));
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
@@ -6403,7 +6408,6 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
-//		ReflectionTestUtils.setField(service, "counterService", counterService);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
@@ -6418,8 +6422,6 @@ public class AbsenceServiceTest {
 
 		Integer idAgent = 9005138;
 		ReturnMessageDto result = null;
-
-		ReturnMessageDto srm = new ReturnMessageDto();
 
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
@@ -6442,7 +6444,9 @@ public class AbsenceServiceTest {
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
-				return new ReturnMessageDto();
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
 			}
 		})
 				.when(absDataConsistencyRules)
@@ -6450,9 +6454,15 @@ public class AbsenceServiceTest {
 						Mockito.isA(List.class));
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
-		Mockito.when(
-				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
-						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		}).when(counterService)
+				.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(DemandeEtatChangeDto.class));
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
 		Mockito.when(counterServiceFactory.getFactory(
@@ -6467,14 +6477,13 @@ public class AbsenceServiceTest {
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-//		ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
 		assertEquals(0, result.getErrors().size());
-		// assertEquals("La demande est validée.", result.getInfos().get(0));
+		assertEquals("La demande est validée.", result.getInfos().get(0));
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
