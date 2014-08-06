@@ -9,13 +9,18 @@ import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.domain.Spcarr;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("AbsReposCompensateurDataConsistencyRulesImpl")
 public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
 
+	@Autowired
+	protected IReposCompensateurRepository reposCompensateurRepository;
+	
 	/**
 	 * Processes the data consistency of a set of Pointages being input by a
 	 * user. It will check the different business rules in order to make sure

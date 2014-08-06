@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import nc.noumea.mairie.abs.domain.Demande;
@@ -12,6 +13,7 @@ import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.IAsaRepository;
 
 @Service("AbsAsaDataConsistencyRulesImpl")
 public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
@@ -21,6 +23,9 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 	protected static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
 	protected static final String OS_INACTIVE = "L'organisation syndicale n'est pas active.";
 
+	@Autowired
+	protected IAsaRepository asaRepository;
+	
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));

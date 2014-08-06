@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
@@ -12,11 +13,18 @@ import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.ICongesExceptionnelsRepository;
+import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.service.impl.HelperService;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.mock.staticmock.MockStaticEntityMethods;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @MockStaticEntityMethods
 public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDataConsistencyRulesImplTest {
@@ -25,20 +33,6 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	
 	@Test
 	public void testMethodeParenteHeritage() throws Throwable {
-		
-		checkChampMotifDemandeSaisi_ok_motifNonObligatoire();
-		checkChampMotifDemandeSaisi_ok_motifSaisi();
-		checkChampMotifDemandeSaisi_ko_motifNull();
-		checkChampMotifDemandeSaisi_ko_motifVide();
-		isAfficherBoutonImprimer();
-		isAfficherBoutonAnnuler_isOperateur();
-		isAfficherBoutonAnnuler_isNotOperateur();
-		checkEtatsDemandeAnnulee_isValidee();
-		checkEtatsDemandeAnnulee_isAttente();
-		checkEtatsDemandeAnnulee_isPrise();
-		checkEtatsDemandeAnnulee_isRejete();
-		filtreDroitOfDemandeSIRH();
-		
 		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
 		super.allTest(impl);
 	}
@@ -360,5 +354,99 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		assertTrue(result11.isAffichageBoutonAnnuler());
 		assertTrue(result11.isAffichageValidation());
 		assertTrue(result11.isModifierValidation());
+	}
+	
+	@Test
+	public void checkDepassementCompteurAgent_quotaZero() {
+		
+		DemandeDto demandeDto = new DemandeDto();
+			demandeDto.setIdTypeDemande(1);
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setQuotaMax(0);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(RefTypeSaisi.class, demandeDto.getIdTypeDemande())).thenReturn(
+				typeSaisi);
+
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+		
+		assertTrue(impl.checkDepassementCompteurAgent(demandeDto));
+	}
+	
+	@Test
+	public void checkDepassementCompteurAgent_false() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+			agentWithServiceDto.setIdAgent(9005138);
+		
+		DemandeDto demandeDto = new DemandeDto();
+			demandeDto.setIdTypeDemande(1);
+			demandeDto.setDateDebut(new Date());
+			demandeDto.setAgentWithServiceDto(agentWithServiceDto);
+			demandeDto.setDuree(10.0);
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setQuotaMax(10);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(RefTypeSaisi.class, demandeDto.getIdTypeDemande())).thenReturn(
+				typeSaisi);
+
+		Date fromDate = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDateDebutByUnitePeriodeQuotaAndDebutDemande(
+				typeSaisi.getRefUnitePeriodeQuota(), demandeDto.getDateDebut())).thenReturn(fromDate);
+		
+		ICongesExceptionnelsRepository congesExceptionnelsRepository = Mockito.mock(ICongesExceptionnelsRepository.class);
+		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(
+				demandeDto.getAgentWithServiceDto().getIdAgent(), fromDate, demandeDto.getDateDebut(), demandeDto.getIdTypeDemande())).thenReturn(0.0);
+		
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "congesExceptionnelsRepository", congesExceptionnelsRepository);
+		
+		assertFalse(impl.checkDepassementCompteurAgent(demandeDto));
+	}
+	
+	@Test
+	public void checkDepassementCompteurAgent_true() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+			agentWithServiceDto.setIdAgent(9005138);
+		
+		DemandeDto demandeDto = new DemandeDto();
+			demandeDto.setIdTypeDemande(1);
+			demandeDto.setDateDebut(new Date());
+			demandeDto.setAgentWithServiceDto(agentWithServiceDto);
+			demandeDto.setDuree(10.0);
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setQuotaMax(10);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(RefTypeSaisi.class, demandeDto.getIdTypeDemande())).thenReturn(
+				typeSaisi);
+
+		Date fromDate = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDateDebutByUnitePeriodeQuotaAndDebutDemande(
+				typeSaisi.getRefUnitePeriodeQuota(), demandeDto.getDateDebut())).thenReturn(fromDate);
+		
+		ICongesExceptionnelsRepository congesExceptionnelsRepository = Mockito.mock(ICongesExceptionnelsRepository.class);
+		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(
+				demandeDto.getAgentWithServiceDto().getIdAgent(), fromDate, demandeDto.getDateDebut(), demandeDto.getIdTypeDemande())).thenReturn(1.0);
+		
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "congesExceptionnelsRepository", congesExceptionnelsRepository);
+		
+		assertTrue(impl.checkDepassementCompteurAgent(demandeDto));
 	}
 }

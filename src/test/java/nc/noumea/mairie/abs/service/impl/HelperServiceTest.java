@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.domain.Spcarr;
 
@@ -568,5 +569,110 @@ public class HelperServiceTest {
 		
 		HelperService service = new HelperService();
 		assertTrue(service.isConventionCollective(carr));
+	}
+	
+	@Test
+	public void getDateDebutAnneeForOneDate_returnFirstDAy() {
+		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+
+		HelperService service = new HelperService();
+		Date result = service.getDateDebutAnneeForOneDate(dateDemande, 1);
+
+		assertEquals(result, new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+	}
+	
+	@Test
+	public void getDateDebutJourneeForOneDate_returnFirstDAy() {
+		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+
+		HelperService service = new HelperService();
+		Date result = service.getDateDebutJourneeForOneDate(dateDemande, 1);
+
+		assertEquals(result, new DateTime(2014, 05, 13, 0, 0, 0).toDate());
+	}
+	
+	@Test
+	public void getDateDebutMoisForOneDate_Moins3Mois() {
+		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+
+		HelperService service = new HelperService();
+		Date result = service.getDateDebutMoisForOneDate(dateDemande, 3);
+
+		assertEquals(result, new DateTime(2014, 03, 1, 0, 0, 0).toDate());
+	}
+	
+	@Test
+	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_1AnCivil() {
+		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+		
+		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
+		upq.setGlissant(false);
+		upq.setUnite("an");
+		upq.setValeur(1);
+
+		HelperService service = new HelperService();
+		Date result = service.getDateDebutByUnitePeriodeQuotaAndDebutDemande(upq, dateDebutDemande);
+
+		assertEquals(result, new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+	}
+	
+	@Test
+	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_3MoisNonGlissants() {
+		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+		
+		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
+		upq.setGlissant(false);
+		upq.setUnite("mois");
+		upq.setValeur(3);
+
+		HelperService service = new HelperService();
+		Date result = service.getDateDebutByUnitePeriodeQuotaAndDebutDemande(upq, dateDebutDemande);
+
+		assertEquals(result, new DateTime(2014, 3, 1, 0, 0, 0).toDate());
+	}
+	
+	@Test
+	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_ParMoisNonGlissant() {
+		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+		
+		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
+		upq.setGlissant(false);
+		upq.setUnite("mois");
+		upq.setValeur(1);
+
+		HelperService service = new HelperService();
+		Date result = service.getDateDebutByUnitePeriodeQuotaAndDebutDemande(upq, dateDebutDemande);
+
+		assertEquals(result, new DateTime(2014, 5, 1, 0, 0, 0).toDate());
+	}
+	
+	@Test
+	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_12MoisGlissants() {
+		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+		
+		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
+		upq.setGlissant(true);
+		upq.setUnite("mois");
+		upq.setValeur(12);
+
+		HelperService service = new HelperService();
+		Date result = service.getDateDebutByUnitePeriodeQuotaAndDebutDemande(upq, dateDebutDemande);
+
+		assertEquals(result, new DateTime(2013, 5, 13, 12, 30, 0).toDate());
+	}
+	
+	@Test
+	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_1MoisGlissant() {
+		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+		
+		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
+		upq.setGlissant(true);
+		upq.setUnite("mois");
+		upq.setValeur(1);
+
+		HelperService service = new HelperService();
+		Date result = service.getDateDebutByUnitePeriodeQuotaAndDebutDemande(upq, dateDebutDemande);
+
+		assertEquals(result, new DateTime(2014, 4, 13, 12, 30, 0).toDate());
 	}
 }

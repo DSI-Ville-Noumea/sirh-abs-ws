@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -121,7 +122,7 @@ public class RefTypeSaisi {
 	@Column(name = "QUOTA_MAX")
 	private Integer quotaMax;
 	
-	@OneToOne(optional = true)
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
 	@JoinColumn(name = "ID_REF_UNITE_PERIODE_QUOTA")
 	private RefUnitePeriodeQuota refUnitePeriodeQuota;
 

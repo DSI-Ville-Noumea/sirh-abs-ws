@@ -23,8 +23,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 	public void allTest() throws Throwable {
 		super.impl = new AbsRecuperationDataConsistencyRulesImpl();
 		super.allTest(impl);
-		
-		super.filtreDroitOfListeDemandesByDemande_Approbateur();
 	}
 
 	@Test

@@ -8,15 +8,21 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.ICongesExceptionnelsRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("AbsCongesExcepDataConsistencyRulesImpl")
 public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
 
 	public static final String CHAMP_COMMENTAIRE_OBLIGATOIRE = "Le champ Commentaire est obligatoire.";
+	
+	@Autowired
+	protected ICongesExceptionnelsRepository congesExceptionnelsRepository;
 	
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi) {
@@ -83,5 +89,29 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 				RefEtatEnum.APPROUVEE.getCodeEtat()));
 		
 		return demandeDto;
+	}
+	
+	@Override
+	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+		
+		RefTypeSaisi typeSaisi = demandeRepository.getEntity(RefTypeSaisi.class, demandeDto.getIdTypeDemande());
+		
+		// si le quota max pour ce type de demande est a zero
+		// on renvoie une alerte de depassement dans tous les cas
+		if(0 == typeSaisi.getQuotaMax())
+			return true;
+		
+		Date dateDebut = helperService.getDateDebutByUnitePeriodeQuotaAndDebutDemande(
+				typeSaisi.getRefUnitePeriodeQuota(), 
+				demandeDto.getDateDebut());
+		
+		Double dureeDejaPris = congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(
+				demandeDto.getAgentWithServiceDto().getIdAgent(), dateDebut, demandeDto.getDateDebut(), demandeDto.getIdTypeDemande());
+		
+		if(dureeDejaPris + demandeDto.getDuree() > typeSaisi.getQuotaMax()) {
+			return true;
+		}
+		
+		return false;
 	}
 }

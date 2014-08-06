@@ -41,6 +41,8 @@ public class DemandeRepositoryTest {
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 	@Test
 	@Transactional("absTransactionManager")
@@ -106,7 +108,6 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesAgent_DateFilter_Return2Demande() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		DemandeRecup d = new DemandeRecup();
 		d.setIdAgent(9005138);
@@ -154,7 +155,6 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesAgent_DateFinFilter_Return2Demande() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		DemandeRecup d = new DemandeRecup();
 		d.setIdAgent(9005138);
@@ -203,8 +203,7 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesAgent_TypeFilter_Return0Demande() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
+		
 		RefTypeAbsence typeMaladie = new RefTypeAbsence();
 		typeMaladie.setIdRefTypeAbsence(6);
 		typeMaladie.setLabel("Maladies");
@@ -258,7 +257,7 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesAgent_TypeFilter_Return2Demande() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
 		RefTypeAbsence typeMaladie = new RefTypeAbsence();
 		typeMaladie.setIdRefTypeAbsence(6);
 		typeMaladie.setLabel("Maladies");
@@ -318,7 +317,6 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesAgent_MultiAgent_Return6Demandes() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		DemandeRecup d = new DemandeRecup();
 		d.setIdAgent(9005130);
@@ -414,7 +412,6 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesAgent_MultiAgent_Return4DemandesOf6() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		DemandeRecup d = new DemandeRecup();
 		d.setIdAgent(9005130);
@@ -809,7 +806,6 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesSIRH_TypeFilter_Return0Demande() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		RefTypeAbsence typeMaladie = new RefTypeAbsence();
 		typeMaladie.setIdRefTypeAbsence(6);
@@ -864,7 +860,6 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesSIRH_TypeFilter_Return2Demande() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		RefTypeAbsence typeMaladie = new RefTypeAbsence();
 		typeMaladie.setIdRefTypeAbsence(6);
 		typeMaladie.setLabel("Maladies");
@@ -924,7 +919,6 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesSIRH_DateFilter_Return2Demande() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		DemandeRecup d = new DemandeRecup();
 		d.setIdAgent(9005138);
@@ -972,7 +966,6 @@ public class DemandeRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void listeDemandesSIRH_DateFinFilter_Return2Demande() throws ParseException {
 		// Given
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		DemandeRecup d = new DemandeRecup();
 		d.setIdAgent(9005138);
@@ -1016,4 +1009,6 @@ public class DemandeRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+	
 }

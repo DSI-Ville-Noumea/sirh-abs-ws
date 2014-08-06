@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.domain.Spcarr;
 
@@ -29,6 +30,8 @@ public class HelperService {
 	private final static long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 	private final static long MILLISECONDS_PER_MINUTES = 1000 * 60;
 
+	public static String UNITE_DECOMPTE_AN = "an";
+	public static String UNITE_DECOMPTE_MOIS = "mois";
 	public static String UNITE_DECOMPTE_JOURS = "jours";
 	public static String UNITE_DECOMPTE_MINUTES = "minutes";
 
@@ -207,6 +210,36 @@ public class HelperService {
 		return new DateTime(year, month, minDay, 0, 0, 0).toDate();
 	}
 
+	public Date getDateDebutMoisForOneDate(Date dateDemande, int nombreMois) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateDemande);
+		int minDay = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
+		int month = calendar.get(Calendar.MONTH) + 1 - (nombreMois - 1);
+		int year = calendar.get(Calendar.YEAR);
+		// on recupere le 1er jour du mois de la demande
+		return new DateTime(year, month, minDay, 0, 0, 0).toDate();
+	}
+	
+	public Date getDateDebutAnneeForOneDate(Date dateDemande, int nombreAnnees) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateDemande);
+		int minDay = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
+		int month = calendar.getActualMinimum(Calendar.MONTH) + 1;
+		int year = calendar.get(Calendar.YEAR) - (nombreAnnees - 1);
+		// on recupere le 1er jour du mois de la demande
+		return new DateTime(year, month, minDay, 0, 0, 0).toDate();
+	}
+	
+	public Date getDateDebutJourneeForOneDate(Date dateDemande, int nombreJours) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateDemande);
+		int minDay = calendar.get(Calendar.DAY_OF_MONTH) - (nombreJours - 1);
+		int month = calendar.get(Calendar.MONTH) + 1;
+		int year = calendar.get(Calendar.YEAR);
+		// on recupere le 1er jour du mois de la demande
+		return new DateTime(year, month, minDay, 0, 0, 0).toDate();
+	}
+
 	public Date getDateFinMoisForOneDate(Date dateDemande) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(dateDemande);
@@ -227,5 +260,41 @@ public class HelperService {
 	
 	public boolean isConventionCollective(Spcarr carr) {
 		return (carr.getCdcate() == 7);
+	}
+	
+	public Date getDateDebutByUnitePeriodeQuotaAndDebutDemande(RefUnitePeriodeQuota upq, Date dateDebutDemande) {
+		
+		if(UNITE_DECOMPTE_AN.equals(upq.getUnite())){
+			if(upq.isGlissant()) {
+				Calendar calendar = Calendar.getInstance();
+					calendar.setTime(dateDebutDemande);
+					calendar.add(Calendar.YEAR, -upq.getValeur());
+				return calendar.getTime();
+			}else{
+				return getDateDebutAnneeForOneDate(dateDebutDemande, upq.getValeur());
+			}
+		}
+		if(UNITE_DECOMPTE_MOIS.equals(upq.getUnite())){
+			if(upq.isGlissant()) {
+				Calendar calendar = Calendar.getInstance();
+					calendar.setTime(dateDebutDemande);
+					calendar.add(Calendar.MONTH, -upq.getValeur());
+				return calendar.getTime();
+			}else{
+				return getDateDebutMoisForOneDate(dateDebutDemande, upq.getValeur());
+			}
+		}
+		if(UNITE_DECOMPTE_JOURS.equals(upq.getUnite())){
+			if(upq.isGlissant()) {
+				Calendar calendar = Calendar.getInstance();
+					calendar.setTime(dateDebutDemande);
+					calendar.add(Calendar.DAY_OF_YEAR, -upq.getValeur());
+				return calendar.getTime();
+			}else{
+				return getDateDebutJourneeForOneDate(dateDebutDemande, upq.getValeur());
+			}
+		}
+		
+		return null;
 	}
 }

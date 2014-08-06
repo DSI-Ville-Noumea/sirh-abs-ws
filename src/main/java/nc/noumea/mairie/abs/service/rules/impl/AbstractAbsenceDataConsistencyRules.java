@@ -19,11 +19,8 @@ import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
-import nc.noumea.mairie.abs.repository.IAsaRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
-import nc.noumea.mairie.abs.repository.IRecuperationRepository;
-import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -41,12 +38,6 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	protected Logger logger = LoggerFactory.getLogger(AbstractAbsenceDataConsistencyRules.class);
 
 	@Autowired
-	protected IRecuperationRepository recuperationRepository;
-
-	@Autowired
-	protected IReposCompensateurRepository reposCompensateurRepository;
-
-	@Autowired
 	protected ICounterRepository counterRepository;
 
 	@Autowired
@@ -60,9 +51,6 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Autowired
 	protected IAccessRightsRepository accessRightsRepository;
-
-	@Autowired
-	protected IAsaRepository asaRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;

@@ -9,11 +9,16 @@ import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("AbsRecuperationDataConsistencyRulesImpl")
 public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
+
+	@Autowired
+	protected IRecuperationRepository recuperationRepository;
 
 	/**
 	 * Processes the data consistency of a set of Pointages being input by a
