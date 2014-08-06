@@ -4319,6 +4319,78 @@ public class AbsenceServiceTest {
 		assertEquals("La demande est validée.", result.getInfos().get(0));
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void setDemandeEtatSIRH_setDemandeEtatRejete_ok() {
+
+		Integer idAgent = 9005138;
+		ReturnMessageDto result = null;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		dto.setIdDemande(1);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+			type.setGroupe(groupe);
+		
+		DemandeAsa demande = Mockito.spy(new DemandeAsa());
+			demande.setDuree(10.0);
+			demande.setType(type);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		ICounterService counterService = Mockito.mock(ICounterService.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				return result;
+			}
+		}).when(counterService)
+				.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(DemandeEtatChangeDto.class));
+
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+		Mockito.when(counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(),
+				demande.getType().getIdRefTypeAbsence())).thenReturn(
+				counterService);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(srm);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals("La demande est rejetée.", result.getInfos().get(0));
+		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
