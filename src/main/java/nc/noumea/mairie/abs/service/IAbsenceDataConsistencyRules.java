@@ -39,6 +39,6 @@ public interface IAbsenceDataConsistencyRules {
 	
 	DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto);
 
-	ReturnMessageDto checkSaisiKiosqueAutorisee(ReturnMessageDto srm,
+	ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm,
 			RefTypeSaisi typeSaisi, boolean isProvenanceSIRH);
 }

@@ -85,7 +85,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
 
-		checkSaisiKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
+		checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
 		checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 		checkAgentInactivity(srm, idAgent, dateLundi);
 		checkStatutAgent(srm, demande);
@@ -161,7 +161,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 	
 	@Override
-	public ReturnMessageDto checkSaisiKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi, boolean isProvenanceSIRH) {
+	public ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi, boolean isProvenanceSIRH) {
 
 		if(!isProvenanceSIRH && !typeSaisi.isSaisieKiosque()) {
 			logger.warn(String.format(SAISIE_KIOSQUE_NON_AUTORISEE));

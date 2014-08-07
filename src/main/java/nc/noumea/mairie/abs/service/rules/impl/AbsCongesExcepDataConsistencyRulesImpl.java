@@ -29,6 +29,7 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkChampMotifDemandeSaisi(srm, (DemandeCongesExceptionnels)demande);
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
+		checkMessageAlerteDepassementDroit(srm, (DemandeCongesExceptionnels)demande);
 	}
 	
 	protected ReturnMessageDto checkChampMotifDemandeSaisi(ReturnMessageDto srm, DemandeCongesExceptionnels demande) {
@@ -92,9 +93,15 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 	}
 	
 	@Override
-	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto){
+		return checkDepassementCompteurAgent(
+				demandeDto.getIdTypeDemande(), demandeDto.getDateDebut(), 
+				demandeDto.getAgentWithServiceDto().getIdAgent(), demandeDto.getDuree());
+	}
+	
+	private boolean checkDepassementCompteurAgent(Integer idTypeDemande, Date dateDebutDemande, Integer idAgent, Double duree) {
 		
-		RefTypeSaisi typeSaisi = demandeRepository.getEntity(RefTypeSaisi.class, demandeDto.getIdTypeDemande());
+		RefTypeSaisi typeSaisi = demandeRepository.getEntity(RefTypeSaisi.class, idTypeDemande);
 		
 		// si le quota max pour ce type de demande est a zero
 		// on renvoie une alerte de depassement dans tous les cas
@@ -103,15 +110,30 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 		
 		Date dateDebut = helperService.getDateDebutByUnitePeriodeQuotaAndDebutDemande(
 				typeSaisi.getRefUnitePeriodeQuota(), 
-				demandeDto.getDateDebut());
+				dateDebutDemande);
 		
 		Double dureeDejaPris = congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(
-				demandeDto.getAgentWithServiceDto().getIdAgent(), dateDebut, demandeDto.getDateDebut(), demandeDto.getIdTypeDemande());
+				idAgent, dateDebut, dateDebutDemande, idTypeDemande);
 		
-		if(dureeDejaPris + demandeDto.getDuree() > typeSaisi.getQuotaMax()) {
+		if(dureeDejaPris + duree > typeSaisi.getQuotaMax()) {
 			return true;
 		}
 		
 		return false;
+	}
+	
+	protected ReturnMessageDto checkMessageAlerteDepassementDroit(ReturnMessageDto srm, DemandeCongesExceptionnels demande) {
+		
+		// si la colonne alerte dans la table de parametre est a vrai
+		if(demande.getType().getTypeSaisi().isAlerte()
+				&& checkDepassementCompteurAgent(
+						demande.getType().getIdRefTypeAbsence(), demande.getDateDebut(), 
+						demande.getIdAgent(), demande.getDuree())) {
+			
+			logger.warn(String.format(demande.getType().getTypeSaisi().getMessageAlerte(), demande.getIdAgent()));
+			srm.getInfos().add(String.format(demande.getType().getTypeSaisi().getMessageAlerte(), demande.getIdAgent()));
+		}
+		
+		return srm;
 	}
 }

@@ -346,7 +346,7 @@ public class AbsenceService implements IAbsenceService {
 		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 		
-		result = absenceDataConsistencyRulesImpl.checkSaisiKiosqueAutorisee(result, demande.getType().getTypeSaisi(), false);
+		result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(), false);
 
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -383,7 +383,7 @@ public class AbsenceService implements IAbsenceService {
 		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
-		result = absenceDataConsistencyRulesImpl.checkSaisiKiosqueAutorisee(result, demande.getType().getTypeSaisi(), false);
+		result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(), false);
 		
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -728,6 +728,16 @@ public class AbsenceService implements IAbsenceService {
 		result.getInfos().add(String.format("La demande est en attente."));
 	}
 	
+	/**
+	 * Mapping des saisies (creation/modif) de demande depuis kiosque et SIRH
+	 * 
+	 * @param demandeDto DTO
+	 * @param demande objet Demande  
+	 * @param idAgent agent connecte
+	 * @param dateJour date du jour
+	 * @param returnDto ReturnMessageDto 
+	 * @return la demande a enregistrer
+	 */
 	private Demande mappingDemandeSpecifique(DemandeDto demandeDto, Demande demande, Integer idAgent, Date dateJour, ReturnMessageDto returnDto){
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande

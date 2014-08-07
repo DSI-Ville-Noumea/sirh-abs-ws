@@ -110,9 +110,9 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		checkStatutAgent_Contractuel_ko();
 		checkStatutAgent_ConventionCollective_ok();
 		checkStatutAgent_ConventionCollective_ko();
-		checkSaisiKiosqueAutorisee_sourceKiosque_saisieKO();
-		checkSaisiKiosqueAutorisee_sourceKiosque_saisieOK();
-		checkSaisiKiosqueAutorisee_sourceSIRH();
+		checkSaisieKiosqueAutorisee_sourceKiosque_saisieKO();
+		checkSaisieKiosqueAutorisee_sourceKiosque_saisieOK();
+		checkSaisieKiosqueAutorisee_sourceSIRH();
 	}
 
 	@Test
@@ -3056,40 +3056,40 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	}
 	
 	@Test
-	public void checkSaisiKiosqueAutorisee_sourceSIRH() {
+	public void checkSaisieKiosqueAutorisee_sourceSIRH() {
 		
 		ReturnMessageDto srm = new ReturnMessageDto();
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setSaisieKiosque(false);
 		
-		srm = impl.checkSaisiKiosqueAutorisee(srm, typeSaisi, true);
+		srm = impl.checkSaisieKiosqueAutorisee(srm, typeSaisi, true);
 		
 		assertEquals(srm.getErrors().size(), 0);
 	}
 	
 	@Test
-	public void checkSaisiKiosqueAutorisee_sourceKiosque_saisieKO() {
+	public void checkSaisieKiosqueAutorisee_sourceKiosque_saisieKO() {
 		
 		ReturnMessageDto srm = new ReturnMessageDto();
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setSaisieKiosque(false);
 		
-		srm = impl.checkSaisiKiosqueAutorisee(srm, typeSaisi, false);
+		srm = impl.checkSaisieKiosqueAutorisee(srm, typeSaisi, false);
 		
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.SAISIE_KIOSQUE_NON_AUTORISEE);
 	}
 	
 	@Test
-	public void checkSaisiKiosqueAutorisee_sourceKiosque_saisieOK() {
+	public void checkSaisieKiosqueAutorisee_sourceKiosque_saisieOK() {
 		
 		ReturnMessageDto srm = new ReturnMessageDto();
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setSaisieKiosque(true);
 		
-		srm = impl.checkSaisiKiosqueAutorisee(srm, typeSaisi, false);
+		srm = impl.checkSaisieKiosqueAutorisee(srm, typeSaisi, false);
 		
 		assertEquals(srm.getErrors().size(), 0);
 	}

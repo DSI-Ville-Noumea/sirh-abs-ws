@@ -359,8 +359,11 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	@Test
 	public void checkDepassementCompteurAgent_quotaZero() {
 		
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		
 		DemandeDto demandeDto = new DemandeDto();
 			demandeDto.setIdTypeDemande(1);
+			demandeDto.setAgentWithServiceDto(agentWithServiceDto);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setQuotaMax(0);
@@ -448,5 +451,93 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		ReflectionTestUtils.setField(impl, "congesExceptionnelsRepository", congesExceptionnelsRepository);
 		
 		assertTrue(impl.checkDepassementCompteurAgent(demandeDto));
+	}
+	
+	@Test
+	public void checkMessageAlerteDepassementDroit_AlerteFalseEtDepasstCompteurTrue() {
+
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisiBis = new RefTypeSaisi();
+			typeSaisiBis.setAlerte(true);
+	
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(1);
+			type.setTypeSaisi(typeSaisiBis);
+		
+		DemandeCongesExceptionnels demande = new DemandeCongesExceptionnels();
+			demande.setType(type);
+			demande.setDateDebut(new Date());
+			demande.setIdAgent(9005138);
+			demande.setDuree(10.0);
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setQuotaMax(10);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(RefTypeSaisi.class, demande.getType().getIdRefTypeAbsence())).thenReturn(
+				typeSaisi);
+
+		Date fromDate = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDateDebutByUnitePeriodeQuotaAndDebutDemande(
+				typeSaisi.getRefUnitePeriodeQuota(), demande.getDateDebut())).thenReturn(fromDate);
+		
+		ICongesExceptionnelsRepository congesExceptionnelsRepository = Mockito.mock(ICongesExceptionnelsRepository.class);
+		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(
+				demande.getIdAgent(), fromDate, demande.getDateDebut(), demande.getType().getIdRefTypeAbsence())).thenReturn(0.0);
+		
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "congesExceptionnelsRepository", congesExceptionnelsRepository);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkMessageAlerteDepassementDroit(result, demande);
+		
+		assertEquals(0, result.getErrors().size());
+	}
+	
+	@Test
+	public void checkMessageAlerteDepassementDroit_AlerteTrueEtDepasstCompteurTrue() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisiBis = new RefTypeSaisi();
+			typeSaisiBis.setAlerte(true);
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+			type.setIdRefTypeAbsence(1);
+			type.setTypeSaisi(typeSaisiBis);
+		
+		DemandeCongesExceptionnels demande = new DemandeCongesExceptionnels();
+			demande.setType(type);
+			demande.setDateDebut(new Date());
+			demande.setIdAgent(9005138);
+			demande.setDuree(10.0);
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setQuotaMax(10);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(RefTypeSaisi.class, demande.getType().getIdRefTypeAbsence())).thenReturn(
+				typeSaisi);
+
+		Date fromDate = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDateDebutByUnitePeriodeQuotaAndDebutDemande(
+				typeSaisi.getRefUnitePeriodeQuota(), demande.getDateDebut())).thenReturn(fromDate);
+		
+		ICongesExceptionnelsRepository congesExceptionnelsRepository = Mockito.mock(ICongesExceptionnelsRepository.class);
+		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(
+				demande.getIdAgent(), fromDate, demande.getDateDebut(), demande.getType().getIdRefTypeAbsence())).thenReturn(0.0);
+		
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "congesExceptionnelsRepository", congesExceptionnelsRepository);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkMessageAlerteDepassementDroit(result, demande);
 	}
 }
