@@ -2922,6 +2922,160 @@ public class AbsenceServiceTest {
 	}
 
 	@Test
+	public void getDemande_CongesExcep_WithResult_isEtatDefinitif() {
+
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+		Date dateMaj = new Date();
+		Date dateMaj2 = new Date();
+		Integer idDemande = 1;
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(26);
+			rta.setGroupe(groupe);
+
+		Demande d = new Demande();
+			d.setType(rta);
+
+		DemandeCongesExceptionnels dr = new DemandeCongesExceptionnels();
+
+		EtatDemande ed = new EtatDemande();
+			ed.setDate(dateMaj);
+			ed.setDemande((Demande) dr);
+			ed.setEtat(RefEtatEnum.PROVISOIRE);
+			ed.setIdAgent(9005138);
+			ed.setIdEtatDemande(1);
+		EtatDemande ed2 = new EtatDemande();
+			ed2.setDate(dateMaj2);
+			ed2.setDemande((Demande) dr);
+			ed2.setEtat(RefEtatEnum.SAISIE);
+			ed2.setIdAgent(9005138);
+			ed2.setIdEtatDemande(2);
+			ed2.setMotif("motif");
+		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
+			listEtatDemande.addAll(Arrays.asList(ed2, ed));
+
+		dr.setDateDebut(dateDebut);
+		dr.setDateFin(dateFin);
+		dr.setDuree(10.0);
+		dr.setEtatsDemande(listEtatDemande);
+		dr.setIdAgent(9005138);
+		dr.setIdDemande(idDemande);
+		dr.setType(rta);
+
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+		Mockito.when(sirhWSConsumer.getAgentService(dr.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+
+		IDemandeRepository demandeRepo = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
+		Mockito.when(demandeRepo.getEntity(DemandeCongesExceptionnels.class, idDemande)).thenReturn(dr);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		// When
+		DemandeDto result = service.getDemandeDto(idDemande);
+
+		// Then
+		assertEquals(result.getDateDebut(), dateDebut);
+		assertEquals(result.getDuree().toString(), "10.0");
+		assertEquals(result.getIdDemande(), idDemande);
+		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.SAISIE.getCodeEtat());
+		assertEquals(result.getIdTypeDemande().intValue(), 26);
+		assertFalse(result.isAffichageBoutonImprimer());
+		assertFalse(result.isAffichageBoutonModifier());
+		assertFalse(result.isAffichageBoutonSupprimer());
+		assertEquals("motif", result.getMotif());
+	}
+
+	@Test
+	public void getDemande_CongesExceptionnels_WithResult_isNoEtatDefinitif() {
+
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+		Date dateMaj = new Date();
+		Date dateMaj2 = new Date();
+		Integer idDemande = 1;
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+	
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(26);
+			rta.setGroupe(groupe);
+
+		Demande d = new Demande();
+		d.setType(rta);
+
+		DemandeCongesExceptionnels dr = new DemandeCongesExceptionnels();
+
+		EtatDemande ed = new EtatDemande();
+		ed.setDate(dateMaj);
+		ed.setDemande((Demande) dr);
+		ed.setEtat(RefEtatEnum.SAISIE);
+		ed.setIdAgent(9005138);
+		ed.setIdEtatDemande(1);
+		EtatDemande ed2 = new EtatDemande();
+		ed2.setDate(dateMaj2);
+		ed2.setDemande((Demande) dr);
+		ed2.setEtat(RefEtatEnum.APPROUVEE);
+		ed2.setIdAgent(9005138);
+		ed2.setIdEtatDemande(2);
+		ed2.setMotif("motif");
+		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
+		listEtatDemande.addAll(Arrays.asList(ed2, ed));
+
+		dr.setDateDebut(dateDebut);
+		dr.setDateFin(dateFin);
+		dr.setDuree(10.0);
+		dr.setEtatsDemande(listEtatDemande);
+		dr.setIdAgent(9005138);
+		dr.setIdDemande(idDemande);
+		dr.setType(rta);
+
+		IDemandeRepository demandeRepo = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
+		Mockito.when(demandeRepo.getEntity(DemandeCongesExceptionnels.class, idDemande)).thenReturn(dr);
+
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(d.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+		Mockito.when(sirhWSConsumer.getAgentService(dr.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepo);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		// When
+		DemandeDto result = service.getDemandeDto(idDemande);
+
+		// Then
+		assertEquals(result.getDateDebut(), dateDebut);
+		assertEquals(result.getDuree().toString(), "10.0");
+		assertEquals(result.getIdDemande(), idDemande);
+		assertEquals(result.getIdRefEtat().intValue(), RefEtatEnum.APPROUVEE.getCodeEtat());
+		assertEquals(result.getIdTypeDemande().intValue(), 26);
+		assertFalse(result.isAffichageBoutonImprimer());
+		assertFalse(result.isAffichageBoutonModifier());
+		assertFalse(result.isAffichageBoutonSupprimer());
+		assertEquals("motif", result.getMotif());
+	}
+	
+	@Test
 	public void saveDemandeSIRHReposComp_OK_avecEtatProvisoire() {
 
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -7472,29 +7626,33 @@ public class AbsenceServiceTest {
 		Date dateMaj2 = new Date();
 		Integer idDemande = 1;
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.NOT_EXIST.getValue());
+		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(7);
+			rta.setIdRefTypeAbsence(7);
+			rta.setGroupe(groupe);
 
 		Demande d = new Demande();
-		d.setType(rta);
+			d.setType(rta);
 
 		DemandeReposComp dr = new DemandeReposComp();
 
 		EtatDemande ed = new EtatDemande();
-		ed.setDate(dateMaj);
-		ed.setDemande((Demande) dr);
-		ed.setEtat(RefEtatEnum.SAISIE);
-		ed.setIdAgent(9005138);
-		ed.setIdEtatDemande(1);
+			ed.setDate(dateMaj);
+			ed.setDemande((Demande) dr);
+			ed.setEtat(RefEtatEnum.SAISIE);
+			ed.setIdAgent(9005138);
+			ed.setIdEtatDemande(1);
 		EtatDemande ed2 = new EtatDemande();
-		ed2.setDate(dateMaj2);
-		ed2.setDemande((Demande) dr);
-		ed2.setEtat(RefEtatEnum.APPROUVEE);
-		ed2.setIdAgent(9005138);
-		ed2.setIdEtatDemande(2);
-		ed2.setMotif("motif");
+			ed2.setDate(dateMaj2);
+			ed2.setDemande((Demande) dr);
+			ed2.setEtat(RefEtatEnum.APPROUVEE);
+			ed2.setIdAgent(9005138);
+			ed2.setIdEtatDemande(2);
+			ed2.setMotif("motif");
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
-		listEtatDemande.addAll(Arrays.asList(ed2, ed));
+			listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
 		dr.setDateDebut(dateDebut);
 		dr.setDateFin(dateFin);

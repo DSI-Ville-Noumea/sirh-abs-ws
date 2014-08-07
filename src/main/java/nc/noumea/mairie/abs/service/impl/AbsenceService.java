@@ -157,10 +157,7 @@ public class AbsenceService implements IAbsenceService {
 			return demandeDto;
 		}
 
-		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getType().getIdRefTypeAbsence())) {
-			case CONGE_ANNUEL:
-				// TODO
-				break;
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
 			case REPOS_COMP:
 
 				DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, idDemande);
@@ -183,13 +180,7 @@ public class AbsenceService implements IAbsenceService {
 						helperService.getCurrentDate()));
 				demandeDto.updateEtat(demandeRecup.getLatestEtatDemande());
 				break;
-			case ASA_A48:
-			case ASA_A52:
-			case ASA_A53:
-			case ASA_A54:
-			case ASA_A55:
-			case ASA_A49:
-			case ASA_A50:
+			case ASA:
 				DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
 				if (null == demandeAsa) {
 					return demandeDto;
@@ -199,17 +190,17 @@ public class AbsenceService implements IAbsenceService {
 						helperService.getCurrentDate()));
 				demandeDto.updateEtat(demandeAsa.getLatestEtatDemande());
 				break;
-			case MALADIES:
-				// TODO
+			case CONGES_EXCEP:
+				DemandeCongesExceptionnels demandeCongesExcep = demandeRepository.getEntity(DemandeCongesExceptionnels.class, idDemande);
+				if (null == demandeCongesExcep) {
+					return demandeDto;
+				}
+				demandeDto = new DemandeDto(demandeCongesExcep, sirhWSConsumer.getAgentService(demande.getIdAgent(),
+						helperService.getCurrentDate()));
+				demandeDto.updateEtat(demandeCongesExcep.getLatestEtatDemande());
 				break;
 			default:
 				return demandeDto;
-		}
-
-		if (null == demandeDto && null != demande) {
-			demandeDto = new DemandeDto(demande, sirhWSConsumer.getAgentService(demande.getIdAgent(),
-					helperService.getCurrentDate()));
-			demandeDto.updateEtat(demande.getLatestEtatDemande());
 		}
 
 		return demandeDto;
