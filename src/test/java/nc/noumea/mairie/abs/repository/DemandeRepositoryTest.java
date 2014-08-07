@@ -24,6 +24,7 @@ import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -505,7 +506,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.clear();
 	}
 
-	// @Test
+//	@Test
 	@Transactional("absTransactionManager")
 	public void getListViseursDemandesSaisiesJourDonne() {
 
@@ -578,8 +579,10 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(etatDemande2);
 
 		List<Integer> listeTypes = new ArrayList<Integer>();
-		listeTypes.add(RefTypeAbsenceEnum.RECUP.getValue());
-		listeTypes.add(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+			listeTypes.add(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+			listeTypes.add(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+			listeTypes.add(RefTypeGroupeAbsenceEnum.ASA.getValue());
+			listeTypes.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 
 		// When
 		List<Integer> result = repository.getListViseursDemandesSaisiesJourDonne(listeTypes);
@@ -590,7 +593,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.clear();
 	}
 
-	// @Test
+//	@Test
 	@Transactional("absTransactionManager")
 	public void getListApprobateursDemandesSaisiesJourDonne() {
 
@@ -742,12 +745,9 @@ public class DemandeRepositoryTest {
 		dda5.setDroitsAgent(droitsAgent5);
 		absEntityManager.persist(dda5);
 
-		RefTypeAbsence rta5 = new RefTypeAbsence();
-		rta5.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
-		absEntityManager.persist(rta5);
 		Demande demande5 = new Demande();
 		demande5.setIdAgent(9000012);
-		demande5.setType(rta5);
+		demande5.setType(rta4);
 		absEntityManager.persist(demande5);
 		EtatDemande etatDemande5 = new EtatDemande();
 		etatDemande5.setDemande(demande5);

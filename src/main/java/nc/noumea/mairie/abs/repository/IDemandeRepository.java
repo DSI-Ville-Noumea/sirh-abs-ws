@@ -24,9 +24,9 @@ public interface IDemandeRepository {
 
 	void removeEntity(Object obj);
 
-	List<Integer> getListViseursDemandesSaisiesJourDonne(List<Integer> listeTypes);
+	List<Integer> getListViseursDemandesSaisiesJourDonne(List<Integer> listeTypesGroupe);
 
-	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(List<Integer> listeTypes);
+	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(List<Integer> listeTypesGroupe);
 
 	List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			Integer idAgentRecherche);
