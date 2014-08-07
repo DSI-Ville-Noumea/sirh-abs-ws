@@ -3124,7 +3124,7 @@ public class AbsenceServiceTest {
 	}
 	
 	@Test
-	public void saveDemandeSIRHCongesExcep_OK_avecEtatSaisie() {
+	public void saveDemandeSIRHCongesExcep_OK_avecEtatSaisie_ParametrageSaisieKiosqueTrue() {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -3162,6 +3162,7 @@ public class AbsenceServiceTest {
 		typeSaisi.setDuree(true);
 		typeSaisi.setChkDateDebut(true);
 		typeSaisi.setChkDateFin(true);
+		typeSaisi.setSaisieKiosque(true);
 		
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesExceptionnels.class, dto.getIdDemande())).thenReturn(
@@ -3171,7 +3172,124 @@ public class AbsenceServiceTest {
 				Object[] args = invocation.getArguments();
 				DemandeCongesExceptionnels obj = (DemandeCongesExceptionnels) args[0];
 
-				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
+				assertEquals(1, obj.getEtatsDemande().size());
+				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getLatestEtatDemande().getEtat().getCodeEtat());
+				assertEquals(9005138, obj.getIdAgent().intValue());
+				assertEquals(obj.getDuree(), 10, 5);
+				assertFalse(obj.isDateDebutAM());
+				assertFalse(obj.isDateFinAM());
+				assertTrue(obj.isDateDebutPM());
+				assertTrue(obj.isDateFinPM());
+
+				return true;
+			}
+		}).when(demandeRepository).persistEntity(Mockito.isA(DemandeCongesExceptionnels.class));
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(
+				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
+				.thenReturn(dateFin);
+		Mockito.when(
+				helperService.getDateDebut(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(dateDebut);
+		Mockito.when(helperService.getDuree(typeSaisi, dateDebut, dateFin, dto.getDuree())).thenReturn(dto.getDuree());
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(DemandeCongesExceptionnels.class), Mockito.isA(Date.class), Mockito.anyBoolean());
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).clear();
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).setFlushMode(FlushModeType.COMMIT);
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande())).thenReturn(typeSaisi);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		result = service.saveDemandeSIRH(idAgent, dto);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(Demande.class));
+	}
+	
+	@Test
+	public void saveDemandeSIRHCongesExcep_OK_avecEtatValide_ParametrageSaisieKiosqueFalse() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		Integer idAgent = 9005138;
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+		
+		DemandeDto dto = new DemandeDto();
+		dto.setIdDemande(1);
+		dto.setDateDebut(dateDebut);
+		dto.setDuree(10.5);
+		dto.setIdTypeDemande(26);
+		dto.setGroupeAbsence(groupeAbsence);
+		dto.setDateDebutPM(true);
+		dto.setDateFinPM(true);
+		
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(idAgent);
+		dto.setAgentWithServiceDto(agDto);
+		dto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+
+		Droit droitOperateur = new Droit();
+		DroitDroitsAgent droitDroitAgent = new DroitDroitsAgent();
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(idAgent);
+		droitDroitAgent.setDroitsAgent(droitsAgent);
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.add(droitDroitAgent);
+		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		typeSaisi.setDuree(true);
+		typeSaisi.setChkDateDebut(true);
+		typeSaisi.setChkDateFin(true);
+		typeSaisi.setSaisieKiosque(false);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(DemandeCongesExceptionnels.class, dto.getIdDemande())).thenReturn(
+				new DemandeCongesExceptionnels());
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				DemandeCongesExceptionnels obj = (DemandeCongesExceptionnels) args[0];
+
+				assertEquals(2, obj.getEtatsDemande().size());
+				assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), obj.getEtatsDemande().get(1).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
 				assertEquals(obj.getDuree(), 10, 5);
 				assertFalse(obj.isDateDebutAM());

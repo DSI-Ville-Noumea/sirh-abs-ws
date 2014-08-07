@@ -553,7 +553,16 @@ public class AbsenceService implements IAbsenceService {
 			demandeRepository.clear();
 			return returnDto;
 		}
-
+		
+		// si la demande provient de SIRH, et que la SAISIE KIOSQUE dans la table de parametrage est a FALSE
+		// l etat de la demande passe automatiquement a VALIDE en ajoutant une ligne dans la table ABS_ETAT_DEMANDE
+		if(!demande.getType().getTypeSaisi().isSaisieKiosque()) {
+			DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+				demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+				demandeEtatChangeDto.setMotif("");
+			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+		}
+		
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 
