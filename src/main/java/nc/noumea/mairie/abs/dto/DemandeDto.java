@@ -66,6 +66,8 @@ public class DemandeDto {
 	private OrganisationSyndicaleDto organisationSyndicale;
 
 	private String commentaire;
+	
+	private RefTypeSaisiDto typeSaisi;
 
 	public DemandeDto() {
 	}
@@ -89,6 +91,7 @@ public class DemandeDto {
 		this.dateFin = d.getDateFin();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
 		this.motif = d.getLatestEtatDemande().getMotif();
+		this.typeSaisi = new RefTypeSaisiDto(d.getType().getTypeSaisi());
 
 		for (EtatDemande etat : d.getEtatsDemande()) {
 			if (this.isValeurVisa == null && etat.getEtat().equals(RefEtatEnum.VISEE_FAVORABLE)) {
@@ -439,6 +442,14 @@ public class DemandeDto {
 
 	public void setCommentaire(String commentaire) {
 		this.commentaire = commentaire;
+	}
+
+	public RefTypeSaisiDto getTypeSaisi() {
+		return typeSaisi;
+	}
+
+	public void setTypeSaisi(RefTypeSaisiDto typeSaisi) {
+		this.typeSaisi = typeSaisi;
 	}
 
 }
