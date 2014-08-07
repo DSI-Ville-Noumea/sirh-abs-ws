@@ -32,7 +32,9 @@ public class RefTypeSaisiDto {
 	
 	public RefTypeSaisiDto(RefTypeSaisi typeSaisi){
 		this();
-		this.idRefTypeDemande = typeSaisi.getType().getIdRefTypeAbsence();
+		if(null != typeSaisi && null != typeSaisi.getType()) 
+			this.idRefTypeDemande = typeSaisi.getType().getIdRefTypeAbsence();
+		
 		this.calendarDateDebut = typeSaisi.isCalendarDateDebut();
 		this.calendarHeureDebut = typeSaisi.isCalendarHeureDebut();
 		this.chkDateDebut = typeSaisi.isChkDateDebut();

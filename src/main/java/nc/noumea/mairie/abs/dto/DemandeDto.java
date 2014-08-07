@@ -91,8 +91,9 @@ public class DemandeDto {
 		this.dateFin = d.getDateFin();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
 		this.motif = d.getLatestEtatDemande().getMotif();
-		this.typeSaisi = new RefTypeSaisiDto(d.getType().getTypeSaisi());
-
+		if(null != d.getType() && null != d.getType().getTypeSaisi())
+			this.typeSaisi = new RefTypeSaisiDto(d.getType().getTypeSaisi());
+		
 		for (EtatDemande etat : d.getEtatsDemande()) {
 			if (this.isValeurVisa == null && etat.getEtat().equals(RefEtatEnum.VISEE_FAVORABLE)) {
 				this.isValeurVisa = Boolean.TRUE;
