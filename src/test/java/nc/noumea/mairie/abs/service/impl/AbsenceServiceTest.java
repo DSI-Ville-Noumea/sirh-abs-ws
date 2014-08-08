@@ -1717,9 +1717,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIncorrect_ReturnError_RecupReposComp() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		
 		RefTypeAbsence typeRecup = new RefTypeAbsence();
 		typeRecup.setLabel("Récupération");
 		typeRecup.setIdRefTypeAbsence(3);
+		typeRecup.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		DemandeRecup demande1 = new DemandeRecup();
@@ -1766,9 +1770,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_Recup_ReposComp() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		
 		RefTypeAbsence typeRecup = new RefTypeAbsence();
 		typeRecup.setLabel("Récupération");
 		typeRecup.setIdRefTypeAbsence(3);
+		typeRecup.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		final DemandeRecup demande1 = new DemandeRecup();
@@ -6947,9 +6955,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIncorrect_ReturnError_A48() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setLabel("ASA");
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		DemandeAsa demande1 = new DemandeAsa();
@@ -6977,9 +6989,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIncorrect_ReturnError_A54() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setLabel("ASA");
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		DemandeAsa demande1 = new DemandeAsa();
@@ -7006,10 +7022,14 @@ public class AbsenceServiceTest {
 
 	@Test
 	public void setDemandeEtatPris_EtatIncorrect_ReturnError_A55() {
-
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setLabel("ASA");
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		DemandeAsa demande1 = new DemandeAsa();
@@ -7037,9 +7057,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIncorrect_ReturnError_A52() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setLabel("ASA");
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		DemandeAsa demande1 = new DemandeAsa();
@@ -7067,9 +7091,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIncorrect_ReturnError_A53() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setLabel("ASA");
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		DemandeAsa demande1 = new DemandeAsa();
@@ -7097,9 +7125,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIncorrect_ReturnError_A50() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setLabel("ASA");
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		DemandeAsa demande1 = new DemandeAsa();
@@ -7127,9 +7159,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIncorrect_ReturnError_A49() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setLabel("ASA");
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
+		type.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		DemandeAsa demande1 = new DemandeAsa();
@@ -7157,9 +7193,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_A48() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence typeA54 = new RefTypeAbsence();
 		typeA54.setLabel("ASA");
 		typeA54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		typeA54.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		final DemandeAsa demande1 = new DemandeAsa();
@@ -7205,11 +7245,15 @@ public class AbsenceServiceTest {
 
 	@Test
 	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_A54() {
-
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence typeA54 = new RefTypeAbsence();
 		typeA54.setLabel("ASA");
 		typeA54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
-
+		typeA54.setGroupe(groupe);
+		
 		EtatDemande etat1 = new EtatDemande();
 		final DemandeAsa demande1 = new DemandeAsa();
 		etat1.setDemande(demande1);
@@ -7254,10 +7298,14 @@ public class AbsenceServiceTest {
 
 	@Test
 	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_A55() {
-
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence typeA54 = new RefTypeAbsence();
 		typeA54.setLabel("ASA");
 		typeA54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
+		typeA54.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		final DemandeAsa demande1 = new DemandeAsa();
@@ -7304,9 +7352,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_A52() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence typeA54 = new RefTypeAbsence();
 		typeA54.setLabel("ASA");
 		typeA54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
+		typeA54.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		final DemandeAsa demande1 = new DemandeAsa();
@@ -7352,10 +7404,14 @@ public class AbsenceServiceTest {
 
 	@Test
 	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_A53() {
-
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence typeA54 = new RefTypeAbsence();
 		typeA54.setLabel("ASA");
 		typeA54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
+		typeA54.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		final DemandeAsa demande1 = new DemandeAsa();
@@ -7401,10 +7457,14 @@ public class AbsenceServiceTest {
 
 	@Test
 	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_A49() {
-
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence typeA54 = new RefTypeAbsence();
 		typeA54.setLabel("ASA");
 		typeA54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
+		typeA54.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		final DemandeAsa demande1 = new DemandeAsa();
@@ -7451,9 +7511,13 @@ public class AbsenceServiceTest {
 	@Test
 	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_A50() {
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		
 		RefTypeAbsence typeA54 = new RefTypeAbsence();
 		typeA54.setLabel("ASA");
 		typeA54.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
+		typeA54.setGroupe(groupe);
 
 		EtatDemande etat1 = new EtatDemande();
 		final DemandeAsa demande1 = new DemandeAsa();

@@ -17,7 +17,6 @@ import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -464,10 +463,7 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getType().getIdRefTypeAbsence())) {
-			case CONGE_ANNUEL:
-				// TODO
-				break;
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum((demande.getType().getGroupe().getIdRefGroupeAbsence()))) {
 			case REPOS_COMP:
 			case RECUP:
 				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
@@ -480,13 +476,8 @@ public class AbsenceService implements IAbsenceService {
 					return result;
 				}
 				break;
-			case ASA_A48:
-			case ASA_A54:
-			case ASA_A55:
-			case ASA_A53:
-			case ASA_A52:
-			case ASA_A50:
-			case ASA_A49:
+			case CONGES_EXCEP:
+			case ASA:
 				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.VALIDEE) {
 					result.getErrors()
 							.add(String
@@ -497,9 +488,6 @@ public class AbsenceService implements IAbsenceService {
 							RefEtatEnum.VALIDEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
 					return result;
 				}
-				break;
-			case MALADIES:
-				// TODO
 				break;
 			default:
 				break;
