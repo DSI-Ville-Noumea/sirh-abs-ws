@@ -20,6 +20,7 @@ public class RefTypeSaisiDto {
 	private boolean compteurCollectif;
 	private boolean saisieKiosque;
 	private String description;
+	private boolean motif;
 	private String infosComplementaires;
 	private boolean alerte;
 	private String messageAlerte;
@@ -50,6 +51,7 @@ public class RefTypeSaisiDto {
 		this.compteurCollectif = typeSaisi.isCompteurCollectif();
 		this.saisieKiosque = typeSaisi.isSaisieKiosque();
 		this.description = typeSaisi.getDescription();
+		this.motif = typeSaisi.isMotif();
 		this.infosComplementaires = typeSaisi.getInfosComplementaires();
 		this.alerte = typeSaisi.isAlerte();
 		this.messageAlerte = typeSaisi.getMessageAlerte();
@@ -227,6 +229,14 @@ public class RefTypeSaisiDto {
 
 	public void setCompteurCollectif(boolean compteurCollectif) {
 		this.compteurCollectif = compteurCollectif;
+	}
+
+	public boolean isMotif() {
+		return motif;
+	}
+
+	public void setMotif(boolean motif) {
+		this.motif = motif;
 	}
 	
 	
