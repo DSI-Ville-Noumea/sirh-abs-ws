@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,8 +23,10 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
+import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
+import nc.noumea.mairie.abs.service.counter.impl.CongesExcepCounterServiceImpl;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 import nc.noumea.mairie.domain.SpSold;
 
@@ -71,10 +74,16 @@ public class SoldeServiceTest {
 		}).when(absDataConsistencyRules)
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
+		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
+		
+		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
@@ -171,10 +180,25 @@ public class SoldeServiceTest {
 		}).when(absDataConsistencyRules)
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
+		SoldeSpecifiqueDto soldeSpecifiqueDto = new SoldeSpecifiqueDto();
+		soldeSpecifiqueDto.setLibelle("libelle 1");
+		soldeSpecifiqueDto.setSolde(10.0);
+		
+		SoldeSpecifiqueDto soldeSpecifiqueDto2 = new SoldeSpecifiqueDto();
+		soldeSpecifiqueDto2.setLibelle("libelle 2");
+		soldeSpecifiqueDto2.setSolde(20.0);
+		
+		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
+		listeSoldeSpecifiqueDto.addAll(Arrays.asList(soldeSpecifiqueDto, soldeSpecifiqueDto2));
+		
+		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, dateDeb, dateFin)).thenReturn(listeSoldeSpecifiqueDto);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin);
 
@@ -193,6 +217,7 @@ public class SoldeServiceTest {
 		assertTrue(dto.isAfficheSoldeAsaA54());
 		assertTrue(dto.isAfficheSoldeAsaA55());
 		assertEquals(2, dto.getListeSoldeAsaA55().size());
+		assertEquals(2, dto.getListeSoldeCongesExcep().size());
 	}
 
 	@Test
@@ -276,10 +301,16 @@ public class SoldeServiceTest {
 		}).when(absDataConsistencyRules)
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
+		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
+		
+		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
 		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
@@ -349,10 +380,16 @@ public class SoldeServiceTest {
 		}).when(absDataConsistencyRules)
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
+		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
+		
+		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
@@ -416,11 +453,17 @@ public class SoldeServiceTest {
 			}
 		}).when(absDataConsistencyRules)
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
-
+		
+		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
+		
+		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
@@ -485,10 +528,16 @@ public class SoldeServiceTest {
 		}).when(absDataConsistencyRules)
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
+		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
+		
+		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null);

@@ -13,6 +13,7 @@ import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
@@ -201,6 +202,11 @@ public abstract class AbstractCounterService implements ICounterService {
 
 	@Override
 	public List<CompteurAsaDto> getListeCompteur() {
+		return null;
+	}
+	
+	@Override
+	public List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin) {
 		return null;
 	}
 

@@ -16,8 +16,10 @@ import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeMonthDto;
+import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
+import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 import nc.noumea.mairie.domain.SpSold;
@@ -43,7 +45,11 @@ public class SoldeService implements ISoldeService {
 	@Autowired
 	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
 	private AbsReposCompensateurDataConsistencyRulesImpl absReposCompDataConsistencyRules;
-
+	
+	@Autowired
+	@Qualifier("CongesExcepCounterServiceImpl")
+	private ICounterService congesExcepCounterServiceImpl;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public SoldeDto getAgentSolde(Integer idAgent, Date dateDeb, Date dateFin) {
@@ -100,7 +106,15 @@ public class SoldeService implements ISoldeService {
 			listDto.add(dtoMonth);
 		}
 		dto.setListeSoldeAsaA55(listDto);
-
+		
+		// Conges Exceptionnels
+		List<SoldeSpecifiqueDto> listeSoldeCongesExcep = congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, dateDeb, dateFin);
+		if(null != listeSoldeCongesExcep
+				&& !listeSoldeCongesExcep.isEmpty()) {
+			dto.setAfficheSoldeCongesExcep(true);
+			dto.setListeSoldeCongesExcep(listeSoldeCongesExcep);
+		}
+		
 		return dto;
 	}
 

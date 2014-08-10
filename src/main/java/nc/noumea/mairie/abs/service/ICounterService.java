@@ -8,6 +8,7 @@ import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 
 public interface ICounterService {
 
@@ -26,4 +27,7 @@ public interface ICounterService {
 	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
 
 	List<CompteurAsaDto> getListeCompteur();
+
+	List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent,
+			Date dateDebut, Date dateFin);
 }

@@ -1,10 +1,16 @@
 package nc.noumea.mairie.abs.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 
@@ -27,7 +33,9 @@ public class RefGroupeAbsence {
 	@Column(name = "LIBELLE", columnDefinition = "NVARCHAR2")
 	private String libelle;
 
-	
+	@OneToMany(mappedBy = "groupe", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OrderBy("label")
+	private List<RefTypeAbsence> listeTypeAbsence = new ArrayList<RefTypeAbsence>();
 
 	public Integer getIdRefGroupeAbsence() {
 		return idRefGroupeAbsence;
@@ -51,6 +59,14 @@ public class RefGroupeAbsence {
 
 	public void setLibelle(String libelle) {
 		this.libelle = libelle;
+	}
+
+	public List<RefTypeAbsence> getListeTypeAbsence() {
+		return listeTypeAbsence;
+	}
+
+	public void setListeTypeAbsence(List<RefTypeAbsence> listeTypeAbsence) {
+		this.listeTypeAbsence = listeTypeAbsence;
 	}
 	
 	

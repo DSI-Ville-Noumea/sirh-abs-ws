@@ -20,6 +20,9 @@ public class SoldeDto {
 	private boolean afficheSoldeAsaA55;
 	private Double soldeAsaA55;
 	private List<SoldeMonthDto> listeSoldeAsaA55;
+	
+	private boolean afficheSoldeCongesExcep;
+	private List<SoldeSpecifiqueDto> listeSoldeCongesExcep;
 
 	public SoldeDto() {
 		listeSoldeAsaA55 = new ArrayList<SoldeMonthDto>();
@@ -143,6 +146,23 @@ public class SoldeDto {
 
 	public void setSoldeAsaA55(Double soldeAsaA55) {
 		this.soldeAsaA55 = soldeAsaA55;
+	}
+
+	public boolean isAfficheSoldeCongesExcep() {
+		return afficheSoldeCongesExcep;
+	}
+
+	public void setAfficheSoldeCongesExcep(boolean afficheSoldeCongesExcep) {
+		this.afficheSoldeCongesExcep = afficheSoldeCongesExcep;
+	}
+
+	public List<SoldeSpecifiqueDto> getListeSoldeCongesExcep() {
+		return listeSoldeCongesExcep;
+	}
+
+	public void setListeSoldeCongesExcep(
+			List<SoldeSpecifiqueDto> listeSoldeCongesExcep) {
+		this.listeSoldeCongesExcep = listeSoldeCongesExcep;
 	}
 
 }
