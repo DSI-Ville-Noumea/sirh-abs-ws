@@ -56,7 +56,7 @@ public class DataConsistencyRulesFactory {
 	private IAbsenceDataConsistencyRules absCongesExcepDataConsistencyRulesImpl;
 
 	// Méthode permettant de récupérer les Factory
-	public IAbsenceDataConsistencyRules getFactory(int groupe, int type) {
+	public IAbsenceDataConsistencyRules getFactory(Integer groupe, Integer type) {
 
 		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(groupe)) {
 			case REPOS_COMP:
@@ -74,7 +74,7 @@ public class DataConsistencyRulesFactory {
 	}
 
 	@SuppressWarnings("incomplete-switch")
-	private IAbsenceDataConsistencyRules getFactoryAsa(int type) {
+	private IAbsenceDataConsistencyRules getFactoryAsa(Integer type) {
 
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(type)) {
 
