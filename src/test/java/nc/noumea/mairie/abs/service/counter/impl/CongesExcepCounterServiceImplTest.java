@@ -47,7 +47,7 @@ public class CongesExcepCounterServiceImplTest extends AbstractCounterServiceTes
 		Date dateFin = new Date();
 		
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.getEntity(RefGroupeAbsence.class, RefTypeGroupeAbsenceEnum.CONGES_EXCEP)).thenReturn(groupe);
+		Mockito.when(demandeRepository.getEntity(RefGroupeAbsence.class, RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue())).thenReturn(groupe);
 
 		ICongesExceptionnelsRepository congesExceptionnelsRepository = Mockito.mock(ICongesExceptionnelsRepository.class);
 		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(idAgent, dateDebut, dateFin, typeAbs1.getIdRefTypeAbsence())).thenReturn(10.0);
