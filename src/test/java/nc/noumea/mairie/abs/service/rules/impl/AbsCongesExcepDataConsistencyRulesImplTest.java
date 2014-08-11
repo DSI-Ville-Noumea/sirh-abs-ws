@@ -540,4 +540,269 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = impl.checkMessageAlerteDepassementDroit(result, demande);
 	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence() {
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(3, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "La date de début est obligatoire.");
+		assertEquals(result.getErrors().get(1), "Vous devez sélectionner au moins un statut d'agent.");
+		assertEquals(result.getErrors().get(2), "L'unité de décompte est obligatoire.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_ErreurMotif() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "Les informations complémentaires sont obligatoires si le champ Motif est coché.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_ErreurAlerte() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "Le message d'alerte est obligatoire si le champ Alerte est coché.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_ErreurQuotaMax() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+			typeSaisi.setQuotaMax(0);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "Le Quota max est obligatoire si l'Unité de période pour le quota est sélectionnée.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_DecompteJours_ErreurHeureFin() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+			typeSaisi.setCalendarHeureDebut(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "L'heure de début ou de fin n'est pas valide pour une unité de décompte en JOURS.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_DecompteJours_ErreurChkDate() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+			typeSaisi.setCalendarHeureDebut(false);
+			typeSaisi.setCalendarHeureFin(false);
+			typeSaisi.setChkDateDebut(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "Les radio boutons Matin/Après-midi doivent être sélectionnés ensemble.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_DecompteJours_ok() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+			typeSaisi.setCalendarHeureDebut(false);
+			typeSaisi.setCalendarHeureFin(false);
+			typeSaisi.setChkDateDebut(true);
+			typeSaisi.setChkDateFin(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(0, result.getErrors().size());
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_DecompteMinutes_erreurHeureFin() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+			typeSaisi.setCalendarHeureDebut(true);
+			typeSaisi.setCalendarHeureFin(false);
+			typeSaisi.setChkDateDebut(false);
+			typeSaisi.setChkDateFin(false);
+			typeSaisi.setCalendarDateFin(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "Pour une unité de décompte en MINUTES, l'heure de fin est obligatoire si la date de fin est sélectionnée.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_DecompteMinutes_erreurHeureDebut() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+			typeSaisi.setCalendarHeureDebut(false);
+			typeSaisi.setCalendarHeureFin(true);
+			typeSaisi.setChkDateDebut(false);
+			typeSaisi.setChkDateFin(false);
+			typeSaisi.setCalendarDateFin(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "L'heure de début est obligatoire pour une unité de décompte en MINUTES.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_DecompteMinutes_erreurChkDate() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+			typeSaisi.setCalendarHeureDebut(true);
+			typeSaisi.setCalendarHeureFin(true);
+			typeSaisi.setChkDateDebut(false);
+			typeSaisi.setChkDateFin(true);
+			typeSaisi.setCalendarDateFin(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "Les radio boutons Matin/Après-midi ne sont pas valides pour une unité de décompte en MINUTES.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_DecompteMinutes_ok() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+			typeSaisi.setCalendarHeureDebut(true);
+			typeSaisi.setCalendarHeureFin(true);
+			typeSaisi.setChkDateDebut(false);
+			typeSaisi.setChkDateFin(false);
+			typeSaisi.setCalendarDateFin(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(0, result.getErrors().size());
+	}
 }

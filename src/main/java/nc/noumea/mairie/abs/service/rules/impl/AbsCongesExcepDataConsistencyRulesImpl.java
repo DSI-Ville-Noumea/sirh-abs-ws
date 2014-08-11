@@ -12,6 +12,7 @@ import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICongesExceptionnelsRepository;
+import nc.noumea.mairie.abs.service.impl.HelperService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -133,6 +134,66 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 			logger.warn(String.format(demande.getType().getTypeSaisi().getMessageAlerte(), demande.getIdAgent()));
 			srm.getInfos().add(String.format(demande.getType().getTypeSaisi().getMessageAlerte(), demande.getIdAgent()));
 		}
+		
+		return srm;
+	}
+	
+	@Override
+	public ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi, ReturnMessageDto srm) {
+		
+		if(!typeSaisi.isCalendarDateDebut()) 
+			srm.getErrors().add(String.format("La date de début est obligatoire."));
+		
+		if(!typeSaisi.isFonctionnaire() && !typeSaisi.isContractuel() && !typeSaisi.isConventionCollective())
+			srm.getErrors().add(String.format("Vous devez sélectionner au moins un statut d'agent."));
+		
+		if(typeSaisi.isMotif() && null == typeSaisi.getInfosComplementaires())
+			srm.getErrors().add(String.format("Les informations complémentaires sont obligatoires si le champ Motif est coché."));
+		
+		if(typeSaisi.isAlerte() && null == typeSaisi.getMessageAlerte())
+			srm.getErrors().add(String.format("Le message d'alerte est obligatoire si le champ Alerte est coché."));
+		
+		if(null != typeSaisi.getRefUnitePeriodeQuota() 
+				&& (null == typeSaisi.getQuotaMax() || 0 == typeSaisi.getQuotaMax())) {
+			srm.getErrors().add(String.format("Le Quota max est obligatoire si l'Unité de période pour le quota est sélectionnée."));
+		}
+		
+		if(null == typeSaisi.getUniteDecompte() || "".equals(typeSaisi.getUniteDecompte().trim()))
+			srm.getErrors().add(String.format("L'unité de décompte est obligatoire."));
+		
+		if (HelperService.UNITE_DECOMPTE_JOURS.equals(typeSaisi.getUniteDecompte())) {
+			return checkSaisiNewTypeAbsenceWithJours(typeSaisi, srm);
+		}
+		if (HelperService.UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
+			return checkSaisiNewTypeAbsenceWithMinutes(typeSaisi, srm);
+		}
+		
+		return srm;
+	}
+	
+	private ReturnMessageDto checkSaisiNewTypeAbsenceWithMinutes(RefTypeSaisi typeSaisi, ReturnMessageDto srm) {
+		
+		if((typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin())
+				|| (!typeSaisi.isCalendarDateFin() && typeSaisi.isCalendarHeureFin())) 
+			srm.getErrors().add(String.format("Pour une unité de décompte en MINUTES, l'heure de fin est obligatoire si la date de fin est sélectionnée."));
+		
+		if(!typeSaisi.isCalendarHeureDebut()) 
+			srm.getErrors().add(String.format("L'heure de début est obligatoire pour une unité de décompte en MINUTES."));
+		
+		if(typeSaisi.isChkDateDebut() || typeSaisi.isChkDateFin())
+			srm.getErrors().add(String.format("Les radio boutons Matin/Après-midi ne sont pas valides pour une unité de décompte en MINUTES."));
+		
+		return srm;
+	}
+	
+	private ReturnMessageDto checkSaisiNewTypeAbsenceWithJours(RefTypeSaisi typeSaisi, ReturnMessageDto srm) {
+		
+		if(typeSaisi.isCalendarHeureDebut() || typeSaisi.isCalendarHeureFin()) 
+			srm.getErrors().add(String.format("L'heure de début ou de fin n'est pas valide pour une unité de décompte en JOURS."));
+		
+		if((typeSaisi.isChkDateDebut() && !typeSaisi.isChkDateFin())
+				|| (!typeSaisi.isChkDateDebut() && typeSaisi.isChkDateFin())) 
+			srm.getErrors().add(String.format("Les radio boutons Matin/Après-midi doivent être sélectionnés ensemble."));
 		
 		return srm;
 	}

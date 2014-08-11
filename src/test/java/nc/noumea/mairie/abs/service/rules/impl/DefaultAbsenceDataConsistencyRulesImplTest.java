@@ -113,6 +113,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		checkSaisieKiosqueAutorisee_sourceKiosque_saisieKO();
 		checkSaisieKiosqueAutorisee_sourceKiosque_saisieOK();
 		checkSaisieKiosqueAutorisee_sourceSIRH();
+		checkSaisiNewTypeAbsence();
 	}
 
 	@Test
@@ -3092,5 +3093,16 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		srm = impl.checkSaisieKiosqueAutorisee(srm, typeSaisi, false);
 		
 		assertEquals(srm.getErrors().size(), 0);
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
+		srm = impl.checkSaisiNewTypeAbsence(typeSaisi, srm);
+		
+		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.SAISIE_TYPE_ABSENCE_NON_AUTORISEE);
 	}
 }

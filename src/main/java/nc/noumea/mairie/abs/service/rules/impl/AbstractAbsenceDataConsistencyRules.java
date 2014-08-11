@@ -73,6 +73,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String STATUT_AGENT_CONTRACTUEL = "Ce type de demande ne peut pas être saisi par les contractuels.";
 	public static final String STATUT_AGENT_CONV_COLL = "Ce type de demande ne peut pas être saisi par les conventions collectives.";
 	public static final String SAISIE_KIOSQUE_NON_AUTORISEE = "Ce type de demande n'est pas géré depuis le Kiosque RH.";
+	public static final String SAISIE_TYPE_ABSENCE_NON_AUTORISEE = "La saisie de nouveau type d'absence pour ce groupe d'absence n'est pas autorisée.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
@@ -386,4 +387,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		return srm;
 	}
 	
+	@Override
+	public ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi, ReturnMessageDto srm) {
+		logger.warn(String.format(SAISIE_TYPE_ABSENCE_NON_AUTORISEE));
+		srm.getErrors().add(String.format(SAISIE_TYPE_ABSENCE_NON_AUTORISEE));
+		return srm;
+	}
 }

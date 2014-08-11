@@ -11,7 +11,9 @@ import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
+import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.ITypeAbsenceService;
+import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -40,6 +42,9 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
 
+	@Autowired
+	private DataConsistencyRulesFactory dataConsistencyRulesFactory;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public List<RefTypeAbsenceDto> getListeTypAbsence() {
@@ -85,9 +90,9 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			typeAbsence = new RefTypeAbsence();
 		}
 
-		if (null != typeAbsenceDto.getGroupeAbsence() && !"".equals(typeAbsenceDto.getGroupeAbsence().getCode().trim())) {
+		if (null != typeAbsenceDto.getGroupeAbsence() && !"".equals(typeAbsenceDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
 			RefGroupeAbsence groupe = typeAbsenceRepository.getEntity(RefGroupeAbsence.class,
-					typeAbsenceDto.getGroupeAbsence());
+					typeAbsenceDto.getGroupeAbsence().getIdRefGroupeAbsence());
 
 			if (null == groupe) {
 				logger.debug(TYPE_GROUPE_INEXISTANT);
@@ -119,7 +124,6 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			typeSaisi.setContractuel(typeSaisiDto.isContractuel());
 			typeSaisi.setConventionCollective(typeSaisiDto.isConventionCollective());
 			typeSaisi.setDescription(typeSaisiDto.getDescription());
-			typeSaisi.setDuree(typeSaisiDto.isDuree());
 			typeSaisi.setFonctionnaire(typeSaisiDto.isFonctionnaire());
 			typeSaisi.setInfosComplementaires(typeSaisiDto.getInfosComplementaires());
 			typeSaisi.setMessageAlerte(typeSaisiDto.getMessageAlerte());
@@ -127,6 +131,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			typeSaisi.setQuotaMax(typeSaisiDto.getQuotaMax());
 			typeSaisi.setSaisieKiosque(typeSaisiDto.isSaisieKiosque());
 			typeSaisi.setUniteDecompte(typeSaisiDto.getUniteDecompte());
+			typeSaisi.setMotif(typeSaisiDto.isMotif());
 
 			if (null != typeSaisiDto.getUnitePeriodeQuotaDto()
 					&& null != typeSaisiDto.getUnitePeriodeQuotaDto().getIdRefUnitePeriodeQuota()) {
@@ -140,9 +145,22 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 					return result;
 				}
 				typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			}else{
+				typeSaisi.setRefUnitePeriodeQuota(null);
 			}
+			typeAbsence.setTypeSaisi(typeSaisi);
 		}
-
+		
+		// on check la saisie 
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+				typeAbsence.getGroupe().getIdRefGroupeAbsence(), typeAbsence.getIdRefTypeAbsence());
+		
+		result = absenceDataConsistencyRulesImpl.checkSaisiNewTypeAbsence(typeAbsence.getTypeSaisi(), result);
+		
+		if(!result.getErrors().isEmpty()) {
+			return result;
+		}
+		
 		typeAbsenceRepository.persistEntity(typeAbsence);
 
 		addMessageConfirmation(typeAbsenceDto.getIdRefTypeAbsence(), result);
