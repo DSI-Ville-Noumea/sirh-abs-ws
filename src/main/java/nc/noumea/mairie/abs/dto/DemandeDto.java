@@ -20,6 +20,7 @@ public class DemandeDto {
 
 	private Integer idDemande;
 	private Integer idTypeDemande;
+	private String libelleTypeDemande;
 	private RefGroupeAbsenceDto groupeAbsence;
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
@@ -66,7 +67,7 @@ public class DemandeDto {
 	private OrganisationSyndicaleDto organisationSyndicale;
 
 	private String commentaire;
-	
+
 	private RefTypeSaisiDto typeSaisi;
 
 	public DemandeDto() {
@@ -84,6 +85,7 @@ public class DemandeDto {
 		this.agentWithServiceDto = agentDto;
 		this.idDemande = d.getIdDemande();
 		this.idTypeDemande = d.getType().getIdRefTypeAbsence();
+		this.libelleTypeDemande = d.getType().getLabel();
 		if (null != d.getType().getGroupe()) {
 			this.groupeAbsence = new RefGroupeAbsenceDto(d.getType().getGroupe());
 		}
@@ -91,9 +93,9 @@ public class DemandeDto {
 		this.dateFin = d.getDateFin();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
 		this.motif = d.getLatestEtatDemande().getMotif();
-		if(null != d.getType() && null != d.getType().getTypeSaisi())
+		if (null != d.getType() && null != d.getType().getTypeSaisi())
 			this.typeSaisi = new RefTypeSaisiDto(d.getType().getTypeSaisi());
-		
+
 		for (EtatDemande etat : d.getEtatsDemande()) {
 			if (this.isValeurVisa == null && etat.getEtat().equals(RefEtatEnum.VISEE_FAVORABLE)) {
 				this.isValeurVisa = Boolean.TRUE;
@@ -451,6 +453,14 @@ public class DemandeDto {
 
 	public void setTypeSaisi(RefTypeSaisiDto typeSaisi) {
 		this.typeSaisi = typeSaisi;
+	}
+
+	public String getLibelleTypeDemande() {
+		return libelleTypeDemande;
+	}
+
+	public void setLibelleTypeDemande(String libelleTypeDemande) {
+		this.libelleTypeDemande = libelleTypeDemande;
 	}
 
 }
