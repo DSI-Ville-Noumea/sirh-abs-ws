@@ -153,8 +153,12 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 		if(typeSaisi.isAlerte() && null == typeSaisi.getMessageAlerte())
 			srm.getErrors().add(String.format("Le message d'alerte est obligatoire si le champ Alerte est coché."));
 		
-		if(null != typeSaisi.getRefUnitePeriodeQuota() 
+		if((null != typeSaisi.getRefUnitePeriodeQuota()  && null != typeSaisi.getRefUnitePeriodeQuota().getIdRefUnitePeriodeQuota())
 				&& (null == typeSaisi.getQuotaMax() || 0 == typeSaisi.getQuotaMax())) {
+			srm.getErrors().add(String.format("Le Quota max est obligatoire si l'Unité de période pour le quota est sélectionnée."));
+		}
+		if((null == typeSaisi.getRefUnitePeriodeQuota() || null == typeSaisi.getRefUnitePeriodeQuota().getIdRefUnitePeriodeQuota())
+				&& (null != typeSaisi.getQuotaMax() && 0 != typeSaisi.getQuotaMax())) {
 			srm.getErrors().add(String.format("Le Quota max est obligatoire si l'Unité de période pour le quota est sélectionnée."));
 		}
 		

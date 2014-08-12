@@ -558,6 +558,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	public void checkSaisiNewTypeAbsence_ErreurMotif() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
@@ -578,6 +579,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	public void checkSaisiNewTypeAbsence_ErreurAlerte() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
@@ -600,6 +602,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	public void checkSaisiNewTypeAbsence_ErreurQuotaMax() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
@@ -620,9 +623,33 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	}
 	
 	@Test
+	public void checkSaisiNewTypeAbsence_ErreurQuotaMaxBis() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "Le Quota max est obligatoire si l'Unité de période pour le quota est sélectionnée.");
+	}
+	
+	@Test
 	public void checkSaisiNewTypeAbsence_DecompteJours_ErreurHeureFin() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
@@ -647,6 +674,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	public void checkSaisiNewTypeAbsence_DecompteJours_ErreurChkDate() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
@@ -673,6 +701,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	public void checkSaisiNewTypeAbsence_DecompteJours_ok() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
@@ -699,6 +728,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	public void checkSaisiNewTypeAbsence_DecompteMinutes_erreurHeureFin() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+			refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
@@ -727,6 +757,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	public void checkSaisiNewTypeAbsence_DecompteMinutes_erreurHeureDebut() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
@@ -755,6 +786,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	public void checkSaisiNewTypeAbsence_DecompteMinutes_erreurChkDate() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
@@ -783,6 +815,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	public void checkSaisiNewTypeAbsence_DecompteMinutes_ok() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);

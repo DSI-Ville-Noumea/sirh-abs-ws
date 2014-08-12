@@ -40,6 +40,7 @@ public class CongesExcepCounterServiceImpl extends AbstractCounterService {
 					SoldeSpecifiqueDto dto = new SoldeSpecifiqueDto();
 						dto.setLibelle(typeAbsence.getLabel());
 						dto.setSolde(dureeDejaPris);
+						dto.setUniteDecompte(typeAbsence.getTypeSaisi().getUniteDecompte());
 					
 					result.add(dto);
 				}
