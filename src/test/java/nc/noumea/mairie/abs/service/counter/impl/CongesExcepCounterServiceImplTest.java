@@ -9,6 +9,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.ICongesExceptionnelsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -27,13 +28,17 @@ public class CongesExcepCounterServiceImplTest extends AbstractCounterServiceTes
 	@Test
 	public void getListAgentCounterByDate() {
 		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
 		RefTypeAbsence typeAbs1 = new RefTypeAbsence();
 		typeAbs1.setIdRefTypeAbsence(1);
 		typeAbs1.setLabel("label 1");
+		typeAbs1.setTypeSaisi(typeSaisi);
 		
 		RefTypeAbsence typeAbs2 = new RefTypeAbsence();
 		typeAbs2.setIdRefTypeAbsence(2);
 		typeAbs2.setLabel("label 2");
+		typeAbs2.setTypeSaisi(typeSaisi);
 		
 		RefTypeAbsence typeAbsNoCounter = new RefTypeAbsence();
 		typeAbsNoCounter.setIdRefTypeAbsence(3);
