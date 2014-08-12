@@ -9,7 +9,6 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +19,7 @@ public class AsaRepository implements IAsaRepository {
 	private EntityManager absEntityManager;
 
 	@Override
-	public List<DemandeAsa> getListDemandeAsaEnCours(Integer idAgent, Integer idDemande, RefTypeAbsenceEnum type) {
+	public List<DemandeAsa> getListDemandeAsaEnCours(Integer idAgent, Integer idDemande, Integer type) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select da from DemandeAsa da inner join da.etatsDemande ed where da.idAgent = :idAgent ");
@@ -34,7 +33,7 @@ public class AsaRepository implements IAsaRepository {
 		TypedQuery<DemandeAsa> q = absEntityManager.createQuery(sb.toString(), DemandeAsa.class);
 
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("type", type.getValue());
+		q.setParameter("type", type);
 		q.setParameter("SAISIE", RefEtatEnum.SAISIE);
 		q.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE);
 		q.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE);
@@ -49,7 +48,7 @@ public class AsaRepository implements IAsaRepository {
 
 	@Override
 	public List<DemandeAsa> getListDemandeAsaPourMois(Integer idAgent, Integer idDemande, Date dateDeb, Date dateFin,
-			RefTypeAbsenceEnum type) {
+			Integer type) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select da from DemandeAsa da inner join da.etatsDemande ed where da.idAgent = :idAgent ");
@@ -64,7 +63,7 @@ public class AsaRepository implements IAsaRepository {
 		TypedQuery<DemandeAsa> q = absEntityManager.createQuery(sb.toString(), DemandeAsa.class);
 
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("type", type.getValue());
+		q.setParameter("type", type);
 		q.setParameter("SAISIE", RefEtatEnum.SAISIE);
 		q.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE);
 		q.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE);

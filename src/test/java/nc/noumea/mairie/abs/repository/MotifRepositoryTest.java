@@ -61,15 +61,11 @@ public class MotifRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void getListeMotifCompteur() {
 		// Given
-		Integer idRefType = 3;
-
 		RefTypeAbsence typeRecup = new RefTypeAbsence();
-		typeRecup.setIdRefTypeAbsence(3);
 		typeRecup.setLabel("Récupération");
 		absEntityManager.persist(typeRecup);
 
 		RefTypeAbsence typeConge = new RefTypeAbsence();
-		typeConge.setIdRefTypeAbsence(1);
 		typeConge.setLabel("Congé annuel");
 		absEntityManager.persist(typeConge);
 
@@ -89,7 +85,7 @@ public class MotifRepositoryTest {
 		absEntityManager.persist(refus3);
 
 		// When
-		List<MotifCompteur> result = repository.getListeMotifCompteur(idRefType);
+		List<MotifCompteur> result = repository.getListeMotifCompteur(typeRecup.getIdRefTypeAbsence());
 
 		// Then
 		assertEquals(2, result.size());
@@ -105,12 +101,10 @@ public class MotifRepositoryTest {
 	public void getListeMotifCompteur_NoType() {
 		// Given
 		RefTypeAbsence typeRecup = new RefTypeAbsence();
-		typeRecup.setIdRefTypeAbsence(3);
 		typeRecup.setLabel("Récupération");
 		absEntityManager.persist(typeRecup);
 
 		RefTypeAbsence typeConge = new RefTypeAbsence();
-		typeConge.setIdRefTypeAbsence(1);
 		typeConge.setLabel("Congé annuel");
 		absEntityManager.persist(typeConge);
 

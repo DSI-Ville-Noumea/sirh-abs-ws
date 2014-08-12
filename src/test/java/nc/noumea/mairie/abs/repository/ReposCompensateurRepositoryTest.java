@@ -47,9 +47,7 @@ public class ReposCompensateurRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
 		absEntityManager.persist(rta);
-		// Given
 		
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
@@ -99,7 +97,6 @@ public class ReposCompensateurRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -151,7 +148,6 @@ public class ReposCompensateurRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -203,9 +199,7 @@ public class ReposCompensateurRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
 		absEntityManager.persist(rta);
-		// Given
 		
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
@@ -272,7 +266,6 @@ public class ReposCompensateurRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -373,9 +366,7 @@ public class ReposCompensateurRepositoryTest {
 		listEtatDemande.addAll(Arrays.asList(et, et2, et3));
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
 		absEntityManager.persist(rta);
-		// Given
 		
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
@@ -423,9 +414,7 @@ public class ReposCompensateurRepositoryTest {
 		listEtatDemande.addAll(Arrays.asList(et, et2, et3));
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
 		absEntityManager.persist(rta);
-		// Given
 		
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);
@@ -461,9 +450,7 @@ public class ReposCompensateurRepositoryTest {
 		listEtatDemande.addAll(Arrays.asList(et2));
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(2);
 		absEntityManager.persist(rta);
-		// Given
 		
 		dr1.setDateDebut(dateJour);
 		dr1.setDateFin(dateJour);

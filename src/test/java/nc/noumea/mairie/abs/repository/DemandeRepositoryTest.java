@@ -206,7 +206,6 @@ public class DemandeRepositoryTest {
 		// Given
 		
 		RefTypeAbsence typeMaladie = new RefTypeAbsence();
-		typeMaladie.setIdRefTypeAbsence(6);
 		typeMaladie.setLabel("Maladies");
 		absEntityManager.persist(typeMaladie);
 
@@ -245,7 +244,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesAgent(null, 9005138, null, null, 3);
+		List<Demande> result = repository.listeDemandesAgent(null, 9005138, null, null, 99);
 
 		// Then
 		assertEquals(0, result.size());
@@ -260,11 +259,9 @@ public class DemandeRepositoryTest {
 		// Given
 
 		RefTypeAbsence typeMaladie = new RefTypeAbsence();
-		typeMaladie.setIdRefTypeAbsence(6);
 		typeMaladie.setLabel("Maladies");
 		absEntityManager.persist(typeMaladie);
 		RefTypeAbsence typeRecup = new RefTypeAbsence();
-		typeRecup.setIdRefTypeAbsence(3);
 		typeRecup.setLabel("Récupération");
 		absEntityManager.persist(typeRecup);
 
@@ -303,7 +300,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesAgent(null, 9005138, null, null, 3);
+		List<Demande> result = repository.listeDemandesAgent(null, 9005138, null, null, typeRecup.getIdRefTypeAbsence());
 
 		// Then
 		assertEquals(2, result.size());
@@ -808,7 +805,6 @@ public class DemandeRepositoryTest {
 		// Given
 
 		RefTypeAbsence typeMaladie = new RefTypeAbsence();
-		typeMaladie.setIdRefTypeAbsence(6);
 		typeMaladie.setLabel("Maladies");
 		absEntityManager.persist(typeMaladie);
 
@@ -847,7 +843,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRH(null, null, null, 3, null);
+		List<Demande> result = repository.listeDemandesSIRH(null, null, null, 99, null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -861,11 +857,9 @@ public class DemandeRepositoryTest {
 	public void listeDemandesSIRH_TypeFilter_Return2Demande() throws ParseException {
 		// Given
 		RefTypeAbsence typeMaladie = new RefTypeAbsence();
-		typeMaladie.setIdRefTypeAbsence(6);
 		typeMaladie.setLabel("Maladies");
 		absEntityManager.persist(typeMaladie);
 		RefTypeAbsence typeRecup = new RefTypeAbsence();
-		typeRecup.setIdRefTypeAbsence(3);
 		typeRecup.setLabel("Récupération");
 		absEntityManager.persist(typeRecup);
 
@@ -904,7 +898,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRH(null, null, null, 3, null);
+		List<Demande> result = repository.listeDemandesSIRH(null, null, null, typeRecup.getIdRefTypeAbsence(), null);
 
 		// Then
 		assertEquals(2, result.size());

@@ -35,7 +35,6 @@ public class TypeAbsenceRepositoryTest {
 		RefTypeAbsence rta = new RefTypeAbsence();
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setIdRefTypeAbsence(1);
 			typeSaisi.setDescription("description");
 			typeSaisi.setInfosComplementaires("infosComplementaires");
 			typeSaisi.setMessageAlerte("messageAlerte");
@@ -48,7 +47,6 @@ public class TypeAbsenceRepositoryTest {
 			groupe.setCode("code");
 			groupe.setLibelle("libelle");
 		
-		rta.setIdRefTypeAbsence(1);
 		rta.setLabel("label");
 		rta.setGroupe(groupe);
 		rta.setTypeSaisi(typeSaisi);
@@ -76,7 +74,6 @@ public class TypeAbsenceRepositoryTest {
 		RefTypeAbsence rta = new RefTypeAbsence();
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setIdRefTypeAbsence(1);
 			typeSaisi.setDescription("description");
 			typeSaisi.setInfosComplementaires("infosComplementaires");
 			typeSaisi.setMessageAlerte("messageAlerte");
@@ -89,7 +86,6 @@ public class TypeAbsenceRepositoryTest {
 			groupe.setCode("code");
 			groupe.setLibelle("libelle");
 		
-		rta.setIdRefTypeAbsence(1);
 		rta.setLabel("label");
 		rta.setGroupe(groupe);
 		rta.setTypeSaisi(typeSaisi);
@@ -101,7 +97,6 @@ public class TypeAbsenceRepositoryTest {
 		RefTypeAbsence rta2 = new RefTypeAbsence();
 		
 		RefTypeSaisi typeSaisi2 = new RefTypeSaisi();
-			typeSaisi2.setIdRefTypeAbsence(2);
 			typeSaisi2.setDescription("description 2");
 			typeSaisi2.setInfosComplementaires("infosComplementaires 2");
 			typeSaisi2.setMessageAlerte("messageAlerte 2");
@@ -114,7 +109,6 @@ public class TypeAbsenceRepositoryTest {
 			groupe2.setCode("code 2");
 			groupe2.setLibelle("libelle 2");
 		
-		rta2.setIdRefTypeAbsence(2);
 		rta2.setLabel("label 2");
 		rta2.setGroupe(groupe2);
 		rta2.setTypeSaisi(typeSaisi2);

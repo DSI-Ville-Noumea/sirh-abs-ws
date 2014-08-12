@@ -47,7 +47,7 @@ public class RefTypeAbsenceDtoTest {
 			ref.setGroupe(groupe);
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setIdRefTypeAbsence(ref.getIdRefTypeAbsence());
+//			typeSaisi.setIdRefTypeAbsence(ref.getIdRefTypeAbsence());
 			typeSaisi.setType(ref);
 		
 		// When
@@ -57,6 +57,6 @@ public class RefTypeAbsenceDtoTest {
 		assertEquals(ref.getLabel(), result.getLibelle());
 		assertEquals(ref.getGroupe().getCode(), result.getGroupeAbsence().getCode());
 		assertEquals(ref.getIdRefTypeAbsence(), result.getIdRefTypeAbsence());
-		assertEquals(typeSaisi.getIdRefTypeAbsence(), result.getTypeSaisiDto().getIdRefTypeDemande());
+		assertEquals(typeSaisi.getType().getIdRefTypeAbsence(), result.getTypeSaisiDto().getIdRefTypeDemande());
 	}
 }

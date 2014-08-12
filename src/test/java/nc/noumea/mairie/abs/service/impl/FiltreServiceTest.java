@@ -621,7 +621,6 @@ public class FiltreServiceTest {
 
 		RefTypeSaisi rts = new RefTypeSaisi();
 		rts.setType(type);
-		rts.setIdRefTypeAbsence(1);
 		rts.setCalendarDateDebut(true);
 		rts.setCalendarHeureDebut(true);
 		rts.setChkDateDebut(true);
@@ -629,7 +628,6 @@ public class FiltreServiceTest {
 
 		RefTypeSaisi rts2 = new RefTypeSaisi();
 		rts2.setType(type);
-		rts2.setIdRefTypeAbsence(2);
 		rts2.setCalendarDateFin(true);
 		rts2.setCalendarHeureFin(true);
 		rts2.setChkDateFin(true);
@@ -674,7 +672,6 @@ public class FiltreServiceTest {
 
 		RefTypeSaisi rts = new RefTypeSaisi();
 		rts.setType(type);
-		rts.setIdRefTypeAbsence(1);
 		rts.setCalendarDateDebut(true);
 		rts.setCalendarHeureDebut(true);
 		rts.setChkDateDebut(true);

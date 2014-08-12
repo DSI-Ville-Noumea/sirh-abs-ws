@@ -13,7 +13,6 @@ import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -50,7 +49,6 @@ public class AsaRepositoryTest {
 		listEtatDemande.add(et);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		absEntityManager.persist(rta);
 		// Given
 
@@ -233,7 +231,7 @@ public class AsaRepositoryTest {
 		absEntityManager.persist(dr11);
 
 		// When
-		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, null, RefTypeAbsenceEnum.ASA_A48);
+		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, null, rta.getIdRefTypeAbsence());
 
 		assertEquals(5, result.size());
 	}
@@ -255,7 +253,6 @@ public class AsaRepositoryTest {
 		listEtatDemande.add(et);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		absEntityManager.persist(rta);
 		// Given
 
@@ -269,7 +266,7 @@ public class AsaRepositoryTest {
 
 		// When
 		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, dr1.getIdDemande(),
-				RefTypeAbsenceEnum.ASA_A48);
+				rta.getIdRefTypeAbsence());
 
 		assertEquals(0, result.size());
 	}
@@ -291,7 +288,6 @@ public class AsaRepositoryTest {
 		listEtatDemande.add(et);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		absEntityManager.persist(rta);
 		// Given
 
@@ -314,7 +310,6 @@ public class AsaRepositoryTest {
 		listEtatDemande2.add(et2);
 
 		RefTypeAbsence rta2 = new RefTypeAbsence();
-		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
 		absEntityManager.persist(rta2);
 		// Given
 
@@ -337,7 +332,6 @@ public class AsaRepositoryTest {
 		listEtatDemande3.add(et3);
 
 		RefTypeAbsence rta3 = new RefTypeAbsence();
-		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
 		absEntityManager.persist(rta3);
 		// Given
 
@@ -360,7 +354,6 @@ public class AsaRepositoryTest {
 		listEtatDemande4.add(et4);
 
 		RefTypeAbsence rta4 = new RefTypeAbsence();
-		rta4.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
 		absEntityManager.persist(rta4);
 		// Given
 
@@ -374,15 +367,15 @@ public class AsaRepositoryTest {
 
 		// When
 		List<DemandeAsa> result_ASA_A48 = repository
-				.getListDemandeAsaEnCours(9005168, null, RefTypeAbsenceEnum.ASA_A48);
+				.getListDemandeAsaEnCours(9005168, null, rta.getIdRefTypeAbsence());
 		assertEquals(1, result_ASA_A48.size());
 
 		List<DemandeAsa> result_ASA_A54 = repository
-				.getListDemandeAsaEnCours(9005168, null, RefTypeAbsenceEnum.ASA_A54);
+				.getListDemandeAsaEnCours(9005168, null, rta2.getIdRefTypeAbsence());
 		assertEquals(1, result_ASA_A54.size());
 
 		List<DemandeAsa> result_ASA_A55 = repository
-				.getListDemandeAsaEnCours(9005168, null, RefTypeAbsenceEnum.ASA_A55);
+				.getListDemandeAsaEnCours(9005168, null, rta3.getIdRefTypeAbsence());
 		assertEquals(1, result_ASA_A55.size());
 	}
 
@@ -405,7 +398,6 @@ public class AsaRepositoryTest {
 		listEtatDemande.add(et);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
 		absEntityManager.persist(rta);
 		// Given
 
@@ -589,7 +581,7 @@ public class AsaRepositoryTest {
 
 		// When
 		List<DemandeAsa> result = repository.getListDemandeAsaPourMois(9005168, null, dateDebMois, dateFinMois,
-				RefTypeAbsenceEnum.ASA_A50);
+				rta.getIdRefTypeAbsence());
 
 		assertEquals(7, result.size());
 	}
@@ -613,7 +605,6 @@ public class AsaRepositoryTest {
 		listEtatDemande.add(et);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
 		absEntityManager.persist(rta);
 		// Given
 
@@ -627,7 +618,7 @@ public class AsaRepositoryTest {
 
 		// When
 		List<DemandeAsa> result = repository.getListDemandeAsaPourMois(9005168, dr1.getIdDemande(), dateDebMois,
-				dateFinMois, RefTypeAbsenceEnum.ASA_A50);
+				dateFinMois, rta.getIdRefTypeAbsence());
 
 		assertEquals(0, result.size());
 	}
@@ -651,7 +642,6 @@ public class AsaRepositoryTest {
 		listEtatDemande.add(et);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());
 		absEntityManager.persist(rta);
 		// Given
 
@@ -674,7 +664,6 @@ public class AsaRepositoryTest {
 		listEtatDemande2.add(et2);
 
 		RefTypeAbsence rta2 = new RefTypeAbsence();
-		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
 		absEntityManager.persist(rta2);
 		// Given
 
@@ -697,7 +686,6 @@ public class AsaRepositoryTest {
 		listEtatDemande3.add(et3);
 
 		RefTypeAbsence rta3 = new RefTypeAbsence();
-		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
 		absEntityManager.persist(rta3);
 		// Given
 
@@ -720,7 +708,6 @@ public class AsaRepositoryTest {
 		listEtatDemande4.add(et4);
 
 		RefTypeAbsence rta4 = new RefTypeAbsence();
-		rta4.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
 		absEntityManager.persist(rta4);
 		// Given
 
@@ -734,11 +721,11 @@ public class AsaRepositoryTest {
 
 		// When
 		List<DemandeAsa> result_ASA_A49 = repository.getListDemandeAsaPourMois(9005168, null, dateDebMois, dateFinMois,
-				RefTypeAbsenceEnum.ASA_A49);
+				rta.getIdRefTypeAbsence());
 		assertEquals(1, result_ASA_A49.size());
 
 		List<DemandeAsa> result_ASA_A50 = repository.getListDemandeAsaPourMois(9005168, null, dateDebMois, dateFinMois,
-				RefTypeAbsenceEnum.ASA_A50);
+				rta.getIdRefTypeAbsence());
 		assertEquals(1, result_ASA_A50.size());
 	}
 }

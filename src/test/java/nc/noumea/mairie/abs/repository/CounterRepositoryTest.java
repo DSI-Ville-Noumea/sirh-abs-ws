@@ -311,7 +311,6 @@ public class CounterRepositoryTest {
 
 		// Given
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(7);
 		absEntityManager.persist(type);
 
 		AgentAsaA48Count count = new AgentAsaA48Count();

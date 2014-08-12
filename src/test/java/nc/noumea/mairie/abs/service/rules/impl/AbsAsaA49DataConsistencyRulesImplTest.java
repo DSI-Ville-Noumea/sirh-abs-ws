@@ -11,7 +11,6 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -56,7 +55,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
-						Mockito.isA(Date.class), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(listDemandeAsa);
+						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
@@ -97,7 +96,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
-						Mockito.isA(Date.class), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(listDemandeAsa);
+						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
@@ -127,7 +126,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
-						Mockito.isA(Date.class), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(
+						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(
 				new ArrayList<DemandeAsa>());
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();
@@ -169,7 +168,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
-						Mockito.isA(Date.class), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(listDemandeAsa);
+						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
@@ -211,7 +210,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
-						Mockito.isA(Date.class), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(listDemandeAsa);
+						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
@@ -243,7 +242,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
-						Mockito.isA(Date.class), Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(
+						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(
 				new ArrayList<DemandeAsa>());
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();

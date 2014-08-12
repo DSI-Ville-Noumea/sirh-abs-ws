@@ -85,7 +85,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 				return result;
 			}
 		}
-
+		
 		if (null == typeAbsence) {
 			typeAbsence = new RefTypeAbsence();
 		}
@@ -100,6 +100,10 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 				return result;
 			}
 			typeAbsence.setGroupe(groupe);
+		}else{
+			logger.debug(TYPE_GROUPE_INEXISTANT);
+			result.getErrors().add(TYPE_GROUPE_INEXISTANT);
+			return result;
 		}
 
 		typeAbsence.setLabel(typeAbsenceDto.getLibelle());
@@ -132,6 +136,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			typeSaisi.setSaisieKiosque(typeSaisiDto.isSaisieKiosque());
 			typeSaisi.setUniteDecompte(typeSaisiDto.getUniteDecompte());
 			typeSaisi.setMotif(typeSaisiDto.isMotif());
+			typeSaisi.setType(typeAbsence);
 
 			if (null != typeSaisiDto.getUnitePeriodeQuotaDto()
 					&& null != typeSaisiDto.getUnitePeriodeQuotaDto().getIdRefUnitePeriodeQuota()) {

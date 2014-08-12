@@ -47,7 +47,6 @@ public class RecuperationRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -98,7 +97,6 @@ public class RecuperationRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -149,7 +147,6 @@ public class RecuperationRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -200,7 +197,6 @@ public class RecuperationRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -268,7 +264,6 @@ public class RecuperationRepositoryTest {
 		listEtatDemande.add(et);
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -368,7 +363,6 @@ public class RecuperationRepositoryTest {
 		listEtatDemande.addAll(Arrays.asList(et, et2, et3));
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -417,7 +411,6 @@ public class RecuperationRepositoryTest {
 		listEtatDemande.addAll(Arrays.asList(et, et2, et3));
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
 		absEntityManager.persist(rta);
 		// Given
 		
@@ -454,7 +447,6 @@ public class RecuperationRepositoryTest {
 		listEtatDemande.addAll(Arrays.asList(et2));
 		
 		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(3);
 		absEntityManager.persist(rta);
 		// Given
 		

@@ -40,7 +40,7 @@ public class AbsAsaA49DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMois(idAgent, idDemande,
 				helperService.getDateDebutMoisForOneDate(dateDemande),
-				helperService.getDateFinMoisForOneDate(dateDemande), RefTypeAbsenceEnum.ASA_A49);
+				helperService.getDateFinMoisForOneDate(dateDemande), RefTypeAbsenceEnum.ASA_A49.getValue());
 
 		int somme = 0;
 

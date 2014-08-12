@@ -52,7 +52,7 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	private int getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent) {
 
 		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande,
-				RefTypeAbsenceEnum.ASA_A52);
+				RefTypeAbsenceEnum.ASA_A52.getValue());
 
 		int somme = 0;
 

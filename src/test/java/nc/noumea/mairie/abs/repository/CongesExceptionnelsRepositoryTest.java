@@ -12,7 +12,6 @@ import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +40,6 @@ public class CongesExceptionnelsRepositoryTest {
 		Integer idAgent = 9005138;
 		
 		RefTypeAbsence typeAsa = new RefTypeAbsence();
-			typeAsa.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		absEntityManager.persist(typeAsa);
 		
 		DemandeCongesExceptionnels demande = new DemandeCongesExceptionnels();
@@ -58,7 +56,7 @@ public class CongesExceptionnelsRepositoryTest {
 			etatDemande.setEtat(RefEtatEnum.SAISIE);
 		absEntityManager.persist(etatDemande);
 		
-		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("01/06/2013"), sdf.parse("30/06/2013"), 18);
+		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("01/06/2013"), sdf.parse("30/06/2013"), typeAsa.getIdRefTypeAbsence()+1);
 
 		assertEquals(result, new Double(0));
 		
@@ -73,7 +71,6 @@ public class CongesExceptionnelsRepositoryTest {
 		Integer idAgent = 9005138;
 		
 		RefTypeAbsence typeAsa = new RefTypeAbsence();
-			typeAsa.setIdRefTypeAbsence(18);
 		absEntityManager.persist(typeAsa);
 		
 		DemandeCongesExceptionnels demande = new DemandeCongesExceptionnels();
@@ -90,7 +87,7 @@ public class CongesExceptionnelsRepositoryTest {
 			etatDemande.setEtat(RefEtatEnum.SAISIE);
 		absEntityManager.persist(etatDemande);
 		
-		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("01/06/2013"), sdf.parse("30/06/2013"), 18);
+		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("01/06/2013"), sdf.parse("30/06/2013"), typeAsa.getIdRefTypeAbsence());
 
 		assertEquals(result, new Double(10));
 		
@@ -105,7 +102,6 @@ public class CongesExceptionnelsRepositoryTest {
 		Integer idAgent = 9005138;
 		
 		RefTypeAbsence typeAsa = new RefTypeAbsence();
-			typeAsa.setIdRefTypeAbsence(18);
 		absEntityManager.persist(typeAsa);
 		
 		DemandeCongesExceptionnels demande = new DemandeCongesExceptionnels();
@@ -122,7 +118,7 @@ public class CongesExceptionnelsRepositoryTest {
 			etatDemande.setEtat(RefEtatEnum.SAISIE);
 		absEntityManager.persist(etatDemande);
 		
-		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("16/06/2013"), sdf.parse("30/06/2013"), 18);
+		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("16/06/2013"), sdf.parse("30/06/2013"), typeAsa.getIdRefTypeAbsence());
 
 		assertEquals(result, new Double(0));
 		
@@ -137,7 +133,6 @@ public class CongesExceptionnelsRepositoryTest {
 		Integer idAgent = 9005138;
 		
 		RefTypeAbsence typeAsa = new RefTypeAbsence();
-			typeAsa.setIdRefTypeAbsence(18);
 		absEntityManager.persist(typeAsa);
 		
 		DemandeCongesExceptionnels demande = new DemandeCongesExceptionnels();
@@ -154,7 +149,7 @@ public class CongesExceptionnelsRepositoryTest {
 			etatDemande.setEtat(RefEtatEnum.SAISIE);
 		absEntityManager.persist(etatDemande);
 		
-		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("15/06/2013"), sdf.parse("30/06/2013"), 18);
+		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("15/06/2013"), sdf.parse("30/06/2013"), typeAsa.getIdRefTypeAbsence());
 
 		assertEquals(result, new Double(10));
 		
@@ -169,7 +164,6 @@ public class CongesExceptionnelsRepositoryTest {
 		Integer idAgent = 9005138;
 		
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(18);
 		absEntityManager.persist(type);
 
 		DemandeCongesExceptionnels demandePROVISOIRE = new DemandeCongesExceptionnels();
@@ -229,7 +223,7 @@ public class CongesExceptionnelsRepositoryTest {
 		absEntityManager.persist(etatDemandeREJETE);
 		
 		
-		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("16/06/2013"), sdf.parse("30/06/2013"), 18);
+		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("16/06/2013"), sdf.parse("30/06/2013"), type.getIdRefTypeAbsence());
 
 		assertEquals(result, new Double(0));
 		
@@ -244,7 +238,6 @@ public class CongesExceptionnelsRepositoryTest {
 		Integer idAgent = 9005138;
 		
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(18);
 		absEntityManager.persist(type);
 		
 		DemandeCongesExceptionnels demandeSAISIE = new DemandeCongesExceptionnels();
@@ -345,7 +338,7 @@ public class CongesExceptionnelsRepositoryTest {
 			etatDemandeVALIDEE.setEtat(RefEtatEnum.VALIDEE);
 		absEntityManager.persist(etatDemandeVALIDEE);
 		
-		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("01/06/2013"), sdf.parse("30/06/2013"), 18);
+		Double result = repository.countDureeByPeriodeAndTypeDemande(idAgent, sdf.parse("01/06/2013"), sdf.parse("30/06/2013"), type.getIdRefTypeAbsence());
 		
 		assertEquals(result, new Double(70));
 		

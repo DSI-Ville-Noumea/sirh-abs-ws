@@ -7,6 +7,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
@@ -14,10 +15,14 @@ import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
+import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
+import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class TypeAbsenceServiceImplTest {
@@ -111,10 +116,17 @@ public class TypeAbsenceServiceImplTest {
 	@Test
 	public void setTypAbsence_TypeAbsenceModifie() {
 
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(1);
+		
 		RefTypeAbsenceDto typeAbsenceDto = new RefTypeAbsenceDto();
 		typeAbsenceDto.setIdRefTypeAbsence(1);
+		typeAbsenceDto.setGroupeAbsence(groupeAbsence);
 
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
+		typeAbsence.setTypeSaisi(new RefTypeSaisi());
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(9005138)).thenReturn(new ReturnMessageDto());
@@ -122,10 +134,27 @@ public class TypeAbsenceServiceImplTest {
 		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeAbsence.class, typeAbsenceDto.getIdRefTypeAbsence()))
 				.thenReturn(typeAbsence);
+		Mockito.when(typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto.getGroupeAbsence().getIdRefGroupeAbsence()))
+		.thenReturn(groupe);
+		
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				return args[1];
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(ReturnMessageDto.class));
+		
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(groupe.getIdRefGroupeAbsence(), typeAbsence.getIdRefTypeAbsence()))
+				.thenReturn(absDataConsistencyRules);
 
 		TypeAbsenceServiceImpl service = new TypeAbsenceServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		ReturnMessageDto result = service.setTypAbsence(9005138, typeAbsenceDto);
 
@@ -192,7 +221,7 @@ public class TypeAbsenceServiceImplTest {
 		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeAbsence.class, typeAbsenceDto.getIdRefTypeAbsence()))
 				.thenReturn(typeAbsence);
-		Mockito.when(typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto.getGroupeAbsence()))
+		Mockito.when(typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto.getGroupeAbsence().getIdRefGroupeAbsence()))
 				.thenReturn(new RefGroupeAbsence());
 		Mockito.when(
 				typeAbsenceRepository.getEntity(RefUnitePeriodeQuota.class, typeSaisiDto.getUnitePeriodeQuotaDto()
@@ -229,23 +258,39 @@ public class TypeAbsenceServiceImplTest {
 		typeAbsenceDto.setTypeSaisiDto(typeSaisiDto);
 
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
-
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(9005138)).thenReturn(new ReturnMessageDto());
 
 		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeAbsence.class, typeAbsenceDto.getIdRefTypeAbsence()))
 				.thenReturn(typeAbsence);
-		Mockito.when(typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto.getGroupeAbsence()))
-				.thenReturn(new RefGroupeAbsence());
+		Mockito.when(typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(
 				typeAbsenceRepository.getEntity(RefUnitePeriodeQuota.class, typeSaisiDto.getUnitePeriodeQuotaDto()
 						.getIdRefUnitePeriodeQuota())).thenReturn(new RefUnitePeriodeQuota());
 		;
+		
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				return args[1];
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(ReturnMessageDto.class));
+		
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(groupe.getIdRefGroupeAbsence(), typeAbsence.getIdRefTypeAbsence()))
+				.thenReturn(absDataConsistencyRules);
 
 		TypeAbsenceServiceImpl service = new TypeAbsenceServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		ReturnMessageDto result = service.setTypAbsence(9005138, typeAbsenceDto);
 
@@ -272,6 +317,7 @@ public class TypeAbsenceServiceImplTest {
 		typeAbsenceDto.setTypeSaisiDto(typeSaisiDto);
 
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(9005138)).thenReturn(new ReturnMessageDto());
@@ -279,16 +325,31 @@ public class TypeAbsenceServiceImplTest {
 		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeAbsence.class, typeAbsenceDto.getIdRefTypeAbsence()))
 				.thenReturn(typeAbsence);
-		Mockito.when(typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto.getGroupeAbsence()))
-				.thenReturn(new RefGroupeAbsence());
+		Mockito.when(typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(
 				typeAbsenceRepository.getEntity(RefUnitePeriodeQuota.class, typeSaisiDto.getUnitePeriodeQuotaDto()
 						.getIdRefUnitePeriodeQuota())).thenReturn(new RefUnitePeriodeQuota());
 		;
 
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				return args[1];
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(ReturnMessageDto.class));
+		
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(groupe.getIdRefGroupeAbsence(), typeAbsence.getIdRefTypeAbsence()))
+				.thenReturn(absDataConsistencyRules);
+		
 		TypeAbsenceServiceImpl service = new TypeAbsenceServiceImpl();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		ReturnMessageDto result = service.setTypAbsence(9005138, typeAbsenceDto);
 

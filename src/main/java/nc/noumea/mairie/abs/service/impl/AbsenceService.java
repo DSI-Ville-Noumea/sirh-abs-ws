@@ -538,7 +538,7 @@ public class AbsenceService implements IAbsenceService {
 		if(!demande.getType().getTypeSaisi().isSaisieKiosque()) {
 			DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
 				demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-				demandeEtatChangeDto.setMotif("");
+				demandeEtatChangeDto.setMotif(null);
 			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 		}
 		

@@ -13,7 +13,6 @@ import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -82,7 +81,7 @@ public class AbsAsaA55DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(),
-						Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(listDemandeAsa);
+						Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -125,7 +124,7 @@ public class AbsAsaA55DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(),
-						Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(listDemandeAsa);
+						Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -167,7 +166,7 @@ public class AbsAsaA55DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(),
-						Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(listDemandeAsa);
+						Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -234,7 +233,7 @@ public class AbsAsaA55DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(),
-						Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(listDemandeAsa);
+						Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -278,7 +277,7 @@ public class AbsAsaA55DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
 				asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(),
-						Mockito.isA(RefTypeAbsenceEnum.class))).thenReturn(listDemandeAsa);
+						Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA55DataConsistencyRulesImpl impl = new AbsAsaA55DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);

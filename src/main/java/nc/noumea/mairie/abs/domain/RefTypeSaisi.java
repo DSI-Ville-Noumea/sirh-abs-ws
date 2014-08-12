@@ -3,32 +3,39 @@ package nc.noumea.mairie.abs.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "ABS_REF_TYPE_SAISI")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-	@NamedQuery(name = "getRefTypeSaisiByIdTypeDemande", query = "from RefTypeSaisi d where d.type.idRefTypeAbsence = :idRefTypeAbsence"),
-	@NamedQuery(name = "getAllRefTypeSaisi", query = "from RefTypeSaisi d order by d.type.idRefTypeAbsence ")
+	@NamedQuery(name = "getRefTypeSaisiByIdTypeDemande", query = "from RefTypeSaisi d where d.idRefTypeAbsence = :idRefTypeAbsence"),
+	@NamedQuery(name = "getAllRefTypeSaisi", query = "from RefTypeSaisi d order by d.idRefTypeAbsence ")
 })
 public class RefTypeSaisi {
 
 	@Id
 	@Column(name = "ID_REF_TYPE_ABSENCE")
+	@GeneratedValue(generator = "foreign")
+    @GenericGenerator(name = "foreign", strategy = "foreign", parameters =
+    { @Parameter(name = "property", value = "type") })
 	private Integer idRefTypeAbsence;
 	
 	@OneToOne(optional = false)
-	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
+    @PrimaryKeyJoinColumn 
 	private RefTypeAbsence type;
 	
 	@NotNull

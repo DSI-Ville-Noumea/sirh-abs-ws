@@ -4,6 +4,7 @@ public class SoldeSpecifiqueDto {
 	
 	private String libelle;
 	private Double solde;
+	private String uniteDecompte;
 	
 	public String getLibelle() {
 		return libelle;
@@ -16,6 +17,12 @@ public class SoldeSpecifiqueDto {
 	}
 	public void setSolde(Double solde) {
 		this.solde = solde;
+	}
+	public String getUniteDecompte() {
+		return uniteDecompte;
+	}
+	public void setUniteDecompte(String uniteDecompte) {
+		this.uniteDecompte = uniteDecompte;
 	}
 	
 }

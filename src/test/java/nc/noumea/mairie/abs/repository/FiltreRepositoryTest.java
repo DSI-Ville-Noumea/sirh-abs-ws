@@ -139,12 +139,10 @@ public class FiltreRepositoryTest {
 		groupe.setCode("A");
 		absEntityManager.persist(groupe);
 		RefTypeAbsence org1 = new RefTypeAbsence();
-		org1.setIdRefTypeAbsence(1);
 		org1.setLabel("lib1");
 		org1.setGroupe(groupe);
 		absEntityManager.persist(org1);
 		RefTypeAbsence org2 = new RefTypeAbsence();
-		org2.setIdRefTypeAbsence(2);
 		org2.setLabel("lib2");
 		org2.setGroupe(groupe);
 		absEntityManager.persist(org2);
@@ -164,15 +162,12 @@ public class FiltreRepositoryTest {
 	public void findAllRefTypeSaisi() {
 
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(1);
 		absEntityManager.persist(type);
 
 		RefTypeAbsence type2 = new RefTypeAbsence();
-		type2.setIdRefTypeAbsence(2);
 		absEntityManager.persist(type2);
 
 		RefTypeSaisi rts = new RefTypeSaisi();
-			rts.setIdRefTypeAbsence(1);
 			rts.setType(type);
 			rts.setCalendarDateDebut(true);
 			rts.setCalendarHeureDebut(true);
@@ -180,7 +175,6 @@ public class FiltreRepositoryTest {
 		absEntityManager.persist(rts);
 
 		RefTypeSaisi rts2 = new RefTypeSaisi();
-			rts2.setIdRefTypeAbsence(2);
 			rts2.setType(type2);
 			rts2.setCalendarDateFin(true);
 			rts2.setCalendarHeureFin(true);
@@ -201,15 +195,12 @@ public class FiltreRepositoryTest {
 	public void findRefTypeSaisi_type1() {
 
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(1);
 		absEntityManager.persist(type);
 
 		RefTypeAbsence type2 = new RefTypeAbsence();
-			type2.setIdRefTypeAbsence(2);
 		absEntityManager.persist(type2);
 
 		RefTypeSaisi rts = new RefTypeSaisi();
-		rts.setIdRefTypeAbsence(1);
 		rts.setType(type);
 		rts.setCalendarDateDebut(true);
 		rts.setCalendarHeureDebut(true);
@@ -217,14 +208,13 @@ public class FiltreRepositoryTest {
 		absEntityManager.persist(rts);
 
 		RefTypeSaisi rts2 = new RefTypeSaisi();
-		rts2.setIdRefTypeAbsence(2);
 		rts2.setType(type2);
 		rts2.setCalendarDateFin(true);
 		rts2.setCalendarHeureFin(true);
 		rts2.setUniteDecompte("jours");
 		absEntityManager.persist(rts2);
 
-		RefTypeSaisi result = repository.findRefTypeSaisi(1);
+		RefTypeSaisi result = repository.findRefTypeSaisi(type.getIdRefTypeAbsence());
 
 		// Then
 		assertTrue(result.isCalendarDateDebut());
@@ -241,15 +231,12 @@ public class FiltreRepositoryTest {
 	public void findRefTypeSaisi_type2() {
 
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(1);
 		absEntityManager.persist(type);
 
 		RefTypeAbsence type2 = new RefTypeAbsence();
-		type2.setIdRefTypeAbsence(2);
 		absEntityManager.persist(type2);
 
 		RefTypeSaisi rts = new RefTypeSaisi();
-			rts.setIdRefTypeAbsence(1);
 			rts.setType(type);
 			rts.setCalendarDateDebut(true);
 			rts.setCalendarHeureDebut(true);
@@ -257,14 +244,13 @@ public class FiltreRepositoryTest {
 		absEntityManager.persist(rts);
 
 		RefTypeSaisi rts2 = new RefTypeSaisi();
-			rts2.setIdRefTypeAbsence(2);
 			rts2.setType(type2);
 			rts2.setCalendarDateFin(true);
 			rts2.setCalendarHeureFin(true);
 			rts2.setUniteDecompte("jours");
 		absEntityManager.persist(rts2);
 
-		RefTypeSaisi result = repository.findRefTypeSaisi(2);
+		RefTypeSaisi result = repository.findRefTypeSaisi(type2.getIdRefTypeAbsence());
 
 		// Then
 		assertFalse(result.isCalendarDateDebut());
