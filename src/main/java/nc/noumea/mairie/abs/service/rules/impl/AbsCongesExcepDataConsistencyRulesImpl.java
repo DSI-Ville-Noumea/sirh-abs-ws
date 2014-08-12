@@ -162,6 +162,11 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 			srm.getErrors().add(String.format("Le Quota max est obligatoire si l'Unité de période pour le quota est sélectionnée."));
 		}
 		
+		if((typeSaisi.isCalendarHeureFin() || typeSaisi.isChkDateFin())
+				&& !typeSaisi.isCalendarDateFin()) {
+			srm.getErrors().add(String.format("La date de fin est obligatoire si le radio bouton Matin/Après-midi de fin ou l'heure de fin sont sélectionnés."));
+		}
+		
 		if(null == typeSaisi.getUniteDecompte() || "".equals(typeSaisi.getUniteDecompte().trim()))
 			srm.getErrors().add(String.format("L'unité de décompte est obligatoire."));
 		

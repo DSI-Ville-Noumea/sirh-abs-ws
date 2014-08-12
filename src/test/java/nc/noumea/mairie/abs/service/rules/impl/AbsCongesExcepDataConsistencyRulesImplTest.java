@@ -599,6 +599,61 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	}
 	
 	@Test
+	public void checkSaisiNewTypeAbsence_ErreurDateFin() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+			typeSaisi.setChkDateDebut(true);
+			typeSaisi.setChkDateFin(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "La date de fin est obligatoire si le radio bouton Matin/Après-midi de fin ou l'heure de fin sont sélectionnés.");
+	}
+	
+	@Test
+	public void checkSaisiNewTypeAbsence_ErreurDateFin_bis() {
+		
+		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
+		refUnitePeriodeQuota.setIdRefUnitePeriodeQuota(1);
+		
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setFonctionnaire(true);
+			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
+			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+			typeSaisi.setQuotaMax(1);
+			typeSaisi.setMotif(true);
+			typeSaisi.setInfosComplementaires("");
+			typeSaisi.setAlerte(true);
+			typeSaisi.setMessageAlerte("");
+			typeSaisi.setChkDateDebut(false);
+			typeSaisi.setChkDateFin(false);
+			typeSaisi.setCalendarHeureFin(true);
+			typeSaisi.setCalendarDateFin(false);
+			typeSaisi.setCalendarHeureDebut(true);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = impl.checkSaisiNewTypeAbsence(typeSaisi, result);
+		
+		assertEquals(2, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "La date de fin est obligatoire si le radio bouton Matin/Après-midi de fin ou l'heure de fin sont sélectionnés.");
+	}
+	
+	@Test
 	public void checkSaisiNewTypeAbsence_ErreurQuotaMax() {
 		
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
@@ -705,6 +760,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 			typeSaisi.setCalendarDateDebut(true);
+			typeSaisi.setCalendarDateFin(true);
 			typeSaisi.setFonctionnaire(true);
 			typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
 			typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
