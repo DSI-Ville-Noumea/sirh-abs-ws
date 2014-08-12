@@ -10,6 +10,6 @@ public interface ITypeAbsenceService {
 	List<RefTypeAbsenceDto> getListeTypAbsence();
 
 	ReturnMessageDto setTypAbsence(Integer idAgent, RefTypeAbsenceDto typeAbsenceDto);
-	
-	ReturnMessageDto deleteTypeAbsence(Integer idAgent, Integer idTypeDemande);
+
+	ReturnMessageDto deleteTypeAbsence(Integer idAgent, Integer idRefTypeAbsence);
 }

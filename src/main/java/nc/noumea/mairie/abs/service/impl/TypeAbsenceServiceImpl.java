@@ -44,7 +44,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 
 	@Autowired
 	private DataConsistencyRulesFactory dataConsistencyRulesFactory;
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<RefTypeAbsenceDto> getListeTypAbsence() {
@@ -90,9 +90,10 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			typeAbsence = new RefTypeAbsence();
 		}
 
-		if (null != typeAbsenceDto.getGroupeAbsence() && !"".equals(typeAbsenceDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
-			RefGroupeAbsence groupe = typeAbsenceRepository.getEntity(RefGroupeAbsence.class,
-					typeAbsenceDto.getGroupeAbsence().getIdRefGroupeAbsence());
+		if (null != typeAbsenceDto.getGroupeAbsence()
+				&& !"".equals(typeAbsenceDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
+			RefGroupeAbsence groupe = typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto
+					.getGroupeAbsence().getIdRefGroupeAbsence());
 
 			if (null == groupe) {
 				logger.debug(TYPE_GROUPE_INEXISTANT);
@@ -150,22 +151,22 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 					return result;
 				}
 				typeSaisi.setRefUnitePeriodeQuota(refUnitePeriodeQuota);
-			}else{
+			} else {
 				typeSaisi.setRefUnitePeriodeQuota(null);
 			}
 			typeAbsence.setTypeSaisi(typeSaisi);
 		}
-		
-		// on check la saisie 
+
+		// on check la saisie
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 				typeAbsence.getGroupe().getIdRefGroupeAbsence(), typeAbsence.getIdRefTypeAbsence());
-		
+
 		result = absenceDataConsistencyRulesImpl.checkSaisiNewTypeAbsence(typeAbsence.getTypeSaisi(), result);
-		
-		if(!result.getErrors().isEmpty()) {
+
+		if (!result.getErrors().isEmpty()) {
 			return result;
 		}
-		
+
 		typeAbsenceRepository.persistEntity(typeAbsence);
 
 		addMessageConfirmation(typeAbsenceDto.getIdRefTypeAbsence(), result);
@@ -175,7 +176,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto deleteTypeAbsence(Integer idAgent, Integer idTypeDemande) {
+	public ReturnMessageDto deleteTypeAbsence(Integer idAgent, Integer idRefTypeAbsence) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -187,7 +188,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			return result;
 		}
 
-		RefTypeAbsence typeAbsence = typeAbsenceRepository.getEntity(RefTypeAbsence.class, idTypeDemande);
+		RefTypeAbsence typeAbsence = typeAbsenceRepository.getEntity(RefTypeAbsence.class, idRefTypeAbsence);
 
 		if (null == typeAbsence) {
 			logger.debug(TYPE_ABSENCE_INEXISTANT);

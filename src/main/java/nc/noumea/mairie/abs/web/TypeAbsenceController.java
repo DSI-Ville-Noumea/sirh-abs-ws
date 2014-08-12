@@ -24,13 +24,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class TypeAbsenceController {
 
 	private Logger logger = LoggerFactory.getLogger(TypeAbsenceController.class);
-	
+
 	@Autowired
 	private ITypeAbsenceService typeAbsenceService;
-	
+
 	@Autowired
 	private IAgentMatriculeConverterService converterService;
-	
+
 	/**
 	 * Retourne la liste des types d absence
 	 */
@@ -48,42 +48,40 @@ public class TypeAbsenceController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/setTypeAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setTypeAbsence(@RequestBody(required = true) RefTypeAbsenceDto typeAbsenceDto, 
-			@RequestParam("idAgent") int idAgent,
-			HttpServletResponse response) {
+	public ReturnMessageDto setTypeAbsence(@RequestBody(required = true) RefTypeAbsenceDto typeAbsenceDto,
+			@RequestParam("idAgent") int idAgent, HttpServletResponse response) {
 
 		logger.debug("entered POST [typeAbsence/setTypeAbsence] => setTypeAbsence");
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
+
 		ReturnMessageDto srm = typeAbsenceService.setTypAbsence(convertedIdAgent, typeAbsenceDto);
 
 		if (!srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 		}
-		
+
 		return srm;
 	}
-	
+
 	/**
 	 * suppression d un type d absence
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deleteTypeAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public ReturnMessageDto deleteTypeAbsence(@RequestParam("idAgent") int idAgent,
-			@RequestParam("idTypeDemande") int idTypeDemande,
-			HttpServletResponse response) {
+			@RequestParam("idRefTypeAbsence") int idRefTypeAbsence, HttpServletResponse response) {
 
 		logger.debug("entered POST [typeAbsence/deleteTypeAbsence] => deleteTypeAbsence");
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
-		ReturnMessageDto srm = typeAbsenceService.deleteTypeAbsence(convertedIdAgent, idTypeDemande);
+
+		ReturnMessageDto srm = typeAbsenceService.deleteTypeAbsence(convertedIdAgent, idRefTypeAbsence);
 
 		if (!srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 		}
-		
+
 		return srm;
 	}
 }
