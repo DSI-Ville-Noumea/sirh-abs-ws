@@ -36,7 +36,7 @@ public class TypeAbsenceRepository implements ITypeAbsenceRepository {
 
 		TypedQuery<RefTypeAbsence> query = null;
 		
-		query = absEntityManager.createQuery("select a from RefTypeAbsence a inner join a.typeSaisi d inner join a.groupe g ", RefTypeAbsence.class);
+		query = absEntityManager.createQuery("select a from RefTypeAbsence a inner join a.typeSaisi d inner join a.groupe g order by g.code, a.label ", RefTypeAbsence.class);
 
 		return query.getResultList();
 	}

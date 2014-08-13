@@ -53,7 +53,7 @@ public class SoldeController {
 				|| agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		return soldeService.getAgentSolde(convertedIdAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin());
+		return soldeService.getAgentSolde(convertedIdAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin(), filtreSoldeDto.getTypeDemande());
 	}
 
 	/**

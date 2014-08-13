@@ -22,7 +22,7 @@ public class SoldeDto {
 	private List<SoldeMonthDto> listeSoldeAsaA55;
 	
 	private boolean afficheSoldeCongesExcep;
-	private List<SoldeSpecifiqueDto> listeSoldeCongesExcep;
+	private List<SoldeSpecifiqueDto> listeSoldeCongesExcep = new ArrayList<SoldeSpecifiqueDto>();
 
 	public SoldeDto() {
 		listeSoldeAsaA55 = new ArrayList<SoldeMonthDto>();

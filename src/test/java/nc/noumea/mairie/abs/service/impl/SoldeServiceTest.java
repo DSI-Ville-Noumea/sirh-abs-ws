@@ -1,8 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -20,6 +18,7 @@ import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
@@ -86,7 +85,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
 
 		assertEquals("0.0", dto.getSoldeCongeAnnee().toString());
 		assertEquals("0.0", dto.getSoldeCongeAnneePrec().toString());
@@ -102,6 +101,7 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeAsaA48());
 		assertFalse(dto.isAfficheSoldeAsaA54());
 		assertFalse(dto.isAfficheSoldeAsaA55());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin);
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -218,6 +218,7 @@ public class SoldeServiceTest {
 		assertTrue(dto.isAfficheSoldeAsaA55());
 		assertEquals(2, dto.getListeSoldeAsaA55().size());
 		assertEquals(2, dto.getListeSoldeCongesExcep().size());
+		assertTrue(dto.isAfficheSoldeCongesExcep());
 	}
 
 	@Test
@@ -314,7 +315,7 @@ public class SoldeServiceTest {
 
 		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
-		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin);
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -331,6 +332,8 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeAsaA54());
 		assertFalse(dto.isAfficheSoldeAsaA55());
 		assertEquals(0, dto.getListeSoldeAsaA55().size());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(0, dto.getListeSoldeCongesExcep().size());
 	}
 
 	@Test
@@ -392,7 +395,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -405,6 +408,8 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA48());
 		assertEquals(0, dto.getListeSoldeAsaA55().size());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(0, dto.getListeSoldeCongesExcep().size());
 	}
 
 	@Test
@@ -466,7 +471,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -479,6 +484,8 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA54());
 		assertEquals(0, dto.getListeSoldeAsaA55().size());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(0, dto.getListeSoldeCongesExcep().size());
 	}
 
 	@Test
@@ -540,7 +547,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -553,6 +560,167 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA55());
 		assertEquals(0, dto.getListeSoldeAsaA55().size());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(0, dto.getListeSoldeCongesExcep().size());
+	}
+	
+	private void prepareDataTest(SoldeService service, Integer idAgent) {
+		double cotaSoldeAnnee = 62.0;
+		double cotaSoldeAnneePrec = 25.5;
+		ReturnMessageDto srm = new ReturnMessageDto();
+		srm.getErrors().add("erreur");
+
+		AgentRecupCount arc = new AgentRecupCount();
+		arc.setIdAgent(idAgent);
+		arc.setTotalMinutes(72);
+
+		AgentReposCompCount arcc = new AgentReposCompCount();
+		arcc.setIdAgent(idAgent);
+		arcc.setTotalMinutes(12);
+		arcc.setTotalMinutesAnneeN1(10);
+
+		SpSold solde = new SpSold();
+		solde.setNomatr(8765);
+		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
+		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+
+		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
+		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+		Mockito.when(
+				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
+				.thenReturn(null);
+
+		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
+
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
+				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				result.getErrors()
+						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
+				return result;
+			}
+		}).when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+
+		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
+		
+		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
+		
+		ReflectionTestUtils.setField(service, "counterRepository", cr);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
+	}
+	
+	@Test
+	public void getAgentSolde_AgentExists_WithTypeDemande() {
+
+		// Given
+		Integer idAgent = 9008765;
+		SoldeService service = new SoldeService();
+		
+		prepareDataTest(service, idAgent);
+		
+		// When
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.RECUP.getValue());
+
+		assertEquals("72.0", dto.getSoldeRecup().toString());
+		assertNull(dto.getSoldeCongeAnnee());
+		assertNull(dto.getSoldeCongeAnneePrec());
+		assertNull(dto.getSoldeReposCompAnnee());
+		assertNull(dto.getSoldeReposCompAnneePrec());
+		assertNull(dto.getSoldeAsaA55());
+		assertFalse(dto.isAfficheSoldeConge());
+		assertTrue(dto.isAfficheSoldeRecup());
+		assertFalse(dto.isAfficheSoldeReposComp());
+		assertFalse(dto.isAfficheSoldeAsaA55());
+		assertEquals(0, dto.getListeSoldeAsaA55().size());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(0, dto.getListeSoldeCongesExcep().size());
+	}
+	
+	@Test
+	public void getAgentSolde_AgentExists_WithTypeDemandeReposComp() {
+
+		// Given
+		Integer idAgent = 9008765;
+		SoldeService service = new SoldeService();
+
+		prepareDataTest(service, idAgent);
+		// When
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.REPOS_COMP.getValue());
+
+		assertNull(dto.getSoldeRecup());
+		assertNull(dto.getSoldeCongeAnnee());
+		assertNull(dto.getSoldeCongeAnneePrec());
+		assertEquals("12.0", dto.getSoldeReposCompAnnee().toString());
+		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
+		assertNull(dto.getSoldeAsaA55());
+		assertFalse(dto.isAfficheSoldeConge());
+		assertFalse(dto.isAfficheSoldeRecup());
+		assertFalse(dto.isAfficheSoldeReposComp());// car fonctionnaire
+		assertFalse(dto.isAfficheSoldeAsaA55());
+		assertEquals(0, dto.getListeSoldeAsaA55().size());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(0, dto.getListeSoldeCongesExcep().size());
+	}
+	
+	@Test
+	public void getAgentSolde_AgentExists_WithTypeDemandeCongesAnnuels() {
+
+		// Given
+		Integer idAgent = 9008765;
+		SoldeService service = new SoldeService();
+
+		prepareDataTest(service, idAgent);
+		// When
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+
+		assertNull(dto.getSoldeRecup());
+		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
+		assertEquals("25.5", dto.getSoldeCongeAnneePrec().toString());
+		assertNull(dto.getSoldeReposCompAnnee());
+		assertNull(dto.getSoldeReposCompAnneePrec());
+		assertNull(dto.getSoldeAsaA55());
+		assertTrue(dto.isAfficheSoldeConge());
+		assertFalse(dto.isAfficheSoldeRecup());
+		assertFalse(dto.isAfficheSoldeReposComp());
+		assertFalse(dto.isAfficheSoldeAsaA55());
+		assertEquals(0, dto.getListeSoldeAsaA55().size());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(0, dto.getListeSoldeCongesExcep().size());
+	}
+	
+	@Test
+	public void getAgentSolde_AgentExists_WithTypeDemandeAsa50() {
+
+		// Given
+		Integer idAgent = 9008765;
+		SoldeService service = new SoldeService();
+
+		prepareDataTest(service, idAgent);
+		// When
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.ASA_A50.getValue());
+
+		assertNull(dto.getSoldeRecup());
+		assertNull(dto.getSoldeCongeAnnee());
+		assertNull(dto.getSoldeCongeAnneePrec());
+		assertNull(dto.getSoldeReposCompAnnee());
+		assertNull(dto.getSoldeReposCompAnneePrec());
+		assertNull(dto.getSoldeAsaA55());
+		assertFalse(dto.isAfficheSoldeConge());
+		assertFalse(dto.isAfficheSoldeRecup());
+		assertFalse(dto.isAfficheSoldeReposComp());
+		assertFalse(dto.isAfficheSoldeAsaA55());
+		assertEquals(0, dto.getListeSoldeAsaA55().size());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(0, dto.getListeSoldeCongesExcep().size());
 	}
 
 	@Test
@@ -775,5 +943,10 @@ public class SoldeServiceTest {
 		assertEquals(e.getDateModification(), listResult.get(0).getDateModifcation());
 		assertEquals(e.getIdAgent(), listResult.get(0).getIdAgentModification());
 		assertEquals(motifCompteur.getLibelle(), listResult.get(0).getMotif().getLibelle());
+	}
+	
+	@Test
+	public void getAgentSolde_returnListeCongesExcep() {
+		
 	}
 }
