@@ -103,7 +103,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					.equals(demande.getIdDemande())))
 					&& null != demandeExistante.getLatestEtatDemande()
 					&& !RefEtatEnum.REFUSEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
-					&& !RefEtatEnum.PROVISOIRE.equals(demandeExistante.getLatestEtatDemande().getEtat())) {
+					&& !RefEtatEnum.PROVISOIRE.equals(demandeExistante.getLatestEtatDemande().getEtat())
+					&& !RefEtatEnum.ANNULEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
+					&& !RefEtatEnum.REJETE.equals(demandeExistante.getLatestEtatDemande().getEtat())) {
 
 				// date de debut couverte par une autre demande
 				if ((demande.getDateDebut().before(demandeExistante.getDateFin()) || demande.getDateDebut().equals(

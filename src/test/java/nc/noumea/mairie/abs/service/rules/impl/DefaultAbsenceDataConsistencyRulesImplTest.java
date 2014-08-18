@@ -130,17 +130,32 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		demande.getEtatsDemande().add(etat);
 
 		List<Demande> listDemande = new ArrayList<Demande>();
+		
 		Demande demandeExist1 = new Demande();
 		EtatDemande etat1 = new EtatDemande();
 		etat1.setEtat(RefEtatEnum.REFUSEE);
 		demandeExist1.getEtatsDemande().add(etat1);
 		demandeExist1.setIdDemande(2);
+		
 		Demande demandeExist2 = new Demande();
 		EtatDemande etat2 = new EtatDemande();
 		etat2.setEtat(RefEtatEnum.PROVISOIRE);
 		demandeExist2.getEtatsDemande().add(etat2);
 		demandeExist2.setIdDemande(3);
-		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
+		
+		Demande demandeExist3 = new Demande();
+		EtatDemande etat3 = new EtatDemande();
+		etat3.setEtat(RefEtatEnum.REJETE);
+		demandeExist3.getEtatsDemande().add(etat3);
+		demandeExist3.setIdDemande(4);
+		
+		Demande demandeExist4 = new Demande();
+		EtatDemande etat4 = new EtatDemande();
+		etat4.setEtat(RefEtatEnum.ANNULEE);
+		demandeExist4.getEtatsDemande().add(etat4);
+		demandeExist4.setIdDemande(5);
+		
+		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2, demandeExist3, demandeExist4));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null)).thenReturn(
