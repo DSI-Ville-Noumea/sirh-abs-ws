@@ -44,7 +44,8 @@ public class SoldeController {
 	public SoldeDto getSoldeAgent(@RequestParam(value = "idAgent", required = true) Integer idAgent,
 			@RequestBody(required = true) FiltreSoldeDto filtreSoldeDto) {
 
-		logger.debug("entered POST [solde/soldeAgent] => getSoldeAgent with parameter idAgent = {}", idAgent);
+		logger.debug("entered POST [solde/soldeAgent] => getSoldeAgent with parameter idAgent = {}, dateDebut = {}, dateFin = {}", 
+				idAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin());
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 

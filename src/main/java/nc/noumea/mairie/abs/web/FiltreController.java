@@ -44,7 +44,7 @@ public class FiltreController {
 	@RequestMapping(value = "/getEtats", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<RefEtatDto> getEtats(@RequestParam(value = "ongletDemande", required = false) String ongletDemande) {
 
-		logger.debug("entered GET [filtres/getEtats] => getEtats");
+		logger.debug("entered GET [filtres/getEtats] => getEtats with parameter ongletDemande = {}", ongletDemande);
 
 		List<RefEtatDto> etats = filtresService.getRefEtats(ongletDemande);
 
@@ -59,7 +59,7 @@ public class FiltreController {
 	public List<RefTypeAbsenceDto> getTypes(
 			@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
 
-		logger.debug("entered GET [filtres/getTypes] => getTypes");
+		logger.debug("entered GET [filtres/getTypes] => getTypes with parameter idAgentConcerne = {}", idAgentConcerne);
 
 		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsence(idAgentConcerne);
 
