@@ -151,4 +151,22 @@ public class FiltreController {
 
 		return upq;
 	}
+
+	/**
+	 * Liste des types d absence saisissable dans le kiosque RH pour un agent
+	 * donné
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getTypeAbsenceKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefTypeAbsenceDto> getTypeAbsenceKiosque(
+			@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
+
+		logger.debug(
+				"entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter idAgentConcerne = {}",
+				idAgentConcerne);
+
+		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsenceSaisieKiosque(idAgentConcerne);
+
+		return types;
+	}
 }

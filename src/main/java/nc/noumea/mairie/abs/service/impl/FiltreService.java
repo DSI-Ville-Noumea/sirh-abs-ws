@@ -194,4 +194,35 @@ public class FiltreService implements IFiltreService {
 		return resultDto;
 	}
 
+	@Override
+	public List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idAgentConcerne) {
+		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
+		List<RefTypeAbsence> refTypeAbs = filtreRepository.findAllRefTypeAbsences();
+
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgentConcerne), helperService.getCurrentDate());
+
+		for (RefTypeAbsence type : refTypeAbs) {
+			boolean ajout = false;
+
+			if (null != type.getTypeSaisi() && type.getTypeSaisi().isSaisieKiosque()) {
+				if (helperService.isFonctionnaire(carr) && type.getTypeSaisi().isFonctionnaire()) {
+					ajout = true;
+				}
+				if (helperService.isContractuel(carr) && type.getTypeSaisi().isContractuel()) {
+					ajout = true;
+				}
+				if (helperService.isConventionCollective(carr) && type.getTypeSaisi().isConventionCollective()) {
+					ajout = true;
+				}
+			}
+			if (ajout) {
+				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
+				res.add(dto);
+			}
+
+		}
+		return res;
+	}
+
 }
