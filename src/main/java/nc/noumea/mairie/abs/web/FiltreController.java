@@ -159,7 +159,7 @@ public class FiltreController {
 	@ResponseBody
 	@RequestMapping(value = "/getTypeAbsenceKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<RefTypeAbsenceDto> getTypeAbsenceKiosque(
-			@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
+			@RequestParam(value = "idAgentConcerne", required = true) Integer idAgentConcerne) {
 
 		logger.debug(
 				"entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter idAgentConcerne = {}",
