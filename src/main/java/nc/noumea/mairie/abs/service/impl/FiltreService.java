@@ -217,7 +217,7 @@ public class FiltreService implements IFiltreService {
 				}
 			}
 			if (ajout) {
-				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
+				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi());
 				res.add(dto);
 			}
 
