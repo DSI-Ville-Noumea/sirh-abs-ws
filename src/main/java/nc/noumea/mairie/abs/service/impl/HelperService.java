@@ -76,22 +76,21 @@ public class HelperService {
 		}
 		if (typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin()) {
 			Calendar cal = Calendar.getInstance();
-				cal.setTime(dateFin);
-				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
-				cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
-				cal.set(Calendar.SECOND, SECONDS_FIN);
-				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+			cal.setTime(dateFin);
+			cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
+			cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+			cal.set(Calendar.SECOND, SECONDS_FIN);
+			cal.set(Calendar.MILLISECOND, MILLISECONDS);
 			return cal.getTime();
 		}
-		if (!typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() 
-				&& !typeSaisi.isChkDateFin()
+		if (!typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin()
 				&& !typeSaisi.isDuree()) {
 			Calendar cal = Calendar.getInstance();
-				cal.setTime(dateDeb);
-				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
-				cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
-				cal.set(Calendar.SECOND, SECONDS_FIN);
-				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+			cal.setTime(dateDeb);
+			cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
+			cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+			cal.set(Calendar.SECOND, SECONDS_FIN);
+			cal.set(Calendar.MILLISECOND, MILLISECONDS);
 			return cal.getTime();
 		}
 
@@ -124,14 +123,14 @@ public class HelperService {
 				return cal.getTime();
 			}
 		}
-		
+
 		if (typeSaisi.isCalendarDateDebut() && !typeSaisi.isCalendarHeureDebut() && !typeSaisi.isChkDateDebut()) {
 			Calendar cal = Calendar.getInstance();
-				cal.setTime(dateDeb);
-				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_AM);
-				cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
-				cal.set(Calendar.SECOND, SECONDS_DEBUT);
-				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+			cal.setTime(dateDeb);
+			cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_AM);
+			cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
+			cal.set(Calendar.SECOND, SECONDS_DEBUT);
+			cal.set(Calendar.MILLISECOND, MILLISECONDS);
 			return cal.getTime();
 		}
 		return null;
@@ -149,6 +148,9 @@ public class HelperService {
 		}
 
 		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
+			if (UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
+				return duree * 60;
+			}
 			return duree;
 		}
 
@@ -219,7 +221,7 @@ public class HelperService {
 		// on recupere le 1er jour du mois de la demande
 		return new DateTime(year, month, minDay, 0, 0, 0).toDate();
 	}
-	
+
 	public Date getDateDebutAnneeForOneDate(Date dateDemande, int nombreAnnees) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(dateDemande);
@@ -229,7 +231,7 @@ public class HelperService {
 		// on recupere le 1er jour du mois de la demande
 		return new DateTime(year, month, minDay, 0, 0, 0).toDate();
 	}
-	
+
 	public Date getDateDebutJourneeForOneDate(Date dateDemande, int nombreJours) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(dateDemande);
@@ -249,52 +251,52 @@ public class HelperService {
 		// on recupere le dernier jour du mois de la demande
 		return new DateTime(year, month, maxDay, 23, 59, 59).toDate();
 	}
-	
+
 	public boolean isFonctionnaire(Spcarr carr) {
 		return (carr.getCdcate() != 4 && carr.getCdcate() != 7);
 	}
-	
+
 	public boolean isContractuel(Spcarr carr) {
 		return (carr.getCdcate() == 4);
 	}
-	
+
 	public boolean isConventionCollective(Spcarr carr) {
 		return (carr.getCdcate() == 7);
 	}
-	
+
 	public Date getDateDebutByUnitePeriodeQuotaAndDebutDemande(RefUnitePeriodeQuota upq, Date dateDebutDemande) {
-		
-		if(UNITE_DECOMPTE_AN.equals(upq.getUnite())){
-			if(upq.isGlissant()) {
+
+		if (UNITE_DECOMPTE_AN.equals(upq.getUnite())) {
+			if (upq.isGlissant()) {
 				Calendar calendar = Calendar.getInstance();
-					calendar.setTime(dateDebutDemande);
-					calendar.add(Calendar.YEAR, -upq.getValeur());
+				calendar.setTime(dateDebutDemande);
+				calendar.add(Calendar.YEAR, -upq.getValeur());
 				return calendar.getTime();
-			}else{
+			} else {
 				return getDateDebutAnneeForOneDate(dateDebutDemande, upq.getValeur());
 			}
 		}
-		if(UNITE_DECOMPTE_MOIS.equals(upq.getUnite())){
-			if(upq.isGlissant()) {
+		if (UNITE_DECOMPTE_MOIS.equals(upq.getUnite())) {
+			if (upq.isGlissant()) {
 				Calendar calendar = Calendar.getInstance();
-					calendar.setTime(dateDebutDemande);
-					calendar.add(Calendar.MONTH, -upq.getValeur());
+				calendar.setTime(dateDebutDemande);
+				calendar.add(Calendar.MONTH, -upq.getValeur());
 				return calendar.getTime();
-			}else{
+			} else {
 				return getDateDebutMoisForOneDate(dateDebutDemande, upq.getValeur());
 			}
 		}
-		if(UNITE_DECOMPTE_JOURS.equals(upq.getUnite())){
-			if(upq.isGlissant()) {
+		if (UNITE_DECOMPTE_JOURS.equals(upq.getUnite())) {
+			if (upq.isGlissant()) {
 				Calendar calendar = Calendar.getInstance();
-					calendar.setTime(dateDebutDemande);
-					calendar.add(Calendar.DAY_OF_YEAR, -upq.getValeur());
+				calendar.setTime(dateDebutDemande);
+				calendar.add(Calendar.DAY_OF_YEAR, -upq.getValeur());
 				return calendar.getTime();
-			}else{
+			} else {
 				return getDateDebutJourneeForOneDate(dateDebutDemande, upq.getValeur());
 			}
 		}
-		
+
 		return null;
 	}
 }
