@@ -70,8 +70,9 @@ public class DemandeController {
 	public ReturnMessageDto setDemandeAbsence(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) DemandeDto demandeDto, HttpServletResponse response) {
 
-		logger.debug("entered POST [demandes/demande] => setDemandeAbsence for Kiosque with parameters idAgent = {}",
-				idAgent);
+		logger.debug(
+				"entered POST [demandes/demande] => setDemandeAbsence for Kiosque with parameters idAgent = {} and demandeDto={} ",
+				idAgent, demandeDto.getDtoToString(demandeDto));
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		ReturnMessageDto srm = absenceService.saveDemande(convertedIdAgent, demandeDto);
@@ -125,8 +126,7 @@ public class DemandeController {
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
-		if (agent == null
-				|| agent.getIdAgent() == null)
+		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande,
@@ -152,8 +152,7 @@ public class DemandeController {
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
-		if (agent == null
-				|| agent.getIdAgent() == null)
+		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
@@ -193,8 +192,7 @@ public class DemandeController {
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
-		if (agent == null
-				|| agent.getIdAgent() == null)
+		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		// ON VERIFIE LES DROITS

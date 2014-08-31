@@ -10,9 +10,12 @@ import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import flexjson.JSONSerializer;
 
 public class DemandeDto {
 
@@ -461,6 +464,12 @@ public class DemandeDto {
 
 	public void setLibelleTypeDemande(String libelleTypeDemande) {
 		this.libelleTypeDemande = libelleTypeDemande;
+	}
+
+	public String getDtoToString(DemandeDto dto) {
+		String json = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
+				.deepSerialize(dto);
+		return json;
 	}
 
 }
