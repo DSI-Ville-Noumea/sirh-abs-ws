@@ -278,6 +278,12 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/filtres/getTypeAbsenceKiosque</span>
+                    <div>
+                            <a href="#/filtres/getTypeAbsenceKiosque_GET_idAgentConcerne">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/motifCompteur/getListeMotifCompteur</span>
                     <div>
                             <a href="#/motifCompteur/getListeMotifCompteur_GET_idRefType">GET</a>
@@ -2687,7 +2693,7 @@
 
                             <div class="resource-docs">
                                  changer l etat d une demande depuis le kiosque pour le VISA et
- l'APPROBATION <br />
+ l'APPROBATION et l'ANNULATION <br />
  ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 
                             </div>
@@ -4168,6 +4174,139 @@
             <div class="json-field">
                 <span class="json-field-name">glissant</span>
 <span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/filtres/getTypeAbsenceKiosque_GET_idAgentConcerne"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/filtres/getTypeAbsenceKiosque</span>?<span class="url-param-key">idAgentConcerne</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des types d absence saisissable dans le kiosque RH pour un agent
+ donné
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">typeSaisiDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeDemande</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">calendarDateDebut</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">calendarHeureDebut</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">chkDateDebut</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">calendarDateFin</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">calendarHeureFin</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">chkDateFin</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">duree</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">pieceJointe</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">fonctionnaire</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">contractuel</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">conventionCollective</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">saisieKiosque</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">description</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">infosComplementaires</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">alerte</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">messageAlerte</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">quotaMax</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">unitePeriodeQuotaDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idRefUnitePeriodeQuota</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">valeur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">unite</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">glissant</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">uniteDecompte</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">compteurCollectif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">groupeAbsence</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idRefGroupeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">code</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
     ]</span>
 </div>

@@ -216,7 +216,7 @@ public class DemandeController {
 
 	/**
 	 * changer l etat d une demande depuis le kiosque pour le VISA et
-	 * l'APPROBATION <br />
+	 * l'APPROBATION et l'ANNULATION <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
