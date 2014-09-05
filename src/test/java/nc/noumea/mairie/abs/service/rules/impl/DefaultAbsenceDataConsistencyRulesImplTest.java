@@ -72,6 +72,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 			impl = new DefaultAbsenceDataConsistencyRulesImpl();
 		}
 
+		checkDateDebutInferieurDateFin_Ok();
+		checkDateDebutInferieurDateFin_Ko();
 		checkDemandeDejaSaisieSurMemePeriode_withEtatExistantProvisoireAndRefuse();
 		checkDemandeDejaSaisieSurMemePeriode_Ok();
 		checkDemandeDejaSaisieSurMemePeriode_DateFinKo();
@@ -130,31 +132,31 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		demande.getEtatsDemande().add(etat);
 
 		List<Demande> listDemande = new ArrayList<Demande>();
-		
+
 		Demande demandeExist1 = new Demande();
 		EtatDemande etat1 = new EtatDemande();
 		etat1.setEtat(RefEtatEnum.REFUSEE);
 		demandeExist1.getEtatsDemande().add(etat1);
 		demandeExist1.setIdDemande(2);
-		
+
 		Demande demandeExist2 = new Demande();
 		EtatDemande etat2 = new EtatDemande();
 		etat2.setEtat(RefEtatEnum.PROVISOIRE);
 		demandeExist2.getEtatsDemande().add(etat2);
 		demandeExist2.setIdDemande(3);
-		
+
 		Demande demandeExist3 = new Demande();
 		EtatDemande etat3 = new EtatDemande();
 		etat3.setEtat(RefEtatEnum.REJETE);
 		demandeExist3.getEtatsDemande().add(etat3);
 		demandeExist3.setIdDemande(4);
-		
+
 		Demande demandeExist4 = new Demande();
 		EtatDemande etat4 = new EtatDemande();
 		etat4.setEtat(RefEtatEnum.ANNULEE);
 		demandeExist4.getEtatsDemande().add(etat4);
 		demandeExist4.setIdDemande(5);
-		
+
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2, demandeExist3, demandeExist4));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -492,26 +494,26 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void filtreDateAndEtatDemandeFromList_EtatAndDateDemandeFilter_NoResult_BadEtat() {
 
 		RefEtat etatProvisoire = new RefEtat();
-			etatProvisoire.setIdRefEtat(0);
-			etatProvisoire.setLabel("PROVISOIRE");
+		etatProvisoire.setIdRefEtat(0);
+		etatProvisoire.setLabel("PROVISOIRE");
 
 		RefEtat etatPris = new RefEtat();
-			etatPris.setIdRefEtat(6);
-			etatPris.setLabel("PRISE");
+		etatPris.setIdRefEtat(6);
+		etatPris.setLabel("PRISE");
 
 		RefEtat etatSaisie = new RefEtat();
-			etatSaisie.setIdRefEtat(1);
-			etatSaisie.setLabel("SAISIE");
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel("SAISIE");
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
-			
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
 		RefTypeAbsence refType = new RefTypeAbsence();
-			refType.setIdRefTypeAbsence(3);
-			refType.setLabel("RECUP");
-			refType.setGroupe(groupe);
-			
+		refType.setIdRefTypeAbsence(3);
+		refType.setLabel("RECUP");
+		refType.setGroupe(groupe);
+
 		EtatDemande etat1 = new EtatDemande();
 		etat1.setDate(new Date());
 		etat1.setEtat(RefEtatEnum.SAISIE);
@@ -566,19 +568,19 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		// Given
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
-		
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefEtat etatProvisoire = new RefEtat();
-			etatProvisoire.setIdRefEtat(0);
-			etatProvisoire.setLabel("PROVISOIRE");
+		etatProvisoire.setIdRefEtat(0);
+		etatProvisoire.setLabel("PROVISOIRE");
 		RefEtat etatSaisie = new RefEtat();
-			etatSaisie.setIdRefEtat(1);
-			etatSaisie.setLabel("SAISIE");
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel("SAISIE");
 
 		RefTypeAbsence refType = new RefTypeAbsence();
-			refType.setIdRefTypeAbsence(3);
-			refType.setLabel("RECUP");
-			refType.setGroupe(groupe);
+		refType.setIdRefTypeAbsence(3);
+		refType.setLabel("RECUP");
+		refType.setGroupe(groupe);
 
 		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
 		EtatDemande etat1 = new EtatDemande();
@@ -642,48 +644,48 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Integer idAgent = 9005138;
 
 		RefEtat etatProvisoire = new RefEtat();
-			etatProvisoire.setIdRefEtat(0);
-			etatProvisoire.setLabel("PROVISOIRE");
+		etatProvisoire.setIdRefEtat(0);
+		etatProvisoire.setLabel("PROVISOIRE");
 
 		RefEtat etatSaisie = new RefEtat();
-			etatSaisie.setIdRefEtat(1);
-			etatSaisie.setLabel("SAISIE");
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel("SAISIE");
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
-			
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence refType = new RefTypeAbsence();
-			refType.setIdRefTypeAbsence(3);
-			refType.setLabel("RECUP");
-			refType.setGroupe(groupe);
+		refType.setIdRefTypeAbsence(3);
+		refType.setLabel("RECUP");
+		refType.setGroupe(groupe);
 
 		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
 		EtatDemande etat1 = new EtatDemande();
-			etat1.setDate(new Date());
-			etat1.setEtat(RefEtatEnum.SAISIE);
-			etat1.setIdAgent(idAgent);
-			etat1.setIdEtatDemande(1);
+		etat1.setDate(new Date());
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		etat1.setIdAgent(idAgent);
+		etat1.setIdEtatDemande(1);
 		EtatDemande etat2 = new EtatDemande();
-			etat2.setDate(new Date());
-			etat2.setEtat(RefEtatEnum.PROVISOIRE);
-			etat2.setIdAgent(idAgent);
-			etat2.setIdEtatDemande(2);
+		etat2.setDate(new Date());
+		etat2.setEtat(RefEtatEnum.PROVISOIRE);
+		etat2.setIdAgent(idAgent);
+		etat2.setIdEtatDemande(2);
 		DemandeRecup d = new DemandeRecup();
 		etat1.setDemande(d);
-			d.setIdDemande(1);
-			d.setIdAgent(idAgent);
-			d.setType(refType);
-			d.setEtatsDemande(Arrays.asList(etat1));
-			d.setDateDebut(new Date());
-			d.setDuree(30);
+		d.setIdDemande(1);
+		d.setIdAgent(idAgent);
+		d.setType(refType);
+		d.setEtatsDemande(Arrays.asList(etat1));
+		d.setDateDebut(new Date());
+		d.setDuree(30);
 		DemandeRecup d2 = new DemandeRecup();
 		etat2.setDemande(d2);
-			d2.setIdDemande(2);
-			d2.setIdAgent(idAgent);
-			d2.setType(refType);
-			d2.setEtatsDemande(Arrays.asList(etat2));
-			d2.setDateDebut(new Date());
-			d2.setDuree(50);
+		d2.setIdDemande(2);
+		d2.setIdAgent(idAgent);
+		d2.setType(refType);
+		d2.setEtatsDemande(Arrays.asList(etat2));
+		d2.setDateDebut(new Date());
+		d2.setDuree(50);
 		listeDemande.add(d);
 		listeDemande.add(d2);
 
@@ -722,20 +724,20 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Integer idAgent = 9005138;
 
 		RefEtat etatProvisoire = new RefEtat();
-			etatProvisoire.setIdRefEtat(0);
-			etatProvisoire.setLabel("PROVISOIRE");
+		etatProvisoire.setIdRefEtat(0);
+		etatProvisoire.setLabel("PROVISOIRE");
 
 		RefEtat etatSaisie = new RefEtat();
-			etatSaisie.setIdRefEtat(1);
-			etatSaisie.setLabel("SAISIE");
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel("SAISIE");
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
-			
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence refType = new RefTypeAbsence();
-			refType.setIdRefTypeAbsence(3);
-			refType.setLabel("RECUP");
-			refType.setGroupe(groupe);
+		refType.setIdRefTypeAbsence(3);
+		refType.setLabel("RECUP");
+		refType.setGroupe(groupe);
 
 		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
 		EtatDemande etat1 = new EtatDemande();
@@ -803,20 +805,20 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Integer idAgent = 9005138;
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
-		
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefEtat etatProvisoire = new RefEtat();
-			etatProvisoire.setIdRefEtat(0);
-			etatProvisoire.setLabel("PROVISOIRE");
+		etatProvisoire.setIdRefEtat(0);
+		etatProvisoire.setLabel("PROVISOIRE");
 
 		RefEtat etatSaisie = new RefEtat();
-			etatSaisie.setIdRefEtat(1);
-			etatSaisie.setLabel("SAISIE");
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel("SAISIE");
 
 		RefTypeAbsence refType = new RefTypeAbsence();
-			refType.setIdRefTypeAbsence(3);
-			refType.setLabel("RECUP");
-			refType.setGroupe(groupe);
+		refType.setIdRefTypeAbsence(3);
+		refType.setLabel("RECUP");
+		refType.setGroupe(groupe);
 
 		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
 		EtatDemande etat1 = new EtatDemande();
@@ -888,45 +890,45 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		// Given
 		Integer idAgent = 9005138;
-		
+
 		RefEtat etatProvisoire = new RefEtat();
-			etatProvisoire.setIdRefEtat(0);
-			etatProvisoire.setLabel("PROVISOIRE");
+		etatProvisoire.setIdRefEtat(0);
+		etatProvisoire.setLabel("PROVISOIRE");
 		RefEtat etatSaisie = new RefEtat();
-			etatSaisie.setIdRefEtat(1);
-			etatSaisie.setLabel("SAISIE");
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel("SAISIE");
 		RefEtat etatVISEE_F = new RefEtat();
-			etatVISEE_F.setIdRefEtat(2);
-			etatVISEE_F.setLabel("VISEE_F");
+		etatVISEE_F.setIdRefEtat(2);
+		etatVISEE_F.setLabel("VISEE_F");
 		RefEtat etatVISEE_D = new RefEtat();
-			etatVISEE_D.setIdRefEtat(3);
-			etatVISEE_D.setLabel("VISEE_D");
+		etatVISEE_D.setIdRefEtat(3);
+		etatVISEE_D.setLabel("VISEE_D");
 		RefEtat etatApprouve = new RefEtat();
-			etatApprouve.setIdRefEtat(4);
-			etatApprouve.setLabel("APPROUVEE");
+		etatApprouve.setIdRefEtat(4);
+		etatApprouve.setLabel("APPROUVEE");
 		RefEtat etatRefusee = new RefEtat();
-			etatRefusee.setIdRefEtat(5);
-			etatRefusee.setLabel("REFUSEE");
+		etatRefusee.setIdRefEtat(5);
+		etatRefusee.setLabel("REFUSEE");
 		RefEtat etatPrise = new RefEtat();
-			etatPrise.setIdRefEtat(6);
-			etatPrise.setLabel("PRISE");
+		etatPrise.setIdRefEtat(6);
+		etatPrise.setLabel("PRISE");
 		RefEtat etatAnnulee = new RefEtat();
-			etatAnnulee.setIdRefEtat(7);
-			etatAnnulee.setLabel("ANNULEE");
+		etatAnnulee.setIdRefEtat(7);
+		etatAnnulee.setLabel("ANNULEE");
 
 		List<RefEtat> refEtatEnCours = new ArrayList<RefEtat>();
-			refEtatEnCours.add(etatSaisie);
-			refEtatEnCours.add(etatVISEE_F);
-			refEtatEnCours.add(etatVISEE_D);
-			refEtatEnCours.add(etatApprouve);
+		refEtatEnCours.add(etatSaisie);
+		refEtatEnCours.add(etatVISEE_F);
+		refEtatEnCours.add(etatVISEE_D);
+		refEtatEnCours.add(etatApprouve);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
-			
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence refType = new RefTypeAbsence();
-			refType.setIdRefTypeAbsence(3);
-			refType.setLabel("RECUP");
-			refType.setGroupe(groupe);
+		refType.setIdRefTypeAbsence(3);
+		refType.setLabel("RECUP");
+		refType.setGroupe(groupe);
 
 		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
 		EtatDemande etat1 = new EtatDemande();
@@ -1089,44 +1091,44 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		// Given
 		Integer idAgent = 9005138;
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
-		
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefEtat etatPris = new RefEtat();
-			etatPris.setIdRefEtat(6);
-			etatPris.setLabel("PRISE");
+		etatPris.setIdRefEtat(6);
+		etatPris.setLabel("PRISE");
 
 		List<RefEtat> refEtatNonPris = new ArrayList<RefEtat>();
 		RefEtat etatSaisie = new RefEtat();
-			etatSaisie.setIdRefEtat(1);
-			etatSaisie.setLabel("SAISIE");
+		etatSaisie.setIdRefEtat(1);
+		etatSaisie.setLabel("SAISIE");
 		refEtatNonPris.add(etatSaisie);
 
 		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
 		RefTypeAbsence refType = new RefTypeAbsence();
-			refType.setIdRefTypeAbsence(3);
-			refType.setLabel("RECUP");
-			refType.setGroupe(groupe);
-			
+		refType.setIdRefTypeAbsence(3);
+		refType.setLabel("RECUP");
+		refType.setGroupe(groupe);
+
 		EtatDemande etat1 = new EtatDemande();
-			etat1.setDate(new Date());
-			etat1.setEtat(RefEtatEnum.SAISIE);
-			etat1.setIdAgent(idAgent);
-			etat1.setIdEtatDemande(1);
+		etat1.setDate(new Date());
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		etat1.setIdAgent(idAgent);
+		etat1.setIdEtatDemande(1);
 		EtatDemande etat2 = new EtatDemande();
-			etat2.setDate(new Date());
-			etat2.setEtat(RefEtatEnum.PRISE);
-			etat2.setIdAgent(idAgent);
-			etat2.setIdEtatDemande(2);
+		etat2.setDate(new Date());
+		etat2.setEtat(RefEtatEnum.PRISE);
+		etat2.setIdAgent(idAgent);
+		etat2.setIdEtatDemande(2);
 		DemandeRecup d = new DemandeRecup();
 		etat1.setDemande(d);
-			d.setIdDemande(1);
-			d.setIdAgent(idAgent);
-			d.setType(refType);
-			d.setEtatsDemande(Arrays.asList(etat1));
-			d.setDateDebut(new Date());
-			d.setDuree(30);
+		d.setIdDemande(1);
+		d.setIdAgent(idAgent);
+		d.setType(refType);
+		d.setEtatsDemande(Arrays.asList(etat1));
+		d.setDateDebut(new Date());
+		d.setDuree(30);
 		DemandeRecup d2 = new DemandeRecup();
 		etat2.setDemande(d2);
 		d2.setIdDemande(2);
@@ -1466,7 +1468,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
 		assertFalse(result);
 	}
-	
+
 	@Test
 	public void isAfficherBoutonAnnuler_isNotOperateur() {
 
@@ -2823,15 +2825,15 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void checkStatutAgent_Fonctionnaire_ok() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 		typeSaisi.setFonctionnaire(true);
 		typeSaisi.setContractuel(true);
 		typeSaisi.setConventionCollective(true);
-		
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setTypeSaisi(typeSaisi);
-		
+
 		Demande demande = new Demande();
 		demande.setIdAgent(9005138);
 		demande.setType(type);
@@ -2865,15 +2867,15 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void checkStatutAgent_Fonctionnaire_ko() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setFonctionnaire(false);
-			typeSaisi.setContractuel(true);
-			typeSaisi.setConventionCollective(true);
-		
+		typeSaisi.setFonctionnaire(false);
+		typeSaisi.setContractuel(true);
+		typeSaisi.setConventionCollective(true);
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setTypeSaisi(typeSaisi);
-		
+
 		Demande demande = new Demande();
 		demande.setIdAgent(9005138);
 		demande.setType(type);
@@ -2907,15 +2909,15 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void checkStatutAgent_Contractuel_ok() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setFonctionnaire(true);
-			typeSaisi.setContractuel(true);
-			typeSaisi.setConventionCollective(true);
-		
+		typeSaisi.setFonctionnaire(true);
+		typeSaisi.setContractuel(true);
+		typeSaisi.setConventionCollective(true);
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setTypeSaisi(typeSaisi);
-		
+
 		Demande demande = new Demande();
 		demande.setIdAgent(9005138);
 		demande.setType(type);
@@ -2944,20 +2946,20 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(srm.getErrors().size(), 0);
 	}
-	
+
 	@Test
 	public void checkStatutAgent_Contractuel_ko() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setFonctionnaire(true);
-			typeSaisi.setContractuel(false);
-			typeSaisi.setConventionCollective(true);
-		
+		typeSaisi.setFonctionnaire(true);
+		typeSaisi.setContractuel(false);
+		typeSaisi.setConventionCollective(true);
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setTypeSaisi(typeSaisi);
-		
+
 		Demande demande = new Demande();
 		demande.setIdAgent(9005138);
 		demande.setType(type);
@@ -2986,20 +2988,20 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_CONTRACTUEL);
 	}
-	
+
 	@Test
 	public void checkStatutAgent_ConventionCollective_ok() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setFonctionnaire(true);
-			typeSaisi.setContractuel(true);
-			typeSaisi.setConventionCollective(true);
-		
+		typeSaisi.setFonctionnaire(true);
+		typeSaisi.setContractuel(true);
+		typeSaisi.setConventionCollective(true);
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setTypeSaisi(typeSaisi);
-		
+
 		Demande demande = new Demande();
 		demande.setIdAgent(9005138);
 		demande.setType(type);
@@ -3028,20 +3030,20 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(srm.getErrors().size(), 0);
 	}
-	
+
 	@Test
 	public void checkStatutAgent_ConventionCollective_ko() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setFonctionnaire(true);
-			typeSaisi.setContractuel(true);
-			typeSaisi.setConventionCollective(false);
-		
+		typeSaisi.setFonctionnaire(true);
+		typeSaisi.setContractuel(true);
+		typeSaisi.setConventionCollective(false);
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setTypeSaisi(typeSaisi);
-		
+
 		Demande demande = new Demande();
 		demande.setIdAgent(9005138);
 		demande.setType(type);
@@ -3070,54 +3072,130 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_CONV_COLL);
 	}
-	
+
 	@Test
 	public void checkSaisieKiosqueAutorisee_sourceSIRH() {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setSaisieKiosque(false);
-		
+		typeSaisi.setSaisieKiosque(false);
+
 		srm = impl.checkSaisieKiosqueAutorisee(srm, typeSaisi, true);
-		
+
 		assertEquals(srm.getErrors().size(), 0);
 	}
-	
+
 	@Test
 	public void checkSaisieKiosqueAutorisee_sourceKiosque_saisieKO() {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setSaisieKiosque(false);
-		
+		typeSaisi.setSaisieKiosque(false);
+
 		srm = impl.checkSaisieKiosqueAutorisee(srm, typeSaisi, false);
-		
+
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.SAISIE_KIOSQUE_NON_AUTORISEE);
 	}
-	
+
 	@Test
 	public void checkSaisieKiosqueAutorisee_sourceKiosque_saisieOK() {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
+
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setSaisieKiosque(true);
-		
+		typeSaisi.setSaisieKiosque(true);
+
 		srm = impl.checkSaisieKiosqueAutorisee(srm, typeSaisi, false);
-		
+
 		assertEquals(srm.getErrors().size(), 0);
 	}
-	
+
 	@Test
 	public void checkSaisiNewTypeAbsence() {
-		
+
 		ReturnMessageDto srm = new ReturnMessageDto();
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-		
+
 		srm = impl.checkSaisiNewTypeAbsence(typeSaisi, srm);
-		
+
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.SAISIE_TYPE_ABSENCE_NON_AUTORISEE);
+	}
+
+	@Test
+	public void checkDateDebutInferieurDateFin_Ok() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		demande.setIdAgent(9005138);
+		demande.setDateDebut(new LocalDateTime(2013, 9, 10, 12, 1).toDate());
+		demande.setDateFin(new LocalDateTime(2013, 9, 20, 13, 59).toDate());
+
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.PROVISOIRE);
+		demande.getEtatsDemande().add(etat);
+
+		List<Demande> listDemande = new ArrayList<Demande>();
+		Demande demandeExist1 = new Demande();
+		EtatDemande etat1 = new EtatDemande();
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		demandeExist1.getEtatsDemande().add(etat1);
+		demandeExist1.setDateDebut(new LocalDateTime(2013, 9, 10, 14, 0).toDate());
+		demandeExist1.setDateFin(new LocalDateTime(2013, 9, 20, 12, 0).toDate());
+		demandeExist1.setIdDemande(2);
+		Demande demandeExist2 = new Demande();
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setEtat(RefEtatEnum.APPROUVEE);
+		demandeExist2.getEtatsDemande().add(etat2);
+		demandeExist2.setDateDebut(new LocalDateTime(2013, 9, 20, 14, 0).toDate());
+		demandeExist2.setDateFin(new LocalDateTime(2013, 9, 30, 0, 0).toDate());
+		demandeExist2.setIdDemande(3);
+		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
+
+		srm = impl.checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkDateDebutInferieurDateFin_Ko() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		demande.setIdAgent(9005138);
+		demande.setDateDebut(new LocalDateTime(2013, 9, 10, 12, 1).toDate());
+		demande.setDateFin(new LocalDateTime(2013, 9, 1, 14, 0).toDate());
+
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.PROVISOIRE);
+		demande.getEtatsDemande().add(etat);
+
+		List<Demande> listDemande = new ArrayList<Demande>();
+		Demande demandeExist1 = new Demande();
+		EtatDemande etat1 = new EtatDemande();
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		demandeExist1.getEtatsDemande().add(etat1);
+		demandeExist1.setDateDebut(new LocalDateTime(2013, 9, 10, 14, 0).toDate());
+		demandeExist1.setDateFin(new LocalDateTime(2013, 9, 1, 12, 0).toDate());
+		demandeExist1.setIdDemande(2);
+		Demande demandeExist2 = new Demande();
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setEtat(RefEtatEnum.APPROUVEE);
+		demandeExist2.getEtatsDemande().add(etat2);
+		demandeExist2.setDateDebut(new LocalDateTime(2013, 9, 20, 14, 0).toDate());
+		demandeExist2.setDateFin(new LocalDateTime(2013, 9, 10, 0, 0).toDate());
+		demandeExist2.setIdDemande(3);
+		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
+
+		srm = impl.checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals("La date de fin ne peut pas être inférieure à la date de début.", srm
+				.getErrors().get(0).toString());
 	}
 }

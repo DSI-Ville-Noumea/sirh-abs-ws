@@ -13,13 +13,15 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface IAbsenceDataConsistencyRules {
 
-	void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH);
+	void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
+			boolean isProvenanceSIRH);
+
+	ReturnMessageDto checkDateDebutInferieurDateFin(ReturnMessageDto srm, Date dateDebut, Date dateFin);
 
 	ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande,
 			List<RefEtatEnum> listEtatsAcceptes);
-	
-	ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande,
-			List<RefEtatEnum> listEtatsAcceptes);
+
+	ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande, List<RefEtatEnum> listEtatsAcceptes);
 
 	ReturnMessageDto checkDemandeDejaSaisieSurMemePeriode(ReturnMessageDto srm, Demande demande);
 
@@ -33,14 +35,12 @@ public interface IAbsenceDataConsistencyRules {
 			Date dateDemande);
 
 	boolean checkDepassementCompteurAgent(DemandeDto demandeDto);
-	
-	DemandeDto filtreDroitOfDemande(Integer idAgentConnecte, DemandeDto demandeDto,
-			List<DroitsAgent> listDroitAgent);
-	
+
+	DemandeDto filtreDroitOfDemande(Integer idAgentConnecte, DemandeDto demandeDto, List<DroitsAgent> listDroitAgent);
+
 	DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto);
 
-	ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm,
-			RefTypeSaisi typeSaisi, boolean isProvenanceSIRH);
-	
+	ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi, boolean isProvenanceSIRH);
+
 	ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi, ReturnMessageDto srm);
 }

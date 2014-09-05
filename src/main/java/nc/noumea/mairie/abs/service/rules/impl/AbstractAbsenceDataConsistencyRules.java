@@ -66,6 +66,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Le dépassement des droits acquis n'est pas autorisé.";
 	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
 	public static final String DEMANDE_DEJA_COUVERTE_MSG = "La demande ne peut être couverte totalement ou partiellement par une autre absence.";
+	public static final String DEMANDE_MAUVAISE_DATE_MSG = "La date de fin ne peut pas être inférieure à la date de début.";
 	public static final String MOTIF_OBLIGATOIRE = "Le motif est obligatoire.";
 	public static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
 	public static final String STATUT_AGENT = "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
@@ -84,12 +85,24 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
-
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
+			boolean isProvenanceSIRH) {
+		checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 		checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
 		checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 		checkAgentInactivity(srm, idAgent, dateLundi);
 		checkStatutAgent(srm, demande);
+	}
+
+	@Override
+	public ReturnMessageDto checkDateDebutInferieurDateFin(ReturnMessageDto srm, Date dateDebut, Date dateFin) {
+
+		if (dateFin != null && dateFin.before(dateDebut)) {
+			logger.warn(String.format(DEMANDE_MAUVAISE_DATE_MSG));
+			srm.getErrors().add(DEMANDE_MAUVAISE_DATE_MSG);
+		}
+
+		return srm;
 	}
 
 	@Override
@@ -162,11 +175,12 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		return srm;
 	}
-	
-	@Override
-	public ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi, boolean isProvenanceSIRH) {
 
-		if(!isProvenanceSIRH && !typeSaisi.isSaisieKiosque()) {
+	@Override
+	public ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi,
+			boolean isProvenanceSIRH) {
+
+		if (!isProvenanceSIRH && !typeSaisi.isSaisieKiosque()) {
 			logger.warn(String.format(SAISIE_KIOSQUE_NON_AUTORISEE));
 			srm.getErrors().add(SAISIE_KIOSQUE_NON_AUTORISEE);
 		}
@@ -363,23 +377,22 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel, convention coll
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), helperService.getCurrentDate());
-		
-		if(null != demande.getType().getTypeSaisi()) {
-			if(helperService.isFonctionnaire(carr)
-					&& !demande.getType().getTypeSaisi().isFonctionnaire()){
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+				helperService.getCurrentDate());
+
+		if (null != demande.getType().getTypeSaisi()) {
+			if (helperService.isFonctionnaire(carr) && !demande.getType().getTypeSaisi().isFonctionnaire()) {
 				logger.warn(String.format(STATUT_AGENT_FONCTIONNAIRE, demande.getIdAgent()));
 				srm.getErrors().add(String.format(STATUT_AGENT_FONCTIONNAIRE, demande.getIdAgent()));
 				return srm;
 			}
-			if(helperService.isContractuel(carr)
-					&& !demande.getType().getTypeSaisi().isContractuel()){
+			if (helperService.isContractuel(carr) && !demande.getType().getTypeSaisi().isContractuel()) {
 				logger.warn(String.format(STATUT_AGENT_CONTRACTUEL, demande.getIdAgent()));
 				srm.getErrors().add(String.format(STATUT_AGENT_CONTRACTUEL, demande.getIdAgent()));
 				return srm;
 			}
-			if(helperService.isConventionCollective(carr)
-					&& !demande.getType().getTypeSaisi().isConventionCollective()){
+			if (helperService.isConventionCollective(carr)
+					&& !demande.getType().getTypeSaisi().isConventionCollective()) {
 				logger.warn(String.format(STATUT_AGENT_CONV_COLL, demande.getIdAgent()));
 				srm.getErrors().add(String.format(STATUT_AGENT_CONV_COLL, demande.getIdAgent()));
 				return srm;
@@ -388,7 +401,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		return srm;
 	}
-	
+
 	@Override
 	public ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi, ReturnMessageDto srm) {
 		logger.warn(String.format(SAISIE_TYPE_ABSENCE_NON_AUTORISEE));
