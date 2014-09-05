@@ -173,6 +173,11 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			srm.getErrors().add(MOTIF_OBLIGATOIRE);
 		}
 
+		if (null == motif && etat.equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+			logger.warn(String.format(MOTIF_OBLIGATOIRE));
+			srm.getErrors().add(MOTIF_OBLIGATOIRE);
+		}
+
 		return srm;
 	}
 

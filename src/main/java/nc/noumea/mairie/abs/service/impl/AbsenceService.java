@@ -414,8 +414,13 @@ public class AbsenceService implements IAbsenceService {
 
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande
 				.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+		
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
 				Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
+
+
+		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
+				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
 		if (0 < result.getErrors().size()) {
 			return result;
