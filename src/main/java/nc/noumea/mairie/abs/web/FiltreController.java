@@ -59,7 +59,7 @@ public class FiltreController {
 	public List<RefTypeAbsenceDto> getTypes(
 			@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
 
-		logger.debug("entered GET [filtres/getTypes] => getTypes with parameter idAgentConcerne = {}", idAgentConcerne);
+		logger.debug("entered GET [filtres/getTypes] => getTypes with parameter idAgentConcerne = {} ", idAgentConcerne);
 
 		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsence(idAgentConcerne);
 
@@ -154,18 +154,20 @@ public class FiltreController {
 
 	/**
 	 * Liste des types d absence saisissable dans le kiosque RH pour un agent
-	 * donné
+	 * donné et un groupe donné
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypeAbsenceKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<RefTypeAbsenceDto> getTypeAbsenceKiosque(
-			@RequestParam(value = "idAgentConcerne", required = true) Integer idAgentConcerne) {
+			@RequestParam(value = "idAgentConcerne", required = true) Integer idAgentConcerne,
+			@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence) {
 
 		logger.debug(
-				"entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter idAgentConcerne = {}",
-				idAgentConcerne);
+				"entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter idAgentConcerne = {} and idRefGroupeAbsence = {}",
+				idAgentConcerne, idRefGroupeAbsence);
 
-		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsenceSaisieKiosque(idAgentConcerne);
+		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsenceSaisieKiosque(idAgentConcerne,
+				idRefGroupeAbsence);
 
 		return types;
 	}

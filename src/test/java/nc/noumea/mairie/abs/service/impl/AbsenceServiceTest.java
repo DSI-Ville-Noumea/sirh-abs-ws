@@ -71,7 +71,7 @@ public class AbsenceServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(
 				demandeRepository.listeDemandesAgent(idAgentConnecte, null, null, null,
-						RefTypeAbsenceEnum.RECUP.getValue())).thenReturn(listdemande);
+						RefTypeAbsenceEnum.RECUP.getValue(), null)).thenReturn(listdemande);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -83,7 +83,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null,
-				RefTypeAbsenceEnum.RECUP.getValue());
+				RefTypeAbsenceEnum.RECUP.getValue(), null);
 
 		assertEquals(1, listResult.size());
 	}
@@ -123,10 +123,10 @@ public class AbsenceServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(
 				demandeRepository.listeDemandesAgent(idAgentConnecte, null, null, null,
-						RefTypeAbsenceEnum.RECUP.getValue())).thenReturn(listdemande);
+						RefTypeAbsenceEnum.RECUP.getValue(), null)).thenReturn(listdemande);
 		Mockito.when(
 				demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire, null, null, null,
-						RefTypeAbsenceEnum.RECUP.getValue())).thenReturn(listdemandeDeleg);
+						RefTypeAbsenceEnum.RECUP.getValue(), null)).thenReturn(listdemandeDeleg);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
@@ -134,7 +134,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null,
-				RefTypeAbsenceEnum.RECUP.getValue());
+				RefTypeAbsenceEnum.RECUP.getValue(), null);
 
 		assertEquals(3, listResult.size());
 	}
@@ -7864,7 +7864,8 @@ public class AbsenceServiceTest {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(9005138, 9005131, dat, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(9005138, 9005131, dat, null, null, null)).thenReturn(
+				listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null)).thenReturn(
@@ -7898,8 +7899,8 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "filtresService", filtresService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		List<DemandeDto> listResult = service
-				.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
+				null, null);
 
 		assertEquals(1, listResult.size());
 		assertFalse(listResult.get(0).isDepassementCompteur());
@@ -7922,7 +7923,8 @@ public class AbsenceServiceTest {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(9005138, 9005131, date, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(9005138, 9005131, date, null, null, null)).thenReturn(
+				listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null)).thenReturn(
@@ -7949,8 +7951,8 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "filtresService", filtresService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		List<DemandeDto> listResult = service
-				.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
+				null, null);
 
 		assertEquals(0, listResult.size());
 	}

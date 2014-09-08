@@ -77,12 +77,12 @@ public class FiltreRepository implements IFiltreRepository {
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
 		return absEntityManager.find(Tclass, Id);
 	}
-	
+
 	@Override
 	public List<RefGroupeAbsence> findAllRefGroupeAbsence() {
 		return absEntityManager.createNamedQuery("getAllRefGroupeAbsence", RefGroupeAbsence.class).getResultList();
 	}
-	
+
 	@Override
 	public RefGroupeAbsence findRefGroupeAbsence(Integer idRefGroupeAbsence) {
 
@@ -93,9 +93,19 @@ public class FiltreRepository implements IFiltreRepository {
 
 		return query.getSingleResult();
 	}
-	
+
 	@Override
 	public List<RefUnitePeriodeQuota> findAllRefUnitePeriodeQuota() {
-		return absEntityManager.createNamedQuery("findAllRefUnitePeriodeQuota", RefUnitePeriodeQuota.class).getResultList();
+		return absEntityManager.createNamedQuery("findAllRefUnitePeriodeQuota", RefUnitePeriodeQuota.class)
+				.getResultList();
+	}
+
+	@Override
+	public List<RefTypeAbsence> findAllRefTypeAbsencesWithGroup(Integer idRefGroupeAbsence) {
+		String sql = "SELECT o FROM RefTypeAbsence o where o.groupe.idRefGroupeAbsence =:idRefGroupeAbsence";
+
+		TypedQuery<RefTypeAbsence> query = absEntityManager.createQuery(sql, RefTypeAbsence.class);
+		query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
+		return query.getResultList();
 	}
 }

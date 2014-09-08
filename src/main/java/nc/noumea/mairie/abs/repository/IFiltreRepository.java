@@ -29,4 +29,6 @@ public interface IFiltreRepository {
 	RefGroupeAbsence findRefGroupeAbsence(Integer idRefGroupeAbsence);
 	
 	List<RefUnitePeriodeQuota> findAllRefUnitePeriodeQuota();
+
+	List<RefTypeAbsence> findAllRefTypeAbsencesWithGroup(Integer idRefGroupeAbsence);
 }

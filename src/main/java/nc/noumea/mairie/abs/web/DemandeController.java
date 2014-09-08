@@ -117,11 +117,12 @@ public class DemandeController {
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
 			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date dateDemande,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
-			@RequestParam(value = "type", required = false) Integer idRefType) {
+			@RequestParam(value = "type", required = false) Integer idRefType,
+			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence) {
 
 		logger.debug(
-				"entered GET [demandes/listeDemandesAgent] => getListeDemandesAbsenceAgent with parameters idAgent = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {} and type = {}",
-				idAgent, ongletDemande, fromDate, toDate, dateDemande, idRefEtat, idRefType);
+				"entered GET [demandes/listeDemandesAgent] => getListeDemandesAbsenceAgent with parameters idAgent = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, groupe = {} and type = {}",
+				idAgent, ongletDemande, fromDate, toDate, dateDemande, idRefEtat, idRefGroupeAbsence, idRefType);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -130,7 +131,7 @@ public class DemandeController {
 			throw new NotFoundException();
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande,
-				fromDate, toDate, dateDemande, idRefEtat, idRefType);
+				fromDate, toDate, dateDemande, idRefEtat, idRefType, idRefGroupeAbsence);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -206,7 +207,7 @@ public class DemandeController {
 		}
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, idAgentRecherche, ongletDemande,
-				fromDate, toDate, dateDemande, idRefEtat, idRefType);
+				fromDate, toDate, dateDemande, idRefEtat, idRefType, null);
 
 		if (result.size() == 0)
 			throw new NoContentException();

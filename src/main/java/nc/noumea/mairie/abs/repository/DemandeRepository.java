@@ -52,7 +52,7 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@Override
 	public List<Demande> listeDemandesAgent(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate,
-			Date toDate, Integer idRefType) {
+			Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
 		sb.append("where 1=1 ");
@@ -65,6 +65,10 @@ public class DemandeRepository implements IDemandeRepository {
 
 		if (idRefType != null) {
 			sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
+		}
+
+		if (idRefGroupeAbsence != null) {
+			sb.append("and d.type.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");
 		}
 
 		if (fromDate != null && toDate == null) {
@@ -87,6 +91,10 @@ public class DemandeRepository implements IDemandeRepository {
 
 		if (idRefType != null) {
 			query.setParameter("idRefTypeAbsence", idRefType);
+		}
+
+		if (idRefGroupeAbsence != null) {
+			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
 		}
 
 		if (fromDate != null) {

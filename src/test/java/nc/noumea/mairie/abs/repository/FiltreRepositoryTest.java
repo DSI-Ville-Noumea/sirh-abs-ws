@@ -349,4 +349,33 @@ public class FiltreRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void findAllRefTypeAbsencesWithGroup() {
+		
+		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
+		groupeRecup.setIdRefGroupeAbsence(2);
+		groupeRecup.setLibelle("recup");
+		absEntityManager.persist(groupeRecup);
+		RefTypeAbsence rupq = new RefTypeAbsence();
+		rupq.setGroupe(groupeRecup);
+		absEntityManager.persist(rupq);
+		
+		RefGroupeAbsence groupeAsa = new RefGroupeAbsence();
+		groupeAsa.setIdRefGroupeAbsence(1);
+		groupeAsa.setLibelle("asa");
+		absEntityManager.persist(groupeAsa);
+		RefTypeAbsence rupq2 = new RefTypeAbsence();
+		rupq2.setGroupe(groupeAsa);
+		absEntityManager.persist(rupq2);
+		
+		List<RefTypeAbsence> result = repository.findAllRefTypeAbsencesWithGroup(1);
+
+		assertEquals(1, result.size());
+		assertEquals("asa", result.get(0).getGroupe().getLibelle());
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 }

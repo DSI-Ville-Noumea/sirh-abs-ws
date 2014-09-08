@@ -105,15 +105,15 @@ public class AbsenceService implements IAbsenceService {
 		Date dateJour = new Date();
 
 		demande = mappingDemandeSpecifique(demandeDto, demande, idAgent, dateJour, returnDto);
-		
+
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
 			return returnDto;
 		}
-		
+
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
-		
+
 		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour, false);
 
 		if (returnDto.getErrors().size() != 0) {
@@ -156,7 +156,8 @@ public class AbsenceService implements IAbsenceService {
 			return demandeDto;
 		}
 
-		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe()
+				.getIdRefGroupeAbsence())) {
 			case REPOS_COMP:
 
 				DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, idDemande);
@@ -190,7 +191,8 @@ public class AbsenceService implements IAbsenceService {
 				demandeDto.updateEtat(demandeAsa.getLatestEtatDemande());
 				break;
 			case CONGES_EXCEP:
-				DemandeCongesExceptionnels demandeCongesExcep = demandeRepository.getEntity(DemandeCongesExceptionnels.class, idDemande);
+				DemandeCongesExceptionnels demandeCongesExcep = demandeRepository.getEntity(
+						DemandeCongesExceptionnels.class, idDemande);
 				if (null == demandeCongesExcep) {
 					return demandeDto;
 				}
@@ -208,7 +210,8 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
-			Date fromDate, Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType) {
+			Date fromDate, Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType,
+			Integer idRefGroupeAbsence) {
 
 		// si date de debut et de fin nulles, alors on filtre sur 12 mois
 		// glissants
@@ -218,7 +221,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
-				idRefType);
+				idRefType, idRefGroupeAbsence);
 
 		List<RefEtat> listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, idRefEtat);
 
@@ -239,14 +242,14 @@ public class AbsenceService implements IAbsenceService {
 			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto,
 					listDroitAgent);
 			// pas de demande pour le kiosque
-//			demandeDto
-//					.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
+			// demandeDto
+			// .setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
 		}
 		return listeDto;
 	}
 
 	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate,
-			Date toDate, Integer idRefType) {
+			Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
 
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
@@ -255,10 +258,10 @@ public class AbsenceService implements IAbsenceService {
 				idAgentConcerne);
 
 		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate,
-				idRefType);
+				idRefType,idRefGroupeAbsence);
 		if (null != idApprobateurOfDelegataire) {
 			listeSansFiltredelegataire = demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
-					idAgentConcerne, fromDate, toDate, idRefType);
+					idAgentConcerne, fromDate, toDate, idRefType,idRefGroupeAbsence);
 		}
 
 		for (Demande demandeDeleg : listeSansFiltredelegataire) {
@@ -344,8 +347,9 @@ public class AbsenceService implements IAbsenceService {
 
 		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
-		
-		result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(), false);
+
+		result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(),
+				false);
 
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -382,8 +386,9 @@ public class AbsenceService implements IAbsenceService {
 		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
-		result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(), false);
-		
+		result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(),
+				false);
+
 		if (0 < result.getErrors().size()) {
 			return result;
 		}
@@ -414,10 +419,9 @@ public class AbsenceService implements IAbsenceService {
 
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande
 				.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
-		
+
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
 				Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
-
 
 		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
@@ -468,7 +472,8 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum((demande.getType().getGroupe().getIdRefGroupeAbsence()))) {
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum((demande.getType().getGroupe()
+				.getIdRefGroupeAbsence()))) {
 			case REPOS_COMP:
 			case RECUP:
 				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
@@ -532,21 +537,23 @@ public class AbsenceService implements IAbsenceService {
 		Date dateJour = new Date();
 
 		demande = mappingDemandeSpecifique(demandeDto, demande, idAgent, dateJour, returnDto);
-		
+
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
 			return returnDto;
 		}
-		
-		// si la demande provient de SIRH, et que la SAISIE KIOSQUE dans la table de parametrage est a FALSE
-		// l etat de la demande passe automatiquement a VALIDE en ajoutant une ligne dans la table ABS_ETAT_DEMANDE
-		if(!demande.getType().getTypeSaisi().isSaisieKiosque()) {
+
+		// si la demande provient de SIRH, et que la SAISIE KIOSQUE dans la
+		// table de parametrage est a FALSE
+		// l etat de la demande passe automatiquement a VALIDE en ajoutant une
+		// ligne dans la table ABS_ETAT_DEMANDE
+		if (!demande.getType().getTypeSaisi().isSaisieKiosque()) {
 			DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-				demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-				demandeEtatChangeDto.setMotif(null);
+			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+			demandeEtatChangeDto.setMotif(null);
 			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 		}
-		
+
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 
@@ -720,18 +727,24 @@ public class AbsenceService implements IAbsenceService {
 
 		result.getInfos().add(String.format("La demande est en attente."));
 	}
-	
+
 	/**
 	 * Mapping des saisies (creation/modif) de demande depuis kiosque et SIRH
 	 * 
-	 * @param demandeDto DTO
-	 * @param demande objet Demande  
-	 * @param idAgent agent connecte
-	 * @param dateJour date du jour
-	 * @param returnDto ReturnMessageDto 
+	 * @param demandeDto
+	 *            DTO
+	 * @param demande
+	 *            objet Demande
+	 * @param idAgent
+	 *            agent connecte
+	 * @param dateJour
+	 *            date du jour
+	 * @param returnDto
+	 *            ReturnMessageDto
 	 * @return la demande a enregistrer
 	 */
-	private Demande mappingDemandeSpecifique(DemandeDto demandeDto, Demande demande, Integer idAgent, Date dateJour, ReturnMessageDto returnDto){
+	private Demande mappingDemandeSpecifique(DemandeDto demandeDto, Demande demande, Integer idAgent, Date dateJour,
+			ReturnMessageDto returnDto) {
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande
 		// et on effectue les verifications appropriees
@@ -828,9 +841,10 @@ public class AbsenceService implements IAbsenceService {
 				break;
 			default:
 				returnDto.getErrors().add(
-						String.format("Le groupe [%d] de la demande n'est pas reconnu.", demandeDto.getGroupeAbsence().getIdRefGroupeAbsence()));
+						String.format("Le groupe [%d] de la demande n'est pas reconnu.", demandeDto.getGroupeAbsence()
+								.getIdRefGroupeAbsence()));
 		}
-		
+
 		return demande;
 	}
 

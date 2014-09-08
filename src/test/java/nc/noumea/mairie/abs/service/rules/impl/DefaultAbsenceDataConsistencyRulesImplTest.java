@@ -160,8 +160,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2, demandeExist3, demandeExist4));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null)).thenReturn(
-				listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
+				.thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
@@ -203,8 +203,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null)).thenReturn(
-				listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
+				.thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
@@ -246,8 +246,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null)).thenReturn(
-				listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
+				.thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
@@ -291,8 +291,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null)).thenReturn(
-				listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
+				.thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
@@ -3195,7 +3195,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		srm = impl.checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 
 		assertEquals(1, srm.getErrors().size());
-		assertEquals("La date de fin ne peut pas être inférieure à la date de début.", srm
-				.getErrors().get(0).toString());
+		assertEquals("La date de fin ne peut pas être inférieure à la date de début.", srm.getErrors().get(0)
+				.toString());
 	}
 }

@@ -195,9 +195,14 @@ public class FiltreService implements IFiltreService {
 	}
 
 	@Override
-	public List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idAgentConcerne) {
+	public List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idAgentConcerne, Integer idRefGroupeAbsence) {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
-		List<RefTypeAbsence> refTypeAbs = filtreRepository.findAllRefTypeAbsences();
+		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
+		if (idRefGroupeAbsence == null) {
+			refTypeAbs = filtreRepository.findAllRefTypeAbsences();
+		} else {
+			refTypeAbs = filtreRepository.findAllRefTypeAbsencesWithGroup(idRefGroupeAbsence);
+		}
 
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
 				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgentConcerne), helperService.getCurrentDate());

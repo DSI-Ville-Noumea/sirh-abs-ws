@@ -108,7 +108,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public ReturnMessageDto checkDemandeDejaSaisieSurMemePeriode(ReturnMessageDto srm, Demande demande) {
 
-		List<Demande> listDemande = demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null);
+		List<Demande> listDemande = demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null,
+				null);
 
 		for (Demande demandeExistante : listDemande) {
 

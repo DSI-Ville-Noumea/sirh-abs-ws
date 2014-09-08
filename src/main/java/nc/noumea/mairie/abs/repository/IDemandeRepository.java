@@ -20,7 +20,7 @@ public interface IDemandeRepository {
 	void setFlushMode(FlushModeType flushMode);
 
 	List<Demande> listeDemandesAgent(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate, Date toDate,
-			Integer idRefType);
+			Integer idRefType, Integer idRefGroupeAbsence);
 
 	void removeEntity(Object obj);
 
