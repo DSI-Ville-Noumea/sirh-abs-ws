@@ -78,7 +78,12 @@ public class DemandeDto {
 
 	public DemandeDto(Demande d, AgentWithServiceDto agentWithServiceDto) {
 		this(d);
-		this.agentWithServiceDto = agentWithServiceDto;
+		if (agentWithServiceDto != null) {
+			this.agentWithServiceDto = agentWithServiceDto;
+		} else {
+			this.agentWithServiceDto = new AgentWithServiceDto();
+			this.agentWithServiceDto.setIdAgent(d.getIdAgent());
+		}
 	}
 
 	public DemandeDto(Demande d) {
