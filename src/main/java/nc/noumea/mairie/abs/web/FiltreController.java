@@ -171,4 +171,20 @@ public class FiltreController {
 
 		return types;
 	}
+
+	/**
+	 * Liste des types d absence pour l'alimenation des compteurs dans le kiosque
+	 * Pour le moment que pour recup et repos comp
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getTypeAbsenceCompteurKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefTypeAbsenceDto> getTypeAbsenceCompteurKiosque() {
+
+		logger.debug(
+				"entered GET [filtres/getTypeAbsenceCompteurKiosque] => getTypeAbsenceCompteurKiosque");
+
+		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsenceCompteurKiosque();
+
+		return types;
+	}
 }

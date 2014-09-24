@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
@@ -230,4 +231,21 @@ public class FiltreService implements IFiltreService {
 		return res;
 	}
 
+	@Override
+	public List<RefTypeAbsenceDto> getRefTypesAbsenceCompteurKiosque() {
+		List<RefTypeAbsenceDto> result = new ArrayList<RefTypeAbsenceDto>();
+		List<RefTypeAbsence> listeRecup = filtreRepository
+				.findAllRefTypeAbsencesWithGroup(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		for (RefTypeAbsence r : listeRecup) {
+			RefTypeAbsenceDto dtoRecup = new RefTypeAbsenceDto(r);
+			result.add(dtoRecup);
+		}
+		List<RefTypeAbsence> listeReposComp = filtreRepository
+				.findAllRefTypeAbsencesWithGroup(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		for (RefTypeAbsence r : listeReposComp) {
+			RefTypeAbsenceDto dtoRecup = new RefTypeAbsenceDto(r);
+			result.add(dtoRecup);
+		}
+		return result;
+	}
 }
