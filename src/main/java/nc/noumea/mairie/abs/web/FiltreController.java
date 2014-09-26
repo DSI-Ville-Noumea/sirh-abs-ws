@@ -173,17 +173,30 @@ public class FiltreController {
 	}
 
 	/**
-	 * Liste des types d absence pour l'alimenation des compteurs dans le kiosque
-	 * Pour le moment que pour recup et repos comp
+	 * Liste des types d absence pour l'alimenation des compteurs dans le
+	 * kiosque Pour le moment que pour recup et repos comp
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypeAbsenceCompteurKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<RefTypeAbsenceDto> getTypeAbsenceCompteurKiosque() {
 
-		logger.debug(
-				"entered GET [filtres/getTypeAbsenceCompteurKiosque] => getTypeAbsenceCompteurKiosque");
+		logger.debug("entered GET [filtres/getTypeAbsenceCompteurKiosque] => getTypeAbsenceCompteurKiosque");
 
 		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsenceCompteurKiosque();
+
+		return types;
+	}
+
+	/**
+	 * Liste de tous les types d absence possibles
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getAllTypes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefTypeAbsenceDto> getAllTypes() {
+
+		logger.debug("entered GET [filtres/getAllTypes] => getAllTypes");
+
+		List<RefTypeAbsenceDto> types = filtresService.getAllRefTypesAbsence();
 
 		return types;
 	}

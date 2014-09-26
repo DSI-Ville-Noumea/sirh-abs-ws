@@ -26,4 +26,6 @@ public interface IFiltreService {
 	List<UnitePeriodeQuotaDto> getUnitePeriodeQuota();
 
 	List<RefTypeAbsenceDto> getRefTypesAbsenceCompteurKiosque();
+
+	List<RefTypeAbsenceDto> getAllRefTypesAbsence();
 }
