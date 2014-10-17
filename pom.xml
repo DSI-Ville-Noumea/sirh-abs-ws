@@ -241,11 +241,11 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>net.sf.flexjson</groupId> -->
-<!-- 			<artifactId>flexjson</artifactId> -->
-<!-- 			<version>3.2</version> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>net.sf.flexjson</groupId>
+			<artifactId>flexjson</artifactId>
+			<version>3.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -267,11 +267,11 @@
 			<version>2.4</version>
 		</dependency>
 
-		<dependency>
-			<groupId>wadlGenerator</groupId>
-			<artifactId>wadlGenerator</artifactId>
-			<version>1.1-SNAPSHOT</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>wadlGenerator</groupId> -->
+<!-- 			<artifactId>wadlGenerator</artifactId> -->
+<!-- 			<version>1.1-SNAPSHOT</version> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
