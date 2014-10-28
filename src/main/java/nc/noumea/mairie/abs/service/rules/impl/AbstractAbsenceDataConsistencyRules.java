@@ -311,7 +311,13 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
-		return false;
+		// cf redmine #11822
+		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {

@@ -59,31 +59,31 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		assertFalse(result2.isAffichageBoutonImprimer());
 		// APPROUVEE
 		assertTrue(result3.isAffichageBoutonAnnuler());
-		assertFalse(result3.isAffichageBoutonImprimer());
+		assertTrue(result3.isAffichageBoutonImprimer());
 		// REFUSEE
 		assertFalse(result4.isAffichageBoutonAnnuler());
-		assertFalse(result4.isAffichageBoutonImprimer());
+		assertTrue(result4.isAffichageBoutonImprimer());
 		// VISEE_FAVORABLE
 		assertTrue(result5.isAffichageBoutonAnnuler());
-		assertFalse(result5.isAffichageBoutonImprimer());
+		assertTrue(result5.isAffichageBoutonImprimer());
 		// VISEE_DEFAVORABLE
 		assertTrue(result6.isAffichageBoutonAnnuler());
-		assertFalse(result6.isAffichageBoutonImprimer());
+		assertTrue(result6.isAffichageBoutonImprimer());
 		// PRISE
 		assertFalse(result7.isAffichageBoutonAnnuler());
-		assertFalse(result7.isAffichageBoutonImprimer());
+		assertTrue(result7.isAffichageBoutonImprimer());
 		// ANNULEE
 		assertFalse(result8.isAffichageBoutonAnnuler());
-		assertFalse(result8.isAffichageBoutonImprimer());
+		assertTrue(result8.isAffichageBoutonImprimer());
 		// VALIDEE
 		assertTrue(result9.isAffichageBoutonAnnuler());
 		assertTrue(result9.isAffichageBoutonImprimer());
 		// REJETE
 		assertFalse(result10.isAffichageBoutonAnnuler());
-		assertFalse(result10.isAffichageBoutonImprimer());
+		assertTrue(result10.isAffichageBoutonImprimer());
 		// EN ATTENTE
 		assertTrue(result11.isAffichageBoutonAnnuler());
-		assertFalse(result11.isAffichageBoutonImprimer());
+		assertTrue(result11.isAffichageBoutonImprimer());
 	}
 
 	@Test
@@ -101,31 +101,31 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		assertFalse(result2.isAffichageBoutonImprimer());
 		// APPROUVEE
 		assertTrue(result3.isAffichageBoutonAnnuler());
-		assertFalse(result3.isAffichageBoutonImprimer());
+		assertTrue(result3.isAffichageBoutonImprimer());
 		// REFUSEE
 		assertFalse(result4.isAffichageBoutonAnnuler());
-		assertFalse(result4.isAffichageBoutonImprimer());
+		assertTrue(result4.isAffichageBoutonImprimer());
 		// VISEE_FAVORABLE
 		assertTrue(result5.isAffichageBoutonAnnuler());
-		assertFalse(result5.isAffichageBoutonImprimer());
+		assertTrue(result5.isAffichageBoutonImprimer());
 		// VISEE_DEFAVORABLE
 		assertTrue(result6.isAffichageBoutonAnnuler());
-		assertFalse(result6.isAffichageBoutonImprimer());
+		assertTrue(result6.isAffichageBoutonImprimer());
 		// PRISE
 		assertTrue(result7.isAffichageBoutonAnnuler());
-		assertFalse(result7.isAffichageBoutonImprimer());
+		assertTrue(result7.isAffichageBoutonImprimer());
 		// ANNULEE
 		assertFalse(result8.isAffichageBoutonAnnuler());
-		assertFalse(result8.isAffichageBoutonImprimer());
+		assertTrue(result8.isAffichageBoutonImprimer());
 		// VALIDEE
 		assertTrue(result9.isAffichageBoutonAnnuler());
 		assertTrue(result9.isAffichageBoutonImprimer());
 		// REJETE
 		assertFalse(result10.isAffichageBoutonAnnuler());
-		assertFalse(result10.isAffichageBoutonImprimer());
+		assertTrue(result10.isAffichageBoutonImprimer());
 		// EN ATTENTE
 		assertTrue(result11.isAffichageBoutonAnnuler());
-		assertFalse(result11.isAffichageBoutonImprimer());
+		assertTrue(result11.isAffichageBoutonImprimer());
 	}
 	
 	@Test
@@ -143,19 +143,19 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -163,19 +163,19 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 	}
 	
 	@Test

@@ -7,7 +7,6 @@ import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 
@@ -26,7 +25,8 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
+			boolean isProvenanceSIRH) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkDepassementDroitsAcquis(srm, demande);
 
@@ -48,10 +48,5 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 		}
 
 		return srm;
-	}
-	
-	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
-		
-		return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
 	}
 }

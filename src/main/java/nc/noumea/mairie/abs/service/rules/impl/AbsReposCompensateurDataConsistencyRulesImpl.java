@@ -7,7 +7,6 @@ import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.domain.Spcarr;
@@ -20,14 +19,15 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 
 	@Autowired
 	protected IReposCompensateurRepository reposCompensateurRepository;
-	
+
 	/**
 	 * Processes the data consistency of a set of Pointages being input by a
 	 * user. It will check the different business rules in order to make sure
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
+			boolean isProvenanceSIRH) {
 		checkStatutAgent(srm, demande.getIdAgent());
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkDepassementDroitsAcquis(srm, demande);
@@ -64,10 +64,5 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 		}
 
 		return srm;
-	}
-
-	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
-
-		return demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
 	}
 }

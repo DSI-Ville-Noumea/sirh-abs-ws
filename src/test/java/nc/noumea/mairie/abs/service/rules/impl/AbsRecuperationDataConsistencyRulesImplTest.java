@@ -17,8 +17,8 @@ import org.springframework.mock.staticmock.MockStaticEntityMethods;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @MockStaticEntityMethods
-public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceDataConsistencyRulesImplTest  {
-	
+public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceDataConsistencyRulesImplTest {
+
 	@Test
 	public void allTest() throws Throwable {
 		super.impl = new AbsRecuperationDataConsistencyRulesImpl();
@@ -43,28 +43,28 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 		assertTrue(result3.isAffichageBoutonImprimer());
 		// REFUSEE
 		assertFalse(result4.isAffichageBoutonAnnuler());
-		assertFalse(result4.isAffichageBoutonImprimer());
+		assertTrue(result4.isAffichageBoutonImprimer());
 		// VISEE_FAVORABLE
 		assertTrue(result5.isAffichageBoutonAnnuler());
-		assertFalse(result5.isAffichageBoutonImprimer());
+		assertTrue(result5.isAffichageBoutonImprimer());
 		// VISEE_DEFAVORABLE
 		assertTrue(result6.isAffichageBoutonAnnuler());
-		assertFalse(result6.isAffichageBoutonImprimer());
+		assertTrue(result6.isAffichageBoutonImprimer());
 		// PRISE
 		assertFalse(result7.isAffichageBoutonAnnuler());
-		assertFalse(result7.isAffichageBoutonImprimer());
+		assertTrue(result7.isAffichageBoutonImprimer());
 		// ANNULEE
 		assertFalse(result8.isAffichageBoutonAnnuler());
-		assertFalse(result8.isAffichageBoutonImprimer());
+		assertTrue(result8.isAffichageBoutonImprimer());
 		// VALIDEE
 		assertFalse(result9.isAffichageBoutonAnnuler());
-		assertFalse(result9.isAffichageBoutonImprimer());
+		assertTrue(result9.isAffichageBoutonImprimer());
 		// REJETE
 		assertFalse(result10.isAffichageBoutonAnnuler());
-		assertFalse(result10.isAffichageBoutonImprimer());
+		assertTrue(result10.isAffichageBoutonImprimer());
 		// EN ATTENTE
 		assertFalse(result11.isAffichageBoutonAnnuler());
-		assertFalse(result11.isAffichageBoutonImprimer());
+		assertTrue(result11.isAffichageBoutonImprimer());
 	}
 
 	@Test
@@ -85,57 +85,57 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 		assertTrue(result3.isAffichageBoutonImprimer());
 		// REFUSEE
 		assertFalse(result4.isAffichageBoutonAnnuler());
-		assertFalse(result4.isAffichageBoutonImprimer());
+		assertTrue(result4.isAffichageBoutonImprimer());
 		// VISEE_FAVORABLE
 		assertTrue(result5.isAffichageBoutonAnnuler());
-		assertFalse(result5.isAffichageBoutonImprimer());
+		assertTrue(result5.isAffichageBoutonImprimer());
 		// VISEE_DEFAVORABLE
 		assertTrue(result6.isAffichageBoutonAnnuler());
-		assertFalse(result6.isAffichageBoutonImprimer());
+		assertTrue(result6.isAffichageBoutonImprimer());
 		// PRISE
 		assertFalse(result7.isAffichageBoutonAnnuler());
-		assertFalse(result7.isAffichageBoutonImprimer());
+		assertTrue(result7.isAffichageBoutonImprimer());
 		// ANNULEE
 		assertFalse(result8.isAffichageBoutonAnnuler());
-		assertFalse(result8.isAffichageBoutonImprimer());
+		assertTrue(result8.isAffichageBoutonImprimer());
 		// VALIDEE
 		assertFalse(result9.isAffichageBoutonAnnuler());
-		assertFalse(result9.isAffichageBoutonImprimer());
+		assertTrue(result9.isAffichageBoutonImprimer());
 		// REJETE
 		assertFalse(result10.isAffichageBoutonAnnuler());
-		assertFalse(result10.isAffichageBoutonImprimer());
+		assertTrue(result10.isAffichageBoutonImprimer());
 		// EN ATTENTE
 		assertFalse(result11.isAffichageBoutonAnnuler());
-		assertFalse(result11.isAffichageBoutonImprimer());
+		assertTrue(result11.isAffichageBoutonImprimer());
 	}
-	
+
 	@Test
 	public void filtreDroitOfDemandeSIRH() {
-		
+
 		super.impl = new AbsRecuperationDataConsistencyRulesImpl();
 		super.filtreDroitOfDemandeSIRH();
-		
+
 		// APPROUVEE
 		assertFalse(result3.isAffichageValidation());
 		assertFalse(result3.isModifierValidation());
-		
+
 		// PRISE
 		assertFalse(result7.isAffichageBoutonAnnuler());
 		assertFalse(result7.isAffichageValidation());
-		
+
 		// VALIDEE
 		assertFalse(result9.isAffichageBoutonAnnuler());
 		assertFalse(result9.isAffichageValidation());
-		
+
 		// REJETEE
 		assertFalse(result10.isAffichageValidation());
-		
+
 		// EN ATTENTE
 		assertFalse(result11.isAffichageBoutonAnnuler());
 		assertFalse(result11.isAffichageValidation());
 		assertFalse(result11.isModifierValidation());
 	}
-	
+
 	@Test
 	public void checkDepassementDroitsAcquis_iOk() {
 
@@ -192,55 +192,55 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 		assertEquals(1, srm.getErrors().size());
 		assertEquals("Le dépassement des droits acquis n'est pas autorisé.", srm.getErrors().get(0).toString());
 	}
-	
+
 	@Test
 	public void isAfficherBoutonImprimer() {
-		
+
 		DemandeDto demandeDto = new DemandeDto();
-			demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-			
+		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		boolean result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
+		assertTrue(result);
+
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
+		assertTrue(result);
+
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertTrue(result);
-		
+
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
+		assertTrue(result);
+
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
+		assertTrue(result);
+
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
+		assertTrue(result);
+
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
+		assertTrue(result);
+
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
-		
+		assertTrue(result);
+
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 	}
 }

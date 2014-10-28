@@ -134,19 +134,19 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -154,19 +154,19 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertFalse(result);
+		assertTrue(result);
 	}
 	
 	@Test
