@@ -580,8 +580,9 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche, Integer idRefGroupeAbsence) {
+			Integer idAgentRecherche, Integer idRefGroupeAbsence, boolean aValider) {
 
+		// TODO traiter le cas des a valider
 		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
 				idAgentRecherche, idRefGroupeAbsence);
 		List<RefEtat> listEtats = null;

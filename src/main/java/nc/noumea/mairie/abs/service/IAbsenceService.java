@@ -24,7 +24,7 @@ public interface IAbsenceService {
 	ReturnMessageDto saveDemandeSIRH(Integer idAgent, DemandeDto demandeDto);
 
 	List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche, Integer idRefGroupeAbsence);
+			Integer idAgentRecherche, Integer idRefGroupeAbsence, boolean aValider);
 
 	List<DemandeDto> getDemandesArchives(Integer idDemande);
 
