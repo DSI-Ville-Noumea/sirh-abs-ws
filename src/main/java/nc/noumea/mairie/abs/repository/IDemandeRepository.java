@@ -29,5 +29,5 @@ public interface IDemandeRepository {
 	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(List<Integer> listeTypesGroupe);
 
 	List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche);
+			Integer idAgentRecherche, Integer idRefGroupeAbsence);
 }

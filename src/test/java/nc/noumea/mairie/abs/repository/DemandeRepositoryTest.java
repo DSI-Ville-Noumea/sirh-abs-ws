@@ -791,7 +791,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drc);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRH(null, null, null, null, null);
+		List<Demande> result = repository.listeDemandesSIRH(null, null, null, null, null, null);
 
 		// Then
 		assertEquals(2, result.size());
@@ -846,7 +846,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRH(null, null, null, 99, null);
+		List<Demande> result = repository.listeDemandesSIRH(null, null, null, 99, null, null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -901,7 +901,8 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRH(null, null, null, typeRecup.getIdRefTypeAbsence(), null);
+		List<Demande> result = repository.listeDemandesSIRH(null, null, null, typeRecup.getIdRefTypeAbsence(), null,
+				null);
 
 		// Then
 		assertEquals(2, result.size());
@@ -948,7 +949,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRH(sdf.parse("01/06/2013"), null, null, null, null);
+		List<Demande> result = repository.listeDemandesSIRH(sdf.parse("01/06/2013"), null, null, null, null, null);
 
 		// Then
 		assertEquals(2, result.size());
@@ -996,7 +997,7 @@ public class DemandeRepositoryTest {
 
 		// When
 		List<Demande> result = repository.listeDemandesSIRH(sdf.parse("01/06/2013"), sdf.parse("16/06/2013"), null,
-				null, null);
+				null, null, null);
 
 		// Then
 		assertEquals(2, result.size());

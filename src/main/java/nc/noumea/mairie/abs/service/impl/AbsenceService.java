@@ -258,10 +258,10 @@ public class AbsenceService implements IAbsenceService {
 				idAgentConcerne);
 
 		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate,
-				idRefType,idRefGroupeAbsence);
+				idRefType, idRefGroupeAbsence);
 		if (null != idApprobateurOfDelegataire) {
 			listeSansFiltredelegataire = demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
-					idAgentConcerne, fromDate, toDate, idRefType,idRefGroupeAbsence);
+					idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence);
 		}
 
 		for (Demande demandeDeleg : listeSansFiltredelegataire) {
@@ -580,10 +580,10 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche) {
+			Integer idAgentRecherche, Integer idRefGroupeAbsence) {
 
 		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
-				idAgentRecherche);
+				idAgentRecherche, idRefGroupeAbsence);
 		List<RefEtat> listEtats = null;
 		if (idRefEtat != null) {
 			RefEtat etat = demandeRepository.getEntity(RefEtat.class, idRefEtat);

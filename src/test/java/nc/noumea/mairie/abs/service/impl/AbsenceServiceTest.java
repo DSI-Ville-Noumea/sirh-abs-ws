@@ -4286,7 +4286,7 @@ public class AbsenceServiceTest {
 		listdemandeDto.add(dto);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesSIRH(null, null, null, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesSIRH(null, null, null, null, null, null)).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, null, null)).thenReturn(
@@ -4303,7 +4303,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
@@ -7664,7 +7664,7 @@ public class AbsenceServiceTest {
 		listdemandeDto.add(dto);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesSIRH(null, null, null, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesSIRH(null, null, null, null, null, null)).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, null, null)).thenReturn(
@@ -7681,7 +7681,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());

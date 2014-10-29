@@ -176,7 +176,7 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@Override
 	public List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche) {
+			Integer idAgentRecherche, Integer idRefGroupeAbsence) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
 		sb.append("where 1=1 ");
@@ -195,6 +195,10 @@ public class DemandeRepository implements IDemandeRepository {
 		// type
 		if (idRefType != null) {
 			sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
+		}
+		// groupe
+		if (idRefGroupeAbsence != null) {
+			sb.append("and d.type.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");
 		}
 
 		sb.append("order by d.idDemande desc ");
@@ -217,6 +221,10 @@ public class DemandeRepository implements IDemandeRepository {
 		// type
 		if (idRefType != null) {
 			query.setParameter("idRefTypeAbsence", idRefType);
+		}
+		// groupe
+		if (idRefGroupeAbsence != null) {
+			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
 		}
 		return query.getResultList();
 	}

@@ -335,14 +335,15 @@ public class DemandeController {
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType,
-			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche) {
+			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche,
+			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence) {
 
 		logger.debug(
-				"entered GET [demandes/listeDemandesSIRH] => getListeDemandesAbsenceSIRH with parameters  from = {}, to = {},  etat = {}, type = {} and idAgentConcerne= {}",
-				fromDate, toDate, idRefEtat, idRefType, idAgentRecherche);
+				"entered GET [demandes/listeDemandesSIRH] => getListeDemandesAbsenceSIRH with parameters  from = {}, to = {},  etat = {}, groupe = {}, type = {} and idAgentConcerne= {}",
+				fromDate, toDate, idRefEtat, idRefGroupeAbsence, idRefType, idAgentRecherche);
 
 		List<DemandeDto> result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
-				idAgentRecherche);
+				idAgentRecherche, idRefGroupeAbsence);
 
 		if (result.size() == 0)
 			throw new NoContentException();
