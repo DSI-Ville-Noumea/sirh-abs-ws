@@ -36,11 +36,14 @@ public class TypeAbsenceController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getListeTypeAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<RefTypeAbsenceDto> getListeTypeAbsence() {
+	public List<RefTypeAbsenceDto> getListeTypeAbsence(
+			@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence) {
 
-		logger.debug("entered GET [typeAbsence/getListeTypeAbsence] => getListeTypeAbsence");
+		logger.debug(
+				"entered GET [typeAbsence/getListeTypeAbsence] => getListeTypeAbsence with parameters idRefGroupeAbsence = {}",
+				idRefGroupeAbsence);
 
-		return typeAbsenceService.getListeTypAbsence();
+		return typeAbsenceService.getListeTypAbsence(idRefGroupeAbsence);
 	}
 
 	/**

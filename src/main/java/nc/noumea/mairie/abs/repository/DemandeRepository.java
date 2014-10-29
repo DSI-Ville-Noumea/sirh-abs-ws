@@ -97,9 +97,6 @@ public class DemandeRepository implements IDemandeRepository {
 			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
 		}
 
-		if (fromDate != null) {
-		}
-
 		if (fromDate != null && toDate == null) {
 			query.setParameter("fromDate", fromDate);
 		} else if (fromDate == null && toDate != null) {

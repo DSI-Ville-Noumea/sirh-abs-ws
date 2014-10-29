@@ -47,9 +47,9 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<RefTypeAbsenceDto> getListeTypAbsence() {
+	public List<RefTypeAbsenceDto> getListeTypAbsence(Integer idRefGroupeAbsence) {
 
-		List<RefTypeAbsence> listTypeAbsence = typeAbsenceRepository.getListeTypAbsence();
+		List<RefTypeAbsence> listTypeAbsence = typeAbsenceRepository.getListeTypAbsence(idRefGroupeAbsence);
 
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
 		if (listTypeAbsence != null) {
@@ -85,7 +85,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 				return result;
 			}
 		}
-		
+
 		if (null == typeAbsence) {
 			typeAbsence = new RefTypeAbsence();
 		}
@@ -101,7 +101,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 				return result;
 			}
 			typeAbsence.setGroupe(groupe);
-		}else{
+		} else {
 			logger.debug(TYPE_GROUPE_INEXISTANT);
 			result.getErrors().add(TYPE_GROUPE_INEXISTANT);
 			return result;

@@ -9,8 +9,8 @@ public interface ITypeAbsenceRepository {
 	void persistEntity(Object obj);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
-	
+
 	void removeEntity(Object obj);
 
-	List<RefTypeAbsence> getListeTypAbsence();
+	List<RefTypeAbsence> getListeTypAbsence(Integer idRefGroupeAbsence);
 }

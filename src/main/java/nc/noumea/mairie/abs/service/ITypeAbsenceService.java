@@ -7,7 +7,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface ITypeAbsenceService {
 
-	List<RefTypeAbsenceDto> getListeTypAbsence();
+	List<RefTypeAbsenceDto> getListeTypAbsence(Integer idRefGroupeAbsence);
 
 	ReturnMessageDto setTypAbsence(Integer idAgent, RefTypeAbsenceDto typeAbsenceDto);
 
