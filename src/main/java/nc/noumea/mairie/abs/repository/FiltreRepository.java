@@ -112,8 +112,7 @@ public class FiltreRepository implements IFiltreRepository {
 	@Override
 	public List<RefEtat> findRefEtatAValider() {
 		List<RefEtat> res = new ArrayList<RefEtat>();
-		RefEtat appr = absEntityManager.find(RefEtat.class, RefEtatEnum.APPROUVEE.getCodeEtat());
-		res.add(appr);
+		res.add(absEntityManager.find(RefEtat.class, RefEtatEnum.APPROUVEE.getCodeEtat()));
 		res.add(absEntityManager.find(RefEtat.class, RefEtatEnum.EN_ATTENTE.getCodeEtat()));
 		return res;
 	}
