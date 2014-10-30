@@ -30,4 +30,6 @@ public interface IDemandeRepository {
 
 	List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			Integer idAgentRecherche, Integer idRefGroupeAbsence);
+
+	List<Demande> listeDemandesSIRHAValider();
 }

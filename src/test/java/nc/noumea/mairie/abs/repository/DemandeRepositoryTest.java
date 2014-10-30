@@ -1138,4 +1138,129 @@ public class DemandeRepositoryTest {
 		absEntityManager.clear();
 	}
 
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesSIRHAValider_Return0Demande() throws ParseException {
+		// Given
+
+		RefTypeAbsence typeMaladie = new RefTypeAbsence();
+		typeMaladie.setLabel("Maladies");
+		absEntityManager.persist(typeMaladie);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.setType(typeMaladie);
+		absEntityManager.persist(d);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/06/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.setType(typeMaladie);
+		absEntityManager.persist(d2);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("15/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.setType(typeMaladie);
+		absEntityManager.persist(drp);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.setType(typeMaladie);
+		absEntityManager.persist(drp2);
+
+		// When
+		List<Demande> result = repository.listeDemandesSIRHAValider();
+
+		// Then
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesSIRHAValider_Return2Demande() throws ParseException {
+		// Given
+		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
+		groupeRecup.setIdRefGroupeAbsence(1);
+		absEntityManager.persist(groupeRecup);
+
+		RefGroupeAbsence groupeAsa = new RefGroupeAbsence();
+		groupeAsa.setIdRefGroupeAbsence(3);
+		absEntityManager.persist(groupeAsa);
+
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setGroupe(groupeRecup);
+		typeRecup.setLabel("RECUP");
+		absEntityManager.persist(typeRecup);
+
+		RefTypeAbsence typeAsa = new RefTypeAbsence();
+		typeAsa.setGroupe(groupeAsa);
+		typeAsa.setLabel("ASA");
+		absEntityManager.persist(typeAsa);
+
+		DemandeAsa d = new DemandeAsa();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(null);
+		d.setType(typeAsa);
+		absEntityManager.persist(d);
+
+		EtatDemande etatDemandeAppr = new EtatDemande();
+		etatDemandeAppr.setDemande(d);
+		etatDemandeAppr.setIdAgent(9005138);
+		etatDemandeAppr.setEtat(RefEtatEnum.APPROUVEE);
+		absEntityManager.persist(etatDemandeAppr);
+
+		DemandeAsa dR2 = new DemandeAsa();
+		dR2.setIdAgent(9005139);
+		dR2.setDateDebut(sdf.parse("15/06/2013"));
+		dR2.setDateFin(null);
+		dR2.setType(typeAsa);
+		absEntityManager.persist(dR2);
+
+		EtatDemande etatDemandeSaisie = new EtatDemande();
+		etatDemandeSaisie.setDemande(dR2);
+		etatDemandeSaisie.setIdAgent(9005138);
+		etatDemandeSaisie.setEtat(RefEtatEnum.SAISIE);
+		absEntityManager.persist(etatDemandeSaisie);
+
+		DemandeRecup drp = new DemandeRecup();
+		drp.setIdAgent(9005139);
+		drp.setDateDebut(sdf.parse("15/05/2013"));
+		drp.setDateFin(null);
+		drp.setType(typeRecup);
+		absEntityManager.persist(drp);
+
+		EtatDemande etatDemandeAttente = new EtatDemande();
+		etatDemandeAttente.setDemande(drp);
+		etatDemandeAttente.setIdAgent(9005138);
+		etatDemandeAttente.setEtat(RefEtatEnum.EN_ATTENTE);
+		absEntityManager.persist(etatDemandeAttente);
+
+		// When
+		List<Demande> result = repository.listeDemandesSIRHAValider();
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals("9005138", ((DemandeAsa) result.get(1)).getIdAgent().toString());
+		assertEquals("9005139", ((DemandeAsa) result.get(0)).getIdAgent().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 }

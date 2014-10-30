@@ -4303,7 +4303,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, false);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
@@ -7681,7 +7681,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, false);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
@@ -8467,5 +8467,68 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(Demande.class));
+	}
+
+	@Test
+	public void getListeDemandesSIRHAValider_return1Liste_WithA48() {
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		Demande d = new Demande();
+		d.setIdDemande(1);
+		d.setType(type);
+		listdemande.add(d);
+
+		List<DemandeDto> listdemandeDto = new ArrayList<DemandeDto>();
+
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+
+		DemandeDto dto = new DemandeDto();
+		dto.setIdDemande(1);
+		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		dto.setIdRefEtat(10);
+
+		listdemandeDto.add(dto);
+
+		RefEtat refAppro = new RefEtat();
+		refAppro.setIdRefEtat(4);
+		RefEtat refAttente = new RefEtat();
+		refAttente.setIdRefEtat(10);
+		List<RefEtat> listEtat = new ArrayList<>();
+		listEtat.add(refAttente);
+		listEtat.add(refAppro);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.listeDemandesSIRHAValider()).thenReturn(listdemande);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null)).thenReturn(
+				listdemandeDto);
+		Mockito.when(absDataConsistencyRules.filtreDroitOfDemandeSIRH(dto)).thenReturn(dto);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findRefEtatAValider()).thenReturn(listEtat);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+
+		List<DemandeDto> listResult = service.getListeDemandesSIRHAValider();
+
+		assertEquals(1, listResult.size());
+		assertTrue(listResult.get(0).isDepassementCompteur());
+
 	}
 }

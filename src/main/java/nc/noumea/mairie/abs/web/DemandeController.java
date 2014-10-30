@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.web;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -343,8 +344,13 @@ public class DemandeController {
 				"entered GET [demandes/listeDemandesSIRH] => getListeDemandesAbsenceSIRH with parameters  from = {}, to = {},  etat = {}, groupe = {}, type = {}, idAgentConcerne= {} and aValider= {}",
 				fromDate, toDate, idRefEtat, idRefGroupeAbsence, idRefType, idAgentRecherche, aValider);
 
-		List<DemandeDto> result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
-				idAgentRecherche, idRefGroupeAbsence, aValider);
+		List<DemandeDto> result = new ArrayList<DemandeDto>();
+		if (aValider) {
+			result = absenceService.getListeDemandesSIRHAValider();
+		} else {
+			result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType, idAgentRecherche,
+					idRefGroupeAbsence);
+		}
 
 		if (result.size() == 0)
 			throw new NoContentException();

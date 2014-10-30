@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 
 import org.springframework.stereotype.Repository;
 
@@ -223,6 +224,21 @@ public class DemandeRepository implements IDemandeRepository {
 		if (idRefGroupeAbsence != null) {
 			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
 		}
+		return query.getResultList();
+	}
+
+	@Override
+	public List<Demande> listeDemandesSIRHAValider() {
+		// pour le moment la DRH ne doit valider que les congés excep et les ASA
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from Demande d ");
+		sb.append("where d.type.groupe.idRefGroupeAbsence in( :ASA , :CONGE_EXCEP ) ");
+		sb.append("order by d.idDemande desc ");
+
+		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
+		query.setParameter("ASA", RefTypeGroupeAbsenceEnum.ASA.getValue());
+		query.setParameter("CONGE_EXCEP", RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+
 		return query.getResultList();
 	}
 }

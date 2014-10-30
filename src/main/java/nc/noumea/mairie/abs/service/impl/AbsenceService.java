@@ -580,9 +580,7 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche, Integer idRefGroupeAbsence, boolean aValider) {
-
-		// TODO traiter le cas des a valider
+			Integer idAgentRecherche, Integer idRefGroupeAbsence) {
 		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
 				idAgentRecherche, idRefGroupeAbsence);
 		List<RefEtat> listEtats = null;
@@ -847,6 +845,22 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		return demande;
+	}
+
+	@Override
+	public List<DemandeDto> getListeDemandesSIRHAValider() {
+		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRHAValider();
+
+		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
+				filtreRepository.findRefEtatAValider(), null);
+		for (DemandeDto dto : listeDto) {
+			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(dto
+					.getGroupeAbsence().getIdRefGroupeAbsence(), dto.getIdTypeDemande());
+			dto = absenceDataConsistencyRulesImpl.filtreDroitOfDemandeSIRH(dto);
+			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto));
+		}
+
+		return listeDto;
 	}
 
 }

@@ -25,10 +25,12 @@ public interface IFiltreRepository {
 	RefTypeSaisi findRefTypeSaisi(Integer idRefTypeAbsence);
 
 	List<RefGroupeAbsence> findAllRefGroupeAbsence();
-	
+
 	RefGroupeAbsence findRefGroupeAbsence(Integer idRefGroupeAbsence);
-	
+
 	List<RefUnitePeriodeQuota> findAllRefUnitePeriodeQuota();
 
 	List<RefTypeAbsence> findAllRefTypeAbsencesWithGroup(Integer idRefGroupeAbsence);
+
+	List<RefEtat> findRefEtatAValider();
 }

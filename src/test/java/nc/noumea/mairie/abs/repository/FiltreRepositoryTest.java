@@ -168,17 +168,17 @@ public class FiltreRepositoryTest {
 		absEntityManager.persist(type2);
 
 		RefTypeSaisi rts = new RefTypeSaisi();
-			rts.setType(type);
-			rts.setCalendarDateDebut(true);
-			rts.setCalendarHeureDebut(true);
-			rts.setUniteDecompte("jours");
+		rts.setType(type);
+		rts.setCalendarDateDebut(true);
+		rts.setCalendarHeureDebut(true);
+		rts.setUniteDecompte("jours");
 		absEntityManager.persist(rts);
 
 		RefTypeSaisi rts2 = new RefTypeSaisi();
-			rts2.setType(type2);
-			rts2.setCalendarDateFin(true);
-			rts2.setCalendarHeureFin(true);
-			rts2.setUniteDecompte("jours");
+		rts2.setType(type2);
+		rts2.setCalendarDateFin(true);
+		rts2.setCalendarHeureFin(true);
+		rts2.setUniteDecompte("jours");
 		absEntityManager.persist(rts2);
 
 		List<RefTypeSaisi> result = repository.findAllRefTypeSaisi();
@@ -237,17 +237,17 @@ public class FiltreRepositoryTest {
 		absEntityManager.persist(type2);
 
 		RefTypeSaisi rts = new RefTypeSaisi();
-			rts.setType(type);
-			rts.setCalendarDateDebut(true);
-			rts.setCalendarHeureDebut(true);
-			rts.setUniteDecompte("jours");
+		rts.setType(type);
+		rts.setCalendarDateDebut(true);
+		rts.setCalendarHeureDebut(true);
+		rts.setUniteDecompte("jours");
 		absEntityManager.persist(rts);
 
 		RefTypeSaisi rts2 = new RefTypeSaisi();
-			rts2.setType(type2);
-			rts2.setCalendarDateFin(true);
-			rts2.setCalendarHeureFin(true);
-			rts2.setUniteDecompte("jours");
+		rts2.setType(type2);
+		rts2.setCalendarDateFin(true);
+		rts2.setCalendarHeureFin(true);
+		rts2.setUniteDecompte("jours");
 		absEntityManager.persist(rts2);
 
 		RefTypeSaisi result = repository.findRefTypeSaisi(type2.getIdRefTypeAbsence());
@@ -261,81 +261,81 @@ public class FiltreRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void findAllRefGroupeAbsence() {
-		
+
 		RefGroupeAbsence rga = new RefGroupeAbsence();
-			rga.setIdRefGroupeAbsence(1);
-			rga.setCode("code 1");
-			rga.setLibelle("libelle 1");
+		rga.setIdRefGroupeAbsence(1);
+		rga.setCode("code 1");
+		rga.setLibelle("libelle 1");
 		absEntityManager.persist(rga);
-		
+
 		RefGroupeAbsence rga2 = new RefGroupeAbsence();
-			rga2.setIdRefGroupeAbsence(2);
-			rga2.setCode("code 2");
-			rga2.setLibelle("libelle 2");
+		rga2.setIdRefGroupeAbsence(2);
+		rga2.setCode("code 2");
+		rga2.setLibelle("libelle 2");
 		absEntityManager.persist(rga2);
-		
+
 		List<RefGroupeAbsence> result = repository.findAllRefGroupeAbsence();
 
 		assertEquals(2, result.size());
 		assertEquals("code 1", result.get(0).getCode());
 		assertEquals("code 2", result.get(1).getCode());
-		
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void findRefGroupeAbsence() {
 
 		RefGroupeAbsence rga = new RefGroupeAbsence();
-			rga.setIdRefGroupeAbsence(1);
-			rga.setCode("code 1");
-			rga.setLibelle("libelle 1");
+		rga.setIdRefGroupeAbsence(1);
+		rga.setCode("code 1");
+		rga.setLibelle("libelle 1");
 		absEntityManager.persist(rga);
-		
+
 		RefGroupeAbsence rga2 = new RefGroupeAbsence();
-			rga2.setIdRefGroupeAbsence(2);
-			rga2.setCode("code 2");
-			rga2.setLibelle("libelle 2");
+		rga2.setIdRefGroupeAbsence(2);
+		rga2.setCode("code 2");
+		rga2.setLibelle("libelle 2");
 		absEntityManager.persist(rga2);
-	
+
 		RefGroupeAbsence result = repository.findRefGroupeAbsence(1);
-		
+
 		assertEquals("code 1", result.getCode());
 		assertEquals("libelle 1", result.getLibelle());
-		
+
 		result = repository.findRefGroupeAbsence(2);
-		
+
 		assertEquals("code 2", result.getCode());
 		assertEquals("libelle 2", result.getLibelle());
-		
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void findAllRefUnitePeriodeQuota() {
-		
+
 		RefUnitePeriodeQuota rupq = new RefUnitePeriodeQuota();
-			rupq.setIdRefUnitePeriodeQuota(1);
-			rupq.setUnite("jours");
-			rupq.setValeur(10);
-			rupq.setGlissant(true);
+		rupq.setIdRefUnitePeriodeQuota(1);
+		rupq.setUnite("jours");
+		rupq.setValeur(10);
+		rupq.setGlissant(true);
 		absEntityManager.persist(rupq);
-		
+
 		RefUnitePeriodeQuota rupq2 = new RefUnitePeriodeQuota();
-			rupq2.setIdRefUnitePeriodeQuota(2);
-			rupq2.setUnite("minutes");
-			rupq2.setValeur(13);
-			rupq2.setGlissant(false);
+		rupq2.setIdRefUnitePeriodeQuota(2);
+		rupq2.setUnite("minutes");
+		rupq2.setValeur(13);
+		rupq2.setGlissant(false);
 		absEntityManager.persist(rupq2);
-		
+
 		List<RefUnitePeriodeQuota> result = repository.findAllRefUnitePeriodeQuota();
 
 		assertEquals(2, result.size());
@@ -345,15 +345,15 @@ public class FiltreRepositoryTest {
 		assertEquals("minutes", result.get(1).getUnite());
 		assertEquals(13, result.get(1).getValeur().intValue());
 		assertFalse(result.get(1).isGlissant());
-		
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void findAllRefTypeAbsencesWithGroup() {
-		
+
 		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
 		groupeRecup.setIdRefGroupeAbsence(2);
 		groupeRecup.setLibelle("recup");
@@ -361,7 +361,7 @@ public class FiltreRepositoryTest {
 		RefTypeAbsence rupq = new RefTypeAbsence();
 		rupq.setGroupe(groupeRecup);
 		absEntityManager.persist(rupq);
-		
+
 		RefGroupeAbsence groupeAsa = new RefGroupeAbsence();
 		groupeAsa.setIdRefGroupeAbsence(1);
 		groupeAsa.setLibelle("asa");
@@ -369,12 +369,35 @@ public class FiltreRepositoryTest {
 		RefTypeAbsence rupq2 = new RefTypeAbsence();
 		rupq2.setGroupe(groupeAsa);
 		absEntityManager.persist(rupq2);
-		
+
 		List<RefTypeAbsence> result = repository.findAllRefTypeAbsencesWithGroup(1);
 
 		assertEquals(1, result.size());
 		assertEquals("asa", result.get(0).getGroupe().getLibelle());
-		
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void findRefEtatAValider() {
+		RefEtat etatAttente = new RefEtat();
+		etatAttente.setLabel("EN ATTENTE");
+		absEntityManager.persist(etatAttente);
+
+		RefEtat etatAppr = new RefEtat();
+		etatAppr.setLabel("APPROUVEE");
+		absEntityManager.persist(etatAppr);
+
+		RefEtat etatSaisie = new RefEtat();
+		etatSaisie.setLabel("SAISIE");
+		absEntityManager.persist(etatSaisie);
+
+		List<RefEtat> result = repository.findRefEtatAValider();
+
+		assertEquals(2, result.size());
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
