@@ -208,7 +208,7 @@
                 <div class="resource-summary">
                     <span class="resource-summary-path">/demandes/listeDemandesSIRH</span>
                     <div>
-                            <a href="#/demandes/listeDemandesSIRH_GET_from_to_etat_type_idAgentRecherche">GET</a>
+                            <a href="#/demandes/listeDemandesSIRH_GET_from_to_etat_type_idAgentRecherche_groupe_aValider">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -400,7 +400,7 @@
                 <div class="resource-summary">
                     <span class="resource-summary-path">/typeAbsence/getListeTypeAbsence</span>
                     <div>
-                            <a href="#/typeAbsence/getListeTypeAbsence_GET">GET</a>
+                            <a href="#/typeAbsence/getListeTypeAbsence_GET_idRefGroupeAbsence">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -3134,11 +3134,11 @@
 </div>
                             </div>
                     </div>
-                    <a id="/demandes/listeDemandesSIRH_GET_from_to_etat_type_idAgentRecherche"/>
+                    <a id="/demandes/listeDemandesSIRH_GET_from_to_etat_type_idAgentRecherche_groupe_aValider"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">GET</span>
-<span class="path">/demandes/listeDemandesSIRH</span>?<span class="url-param-key">from</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">to</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">etat</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">type</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idAgentRecherche</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+<span class="path">/demandes/listeDemandesSIRH</span>?<span class="url-param-key">from</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">to</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">etat</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">type</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idAgentRecherche</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">groupe</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">aValider</span>=<span class="url-param-expected-type"><span class="json-primitive-type">boolean</span></span>                        </div>
 
                             <div class="resource-docs">
                                  Liste des demandes pour SIRH <br />
@@ -3753,7 +3753,7 @@
             </div>
             <div class="json-field">
                 <span class="json-field-name">statusCode</span>
-<span class="json-primitive-type">string</span><div class="json-primitive-restrictions">one of [ CONTINUE, SWITCHING_PROTOCOLS, PROCESSING, CHECKPOINT, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION, NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTI_STATUS, ALREADY_REPORTED, IM_USED, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND, MOVED_TEMPORARILY, SEE_OTHER, NOT_MODIFIED, USE_PROXY, TEMPORARY_REDIRECT, PERMANENT_REDIRECT, BAD_REQUEST, UNAUTHORIZED, PAYMENT_REQUIRED, FORBIDDEN, NOT_FOUND, METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, PROXY_AUTHENTICATION_REQUIRED, REQUEST_TIMEOUT, CONFLICT, GONE, LENGTH_REQUIRED, PRECONDITION_FAILED, PAYLOAD_TOO_LARGE, REQUEST_ENTITY_TOO_LARGE, URI_TOO_LONG, REQUEST_URI_TOO_LONG, UNSUPPORTED_MEDIA_TYPE, REQUESTED_RANGE_NOT_SATISFIABLE, EXPECTATION_FAILED, I_AM_A_TEAPOT, INSUFFICIENT_SPACE_ON_RESOURCE, METHOD_FAILURE, DESTINATION_LOCKED, UNPROCESSABLE_ENTITY, LOCKED, FAILED_DEPENDENCY, UPGRADE_REQUIRED, PRECONDITION_REQUIRED, TOO_MANY_REQUESTS, REQUEST_HEADER_FIELDS_TOO_LARGE, INTERNAL_SERVER_ERROR, NOT_IMPLEMENTED, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT, HTTP_VERSION_NOT_SUPPORTED, VARIANT_ALSO_NEGOTIATES, INSUFFICIENT_STORAGE, LOOP_DETECTED, BANDWIDTH_LIMIT_EXCEEDED, NOT_EXTENDED, NETWORK_AUTHENTICATION_REQUIRED ]</div>            </div>
+<span class="json-primitive-type">string</span><div class="json-primitive-restrictions">one of [ CONTINUE, SWITCHING_PROTOCOLS, PROCESSING, CHECKPOINT, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION, NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTI_STATUS, ALREADY_REPORTED, IM_USED, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND, MOVED_TEMPORARILY, SEE_OTHER, NOT_MODIFIED, USE_PROXY, TEMPORARY_REDIRECT, RESUME_INCOMPLETE, BAD_REQUEST, UNAUTHORIZED, PAYMENT_REQUIRED, FORBIDDEN, NOT_FOUND, METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, PROXY_AUTHENTICATION_REQUIRED, REQUEST_TIMEOUT, CONFLICT, GONE, LENGTH_REQUIRED, PRECONDITION_FAILED, REQUEST_ENTITY_TOO_LARGE, REQUEST_URI_TOO_LONG, UNSUPPORTED_MEDIA_TYPE, REQUESTED_RANGE_NOT_SATISFIABLE, EXPECTATION_FAILED, I_AM_A_TEAPOT, INSUFFICIENT_SPACE_ON_RESOURCE, METHOD_FAILURE, DESTINATION_LOCKED, UNPROCESSABLE_ENTITY, LOCKED, FAILED_DEPENDENCY, UPGRADE_REQUIRED, PRECONDITION_REQUIRED, TOO_MANY_REQUESTS, REQUEST_HEADER_FIELDS_TOO_LARGE, INTERNAL_SERVER_ERROR, NOT_IMPLEMENTED, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT, HTTP_VERSION_NOT_SUPPORTED, VARIANT_ALSO_NEGOTIATES, INSUFFICIENT_STORAGE, LOOP_DETECTED, BANDWIDTH_LIMIT_EXCEEDED, NOT_EXTENDED, NETWORK_AUTHENTICATION_REQUIRED ]</div>            </div>
 </div></span>    }
 </div>
                             </div>
@@ -5337,11 +5337,11 @@
 </div>
                             </div>
                     </div>
-                    <a id="/typeAbsence/getListeTypeAbsence_GET"/>
+                    <a id="/typeAbsence/getListeTypeAbsence_GET_idRefGroupeAbsence"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">GET</span>
-<span class="path">/typeAbsence/getListeTypeAbsence</span>                        </div>
+<span class="path">/typeAbsence/getListeTypeAbsence</span>?<span class="url-param-key">idRefGroupeAbsence</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
                                  Retourne la liste des types d absence
