@@ -1250,7 +1250,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result1.isAffichageBoutonImprimer());
 		assertFalse(result1.isAffichageBoutonModifier());
 		assertFalse(result1.isAffichageBoutonSupprimer());
-		assertFalse(result1.isAffichageBoutonDupliquer());
+		assertTrue(result1.isAffichageBoutonDupliquer());
 		assertFalse(result1.isAffichageVisa());
 		assertFalse(result1.isModifierApprobation());
 		assertFalse(result1.isModifierVisa());
@@ -1267,7 +1267,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result2.isAffichageBoutonImprimer());
 		assertFalse(result2.isAffichageBoutonModifier());
 		assertFalse(result2.isAffichageBoutonSupprimer());
-		assertFalse(result2.isAffichageBoutonDupliquer());
+		assertTrue(result2.isAffichageBoutonDupliquer());
 		assertFalse(result2.isAffichageVisa());
 		assertFalse(result2.isModifierApprobation());
 		assertFalse(result2.isModifierVisa());
@@ -1299,7 +1299,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result4.isAffichageBoutonImprimer());
 		assertFalse(result4.isAffichageBoutonModifier());
 		assertFalse(result4.isAffichageBoutonSupprimer());
-		assertFalse(result4.isAffichageBoutonDupliquer());
+		assertTrue(result4.isAffichageBoutonDupliquer());
 		assertFalse(result4.isAffichageVisa());
 		assertFalse(result4.isModifierApprobation());
 		assertFalse(result4.isModifierVisa());
@@ -1316,7 +1316,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result5.isAffichageBoutonImprimer());
 		assertFalse(result5.isAffichageBoutonModifier());
 		assertFalse(result5.isAffichageBoutonSupprimer());
-		assertFalse(result5.isAffichageBoutonDupliquer());
+		assertTrue(result5.isAffichageBoutonDupliquer());
 		assertFalse(result5.isAffichageVisa());
 		assertFalse(result5.isModifierApprobation());
 		assertFalse(result5.isModifierVisa());
@@ -1332,7 +1332,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result6.isAffichageBoutonImprimer());
 		assertFalse(result6.isAffichageBoutonModifier());
 		assertFalse(result6.isAffichageBoutonSupprimer());
-		assertFalse(result6.isAffichageBoutonDupliquer());
+		assertTrue(result6.isAffichageBoutonDupliquer());
 		assertFalse(result6.isAffichageVisa());
 		assertFalse(result6.isModifierApprobation());
 		assertFalse(result6.isModifierVisa());
@@ -1347,7 +1347,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result7.isAffichageBoutonImprimer());
 		assertFalse(result7.isAffichageBoutonModifier());
 		assertFalse(result7.isAffichageBoutonSupprimer());
-		assertFalse(result7.isAffichageBoutonDupliquer());
+		assertTrue(result7.isAffichageBoutonDupliquer());
 		assertFalse(result7.isAffichageVisa());
 		assertFalse(result7.isModifierApprobation());
 		assertFalse(result7.isModifierVisa());
@@ -1363,7 +1363,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result8.isAffichageBoutonImprimer());
 		assertFalse(result8.isAffichageBoutonModifier());
 		assertFalse(result8.isAffichageBoutonSupprimer());
-		assertFalse(result8.isAffichageBoutonDupliquer());
+		assertTrue(result8.isAffichageBoutonDupliquer());
 		assertFalse(result8.isAffichageVisa());
 		assertFalse(result8.isModifierApprobation());
 		assertFalse(result8.isModifierVisa());
@@ -1379,7 +1379,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result9.isAffichageBoutonImprimer());
 		assertFalse(result9.isAffichageBoutonModifier());
 		assertFalse(result9.isAffichageBoutonSupprimer());
-		assertFalse(result9.isAffichageBoutonDupliquer());
+		assertTrue(result9.isAffichageBoutonDupliquer());
 		assertFalse(result9.isAffichageVisa());
 		assertFalse(result9.isModifierApprobation());
 		assertFalse(result9.isModifierVisa());
@@ -1395,7 +1395,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result10.isAffichageBoutonImprimer());
 		assertFalse(result10.isAffichageBoutonModifier());
 		assertFalse(result10.isAffichageBoutonSupprimer());
-		assertFalse(result10.isAffichageBoutonDupliquer());
+		assertTrue(result10.isAffichageBoutonDupliquer());
 		assertFalse(result10.isAffichageVisa());
 		assertFalse(result10.isModifierApprobation());
 		assertFalse(result10.isModifierVisa());
@@ -1410,7 +1410,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result11.isAffichageBoutonImprimer());
 		assertFalse(result11.isAffichageBoutonModifier());
 		assertFalse(result11.isAffichageBoutonSupprimer());
-		assertFalse(result11.isAffichageBoutonDupliquer());
+		assertTrue(result11.isAffichageBoutonDupliquer());
 		assertFalse(result11.isAffichageVisa());
 		assertFalse(result11.isModifierApprobation());
 		assertFalse(result11.isModifierVisa());
@@ -1919,7 +1919,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result8.isAffichageApprobation());
 		assertFalse(result8.isAffichageBoutonModifier());
 		assertFalse(result8.isAffichageBoutonSupprimer());
-		assertTrue(result8.isAffichageBoutonDupliquer());
+		assertFalse(result8.isAffichageBoutonDupliquer());
 		assertFalse(result8.isAffichageVisa());
 		assertFalse(result8.isModifierApprobation());
 		assertFalse(result8.isModifierVisa());

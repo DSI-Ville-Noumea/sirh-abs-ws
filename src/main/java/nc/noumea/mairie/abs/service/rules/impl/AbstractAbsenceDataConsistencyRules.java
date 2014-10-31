@@ -261,8 +261,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
 						demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
 						demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
-						demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(
-								RefEtatEnum.ANNULEE.getCodeEtat()));
+						demandeDto.setAffichageBoutonDupliquer(false);
 						continue;
 					}
 					if (dda.getDroitProfil().getProfil().getLibelle().equals(ProfilEnum.VISEUR.toString())) {
@@ -305,7 +304,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		demandeDto.setAffichageValidation(false);
 		demandeDto.setModifierValidation(false);
 		demandeDto.setAffichageEnAttente(false);
-		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
+		demandeDto.setAffichageBoutonDupliquer(true);
 
 		return demandeDto;
 	}

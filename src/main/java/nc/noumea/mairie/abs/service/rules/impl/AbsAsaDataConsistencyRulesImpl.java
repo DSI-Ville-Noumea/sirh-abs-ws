@@ -54,7 +54,7 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 		demandeDto.setModifierValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()));
 		demandeDto.setAffichageEnAttente(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
-		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
+		demandeDto.setAffichageBoutonDupliquer(true);
 
 		return demandeDto;
 	}
