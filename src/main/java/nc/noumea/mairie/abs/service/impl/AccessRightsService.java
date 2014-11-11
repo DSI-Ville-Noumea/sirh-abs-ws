@@ -872,29 +872,34 @@ public class AccessRightsService implements IAccessRightsService {
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits
 		// sur l'agent pour qui il effectue la demande
 		if (!idAgent.equals(idAgentOfDemande)) {
-			if (accessRightsRepository.isUserOperateur(idAgent)) {
+			if (accessRightsRepository.isUserOperateur(idAgent) || accessRightsRepository.isUserApprobateur(idAgent)
+					|| accessRightsRepository.isUserViseur(idAgent)) {
 
 				// on recherche tous les sous agents de la personne
-				Droit droitOperateur = accessRightsRepository.getAgentDroitFetchAgents(idAgent);
+				Droit droitOperateurApproViseur = accessRightsRepository.getAgentDroitFetchAgents(idAgent);
 				boolean trouve = false;
-				for (DroitDroitsAgent dda : droitOperateur.getDroitDroitsAgent()) {
+				for (DroitDroitsAgent dda : droitOperateurApproViseur.getDroitDroitsAgent()) {
 					if (dda.getDroitsAgent().getIdAgent().equals(idAgentOfDemande)) {
 						trouve = true;
 						break;
 					}
 				}
 				if (!trouve) {
-					logger.warn("Vous n'êtes pas opérateur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
+					logger.warn(
+							"Vous n'êtes ni opérateur,ni approbateur, ni viseur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
 							idAgentOfDemande);
-					returnDto.getErrors().add(
-							String.format(
-									"Vous n'êtes pas opérateur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
-									idAgentOfDemande));
+					returnDto
+							.getErrors()
+							.add(String
+									.format("Vous n'êtes ni opérateur,ni approbateur, ni viseur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
+											idAgentOfDemande));
 				}
 			} else {
-				logger.warn("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes.");
-				returnDto.getErrors().add(
-						String.format("Vous n'êtes pas opérateur. Vous ne pouvez pas saisir de demandes."));
+				logger.warn("Vous n'êtes ni opérateur,ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes.");
+				returnDto
+						.getErrors()
+						.add(String
+								.format("Vous n'êtes ni opérateur,ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes."));
 			}
 		}
 		return returnDto;
