@@ -159,15 +159,13 @@ public class FiltreController {
 	@ResponseBody
 	@RequestMapping(value = "/getTypeAbsenceKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<RefTypeAbsenceDto> getTypeAbsenceKiosque(
-			@RequestParam(value = "idAgentConcerne", required = true) Integer idAgentConcerne,
 			@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence) {
 
 		logger.debug(
-				"entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter idAgentConcerne = {} and idRefGroupeAbsence = {}",
-				idAgentConcerne, idRefGroupeAbsence);
-
-		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsenceSaisieKiosque(idAgentConcerne,
+				"entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter  idRefGroupeAbsence = {}",
 				idRefGroupeAbsence);
+
+		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsenceSaisieKiosque(idRefGroupeAbsence);
 
 		return types;
 	}

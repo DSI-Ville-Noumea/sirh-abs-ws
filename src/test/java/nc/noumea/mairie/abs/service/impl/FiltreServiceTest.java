@@ -850,10 +850,9 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(9005138, null);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(null);
 
-		assertEquals(1, result.size());
-		assertEquals("fonctionnaire2", result.get(0).getLibelle());
+		assertEquals(4, result.size());
 	}
 
 	@Test
@@ -917,9 +916,9 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(9005138, null);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(null);
 
-		assertEquals(0, result.size());
+		assertEquals(3, result.size());
 	}
 
 	@Test
@@ -983,10 +982,9 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(9005138, null);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(null);
 
-		assertEquals(1, result.size());
-		assertEquals("contractuel", result.get(0).getLibelle());
+		assertEquals(3, result.size());
 	}
 
 	@Test
@@ -1066,10 +1064,9 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(9005138, 1);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1);
 
-		assertEquals(1, result.size());
-		assertEquals("fonctionnaire2", result.get(0).getLibelle());
+		assertEquals(4, result.size());
 	}
 
 	@Test
@@ -1138,9 +1135,9 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(9005138, 1);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1);
 
-		assertEquals(0, result.size());
+		assertEquals(3, result.size());
 	}
 
 	@Test
@@ -1209,9 +1206,8 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(9005138, 1);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1);
 
-		assertEquals(1, result.size());
-		assertEquals("contractuel", result.get(0).getLibelle());
+		assertEquals(3, result.size());
 	}
 }

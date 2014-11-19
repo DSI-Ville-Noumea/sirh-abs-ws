@@ -196,7 +196,7 @@ public class FiltreService implements IFiltreService {
 	}
 
 	@Override
-	public List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idAgentConcerne, Integer idRefGroupeAbsence) {
+	public List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idRefGroupeAbsence) {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
 		if (idRefGroupeAbsence == null) {
@@ -205,28 +205,9 @@ public class FiltreService implements IFiltreService {
 			refTypeAbs = filtreRepository.findAllRefTypeAbsencesWithGroup(idRefGroupeAbsence);
 		}
 
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgentConcerne), helperService.getCurrentDate());
-
 		for (RefTypeAbsence type : refTypeAbs) {
-			boolean ajout = false;
-
-			if (null != type.getTypeSaisi() && type.getTypeSaisi().isSaisieKiosque()) {
-				if (helperService.isFonctionnaire(carr) && type.getTypeSaisi().isFonctionnaire()) {
-					ajout = true;
-				}
-				if (helperService.isContractuel(carr) && type.getTypeSaisi().isContractuel()) {
-					ajout = true;
-				}
-				if (helperService.isConventionCollective(carr) && type.getTypeSaisi().isConventionCollective()) {
-					ajout = true;
-				}
-			}
-			if (ajout) {
-				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi());
-				res.add(dto);
-			}
-
+			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi());
+			res.add(dto);
 		}
 		return res;
 	}
