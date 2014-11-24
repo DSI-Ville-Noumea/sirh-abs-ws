@@ -145,12 +145,13 @@ public class AccessRightsService implements IAccessRightsService {
 			// on supprime tous les inputters (et sous agents) de l'approbateur
 			setInputter(droitToDelete.getIdAgent(), new InputterDto());
 
+			setViseurs(droitToDelete.getIdAgent(), new ViseursDto());
 			// enfin on supprime l'approbateur
 			// First, we remove all the agents this approbateur was approving
 			// this will also delete all the agents its operateurs were filling
 			// in for
 			for (DroitDroitsAgent agentSaisiToDelete : droitToDelete.getDroitDroitsAgent()) {
-				accessRightsRepository.clear();
+				//accessRightsRepository.clear();
 				accessRightsRepository.removeEntity(agentSaisiToDelete);
 			}
 			for (DroitProfil dp : droitToDelete.getDroitProfils()) {

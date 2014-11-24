@@ -85,6 +85,7 @@ public class AccessRightsController {
 		try {
 			agentErreur = accessRightService.setApprobateurs(agDtos);
 		} catch (Exception e) {
+			logger.debug(e.getMessage());
 			throw new ConflictException(e.getMessage());
 		}
 
