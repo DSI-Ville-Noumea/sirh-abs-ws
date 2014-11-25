@@ -105,6 +105,33 @@ public class DemandeController {
 	}
 
 	/**
+	 * Historique d'une demande d absence <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/historique", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<DemandeDto> getAbsenceArchives(@RequestParam("idAgent") int idAgent,
+			@RequestParam("idDemande") Integer idDemande) {
+
+		logger.debug(
+				"entered GET [demandes/historique] => getAbsenceArchives with parameters idAgent = {} and idDemande = {}",
+				idAgent, idDemande);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+		if (agent == null || agent.getIdAgent() == null)
+			throw new NotFoundException();
+
+		List<DemandeDto> result = absenceService.getDemandesArchives(idDemande);
+
+		if (result.size() == 0)
+			throw new NoContentException();
+
+		return result;
+	}
+
+	/**
 	 * Liste des demandes d un agent <br />
 	 * Parametres en entree : format du type timestamp : YYYYMMdd <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"

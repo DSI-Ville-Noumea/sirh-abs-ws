@@ -45,6 +45,7 @@ public class DemandeDto {
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateSaisie;
 	private String motif;
+	private AgentWithServiceDto agentEtat;
 
 	// permet d'afficher ou non les icones correspondants
 	private boolean isAffichageBoutonModifier;
@@ -164,10 +165,11 @@ public class DemandeDto {
 		}
 	}
 
-	public void updateEtat(EtatDemande etat) {
+	public void updateEtat(EtatDemande etat, AgentWithServiceDto agentDto) {
 		idRefEtat = etat.getEtat().getCodeEtat();
 		dateSaisie = etat.getDate();
 		motif = etat.getMotif();
+		agentEtat = agentDto;
 	}
 
 	public Integer getIdDemande() {
@@ -475,6 +477,14 @@ public class DemandeDto {
 		String json = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
 				.deepSerialize(dto);
 		return json;
+	}
+
+	public AgentWithServiceDto getAgentEtat() {
+		return agentEtat;
+	}
+
+	public void setAgentEtat(AgentWithServiceDto agentEtat) {
+		this.agentEtat = agentEtat;
 	}
 
 }

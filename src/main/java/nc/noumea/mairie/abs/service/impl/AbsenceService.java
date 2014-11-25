@@ -167,7 +167,8 @@ public class AbsenceService implements IAbsenceService {
 
 				demandeDto = new DemandeDto(demandeReposComp, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
-				demandeDto.updateEtat(demandeReposComp.getLatestEtatDemande());
+				demandeDto.updateEtat(demandeReposComp.getLatestEtatDemande(), sirhWSConsumer.getAgentService(
+						demandeReposComp.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()));
 				break;
 			case RECUP:
 
@@ -178,7 +179,8 @@ public class AbsenceService implements IAbsenceService {
 
 				demandeDto = new DemandeDto(demandeRecup, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
-				demandeDto.updateEtat(demandeRecup.getLatestEtatDemande());
+				demandeDto.updateEtat(demandeRecup.getLatestEtatDemande(),sirhWSConsumer.getAgentService(
+						demandeRecup.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()));
 				break;
 			case ASA:
 				DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
@@ -188,7 +190,8 @@ public class AbsenceService implements IAbsenceService {
 
 				demandeDto = new DemandeDto(demandeAsa, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
-				demandeDto.updateEtat(demandeAsa.getLatestEtatDemande());
+				demandeDto.updateEtat(demandeAsa.getLatestEtatDemande(),sirhWSConsumer.getAgentService(
+						demandeAsa.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()));
 				break;
 			case CONGES_EXCEP:
 				DemandeCongesExceptionnels demandeCongesExcep = demandeRepository.getEntity(
@@ -198,7 +201,8 @@ public class AbsenceService implements IAbsenceService {
 				}
 				demandeDto = new DemandeDto(demandeCongesExcep, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
-				demandeDto.updateEtat(demandeCongesExcep.getLatestEtatDemande());
+				demandeDto.updateEtat(demandeCongesExcep.getLatestEtatDemande(),sirhWSConsumer.getAgentService(
+						demandeCongesExcep.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()));
 				break;
 			default:
 				return demandeDto;
@@ -613,7 +617,7 @@ public class AbsenceService implements IAbsenceService {
 		for (EtatDemande etat : dem.getEtatsDemande()) {
 			DemandeDto dto = new DemandeDto(dem, sirhWSConsumer.getAgentService(etat.getIdAgent(),
 					helperService.getCurrentDate()));
-			dto.updateEtat(etat);
+			dto.updateEtat(etat, sirhWSConsumer.getAgentService(etat.getIdAgent(), helperService.getCurrentDate()));
 			result.add(dto);
 		}
 

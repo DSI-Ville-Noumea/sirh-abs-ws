@@ -51,7 +51,7 @@ public class EditionDemandeDtoTest {
 		d.getEtatsDemande().add(etatDemande);
 
 		DemandeDto demandeDto = new DemandeDto(d, agDto);
-		demandeDto.updateEtat(d.getLatestEtatDemande());
+		demandeDto.updateEtat(d.getLatestEtatDemande(),new AgentWithServiceDto());
 
 		SoldeDto soldeDto = new SoldeDto();
 		soldeDto.setSoldeCongeAnnee((double) 12);

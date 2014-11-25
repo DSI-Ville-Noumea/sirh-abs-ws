@@ -42,6 +42,9 @@ public class DemandeDtoTest {
 		EtatDemande etatDemande = new EtatDemande();
 		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
 		etatDemande.setDate(dateDemande);
+		etatDemande.setIdAgent(9005131);
+		AgentWithServiceDto agentEtat = new AgentWithServiceDto();
+		agentEtat.setIdAgent(9005131);
 
 		DemandeAsa d = new DemandeAsa();
 		d.setDateFin(dateDemande);
@@ -52,7 +55,7 @@ public class DemandeDtoTest {
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
-		result.updateEtat(etatDemande);
+		result.updateEtat(etatDemande, agentEtat);
 
 		// Then
 
@@ -67,6 +70,7 @@ public class DemandeDtoTest {
 		assertEquals(4, (int) result.getIdRefEtat());
 		assertEquals(dateDemande, result.getDateSaisie());
 		assertEquals(dateDemande, result.getDateFin());
+		assertEquals(9005131, (int) result.getAgentEtat().getIdAgent());
 	}
 
 	@Test
@@ -81,7 +85,7 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
@@ -312,7 +316,7 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
@@ -404,7 +408,7 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
@@ -492,7 +496,7 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
@@ -580,7 +584,7 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
@@ -756,7 +760,7 @@ public class DemandeDtoTest {
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 

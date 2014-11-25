@@ -336,7 +336,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				DemandeDto dto = new DemandeDto(d, sirhWSConsumer.getAgentService(d.getIdAgent(),
 						helperService.getCurrentDate()));
-				dto.updateEtat(d.getLatestEtatDemande());
+				dto.updateEtat(
+						d.getLatestEtatDemande(),
+						sirhWSConsumer.getAgentService(d.getLatestEtatDemande().getIdAgent(),
+								helperService.getCurrentDate()));
 				listeDemandeDto.add(dto);
 			}
 			return listeDemandeDto;
@@ -352,7 +355,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
 					DemandeDto dto = new DemandeDto(d, sirhWSConsumer.getAgentService(d.getIdAgent(),
 							helperService.getCurrentDate()));
-					dto.updateEtat(d.getLatestEtatDemande());
+					dto.updateEtat(
+							d.getLatestEtatDemande(),
+							sirhWSConsumer.getAgentService(d.getLatestEtatDemande().getIdAgent(),
+									helperService.getCurrentDate()));
 					listeDemandeDto.add(dto);
 				}
 				isfiltreDateDemande = true;
@@ -364,7 +370,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				DemandeDto dto = new DemandeDto(d, sirhWSConsumer.getAgentService(d.getIdAgent(),
 						helperService.getCurrentDate()));
-				dto.updateEtat(d.getLatestEtatDemande());
+				dto.updateEtat(
+						d.getLatestEtatDemande(),
+						sirhWSConsumer.getAgentService(d.getLatestEtatDemande().getIdAgent(),
+								helperService.getCurrentDate()));
 				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 						.getCodeEtat()))) {
 					if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)
