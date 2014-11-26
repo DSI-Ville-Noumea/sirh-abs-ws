@@ -206,7 +206,8 @@ public class FiltreService implements IFiltreService {
 		}
 
 		for (RefTypeAbsence type : refTypeAbs) {
-			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi());
+			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi(),
+					type.getListeTypeSaisiCongeAnnuel());
 			res.add(dto);
 		}
 		return res;
@@ -236,7 +237,8 @@ public class FiltreService implements IFiltreService {
 		List<RefTypeAbsence> refTypeAbs = filtreRepository.findAllRefTypeAbsences();
 
 		for (RefTypeAbsence type : refTypeAbs) {
-			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi());
+			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi(),
+					type.getListeTypeSaisiCongeAnnuel());
 			res.add(dto);
 
 		}

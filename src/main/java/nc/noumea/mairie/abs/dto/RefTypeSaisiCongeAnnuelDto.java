@@ -1,77 +1,42 @@
-package nc.noumea.mairie.abs.domain;
+package nc.noumea.mairie.abs.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 
-import org.hibernate.annotations.Type;
+public class RefTypeSaisiCongeAnnuelDto {
 
-@Entity
-@Table(name = "ABS_REF_TYPE_SAISI_CONGE_ANNUEL")
-@PersistenceUnit(unitName = "absPersistenceUnit")
-public class RefTypeSaisiCongeAnnuel {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_REF_TYPE_SAISI_CONGE_ANNUEL")
 	private Integer idRefTypeSaisiCongeAnnuel;
-
-	@NotNull
-	@Column(name = "CODE_BASE_HORAIRE_ABSENCE", nullable = false)
 	private String codeBaseHoraireAbsence;
-
-	@NotNull
-	@Column(name = "DESCRIPTION", nullable = false)
 	private String description;
-
-	@ManyToOne
-	@JoinColumn(name = "ID_REF_TYPE_ABSENCE", referencedColumnName = "ID_REF_TYPE_ABSENCE")
-	private RefTypeAbsence type;
-
-	@NotNull
-	@Column(name = "CALENDAR_DATE_DEBUT", nullable = false)
-	@Type(type = "boolean")
+	private Integer idRefTypeDemande;
 	private boolean calendarDateDebut;
-
-	@NotNull
-	@Column(name = "CHK_DATE_DEBUT", nullable = false)
-	@Type(type = "boolean")
 	private boolean chkDateDebut;
-
-	@NotNull
-	@Column(name = "CALENDAR_DATE_FIN", nullable = false)
-	@Type(type = "boolean")
 	private boolean calendarDateFin;
-
-	@NotNull
-	@Column(name = "CHK_DATE_FIN", nullable = false)
-	@Type(type = "boolean")
 	private boolean chkDateFin;
-
-	@NotNull
-	@Column(name = "CALENDAR_DATE_REPRISE", nullable = false)
-	@Type(type = "boolean")
 	private boolean calendarDateReprise;
-
-	@Column(name = "QUOTA_MULTIPLE")
 	private Integer quotaMultiple;
-
-	@NotNull
-	@Column(name = "DECOMPTE_SAMEDI", nullable = false)
-	@Type(type = "boolean")
 	private boolean decompteSamedi;
-
-	@NotNull
-	@Column(name = "CONSECUTIF", nullable = false)
-	@Type(type = "boolean")
 	private boolean consecutif;
+
+	public RefTypeSaisiCongeAnnuelDto() {
+	}
+
+	public RefTypeSaisiCongeAnnuelDto(RefTypeSaisiCongeAnnuel typeSaisieCongeAnnuel) {
+		this();
+		if (null != typeSaisieCongeAnnuel && null != typeSaisieCongeAnnuel.getType())
+			this.idRefTypeDemande = typeSaisieCongeAnnuel.getType().getIdRefTypeAbsence();
+
+		this.idRefTypeSaisiCongeAnnuel = typeSaisieCongeAnnuel.getIdRefTypeSaisiCongeAnnuel();
+		this.codeBaseHoraireAbsence = typeSaisieCongeAnnuel.getCodeBaseHoraireAbsence();
+		this.description = typeSaisieCongeAnnuel.getDescription();
+		this.calendarDateDebut = typeSaisieCongeAnnuel.isCalendarDateDebut();
+		this.chkDateDebut = typeSaisieCongeAnnuel.isChkDateDebut();
+		this.calendarDateFin = typeSaisieCongeAnnuel.isCalendarDateFin();
+		this.chkDateFin = typeSaisieCongeAnnuel.isChkDateFin();
+		this.calendarDateReprise = typeSaisieCongeAnnuel.isCalendarDateReprise();
+		this.quotaMultiple = typeSaisieCongeAnnuel.getQuotaMultiple();
+		this.decompteSamedi = typeSaisieCongeAnnuel.isDecompteSamedi();
+		this.consecutif = typeSaisieCongeAnnuel.isConsecutif();
+	}
 
 	public Integer getIdRefTypeSaisiCongeAnnuel() {
 		return idRefTypeSaisiCongeAnnuel;
@@ -89,12 +54,12 @@ public class RefTypeSaisiCongeAnnuel {
 		this.codeBaseHoraireAbsence = codeBaseHoraireAbsence;
 	}
 
-	public RefTypeAbsence getType() {
-		return type;
+	public Integer getIdRefTypeDemande() {
+		return idRefTypeDemande;
 	}
 
-	public void setType(RefTypeAbsence type) {
-		this.type = type;
+	public void setIdRefTypeDemande(Integer idRefTypeDemande) {
+		this.idRefTypeDemande = idRefTypeDemande;
 	}
 
 	public boolean isCalendarDateDebut() {

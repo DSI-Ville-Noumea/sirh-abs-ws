@@ -1,5 +1,8 @@
 package nc.noumea.mairie.abs.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +11,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 
@@ -33,9 +38,9 @@ public class RefTypeAbsence {
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
 	private RefTypeSaisi typeSaisi;
 
-	@OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
-	private RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel;
+	@OneToMany(mappedBy = "type", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OrderBy("codeBaseHoraireAbsence")
+	private List<RefTypeSaisiCongeAnnuel> listeTypeSaisiCongeAnnuel = new ArrayList<RefTypeSaisiCongeAnnuel>();
 
 	public Integer getIdRefTypeAbsence() {
 		return idRefTypeAbsence;
@@ -69,12 +74,12 @@ public class RefTypeAbsence {
 		this.typeSaisi = typeSaisi;
 	}
 
-	public RefTypeSaisiCongeAnnuel getTypeSaisiCongeAnnuel() {
-		return typeSaisiCongeAnnuel;
+	public List<RefTypeSaisiCongeAnnuel> getListeTypeSaisiCongeAnnuel() {
+		return listeTypeSaisiCongeAnnuel;
 	}
 
-	public void setTypeSaisiCongeAnnuel(RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel) {
-		this.typeSaisiCongeAnnuel = typeSaisiCongeAnnuel;
+	public void setListeTypeSaisiCongeAnnuel(List<RefTypeSaisiCongeAnnuel> listeTypeSaisiCongeAnnuel) {
+		this.listeTypeSaisiCongeAnnuel = listeTypeSaisiCongeAnnuel;
 	}
 
 }

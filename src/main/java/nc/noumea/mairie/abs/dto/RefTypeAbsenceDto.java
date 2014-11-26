@@ -1,7 +1,11 @@
 package nc.noumea.mairie.abs.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 
 public class RefTypeAbsenceDto {
 
@@ -9,6 +13,7 @@ public class RefTypeAbsenceDto {
 	private String libelle;
 	private RefGroupeAbsenceDto groupeAbsence;
 	private RefTypeSaisiDto typeSaisiDto;
+	private List<RefTypeSaisiCongeAnnuelDto> listeTypeSaisiCongeAnnuelDto;
 
 	public RefTypeAbsenceDto() {
 	}
@@ -22,7 +27,8 @@ public class RefTypeAbsenceDto {
 		}
 	}
 
-	public RefTypeAbsenceDto(RefTypeAbsence type, RefTypeSaisi typeSaisi) {
+	public RefTypeAbsenceDto(RefTypeAbsence type, RefTypeSaisi typeSaisi,
+			List<RefTypeSaisiCongeAnnuel> listeTypeSaisieCongeAnnuel) {
 		super();
 		this.idRefTypeAbsence = type.getIdRefTypeAbsence();
 		this.libelle = type.getLabel();
@@ -31,6 +37,12 @@ public class RefTypeAbsenceDto {
 		}
 		if (null != typeSaisi) {
 			this.typeSaisiDto = new RefTypeSaisiDto(typeSaisi);
+		}
+		if (null != listeTypeSaisieCongeAnnuel) {
+			this.listeTypeSaisiCongeAnnuelDto = new ArrayList<RefTypeSaisiCongeAnnuelDto>();
+			for (RefTypeSaisiCongeAnnuel t : listeTypeSaisieCongeAnnuel) {
+				this.listeTypeSaisiCongeAnnuelDto.add(new RefTypeSaisiCongeAnnuelDto(t));
+			}
 		}
 	}
 
@@ -64,6 +76,14 @@ public class RefTypeAbsenceDto {
 
 	public void setGroupeAbsence(RefGroupeAbsenceDto groupeAbsence) {
 		this.groupeAbsence = groupeAbsence;
+	}
+
+	public List<RefTypeSaisiCongeAnnuelDto> getListeTypeSaisiCongeAnnuelDto() {
+		return listeTypeSaisiCongeAnnuelDto;
+	}
+
+	public void setListeTypeSaisiCongeAnnuelDto(List<RefTypeSaisiCongeAnnuelDto> listeTypeSaisiCongeAnnuelDto) {
+		this.listeTypeSaisiCongeAnnuelDto = listeTypeSaisiCongeAnnuelDto;
 	}
 
 }

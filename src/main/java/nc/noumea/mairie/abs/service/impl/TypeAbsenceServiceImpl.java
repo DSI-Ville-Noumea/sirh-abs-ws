@@ -54,7 +54,8 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
 		if (listTypeAbsence != null) {
 			for (RefTypeAbsence typeAbsence : listTypeAbsence) {
-				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(typeAbsence, typeAbsence.getTypeSaisi());
+				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(typeAbsence, typeAbsence.getTypeSaisi(),
+						typeAbsence.getListeTypeSaisiCongeAnnuel());
 				res.add(dto);
 			}
 		}

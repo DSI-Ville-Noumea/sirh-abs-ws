@@ -35,7 +35,8 @@ public class TypeAbsenceRepository implements ITypeAbsenceRepository {
 	public List<RefTypeAbsence> getListeTypAbsence(Integer idRefGroupeAbsence) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select a from RefTypeAbsence a ");
-		sb.append("inner join a.typeSaisi d ");
+		sb.append("left outer join a.typeSaisi d ");
+		sb.append("left outer join a.listeTypeSaisiCongeAnnuel da ");
 		sb.append("inner join a.groupe g ");
 		sb.append("where 1=1 ");
 
