@@ -28,10 +28,14 @@ public class RefTypeAbsence {
 	@OneToOne(fetch = FetchType.EAGER, optional = true)
 	@JoinColumn(name = "ID_REF_GROUPE_ABSENCE")
 	private RefGroupeAbsence groupe;
-	
+
 	@OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
 	private RefTypeSaisi typeSaisi;
+
+	@OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
+	private RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel;
 
 	public Integer getIdRefTypeAbsence() {
 		return idRefTypeAbsence;
@@ -64,5 +68,13 @@ public class RefTypeAbsence {
 	public void setTypeSaisi(RefTypeSaisi typeSaisi) {
 		this.typeSaisi = typeSaisi;
 	}
-	
+
+	public RefTypeSaisiCongeAnnuel getTypeSaisiCongeAnnuel() {
+		return typeSaisiCongeAnnuel;
+	}
+
+	public void setTypeSaisiCongeAnnuel(RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel) {
+		this.typeSaisiCongeAnnuel = typeSaisiCongeAnnuel;
+	}
+
 }
