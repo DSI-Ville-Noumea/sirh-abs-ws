@@ -30,4 +30,6 @@ public interface ICounterService {
 
 	List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent,
 			Date dateDebut, Date dateFin);
+
+	ReturnMessageDto intitCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne);
 }

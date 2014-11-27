@@ -52,11 +52,13 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected static final String DUREE_A_SAISIR = "La durée à ajouter ou retrancher n'est pas saisie.";
 	protected static final String ERREUR_DUREE_SAISIE = "Un seul des champs Durée à ajouter ou Durée à retrancher doit être saisi.";
 	protected static final String COMPTEUR_INEXISTANT = "Le compteur n'existe pas.";
+	protected static final String COMPTEUR_EXISTANT = "Le compteur existe déjà.";
 	protected static final String TYPE_COMPTEUR_INEXISTANT = "Le type de compteur n'existe pas.";
 	protected static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
 	protected static final String OS_INACTIVE = "L'organisation syndicale n'est pas active.";
 
 	protected static final String RESET_COMPTEUR_ANNEE_PRECEDENTE = "Remise à 0 du compteur Année précédente";
+	protected static final String INITIATE_COMPTEUR = "Initialisation du compteur";
 	protected static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur Année en cours";
 
 	protected static final String ERROR_TECHNIQUE = "Erreur technique : ICounterService défaut d'implémentation";
@@ -207,6 +209,11 @@ public abstract class AbstractCounterService implements ICounterService {
 	
 	@Override
 	public List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin) {
+		return null;
+	}
+
+	@Override
+	public ReturnMessageDto intitCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne) {
 		return null;
 	}
 
