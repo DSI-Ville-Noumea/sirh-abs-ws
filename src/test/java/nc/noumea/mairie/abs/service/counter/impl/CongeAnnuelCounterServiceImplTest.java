@@ -2,12 +2,10 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
-import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -19,8 +17,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTest {
 
 	private CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
-
-	private SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
 
 	@Test
 	public void testMethodeParenteHeritage() {
