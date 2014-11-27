@@ -113,6 +113,7 @@ public class TypeAbsenceServiceImplTest {
 		assertEquals(result.getErrors().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_INEXISTANT);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setTypAbsence_TypeAbsenceModifie() {
 
@@ -142,10 +143,12 @@ public class TypeAbsenceServiceImplTest {
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
-				return args[1];
+				return args[2];
 			}
-		}).when(absDataConsistencyRules)
-				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(ReturnMessageDto.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(List.class),
+						Mockito.isA(ReturnMessageDto.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(
@@ -240,6 +243,7 @@ public class TypeAbsenceServiceImplTest {
 		assertEquals(result.getErrors().get(0), TypeAbsenceServiceImpl.UNITE_PERIODE_QUOTA_INEXISTANT);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setTypAbsence_typeAbsenceModifie() {
 
@@ -280,10 +284,12 @@ public class TypeAbsenceServiceImplTest {
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
-				return args[1];
+				return args[2];
 			}
-		}).when(absDataConsistencyRules)
-				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(ReturnMessageDto.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(List.class),
+						Mockito.isA(ReturnMessageDto.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(
@@ -301,6 +307,7 @@ public class TypeAbsenceServiceImplTest {
 		assertEquals(result.getInfos().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_MODIFIE);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void setTypAbsence_typeAbsenceCree() {
 
@@ -340,10 +347,12 @@ public class TypeAbsenceServiceImplTest {
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
-				return args[1];
+				return args[2];
 			}
-		}).when(absDataConsistencyRules)
-				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(ReturnMessageDto.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(List.class),
+						Mockito.isA(ReturnMessageDto.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(

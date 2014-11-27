@@ -3118,7 +3118,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 
-		srm = impl.checkSaisiNewTypeAbsence(typeSaisi, srm);
+		srm = impl.checkSaisiNewTypeAbsence(typeSaisi,null, srm);
 
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.SAISIE_TYPE_ABSENCE_NON_AUTORISEE);
 	}

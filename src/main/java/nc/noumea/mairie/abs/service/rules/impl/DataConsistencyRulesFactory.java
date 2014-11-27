@@ -55,6 +55,10 @@ public class DataConsistencyRulesFactory {
 	@Qualifier("AbsCongesExcepDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absCongesExcepDataConsistencyRulesImpl;
 
+	@Autowired
+	@Qualifier("AbsCongesAnnuelsDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl;
+
 	// Méthode permettant de récupérer les Factory
 	public IAbsenceDataConsistencyRules getFactory(Integer groupe, Integer type) {
 
@@ -67,6 +71,8 @@ public class DataConsistencyRulesFactory {
 				return getFactoryAsa(type);
 			case CONGES_EXCEP:
 				return absCongesExcepDataConsistencyRulesImpl;
+			case CONGES_ANNUELS:
+				return absCongesAnnuelsDataConsistencyRulesImpl;
 			default:
 				break;
 		}

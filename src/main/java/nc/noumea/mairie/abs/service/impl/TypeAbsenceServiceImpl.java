@@ -6,8 +6,10 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
@@ -158,11 +160,33 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			typeAbsence.setTypeSaisi(typeSaisi);
 		}
 
+		if (null != typeAbsenceDto.getListeTypeSaisiCongeAnnuelDto()) {
+			for (RefTypeSaisiCongeAnnuel typeSaisiBase : typeAbsence.getListeTypeSaisiCongeAnnuel()) {
+				for (RefTypeSaisiCongeAnnuelDto typeSaisiDto : typeAbsenceDto.getListeTypeSaisiCongeAnnuelDto()) {
+					if (typeSaisiBase.getIdRefTypeSaisiCongeAnnuel() == typeSaisiDto.getIdRefTypeSaisiCongeAnnuel()) {
+						typeSaisiBase.setCalendarDateDebut(typeSaisiDto.isCalendarDateDebut());
+						typeSaisiBase.setCalendarDateFin(typeSaisiDto.isCalendarDateFin());
+						typeSaisiBase.setCalendarDateReprise(typeSaisiDto.isCalendarDateReprise());
+						typeSaisiBase.setChkDateDebut(typeSaisiDto.isChkDateDebut());
+						typeSaisiBase.setChkDateFin(typeSaisiDto.isChkDateFin());
+						typeSaisiBase.setDescription(typeSaisiDto.getDescription());
+						typeSaisiBase.setCodeBaseHoraireAbsence(typeSaisiDto.getCodeBaseHoraireAbsence());
+						typeSaisiBase.setQuotaMultiple(typeSaisiDto.getQuotaMultiple());
+						typeSaisiBase.setDecompteSamedi(typeSaisiDto.isDecompteSamedi());
+						typeSaisiBase.setConsecutif(typeSaisiDto.isConsecutif());
+						typeSaisiBase.setType(typeAbsence);
+
+					}
+				}
+			}
+		}
+
 		// on check la saisie
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 				typeAbsence.getGroupe().getIdRefGroupeAbsence(), typeAbsence.getIdRefTypeAbsence());
 
-		result = absenceDataConsistencyRulesImpl.checkSaisiNewTypeAbsence(typeAbsence.getTypeSaisi(), result);
+		result = absenceDataConsistencyRulesImpl.checkSaisiNewTypeAbsence(typeAbsence.getTypeSaisi(),
+				typeAbsence.getListeTypeSaisiCongeAnnuel(), result);
 
 		if (!result.getErrors().isEmpty()) {
 			return result;
