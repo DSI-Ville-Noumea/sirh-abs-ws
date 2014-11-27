@@ -9,8 +9,8 @@ import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 
 public class HistoriqueSoldeDto {
 
-	@JsonSerialize(using=JsonDateSerializer.class)
-	@JsonDeserialize(using=JsonDateDeserializer.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateModifcation;
 	private MotifCompteurDto motif;
 	private Integer idAgentModification;
@@ -19,7 +19,8 @@ public class HistoriqueSoldeDto {
 	public HistoriqueSoldeDto(AgentHistoAlimManuelle histo) {
 		super();
 		this.dateModifcation = histo.getDateModification();
-		this.motif = new MotifCompteurDto(histo.getMotifCompteur());
+		if (histo.getMotifCompteur() != null)
+			this.motif = new MotifCompteurDto(histo.getMotifCompteur());
 		this.idAgentModification = histo.getIdAgent();
 		this.textModification = histo.getText();
 	}

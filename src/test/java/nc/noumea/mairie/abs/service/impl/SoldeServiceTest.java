@@ -812,6 +812,44 @@ public class SoldeServiceTest {
 	}
 
 	@Test
+	public void getHistoriqueSoldeAgent_return1Liste_CongeAnnuel() {
+		// Given
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(1);
+		AgentCongeAnnuelCount compteurAgent = new AgentCongeAnnuelCount();
+		compteurAgent.setIdAgentCount(1);
+		MotifCompteur motifCompteur = new MotifCompteur();
+		motifCompteur.setLibelle("lib motif");
+		motifCompteur.setRefTypeAbsence(type);
+		AgentHistoAlimManuelle e = new AgentHistoAlimManuelle();
+		e.setIdAgent(9005138);
+		e.setIdAgentConcerne(9005138);
+		e.setType(type);
+		e.setText("texte test");
+		e.setMotifCompteur(motifCompteur);
+		e.setCompteurAgent(compteurAgent);
+		List<AgentHistoAlimManuelle> list = new ArrayList<AgentHistoAlimManuelle>();
+		list.add(e);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getListHisto(9005138, compteurAgent)).thenReturn(list);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, 9005138)).thenReturn(compteurAgent);
+
+		SoldeService service = new SoldeService();
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 1, new DateTime(2014, 1, 24, 0,
+				0, 0).toDate(), null);
+
+		assertEquals(1, listResult.size());
+		assertEquals(e.getText(), listResult.get(0).getTextModification());
+		assertEquals(e.getDateModification(), listResult.get(0).getDateModifcation());
+		assertEquals(e.getIdAgent(), listResult.get(0).getIdAgentModification());
+		assertEquals(motifCompteur.getLibelle(), listResult.get(0).getMotif().getLibelle());
+	}
+
+	@Test
 	public void getHistoriqueSoldeAgent_return1Liste_Recup() {
 		// Given
 

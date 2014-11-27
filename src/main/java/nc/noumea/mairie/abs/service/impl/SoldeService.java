@@ -177,7 +177,10 @@ public class SoldeService implements ISoldeService {
 		// on recupere le compteur correspondant
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence)) {
 			case CONGE_ANNUEL:
-				// TODO
+				AgentCongeAnnuelCount countCongeAnnuel = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class,
+						idAgent);
+				if (countCongeAnnuel != null)
+					listAgentCount.add(countCongeAnnuel);
 				break;
 			case REPOS_COMP:
 				AgentReposCompCount countReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
