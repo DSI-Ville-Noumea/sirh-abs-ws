@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
 
 	@Override
-	public ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi2,
+	public ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi,
 			List<RefTypeSaisiCongeAnnuel> listeTypeSaisiCongeAnnuel, ReturnMessageDto srm) {
 		for (RefTypeSaisiCongeAnnuel type : listeTypeSaisiCongeAnnuel) {
 			if (!type.isCalendarDateDebut())
