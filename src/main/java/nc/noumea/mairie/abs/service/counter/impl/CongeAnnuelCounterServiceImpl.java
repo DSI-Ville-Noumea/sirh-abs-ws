@@ -37,8 +37,8 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			AgentCongeAnnuelCount arc = new AgentCongeAnnuelCount();
 			arc.setIdAgent(idAgentConcerne);
 
-			arc.setTotalJours(0);
-			arc.setTotalJoursAnneeN1(0);
+			arc.setTotalJours(0.0);
+			arc.setTotalJoursAnneeN1(0.0);
 			arc.setLastModification(helperService.getCurrentDate());
 
 			AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();

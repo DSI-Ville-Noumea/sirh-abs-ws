@@ -14,26 +14,26 @@ import javax.validation.constraints.NotNull;
 public class AgentCongeAnnuelCount extends AgentCount {
 
 	@NotNull
-	@Column(name = "TOTAL_JOURS")
-	private int totalJours;
+	@Column(name = "TOTAL_JOURS", columnDefinition = "numeric")
+	private Double totalJours;
 
 	@NotNull
-	@Column(name = "TOTAL_JOURS_ANNEE_N1")
-	private int totalJoursAnneeN1;
+	@Column(name = "TOTAL_JOURS_ANNEE_N1", columnDefinition = "numeric")
+	private Double totalJoursAnneeN1;
 
-	public int getTotalJours() {
+	public Double getTotalJours() {
 		return totalJours;
 	}
 
-	public void setTotalJours(int totalJours) {
+	public void setTotalJours(Double totalJours) {
 		this.totalJours = totalJours;
 	}
 
-	public int getTotalJoursAnneeN1() {
+	public Double getTotalJoursAnneeN1() {
 		return totalJoursAnneeN1;
 	}
 
-	public void setTotalJoursAnneeN1(int totalJoursAnneeN1) {
+	public void setTotalJoursAnneeN1(Double totalJoursAnneeN1) {
 		this.totalJoursAnneeN1 = totalJoursAnneeN1;
 	}
 

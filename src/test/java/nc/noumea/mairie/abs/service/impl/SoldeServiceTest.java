@@ -1,6 +1,9 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
@@ -24,10 +28,8 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
-import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.counter.impl.CongesExcepCounterServiceImpl;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
-import nc.noumea.mairie.domain.SpSold;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -59,9 +61,6 @@ public class SoldeServiceTest {
 				cr.getAgentCounterByDate(AgentAsaA55Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(null);
 
-		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(null);
-
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -74,13 +73,13 @@ public class SoldeServiceTest {
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
-		
+
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
-		
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
+				listeSoldeSpecifiqueDto);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
@@ -152,10 +151,10 @@ public class SoldeServiceTest {
 		listeArc55.add(arc55);
 		listeArc55.add(arc55bis);
 
-		SpSold solde = new SpSold();
-		solde.setNomatr(8765);
-		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
-		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+		AgentCongeAnnuelCount solde = new AgentCongeAnnuelCount();
+		solde.setIdAgent(idAgent);
+		solde.setTotalJours(cotaSoldeAnnee);
+		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
@@ -163,10 +162,8 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, dateDeb)).thenReturn(arccc);
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, dateDeb)).thenReturn(arc54);
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateDeb)).thenReturn(arc55);
+		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(solde);
 		Mockito.when(cr.getListAgentCounterByDate(9008765, dateDeb, dateFin)).thenReturn(listeArc55);
-
-		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -183,20 +180,20 @@ public class SoldeServiceTest {
 		SoldeSpecifiqueDto soldeSpecifiqueDto = new SoldeSpecifiqueDto();
 		soldeSpecifiqueDto.setLibelle("libelle 1");
 		soldeSpecifiqueDto.setSolde(10.0);
-		
+
 		SoldeSpecifiqueDto soldeSpecifiqueDto2 = new SoldeSpecifiqueDto();
 		soldeSpecifiqueDto2.setLibelle("libelle 2");
 		soldeSpecifiqueDto2.setSolde(20.0);
-		
+
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 		listeSoldeSpecifiqueDto.addAll(Arrays.asList(soldeSpecifiqueDto, soldeSpecifiqueDto2));
-		
+
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, dateDeb, dateFin)).thenReturn(listeSoldeSpecifiqueDto);
-		
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, dateDeb, dateFin)).thenReturn(
+				listeSoldeSpecifiqueDto);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		// When
@@ -266,10 +263,10 @@ public class SoldeServiceTest {
 		listeArc55.add(arcc55);
 		listeArc55.add(arc55bis);
 
-		SpSold solde = new SpSold();
-		solde.setNomatr(8765);
-		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
-		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+		AgentCongeAnnuelCount solde = new AgentCongeAnnuelCount();
+		solde.setIdAgent(idAgent);
+		solde.setTotalJours(cotaSoldeAnnee);
+		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
@@ -283,12 +280,10 @@ public class SoldeServiceTest {
 		Mockito.when(
 				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(arcc55);
+		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(solde);
 		Mockito.when(
 				cr.getListAgentCounterByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
 						12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
-
-		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -303,13 +298,13 @@ public class SoldeServiceTest {
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
-		
+
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
-		
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
+				listeSoldeSpecifiqueDto);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
@@ -355,20 +350,18 @@ public class SoldeServiceTest {
 		arcc.setTotalMinutes(12);
 		arcc.setTotalMinutesAnneeN1(10);
 
-		SpSold solde = new SpSold();
-		solde.setNomatr(8765);
-		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
-		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+		AgentCongeAnnuelCount solde = new AgentCongeAnnuelCount();
+		solde.setIdAgent(idAgent);
+		solde.setTotalJours(cotaSoldeAnnee);
+		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(solde);
 		Mockito.when(
 				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(null);
-
-		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -384,13 +377,13 @@ public class SoldeServiceTest {
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
-		
+
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
-		
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
+				listeSoldeSpecifiqueDto);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
@@ -431,20 +424,18 @@ public class SoldeServiceTest {
 		arcc.setTotalMinutes(12);
 		arcc.setTotalMinutesAnneeN1(10);
 
-		SpSold solde = new SpSold();
-		solde.setNomatr(8765);
-		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
-		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+		AgentCongeAnnuelCount solde = new AgentCongeAnnuelCount();
+		solde.setIdAgent(idAgent);
+		solde.setTotalJours(cotaSoldeAnnee);
+		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(solde);
 		Mockito.when(
 				cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(null);
-
-		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -458,15 +449,15 @@ public class SoldeServiceTest {
 			}
 		}).when(absDataConsistencyRules)
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
-		
+
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
-		
+
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
-		
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
+				listeSoldeSpecifiqueDto);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
@@ -507,20 +498,18 @@ public class SoldeServiceTest {
 		arcc.setTotalMinutes(12);
 		arcc.setTotalMinutesAnneeN1(10);
 
-		SpSold solde = new SpSold();
-		solde.setNomatr(8765);
-		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
-		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+		AgentCongeAnnuelCount solde = new AgentCongeAnnuelCount();
+		solde.setIdAgent(idAgent);
+		solde.setTotalJours(cotaSoldeAnnee);
+		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(solde);
 		Mockito.when(
 				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(null);
-
-		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -536,13 +525,13 @@ public class SoldeServiceTest {
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
-		
+
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
-		
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
+				listeSoldeSpecifiqueDto);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 
@@ -563,7 +552,7 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 		assertEquals(0, dto.getListeSoldeCongesExcep().size());
 	}
-	
+
 	private void prepareDataTest(SoldeService service, Integer idAgent) {
 		double cotaSoldeAnnee = 62.0;
 		double cotaSoldeAnneePrec = 25.5;
@@ -579,20 +568,18 @@ public class SoldeServiceTest {
 		arcc.setTotalMinutes(12);
 		arcc.setTotalMinutesAnneeN1(10);
 
-		SpSold solde = new SpSold();
-		solde.setNomatr(8765);
-		solde.setSoldeAnneeEnCours(cotaSoldeAnnee);
-		solde.setSoldeAnneePrec(cotaSoldeAnneePrec);
+		AgentCongeAnnuelCount solde = new AgentCongeAnnuelCount();
+		solde.setIdAgent(idAgent);
+		solde.setTotalJours(cotaSoldeAnnee);
+		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(solde);
 		Mockito.when(
 				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
 				.thenReturn(null);
-
-		ISirhRepository sirh = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirh.getSpsold(idAgent)).thenReturn(solde);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -608,25 +595,25 @@ public class SoldeServiceTest {
 				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
-		
+
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
-		
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
+				listeSoldeSpecifiqueDto);
+
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 	}
-	
+
 	@Test
 	public void getAgentSolde_AgentExists_WithTypeDemande() {
 
 		// Given
 		Integer idAgent = 9008765;
 		SoldeService service = new SoldeService();
-		
+
 		prepareDataTest(service, idAgent);
-		
+
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.RECUP.getValue());
 
@@ -644,7 +631,7 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 		assertEquals(0, dto.getListeSoldeCongesExcep().size());
 	}
-	
+
 	@Test
 	public void getAgentSolde_AgentExists_WithTypeDemandeReposComp() {
 
@@ -670,7 +657,7 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 		assertEquals(0, dto.getListeSoldeCongesExcep().size());
 	}
-	
+
 	@Test
 	public void getAgentSolde_AgentExists_WithTypeDemandeCongesAnnuels() {
 
@@ -696,7 +683,7 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 		assertEquals(0, dto.getListeSoldeCongesExcep().size());
 	}
-	
+
 	@Test
 	public void getAgentSolde_AgentExists_WithTypeDemandeAsa50() {
 
@@ -944,9 +931,9 @@ public class SoldeServiceTest {
 		assertEquals(e.getIdAgent(), listResult.get(0).getIdAgentModification());
 		assertEquals(motifCompteur.getLibelle(), listResult.get(0).getMotif().getLibelle());
 	}
-	
+
 	@Test
 	public void getAgentSolde_returnListeCongesExcep() {
-		
+
 	}
 }

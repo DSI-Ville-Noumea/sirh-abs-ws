@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.repository;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -8,7 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
-import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.SpadmnId;
 import nc.noumea.mairie.domain.Spcarr;
@@ -31,41 +29,6 @@ public class SirhRepositoryTest {
 
 	@PersistenceContext(unitName = "sirhPersistenceUnit")
 	private EntityManager sirhEntityManager;
-
-	@Test
-	@Transactional("sirhTransactionManager")
-	public void getSpsold_ReturnNull() {
-
-		// When
-		SpSold result = repository.getSpsold(9005138);
-
-		// Then
-		assertEquals(null, result);
-	}
-
-	@Test
-	@Transactional("sirhTransactionManager")
-	public void getSpsold_ReturnResult() {
-
-		SpSold solde = new SpSold();
-		solde.setNomatr(5138);
-		solde.setSoldeAnneeEnCours(72.0);
-		solde.setSoldeAnneePrec(12.5);
-		sirhEntityManager.persist(solde);
-
-		sirhEntityManager.flush();
-
-		// When
-		SpSold result = repository.getSpsold(9005138);
-
-		// Then
-		assertEquals("5138", result.getNomatr().toString());
-		assertEquals("72.0", result.getSoldeAnneeEnCours().toString());
-		assertEquals("12.5", result.getSoldeAnneePrec().toString());
-
-		sirhEntityManager.flush();
-		sirhEntityManager.clear();
-	}
 
 	@Test
 	@Transactional("sirhTransactionManager")
@@ -122,18 +85,18 @@ public class SirhRepositoryTest {
 	public void getAgentCurrentCarriere_returnResult() {
 
 		SpcarrId id = new SpcarrId();
-			id.setDatdeb(20130901);
-			id.setNomatr(5138);
+		id.setDatdeb(20130901);
+		id.setNomatr(5138);
 		Spcarr adm = new Spcarr();
-			adm.setId(id);
-			adm.setCdcate(1);
-			adm.setDateFin(20130930);
+		adm.setId(id);
+		adm.setCdcate(1);
+		adm.setDateFin(20130930);
 
 		sirhEntityManager.persist(adm);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
-			agent.setIdAgent(9005138);
-			agent.setNomatr(5138);
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
 
 		Spcarr result = repository.getAgentCurrentCarriere(agent.getNomatr(), new LocalDate(2013, 9, 22).toDate());
 
@@ -148,20 +111,20 @@ public class SirhRepositoryTest {
 	public void getAgentCurrentCarriere_returnNoResult() {
 
 		SpcarrId id = new SpcarrId();
-			id.setDatdeb(20130901);
-			id.setNomatr(5138);
+		id.setDatdeb(20130901);
+		id.setNomatr(5138);
 		Spcarr adm = new Spcarr();
-			adm.setId(id);
-			adm.setCdcate(1);
-			adm.setDateFin(20130930);
+		adm.setId(id);
+		adm.setCdcate(1);
+		adm.setDateFin(20130930);
 		sirhEntityManager.persist(adm);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
-			agent.setIdAgent(9005138);
-			agent.setNomatr(5138);
-			agent.setNomPatronymique("patro");
-			agent.setPrenom("prenom");
-			agent.setPrenomUsage("prenom");
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
 
 		Spcarr result = repository.getAgentCurrentCarriere(agent.getIdAgent(), new LocalDate(2013, 10, 22).toDate());
 

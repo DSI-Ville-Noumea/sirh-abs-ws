@@ -7,6 +7,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
@@ -18,11 +19,9 @@ import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeMonthDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
-import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
-import nc.noumea.mairie.domain.SpSold;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,19 +36,16 @@ public class SoldeService implements ISoldeService {
 	private Logger logger = LoggerFactory.getLogger(SoldeService.class);
 
 	@Autowired
-	private ISirhRepository sirhRepository;
-
-	@Autowired
 	private ICounterRepository counterRepository;
 
 	@Autowired
 	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
 	private AbsReposCompensateurDataConsistencyRulesImpl absReposCompDataConsistencyRules;
-	
+
 	@Autowired
 	@Qualifier("CongesExcepCounterServiceImpl")
 	private ICounterService congesExcepCounterServiceImpl;
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public SoldeDto getAgentSolde(Integer idAgent, Date dateDeb, Date dateFin, Integer typeDemande) {
@@ -59,7 +55,7 @@ public class SoldeService implements ISoldeService {
 		SoldeDto dto = new SoldeDto();
 
 		// on traite les congés
-		if(null == typeDemande || 0 == typeDemande) {
+		if (null == typeDemande || 0 == typeDemande) {
 			getSoldeConges(idAgent, dto);
 			getSoldeReposComp(idAgent, dto, msg);
 			getSoldeRecup(idAgent, dto);
@@ -67,7 +63,7 @@ public class SoldeService implements ISoldeService {
 			getSoldeAsaA54(idAgent, dto, dateDeb);
 			getSoldeAsaA55(idAgent, dto, dateDeb, dateFin);
 			getSoldeCongesExcep(idAgent, dto, dateDeb, dateFin);
-		}else{
+		} else {
 			switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(typeDemande)) {
 				case CONGE_ANNUEL:
 					getSoldeConges(idAgent, dto);
@@ -94,24 +90,25 @@ public class SoldeService implements ISoldeService {
 					break;
 			}
 		}
-		
+
 		return dto;
 	}
-	
+
 	private void getSoldeConges(Integer idAgent, SoldeDto dto) {
-		SpSold soldeConge = sirhRepository.getSpsold(idAgent);
+		// on traite les congés annuels
+		AgentCongeAnnuelCount soldeConge = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
 		dto.setAfficheSoldeConge(true);
-		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getSoldeAnneeEnCours());
-		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getSoldeAnneePrec());
+		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
+		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
 	}
-	
+
 	private void getSoldeRecup(Integer idAgent, SoldeDto dto) {
 		// on traite les recup
 		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, idAgent);
 		dto.setAfficheSoldeRecup(true);
 		dto.setSoldeRecup((double) (soldeRecup == null ? 0 : soldeRecup.getTotalMinutes()));
 	}
-	
+
 	private void getSoldeReposComp(Integer idAgent, SoldeDto dto, ReturnMessageDto msg) {
 		// on traite les respo comp
 		AgentReposCompCount soldeReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent);
@@ -120,7 +117,7 @@ public class SoldeService implements ISoldeService {
 		dto.setSoldeReposCompAnnee((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutes()));
 		dto.setSoldeReposCompAnneePrec((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutesAnneeN1()));
 	}
-	
+
 	private void getSoldeAsaA48(Integer idAgent, SoldeDto dto, Date dateDeb) {
 		// on traite les ASA A48 pour la date en parametre
 		AgentAsaA48Count soldeAsaA48 = counterRepository
@@ -128,7 +125,7 @@ public class SoldeService implements ISoldeService {
 		dto.setAfficheSoldeAsaA48(soldeAsaA48 == null ? false : true);
 		dto.setSoldeAsaA48(soldeAsaA48 == null ? 0 : soldeAsaA48.getTotalJours());
 	}
-	
+
 	private void getSoldeAsaA54(Integer idAgent, SoldeDto dto, Date dateDeb) {
 		// on traite les ASA A54 pour la date en parametre
 		AgentAsaA54Count soldeAsaA54 = counterRepository
@@ -136,7 +133,7 @@ public class SoldeService implements ISoldeService {
 		dto.setAfficheSoldeAsaA54(soldeAsaA54 == null ? false : true);
 		dto.setSoldeAsaA54(soldeAsaA54 == null ? 0 : soldeAsaA54.getTotalJours());
 	}
-	
+
 	private void getSoldeAsaA55(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin) {
 		// on traite les ASA A55 pour la date en parametre
 		// on affiche le solde courant
@@ -157,17 +154,17 @@ public class SoldeService implements ISoldeService {
 		}
 		dto.setListeSoldeAsaA55(listDto);
 	}
-	
+
 	private void getSoldeCongesExcep(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin) {
 		// Conges Exceptionnels
-		List<SoldeSpecifiqueDto> listeSoldeCongesExcep = congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, dateDeb, dateFin);
-		if(null != listeSoldeCongesExcep
-				&& !listeSoldeCongesExcep.isEmpty()) {
+		List<SoldeSpecifiqueDto> listeSoldeCongesExcep = congesExcepCounterServiceImpl.getListAgentCounterByDate(
+				idAgent, dateDeb, dateFin);
+		if (null != listeSoldeCongesExcep && !listeSoldeCongesExcep.isEmpty()) {
 			dto.setAfficheSoldeCongesExcep(true);
 			dto.setListeSoldeCongesExcep(listeSoldeCongesExcep);
 		}
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<HistoriqueSoldeDto> getHistoriqueSoldeAgent(Integer idAgent, Integer codeRefTypeAbsence, Date dateDeb,
