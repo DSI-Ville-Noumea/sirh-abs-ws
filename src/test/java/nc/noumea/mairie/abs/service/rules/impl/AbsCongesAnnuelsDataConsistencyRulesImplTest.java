@@ -1,15 +1,8 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
-import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.service.impl.HelperService;
 
 import org.junit.Test;
 import org.springframework.mock.staticmock.MockStaticEntityMethods;
@@ -27,20 +20,20 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 	@Test
 	public void checkSaisiNewTypeAbsence() {
-		List<RefTypeSaisiCongeAnnuel> typeSaisi = new ArrayList<>();
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = impl.checkSaisiNewTypeAbsence(null, typeSaisi, result);
 
-		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "La saisie de nouveau type d'absence pour ce groupe d'absence n'est pas autorisée.");
 	}
 
 	@Test
 	public void checkSaisiNewTypeAbsence_ErreurDateDebut() {
-		List<RefTypeSaisiCongeAnnuel> typeSaisi = new ArrayList<>();
-		RefTypeSaisiCongeAnnuel type = new RefTypeSaisiCongeAnnuel();
-		type.setCalendarDateDebut(false);
-		typeSaisi.add(type);
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
+		typeSaisi.setCalendarDateDebut(false);
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = impl.checkSaisiNewTypeAbsence(null, typeSaisi, result);
@@ -53,12 +46,11 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 	@Test
 	public void checkSaisiNewTypeAbsence_ErreurDateFin_Reprise() {
-		List<RefTypeSaisiCongeAnnuel> typeSaisi = new ArrayList<>();
-		RefTypeSaisiCongeAnnuel type = new RefTypeSaisiCongeAnnuel();
-		type.setCalendarDateDebut(true);
-		type.setCalendarDateFin(true);
-		type.setCalendarDateReprise(true);
-		typeSaisi.add(type);
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
+		typeSaisi.setCalendarDateDebut(true);
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setCalendarDateReprise(true);
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = impl.checkSaisiNewTypeAbsence(null, typeSaisi, result);
@@ -70,12 +62,11 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 	@Test
 	public void checkSaisiNewTypeAbsence_ErreurDateFin_Reprise_Bis() {
-		List<RefTypeSaisiCongeAnnuel> typeSaisi = new ArrayList<>();
-		RefTypeSaisiCongeAnnuel type = new RefTypeSaisiCongeAnnuel();
-		type.setCalendarDateDebut(true);
-		type.setCalendarDateFin(false);
-		type.setCalendarDateReprise(false);
-		typeSaisi.add(type);
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
+		typeSaisi.setCalendarDateDebut(true);
+		typeSaisi.setCalendarDateFin(false);
+		typeSaisi.setCalendarDateReprise(false);
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = impl.checkSaisiNewTypeAbsence(null, typeSaisi, result);
@@ -87,14 +78,13 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 	@Test
 	public void checkSaisiNewTypeAbsence_ErreurDecompteSamed_Consecutif() {
-		List<RefTypeSaisiCongeAnnuel> typeSaisi = new ArrayList<>();
-		RefTypeSaisiCongeAnnuel type = new RefTypeSaisiCongeAnnuel();
-		type.setCalendarDateDebut(true);
-		type.setCalendarDateFin(true);
-		type.setCalendarDateReprise(false);
-		type.setDecompteSamedi(true);
-		type.setConsecutif(true);
-		typeSaisi.add(type);
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
+		typeSaisi.setCalendarDateDebut(true);
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setCalendarDateReprise(false);
+		typeSaisi.setDecompteSamedi(true);
+		typeSaisi.setConsecutif(true);
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = impl.checkSaisiNewTypeAbsence(null, typeSaisi, result);
@@ -105,14 +95,13 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 	@Test
 	public void checkSaisiNewTypeAbsence_ErreurDecompteSamed_Consecutif_Bis() {
-		List<RefTypeSaisiCongeAnnuel> typeSaisi = new ArrayList<>();
-		RefTypeSaisiCongeAnnuel type = new RefTypeSaisiCongeAnnuel();
-		type.setCalendarDateDebut(true);
-		type.setCalendarDateFin(true);
-		type.setCalendarDateReprise(false);
-		type.setDecompteSamedi(false);
-		type.setConsecutif(false);
-		typeSaisi.add(type);
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
+		typeSaisi.setCalendarDateDebut(true);
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setCalendarDateReprise(false);
+		typeSaisi.setDecompteSamedi(false);
+		typeSaisi.setConsecutif(false);
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = impl.checkSaisiNewTypeAbsence(null, typeSaisi, result);
@@ -123,14 +112,13 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 	@Test
 	public void checkSaisiNewTypeAbsence_ok() {
-		List<RefTypeSaisiCongeAnnuel> typeSaisi = new ArrayList<>();
-		RefTypeSaisiCongeAnnuel type = new RefTypeSaisiCongeAnnuel();
-		type.setCalendarDateDebut(true);
-		type.setCalendarDateFin(true);
-		type.setCalendarDateReprise(false);
-		type.setDecompteSamedi(false);
-		type.setConsecutif(true);
-		typeSaisi.add(type);
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
+		typeSaisi.setCalendarDateDebut(true);
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setCalendarDateReprise(false);
+		typeSaisi.setDecompteSamedi(false);
+		typeSaisi.setConsecutif(true);
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = impl.checkSaisiNewTypeAbsence(null, typeSaisi, result);

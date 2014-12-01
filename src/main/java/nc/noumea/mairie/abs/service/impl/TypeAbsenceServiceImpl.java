@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
@@ -56,8 +57,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
 		if (listTypeAbsence != null) {
 			for (RefTypeAbsence typeAbsence : listTypeAbsence) {
-				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(typeAbsence, typeAbsence.getTypeSaisi(),
-						typeAbsence.getListeTypeSaisiCongeAnnuel());
+				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(typeAbsence, typeAbsence.getTypeSaisi(), null);
 				res.add(dto);
 			}
 		}
@@ -159,26 +159,22 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			}
 			typeAbsence.setTypeSaisi(typeSaisi);
 		}
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = null;
+		if (null != typeAbsenceDto.getTypeSaisiCongeAnnuelDto()) {
+			typeSaisiCongeAnnuel = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, typeAbsenceDto
+					.getTypeSaisiCongeAnnuelDto().getIdRefTypeSaisiCongeAnnuel());
+			RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = typeAbsenceDto.getTypeSaisiCongeAnnuelDto();
+			typeSaisiCongeAnnuel.setCalendarDateDebut(typeSaisiCongeAnnuelDto.isCalendarDateDebut());
+			typeSaisiCongeAnnuel.setCalendarDateFin(typeSaisiCongeAnnuelDto.isCalendarDateFin());
+			typeSaisiCongeAnnuel.setCalendarDateReprise(typeSaisiCongeAnnuelDto.isCalendarDateReprise());
+			typeSaisiCongeAnnuel.setChkDateDebut(typeSaisiCongeAnnuelDto.isChkDateDebut());
+			typeSaisiCongeAnnuel.setChkDateFin(typeSaisiCongeAnnuelDto.isChkDateFin());
+			typeSaisiCongeAnnuel.setDescription(typeSaisiCongeAnnuelDto.getDescription());
+			typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence(typeSaisiCongeAnnuelDto.getCodeBaseHoraireAbsence());
+			typeSaisiCongeAnnuel.setQuotaMultiple(typeSaisiCongeAnnuelDto.getQuotaMultiple());
+			typeSaisiCongeAnnuel.setDecompteSamedi(typeSaisiCongeAnnuelDto.isDecompteSamedi());
+			typeSaisiCongeAnnuel.setConsecutif(typeSaisiCongeAnnuelDto.isConsecutif());
 
-		if (null != typeAbsenceDto.getListeTypeSaisiCongeAnnuelDto()) {
-			for (RefTypeSaisiCongeAnnuel typeSaisiBase : typeAbsence.getListeTypeSaisiCongeAnnuel()) {
-				for (RefTypeSaisiCongeAnnuelDto typeSaisiDto : typeAbsenceDto.getListeTypeSaisiCongeAnnuelDto()) {
-					if (typeSaisiBase.getIdRefTypeSaisiCongeAnnuel() == typeSaisiDto.getIdRefTypeSaisiCongeAnnuel()) {
-						typeSaisiBase.setCalendarDateDebut(typeSaisiDto.isCalendarDateDebut());
-						typeSaisiBase.setCalendarDateFin(typeSaisiDto.isCalendarDateFin());
-						typeSaisiBase.setCalendarDateReprise(typeSaisiDto.isCalendarDateReprise());
-						typeSaisiBase.setChkDateDebut(typeSaisiDto.isChkDateDebut());
-						typeSaisiBase.setChkDateFin(typeSaisiDto.isChkDateFin());
-						typeSaisiBase.setDescription(typeSaisiDto.getDescription());
-						typeSaisiBase.setCodeBaseHoraireAbsence(typeSaisiDto.getCodeBaseHoraireAbsence());
-						typeSaisiBase.setQuotaMultiple(typeSaisiDto.getQuotaMultiple());
-						typeSaisiBase.setDecompteSamedi(typeSaisiDto.isDecompteSamedi());
-						typeSaisiBase.setConsecutif(typeSaisiDto.isConsecutif());
-						typeSaisiBase.setType(typeAbsence);
-
-					}
-				}
-			}
 		}
 
 		// on check la saisie
@@ -186,7 +182,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 				typeAbsence.getGroupe().getIdRefGroupeAbsence(), typeAbsence.getIdRefTypeAbsence());
 
 		result = absenceDataConsistencyRulesImpl.checkSaisiNewTypeAbsence(typeAbsence.getTypeSaisi(),
-				typeAbsence.getListeTypeSaisiCongeAnnuel(), result);
+				typeSaisiCongeAnnuel, result);
 
 		if (!result.getErrors().isEmpty()) {
 			return result;
@@ -237,6 +233,23 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			logger.debug(TYPE_ABSENCE_CREE);
 			result.getInfos().add(TYPE_ABSENCE_CREE);
 		}
+	}
+
+	@Override
+	public List<RefTypeAbsenceDto> getListeTypAbsenceCongeAnnuel() {
+		RefTypeAbsence typeAbsence = typeAbsenceRepository.getEntity(RefTypeAbsence.class,
+				RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+
+		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
+		for (RefTypeSaisiCongeAnnuel typeCong : typeAbsence.getListeTypeSaisiCongeAnnuel()) {
+			RefTypeAbsenceDto dtoType = new RefTypeAbsenceDto(typeAbsence, null, null);
+			RefTypeSaisiCongeAnnuelDto dto = new RefTypeSaisiCongeAnnuelDto(typeCong);
+			dtoType.setTypeSaisiCongeAnnuelDto(dto);
+			if (!res.contains(dto))
+				res.add(dtoType);
+		}
+
+		return res;
 	}
 
 }

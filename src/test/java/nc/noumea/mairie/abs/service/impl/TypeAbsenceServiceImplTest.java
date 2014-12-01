@@ -8,6 +8,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
@@ -147,7 +148,7 @@ public class TypeAbsenceServiceImplTest {
 			}
 		})
 				.when(absDataConsistencyRules)
-				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(List.class),
+				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(RefTypeSaisiCongeAnnuel.class),
 						Mockito.isA(ReturnMessageDto.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
@@ -288,7 +289,7 @@ public class TypeAbsenceServiceImplTest {
 			}
 		})
 				.when(absDataConsistencyRules)
-				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(List.class),
+				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(RefTypeSaisiCongeAnnuel.class),
 						Mockito.isA(ReturnMessageDto.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
@@ -351,7 +352,7 @@ public class TypeAbsenceServiceImplTest {
 			}
 		})
 				.when(absDataConsistencyRules)
-				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(List.class),
+				.checkSaisiNewTypeAbsence(Mockito.isA(RefTypeSaisi.class), Mockito.isA(RefTypeSaisiCongeAnnuel.class),
 						Mockito.isA(ReturnMessageDto.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);

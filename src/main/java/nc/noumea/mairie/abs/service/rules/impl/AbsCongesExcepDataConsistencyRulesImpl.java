@@ -133,7 +133,7 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 
 	@Override
 	public ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi,
-			List<RefTypeSaisiCongeAnnuel> listeTypeSaisiCongeAnnuel, ReturnMessageDto srm) {
+			RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel, ReturnMessageDto srm) {
 
 		if (!typeSaisi.isCalendarDateDebut())
 			srm.getErrors().add(String.format("La date de début est obligatoire."));

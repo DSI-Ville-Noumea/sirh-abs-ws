@@ -12,13 +12,17 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class HelperServiceTest {
 
@@ -165,15 +169,15 @@ public class HelperServiceTest {
 
 		assertEquals(result, dateFinAttendue);
 	}
-	
+
 	@Test
 	public void getDateFin_typeSaisiJustIsCalendarDateFin_resultOk() {
 
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setDuree(false);
-			typeSaisi.setCalendarDateFin(true);
-			typeSaisi.setCalendarHeureFin(false);
-			typeSaisi.setChkDateFin(false);
+		typeSaisi.setDuree(false);
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setCalendarHeureFin(false);
+		typeSaisi.setChkDateFin(false);
 
 		HelperService service = new HelperService();
 
@@ -190,15 +194,15 @@ public class HelperServiceTest {
 
 		assertEquals(result, dateFinAttendue);
 	}
-	
+
 	@Test
 	public void getDateFin_typeSaisiNoDateFinNoDuree_resultOk() {
 
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setDuree(false);
-			typeSaisi.setCalendarDateFin(false);
-			typeSaisi.setCalendarHeureFin(false);
-			typeSaisi.setChkDateFin(false);
+		typeSaisi.setDuree(false);
+		typeSaisi.setCalendarDateFin(false);
+		typeSaisi.setCalendarHeureFin(false);
+		typeSaisi.setChkDateFin(false);
 
 		HelperService service = new HelperService();
 
@@ -284,14 +288,14 @@ public class HelperServiceTest {
 
 		assertEquals(result, datedebutAttendue);
 	}
-	
+
 	@Test
 	public void getDateDebut_typeSaisiNoHeureNoChk_resultOk() {
 
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
-			typeSaisi.setCalendarDateDebut(true);
-			typeSaisi.setChkDateDebut(false);
-			typeSaisi.setCalendarHeureDebut(false);
+		typeSaisi.setCalendarDateDebut(true);
+		typeSaisi.setChkDateDebut(false);
+		typeSaisi.setCalendarHeureDebut(false);
 
 		HelperService service = new HelperService();
 
@@ -507,70 +511,70 @@ public class HelperServiceTest {
 
 		assertEquals(result, new DateTime(2014, 05, 31, 23, 59, 59).toDate());
 	}
-	
-	@Test 
+
+	@Test
 	public void isFonctionnaire_false() {
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(4);
-		
+		carr.setCdcate(4);
+
 		HelperService service = new HelperService();
 		assertFalse(service.isFonctionnaire(carr));
 	}
-	
-	@Test 
+
+	@Test
 	public void isFonctionnaire_falseBis() {
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(7);
-		
+		carr.setCdcate(7);
+
 		HelperService service = new HelperService();
 		assertFalse(service.isFonctionnaire(carr));
 	}
-	
-	@Test 
+
+	@Test
 	public void isFonctionnaire_true() {
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(1);
-		
+		carr.setCdcate(1);
+
 		HelperService service = new HelperService();
 		assertTrue(service.isFonctionnaire(carr));
 	}
-	
-	@Test 
+
+	@Test
 	public void isContractuel_false() {
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(2);
-		
+		carr.setCdcate(2);
+
 		HelperService service = new HelperService();
 		assertFalse(service.isContractuel(carr));
 	}
 
-	@Test 
+	@Test
 	public void isContractuel_true() {
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(4);
-		
+		carr.setCdcate(4);
+
 		HelperService service = new HelperService();
 		assertTrue(service.isContractuel(carr));
 	}
-	
-	@Test 
+
+	@Test
 	public void isConventionCollective_false() {
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(3);
-		
+		carr.setCdcate(3);
+
 		HelperService service = new HelperService();
 		assertFalse(service.isConventionCollective(carr));
 	}
-	
-	@Test 
+
+	@Test
 	public void isConventionCollective_true() {
 		Spcarr carr = new Spcarr();
-			carr.setCdcate(7);
-		
+		carr.setCdcate(7);
+
 		HelperService service = new HelperService();
 		assertTrue(service.isConventionCollective(carr));
 	}
-	
+
 	@Test
 	public void getDateDebutAnneeForOneDate_returnFirstDAy() {
 		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
@@ -580,7 +584,7 @@ public class HelperServiceTest {
 
 		assertEquals(result, new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 	}
-	
+
 	@Test
 	public void getDateDebutJourneeForOneDate_returnFirstDAy() {
 		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
@@ -590,7 +594,7 @@ public class HelperServiceTest {
 
 		assertEquals(result, new DateTime(2014, 05, 13, 0, 0, 0).toDate());
 	}
-	
+
 	@Test
 	public void getDateDebutMoisForOneDate_Moins3Mois() {
 		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
@@ -600,11 +604,11 @@ public class HelperServiceTest {
 
 		assertEquals(result, new DateTime(2014, 03, 1, 0, 0, 0).toDate());
 	}
-	
+
 	@Test
 	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_1AnCivil() {
 		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
-		
+
 		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
 		upq.setGlissant(false);
 		upq.setUnite("an");
@@ -615,11 +619,11 @@ public class HelperServiceTest {
 
 		assertEquals(result, new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 	}
-	
+
 	@Test
 	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_3MoisNonGlissants() {
 		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
-		
+
 		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
 		upq.setGlissant(false);
 		upq.setUnite("mois");
@@ -630,11 +634,11 @@ public class HelperServiceTest {
 
 		assertEquals(result, new DateTime(2014, 3, 1, 0, 0, 0).toDate());
 	}
-	
+
 	@Test
 	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_ParMoisNonGlissant() {
 		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
-		
+
 		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
 		upq.setGlissant(false);
 		upq.setUnite("mois");
@@ -645,11 +649,11 @@ public class HelperServiceTest {
 
 		assertEquals(result, new DateTime(2014, 5, 1, 0, 0, 0).toDate());
 	}
-	
+
 	@Test
 	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_12MoisGlissants() {
 		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
-		
+
 		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
 		upq.setGlissant(true);
 		upq.setUnite("mois");
@@ -660,11 +664,11 @@ public class HelperServiceTest {
 
 		assertEquals(result, new DateTime(2013, 5, 13, 12, 30, 0).toDate());
 	}
-	
+
 	@Test
 	public void getDateDebutByUnitePeriodeQuotaAndDebutDemande_1MoisGlissant() {
 		Date dateDebutDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
-		
+
 		RefUnitePeriodeQuota upq = new RefUnitePeriodeQuota();
 		upq.setGlissant(true);
 		upq.setUnite("mois");
@@ -675,4 +679,93 @@ public class HelperServiceTest {
 
 		assertEquals(result, new DateTime(2014, 4, 13, 12, 30, 0).toDate());
 	}
+
+	@Test
+	public void getDureeCongeAnnuel_Base_A_returnZero() {
+
+		Double duree = 0.0;
+
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setCodeBaseHoraireAbsence("A");
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
+
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		Double result = service.getDuree(typeSaisi, new Date(), new Date());
+
+		assertEquals(duree, result);
+	}
+
+	@Test
+	public void getDureeCongeAnnuel_Base_D_returnDimanche() {
+		Double duree = 12.0;
+
+		Date dateDebut = new DateTime(2014, 12, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 14, 23, 59, 0).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setCodeBaseHoraireAbsence("D");
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
+
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		Double result = service.getDuree(typeSaisi, dateDebut, dateFin);
+
+		assertEquals(duree, result);
+	}
+
+	@Test
+	public void getDureeCongeAnnuel_Base_A_returnDimancheAndJourFerie() {
+		Double duree = 3.0;
+
+		Date dateDebut = new DateTime(2014, 12, 4, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 8, 23, 59, 0).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setCodeBaseHoraireAbsence("A");
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 4, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 5, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 6, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 7, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 8, 0, 0, 0).toDate())).thenReturn(true);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 9, 0, 0, 0).toDate())).thenReturn(false);
+
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		Double result = service.getDuree(typeSaisi, dateDebut, dateFin);
+
+		assertEquals(duree, result);
+	}
+
+	@Test
+	public void getDureeCongeAnnuel_Base_A_returnDimancheAndJourFerieDimanche() {
+		Double duree = 4.0;
+
+		Date dateDebut = new DateTime(2014, 12, 4, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 8, 23, 59, 0).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setCodeBaseHoraireAbsence("A");
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 4, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 5, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 6, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 7, 0, 0, 0).toDate())).thenReturn(true);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 8, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 9, 0, 0, 0).toDate())).thenReturn(false);
+
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		Double result = service.getDuree(typeSaisi, dateDebut, dateFin);
+
+		assertEquals(duree, result);
+	}
+
 }

@@ -5,17 +5,23 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class HelperService {
+
+	@Autowired
+	private ISirhWSConsumer sirhWSConsumer;
 
 	private static int HEURE_JOUR_DEBUT_AM = 0;
 	private static int HEURE_JOUR_FIN_AM = 11;
@@ -298,5 +304,174 @@ public class HelperService {
 		}
 
 		return null;
+	}
+
+	public Date getDateDebut(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, boolean dateDebutAM,
+			boolean dateDebutPM) {
+
+		if (refTypeSaisiCongeAnnuel.isCalendarDateDebut() && refTypeSaisiCongeAnnuel.isChkDateDebut()) {
+
+			if (dateDebutAM && !dateDebutPM) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dateDebut);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_AM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
+				cal.set(Calendar.SECOND, SECONDS_DEBUT);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+				return cal.getTime();
+			}
+			if (dateDebutPM) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dateDebut);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_PM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
+				cal.set(Calendar.SECOND, SECONDS_DEBUT);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+				return cal.getTime();
+			}
+		}
+
+		if (refTypeSaisiCongeAnnuel.isCalendarDateDebut() && !refTypeSaisiCongeAnnuel.isChkDateDebut()) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(dateDebut);
+			cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_AM);
+			cal.set(Calendar.MINUTE, MINUTES_JOUR_DEBUT);
+			cal.set(Calendar.SECOND, SECONDS_DEBUT);
+			cal.set(Calendar.MILLISECOND, MILLISECONDS);
+			return cal.getTime();
+		}
+		return null;
+	}
+
+	public Date getDateFin(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateFin, Date dateDebut,
+			boolean dateFinAM, boolean dateFinPM, Date dateReprise) {
+
+		if (refTypeSaisiCongeAnnuel.isCalendarDateFin() && !refTypeSaisiCongeAnnuel.isChkDateFin()) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(dateFin);
+			cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
+			cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+			cal.set(Calendar.SECOND, SECONDS_FIN);
+			cal.set(Calendar.MILLISECOND, MILLISECONDS);
+			return cal.getTime();
+		}
+		if (refTypeSaisiCongeAnnuel.isCalendarDateFin() && refTypeSaisiCongeAnnuel.isChkDateFin()) {
+
+			if (dateFinAM && !dateFinPM) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dateFin);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_AM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+				cal.set(Calendar.SECOND, SECONDS_FIN);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+				return cal.getTime();
+			}
+			if (dateFinPM) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dateFin);
+				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
+				cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+				cal.set(Calendar.SECOND, SECONDS_FIN);
+				cal.set(Calendar.MILLISECOND, MILLISECONDS);
+				return cal.getTime();
+			}
+		}
+		if (refTypeSaisiCongeAnnuel.isCalendarDateReprise()) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(dateReprise);
+			cal.add(Calendar.DAY_OF_MONTH, -1);
+			cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
+			cal.set(Calendar.MINUTE, MINUTES_JOUR_FIN);
+			cal.set(Calendar.SECOND, SECONDS_FIN);
+			cal.set(Calendar.MILLISECOND, MILLISECONDS);
+			return cal.getTime();
+		}
+
+		return null;
+	}
+
+	public Double getDuree(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, Date dateFin) {
+		// TODO finri les autres cas
+		Double duree = 0.0;
+		switch (refTypeSaisiCongeAnnuel.getCodeBaseHoraireAbsence()) {
+			case "A":
+			case "D":
+				duree = calculNombreJoursArrondiDemiJournee(dateDebut, dateFin)
+						- calculJoursNonComptes(dateDebut, dateFin);
+				break;
+			case "E":
+			case "F":
+
+				break;
+			case "C":
+
+				break;
+
+			default:
+				break;
+		}
+
+		return duree;
+	}
+
+	private double calculJoursNonComptes(Date dateDebut, Date dateFin) {
+		Double res = 0.0;
+		// on compte le nombre de dimanches entre les 2 dates
+		res += getNombreDimanche(dateDebut, dateFin);
+		// on compte le nombre de jours fériés ou chomes entre les 2 dates
+		res += getNombreJoursFeriesChomes(dateDebut, dateFin);
+		return res;
+
+	}
+
+	private Double getNombreJoursFeriesChomes(Date dateDebut, Date dateFin) {
+		int compteur = 0;
+		Calendar calendarDebut = new GregorianCalendar();
+		calendarDebut.setTime(dateDebut);
+
+		Calendar calendarFin = new GregorianCalendar();
+		calendarFin.setTime(dateFin);
+
+		while (calendarDebut.compareTo(calendarFin)<=0) {
+			if (calendarDebut.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+				if (sirhWSConsumer.isJourHoliday(calendarDebut.getTime())) {
+					compteur++;
+				}
+			}
+			calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		return (double) compteur;
+
+	}
+
+	private Double getNombreDimanche(Date dateDebut, Date dateFin) {
+		int compteur = 0;
+		Calendar calendarDebut = new GregorianCalendar();
+		calendarDebut.setTime(dateDebut);
+
+		Calendar calendarFin = new GregorianCalendar();
+		calendarFin.setTime(dateFin);
+
+		// Différence
+		long diff = Math.abs(dateFin.getTime() - dateDebut.getTime());
+		long numberOfDay = (long) diff / 86400000;
+
+		for (int i = 0; i <= numberOfDay; i++) {
+			if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+				compteur++;
+			}
+			calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		return (double) compteur;
+	}
+
+	public boolean isSamediDecompte(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isSamediOffert(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

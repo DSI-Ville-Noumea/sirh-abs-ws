@@ -425,7 +425,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Override
 	public ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi,
-			List<RefTypeSaisiCongeAnnuel> listeTypeSaisiCongeAnnuel, ReturnMessageDto srm) {
+			RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel, ReturnMessageDto srm) {
 		logger.warn(String.format(SAISIE_TYPE_ABSENCE_NON_AUTORISEE));
 		srm.getErrors().add(String.format(SAISIE_TYPE_ABSENCE_NON_AUTORISEE));
 		return srm;

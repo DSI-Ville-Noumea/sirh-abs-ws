@@ -7,10 +7,12 @@ import java.util.Map;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -25,6 +27,8 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhAgentServiceUrl = "services/agent";
 	private static final String sirhAgentUrl = "agents/getAgent";
 	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
+	private static final String isJourHolidayUrl = "utils/isHoliday";
+	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
 
 	@Override
 	public AgentWithServiceDto getAgentService(Integer idAgent, Date date) {
@@ -74,5 +78,37 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(AgentGeneriqueDto.class, res, url);
+	}
+
+	@Override
+	public boolean isJourHoliday(Date date) {
+		String url = String.format(sirhWsBaseUrl + isJourHolidayUrl);
+		HashMap<String, String> params = new HashMap<>();
+		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		params.put("date", sf.format(date));
+
+		ClientResponse res = createAndFireGetRequest(params, url);
+
+		if (res.getStatus() == HttpStatus.NO_CONTENT.value()) {
+			return false;
+		} else if (res.getStatus() == HttpStatus.OK.value()) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public RefTypeSaisiCongeAnnuelDto getBaseHoraireAbsence(Integer idAgent, Date date) {
+		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+
+		String url = String.format(sirhWsBaseUrl + sirhBaseCongeUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		parameters.put("date", sf.format(date));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(RefTypeSaisiCongeAnnuelDto.class, res, url);
 	}
 }

@@ -43,6 +43,6 @@ public interface IAbsenceDataConsistencyRules {
 
 	ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi, boolean isProvenanceSIRH);
 
-	ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi,
-			List<RefTypeSaisiCongeAnnuel> listeTypeSaisiCongeAnnuel, ReturnMessageDto srm);
+	ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi, RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel,
+			ReturnMessageDto srm);
 }

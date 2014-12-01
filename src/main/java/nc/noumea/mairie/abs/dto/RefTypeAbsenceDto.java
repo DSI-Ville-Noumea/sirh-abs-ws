@@ -1,8 +1,5 @@
 package nc.noumea.mairie.abs.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
@@ -13,7 +10,7 @@ public class RefTypeAbsenceDto {
 	private String libelle;
 	private RefGroupeAbsenceDto groupeAbsence;
 	private RefTypeSaisiDto typeSaisiDto;
-	private List<RefTypeSaisiCongeAnnuelDto> listeTypeSaisiCongeAnnuelDto;
+	private RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto;
 
 	public RefTypeAbsenceDto() {
 	}
@@ -27,8 +24,7 @@ public class RefTypeAbsenceDto {
 		}
 	}
 
-	public RefTypeAbsenceDto(RefTypeAbsence type, RefTypeSaisi typeSaisi,
-			List<RefTypeSaisiCongeAnnuel> listeTypeSaisieCongeAnnuel) {
+	public RefTypeAbsenceDto(RefTypeAbsence type, RefTypeSaisi typeSaisi, RefTypeSaisiCongeAnnuel typeSaisieCongeAnnuel) {
 		super();
 		this.idRefTypeAbsence = type.getIdRefTypeAbsence();
 		this.libelle = type.getLabel();
@@ -38,11 +34,8 @@ public class RefTypeAbsenceDto {
 		if (null != typeSaisi) {
 			this.typeSaisiDto = new RefTypeSaisiDto(typeSaisi);
 		}
-		if (null != listeTypeSaisieCongeAnnuel) {
-			this.listeTypeSaisiCongeAnnuelDto = new ArrayList<RefTypeSaisiCongeAnnuelDto>();
-			for (RefTypeSaisiCongeAnnuel t : listeTypeSaisieCongeAnnuel) {
-				this.listeTypeSaisiCongeAnnuelDto.add(new RefTypeSaisiCongeAnnuelDto(t));
-			}
+		if (null != typeSaisieCongeAnnuel) {
+			this.typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto(typeSaisieCongeAnnuel);
 		}
 	}
 
@@ -78,12 +71,12 @@ public class RefTypeAbsenceDto {
 		this.groupeAbsence = groupeAbsence;
 	}
 
-	public List<RefTypeSaisiCongeAnnuelDto> getListeTypeSaisiCongeAnnuelDto() {
-		return listeTypeSaisiCongeAnnuelDto;
+	public RefTypeSaisiCongeAnnuelDto getTypeSaisiCongeAnnuelDto() {
+		return typeSaisiCongeAnnuelDto;
 	}
 
-	public void setListeTypeSaisiCongeAnnuelDto(List<RefTypeSaisiCongeAnnuelDto> listeTypeSaisiCongeAnnuelDto) {
-		this.listeTypeSaisiCongeAnnuelDto = listeTypeSaisiCongeAnnuelDto;
+	public void setTypeSaisiCongeAnnuelDto(RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto) {
+		this.typeSaisiCongeAnnuelDto = typeSaisiCongeAnnuelDto;
 	}
 
 }

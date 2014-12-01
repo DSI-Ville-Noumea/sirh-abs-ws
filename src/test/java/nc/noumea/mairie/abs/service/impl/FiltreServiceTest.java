@@ -850,7 +850,7 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(null);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(null, 9005138);
 
 		assertEquals(4, result.size());
 	}
@@ -916,7 +916,7 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(null);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(null, 9005138);
 
 		assertEquals(3, result.size());
 	}
@@ -982,7 +982,7 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(null);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(null, 9005138);
 
 		assertEquals(3, result.size());
 	}
@@ -1064,7 +1064,7 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1, 9005138);
 
 		assertEquals(4, result.size());
 	}
@@ -1135,7 +1135,7 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1, 9005138);
 
 		assertEquals(3, result.size());
 	}
@@ -1206,7 +1206,7 @@ public class FiltreServiceTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeServ);
 
-		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1);
+		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1, 9005138);
 
 		assertEquals(3, result.size());
 	}

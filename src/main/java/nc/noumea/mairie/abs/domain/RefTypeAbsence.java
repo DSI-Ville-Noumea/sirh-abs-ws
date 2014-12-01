@@ -38,7 +38,7 @@ public class RefTypeAbsence {
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
 	private RefTypeSaisi typeSaisi;
 
-	@OneToMany(mappedBy = "type", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "type", fetch = FetchType.EAGER, orphanRemoval = true)
 	@OrderBy("codeBaseHoraireAbsence")
 	private List<RefTypeSaisiCongeAnnuel> listeTypeSaisiCongeAnnuel = new ArrayList<RefTypeSaisiCongeAnnuel>();
 

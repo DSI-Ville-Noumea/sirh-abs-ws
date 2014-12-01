@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -42,8 +43,13 @@ public class TypeAbsenceController {
 		logger.debug(
 				"entered GET [typeAbsence/getListeTypeAbsence] => getListeTypeAbsence with parameters idRefGroupeAbsence = {}",
 				idRefGroupeAbsence);
-
-		return typeAbsenceService.getListeTypAbsence(idRefGroupeAbsence);
+		if (idRefGroupeAbsence != null
+				&& idRefGroupeAbsence.toString().equals(
+						String.valueOf(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()))) {
+			return typeAbsenceService.getListeTypAbsenceCongeAnnuel();
+		} else {
+			return typeAbsenceService.getListeTypAbsence(idRefGroupeAbsence);
+		}
 	}
 
 	/**

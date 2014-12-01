@@ -9,6 +9,8 @@ public interface ITypeAbsenceService {
 
 	List<RefTypeAbsenceDto> getListeTypAbsence(Integer idRefGroupeAbsence);
 
+	List<RefTypeAbsenceDto> getListeTypAbsenceCongeAnnuel();
+
 	ReturnMessageDto setTypAbsence(Integer idAgent, RefTypeAbsenceDto typeAbsenceDto);
 
 	ReturnMessageDto deleteTypeAbsence(Integer idAgent, Integer idRefTypeAbsence);

@@ -9,6 +9,7 @@ import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
@@ -179,8 +180,10 @@ public class AbsenceService implements IAbsenceService {
 
 				demandeDto = new DemandeDto(demandeRecup, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
-				demandeDto.updateEtat(demandeRecup.getLatestEtatDemande(),sirhWSConsumer.getAgentService(
-						demandeRecup.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()));
+				demandeDto.updateEtat(
+						demandeRecup.getLatestEtatDemande(),
+						sirhWSConsumer.getAgentService(demandeRecup.getLatestEtatDemande().getIdAgent(),
+								helperService.getCurrentDate()));
 				break;
 			case ASA:
 				DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
@@ -190,8 +193,10 @@ public class AbsenceService implements IAbsenceService {
 
 				demandeDto = new DemandeDto(demandeAsa, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
-				demandeDto.updateEtat(demandeAsa.getLatestEtatDemande(),sirhWSConsumer.getAgentService(
-						demandeAsa.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()));
+				demandeDto.updateEtat(
+						demandeAsa.getLatestEtatDemande(),
+						sirhWSConsumer.getAgentService(demandeAsa.getLatestEtatDemande().getIdAgent(),
+								helperService.getCurrentDate()));
 				break;
 			case CONGES_EXCEP:
 				DemandeCongesExceptionnels demandeCongesExcep = demandeRepository.getEntity(
@@ -201,8 +206,19 @@ public class AbsenceService implements IAbsenceService {
 				}
 				demandeDto = new DemandeDto(demandeCongesExcep, sirhWSConsumer.getAgentService(demande.getIdAgent(),
 						helperService.getCurrentDate()));
-				demandeDto.updateEtat(demandeCongesExcep.getLatestEtatDemande(),sirhWSConsumer.getAgentService(
+				demandeDto.updateEtat(demandeCongesExcep.getLatestEtatDemande(), sirhWSConsumer.getAgentService(
 						demandeCongesExcep.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()));
+				break;
+			case CONGES_ANNUELS:
+				DemandeCongesAnnuels demandeCongesAnnuels = demandeRepository.getEntity(DemandeCongesAnnuels.class,
+						idDemande);
+				if (null == demandeCongesAnnuels) {
+					return demandeDto;
+				}
+				demandeDto = new DemandeDto(demandeCongesAnnuels, sirhWSConsumer.getAgentService(demande.getIdAgent(),
+						helperService.getCurrentDate()));
+				demandeDto.updateEtat(demandeCongesAnnuels.getLatestEtatDemande(), sirhWSConsumer.getAgentService(
+						demandeCongesAnnuels.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()));
 				break;
 			default:
 				return demandeDto;
@@ -842,6 +858,50 @@ public class AbsenceService implements IAbsenceService {
 						.isDateFinPM() : false);
 				demandeCongesExcep.setCommentaire(demande.getType().getTypeSaisi().isMotif() ? demandeDto
 						.getCommentaire() : null);
+				break;
+			case CONGES_ANNUELS:
+				DemandeCongesAnnuels demandeCongesAnnuels = getDemande(DemandeCongesAnnuels.class,
+						demandeDto.getIdDemande());
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeCongesAnnuels, idAgent, dateJour);
+
+				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
+				// fin, 3 - calcul duree
+				// car dependance entre ces 3 donnees pour les calculs
+				demande.setDateDebut(helperService.getDateDebut(
+						demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? null : demande.getType()
+								.getListeTypeSaisiCongeAnnuel().get(0), demandeDto.getDateDebut(),
+						demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+				demande.setDateFin(helperService.getDateFin(
+						demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? null : demande.getType()
+								.getListeTypeSaisiCongeAnnuel().get(0), demandeDto.getDateFin(),
+						demande.getDateDebut(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM(),
+						demandeDto.getDateReprise()));
+
+				demandeCongesAnnuels = (DemandeCongesAnnuels) demande;
+				demandeCongesAnnuels.setDuree(helperService.getDuree(demande.getType().getListeTypeSaisiCongeAnnuel()
+						.size() == 0 ? null : demande.getType().getListeTypeSaisiCongeAnnuel().get(0),
+						demande.getDateDebut(), demande.getDateFin()));
+				demandeCongesAnnuels.setSamediDecompte(helperService.isSamediDecompte(demande.getType()
+						.getListeTypeSaisiCongeAnnuel().size() == 0 ? null : demande.getType()
+						.getListeTypeSaisiCongeAnnuel().get(0)));
+				demandeCongesAnnuels.setSamediOffert(helperService.isSamediOffert(demande.getType()
+						.getListeTypeSaisiCongeAnnuel().size() == 0 ? null : demande.getType()
+						.getListeTypeSaisiCongeAnnuel().get(0)));
+				demandeCongesAnnuels
+						.setDateDebutAM(demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? false : demande
+								.getType().getListeTypeSaisiCongeAnnuel().get(0).isChkDateDebut() ? demandeDto
+								.isDateDebutAM() : false);
+				demandeCongesAnnuels
+						.setDateDebutPM(demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? false : demande
+								.getType().getListeTypeSaisiCongeAnnuel().get(0).isChkDateDebut() ? demandeDto
+								.isDateDebutPM() : false);
+				demandeCongesAnnuels.setDateFinAM(demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? false
+						: demande.getType().getListeTypeSaisiCongeAnnuel().get(0).isChkDateFin() ? demandeDto
+								.isDateFinAM() : false);
+				demandeCongesAnnuels.setDateFinPM(demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? false
+						: demande.getType().getListeTypeSaisiCongeAnnuel().get(0).isChkDateFin() ? demandeDto
+								.isDateFinPM() : false);
+				demandeCongesAnnuels.setCommentaire(demandeDto.getCommentaire());
 				break;
 			default:
 				returnDto.getErrors().add(

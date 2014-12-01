@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
@@ -830,6 +832,159 @@ public class DemandeDtoTest {
 		assertTrue(result.getIsValeurApprobation());
 		assertTrue(result.getIsValeurVisa());
 		assertTrue(result.getValeurValidation());
+		assertFalse(result.isDateDebutAM());
+		assertFalse(result.isDateDebutPM());
+		assertFalse(result.isDateFinAM());
+		assertFalse(result.isDateFinPM());
+	}
+
+
+	@Test
+	public void ctor_DemandeCongeExcep() {
+
+		// Given
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+		Date dateDemande = new Date();
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+
+		EtatDemande etatDemandeApprouve = new EtatDemande();
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
+		EtatDemande etatDemandeRefuse = new EtatDemande();
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
+		EtatDemande etatDemandeVisaF = new EtatDemande();
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
+		EtatDemande etatDemandeVisaD = new EtatDemande();
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		type.setIdRefTypeAbsence(24);
+
+		DemandeCongesExceptionnels d = new DemandeCongesExceptionnels();
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.setDuree(10.0);
+		d.setType(type);
+
+		// When
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+
+		// Then
+		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
+		assertEquals("Nicolas", result.getAgentWithServiceDto().getPrenom());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+
+		assertEquals(10, result.getDuree().intValue());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+		assertEquals(1, (int) result.getIdDemande());
+		assertEquals(dateDebut, result.getDateDebut());
+		assertEquals(dateFin, result.getDateFin());
+		assertEquals("motif approuve", result.getMotif());
+		assertTrue(result.getIsValeurApprobation());
+		assertTrue(result.getIsValeurVisa());
+		assertNull(result.getValeurValidation());
+		assertFalse(result.isDateDebutAM());
+		assertFalse(result.isDateDebutPM());
+		assertFalse(result.isDateFinAM());
+		assertFalse(result.isDateFinPM());
+	}
+
+
+	@Test
+	public void ctor_DemandeCongeAnnuel() {
+
+		// Given
+		Date dateDebut = new Date();
+		Date dateFin = new Date();
+		Date dateDemande = new Date();
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		type.setGroupe(groupe);
+
+		EtatDemande etatDemandeApprouve = new EtatDemande();
+		etatDemandeApprouve.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemandeApprouve.setDate(dateDemande);
+		etatDemandeApprouve.setMotif("motif approuve");
+
+		EtatDemande etatDemandeRefuse = new EtatDemande();
+		etatDemandeRefuse.setEtat(RefEtatEnum.REFUSEE);
+		etatDemandeRefuse.setDate(dateDemande);
+		etatDemandeRefuse.setMotif("motif refuse");
+
+		EtatDemande etatDemandeVisaF = new EtatDemande();
+		etatDemandeVisaF.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		etatDemandeVisaF.setDate(dateDemande);
+		etatDemandeVisaF.setMotif("motif visa f");
+
+		EtatDemande etatDemandeVisaD = new EtatDemande();
+		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		etatDemandeVisaD.setDate(dateDemande);
+		etatDemandeVisaD.setMotif("motif visa d");
+
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setDateDebut(dateDebut);
+		d.setDateFin(dateFin);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemandeApprouve);
+		d.getEtatsDemande().add(etatDemandeVisaF);
+		d.getEtatsDemande().add(etatDemandeRefuse);
+		d.getEtatsDemande().add(etatDemandeVisaD);
+		d.setDuree(10.0);
+
+		// When
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+
+		// Then
+		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
+		assertEquals("Nicolas", result.getAgentWithServiceDto().getPrenom());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+
+		assertEquals(10, result.getDuree().intValue());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+		assertEquals(1, (int) result.getIdDemande());
+		assertEquals(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue(), (int) result.getIdTypeDemande());
+		assertEquals(dateDebut, result.getDateDebut());
+		assertEquals(dateFin, result.getDateFin());
+		assertEquals("motif approuve", result.getMotif());
+		assertTrue(result.getIsValeurApprobation());
+		assertTrue(result.getIsValeurVisa());
+		assertNull(result.getValeurValidation());
 		assertFalse(result.isDateDebutAM());
 		assertFalse(result.isDateDebutPM());
 		assertFalse(result.isDateFinAM());

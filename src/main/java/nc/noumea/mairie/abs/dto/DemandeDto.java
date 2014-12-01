@@ -4,6 +4,7 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
@@ -39,6 +40,7 @@ public class DemandeDto {
 	private boolean isDateFinAM;
 	private boolean isDateFinPM;
 	private Double duree;
+	private Date dateReprise;
 
 	private Integer idRefEtat;
 	@JsonSerialize(using = JsonDateSerializer.class)
@@ -159,6 +161,14 @@ public class DemandeDto {
 				this.isDateFinAM = ((DemandeCongesExceptionnels) d).isDateFinAM();
 				this.isDateFinPM = ((DemandeCongesExceptionnels) d).isDateFinPM();
 				this.commentaire = ((DemandeCongesExceptionnels) d).getCommentaire();
+				break;
+			case CONGES_ANNUELS:
+				this.duree = ((DemandeCongesAnnuels) d).getDuree();
+				this.isDateDebutAM = ((DemandeCongesAnnuels) d).isDateDebutAM();
+				this.isDateDebutPM = ((DemandeCongesAnnuels) d).isDateDebutPM();
+				this.isDateFinAM = ((DemandeCongesAnnuels) d).isDateFinAM();
+				this.isDateFinPM = ((DemandeCongesAnnuels) d).isDateFinPM();
+				this.commentaire = ((DemandeCongesAnnuels) d).getCommentaire();
 				break;
 			default:
 				break;
@@ -485,6 +495,14 @@ public class DemandeDto {
 
 	public void setAgentEtat(AgentWithServiceDto agentEtat) {
 		this.agentEtat = agentEtat;
+	}
+
+	public Date getDateReprise() {
+		return dateReprise;
+	}
+
+	public void setDateReprise(Date dateReprise) {
+		this.dateReprise = dateReprise;
 	}
 
 }

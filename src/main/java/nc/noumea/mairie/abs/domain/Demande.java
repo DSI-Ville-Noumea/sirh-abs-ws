@@ -83,21 +83,24 @@ public class Demande {
 		this.dateFin = demande.getDateFin();
 		this.etatsDemande = demande.getEtatsDemande();
 	}
-	
+
 	@Transient
-	public static Demande mappingDemandeDtoToDemande(DemandeDto demandeDto, Demande demande, Integer idAgent, Date dateJour) {
+	public static Demande mappingDemandeDtoToDemande(DemandeDto demandeDto, Demande demande, Integer idAgent,
+			Date dateJour) {
 
 		// on mappe le DTO dans la Demande generique
 		demande.setDateDebut(demandeDto.getDateDebut());
 		demande.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
-		RefTypeAbsence rta = new RefTypeAbsence();
-		rta.setIdRefTypeAbsence(demandeDto.getIdTypeDemande());
-		demande.setType(rta);
+		if (demande.getType() == null) {
+			RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(demandeDto.getIdTypeDemande());
+			demande.setType(rta);
+		}
 
 		EtatDemande etatDemande = new EtatDemande();
-			etatDemande.setDate(dateJour);
-			etatDemande.setIdAgent(idAgent);
-			etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeDto.getIdRefEtat()));
+		etatDemande.setDate(dateJour);
+		etatDemande.setIdAgent(idAgent);
+		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeDto.getIdRefEtat()));
 		demande.addEtatDemande(etatDemande);
 
 		return demande;
@@ -150,7 +153,5 @@ public class Demande {
 	public void setEtatsDemande(List<EtatDemande> etatsDemande) {
 		this.etatsDemande = etatsDemande;
 	}
-	
-	
-	
+
 }

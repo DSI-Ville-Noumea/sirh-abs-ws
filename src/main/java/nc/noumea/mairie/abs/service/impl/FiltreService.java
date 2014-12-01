@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.RefEtat;
@@ -8,10 +9,12 @@ import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
@@ -19,6 +22,7 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +39,9 @@ public class FiltreService implements IFiltreService {
 
 	@Autowired
 	private HelperService helperService;
+
+	@Autowired
+	private ISirhWSConsumer sirhWSConsumer;
 
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeService;
@@ -196,7 +203,7 @@ public class FiltreService implements IFiltreService {
 	}
 
 	@Override
-	public List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idRefGroupeAbsence) {
+	public List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idRefGroupeAbsence, Integer idAgent) {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
 		if (idRefGroupeAbsence == null) {
@@ -205,9 +212,18 @@ public class FiltreService implements IFiltreService {
 			refTypeAbs = filtreRepository.findAllRefTypeAbsencesWithGroup(idRefGroupeAbsence);
 		}
 
+		RefTypeSaisiCongeAnnuel typeSaisieCongeAnnuel = null;
 		for (RefTypeAbsence type : refTypeAbs) {
-			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi(),
-					type.getListeTypeSaisiCongeAnnuel());
+			if (idAgent != null) {
+				// on cherche le code base horaire absence de l'agent
+				RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(idAgent, new Date());
+				for (RefTypeSaisiCongeAnnuel typeConge : type.getListeTypeSaisiCongeAnnuel()) {
+					if (typeConge.getCodeBaseHoraireAbsence().equals(dtoBase.getCodeBaseHoraireAbsence())) {
+						typeSaisieCongeAnnuel = typeConge;
+					}
+				}
+			}
+			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi(), typeSaisieCongeAnnuel);
 			res.add(dto);
 		}
 		return res;
@@ -237,8 +253,7 @@ public class FiltreService implements IFiltreService {
 		List<RefTypeAbsence> refTypeAbs = filtreRepository.findAllRefTypeAbsences();
 
 		for (RefTypeAbsence type : refTypeAbs) {
-			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi(),
-					type.getListeTypeSaisiCongeAnnuel());
+			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi(), null);
 			res.add(dto);
 
 		}
