@@ -159,8 +159,9 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			}
 			typeAbsence.setTypeSaisi(typeSaisi);
 		}
-		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = null;
-		if (null != typeAbsenceDto.getTypeSaisiCongeAnnuelDto()) {
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		if (null != typeAbsenceDto.getTypeSaisiCongeAnnuelDto()
+				&& null != typeAbsenceDto.getTypeSaisiCongeAnnuelDto().getIdRefTypeSaisiCongeAnnuel()) {
 			typeSaisiCongeAnnuel = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, typeAbsenceDto
 					.getTypeSaisiCongeAnnuelDto().getIdRefTypeSaisiCongeAnnuel());
 			RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = typeAbsenceDto.getTypeSaisiCongeAnnuelDto();

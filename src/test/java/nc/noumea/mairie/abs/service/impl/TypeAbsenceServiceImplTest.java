@@ -12,6 +12,7 @@ import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
@@ -114,7 +115,6 @@ public class TypeAbsenceServiceImplTest {
 		assertEquals(result.getErrors().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_INEXISTANT);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void setTypAbsence_TypeAbsenceModifie() {
 
@@ -124,6 +124,7 @@ public class TypeAbsenceServiceImplTest {
 		RefTypeAbsenceDto typeAbsenceDto = new RefTypeAbsenceDto();
 		typeAbsenceDto.setIdRefTypeAbsence(1);
 		typeAbsenceDto.setGroupeAbsence(groupeAbsence);
+		typeAbsenceDto.setTypeSaisiCongeAnnuelDto(new RefTypeSaisiCongeAnnuelDto());
 
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
 		typeAbsence.setTypeSaisi(new RefTypeSaisi());
@@ -244,7 +245,6 @@ public class TypeAbsenceServiceImplTest {
 		assertEquals(result.getErrors().get(0), TypeAbsenceServiceImpl.UNITE_PERIODE_QUOTA_INEXISTANT);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void setTypAbsence_typeAbsenceModifie() {
 
@@ -308,7 +308,6 @@ public class TypeAbsenceServiceImplTest {
 		assertEquals(result.getInfos().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_MODIFIE);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void setTypAbsence_typeAbsenceCree() {
 

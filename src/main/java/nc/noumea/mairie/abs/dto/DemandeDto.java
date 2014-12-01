@@ -75,6 +75,7 @@ public class DemandeDto {
 	private String commentaire;
 
 	private RefTypeSaisiDto typeSaisi;
+	private RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel;
 
 	public DemandeDto() {
 	}
@@ -503,6 +504,14 @@ public class DemandeDto {
 
 	public void setDateReprise(Date dateReprise) {
 		this.dateReprise = dateReprise;
+	}
+
+	public RefTypeSaisiCongeAnnuelDto getTypeSaisiCongeAnnuel() {
+		return typeSaisiCongeAnnuel;
+	}
+
+	public void setTypeSaisiCongeAnnuel(RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel) {
+		this.typeSaisiCongeAnnuel = typeSaisiCongeAnnuel;
 	}
 
 }

@@ -309,7 +309,7 @@ public class HelperService {
 	public Date getDateDebut(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, boolean dateDebutAM,
 			boolean dateDebutPM) {
 
-		if (refTypeSaisiCongeAnnuel.isCalendarDateDebut() && refTypeSaisiCongeAnnuel.isChkDateDebut()) {
+		if (refTypeSaisiCongeAnnuel.isChkDateDebut()) {
 
 			if (dateDebutAM && !dateDebutPM) {
 				Calendar cal = Calendar.getInstance();
@@ -319,8 +319,7 @@ public class HelperService {
 				cal.set(Calendar.SECOND, SECONDS_DEBUT);
 				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
-			}
-			if (dateDebutPM) {
+			} else if (dateDebutPM) {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(dateDebut);
 				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_PM);
@@ -328,10 +327,10 @@ public class HelperService {
 				cal.set(Calendar.SECOND, SECONDS_DEBUT);
 				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
+			} else {
+				return dateDebut;
 			}
-		}
-
-		if (refTypeSaisiCongeAnnuel.isCalendarDateDebut() && !refTypeSaisiCongeAnnuel.isChkDateDebut()) {
+		} else if (!refTypeSaisiCongeAnnuel.isChkDateDebut()) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(dateDebut);
 			cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_DEBUT_AM);
@@ -354,9 +353,7 @@ public class HelperService {
 			cal.set(Calendar.SECOND, SECONDS_FIN);
 			cal.set(Calendar.MILLISECOND, MILLISECONDS);
 			return cal.getTime();
-		}
-		if (refTypeSaisiCongeAnnuel.isCalendarDateFin() && refTypeSaisiCongeAnnuel.isChkDateFin()) {
-
+		} else if (refTypeSaisiCongeAnnuel.isCalendarDateFin() && refTypeSaisiCongeAnnuel.isChkDateFin()) {
 			if (dateFinAM && !dateFinPM) {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(dateFin);
@@ -365,7 +362,7 @@ public class HelperService {
 				cal.set(Calendar.SECOND, SECONDS_FIN);
 				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
-			}
+			}else
 			if (dateFinPM) {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(dateFin);
@@ -374,9 +371,10 @@ public class HelperService {
 				cal.set(Calendar.SECOND, SECONDS_FIN);
 				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
+			}else{
+				return dateFin;
 			}
-		}
-		if (refTypeSaisiCongeAnnuel.isCalendarDateReprise()) {
+		} else if (refTypeSaisiCongeAnnuel.isCalendarDateReprise()) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(dateReprise);
 			cal.add(Calendar.DAY_OF_MONTH, -1);
@@ -432,7 +430,7 @@ public class HelperService {
 		Calendar calendarFin = new GregorianCalendar();
 		calendarFin.setTime(dateFin);
 
-		while (calendarDebut.compareTo(calendarFin)<=0) {
+		while (calendarDebut.compareTo(calendarFin) <= 0) {
 			if (calendarDebut.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
 				if (sirhWSConsumer.isJourHoliday(calendarDebut.getTime())) {
 					compteur++;

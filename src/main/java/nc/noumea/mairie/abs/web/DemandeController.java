@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -14,6 +15,7 @@ import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.EditionDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
+import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -60,6 +62,40 @@ public class DemandeController {
 
 	@Autowired
 	private ISoldeService soldeService;
+
+	@Autowired
+	private IFiltreRepository filtreRepository;
+
+	/**
+	 * Creation/modification d'une demande : SI idDemande IS NULL ALORS creation
+	 * SINON modification <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/dureeDemandeCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public DemandeDto getDureeDemandeAbsenceCongeAnnuel(@RequestBody(required = true) DemandeDto demandeDto,
+			HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [demandes/dureeDemandeCongeAnnuel] => getDureeDemandeAbsenceCongeAnnuel for Kiosque with parameters  demandeDto={} ",
+				demandeDto.getDtoToString(demandeDto));
+
+		RefTypeSaisiCongeAnnuel typeCongeAnnuel = filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class, demandeDto
+				.getTypeSaisiCongeAnnuel().getIdRefTypeSaisiCongeAnnuel());
+
+		demandeDto.setDateDebut(helperService.getDateDebut(typeCongeAnnuel, demandeDto.getDateDebut(),
+				demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+		demandeDto.setDateFin(helperService.getDateFin(typeCongeAnnuel, demandeDto.getDateFin(),
+				demandeDto.getDateDebut(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM(),
+				demandeDto.getDateReprise()));
+
+		Double duree = helperService.getDuree(typeCongeAnnuel, demandeDto.getDateDebut(), demandeDto.getDateFin());
+
+		DemandeDto res = new DemandeDto();
+		res.setDuree(duree);
+
+		return res;
+	}
 
 	/**
 	 * Creation/modification d'une demande : SI idDemande IS NULL ALORS creation
