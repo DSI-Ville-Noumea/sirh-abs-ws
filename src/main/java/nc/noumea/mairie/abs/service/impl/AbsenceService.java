@@ -632,8 +632,6 @@ public class AbsenceService implements IAbsenceService {
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 		Demande dem = demandeRepository.getEntity(Demande.class, idDemande);
 
-		System.out.println(dem.getEtatsDemande().size());
-
 		for (EtatDemande etat : dem.getEtatsDemande()) {
 			DemandeDto dto = new DemandeDto(dem, sirhWSConsumer.getAgentService(etat.getIdAgent(),
 					helperService.getCurrentDate()));

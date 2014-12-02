@@ -217,9 +217,11 @@ public class FiltreService implements IFiltreService {
 			if (idAgent != null) {
 				// on cherche le code base horaire absence de l'agent
 				RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(idAgent, new Date());
-				RefTypeSaisiCongeAnnuel typeConge = filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
-						dtoBase.getIdRefTypeSaisiCongeAnnuel());
-				typeSaisieCongeAnnuel = typeConge;
+				if (dtoBase.getIdRefTypeSaisiCongeAnnuel() != null) {
+					RefTypeSaisiCongeAnnuel typeConge = filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+							dtoBase.getIdRefTypeSaisiCongeAnnuel());
+					typeSaisieCongeAnnuel = typeConge;
+				}
 			}
 			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi(), typeSaisieCongeAnnuel);
 			res.add(dto);
