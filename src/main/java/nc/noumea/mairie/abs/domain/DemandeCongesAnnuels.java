@@ -1,7 +1,11 @@
 package nc.noumea.mairie.abs.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -43,6 +47,10 @@ public class DemandeCongesAnnuels extends Demande {
 
 	@Column(name = "COMMENTAIRE")
 	private String commentaire;
+
+	@OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ID_REF_TYPE_SAISI_CONGE_ANNUEL")
+	private RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel;
 
 	public Double getDuree() {
 		return duree;
@@ -106,6 +114,14 @@ public class DemandeCongesAnnuels extends Demande {
 
 	public void setSamediOffert(boolean samediOffert) {
 		this.samediOffert = samediOffert;
+	}
+
+	public RefTypeSaisiCongeAnnuel getTypeSaisiCongeAnnuel() {
+		return typeSaisiCongeAnnuel;
+	}
+
+	public void setTypeSaisiCongeAnnuel(RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel) {
+		this.typeSaisiCongeAnnuel = typeSaisiCongeAnnuel;
 	}
 
 }

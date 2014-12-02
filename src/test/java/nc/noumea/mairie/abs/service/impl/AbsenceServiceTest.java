@@ -38,6 +38,7 @@ import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -8550,7 +8551,7 @@ public class AbsenceServiceTest {
 		dto.setIdDemande(1);
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.5);
-		dto.setIdTypeDemande(24);
+		dto.setIdTypeDemande(1);
 		dto.setGroupeAbsence(groupeAbsence);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
@@ -8573,7 +8574,9 @@ public class AbsenceServiceTest {
 		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
 
 		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
 		typeSaisi.setCodeBaseHoraireAbsence("A");
+		dto.setTypeSaisiCongeAnnuel(new RefTypeSaisiCongeAnnuelDto(typeSaisi));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isUserOperateur(idAgent)).thenReturn(true);
@@ -8589,7 +8592,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(obj.getDuree(),new Double(0.0));
+				assertEquals(obj.getDuree(), new Double(0.0));
 
 				return true;
 			}
@@ -8637,10 +8640,15 @@ public class AbsenceServiceTest {
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.getEntity(RefTypeAbsence.class, 1)).thenReturn(new RefTypeAbsence());
+		Mockito.when(filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class, 1)).thenReturn(typeSaisi);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
@@ -8668,7 +8676,7 @@ public class AbsenceServiceTest {
 		dto.setDateDebut(dateDebut);
 		dto.setDuree(10.0);
 		dto.setGroupeAbsence(groupeAbsence);
-		dto.setIdTypeDemande(24);
+		dto.setIdTypeDemande(1);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
@@ -8685,7 +8693,9 @@ public class AbsenceServiceTest {
 		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
 
 		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
 		typeSaisi.setCodeBaseHoraireAbsence("A");
+		dto.setTypeSaisiCongeAnnuel(new RefTypeSaisiCongeAnnuelDto(typeSaisi));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isUserOperateur(idAgent)).thenReturn(true);
@@ -8749,10 +8759,15 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				null);
 
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.getEntity(RefTypeAbsence.class, 1)).thenReturn(new RefTypeAbsence());
+		Mockito.when(filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class, 1)).thenReturn(typeSaisi);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);

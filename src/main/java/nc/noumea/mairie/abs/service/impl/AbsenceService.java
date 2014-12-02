@@ -20,6 +20,7 @@ import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -863,8 +864,11 @@ public class AbsenceService implements IAbsenceService {
 			case CONGES_ANNUELS:
 				DemandeCongesAnnuels demandeCongesAnnuels = getDemande(DemandeCongesAnnuels.class,
 						demandeDto.getIdDemande());
+				demandeCongesAnnuels.setTypeSaisiCongeAnnuel(filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+						demandeDto.getTypeSaisiCongeAnnuel().getIdRefTypeSaisiCongeAnnuel()));
+				demande = demandeCongesAnnuels;
 				demande.setType(filtreRepository.getEntity(RefTypeAbsence.class, demandeDto.getIdTypeDemande()));
-				
+
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeCongesAnnuels, idAgent, dateJour);
 
 				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de

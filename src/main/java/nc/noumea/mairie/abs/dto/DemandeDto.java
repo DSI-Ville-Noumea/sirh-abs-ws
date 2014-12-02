@@ -40,6 +40,8 @@ public class DemandeDto {
 	private boolean isDateFinAM;
 	private boolean isDateFinPM;
 	private Double duree;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateReprise;
 
 	private Integer idRefEtat;
@@ -107,6 +109,12 @@ public class DemandeDto {
 		this.motif = d.getLatestEtatDemande().getMotif();
 		if (null != d.getType() && null != d.getType().getTypeSaisi())
 			this.typeSaisi = new RefTypeSaisiDto(d.getType().getTypeSaisi());
+
+		if (null != d.getType() && d.getType().getListeTypeSaisiCongeAnnuel() != null
+				&& d.getType().getListeTypeSaisiCongeAnnuel().size() > 0) {
+			DemandeCongesAnnuels demandeCongeAnnu = (DemandeCongesAnnuels) d;
+			this.typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuelDto(demandeCongeAnnu.getTypeSaisiCongeAnnuel());
+		}
 
 		for (EtatDemande etat : d.getEtatsDemande()) {
 			if (this.isValeurVisa == null && etat.getEtat().equals(RefEtatEnum.VISEE_FAVORABLE)) {

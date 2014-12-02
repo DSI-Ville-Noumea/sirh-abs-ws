@@ -186,12 +186,12 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi,
 			boolean isProvenanceSIRH) {
-
-		if (!isProvenanceSIRH && !typeSaisi.isSaisieKiosque()) {
-			logger.warn(String.format(SAISIE_KIOSQUE_NON_AUTORISEE));
-			srm.getErrors().add(SAISIE_KIOSQUE_NON_AUTORISEE);
+		if (typeSaisi != null) {
+			if (!isProvenanceSIRH && !typeSaisi.isSaisieKiosque()) {
+				logger.warn(String.format(SAISIE_KIOSQUE_NON_AUTORISEE));
+				srm.getErrors().add(SAISIE_KIOSQUE_NON_AUTORISEE);
+			}
 		}
-
 		return srm;
 	}
 
