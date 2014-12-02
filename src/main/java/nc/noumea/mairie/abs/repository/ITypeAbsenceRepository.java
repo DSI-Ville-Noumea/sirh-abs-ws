@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.repository;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 
 public interface ITypeAbsenceRepository {
 
@@ -13,4 +14,6 @@ public interface ITypeAbsenceRepository {
 	void removeEntity(Object obj);
 
 	List<RefTypeAbsence> getListeTypAbsence(Integer idRefGroupeAbsence);
+
+	List<RefTypeSaisiCongeAnnuel> getListeTypeSaisiCongeAnnuel();
 }

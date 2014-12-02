@@ -242,7 +242,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 				RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
 
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
-		for (RefTypeSaisiCongeAnnuel typeCong : typeAbsence.getListeTypeSaisiCongeAnnuel()) {
+		for (RefTypeSaisiCongeAnnuel typeCong : typeAbsenceRepository.getListeTypeSaisiCongeAnnuel()) {
 			RefTypeAbsenceDto dtoType = new RefTypeAbsenceDto(typeAbsence, null, null);
 			RefTypeSaisiCongeAnnuelDto dto = new RefTypeSaisiCongeAnnuelDto(typeCong);
 			dtoType.setTypeSaisiCongeAnnuelDto(dto);

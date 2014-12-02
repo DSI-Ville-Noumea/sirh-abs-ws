@@ -632,6 +632,8 @@ public class AbsenceService implements IAbsenceService {
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 		Demande dem = demandeRepository.getEntity(Demande.class, idDemande);
 
+		System.out.println(dem.getEtatsDemande().size());
+
 		for (EtatDemande etat : dem.getEtatsDemande()) {
 			DemandeDto dto = new DemandeDto(dem, sirhWSConsumer.getAgentService(etat.getIdAgent(),
 					helperService.getCurrentDate()));
@@ -875,39 +877,31 @@ public class AbsenceService implements IAbsenceService {
 				// fin, 3 - calcul duree
 				// car dependance entre ces 3 donnees pour les calculs
 				demande.setDateDebut(helperService.getDateDebut(
-						demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? null : demande.getType()
-								.getListeTypeSaisiCongeAnnuel().get(0), demandeDto.getDateDebut(),
-						demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
-				demande.setDateFin(helperService.getDateFin(
-						demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? null : demande.getType()
-								.getListeTypeSaisiCongeAnnuel().get(0), demandeDto.getDateFin(),
-						demande.getDateDebut(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM(),
-						demandeDto.getDateReprise()));
+						demande.getType().getTypeSaisiCongeAnnuel() == null ? null : demande.getType()
+								.getTypeSaisiCongeAnnuel(), demandeDto.getDateDebut(), demandeDto.isDateDebutAM(),
+						demandeDto.isDateDebutPM()));
+				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisiCongeAnnuel() == null ? null
+						: demande.getType().getTypeSaisiCongeAnnuel(), demandeDto.getDateFin(), demande.getDateDebut(),
+						demandeDto.isDateFinAM(), demandeDto.isDateFinPM(), demandeDto.getDateReprise()));
 
 				demandeCongesAnnuels = (DemandeCongesAnnuels) demande;
-				demandeCongesAnnuels.setDuree(helperService.getDuree(demande.getType().getListeTypeSaisiCongeAnnuel()
-						.size() == 0 ? null : demande.getType().getListeTypeSaisiCongeAnnuel().get(0),
-						demande.getDateDebut(), demande.getDateFin()));
+				demandeCongesAnnuels.setDuree(helperService.getDuree(
+						demande.getType().getTypeSaisiCongeAnnuel() == null ? null : demande.getType()
+								.getTypeSaisiCongeAnnuel(), demande.getDateDebut(), demande.getDateFin()));
 				demandeCongesAnnuels.setSamediDecompte(helperService.isSamediDecompte(demande.getType()
-						.getListeTypeSaisiCongeAnnuel().size() == 0 ? null : demande.getType()
-						.getListeTypeSaisiCongeAnnuel().get(0)));
+						.getTypeSaisiCongeAnnuel() == null ? null : demande.getType().getTypeSaisiCongeAnnuel()));
 				demandeCongesAnnuels.setSamediOffert(helperService.isSamediOffert(demande.getType()
-						.getListeTypeSaisiCongeAnnuel().size() == 0 ? null : demande.getType()
-						.getListeTypeSaisiCongeAnnuel().get(0)));
-				demandeCongesAnnuels
-						.setDateDebutAM(demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? false : demande
-								.getType().getListeTypeSaisiCongeAnnuel().get(0).isChkDateDebut() ? demandeDto
-								.isDateDebutAM() : false);
-				demandeCongesAnnuels
-						.setDateDebutPM(demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? false : demande
-								.getType().getListeTypeSaisiCongeAnnuel().get(0).isChkDateDebut() ? demandeDto
-								.isDateDebutPM() : false);
-				demandeCongesAnnuels.setDateFinAM(demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? false
-						: demande.getType().getListeTypeSaisiCongeAnnuel().get(0).isChkDateFin() ? demandeDto
-								.isDateFinAM() : false);
-				demandeCongesAnnuels.setDateFinPM(demande.getType().getListeTypeSaisiCongeAnnuel().size() == 0 ? false
-						: demande.getType().getListeTypeSaisiCongeAnnuel().get(0).isChkDateFin() ? demandeDto
-								.isDateFinPM() : false);
+						.getTypeSaisiCongeAnnuel() == null ? null : demande.getType().getTypeSaisiCongeAnnuel()));
+				demandeCongesAnnuels.setDateDebutAM(demande.getType().getTypeSaisiCongeAnnuel() == null ? false
+						: demande.getType().getTypeSaisiCongeAnnuel().isChkDateDebut() ? demandeDto.isDateDebutAM()
+								: false);
+				demandeCongesAnnuels.setDateDebutPM(demande.getType().getTypeSaisiCongeAnnuel() == null ? false
+						: demande.getType().getTypeSaisiCongeAnnuel().isChkDateDebut() ? demandeDto.isDateDebutPM()
+								: false);
+				demandeCongesAnnuels.setDateFinAM(demande.getType().getTypeSaisiCongeAnnuel() == null ? false : demande
+						.getType().getTypeSaisiCongeAnnuel().isChkDateFin() ? demandeDto.isDateFinAM() : false);
+				demandeCongesAnnuels.setDateFinPM(demande.getType().getTypeSaisiCongeAnnuel() == null ? false : demande
+						.getType().getTypeSaisiCongeAnnuel().isChkDateFin() ? demandeDto.isDateFinPM() : false);
 				demandeCongesAnnuels.setCommentaire(demandeDto.getCommentaire());
 				break;
 			default:
