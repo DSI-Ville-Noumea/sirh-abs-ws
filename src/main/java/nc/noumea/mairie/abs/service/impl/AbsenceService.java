@@ -569,7 +569,7 @@ public class AbsenceService implements IAbsenceService {
 		// table de parametrage est a FALSE
 		// l etat de la demande passe automatiquement a VALIDE en ajoutant une
 		// ligne dans la table ABS_ETAT_DEMANDE
-		if (!demande.getType().getTypeSaisi().isSaisieKiosque()) {
+		if (demande.getType().getTypeSaisi() != null && !demande.getType().getTypeSaisi().isSaisieKiosque()) {
 			DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
 			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 			demandeEtatChangeDto.setMotif(null);

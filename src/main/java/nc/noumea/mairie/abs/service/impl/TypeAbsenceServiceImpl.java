@@ -253,4 +253,12 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 		return res;
 	}
 
+	@Override
+	public RefTypeAbsenceDto getTypAbsence(Integer idRefTypeAbsence) {
+		RefTypeAbsence typeAbsence = typeAbsenceRepository.getEntity(RefTypeAbsence.class, idRefTypeAbsence);
+		RefTypeAbsenceDto res = new RefTypeAbsenceDto(typeAbsence, typeAbsence.getTypeSaisi(),
+				typeAbsence.getTypeSaisiCongeAnnuel());
+		return res;
+	}
+
 }

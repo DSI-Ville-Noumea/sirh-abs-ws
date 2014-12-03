@@ -93,4 +93,20 @@ public class TypeAbsenceController {
 
 		return srm;
 	}
+
+	/**
+	 * Retourne une type d absence
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getTypeAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public RefTypeAbsenceDto getTypeAbsence(
+			@RequestParam(value = "idRefTypeAbsence", required = true) Integer idRefTypeAbsence) {
+
+		logger.debug(
+				"entered GET [typeAbsence/getTypeAbsence] => getTypeAbsence with parameters idRefTypeAbsence = {}",
+				idRefTypeAbsence);
+
+		return typeAbsenceService.getTypAbsence(idRefTypeAbsence);
+
+	}
 }
