@@ -21,8 +21,6 @@ import org.springframework.stereotype.Service;
 @Service("AbsCongesExcepDataConsistencyRulesImpl")
 public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
 
-	public static final String CHAMP_COMMENTAIRE_OBLIGATOIRE = "Le champ Commentaire est obligatoire.";
-
 	@Autowired
 	protected ICongesExceptionnelsRepository congesExceptionnelsRepository;
 
