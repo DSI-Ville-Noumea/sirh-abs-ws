@@ -886,9 +886,11 @@ public class AbsenceService implements IAbsenceService {
 				demandeCongesAnnuels = (DemandeCongesAnnuels) demande;
 				demandeCongesAnnuels.setDuree(helperService.getDuree(
 						demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? null : demandeCongesAnnuels
-								.getTypeSaisiCongeAnnuel(), demande.getDateDebut(), demande.getDateFin()));
+								.getTypeSaisiCongeAnnuel(), demande.getDateDebut(), demande.getDateFin(), demandeDto
+								.getDateReprise()));
 				demandeCongesAnnuels.setSamediDecompte(helperService.isSamediDecompte(demandeCongesAnnuels
-						.getTypeSaisiCongeAnnuel() == null ? null : demandeCongesAnnuels.getTypeSaisiCongeAnnuel()));
+						.getTypeSaisiCongeAnnuel() == null ? null : demandeCongesAnnuels.getTypeSaisiCongeAnnuel(),
+						demande.getDateDebut(), demande.getDateFin()));
 				demandeCongesAnnuels.setSamediOffert(helperService.isSamediOffert(demandeCongesAnnuels
 						.getTypeSaisiCongeAnnuel() == null ? null : demandeCongesAnnuels.getTypeSaisiCongeAnnuel()));
 				demandeCongesAnnuels.setDateDebutAM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false

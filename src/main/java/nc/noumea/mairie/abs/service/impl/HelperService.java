@@ -395,21 +395,27 @@ public class HelperService {
 		return null;
 	}
 
-	public Double getDuree(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, Date dateFin) {
+	public Double getDuree(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, Date dateFin,
+			Date dateReprise) {
 		// TODO finri les autres cas
 		Double duree = 0.0;
 		switch (refTypeSaisiCongeAnnuel.getCodeBaseHoraireAbsence()) {
 			case "A":
 			case "D":
 				duree = calculNombreJoursArrondiDemiJournee(dateDebut, dateFin)
-						- calculJoursNonComptes(dateDebut, dateFin);
+						- calculJoursNonComptes(dateDebut, dateFin)
+						+ calculNombreJoursSamedi(refTypeSaisiCongeAnnuel, dateDebut, dateFin);
 				break;
+
 			case "E":
 			case "F":
 				duree = calculNombreJours(dateDebut, dateFin);
-
 				break;
+
 			case "C":
+				// TODO à terminer quand Michel nous donnera le bon calcul
+				duree = calculNombreJours(dateDebut, dateReprise);
+				duree = Math.ceil((duree / 5) * 3);
 
 				break;
 
@@ -418,6 +424,33 @@ public class HelperService {
 		}
 
 		return duree;
+	}
+
+	private double calculNombreJoursSamedi(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, Date dateFin) {
+		int compteur = 0;
+		if (refTypeSaisiCongeAnnuel.isDecompteSamedi()) {
+			Calendar calendarDebut = new GregorianCalendar();
+			calendarDebut.setTime(dateDebut);
+
+			Calendar calendarFin = new GregorianCalendar();
+			calendarFin.setTime(dateFin);
+
+			// Différence
+			long diff = Math.abs(dateFin.getTime() - dateDebut.getTime());
+			long numberOfDay = (long) diff / 86400000;
+
+			for (int i = 0; i <= numberOfDay; i++) {
+				if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+					compteur++;
+				}
+				calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
+			}
+
+			// TODO il faut regarder toutes les demandes de l'année pour voir si
+			// 1 samedi a deja été offert pour decompter
+
+		}
+		return (double) compteur;
 	}
 
 	private double calculJoursNonComptes(Date dateDebut, Date dateFin) {
@@ -471,10 +504,31 @@ public class HelperService {
 		return (double) compteur;
 	}
 
-	public boolean isSamediDecompte(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel) {
-		// TODO Auto-generated method stub
-		// a completer
-		return false;
+	public boolean isSamediDecompte(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, Date dateFin) {
+		int compteur = 0;
+		if (refTypeSaisiCongeAnnuel.isDecompteSamedi()) {
+			Calendar calendarDebut = new GregorianCalendar();
+			calendarDebut.setTime(dateDebut);
+
+			Calendar calendarFin = new GregorianCalendar();
+			calendarFin.setTime(dateFin);
+
+			// Différence
+			long diff = Math.abs(dateFin.getTime() - dateDebut.getTime());
+			long numberOfDay = (long) diff / 86400000;
+
+			for (int i = 0; i <= numberOfDay; i++) {
+				if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+					compteur++;
+				}
+				calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
+			}
+
+			// TODO il faut regarder toutes les demandes de l'année pour voir si
+			// 1 samedi a deja été offert pour decompter
+
+		}
+		return compteur > 0;
 	}
 
 	public boolean isSamediOffert(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel) {

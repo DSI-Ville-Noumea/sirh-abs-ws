@@ -35,21 +35,13 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 	}
 
 	protected ReturnMessageDto checkMultipleCycle(ReturnMessageDto srm, DemandeCongesAnnuels demande) {
+		double nbJours = 0.0;
 		if (demande.getTypeSaisiCongeAnnuel().getQuotaMultiple() != null) {
 			switch (demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence()) {
 				case "C":
-					// TODO à finir
-					logger.warn(String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
-							.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()));
-					srm.getErrors()
-							.add(String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
-									.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()));
-
-					break;
 				case "E":
 				case "F":
-					double nbJours = helperService.calculNombreJours(demande.getDateDebut(),
-							demande.getDateFin());
+					nbJours = helperService.calculNombreJours(demande.getDateDebut(), demande.getDateFin());
 					if (nbJours % demande.getTypeSaisiCongeAnnuel().getQuotaMultiple() != 0) {
 
 						logger.warn(String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
@@ -59,7 +51,6 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 										.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel()
 										.getQuotaMultiple()));
 					}
-
 					break;
 
 				default:

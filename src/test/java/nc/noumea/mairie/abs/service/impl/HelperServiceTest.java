@@ -693,7 +693,7 @@ public class HelperServiceTest {
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-		Double result = service.getDuree(typeSaisi, new Date(), new Date());
+		Double result = service.getDuree(typeSaisi, new Date(), new Date(), new Date());
 
 		assertEquals(duree, result);
 	}
@@ -704,6 +704,7 @@ public class HelperServiceTest {
 
 		Date dateDebut = new DateTime(2014, 12, 1, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 14, 23, 59, 0).toDate();
+		Date dateReprise = new DateTime(2014, 12, 15, 0, 0, 0).toDate();
 
 		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
 		typeSaisi.setCodeBaseHoraireAbsence("D");
@@ -713,7 +714,7 @@ public class HelperServiceTest {
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-		Double result = service.getDuree(typeSaisi, dateDebut, dateFin);
+		Double result = service.getDuree(typeSaisi, dateDebut, dateFin, dateReprise);
 
 		assertEquals(duree, result);
 	}
@@ -724,6 +725,7 @@ public class HelperServiceTest {
 
 		Date dateDebut = new DateTime(2014, 12, 4, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 8, 23, 59, 0).toDate();
+		Date dateReprise = new DateTime(2014, 12, 9, 0, 0, 0).toDate();
 
 		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
 		typeSaisi.setCodeBaseHoraireAbsence("A");
@@ -738,7 +740,7 @@ public class HelperServiceTest {
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-		Double result = service.getDuree(typeSaisi, dateDebut, dateFin);
+		Double result = service.getDuree(typeSaisi, dateDebut, dateFin, dateReprise);
 
 		assertEquals(duree, result);
 	}
@@ -749,6 +751,7 @@ public class HelperServiceTest {
 
 		Date dateDebut = new DateTime(2014, 12, 4, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 8, 23, 59, 0).toDate();
+		Date dateReprise = new DateTime(2014, 12, 9, 0, 0, 0).toDate();
 
 		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
 		typeSaisi.setCodeBaseHoraireAbsence("A");
@@ -763,7 +766,7 @@ public class HelperServiceTest {
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-		Double result = service.getDuree(typeSaisi, dateDebut, dateFin);
+		Double result = service.getDuree(typeSaisi, dateDebut, dateFin, dateReprise);
 
 		assertEquals(duree, result);
 	}
