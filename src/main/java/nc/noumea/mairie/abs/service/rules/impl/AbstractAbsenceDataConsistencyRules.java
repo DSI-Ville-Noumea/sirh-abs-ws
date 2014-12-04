@@ -78,6 +78,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String SAISIE_TYPE_ABSENCE_NON_AUTORISEE = "La saisie de nouveau type d'absence pour ce groupe d'absence n'est pas autorisée.";
 	public static final String BASE_HORAIRE_AGENT = "L'agent [%d] n'a pas de base congé défini. Merci de contacter votre référent RH.";
 	public static final String CHAMP_COMMENTAIRE_OBLIGATOIRE = "Le champ Commentaire est obligatoire.";
+	public static final String SAISIE_NON_MULTIPLE = "Pour la base congé %s, la durée du congé doit être un multiple de %d jours.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");

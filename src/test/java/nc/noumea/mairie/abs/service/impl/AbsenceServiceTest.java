@@ -8592,7 +8592,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(obj.getDuree(), new Double(0.0));
+				assertEquals(obj.getDuree(), new Double(2.0));
 
 				return true;
 			}
@@ -8711,7 +8711,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(obj.getDuree(), new Double(0.0));
+				assertEquals(obj.getDuree(), new Double(3.5));
 
 				return true;
 			}

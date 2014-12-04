@@ -200,6 +200,14 @@ public class HelperService {
 		return ((double) Math.round(nbrJour * 2) / 2);
 	}
 
+	public double calculNombreJours(Date dateDebut, Date dateFin) {
+
+		double diff = dateFin.getTime() - dateDebut.getTime();
+		// calcul nombre jour
+		double nbrJour = diff / MILLISECONDS_PER_DAY;
+		return Math.ceil(nbrJour);
+	}
+
 	public int calculNombreMinutes(Date dateDebut, Date dateFin) {
 
 		long diff = dateFin.getTime() - dateDebut.getTime();
@@ -362,8 +370,7 @@ public class HelperService {
 				cal.set(Calendar.SECOND, SECONDS_FIN);
 				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
-			}else
-			if (dateFinPM) {
+			} else if (dateFinPM) {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(dateFin);
 				cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
@@ -371,7 +378,7 @@ public class HelperService {
 				cal.set(Calendar.SECOND, SECONDS_FIN);
 				cal.set(Calendar.MILLISECOND, MILLISECONDS);
 				return cal.getTime();
-			}else{
+			} else {
 				return dateFin;
 			}
 		} else if (refTypeSaisiCongeAnnuel.isCalendarDateReprise()) {
@@ -399,6 +406,7 @@ public class HelperService {
 				break;
 			case "E":
 			case "F":
+				duree = calculNombreJours(dateDebut, dateFin);
 
 				break;
 			case "C":
@@ -465,11 +473,13 @@ public class HelperService {
 
 	public boolean isSamediDecompte(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel) {
 		// TODO Auto-generated method stub
+		// a completer
 		return false;
 	}
 
 	public boolean isSamediOffert(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel) {
 		// TODO Auto-generated method stub
+		// a completer
 		return false;
 	}
 }
