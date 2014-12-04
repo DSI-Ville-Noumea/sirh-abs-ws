@@ -397,7 +397,6 @@ public class HelperService {
 
 	public Double getDuree(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, Date dateFin,
 			Date dateReprise) {
-		// TODO finri les autres cas
 		Double duree = 0.0;
 		switch (refTypeSaisiCongeAnnuel.getCodeBaseHoraireAbsence()) {
 			case "A":
@@ -413,10 +412,13 @@ public class HelperService {
 				break;
 
 			case "C":
-				// TODO à terminer quand Michel nous donnera le bon calcul
 				duree = calculNombreJours(dateDebut, dateReprise);
-				duree = Math.ceil((duree / 5) * 3);
-
+				duree = Math.ceil((duree / refTypeSaisiCongeAnnuel.getQuotaMultiple()) * 3);
+				if (duree < 3) {
+					duree = calculNombreJours(dateDebut, dateReprise);
+				} else if (duree > 3 && duree <= refTypeSaisiCongeAnnuel.getQuotaMultiple()) {
+					duree = 3.0;
+				}
 				break;
 
 			default:
