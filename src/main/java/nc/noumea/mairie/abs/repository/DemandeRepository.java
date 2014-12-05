@@ -9,10 +9,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -240,5 +242,24 @@ public class DemandeRepository implements IDemandeRepository {
 		query.setParameter("CONGE_EXCEP", RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 
 		return query.getResultList();
+	}
+
+	@Override
+	public Integer getNombreSamediOffertSurAnnee(DemandeCongesAnnuels demande, Integer year) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from DemandeCongesAnnuels d ");
+		sb.append("where d.idAgent = :idAgent ");
+		sb.append("and d.type.groupe.idRefGroupeAbsence in(:CONGE_ANNUEL ) ");
+		sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
+		sb.append("and d.samediOffert is true ");
+
+		TypedQuery<DemandeCongesAnnuels> query = absEntityManager.createQuery(sb.toString(), DemandeCongesAnnuels.class);
+
+		query.setParameter("idAgent", demande.getIdAgent());
+		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		query.setParameter("fromDate", new DateTime(year, 1, 1, 0, 0, 0).toDate());
+		query.setParameter("toDate", new DateTime(year, 12, 31, 23, 59, 0).toDate());
+		List<DemandeCongesAnnuels> res = query.getResultList();
+		return res.size();
 	}
 }

@@ -884,15 +884,11 @@ public class AbsenceService implements IAbsenceService {
 								.isDateFinAM(), demandeDto.isDateFinPM(), demandeDto.getDateReprise()));
 
 				demandeCongesAnnuels = (DemandeCongesAnnuels) demande;
-				demandeCongesAnnuels.setDuree(helperService.getDuree(
-						demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? null : demandeCongesAnnuels
-								.getTypeSaisiCongeAnnuel(), demande.getDateDebut(), demande.getDateFin(), demandeDto
-								.getDateReprise()));
-				demandeCongesAnnuels.setSamediDecompte(helperService.isSamediDecompte(demandeCongesAnnuels
-						.getTypeSaisiCongeAnnuel() == null ? null : demandeCongesAnnuels.getTypeSaisiCongeAnnuel(),
-						demande.getDateDebut(), demande.getDateFin()));
-				demandeCongesAnnuels.setSamediOffert(helperService.isSamediOffert(demandeCongesAnnuels
-						.getTypeSaisiCongeAnnuel() == null ? null : demandeCongesAnnuels.getTypeSaisiCongeAnnuel()));
+				demandeCongesAnnuels.setDuree(helperService.getDureeCongeAnnuel(demandeCongesAnnuels,
+						demandeDto.getDateReprise()));
+				demandeCongesAnnuels.setSamediOffert(helperService.isSamediOffert(demandeCongesAnnuels));
+				demandeCongesAnnuels.setSamediDecompte(demandeCongesAnnuels.isSamediOffert() ? false : helperService
+						.isSamediDecompte(demandeCongesAnnuels));
 				demandeCongesAnnuels.setDateDebutAM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false
 						: demandeCongesAnnuels.getTypeSaisiCongeAnnuel().isChkDateDebut() ? demandeDto.isDateDebutAM()
 								: false);

@@ -4,10 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -22,6 +24,9 @@ public class HelperService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
+
+	@Autowired
+	private IDemandeRepository demandeRepository;
 
 	private static int HEURE_JOUR_DEBUT_AM = 0;
 	private static int HEURE_JOUR_FIN_AM = 11;
@@ -395,28 +400,27 @@ public class HelperService {
 		return null;
 	}
 
-	public Double getDuree(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, Date dateFin,
-			Date dateReprise) {
+	public Double getDureeCongeAnnuel(DemandeCongesAnnuels demande, Date dateReprise) {
 		Double duree = 0.0;
-		switch (refTypeSaisiCongeAnnuel.getCodeBaseHoraireAbsence()) {
+		switch (demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence()) {
 			case "A":
 			case "D":
-				duree = calculNombreJoursArrondiDemiJournee(dateDebut, dateFin)
-						- calculJoursNonComptes(dateDebut, dateFin)
-						+ calculNombreJoursSamedi(refTypeSaisiCongeAnnuel, dateDebut, dateFin);
+				duree = calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())
+						- calculJoursNonComptes(demande.getDateDebut(), demande.getDateFin())
+						- (isSamediOffert(demande) ? 1 : 0);
 				break;
 
 			case "E":
 			case "F":
-				duree = calculNombreJours(dateDebut, dateFin);
+				duree = calculNombreJours(demande.getDateDebut(), demande.getDateFin());
 				break;
 
 			case "C":
-				duree = calculNombreJours(dateDebut, dateReprise);
-				duree = Math.ceil((duree / refTypeSaisiCongeAnnuel.getQuotaMultiple()) * 3);
+				duree = calculNombreJours(demande.getDateDebut(), dateReprise);
+				duree = Math.ceil((duree / demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) * 3);
 				if (duree < 3) {
-					duree = calculNombreJours(dateDebut, dateReprise);
-				} else if (duree > 3 && duree <= refTypeSaisiCongeAnnuel.getQuotaMultiple()) {
+					duree = calculNombreJours(demande.getDateDebut(), dateReprise);
+				} else if (duree > 3 && duree <= demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) {
 					duree = 3.0;
 				}
 				break;
@@ -426,33 +430,6 @@ public class HelperService {
 		}
 
 		return duree;
-	}
-
-	private double calculNombreJoursSamedi(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, Date dateFin) {
-		int compteur = 0;
-		if (refTypeSaisiCongeAnnuel.isDecompteSamedi()) {
-			Calendar calendarDebut = new GregorianCalendar();
-			calendarDebut.setTime(dateDebut);
-
-			Calendar calendarFin = new GregorianCalendar();
-			calendarFin.setTime(dateFin);
-
-			// Différence
-			long diff = Math.abs(dateFin.getTime() - dateDebut.getTime());
-			long numberOfDay = (long) diff / 86400000;
-
-			for (int i = 0; i <= numberOfDay; i++) {
-				if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-					compteur++;
-				}
-				calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
-			}
-
-			// TODO il faut regarder toutes les demandes de l'année pour voir si
-			// 1 samedi a deja été offert pour decompter
-
-		}
-		return (double) compteur;
 	}
 
 	private double calculJoursNonComptes(Date dateDebut, Date dateFin) {
@@ -506,17 +483,17 @@ public class HelperService {
 		return (double) compteur;
 	}
 
-	public boolean isSamediDecompte(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, Date dateFin) {
+	public boolean isSamediDecompte(DemandeCongesAnnuels demande) {
 		int compteur = 0;
-		if (refTypeSaisiCongeAnnuel.isDecompteSamedi()) {
+		if (demande.getTypeSaisiCongeAnnuel() != null && demande.getTypeSaisiCongeAnnuel().isDecompteSamedi()) {
 			Calendar calendarDebut = new GregorianCalendar();
-			calendarDebut.setTime(dateDebut);
+			calendarDebut.setTime(demande.getDateDebut());
 
 			Calendar calendarFin = new GregorianCalendar();
-			calendarFin.setTime(dateFin);
+			calendarFin.setTime(demande.getDateFin());
 
 			// Différence
-			long diff = Math.abs(dateFin.getTime() - dateDebut.getTime());
+			long diff = Math.abs(demande.getDateFin().getTime() - demande.getDateDebut().getTime());
 			long numberOfDay = (long) diff / 86400000;
 
 			for (int i = 0; i <= numberOfDay; i++) {
@@ -526,16 +503,23 @@ public class HelperService {
 				calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
 			}
 
-			// TODO il faut regarder toutes les demandes de l'année pour voir si
-			// 1 samedi a deja été offert pour decompter
-
 		}
 		return compteur > 0;
 	}
 
-	public boolean isSamediOffert(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel) {
+	private int getNombreSamediOffert(DemandeCongesAnnuels demande, Integer year) {
+		return demandeRepository.getNombreSamediOffertSurAnnee(demande, year);
+	}
+
+	public boolean isSamediOffert(DemandeCongesAnnuels demande) {
 		// TODO Auto-generated method stub
 		// a completer
+		Calendar calendarDebut = new GregorianCalendar();
+		calendarDebut.setTime(demande.getDateDebut());
+		int nbSamediDecompte = getNombreSamediOffert(demande, calendarDebut.get(Calendar.YEAR));
+		if (nbSamediDecompte == 0) {
+			return true;
+		}
 		return false;
 	}
 }

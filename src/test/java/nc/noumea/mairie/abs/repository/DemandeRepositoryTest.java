@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.Droit;
@@ -1259,6 +1260,66 @@ public class DemandeRepositoryTest {
 		assertEquals(2, result.size());
 		assertEquals("9005138", ((DemandeAsa) result.get(1)).getIdAgent().toString());
 		assertEquals("9005139", ((DemandeAsa) result.get(0)).getIdAgent().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getNombreSamediOffertSurAnnee_Return0() throws ParseException {
+		// Given
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		absEntityManager.persist(groupe);
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		absEntityManager.persist(type);
+		
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(9005138);
+		d.setType(type);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(sdf.parse("16/05/2013"));
+		d.setSamediOffert(false);
+		absEntityManager.persist(d);
+
+		// When
+		Integer result = repository.getNombreSamediOffertSurAnnee(d, 2013);
+
+		// Then
+		assertEquals(0, (int) result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getNombreSamediOffertSurAnnee_Return1() throws ParseException {
+		// Given
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		absEntityManager.persist(groupe);
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		absEntityManager.persist(type);
+		
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(9005138);
+		d.setType(type);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(sdf.parse("16/05/2013"));
+		d.setSamediOffert(true);
+		absEntityManager.persist(d);
+
+		// When
+		Integer result = repository.getNombreSamediOffertSurAnnee(d, 2013);
+
+		// Then
+		assertEquals(1, (int) result);
 
 		absEntityManager.flush();
 		absEntityManager.clear();

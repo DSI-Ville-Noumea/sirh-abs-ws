@@ -8579,6 +8579,11 @@ public class AbsenceServiceTest {
 		typeSaisi.setCodeBaseHoraireAbsence("A");
 		dto.setTypeSaisiCongeAnnuel(new RefTypeSaisiCongeAnnuelDto(typeSaisi));
 
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+		demande.setTypeSaisiCongeAnnuel(typeSaisi);
+
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isUserOperateur(idAgent)).thenReturn(true);
 		Mockito.when(accessRightsRepository.getAgentDroitFetchAgents(idAgent)).thenReturn(droitOperateur);
@@ -8607,7 +8612,7 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				helperService.getDateDebut(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class),
 						Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(dateDebut);
-		Mockito.when(helperService.getDuree(typeSaisi, dateDebut, dateFin, dateReprise)).thenReturn(2.0);
+		Mockito.when(helperService.getDureeCongeAnnuel(demande, dateReprise)).thenReturn(2.0);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -8699,6 +8704,11 @@ public class AbsenceServiceTest {
 		typeSaisi.setCodeBaseHoraireAbsence("A");
 		dto.setTypeSaisiCongeAnnuel(new RefTypeSaisiCongeAnnuelDto(typeSaisi));
 
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+		demande.setTypeSaisiCongeAnnuel(typeSaisi);
+
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isUserOperateur(idAgent)).thenReturn(true);
 		Mockito.when(accessRightsRepository.getAgentDroitFetchAgents(idAgent)).thenReturn(droitOperateur);
@@ -8727,7 +8737,7 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				helperService.getDateDebut(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class),
 						Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(dateDebut);
-		Mockito.when(helperService.getDuree(typeSaisi, dateDebut, dateFin, dateReprise)).thenReturn(3.5);
+		Mockito.when(helperService.getDureeCongeAnnuel(demande, dateReprise)).thenReturn(3.5);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {

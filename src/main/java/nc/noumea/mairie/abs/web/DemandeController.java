@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
@@ -89,8 +90,13 @@ public class DemandeController {
 				demandeDto.getDateDebut(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM(),
 				demandeDto.getDateReprise()));
 
-		Double duree = helperService.getDuree(typeCongeAnnuel, demandeDto.getDateDebut(), demandeDto.getDateFin(),
-				demandeDto.getDateReprise());
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
+		demande.setDateDebut(demandeDto.getDateDebut());
+		demande.setDateFin(demandeDto.getDateFin());
+		demande.setTypeSaisiCongeAnnuel(typeCongeAnnuel);
+
+		Double duree = helperService.getDureeCongeAnnuel(demande, demandeDto.getDateReprise());
 
 		DemandeDto res = new DemandeDto();
 		res.setDuree(duree);
