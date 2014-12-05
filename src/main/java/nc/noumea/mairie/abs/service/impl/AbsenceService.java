@@ -874,11 +874,11 @@ public class AbsenceService implements IAbsenceService {
 				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
 				// fin, 3 - calcul duree
 				// car dependance entre ces 3 donnees pour les calculs
-				demande.setDateDebut(helperService.getDateDebut(
+				demande.setDateDebut(helperService.getDateDebutCongeAnnuel(
 						demande.getType().getTypeSaisiCongeAnnuel() == null ? null : demande.getType()
 								.getTypeSaisiCongeAnnuel(), demandeDto.getDateDebut(), demandeDto.isDateDebutAM(),
 						demandeDto.isDateDebutPM()));
-				demande.setDateFin(helperService.getDateFin(
+				demande.setDateFin(helperService.getDateFinCongeAnnuel(
 						demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? null : demandeCongesAnnuels
 								.getTypeSaisiCongeAnnuel(), demandeDto.getDateFin(), demande.getDateDebut(), demandeDto
 								.isDateFinAM(), demandeDto.isDateFinPM(), demandeDto.getDateReprise()));

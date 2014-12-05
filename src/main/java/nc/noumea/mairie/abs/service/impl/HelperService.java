@@ -319,11 +319,10 @@ public class HelperService {
 		return null;
 	}
 
-	public Date getDateDebut(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, boolean dateDebutAM,
+	public Date getDateDebutCongeAnnuel(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, boolean dateDebutAM,
 			boolean dateDebutPM) {
 
 		if (refTypeSaisiCongeAnnuel.isChkDateDebut()) {
-
 			if (dateDebutAM && !dateDebutPM) {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(dateDebut);
@@ -355,7 +354,7 @@ public class HelperService {
 		return null;
 	}
 
-	public Date getDateFin(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateFin, Date dateDebut,
+	public Date getDateFinCongeAnnuel(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateFin, Date dateDebut,
 			boolean dateFinAM, boolean dateFinPM, Date dateReprise) {
 
 		if (refTypeSaisiCongeAnnuel.isCalendarDateFin() && !refTypeSaisiCongeAnnuel.isChkDateFin()) {
@@ -497,7 +496,7 @@ public class HelperService {
 			long numberOfDay = (long) diff / 86400000;
 
 			for (int i = 0; i <= numberOfDay; i++) {
-				if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+				if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
 					compteur++;
 				}
 				calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
@@ -512,13 +511,25 @@ public class HelperService {
 	}
 
 	public boolean isSamediOffert(DemandeCongesAnnuels demande) {
-		// TODO Auto-generated method stub
-		// a completer
+
 		Calendar calendarDebut = new GregorianCalendar();
 		calendarDebut.setTime(demande.getDateDebut());
-		int nbSamediDecompte = getNombreSamediOffert(demande, calendarDebut.get(Calendar.YEAR));
-		if (nbSamediDecompte == 0) {
-			return true;
+
+		Calendar calendarFin = new GregorianCalendar();
+		calendarFin.setTime(demande.getDateFin());
+
+		// Différence
+		long diff = Math.abs(demande.getDateFin().getTime() - demande.getDateDebut().getTime());
+		long numberOfDay = (long) diff / 86400000;
+		
+		for (int i = 0; i <= numberOfDay; i++) {
+			if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
+				int nbSamediDecompte = getNombreSamediOffert(demande, calendarDebut.get(Calendar.YEAR));
+				if (nbSamediDecompte == 0) {
+					return true;
+				}
+			}
+			calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
 		}
 		return false;
 	}

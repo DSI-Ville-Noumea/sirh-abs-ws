@@ -84,9 +84,9 @@ public class DemandeController {
 		RefTypeSaisiCongeAnnuel typeCongeAnnuel = filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class, demandeDto
 				.getTypeSaisiCongeAnnuel().getIdRefTypeSaisiCongeAnnuel());
 
-		demandeDto.setDateDebut(helperService.getDateDebut(typeCongeAnnuel, demandeDto.getDateDebut(),
+		demandeDto.setDateDebut(helperService.getDateDebutCongeAnnuel(typeCongeAnnuel, demandeDto.getDateDebut(),
 				demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
-		demandeDto.setDateFin(helperService.getDateFin(typeCongeAnnuel, demandeDto.getDateFin(),
+		demandeDto.setDateFin(helperService.getDateFinCongeAnnuel(typeCongeAnnuel, demandeDto.getDateFin(),
 				demandeDto.getDateDebut(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM(),
 				demandeDto.getDateReprise()));
 
