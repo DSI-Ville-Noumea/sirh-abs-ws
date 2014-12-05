@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -129,5 +130,40 @@ public class TypeAbsenceRepositoryTest {
 		assertEquals("code 2", result.get(1).getGroupe().getCode());
 		assertEquals("libelle 2", result.get(1).getGroupe().getLibelle());
 		assertEquals("description 2", result.get(1).getTypeSaisi().getDescription());
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeTypeSaisiCongeAnnuel_1Result() {
+
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setCodeBaseHoraireAbsence("A");
+		absEntityManager.persist(typeSaisi);
+
+		List<RefTypeSaisiCongeAnnuel> result = repository.getListeTypeSaisiCongeAnnuel();
+
+		assertEquals(1, result.size());
+		assertEquals("A", result.get(0).getCodeBaseHoraireAbsence());
+
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeTypeSaisiCongeAnnuel_2Result() {
+
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setCodeBaseHoraireAbsence("A");
+		absEntityManager.persist(typeSaisi);
+
+		RefTypeSaisiCongeAnnuel typeSaisi2 = new RefTypeSaisiCongeAnnuel();
+		typeSaisi2.setCodeBaseHoraireAbsence("C");
+		absEntityManager.persist(typeSaisi2);
+
+		List<RefTypeSaisiCongeAnnuel> result = repository.getListeTypeSaisiCongeAnnuel();
+
+		assertEquals(2, result.size());
+		assertEquals("A", result.get(0).getCodeBaseHoraireAbsence());
+		assertEquals("C", result.get(1).getCodeBaseHoraireAbsence());
+
 	}
 }

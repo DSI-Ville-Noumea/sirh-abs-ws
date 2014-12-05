@@ -27,8 +27,7 @@ public class RefTypeSaisiCongeAnnuel {
 	@Column(name = "CODE_BASE_HORAIRE_ABSENCE", nullable = false)
 	private String codeBaseHoraireAbsence;
 
-	@NotNull
-	@Column(name = "DESCRIPTION", nullable = false)
+	@Column(name = "DESCRIPTION")
 	private String description;
 
 	@ManyToOne
