@@ -71,6 +71,7 @@ public class DemandeDto {
 	private Boolean isValeurValidation = null;
 	// depassement de droits
 	private boolean isDepassementCompteur;
+	private boolean isDepassementMultiple;
 
 	private OrganisationSyndicaleDto organisationSyndicale;
 
@@ -519,6 +520,14 @@ public class DemandeDto {
 
 	public void setTypeSaisiCongeAnnuel(RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel) {
 		this.typeSaisiCongeAnnuel = typeSaisiCongeAnnuel;
+	}
+
+	public boolean isDepassementMultiple() {
+		return isDepassementMultiple;
+	}
+
+	public void setDepassementMultiple(boolean isDepassementMultiple) {
+		this.isDepassementMultiple = isDepassementMultiple;
 	}
 
 }

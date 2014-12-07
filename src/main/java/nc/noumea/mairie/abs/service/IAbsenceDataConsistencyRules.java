@@ -37,6 +37,8 @@ public interface IAbsenceDataConsistencyRules {
 
 	boolean checkDepassementCompteurAgent(DemandeDto demandeDto);
 
+	boolean checkDepassementMultipleAgent(DemandeDto dto);
+
 	DemandeDto filtreDroitOfDemande(Integer idAgentConnecte, DemandeDto demandeDto, List<DroitsAgent> listDroitAgent);
 
 	DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto);

@@ -9,6 +9,7 @@ import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
@@ -124,5 +125,27 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 			srm.getErrors().add(String.format("Si consécutif est à non, alors décompte du samedi doit être à oui."));
 
 		return srm;
+	}
+
+	@Override
+	public boolean checkDepassementMultipleAgent(DemandeDto demandeDto) {
+		return checkDepassementMultipleAgent(demandeDto.getTypeSaisiCongeAnnuel(), demandeDto.getDuree());
+	}
+
+	private boolean checkDepassementMultipleAgent(RefTypeSaisiCongeAnnuelDto refTypeSaisiCongeAnnuelDto, Double duree) {
+
+		RefTypeSaisiCongeAnnuel typeSaisi = demandeRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+				refTypeSaisiCongeAnnuelDto.getIdRefTypeSaisiCongeAnnuel());
+
+		// si le quota max pour ce type de demande est a zero
+		// on renvoie une alerte de depassement dans tous les cas
+		if (typeSaisi.getQuotaMultiple() == null)
+			return false;
+
+		if (duree % typeSaisi.getQuotaMultiple() != 0) {
+			return true;
+		}
+
+		return false;
 	}
 }

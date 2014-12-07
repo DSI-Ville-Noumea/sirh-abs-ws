@@ -620,6 +620,7 @@ public class AbsenceService implements IAbsenceService {
 					.getGroupeAbsence().getIdRefGroupeAbsence(), dto.getIdTypeDemande());
 			dto = absenceDataConsistencyRulesImpl.filtreDroitOfDemandeSIRH(dto);
 			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto));
+			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(dto));
 		}
 
 		return listeDto;
@@ -923,6 +924,7 @@ public class AbsenceService implements IAbsenceService {
 					.getGroupeAbsence().getIdRefGroupeAbsence(), dto.getIdTypeDemande());
 			dto = absenceDataConsistencyRulesImpl.filtreDroitOfDemandeSIRH(dto);
 			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto));
+			dto.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(dto));
 		}
 
 		return listeDto;

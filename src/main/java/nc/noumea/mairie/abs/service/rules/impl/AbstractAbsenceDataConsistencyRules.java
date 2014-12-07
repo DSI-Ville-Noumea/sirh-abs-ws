@@ -397,6 +397,11 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		return false;
 	}
 
+	@Override
+	public boolean checkDepassementMultipleAgent(DemandeDto demandeDto) {
+		return false;
+	}
+
 	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Demande demande) {
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel, convention coll
