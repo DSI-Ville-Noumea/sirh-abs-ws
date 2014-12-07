@@ -263,9 +263,8 @@ public class AbsenceService implements IAbsenceService {
 					demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto,
 					listDroitAgent);
-			// pas de demande pour le kiosque
-			// demandeDto
-			// .setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
+			demandeDto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
+			demandeDto.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(demandeDto));
 		}
 		return listeDto;
 	}
