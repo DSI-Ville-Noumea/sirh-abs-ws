@@ -30,12 +30,12 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		checkBaseHoraireAbsenceAgent(srm, demande.getIdAgent(), demande.getDateDebut());
 		checkDepassementDroitsAcquis(srm, demande);
 		checkChampMotifDemandeSaisi(srm, (DemandeCongesAnnuels) demande);
-		checkMultipleCycle(srm, (DemandeCongesAnnuels) demande);
+		checkMultipleCycle(srm, (DemandeCongesAnnuels) demande, idAgent);
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
 	}
 
-	protected ReturnMessageDto checkMultipleCycle(ReturnMessageDto srm, DemandeCongesAnnuels demande) {
+	protected ReturnMessageDto checkMultipleCycle(ReturnMessageDto srm, DemandeCongesAnnuels demande, Integer idAgent) {
 		double nbJours = 0.0;
 		if (demande.getTypeSaisiCongeAnnuel().getQuotaMultiple() != null) {
 			switch (demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence()) {
@@ -44,13 +44,21 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 				case "F":
 					nbJours = helperService.calculNombreJours(demande.getDateDebut(), demande.getDateFin());
 					if (nbJours % demande.getTypeSaisiCongeAnnuel().getQuotaMultiple() != 0) {
-
-						logger.warn(String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
-								.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()));
-						srm.getErrors().add(
-								String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
-										.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel()
-										.getQuotaMultiple()));
+						if (accessRightsRepository.isOperateurOfAgent(idAgent, demande.getIdAgent())) {
+							logger.warn(String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
+									.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()));
+							srm.getInfos().add(
+									String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
+											.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel()
+											.getQuotaMultiple()));
+						} else {
+							logger.warn(String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
+									.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()));
+							srm.getErrors().add(
+									String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
+											.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel()
+											.getQuotaMultiple()));
+						}
 					}
 					break;
 

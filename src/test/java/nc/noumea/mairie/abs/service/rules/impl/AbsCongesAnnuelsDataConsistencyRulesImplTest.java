@@ -14,6 +14,7 @@ import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -304,6 +305,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 	@Test
 	public void checkMultipleCycle_withNoMultiple() {
+		Integer idOperateur = 9005138;
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
@@ -315,13 +317,14 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demande.setCommentaire(null);
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
 
-		srm = impl.checkMultipleCycle(srm, demande);
+		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
 
 		assertEquals(0, srm.getErrors().size());
 	}
 
 	@Test
 	public void checkMultipleCycle_withMultiple() {
+		Integer idOperateur = 9005138;
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
@@ -332,15 +335,50 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setCommentaire(null);
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setIdAgent(9003041);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(4.0);
 
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idOperateur, demande.getIdAgent())).thenReturn(false);
+
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
-		srm = impl.checkMultipleCycle(srm, demande);
+		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
+		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
 
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(srm.getErrors().get(0),
+				"Pour la base congé E, la durée du congé doit être un multiple de 5 jours.");
+	}
+
+	@Test
+	public void checkMultipleCycle_withMultiple_ForOperateur() {
+		Integer idOperateur = 9005138;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("E");
+		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setCommentaire(null);
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setIdAgent(9003041);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(4.0);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idOperateur, demande.getIdAgent())).thenReturn(true);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
+		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
+
+		assertEquals(1, srm.getInfos().size());
+		assertEquals(srm.getInfos().get(0),
 				"Pour la base congé E, la durée du congé doit être un multiple de 5 jours.");
 	}
 
