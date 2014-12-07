@@ -1,6 +1,8 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
@@ -9,10 +11,12 @@ import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
+import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -338,5 +342,61 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(srm.getErrors().get(0),
 				"Pour la base congé E, la durée du congé doit être un multiple de 5 jours.");
+	}
+
+	@Test
+	public void checkDepassementMultipleAgent_Ok() {
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
+		typeSaisi.setCalendarDateDebut(true);
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setCalendarDateReprise(false);
+		typeSaisi.setDecompteSamedi(false);
+		typeSaisi.setConsecutif(true);
+		typeSaisi.setQuotaMultiple(3);
+
+		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuelDto(typeSaisi);
+
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setDuree(5.0);
+		demandeDto.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefTypeSaisiCongeAnnuel.class, typeSaisi.getIdRefTypeSaisiCongeAnnuel()))
+				.thenReturn(typeSaisi);
+
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+		boolean result = impl.checkDepassementMultipleAgent(demandeDto);
+
+		assertTrue(result);
+	}
+
+	@Test
+	public void checkDepassementMultipleAgent_Ko() {
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
+		typeSaisi.setCalendarDateDebut(true);
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setCalendarDateReprise(false);
+		typeSaisi.setDecompteSamedi(false);
+		typeSaisi.setConsecutif(true);
+		typeSaisi.setQuotaMultiple(5);
+
+		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuelDto(typeSaisi);
+
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setDuree(5.0);
+		demandeDto.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefTypeSaisiCongeAnnuel.class, typeSaisi.getIdRefTypeSaisiCongeAnnuel()))
+				.thenReturn(typeSaisi);
+
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+		boolean result = impl.checkDepassementMultipleAgent(demandeDto);
+
+		assertFalse(result);
 	}
 }

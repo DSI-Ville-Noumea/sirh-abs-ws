@@ -4310,6 +4310,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
+		assertFalse(listResult.get(0).isDepassementMultiple());
 
 	}
 
@@ -7688,6 +7689,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
+		assertFalse(listResult.get(0).isDepassementMultiple());
 	}
 
 	@Test
@@ -7907,6 +7909,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, listResult.size());
 		assertFalse(listResult.get(0).isDepassementCompteur());
+		assertFalse(listResult.get(0).isDepassementMultiple());
 	}
 
 	@Test
@@ -8532,6 +8535,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
+		assertFalse(listResult.get(0).isDepassementMultiple());
 
 	}
 
@@ -9371,6 +9375,54 @@ public class AbsenceServiceTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals("erreur droit", result.getErrors().get(0).toString());
 		Mockito.verify(demandeRepository, Mockito.times(0)).persistEntity(Mockito.isA(Demande.class));
+	}
+
+
+	@Test
+	public void getListeDemandesSIRH_return1Liste_WithCongeAnnuel() {
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+		Demande d = new Demande();
+		d.setIdDemande(1);
+		listdemande.add(d);
+
+		List<DemandeDto> listdemandeDto = new ArrayList<DemandeDto>();
+
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		DemandeDto dto = new DemandeDto();
+		dto.setIdDemande(1);
+		dto.setIdTypeDemande(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+
+		listdemandeDto.add(dto);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.listeDemandesSIRH(null, null, null, null, null, null)).thenReturn(listdemande);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, null, null)).thenReturn(
+				listdemandeDto);
+		Mockito.when(absDataConsistencyRules.filtreDroitOfDemandeSIRH(dto)).thenReturn(dto);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+		Mockito.when(absDataConsistencyRules.checkDepassementMultipleAgent(dto)).thenReturn(true);
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null);
+
+		assertEquals(1, listResult.size());
+		assertTrue(listResult.get(0).isDepassementCompteur());
+		assertTrue(listResult.get(0).isDepassementMultiple());
+
 	}
 
 }
