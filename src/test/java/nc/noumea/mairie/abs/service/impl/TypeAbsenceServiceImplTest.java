@@ -369,6 +369,43 @@ public class TypeAbsenceServiceImplTest {
 		Mockito.verify(typeAbsenceRepository, Mockito.times(1)).persistEntity(Mockito.isA(RefTypeAbsence.class));
 		assertEquals(result.getInfos().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_CREE);
 	}
+	
+
+
+	@Test
+	public void setTypAbsence_CongeAnnuel() {
+		RefGroupeAbsenceDto groupeDto = new RefGroupeAbsenceDto();
+		groupeDto.setCode("groupe");
+		groupeDto.setLibelle("lib groupe");
+		groupeDto.setIdRefGroupeAbsence(1);
+		
+		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
+
+		RefTypeAbsenceDto typeAbsenceDto = new RefTypeAbsenceDto();
+		typeAbsenceDto.setIdRefTypeAbsence(1);
+		typeAbsenceDto.setGroupeAbsence(groupeDto);
+		typeAbsenceDto.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto);
+
+		RefTypeAbsence typeAbsence = new RefTypeAbsence();
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(9005138)).thenReturn(new ReturnMessageDto());
+
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeAbsence.class, typeAbsenceDto.getIdRefTypeAbsence()))
+				.thenReturn(typeAbsence);
+		Mockito.when(typeAbsenceRepository.getEntity(RefGroupeAbsence.class, typeAbsenceDto.getGroupeAbsence()))
+				.thenReturn(null);
+
+		TypeAbsenceServiceImpl service = new TypeAbsenceServiceImpl();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+
+		ReturnMessageDto result = service.setTypAbsence(9005138, typeAbsenceDto);
+
+		Mockito.verify(typeAbsenceRepository, Mockito.times(0)).persistEntity(Mockito.isA(RefTypeAbsence.class));
+		assertEquals(result.getErrors().get(0), TypeAbsenceServiceImpl.TYPE_GROUPE_INEXISTANT);
+	}
 
 	@Test
 	public void deleteTypeAbsence_UserNonHabilite() {

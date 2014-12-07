@@ -13,6 +13,7 @@ import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
+import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.junit.Test;
@@ -295,5 +296,47 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		srm = impl.checkBaseHoraireAbsenceAgent(srm, idAgent, dateDebut);
 
 		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkMultipleCycle_withNoMultiple() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("A");
+		typeSaisiCongeAnnuel.setQuotaMultiple(null);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setCommentaire(null);
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+
+		srm = impl.checkMultipleCycle(srm, demande);
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkMultipleCycle_withMultiple() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("E");
+		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setCommentaire(null);
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(4.0);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		srm = impl.checkMultipleCycle(srm, demande);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0),
+				"Pour la base congé E, la durée du congé doit être un multiple de 5 jours.");
 	}
 }
