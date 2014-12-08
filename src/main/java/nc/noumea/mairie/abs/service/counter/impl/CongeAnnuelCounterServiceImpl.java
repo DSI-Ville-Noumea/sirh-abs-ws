@@ -1,5 +1,7 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
+import java.util.List;
+
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
@@ -59,5 +61,54 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		}
 
 		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Integer> getListAgentCongeAnnuelCountForReset() {
+		return counterRepository.getListAgentCongeAnnuelCountForReset();
+	}
+
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto resetCompteurCongeAnnuel(Integer idAgentCount) {
+
+		logger.info("reset CompteurCongeAnnuel for idAgentCount {} ...", idAgentCount);
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		AgentCongeAnnuelCount arc = counterRepository.getEntity(AgentCongeAnnuelCount.class, idAgentCount);
+
+		if (arc == null) {
+			logger.warn(COMPTEUR_INEXISTANT);
+			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
+			return srm;
+		}
+
+		// selon la SFD, compteur annee en cours à ajouter au compteur de
+		// l'année precedente
+		// et on remet le compteur de l'année à 0
+
+		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
+		histo.setIdAgent(arc.getIdAgent());
+		histo.setIdAgentConcerne(arc.getIdAgent());
+		histo.setDateModification(helperService.getCurrentDate());
+		histo.setMotifCompteur(null);
+		histo.setMotifTechnique(RESET_COMPTEUR_ANNEE_EN_COURS);
+		String textLog = "Retrait de " + (0 - arc.getTotalJours()) + " jours sur la nouvelle année.";
+		histo.setText(textLog);
+		histo.setCompteurAgent(arc);
+
+		RefTypeAbsence rta = new RefTypeAbsence();
+		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		histo.setType(rta);
+
+		arc.setTotalJoursAnneeN1(arc.getTotalJoursAnneeN1() + arc.getTotalJours());
+		arc.setTotalJours(0.0);
+
+		counterRepository.persistEntity(arc);
+		counterRepository.persistEntity(histo);
+
+		return srm;
 	}
 }

@@ -129,7 +129,7 @@ public class CounterRepository implements ICounterRepository {
 
 		return (r.size() == 1 ? r.get(0) : null);
 	}
-	
+
 	@Override
 	public <T> T getOSCounterByDate(Class<T> T, Integer idOrganisationSyndicale, Date date) {
 
@@ -141,15 +141,12 @@ public class CounterRepository implements ICounterRepository {
 		Join<T, OrganisationSyndicale> j = c.join("organisationSyndicale");
 		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idOrganisationSyndicale");
 		ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateDebut");
-		cq.where(
-		cb.and(cb.equal(j.get("idOrganisationSyndicale"), p),
-				cb.between(p2, c.<Date> get("dateDebut"), c.<Date> get("dateFin")))
-				)
-				;
+		cq.where(cb.and(cb.equal(j.get("idOrganisationSyndicale"), p),
+				cb.between(p2, c.<Date> get("dateDebut"), c.<Date> get("dateFin"))));
 
 		// Build query
 		TypedQuery<T> q = absEntityManager.createQuery(cq);
-	    q.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
+		q.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
 		q.setParameter("dateDebut", date);
 		q.setMaxResults(1);
 
@@ -202,6 +199,17 @@ public class CounterRepository implements ICounterRepository {
 		q.setParameter("dateFin", dateFin);
 
 		return q.getResultList();
+	}
+
+	@Override
+	public List<Integer> getListAgentCongeAnnuelCountForReset() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select c.idAgentCount from AgentCongeAnnuelCount c ");
+
+		TypedQuery<Integer> query = absEntityManager.createQuery(sb.toString(), Integer.class);
+
+		return query.getResultList();
 	}
 
 }

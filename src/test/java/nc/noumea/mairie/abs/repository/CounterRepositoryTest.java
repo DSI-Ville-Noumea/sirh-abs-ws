@@ -14,6 +14,7 @@ import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
@@ -577,7 +578,7 @@ public class CounterRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getOSCounterByDate_1Agent_ReturnRecord() {
@@ -611,6 +612,35 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListAgentCongeAnnuelCountForReset() {
+
+		AgentCongeAnnuelCount arcc = new AgentCongeAnnuelCount();
+		arcc.setIdAgent(9005138);
+		arcc.setLastModification(new Date());
+		absEntityManager.persist(arcc);
+
+		AgentCongeAnnuelCount arcc2 = new AgentCongeAnnuelCount();
+		arcc2.setIdAgent(9005138);
+		arcc2.setLastModification(new Date());
+		arcc2.setTotalJours(10.0);
+		absEntityManager.persist(arcc2);
+
+		AgentCongeAnnuelCount arcc3 = new AgentCongeAnnuelCount();
+		arcc3.setIdAgent(9005138);
+		arcc3.setLastModification(new Date());
+		arcc3.setTotalJours(5.0);
+		absEntityManager.persist(arcc3);
+
+		List<Integer> result = repository.getListAgentCongeAnnuelCountForReset();
+
+		assertEquals(3, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

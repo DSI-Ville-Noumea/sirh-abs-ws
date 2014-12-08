@@ -13,7 +13,7 @@ import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 public interface ICounterService {
 
 	int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes);
-	
+
 	ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto);
 
 	ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto);
@@ -28,8 +28,11 @@ public interface ICounterService {
 
 	List<CompteurAsaDto> getListeCompteur();
 
-	List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent,
-			Date dateDebut, Date dateFin);
+	List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin);
 
 	ReturnMessageDto intitCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne);
+
+	List<Integer> getListAgentCongeAnnuelCountForReset();
+
+	ReturnMessageDto resetCompteurCongeAnnuel(Integer idAgentCongeAnnuelCount);
 }

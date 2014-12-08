@@ -1,5 +1,7 @@
 package nc.noumea.mairie.abs.web;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -48,6 +50,42 @@ public class CongeAnnuelController {
 		int convertedIdAgentConcerne = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConcerne);
 
 		ReturnMessageDto srm = counterService.intitCompteurCongeAnnuel(convertedIdAgent, convertedIdAgentConcerne);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+
+		return srm;
+	}
+
+	/**
+	 * Liste des compteurs a remettre a zero
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getListeCompteurCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<Integer> getListeCompteurCongeAnnuel() {
+
+		logger.debug("entered GET [congeannuel/getListeCompteurCongeAnnuel] => getListeCompteurCongeAnnuel");
+
+		List<Integer> listCompteur = counterService.getListAgentCongeAnnuelCountForReset();
+
+		return listCompteur;
+	}
+
+	/**
+	 * Remise a zero des compteurs de repos compensateur de l annee en cours <br />
+	 * utile a SIRH-JOBS le 31/12
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/resetCompteurCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public ReturnMessageDto resetCompteurCongeAnnuel(
+			@RequestParam("idAgentCongeAnnuelCount") int idAgentCongeAnnuelCount, HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [congeannuel/resetCompteurCongeAnnuel] => resetCompteurCongeAnnuel with parameters idAgentCongeAnnuelCount = {}",
+				idAgentCongeAnnuelCount);
+
+		ReturnMessageDto srm = counterService.resetCompteurCongeAnnuel(idAgentCongeAnnuelCount);
 
 		if (!srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);

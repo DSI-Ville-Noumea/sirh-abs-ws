@@ -198,6 +198,11 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
+	public List<Integer> getListAgentCongeAnnuelCountForReset() {
+		return new ArrayList<Integer>();
+	}
+
+	@Override
 	public List<Integer> getListAgentReposCompCountForResetAnneeEnCours() {
 		return new ArrayList<Integer>();
 	}
@@ -206,7 +211,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	public List<CompteurAsaDto> getListeCompteur() {
 		return null;
 	}
-	
+
 	@Override
 	public List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin) {
 		return null;
@@ -215,6 +220,15 @@ public abstract class AbstractCounterService implements ICounterService {
 	@Override
 	public ReturnMessageDto intitCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne) {
 		return null;
+	}
+
+	@Override
+	public ReturnMessageDto resetCompteurCongeAnnuel(Integer idAgentCongeAnnuelCount) {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
+
+		return srm;
 	}
 
 }
