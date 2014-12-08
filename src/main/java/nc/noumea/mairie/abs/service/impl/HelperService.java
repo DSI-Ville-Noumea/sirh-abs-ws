@@ -284,7 +284,7 @@ public class HelperService {
 	}
 
 	public boolean isAgentEligibleCongeAnnuel(Spcarr carr) {
-		return (carr.getCdcate() == 9 || carr.getCdcate() == 10 || carr.getCdcate() == 11);
+		return !(carr.getCdcate() == 9 || carr.getCdcate() == 10 || carr.getCdcate() == 11);
 	}
 
 	public Date getDateDebutByUnitePeriodeQuotaAndDebutDemande(RefUnitePeriodeQuota upq, Date dateDebutDemande) {
