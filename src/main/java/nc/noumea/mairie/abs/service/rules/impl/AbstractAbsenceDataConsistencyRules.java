@@ -79,6 +79,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String BASE_HORAIRE_AGENT = "L'agent [%d] n'a pas de base congé défini. Merci de contacter votre référent RH.";
 	public static final String CHAMP_COMMENTAIRE_OBLIGATOIRE = "Le champ Commentaire est obligatoire.";
 	public static final String SAISIE_NON_MULTIPLE = "Pour la base congé %s, la durée du congé doit être un multiple de %d jours.";
+	public static final String STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL = "Ce type de demande ne peut pas être saisi par les adjoints, conseillers municipaux et le maire.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
@@ -424,6 +425,13 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					&& !demande.getType().getTypeSaisi().isConventionCollective()) {
 				logger.warn(String.format(STATUT_AGENT_CONV_COLL, demande.getIdAgent()));
 				srm.getErrors().add(String.format(STATUT_AGENT_CONV_COLL, demande.getIdAgent()));
+				return srm;
+			}
+		}
+		if(null != demande.getType().getTypeSaisiCongeAnnuel()){
+			if (!helperService.isAgentEligibleCongeAnnuel(carr)) {
+				logger.warn(String.format(STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL, demande.getIdAgent()));
+				srm.getErrors().add(String.format(STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL, demande.getIdAgent()));
 				return srm;
 			}
 		}

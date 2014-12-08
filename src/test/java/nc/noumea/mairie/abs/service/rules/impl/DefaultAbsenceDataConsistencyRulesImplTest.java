@@ -28,6 +28,7 @@ import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -3118,7 +3119,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 
-		srm = impl.checkSaisiNewTypeAbsence(typeSaisi,null, srm);
+		srm = impl.checkSaisiNewTypeAbsence(typeSaisi, null, srm);
 
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.SAISIE_TYPE_ABSENCE_NON_AUTORISEE);
 	}
@@ -3197,5 +3198,81 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertEquals(1, srm.getErrors().size());
 		assertEquals("La date de fin ne peut pas être inférieure à la date de début.", srm.getErrors().get(0)
 				.toString());
+	}
+
+	@Test
+	public void checkStatutAgent_Adjoint_ko() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisiCongeAnnuel(typeSaisi);
+
+		Demande demande = new Demande();
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(9);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		Mockito.when(helperService.isAgentEligibleCongeAnnuel(carr)).thenReturn(false);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
+		srm = impl.checkStatutAgent(srm, demande);
+
+		assertEquals(srm.getErrors().size(), 1);
+		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL);
+	}
+
+	@Test
+	public void checkStatutAgent_Conseiller_ko() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisiCongeAnnuel(typeSaisi);
+
+		Demande demande = new Demande();
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(10);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+		Mockito.when(helperService.isAgentEligibleCongeAnnuel(carr)).thenReturn(false);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
+		srm = impl.checkStatutAgent(srm, demande);
+
+		assertEquals(srm.getErrors().size(), 1);
+		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL);
 	}
 }

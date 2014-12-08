@@ -283,6 +283,10 @@ public class HelperService {
 		return (carr.getCdcate() == 7);
 	}
 
+	public boolean isAgentEligibleCongeAnnuel(Spcarr carr) {
+		return (carr.getCdcate() == 9 || carr.getCdcate() == 10 || carr.getCdcate() == 11);
+	}
+
 	public Date getDateDebutByUnitePeriodeQuotaAndDebutDemande(RefUnitePeriodeQuota upq, Date dateDebutDemande) {
 
 		if (UNITE_DECOMPTE_AN.equals(upq.getUnite())) {
@@ -319,8 +323,8 @@ public class HelperService {
 		return null;
 	}
 
-	public Date getDateDebutCongeAnnuel(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, boolean dateDebutAM,
-			boolean dateDebutPM) {
+	public Date getDateDebutCongeAnnuel(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut,
+			boolean dateDebutAM, boolean dateDebutPM) {
 
 		if (refTypeSaisiCongeAnnuel.isChkDateDebut()) {
 			if (dateDebutAM && !dateDebutPM) {
@@ -521,7 +525,7 @@ public class HelperService {
 		// Différence
 		long diff = Math.abs(demande.getDateFin().getTime() - demande.getDateDebut().getTime());
 		long numberOfDay = (long) diff / 86400000;
-		
+
 		for (int i = 0; i <= numberOfDay; i++) {
 			if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
 				int nbSamediDecompte = getNombreSamediOffert(demande, calendarDebut.get(Calendar.YEAR));
