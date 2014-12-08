@@ -7,6 +7,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
@@ -57,11 +58,13 @@ public class SuppressionServiceTest {
 				.verifDemandeExiste(Mockito.any(Demande.class), Mockito.isA(ReturnMessageDto.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absenceDataConsistencyRulesImpl);
-		
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
+
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -80,15 +83,15 @@ public class SuppressionServiceTest {
 		Integer idDemande = 1;
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(3);
-			type.setGroupe(groupe);
+		type.setIdRefTypeAbsence(3);
+		type.setGroupe(groupe);
 
 		DemandeRecup demande = new DemandeRecup();
-			demande.setIdAgent(9005131);
-			demande.setType(type);
+		demande.setIdAgent(9005131);
+		demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, idDemande)).thenReturn(demande);
@@ -115,14 +118,16 @@ public class SuppressionServiceTest {
 		Mockito.when(
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(result);
-		
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absenceDataConsistencyRulesImpl);
-		
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
+
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -202,12 +207,14 @@ public class SuppressionServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absenceDataConsistencyRulesImpl);
-		
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
+
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -289,14 +296,16 @@ public class SuppressionServiceTest {
 		Mockito.when(
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
-		
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absenceDataConsistencyRulesImpl);
-		
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
+
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -320,17 +329,17 @@ public class SuppressionServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
-		
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(3);
-			type.setGroupe(groupe);
+		type.setIdRefTypeAbsence(3);
+		type.setGroupe(groupe);
 
 		DemandeRecup demande = new DemandeRecup();
-			demande.setIdAgent(9005138);
-			demande.setEtatsDemande(listEtat);
-			demande.setIdDemande(1);
-			demande.setType(type);
+		demande.setIdAgent(9005138);
+		demande.setEtatsDemande(listEtat);
+		demande.setIdDemande(1);
+		demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(demande);
@@ -380,12 +389,14 @@ public class SuppressionServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -485,8 +496,7 @@ public class SuppressionServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(demande);
 
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = Mockito
-				.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
@@ -501,11 +511,13 @@ public class SuppressionServiceTest {
 				.verifDemandeExiste(Mockito.any(Demande.class), Mockito.isA(ReturnMessageDto.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -524,11 +536,11 @@ public class SuppressionServiceTest {
 		Integer idDemande = 1;
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
-		
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(2);
-			type.setGroupe(groupe);
+		type.setIdRefTypeAbsence(2);
+		type.setGroupe(groupe);
 
 		DemandeReposComp demande = new DemandeReposComp();
 		demande.setIdAgent(9005131);
@@ -561,12 +573,14 @@ public class SuppressionServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(result);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -646,12 +660,14 @@ public class SuppressionServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -733,14 +749,16 @@ public class SuppressionServiceTest {
 		Mockito.when(
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
-		
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -823,12 +841,14 @@ public class SuppressionServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -911,12 +931,14 @@ public class SuppressionServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -939,11 +961,11 @@ public class SuppressionServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
-			type.setGroupe(groupe);
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		type.setGroupe(groupe);
 
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
@@ -999,12 +1021,14 @@ public class SuppressionServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -1025,7 +1049,7 @@ public class SuppressionServiceTest {
 		etatDemande.setEtat(RefEtatEnum.SAISIE);
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
@@ -1085,14 +1109,16 @@ public class SuppressionServiceTest {
 		Mockito.when(
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
-		
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -1175,12 +1201,14 @@ public class SuppressionServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -1188,7 +1216,7 @@ public class SuppressionServiceTest {
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void supprimerDemandeAsaA55_ok_etatSaisie() {
@@ -1261,14 +1289,16 @@ public class SuppressionServiceTest {
 		Mockito.when(
 				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
-		
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);
@@ -1291,17 +1321,17 @@ public class SuppressionServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
-			type.setGroupe(groupe);
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
+		type.setGroupe(groupe);
 
 		DemandeAsa demande = new DemandeAsa();
-			demande.setIdAgent(9005138);
-			demande.setEtatsDemande(listEtat);
-			demande.setIdDemande(1);
-			demande.setType(type);
+		demande.setIdAgent(9005138);
+		demande.setEtatsDemande(listEtat);
+		demande.setIdDemande(1);
+		demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(demande);
@@ -1351,12 +1381,194 @@ public class SuppressionServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
 
 		SuppressionService service = new SuppressionService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-//		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		result = service.supprimerDemande(idAgent, idDemande);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void supprimerDemandeCongeAnnuel_ok_etatSaisie() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		Integer idDemande = 1;
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setEtat(RefEtatEnum.SAISIE);
+		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
+		listEtat.add(etatDemande);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		type.setGroupe(groupe);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setIdAgent(9005138);
+		demande.setEtatsDemande(listEtat);
+		demande.setIdDemande(1);
+		demande.setType(type);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(demande);
+		Mockito.when(demandeRepository.getEntity(DemandeCongesAnnuels.class, idDemande)).thenReturn(demande);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).removeEntity(Mockito.isA(Demande.class));
+
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				Demande obj = (Demande) args[0];
+				ReturnMessageDto result = (ReturnMessageDto) args[1];
+				if (null == obj) {
+					result.getErrors().add("La demande n'existe pas.");
+				}
+				return result;
+			}
+		}).when(absenceDataConsistencyRulesImpl)
+				.verifDemandeExiste(Mockito.any(Demande.class), Mockito.isA(ReturnMessageDto.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				Demande demande = (Demande) args[1];
+				List<RefEtatEnum> listEtatsAcceptes = (List<RefEtatEnum>) args[2];
+
+				if (null != demande.getLatestEtatDemande()
+						&& !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
+					result.getErrors().add("Erreur etat incorrect");
+				}
+
+				return result;
+			}
+		})
+				.when(absenceDataConsistencyRulesImpl)
+				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(
+				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
+						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absenceDataConsistencyRulesImpl);
+
+		SuppressionService service = new SuppressionService();
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+
+		result = service.supprimerDemande(idAgent, idDemande);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).removeEntity(Mockito.isA(Demande.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void supprimerDemandeCongeAnnuel_ok_etatProvisoire() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		Integer idDemande = 1;
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setEtat(RefEtatEnum.PROVISOIRE);
+		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
+		listEtat.add(etatDemande);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		type.setGroupe(groupe);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setIdAgent(9005138);
+		demande.setEtatsDemande(listEtat);
+		demande.setIdDemande(1);
+		demande.setType(type);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, idDemande)).thenReturn(demande);
+		Mockito.when(demandeRepository.getEntity(DemandeCongesAnnuels.class, idDemande)).thenReturn(demande);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(demandeRepository).removeEntity(Mockito.isA(Demande.class));
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				Demande obj = (Demande) args[0];
+				ReturnMessageDto result = (ReturnMessageDto) args[1];
+				if (null == obj) {
+					result.getErrors().add("La demande n'existe pas.");
+				}
+				return result;
+			}
+		}).when(absDataConsistencyRules)
+				.verifDemandeExiste(Mockito.any(Demande.class), Mockito.isA(ReturnMessageDto.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				Demande demande = (Demande) args[1];
+				List<RefEtatEnum> listEtatsAcceptes = (List<RefEtatEnum>) args[2];
+
+				if (null != demande.getLatestEtatDemande()
+						&& !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
+					result.getErrors().add("Erreur etat incorrect");
+				}
+
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(
+				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
+						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
+
+		SuppressionService service = new SuppressionService();
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		// ReflectionTestUtils.setField(service,
+		// "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.supprimerDemande(idAgent, idDemande);

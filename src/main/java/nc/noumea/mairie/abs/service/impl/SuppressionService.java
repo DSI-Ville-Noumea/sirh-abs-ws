@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
@@ -103,6 +104,9 @@ public class SuppressionService implements ISuppressionService {
 				break;
 			case CONGES_EXCEP:
 				demande = getDemande(DemandeCongesExceptionnels.class, idDemande);
+				break;
+			case CONGES_ANNUELS:
+				demande = getDemande(DemandeCongesAnnuels.class, idDemande);
 				break;
 			default:
 				returnDto.getErrors().add(
