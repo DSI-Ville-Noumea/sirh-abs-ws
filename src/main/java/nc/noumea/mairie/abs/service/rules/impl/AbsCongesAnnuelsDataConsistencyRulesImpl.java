@@ -46,7 +46,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 				case "F":
 					nbJours = helperService.calculNombreJours(demande.getDateDebut(), demande.getDateFin());
 					if (nbJours % demande.getTypeSaisiCongeAnnuel().getQuotaMultiple() != 0) {
-						if (accessRightsRepository.isOperateurOfAgent(idAgent, demande.getIdAgent())) {
+						if (accessRightsRepository.isOperateurOfAgent(idAgent, demande.getIdAgent())
+								|| sirhWSConsumer.isUtilisateurSIRH(idAgent).getErrors().size() == 0) {
 							logger.warn(String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
 									.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()));
 							srm.getInfos().add(
