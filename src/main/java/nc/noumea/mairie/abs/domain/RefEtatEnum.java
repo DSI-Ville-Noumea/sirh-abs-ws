@@ -5,7 +5,7 @@ import java.util.List;
 public enum RefEtatEnum {
 
 	PROVISOIRE(0), SAISIE(1), VISEE_FAVORABLE(2), VISEE_DEFAVORABLE(3), APPROUVEE(4), REFUSEE(5), PRISE(6), ANNULEE(7), VALIDEE(
-			8), REJETE(9), EN_ATTENTE(10);
+			8), REJETE(9), EN_ATTENTE(10), A_VALIDER(11);
 
 	private int codeEtat;
 
@@ -45,6 +45,8 @@ public enum RefEtatEnum {
 				return REJETE;
 			case 10:
 				return EN_ATTENTE;
+			case 11:
+				return A_VALIDER;
 			default:
 				return null;
 		}

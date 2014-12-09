@@ -33,7 +33,8 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
 	}
 
-	protected ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
+	@Override
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
 
 		// on recupere le solde de l agent
 		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent());

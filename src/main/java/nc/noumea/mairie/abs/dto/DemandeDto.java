@@ -145,10 +145,11 @@ public class DemandeDto {
 
 		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(groupeAbsence.getIdRefGroupeAbsence())) {
 			case REPOS_COMP:
-				Integer dureeAnnee = ((DemandeReposComp) d).getDuree() == null ? 0 : ((DemandeReposComp) d).getDuree();
-				Integer dureeAnneePrec = ((DemandeReposComp) d).getDureeAnneeN1() == null ? 0 : ((DemandeReposComp) d)
-						.getDureeAnneeN1();
-				this.duree = (double) (dureeAnnee + dureeAnneePrec);
+				Integer dureeAnneeReposComp = ((DemandeReposComp) d).getDuree() == null ? 0 : ((DemandeReposComp) d)
+						.getDuree();
+				Integer dureeAnneePrecReposComp = ((DemandeReposComp) d).getDureeAnneeN1() == null ? 0
+						: ((DemandeReposComp) d).getDureeAnneeN1();
+				this.duree = (double) (dureeAnneeReposComp + dureeAnneePrecReposComp);
 				break;
 			case RECUP:
 				this.duree = (double) (((DemandeRecup) d).getDuree());
@@ -172,7 +173,11 @@ public class DemandeDto {
 				this.commentaire = ((DemandeCongesExceptionnels) d).getCommentaire();
 				break;
 			case CONGES_ANNUELS:
-				this.duree = ((DemandeCongesAnnuels) d).getDuree();
+				Double dureeAnneeCongeAnnuel = ((DemandeCongesAnnuels) d).getDuree() == null ? 0
+						: ((DemandeCongesAnnuels) d).getDuree();
+				Double dureeAnneePrecCongeAnnuel = ((DemandeCongesAnnuels) d).getDureeAnneeN1() == null ? 0
+						: ((DemandeCongesAnnuels) d).getDureeAnneeN1();
+				this.duree = (double) (dureeAnneeCongeAnnuel + dureeAnneePrecCongeAnnuel);
 				this.isDateDebutAM = ((DemandeCongesAnnuels) d).isDateDebutAM();
 				this.isDateDebutPM = ((DemandeCongesAnnuels) d).isDateDebutPM();
 				this.isDateFinAM = ((DemandeCongesAnnuels) d).isDateFinAM();

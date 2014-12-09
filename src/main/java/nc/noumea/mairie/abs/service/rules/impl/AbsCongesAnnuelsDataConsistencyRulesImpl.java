@@ -90,8 +90,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		return srm;
 	}
 
-	protected ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
-
+	@Override
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
 		// on recupere le solde de l agent
 		AgentCongeAnnuelCount soldeCongeAnnuel = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class,
 				demande.getIdAgent());
@@ -100,8 +100,11 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 				.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(demande.getIdAgent(),
 						demande.getIdDemande());
 
+		// TODO traiter le cas du -5jours
+
 		if (null == soldeCongeAnnuel
-				|| soldeCongeAnnuel.getTotalJours() - sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree() < 0) {
+				|| (soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1()) - sommeDemandeEnCours
+						- ((DemandeCongesAnnuels) demande).getDuree() < 0) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 			srm.getErrors().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 		}

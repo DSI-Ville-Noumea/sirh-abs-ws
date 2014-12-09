@@ -213,6 +213,20 @@ public class CongesAnnuelsRepositoryTest {
 		etatDemandeVALIDEE.setEtat(RefEtatEnum.VALIDEE);
 		absEntityManager.persist(etatDemandeVALIDEE);
 
+		DemandeCongesAnnuels demandeAVALIDEE = new DemandeCongesAnnuels();
+		demandeAVALIDEE.setDuree(10.0);
+		demandeAVALIDEE.setDateDebut(sdf.parse("15/06/2013"));
+		demandeAVALIDEE.setDateFin(sdf.parse("25/06/2013"));
+		demandeAVALIDEE.setIdAgent(idAgent);
+		demandeAVALIDEE.setType(type);
+		absEntityManager.persist(demandeAVALIDEE);
+
+		EtatDemande etatDemandeAVALIDEE = new EtatDemande();
+		etatDemandeAVALIDEE.setDemande(demandeVALIDEE);
+		etatDemandeAVALIDEE.setIdAgent(9000001);
+		etatDemandeAVALIDEE.setEtat(RefEtatEnum.A_VALIDER);
+		absEntityManager.persist(etatDemandeAVALIDEE);
+
 		Double result = repository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(idAgent,
 				demandeSAISIE.getIdDemande());
 

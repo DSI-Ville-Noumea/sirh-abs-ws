@@ -428,7 +428,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				return srm;
 			}
 		}
-		if(null != demande.getType().getTypeSaisiCongeAnnuel()){
+		if (null != demande.getType().getTypeSaisiCongeAnnuel()) {
 			if (!helperService.isAgentEligibleCongeAnnuel(carr)) {
 				logger.warn(String.format(STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL, demande.getIdAgent()));
 				srm.getErrors().add(String.format(STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL, demande.getIdAgent()));
@@ -444,6 +444,11 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel, ReturnMessageDto srm) {
 		logger.warn(String.format(SAISIE_TYPE_ABSENCE_NON_AUTORISEE));
 		srm.getErrors().add(String.format(SAISIE_TYPE_ABSENCE_NON_AUTORISEE));
+		return srm;
+	}
+
+	@Override
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
 		return srm;
 	}
 }

@@ -6,6 +6,10 @@ import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
@@ -202,6 +206,113 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		assertEquals(0, result.getErrors().size());
 
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+	}
+
+	@Test
+	public void majCompteurToAgent_compteurInexistant() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(2.0);
+		demande.setIdAgent(9005138);
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getIdAgent())).thenReturn(
+				null);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		ReturnMessageDto result = service.majCompteurToAgent(srm, demande, dto);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le compteur n'existe pas.", result.getErrors().get(0));
+
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+	}
+
+	@Test
+	public void majCompteurToAgent_soldeNegatif() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(2.0);
+		demande.setIdAgent(9005138);
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+
+		AgentCongeAnnuelCount arc = new AgentCongeAnnuelCount();
+		arc.setTotalJours(0.0);
+		arc.setTotalJoursAnneeN1(0.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getIdAgent())).thenReturn(
+				arc);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		ReturnMessageDto result = service.majCompteurToAgent(srm, demande, dto);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0));
+
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+	}
+
+	@Test
+	public void majCompteurToAgent_OK() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(2.0);
+		demande.setIdAgent(9005138);
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+
+		AgentCongeAnnuelCount arc = new AgentCongeAnnuelCount();
+		arc.setTotalJours(3.0);
+		arc.setTotalJoursAnneeN1(0.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getIdAgent())).thenReturn(
+				arc);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		ReturnMessageDto result = service.majCompteurToAgent(srm, demande, dto);
+
+		assertEquals(0, result.getErrors().size());
+
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
 	}
 

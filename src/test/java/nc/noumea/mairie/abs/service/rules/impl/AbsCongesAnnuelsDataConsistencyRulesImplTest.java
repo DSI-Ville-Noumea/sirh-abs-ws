@@ -212,6 +212,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
 		soldeCongeAnnuel.setTotalJours(2.0);
+		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getIdAgent())).thenReturn(
@@ -246,6 +247,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
 		soldeCongeAnnuel.setTotalJours(20.0);
+		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getIdAgent())).thenReturn(

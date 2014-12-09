@@ -263,8 +263,10 @@ public class AbsenceService implements IAbsenceService {
 					demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto,
 					listDroitAgent);
-			demandeDto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
-			demandeDto.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(demandeDto));
+			demandeDto
+					.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
+			demandeDto
+					.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(demandeDto));
 		}
 		return listeDto;
 	}
@@ -406,9 +408,11 @@ public class AbsenceService implements IAbsenceService {
 
 		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
-
-		result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(),
-				false);
+		
+		if (demande.getType().getTypeSaisi() != null) {
+			result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType()
+					.getTypeSaisi(), false);
+		}
 
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -430,6 +434,9 @@ public class AbsenceService implements IAbsenceService {
 		}
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
 			result.getInfos().add(String.format("La demande est approuvée."));
+		}
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat())) {
+			result.getInfos().add(String.format("La demande est en attente de validation par la DRH."));
 		}
 
 		return result;
@@ -469,12 +476,36 @@ public class AbsenceService implements IAbsenceService {
 
 	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setDate(new Date());
-		etatDemande.setMotif(demandeEtatChangeDto.getMotif());
-		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
-		etatDemande.setIdAgent(idAgent);
-		demande.addEtatDemande(etatDemande);
+		if (demande.getType() != null && demande.getType().getTypeSaisiCongeAnnuel() != null) {
+			// cas des congés annuels
+			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+					RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(), null);
+			ReturnMessageDto srm = new ReturnMessageDto();
+			srm = absenceDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srm, demande);
+			if (srm.getErrors().size() > 0) {
+				EtatDemande etatDemande = new EtatDemande();
+				etatDemande.setDate(new Date());
+				etatDemande.setMotif(demandeEtatChangeDto.getMotif());
+				etatDemande.setEtat(RefEtatEnum.A_VALIDER);
+				demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.A_VALIDER.getCodeEtat());
+				etatDemande.setIdAgent(idAgent);
+				demande.addEtatDemande(etatDemande);
+			} else {
+				EtatDemande etatDemande = new EtatDemande();
+				etatDemande.setDate(new Date());
+				etatDemande.setMotif(demandeEtatChangeDto.getMotif());
+				etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
+				etatDemande.setIdAgent(idAgent);
+				demande.addEtatDemande(etatDemande);
+			}
+		} else {
+			EtatDemande etatDemande = new EtatDemande();
+			etatDemande.setDate(new Date());
+			etatDemande.setMotif(demandeEtatChangeDto.getMotif());
+			etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
+			etatDemande.setIdAgent(idAgent);
+			demande.addEtatDemande(etatDemande);
+		}
 	}
 
 	@Override

@@ -17,9 +17,11 @@ import javax.validation.constraints.NotNull;
 @PrimaryKeyJoinColumn(name = "ID_DEMANDE")
 public class DemandeCongesAnnuels extends Demande {
 
-	@NotNull
 	@Column(name = "DUREE", columnDefinition = "numeric")
 	private Double duree;
+
+	@Column(name = "DUREE_ANNEE_N1", columnDefinition = "numeric")
+	private Double dureeAnneeN1;
 
 	@NotNull
 	@Column(name = "DATE_DEBUT_AM")
@@ -122,6 +124,14 @@ public class DemandeCongesAnnuels extends Demande {
 
 	public void setTypeSaisiCongeAnnuel(RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel) {
 		this.typeSaisiCongeAnnuel = typeSaisiCongeAnnuel;
+	}
+
+	public Double getDureeAnneeN1() {
+		return dureeAnneeN1;
+	}
+
+	public void setDureeAnneeN1(Double dureeAnneeN1) {
+		this.dureeAnneeN1 = dureeAnneeN1;
 	}
 
 }

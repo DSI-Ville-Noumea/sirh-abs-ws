@@ -47,4 +47,6 @@ public interface IAbsenceDataConsistencyRules {
 
 	ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi, RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel,
 			ReturnMessageDto srm);
+
+	ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande);
 }

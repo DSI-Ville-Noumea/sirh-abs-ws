@@ -48,7 +48,8 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 		return srm;
 	}
 
-	protected ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
+	@Override
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
 		// on recupere le solde de l agent
 		AgentReposCompCount soldeReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
 				demande.getIdAgent());
