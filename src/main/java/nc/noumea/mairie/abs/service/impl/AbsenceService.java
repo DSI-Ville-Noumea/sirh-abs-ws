@@ -408,7 +408,7 @@ public class AbsenceService implements IAbsenceService {
 
 		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
-		
+
 		if (demande.getType().getTypeSaisi() != null) {
 			result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType()
 					.getTypeSaisi(), false);
@@ -548,6 +548,19 @@ public class AbsenceService implements IAbsenceService {
 													.toString()));
 					logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
 							RefEtatEnum.VALIDEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
+					return result;
+				}
+				break;
+			case CONGES_ANNUELS:
+				if (!(demande.getLatestEtatDemande().getEtat() == RefEtatEnum.VALIDEE || demande.getLatestEtatDemande()
+						.getEtat() == RefEtatEnum.APPROUVEE)) {
+					result.getErrors().add(
+							String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
+									RefEtatEnum.VALIDEE.toString() + " ou " + RefEtatEnum.APPROUVEE.toString(), demande
+											.getLatestEtatDemande().getEtat().toString()));
+					logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
+							RefEtatEnum.VALIDEE.toString() + " ou " + RefEtatEnum.APPROUVEE.toString(), demande
+									.getLatestEtatDemande().getEtat().toString());
 					return result;
 				}
 				break;

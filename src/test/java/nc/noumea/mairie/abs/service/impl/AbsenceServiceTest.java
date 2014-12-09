@@ -9630,4 +9630,92 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
+
+
+	@Test
+	public void setDemandeEtatPris_EtatIncorrect_ReturnError_CongeAnnuel() {
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setLabel("Congé annuel");
+		typeRecup.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		typeRecup.setGroupe(groupe);
+
+		EtatDemande etat1 = new EtatDemande();
+		DemandeCongesAnnuels demande1 = new DemandeCongesAnnuels();
+		etat1.setDemande(demande1);
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		demande1.getEtatsDemande().add(etat1);
+		demande1.setType(typeRecup);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(demande1);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		// When
+		ReturnMessageDto result = service.setDemandeEtatPris(1);
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("La demande 1 n'est pas à l'état VALIDEE ou APPROUVEE mais SAISIE.", result.getErrors().get(0).toString());
+		Mockito.verify(demandeRepository, Mockito.never()).removeEntity(Mockito.isA(Demande.class));
+	}
+
+	@Test
+	public void setDemandeEtatPris_EtatIsOk_AddEtatDemande_CongeAnnuel() {
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setLabel("Congé annuel");
+		typeRecup.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		typeRecup.setGroupe(groupe);
+
+		EtatDemande etat1 = new EtatDemande();
+		final DemandeCongesAnnuels demande1 = new DemandeCongesAnnuels();
+		etat1.setDemande(demande1);
+		etat1.setEtat(RefEtatEnum.APPROUVEE);
+		demande1.getEtatsDemande().add(etat1);
+		demande1.setType(typeRecup);
+		demande1.setIdAgent(9006565);
+
+		final Date date = new DateTime(2014, 1, 26, 15, 16, 35).toDate();
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, 1)).thenReturn(demande1);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				EtatDemande etat = (EtatDemande) args[0];
+
+				assertEquals(date, etat.getDate());
+				assertEquals(demande1, etat.getDemande());
+				assertEquals(RefEtatEnum.PRISE, etat.getEtat());
+				assertEquals(9006565, (int) etat.getIdAgent());
+				assertNull(etat.getMotif());
+				return null;
+			}
+		}).when(demandeRepository).persistEntity(Mockito.isA(EtatDemande.class));
+
+		HelperService helper = Mockito.mock(HelperService.class);
+		Mockito.when(helper.getCurrentDate()).thenReturn(date);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "helperService", helper);
+
+		// When
+		ReturnMessageDto result = service.setDemandeEtatPris(1);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(EtatDemande.class));
+	}
 }
