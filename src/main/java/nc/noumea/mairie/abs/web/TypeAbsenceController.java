@@ -100,13 +100,13 @@ public class TypeAbsenceController {
 	@ResponseBody
 	@RequestMapping(value = "/getTypeAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public RefTypeAbsenceDto getTypeAbsence(
-			@RequestParam(value = "idRefTypeAbsence", required = true) Integer idRefTypeAbsence) {
+			@RequestParam(value = "idBaseHoraireAbsence", required = true) Integer idBaseHoraireAbsence) {
 
 		logger.debug(
-				"entered GET [typeAbsence/getTypeAbsence] => getTypeAbsence with parameters idRefTypeAbsence = {}",
-				idRefTypeAbsence);
+				"entered GET [typeAbsence/getTypeAbsence] => getTypeAbsence with parameters idBaseHoraireAbsence = {}",
+				idBaseHoraireAbsence);
 
-		return typeAbsenceService.getTypAbsence(idRefTypeAbsence);
+		return typeAbsenceService.getTypeAbsenceByBaseHoraire(idBaseHoraireAbsence);
 
 	}
 }

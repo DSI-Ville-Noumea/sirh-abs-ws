@@ -150,13 +150,34 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		RefTypeSaisiCongeAnnuel typeSaisi = demandeRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
 				refTypeSaisiCongeAnnuelDto.getIdRefTypeSaisiCongeAnnuel());
 
-		// si le quota max pour ce type de demande est a zero
-		// on renvoie une alerte de depassement dans tous les cas
-		if (typeSaisi.getQuotaMultiple() == null)
-			return false;
+		switch (typeSaisi.getCodeBaseHoraireAbsence()) {
+			case "E":
+			case "F":
 
-		if (duree % typeSaisi.getQuotaMultiple() != 0) {
-			return true;
+				// si le quota max pour ce type de demande est a zero
+				// on renvoie une alerte de depassement dans tous les cas
+				if (typeSaisi.getQuotaMultiple() == null)
+					return false;
+
+				if (duree % typeSaisi.getQuotaMultiple() != 0) {
+					return true;
+				}
+
+				break;
+			case "C":
+
+				// si le quota max pour ce type de demande est a zero
+				// on renvoie une alerte de depassement dans tous les cas
+				if (typeSaisi.getQuotaMultiple() == null)
+					return false;
+
+				if (duree % 3 != 0) {
+					return true;
+				}
+				break;
+
+			default:
+				break;
 		}
 
 		return false;

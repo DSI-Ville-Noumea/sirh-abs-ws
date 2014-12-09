@@ -369,8 +369,6 @@ public class TypeAbsenceServiceImplTest {
 		Mockito.verify(typeAbsenceRepository, Mockito.times(1)).persistEntity(Mockito.isA(RefTypeAbsence.class));
 		assertEquals(result.getInfos().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_CREE);
 	}
-	
-
 
 	@Test
 	public void setTypAbsence_CongeAnnuel() {
@@ -378,7 +376,7 @@ public class TypeAbsenceServiceImplTest {
 		groupeDto.setCode("groupe");
 		groupeDto.setLibelle("lib groupe");
 		groupeDto.setIdRefGroupeAbsence(1);
-		
+
 		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
 
 		RefTypeAbsenceDto typeAbsenceDto = new RefTypeAbsenceDto();
@@ -469,6 +467,34 @@ public class TypeAbsenceServiceImplTest {
 
 		Mockito.verify(typeAbsenceRepository, Mockito.times(1)).removeEntity(Mockito.isA(RefTypeAbsence.class));
 		assertEquals(result.getInfos().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_SUPPRIME);
+	}
+
+	@Test
+	public void getTypeAbsenceByBaseHoraire_BaseA() {
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(1);
+
+		RefTypeSaisiCongeAnnuel refSaisie = new RefTypeSaisiCongeAnnuel();
+		refSaisie.setIdRefTypeSaisiCongeAnnuel(1);
+		refSaisie.setCodeBaseHoraireAbsence("A");
+		refSaisie.setType(type);
+
+		type.setTypeSaisiCongeAnnuel(refSaisie);
+
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(
+				typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, refSaisie.getIdRefTypeSaisiCongeAnnuel()))
+				.thenReturn(refSaisie);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeAbsence.class, refSaisie.getType().getIdRefTypeAbsence()))
+				.thenReturn(type);
+
+		TypeAbsenceServiceImpl service = new TypeAbsenceServiceImpl();
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+
+		RefTypeAbsenceDto result = service.getTypeAbsenceByBaseHoraire(1);
+
+		assertEquals(result.getTypeSaisiCongeAnnuelDto().getCodeBaseHoraireAbsence(),
+				refSaisie.getCodeBaseHoraireAbsence());
 	}
 
 }

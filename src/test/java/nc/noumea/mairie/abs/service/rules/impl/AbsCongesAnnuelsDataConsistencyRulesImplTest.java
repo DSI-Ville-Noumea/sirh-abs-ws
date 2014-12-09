@@ -397,6 +397,36 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		typeSaisi.setDecompteSamedi(false);
 		typeSaisi.setConsecutif(true);
 		typeSaisi.setQuotaMultiple(3);
+		typeSaisi.setCodeBaseHoraireAbsence("A");
+
+		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuelDto(typeSaisi);
+
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setDuree(5.0);
+		demandeDto.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefTypeSaisiCongeAnnuel.class, typeSaisi.getIdRefTypeSaisiCongeAnnuel()))
+				.thenReturn(typeSaisi);
+
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+		boolean result = impl.checkDepassementMultipleAgent(demandeDto);
+
+		assertFalse(result);
+	}
+
+	@Test
+	public void checkDepassementMultipleAgent_Ko_BaseF() {
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
+		typeSaisi.setCalendarDateDebut(true);
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setCalendarDateReprise(false);
+		typeSaisi.setDecompteSamedi(false);
+		typeSaisi.setConsecutif(true);
+		typeSaisi.setQuotaMultiple(4);
+		typeSaisi.setCodeBaseHoraireAbsence("F");
 
 		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuelDto(typeSaisi);
 
@@ -416,7 +446,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 	}
 
 	@Test
-	public void checkDepassementMultipleAgent_Ko() {
+	public void checkDepassementMultipleAgent_Ko_BaseC() {
 		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
 		typeSaisi.setIdRefTypeSaisiCongeAnnuel(1);
 		typeSaisi.setCalendarDateDebut(true);
@@ -425,6 +455,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		typeSaisi.setDecompteSamedi(false);
 		typeSaisi.setConsecutif(true);
 		typeSaisi.setQuotaMultiple(5);
+		typeSaisi.setCodeBaseHoraireAbsence("C");
 
 		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuelDto(typeSaisi);
 
@@ -440,7 +471,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 		boolean result = impl.checkDepassementMultipleAgent(demandeDto);
 
-		assertFalse(result);
+		assertTrue(result);
 	}
 
 	@Test
