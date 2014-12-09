@@ -182,7 +182,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} minutes...", demande.getIdAgent(), jours);
+		logger.info("updating counters for Agent [{}] with {} jours...", demande.getIdAgent(), jours);
 
 		AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(
 				AgentCongeAnnuelCount.class, demande.getIdAgent());

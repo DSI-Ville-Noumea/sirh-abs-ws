@@ -219,6 +219,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setDuree(2.0);
+		demande.setDureeAnneeN1(0.0);
 		demande.setIdAgent(9005138);
 
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
@@ -251,6 +252,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setDuree(2.0);
+		demande.setDureeAnneeN1(0.0);
 		demande.setIdAgent(9005138);
 
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
@@ -287,6 +289,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setDuree(2.0);
+		demande.setDureeAnneeN1(0.0);
 		demande.setIdAgent(9005138);
 
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
@@ -349,7 +352,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
 
-		assertEquals(-10, result.intValue());
+		assertEquals(-30, result.intValue());
 	}
 
 	@Test
