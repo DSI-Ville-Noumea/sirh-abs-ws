@@ -771,10 +771,10 @@ public class AbsenceService implements IAbsenceService {
 		// maj de la demande
 		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
+		if (demandeEtatChangeDto.getIdRefEtat() == RefEtatEnum.REJETE.getCodeEtat()) {
 			result.getInfos().add(String.format("La demande est rejetée."));
 		}
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
+		if (demandeEtatChangeDto.getIdRefEtat() == RefEtatEnum.VALIDEE.getCodeEtat()) {
 			result.getInfos().add(String.format("La demande est validée."));
 		}
 	}

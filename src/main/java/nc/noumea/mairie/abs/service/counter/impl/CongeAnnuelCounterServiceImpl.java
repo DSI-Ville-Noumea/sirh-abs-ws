@@ -137,8 +137,10 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	protected Double calculJoursCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		Double jours = 0.0;
 		// si on approuve, le compteur decremente
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
-			jours = 0 - ((DemandeCongesAnnuels) demande).getDuree();
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
+			jours = 0 - ((DemandeCongesAnnuels) demande).getDuree()
+					- ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
 		}
 		// si on passe de Approuve a Refuse, le compteur incremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
