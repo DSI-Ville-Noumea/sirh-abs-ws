@@ -231,15 +231,17 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@Override
 	public List<Demande> listeDemandesSIRHAValider() {
-		// pour le moment la DRH ne doit valider que les congés excep et les ASA
+		// pour le moment la DRH ne doit valider que les congés excep, congé
+		// annuel et les ASA
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
-		sb.append("where d.type.groupe.idRefGroupeAbsence in( :ASA , :CONGE_EXCEP ) ");
+		sb.append("where d.type.groupe.idRefGroupeAbsence in( :ASA , :CONGE_EXCEP, :CONGE_ANNUEL ) ");
 		sb.append("order by d.idDemande desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
 		query.setParameter("ASA", RefTypeGroupeAbsenceEnum.ASA.getValue());
 		query.setParameter("CONGE_EXCEP", RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 
 		return query.getResultList();
 	}
@@ -253,7 +255,8 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
 		sb.append("and d.samediOffert is true ");
 
-		TypedQuery<DemandeCongesAnnuels> query = absEntityManager.createQuery(sb.toString(), DemandeCongesAnnuels.class);
+		TypedQuery<DemandeCongesAnnuels> query = absEntityManager
+				.createQuery(sb.toString(), DemandeCongesAnnuels.class);
 
 		query.setParameter("idAgent", demande.getIdAgent());
 		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());

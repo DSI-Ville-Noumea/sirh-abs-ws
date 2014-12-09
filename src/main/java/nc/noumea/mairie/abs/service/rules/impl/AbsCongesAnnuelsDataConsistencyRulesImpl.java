@@ -185,4 +185,37 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		// saisie,provisoire,refuse,rejeté et annulé
 		return super.checkEtatsDemandeAnnulee(srm, demande, listEtats);
 	}
+
+	@Override
+	public DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto) {
+
+		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
+		demandeDto.setAffichageValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()));
+		demandeDto.setModifierValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()));
+		demandeDto.setAffichageEnAttente(demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
+		demandeDto.setAffichageBoutonDupliquer(true);
+
+		return demandeDto;
+	}
+
+	@Override
+	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+		ReturnMessageDto dtoErreur = new ReturnMessageDto();
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
+		demande.setIdDemande(demandeDto.getIdDemande());
+		demande.setDuree(demandeDto.getDuree());
+		dtoErreur = checkDepassementDroitsAcquis(dtoErreur, demande);
+		if (dtoErreur.getErrors().size() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

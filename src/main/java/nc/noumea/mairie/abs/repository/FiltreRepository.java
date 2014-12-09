@@ -114,6 +114,7 @@ public class FiltreRepository implements IFiltreRepository {
 		List<RefEtat> res = new ArrayList<RefEtat>();
 		res.add(absEntityManager.find(RefEtat.class, RefEtatEnum.APPROUVEE.getCodeEtat()));
 		res.add(absEntityManager.find(RefEtat.class, RefEtatEnum.EN_ATTENTE.getCodeEtat()));
+		res.add(absEntityManager.find(RefEtat.class, RefEtatEnum.A_VALIDER.getCodeEtat()));
 		return res;
 	}
 }

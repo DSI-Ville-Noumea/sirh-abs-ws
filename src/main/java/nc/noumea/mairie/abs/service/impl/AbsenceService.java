@@ -19,6 +19,7 @@ import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -781,8 +782,15 @@ public class AbsenceService implements IAbsenceService {
 	protected void setDemandeEtatEnAttente(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
 			ReturnMessageDto result) {
 
-		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
-				Arrays.asList(RefEtatEnum.APPROUVEE));
+		List<RefEtatEnum> listeEtats = new ArrayList<>();
+		if (demande.getType() != null
+				&& demande.getType().getIdRefTypeAbsence() == RefTypeAbsenceEnum.CONGE_ANNUEL.getValue()) {
+			listeEtats.add(RefEtatEnum.A_VALIDER);
+		} else {
+			listeEtats.add(RefEtatEnum.APPROUVEE);
+		}
+
+		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, listeEtats);
 
 		if (0 < result.getErrors().size()) {
 			return;

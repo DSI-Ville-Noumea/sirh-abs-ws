@@ -394,9 +394,13 @@ public class FiltreRepositoryTest {
 		etatSaisie.setLabel("SAISIE");
 		absEntityManager.persist(etatSaisie);
 
+		RefEtat etatAValider = new RefEtat();
+		etatAValider.setLabel("A VALIDER");
+		absEntityManager.persist(etatAValider);
+
 		List<RefEtat> result = repository.findRefEtatAValider();
 
-		assertEquals(2, result.size());
+		assertEquals(3, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

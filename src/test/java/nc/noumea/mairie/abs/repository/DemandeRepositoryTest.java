@@ -1194,11 +1194,15 @@ public class DemandeRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void listeDemandesSIRHAValider_Return2Demande() throws ParseException {
+	public void listeDemandesSIRHAValider_Return3Demande() throws ParseException {
 		// Given
 		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
 		groupeRecup.setIdRefGroupeAbsence(1);
 		absEntityManager.persist(groupeRecup);
+
+		RefGroupeAbsence groupeCongeAnnuel = new RefGroupeAbsence();
+		groupeCongeAnnuel.setIdRefGroupeAbsence(5);
+		absEntityManager.persist(groupeCongeAnnuel);
 
 		RefGroupeAbsence groupeAsa = new RefGroupeAbsence();
 		groupeAsa.setIdRefGroupeAbsence(3);
@@ -1209,10 +1213,28 @@ public class DemandeRepositoryTest {
 		typeRecup.setLabel("RECUP");
 		absEntityManager.persist(typeRecup);
 
+		RefTypeAbsence typeCongeAnnuel = new RefTypeAbsence();
+		typeCongeAnnuel.setGroupe(groupeCongeAnnuel);
+		typeCongeAnnuel.setLabel("CONGES");
+		absEntityManager.persist(typeCongeAnnuel);
+
 		RefTypeAbsence typeAsa = new RefTypeAbsence();
 		typeAsa.setGroupe(groupeAsa);
 		typeAsa.setLabel("ASA");
 		absEntityManager.persist(typeAsa);
+
+		DemandeCongesAnnuels dConge = new DemandeCongesAnnuels();
+		dConge.setIdAgent(9005131);
+		dConge.setDateDebut(sdf.parse("15/05/2013"));
+		dConge.setDateFin(null);
+		dConge.setType(typeCongeAnnuel);
+		absEntityManager.persist(dConge);
+
+		EtatDemande etatCongeDemandeAppr = new EtatDemande();
+		etatCongeDemandeAppr.setDemande(dConge);
+		etatCongeDemandeAppr.setIdAgent(9005138);
+		etatCongeDemandeAppr.setEtat(RefEtatEnum.APPROUVEE);
+		absEntityManager.persist(etatCongeDemandeAppr);
 
 		DemandeAsa d = new DemandeAsa();
 		d.setIdAgent(9005138);
@@ -1257,9 +1279,10 @@ public class DemandeRepositoryTest {
 		List<Demande> result = repository.listeDemandesSIRHAValider();
 
 		// Then
-		assertEquals(2, result.size());
+		assertEquals(3, result.size());
 		assertEquals("9005138", ((DemandeAsa) result.get(1)).getIdAgent().toString());
 		assertEquals("9005139", ((DemandeAsa) result.get(0)).getIdAgent().toString());
+		assertEquals("9005131", ((DemandeCongesAnnuels) result.get(2)).getIdAgent().toString());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
