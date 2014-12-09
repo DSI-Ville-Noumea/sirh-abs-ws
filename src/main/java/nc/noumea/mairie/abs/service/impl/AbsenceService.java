@@ -760,16 +760,29 @@ public class AbsenceService implements IAbsenceService {
 			return;
 		}
 
-		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
-				.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
-		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
+		if (demande.getType() != null && demande.getType().getTypeSaisiCongeAnnuel() != null) {
+			// maj de la demande
+			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 
-		if (0 < result.getErrors().size()) {
-			return;
+			ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
+					.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+			result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
+
+			if (0 < result.getErrors().size()) {
+				return;
+			}
+		} else {
+			ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
+					.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+			result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
+
+			if (0 < result.getErrors().size()) {
+				return;
+			}
+
+			// maj de la demande
+			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 		}
-
-		// maj de la demande
-		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 
 		if (demandeEtatChangeDto.getIdRefEtat() == RefEtatEnum.REJETE.getCodeEtat()) {
 			result.getInfos().add(String.format("La demande est rejetée."));
