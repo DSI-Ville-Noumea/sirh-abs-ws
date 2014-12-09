@@ -2,11 +2,14 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -314,6 +317,127 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+	}
+
+	@Test
+	public void calculJoursCompteur_badEtat() {
+
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+
+		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(0, result.intValue());
+	}
+
+	@Test
+	public void calculJoursCompteur_debit() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+
+		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(-10, result.intValue());
+	}
+
+	@Test
+	public void calculJoursCompteur_credit_EtatRefusee() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.APPROUVEE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+		demande.setEtatsDemande(etatsDemande);
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+
+		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(30, result.intValue());
+	}
+
+	@Test
+	public void calculJoursCompteur_credit_EtatAnnule() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.APPROUVEE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+		demande.setEtatsDemande(etatsDemande);
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+
+		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(30, result.intValue());
+	}
+
+	@Test
+	public void calculJoursCompteur_credit_EtatAnnulee() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.APPROUVEE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+		demande.setEtatsDemande(etatsDemande);
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+
+		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(30, result.intValue());
+	}
+
+	@Test
+	public void calculJoursCompteur_credit_MauvaisEtat() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.REFUSEE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+		demande.setEtatsDemande(etatsDemande);
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+
+		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(0, result.intValue());
 	}
 
 }

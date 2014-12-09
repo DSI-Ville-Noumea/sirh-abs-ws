@@ -141,9 +141,15 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			jours = 0 - ((DemandeCongesAnnuels) demande).getDuree();
 		}
 		// si on passe de Approuve a Refuse, le compteur incremente
-		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()) || demandeEtatChangeDto
-				.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
 				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
+			jours = ((DemandeCongesAnnuels) demande).getDuree() + ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
+		}
+		// si on passe de Approuve a Annulé ou de Validée à annulé, le compteur
+		// incremente
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())
+				&& (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE) || demande
+						.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE))) {
 			jours = ((DemandeCongesAnnuels) demande).getDuree() + ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
 		}
 
