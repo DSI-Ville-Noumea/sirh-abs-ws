@@ -323,7 +323,7 @@ public class HelperServiceTest {
 		compteurDto.setDureeAAjouter(10.0);
 
 		HelperService service = new HelperService();
-		Double minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
+		Double minutes = service.calculAlimManuelleCompteur(compteurDto);
 
 		assertEquals(10, minutes.intValue());
 	}
@@ -335,7 +335,7 @@ public class HelperServiceTest {
 		compteurDto.setDureeARetrancher(10.0);
 
 		HelperService service = new HelperService();
-		Double minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
+		Double minutes = service.calculAlimManuelleCompteur(compteurDto);
 
 		assertEquals(-10, minutes.intValue());
 	}
@@ -346,7 +346,7 @@ public class HelperServiceTest {
 		CompteurDto compteurDto = new CompteurDto();
 
 		HelperService service = new HelperService();
-		Double minutes = service.calculMinutesAlimManuelleCompteur(compteurDto);
+		Double minutes = service.calculAlimManuelleCompteur(compteurDto);
 
 		assertEquals(0, minutes.intValue());
 	}

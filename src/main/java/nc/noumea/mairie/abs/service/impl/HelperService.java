@@ -168,7 +168,7 @@ public class HelperService {
 		return 0.0;
 	}
 
-	public Double calculMinutesAlimManuelleCompteur(CompteurDto compteurDto) {
+	public Double calculAlimManuelleCompteur(CompteurDto compteurDto) {
 
 		Double minutes = 0.0;
 		if (null != compteurDto.getDureeAAjouter()) {
@@ -185,15 +185,6 @@ public class HelperService {
 		calStr1.setTime(new Date());
 		calStr1.add(GregorianCalendar.YEAR, -1);
 		return calStr1.getTime();
-	}
-
-	public Double calculJoursAlimManuelleCompteur(CompteurDto compteurDto) {
-
-		Double minutes = 0.0;
-		if (null != compteurDto.getDureeAAjouter()) {
-			minutes = compteurDto.getDureeAAjouter();
-		}
-		return minutes;
 	}
 
 	public double calculNombreJoursArrondiDemiJournee(Date dateDebut, Date dateFin) {

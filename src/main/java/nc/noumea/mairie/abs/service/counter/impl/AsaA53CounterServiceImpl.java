@@ -34,7 +34,7 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 		logger.info("Trying to update manually ASA A53 counters for Agent {} ...", compteurDto.getIdAgent());
 
 		try {
-			Double nbJours = helperService.calculJoursAlimManuelleCompteur(compteurDto);
+			Double nbJours = helperService.calculAlimManuelleCompteur(compteurDto);
 			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A53.getValue(), result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);

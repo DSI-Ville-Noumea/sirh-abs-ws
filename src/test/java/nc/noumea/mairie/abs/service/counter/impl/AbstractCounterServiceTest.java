@@ -99,7 +99,7 @@ public class AbstractCounterServiceTest {
 	@Test
 	public void controlCompteurPositif_negatif() {
 
-		Integer minutes = -10;
+		Double minutes = -10.0;
 		Double totalMinutes = 0.0;
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -112,7 +112,7 @@ public class AbstractCounterServiceTest {
 	@Test
 	public void controlCompteurPositif_OkZero() {
 
-		Integer minutes = -10;
+		Double minutes = -10.0;
 		Double totalMinutes = 10.0;
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -124,7 +124,7 @@ public class AbstractCounterServiceTest {
 	@Test
 	public void controlCompteurPositif_Ok() {
 
-		Integer minutes = -10;
+		Double minutes = -10.0;
 		Double totalMinutes = 10.5;
 		ReturnMessageDto result = new ReturnMessageDto();
 

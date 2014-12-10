@@ -61,7 +61,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		compteurDto.setAnneePrecedente(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(
@@ -99,7 +99,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		compteurDto.setAnneePrecedente(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(
@@ -138,7 +138,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent()))
 				.thenReturn(arc);
@@ -175,7 +175,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		compteurDto.setAnneePrecedente(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(
@@ -214,7 +214,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		compteurDto.setAnneePrecedente(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(

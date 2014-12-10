@@ -32,7 +32,7 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 
 		logger.info("Trying to update manually recuperation counters for Agent {} ...", compteurDto.getIdAgent());
 
-		Double dMinutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+		Double dMinutes = helperService.calculAlimManuelleCompteur(compteurDto);
 		Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
 		try {
 			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, RefTypeAbsenceEnum.RECUP.getValue(), result, motifCompteur);
@@ -234,7 +234,7 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 
 		// on verifie que le solde est positif seulement si on debite le
 		// compteur
-		controlCompteurPositif(minutes, arc.getTotalMinutes(), srm);
+		controlCompteurPositif(minutes==null ? null : new Double(minutes), new Double(arc.getTotalMinutes()), srm);
 		if (!srm.getErrors().isEmpty()) {
 			return srm;
 		}

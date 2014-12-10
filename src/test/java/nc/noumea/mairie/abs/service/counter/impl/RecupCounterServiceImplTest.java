@@ -386,7 +386,7 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
@@ -423,7 +423,7 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(
 				null);
@@ -464,7 +464,7 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
@@ -505,7 +505,7 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
@@ -545,7 +545,7 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);

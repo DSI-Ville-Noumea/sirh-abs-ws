@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ICounterService;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -91,6 +93,33 @@ public class CongeAnnuelController {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 		}
 
+		return srm;
+	}
+
+
+	/**
+	 * Ajout/retire manuel au compteur de recuperation pour un agent
+	 * <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/addManual", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto addCongeAnnuelManuelForAgent(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) CompteurDto compteurDto, 
+			HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [congeannuel/addManual] => addCongeAnnuelManuelForAgent with parameters idAgent = {}",
+				idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		ReturnMessageDto srm = counterService.majManuelleCompteurToAgent(convertedIdAgent, compteurDto);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+		
 		return srm;
 	}
 }

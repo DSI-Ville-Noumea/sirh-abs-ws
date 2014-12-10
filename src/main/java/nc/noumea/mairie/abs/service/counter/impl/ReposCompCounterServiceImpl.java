@@ -229,8 +229,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	 * mise a jour
 	 */
 	@Override
-	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto srm,
-			MotifCompteur motifCompteur) {
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
+			ReturnMessageDto srm, MotifCompteur motifCompteur) {
 
 		logger.info("Trying to update manually Repos Comp. counters for Agent {} ...", compteurDto.getIdAgent());
 
@@ -238,15 +238,16 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		Integer minutesAnneeN1 = null;
 
 		if (compteurDto.isAnneePrecedente()) {
-			Double dMinutesAnneeN1 = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+			Double dMinutesAnneeN1 = helperService.calculAlimManuelleCompteur(compteurDto);
 			minutesAnneeN1 = null != dMinutesAnneeN1 ? dMinutesAnneeN1.intValue() : 0;
 		} else {
-			Double dMinutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+			Double dMinutes = helperService.calculAlimManuelleCompteur(compteurDto);
 			minutes = null != dMinutes ? dMinutes.intValue() : 0;
 		}
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, minutesAnneeN1, RefTypeAbsenceEnum.REPOS_COMP.getValue(), srm, motifCompteur);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, minutesAnneeN1,
+					RefTypeAbsenceEnum.REPOS_COMP.getValue(), srm, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -265,8 +266,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	 * @throws IllegalAccessException
 	 */
 	private ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Integer minutes, Integer minutesAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
-			throws InstantiationException, IllegalAccessException {
+			Integer minutes, Integer minutesAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm,
+			MotifCompteur motifCompteur) throws InstantiationException, IllegalAccessException {
 
 		if (sirhWSConsumer.getAgent(compteurDto.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
@@ -284,8 +285,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		}
 
 		// on verifie que le solde est positif
-		controlCompteurPositif(minutes, arc.getTotalMinutes(), srm);
-		controlCompteurPositif(minutesAnneeN1, arc.getTotalMinutesAnneeN1(), srm);
+		controlCompteurPositif(minutes==null ? null : new Double(minutes), new Double(arc.getTotalMinutes()), srm);
+		controlCompteurPositif(minutesAnneeN1==null ? null : new Double(minutesAnneeN1), new Double(arc.getTotalMinutesAnneeN1()), srm);
 		if (!srm.getErrors().isEmpty()) {
 			return srm;
 		}
@@ -315,8 +316,9 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
-		
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc,
+				idRefTypeAbsence);
+
 		return srm;
 	}
 

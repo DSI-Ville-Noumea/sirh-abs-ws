@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,11 +11,15 @@ import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
+import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -441,6 +446,205 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
 
 		assertEquals(0, result.intValue());
+	}
+
+	@Test
+	public void majManuelleCompteurCongeAnnuelToAgent_agentInexistant() {
+
+		super.service = new CongeAnnuelCounterServiceImpl();
+		super.majManuelleCompteurToAgent_prepareData();
+
+		Integer idAgent = 9005138;
+		CompteurDto compteurDto = new CompteurDto();
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeARetrancher(10.0);
+		compteurDto.setIdMotifCompteur(1);
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(sirhWSConsumer.getAgent(compteurDto.getIdAgent())).thenReturn(null);
+
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		boolean isAgentNotFoundException = false;
+		try {
+			service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		} catch (AgentNotFoundException e) {
+			isAgentNotFoundException = true;
+		}
+
+		assertTrue(isAgentNotFoundException);
+	}
+
+	@Test
+	public void majManuelleCompteurCongeAnnuelToAgent_CompteurInexistant_And_SoldeNegatif() {
+
+		super.service = new CongeAnnuelCounterServiceImpl();
+		super.majManuelleCompteurToAgent_prepareData();
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		CompteurDto compteurDto = new CompteurDto();
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeARetrancher(10.0);
+		compteurDto.setIdMotifCompteur(1);
+		
+
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, compteurDto.getIdAgent()))
+				.thenReturn(new AgentCongeAnnuelCount());
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(sirhWSConsumer.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+	}
+
+	@Test
+	public void majManuelleCompteurCongeAnnuelToAgent_CompteurExistant_And_SoldeNegatif() {
+
+		super.service = new CongeAnnuelCounterServiceImpl();
+		super.majManuelleCompteurToAgent_prepareData();
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		CompteurDto compteurDto = new CompteurDto();
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeARetrancher(10.0);
+		compteurDto.setIdMotifCompteur(1);
+
+		AgentCongeAnnuelCount arc = new AgentCongeAnnuelCount();
+		arc.setTotalJours(5.0);
+
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(sirhWSConsumer.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, compteurDto.getIdAgent()))
+				.thenReturn(arc);
+
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+	}
+
+	@Test
+	public void majManuelleCompteurCongeAnnuelToAgent_OK_avecCompteurExistant() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		CompteurDto compteurDto = new CompteurDto();
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeARetrancher(10.0);
+		compteurDto.setIdMotifCompteur(1);
+
+		AgentCongeAnnuelCount arc = new AgentCongeAnnuelCount();
+		arc.setTotalJours(15.0);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, compteurDto.getIdAgent()))
+				.thenReturn(arc);
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
+				new MotifCompteur());
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(sirhWSConsumer.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+
+		assertEquals(0, result.getErrors().size());
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+	}
+
+	@Test
+	public void majManuelleCompteurCongeAnnuelToAgent_CompteurInexistant() {
+
+		super.service = new CongeAnnuelCounterServiceImpl();
+		super.majManuelleCompteurToAgent_prepareData();
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		CompteurDto compteurDto = new CompteurDto();
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeARetrancher(10.0);
+		compteurDto.setIdMotifCompteur(1);
+
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, compteurDto.getIdAgent()))
+				.thenReturn(null);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(sirhWSConsumer.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le compteur n'existe pas.", result.getErrors().get(0).toString());
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
 	}
 
 }

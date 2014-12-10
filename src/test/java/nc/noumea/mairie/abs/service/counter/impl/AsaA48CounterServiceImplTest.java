@@ -50,7 +50,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
@@ -86,7 +86,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
@@ -130,7 +130,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
@@ -174,7 +174,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculMinutesAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);

@@ -30,7 +30,7 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 
 		logger.info("Trying to update manually ASA A54 counters for Agent {} ...", compteurDto.getIdAgent());
 
-		Double nbJours = helperService.calculJoursAlimManuelleCompteur(compteurDto);
+		Double nbJours = helperService.calculAlimManuelleCompteur(compteurDto);
 
 		try {
 			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A54.getValue(), result, motifCompteur);

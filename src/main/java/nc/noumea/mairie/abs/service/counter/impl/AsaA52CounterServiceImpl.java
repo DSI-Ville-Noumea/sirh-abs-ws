@@ -34,7 +34,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 		logger.info("Trying to update manually ASA A52 counters for Agent {} ...", compteurDto.getIdAgent());
 
 		try {
-			Double dMinutes = helperService.calculMinutesAlimManuelleCompteur(compteurDto);
+			Double dMinutes = helperService.calculAlimManuelleCompteur(compteurDto);
 			Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
 			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, RefTypeAbsenceEnum.ASA_A52.getValue(), result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {

@@ -6,9 +6,11 @@ import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
@@ -231,6 +233,106 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		counterRepository.persistEntity(arc);
 		counterRepository.persistEntity(demande);
 
+		return srm;
+	}
+	
+
+
+	/**
+	 * appeler depuis SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
+	 * mise a jour
+	 */
+	@Override
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto srm,
+			MotifCompteur motifCompteur) {
+
+		logger.info("Trying to update manually conge annuel counters for Agent {} ...", compteurDto.getIdAgent());
+
+		Double jours = null;
+		Double joursAnneeN1 = null;
+
+		if (compteurDto.isAnneePrecedente()) {
+			Double dJoursAnneeN1 = helperService.calculAlimManuelleCompteur(compteurDto);
+			joursAnneeN1 = null != dJoursAnneeN1 ? dJoursAnneeN1 : 0;
+		} else {
+			Double dJours = helperService.calculAlimManuelleCompteur(compteurDto);
+			jours = null != dJours ? dJours : 0;
+		}
+
+		try {
+			return majManuelleCompteurToAgent(idAgent, compteurDto, jours, joursAnneeN1, RefTypeAbsenceEnum.CONGE_ANNUEL.getValue(), srm, motifCompteur);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+		}
+	}
+
+
+	/**
+	 * Mise à jour manuelle du compteur de congé annuel
+	 * 
+	 * @param T1
+	 *            inherits BaseAgentCount
+	 * @param idAgent
+	 * @param jours
+	 *            : negatif pour debiter, positif pour crediter
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	private ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
+			Double jours, Double joursAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
+			throws InstantiationException, IllegalAccessException {
+
+		if (sirhWSConsumer.getAgent(compteurDto.getIdAgent()) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
+			throw new AgentNotFoundException();
+		}
+
+		logger.info("updating counters for Agent [{}] with {} minutes...", compteurDto.getIdAgent(), jours);
+
+		AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(AgentCongeAnnuelCount.class,
+				compteurDto.getIdAgent());
+
+		if (arc == null) {
+			logger.warn(COMPTEUR_INEXISTANT);
+			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
+			return srm;
+		}
+
+		// on verifie que le solde est positif
+		controlCompteurPositif(jours, arc.getTotalJours(), srm);
+		controlCompteurPositif(joursAnneeN1, arc.getTotalJoursAnneeN1(), srm);
+		if (!srm.getErrors().isEmpty()) {
+			return srm;
+		}
+
+		String textLog = "";
+		if (null != compteurDto.getDureeAAjouter()) {
+			if (compteurDto.isAnneePrecedente()) {
+				textLog = "Ajout de " + joursAnneeN1 + " minutes sur le compteur de l'année précédente.";
+			} else {
+				textLog = "Ajout de " + jours + " minutes sur le compteur de l'année.";
+			}
+		}
+		if (null != compteurDto.getDureeARetrancher()) {
+			if (compteurDto.isAnneePrecedente()) {
+				textLog = "Retrait de " + joursAnneeN1 + " minutes sur le compteur de l'année précédente.";
+			} else {
+				textLog = "Retrait de " + jours + " minutes sur le compteur de l'année.";
+			}
+		}
+
+		if (null != jours) {
+			arc.setTotalJours(arc.getTotalJours() + jours);
+		}
+		if (null != joursAnneeN1) {
+			arc.setTotalJoursAnneeN1(arc.getTotalJoursAnneeN1() + joursAnneeN1);
+		}
+		arc.setLastModification(helperService.getCurrentDate());
+
+		counterRepository.persistEntity(arc);
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
+		
 		return srm;
 	}
 }
