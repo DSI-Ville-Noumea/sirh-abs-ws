@@ -262,7 +262,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		try {
 			return majManuelleCompteurToAgent(idAgent, compteurDto, jours, joursAnneeN1, RefTypeAbsenceEnum.CONGE_ANNUEL.getValue(), srm, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+			throw new RuntimeException("An error occured while trying to update conge annuel counters :", e);
 		}
 	}
 
@@ -309,16 +309,16 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		String textLog = "";
 		if (null != compteurDto.getDureeAAjouter()) {
 			if (compteurDto.isAnneePrecedente()) {
-				textLog = "Ajout de " + joursAnneeN1 + " minutes sur le compteur de l'année précédente.";
+				textLog = "Ajout de " + joursAnneeN1 + " jours sur le compteur de l'année précédente.";
 			} else {
-				textLog = "Ajout de " + jours + " minutes sur le compteur de l'année.";
+				textLog = "Ajout de " + jours + " jours sur le compteur de l'année.";
 			}
 		}
 		if (null != compteurDto.getDureeARetrancher()) {
 			if (compteurDto.isAnneePrecedente()) {
-				textLog = "Retrait de " + joursAnneeN1 + " minutes sur le compteur de l'année précédente.";
+				textLog = "Retrait de " + joursAnneeN1 + " jours sur le compteur de l'année précédente.";
 			} else {
-				textLog = "Retrait de " + jours + " minutes sur le compteur de l'année.";
+				textLog = "Retrait de " + jours + " jours sur le compteur de l'année.";
 			}
 		}
 
