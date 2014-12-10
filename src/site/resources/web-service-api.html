@@ -157,6 +157,24 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/getListeCompteurCongeAnnuel</span>
+                    <div>
+                            <a href="#/congeannuel/getListeCompteurCongeAnnuel_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/resetCompteurCongeAnnuel</span>
+                    <div>
+                            <a href="#/congeannuel/resetCompteurCongeAnnuel_GET_idAgentCongeAnnuelCount">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/addManual</span>
+                    <div>
+                            <a href="#/congeannuel/addManual_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/demandes/dureeDemandeCongeAnnuel</span>
                     <div>
                             <a href="#/demandes/dureeDemandeCongeAnnuel_POST">POST</a>
@@ -436,7 +454,7 @@
                 <div class="resource-summary">
                     <span class="resource-summary-path">/typeAbsence/getTypeAbsence</span>
                     <div>
-                            <a href="#/typeAbsence/getTypeAbsence_GET_idRefTypeAbsence">GET</a>
+                            <a href="#/typeAbsence/getTypeAbsence_GET_idBaseHoraireAbsence">GET</a>
                     </div>
                 </div>
 
@@ -1633,6 +1651,125 @@
 </div>
                             </div>
                     </div>
+                    <a id="/congeannuel/getListeCompteurCongeAnnuel_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/congeannuel/getListeCompteurCongeAnnuel</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des compteurs a remettre a zero
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+<span class="json-primitive-type">int</span>    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeannuel/resetCompteurCongeAnnuel_GET_idAgentCongeAnnuelCount"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/congeannuel/resetCompteurCongeAnnuel</span>?<span class="url-param-key">idAgentCongeAnnuelCount</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Remise a zero des compteurs de repos compensateur de l annee en cours <br />
+ utile a SIRH-JOBS le 31/12
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeannuel/addManual_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/congeannuel/addManual</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Ajout/retire manuel au compteur de recuperation pour un agent
+ <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeAAjouter</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeARetrancher</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">anneePrecedente</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idOrganisationSyndicale</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
                     <a id="/demandes/dureeDemandeCongeAnnuel_POST"/>
                     <div class="resource">
                         <div class="resource-header">
@@ -1970,6 +2107,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
                             </div>
@@ -2296,6 +2436,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
                             </div>
@@ -2637,6 +2780,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
                             </div>
@@ -2996,6 +3142,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
                             </div>
@@ -3338,6 +3487,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>
 </div>
@@ -3682,6 +3834,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>
 </div>
@@ -4048,6 +4203,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>
 </div>
@@ -4540,6 +4698,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
                             </div>
@@ -4901,6 +5062,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>
 </div>
@@ -5244,6 +5408,9 @@
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
             </div>
+            <div class="json-field">
+                <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>
 </div>
@@ -7472,11 +7639,11 @@
 </div>
                             </div>
                     </div>
-                    <a id="/typeAbsence/getTypeAbsence_GET_idRefTypeAbsence"/>
+                    <a id="/typeAbsence/getTypeAbsence_GET_idBaseHoraireAbsence"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">GET</span>
-<span class="path">/typeAbsence/getTypeAbsence</span>?<span class="url-param-key">idRefTypeAbsence</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+<span class="path">/typeAbsence/getTypeAbsence</span>?<span class="url-param-key">idBaseHoraireAbsence</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
                                  Retourne une type d absence

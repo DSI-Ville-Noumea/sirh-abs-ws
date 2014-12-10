@@ -127,7 +127,7 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
 		sb.append("inner join abs_ref_type_absence rta on d.id_type_demande = rta.id_ref_type_absence "
 				+ "and rta.id_ref_groupe_absence in ( :TYPE ) ");
-		sb.append("inner join abs_ref_type_saisi rts on rta.id_ref_type_absence = rts.id_ref_type_absence "
+		sb.append("left outer join abs_ref_type_saisi rts on rta.id_ref_type_absence = rts.id_ref_type_absence "
 				+ "and rts.saisie_kiosque is true ");
 		sb.append("where ed.id_ref_etat = :SAISIE ");
 		sb.append("and date_trunc('day', ed.date) = current_date - interval '1 day' ");
@@ -157,7 +157,7 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
 		sb.append("inner join abs_ref_type_absence rta on d.id_type_demande = rta.id_ref_type_absence "
 				+ "and rta.id_ref_groupe_absence in ( :TYPE ) ");
-		sb.append("inner join abs_ref_type_saisi rts on rta.id_ref_type_absence = rts.id_ref_type_absence "
+		sb.append("left outer join abs_ref_type_saisi rts on rta.id_ref_type_absence = rts.id_ref_type_absence "
 				+ "and rts.saisie_kiosque is true ");
 		sb.append("where ed.id_ref_etat in( :SAISIE , :VISEE_F , :VISEE_D ) ");
 		sb.append("and date_trunc('day', ed.date) = current_date - interval '1 day' ");
