@@ -106,8 +106,8 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 
 		List<AgentAsaA53Count> listeArc = counterRepository.getListCounter(AgentAsaA53Count.class);
 		for (AgentAsaA53Count arc : listeArc) {
-			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
-			CompteurDto dto = new CompteurDto(arc,list.size()>0 ? list.get(0) : null);
+			List<AgentHistoAlimManuelle> list = counterRepository.getListHistoOrganisationSyndicale(arc);
+			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
 			result.add(dto);
 		}
 		return result;

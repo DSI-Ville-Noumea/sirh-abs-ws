@@ -27,6 +27,8 @@ public interface ICounterRepository {
 
 	List<AgentHistoAlimManuelle> getListHisto(Integer idAgent, AgentCount compteurAgent);
 
+	List<AgentHistoAlimManuelle> getListHistoOrganisationSyndicale(AgentCount compteurAgent);
+
 	List<AgentAsaA55Count> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin);
 
 	<T> T getOSCounterByDate(Class<T> T, Integer idOrganisationSyndicale, Date date);

@@ -212,4 +212,15 @@ public class CounterRepository implements ICounterRepository {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<AgentHistoAlimManuelle> getListHistoOrganisationSyndicale(AgentCount compteurAgent) {
+		TypedQuery<AgentHistoAlimManuelle> q = absEntityManager
+				.createQuery(
+						"from AgentHistoAlimManuelle h where h.compteurAgent.idAgentCount = :idAgentCount order by h.dateModification desc ",
+						AgentHistoAlimManuelle.class);
+		q.setParameter("idAgentCount", compteurAgent.getIdAgentCount());
+
+		return q.getResultList();
+	}
+
 }
