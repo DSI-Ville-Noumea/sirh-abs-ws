@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -26,7 +25,7 @@ public interface ICounterService {
 
 	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
 
-	List<CompteurAsaDto> getListeCompteur();
+	List<CompteurDto> getListeCompteur();
 
 	List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin);
 

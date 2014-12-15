@@ -2,6 +2,13 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
+import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -13,7 +20,7 @@ public class CompteurDto {
 
 	private Double dureeARetrancher;
 
-	private Integer idMotifCompteur;
+	private MotifCompteurDto motifCompteurDto;
 
 	private boolean isAnneePrecedente;
 
@@ -25,7 +32,7 @@ public class CompteurDto {
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateFin;
 
-	private Integer idOrganisationSyndicale;
+	private OrganisationSyndicaleDto organisationSyndicaleDto;
 
 	public Integer getIdAgent() {
 		return idAgent;
@@ -49,14 +56,6 @@ public class CompteurDto {
 
 	public void setDureeARetrancher(Double dureeARetrancher) {
 		this.dureeARetrancher = dureeARetrancher;
-	}
-
-	public Integer getIdMotifCompteur() {
-		return idMotifCompteur;
-	}
-
-	public void setIdMotifCompteur(Integer idMotifCompteur) {
-		this.idMotifCompteur = idMotifCompteur;
 	}
 
 	public boolean isAnneePrecedente() {
@@ -83,12 +82,83 @@ public class CompteurDto {
 		this.dateFin = dateFin;
 	}
 
-	public Integer getIdOrganisationSyndicale() {
-		return idOrganisationSyndicale;
+	public CompteurDto(AgentAsaA48Count arc, AgentHistoAlimManuelle histo) {
+		this.idAgent = arc.getIdAgent();
+		this.dureeAAjouter = arc.getTotalJours();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+		if (histo != null) {
+			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
+			this.motifCompteurDto = dto;
+		}
 	}
 
-	public void setIdOrganisationSyndicale(Integer idOrganisationSyndicale) {
-		this.idOrganisationSyndicale = idOrganisationSyndicale;
+	public CompteurDto(AgentAsaA53Count arc, AgentHistoAlimManuelle histo) {
+		this.idAgent = arc.getIdAgent();
+		this.dureeAAjouter = arc.getTotalJours();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+		if (null != arc)
+			this.organisationSyndicaleDto = new OrganisationSyndicaleDto(arc.getOrganisationSyndicale());
+		if (histo != null) {
+			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
+			this.motifCompteurDto = dto;
+		}
+	}
+
+	public CompteurDto(AgentAsaA52Count arc, AgentHistoAlimManuelle histo) {
+		this.idAgent = arc.getIdAgent();
+		this.dureeAAjouter = (double) arc.getTotalMinutes();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+		if (null != arc)
+			this.organisationSyndicaleDto = new OrganisationSyndicaleDto(arc.getOrganisationSyndicale());
+		if (histo != null) {
+			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
+			this.motifCompteurDto = dto;
+		}
+	}
+
+	public CompteurDto(AgentAsaA54Count arc, AgentHistoAlimManuelle histo) {
+		this.idAgent = arc.getIdAgent();
+		this.dureeAAjouter = arc.getTotalJours();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+		if (histo != null) {
+			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
+			this.motifCompteurDto = dto;
+		}
+	}
+
+	public CompteurDto(AgentAsaA55Count arc, AgentHistoAlimManuelle histo) {
+		this.idAgent = arc.getIdAgent();
+		this.dureeAAjouter = (double) arc.getTotalMinutes();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+		if (histo != null) {
+			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
+			this.motifCompteurDto = dto;
+		}
+	}
+
+	public CompteurDto() {
+		super();
+	}
+
+	public OrganisationSyndicaleDto getOrganisationSyndicaleDto() {
+		return organisationSyndicaleDto;
+	}
+
+	public void setOrganisationSyndicaleDto(OrganisationSyndicaleDto organisationSyndicaleDto) {
+		this.organisationSyndicaleDto = organisationSyndicaleDto;
+	}
+
+	public MotifCompteurDto getMotifCompteurDto() {
+		return motifCompteurDto;
+	}
+
+	public void setMotifCompteurDto(MotifCompteurDto motifCompteurDto) {
+		this.motifCompteurDto = motifCompteurDto;
 	}
 
 }

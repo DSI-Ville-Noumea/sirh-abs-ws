@@ -20,6 +20,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.MotifCompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
@@ -57,7 +58,9 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 		compteurDto.setAnneePrecedente(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -95,7 +98,9 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 		compteurDto.setAnneePrecedente(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -130,7 +135,9 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 
 		AgentRecupCount arc = new AgentRecupCount();
 		arc.setTotalMinutes(15);
@@ -171,7 +178,9 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 		compteurDto.setAnneePrecedente(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -210,7 +219,9 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 		compteurDto.setAnneePrecedente(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);

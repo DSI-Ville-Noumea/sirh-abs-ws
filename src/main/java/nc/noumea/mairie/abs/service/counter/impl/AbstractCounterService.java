@@ -9,7 +9,6 @@ import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
-import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -108,8 +107,11 @@ public abstract class AbstractCounterService implements ICounterService {
 
 		controlSaisieAlimManuelleCompteur(compteurDto, result);
 
-		MotifCompteur motifCompteur = counterRepository
-				.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur());
+		MotifCompteur motifCompteur = null;
+		if (compteurDto.getMotifCompteurDto() != null) {
+			motifCompteur = counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto()
+					.getIdMotifCompteur());
+		}
 		if (null == motifCompteur) {
 			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
 			result.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
@@ -209,7 +211,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public List<CompteurAsaDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur() {
 		return null;
 	}
 

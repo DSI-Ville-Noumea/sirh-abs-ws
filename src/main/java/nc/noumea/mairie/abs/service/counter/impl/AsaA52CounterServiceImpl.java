@@ -6,12 +6,12 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -62,7 +62,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 				compteurDto.getIdAgent(), nbMinutes, compteurDto.getDateDebut(), compteurDto.getDateFin());
 
 		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class,
-				compteurDto.getIdOrganisationSyndicale());
+				compteurDto.getOrganisationSyndicaleDto().getIdOrganisation());
 		if (null == organisationSyndicale) {
 			logger.warn(OS_INEXISTANT);
 			srm.getErrors().add(String.format(OS_INEXISTANT));
@@ -74,7 +74,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 		}
 		
 		AgentAsaA52Count arc = (AgentAsaA52Count) counterRepository.getOSCounterByDate(AgentAsaA52Count.class,
-				compteurDto.getIdOrganisationSyndicale(), compteurDto.getDateDebut());
+				compteurDto.getOrganisationSyndicaleDto().getIdOrganisation(), compteurDto.getDateDebut());
 
 		if (arc == null) {
 			arc = new AgentAsaA52Count();
@@ -101,12 +101,13 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurAsaDto> getListeCompteur() {
-		List<CompteurAsaDto> result = new ArrayList<>();
+	public List<CompteurDto> getListeCompteur() {
+		List<CompteurDto> result = new ArrayList<>();
 
 		List<AgentAsaA52Count> listeArc = counterRepository.getListCounter(AgentAsaA52Count.class);
 		for (AgentAsaA52Count arc : listeArc) {
-			CompteurAsaDto dto = new CompteurAsaDto(arc);
+			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
+			CompteurDto dto = new CompteurDto(arc,list.size()>0 ? list.get(0) : null);
 			result.add(dto);
 		}
 		return result;

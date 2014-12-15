@@ -14,9 +14,9 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
-import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.MotifCompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -124,7 +124,9 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 			compteurDto.setIdAgent(9005151);
 			compteurDto.setDureeAAjouter(10.0);
 			compteurDto.setDateDebut(new DateTime(2013, 4, 2, 0, 0, 0).toDate());
-			compteurDto.setIdMotifCompteur(1);
+			MotifCompteurDto motifDto = new MotifCompteurDto();
+			motifDto.setIdMotifCompteur(1);
+			compteurDto.setMotifCompteurDto(motifDto);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
@@ -156,7 +158,9 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeAAjouter(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
 		compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
 
@@ -174,7 +178,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(
 				counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, compteurDto.getIdAgent(),
 						compteurDto.getDateDebut())).thenReturn(arc);
-		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
@@ -203,7 +207,9 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeAAjouter(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
 		compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
 
@@ -218,7 +224,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(
 				counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, compteurDto.getIdAgent(),
 						compteurDto.getDateDebut())).thenReturn(null);
-		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
@@ -242,7 +248,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 	@Test
 	public void getListeCompteur_noResult() {
 
-		List<CompteurAsaDto> result = new ArrayList<CompteurAsaDto>();
+		List<CompteurDto> result = new ArrayList<CompteurDto>();
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getListCounter(AgentAsaA55Count.class)).thenReturn(
@@ -262,7 +268,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 	@Test
 	public void getListeCompteur_1Result() {
 
-		List<CompteurAsaDto> result = new ArrayList<CompteurAsaDto>();
+		List<CompteurDto> result = new ArrayList<CompteurDto>();
 		AgentAsaA55Count e = new AgentAsaA55Count();
 		e.setTotalMinutes(12 * 60);
 		List<AgentAsaA55Count> list = new ArrayList<AgentAsaA55Count>();
@@ -277,7 +283,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		result = service.getListeCompteur();
 
 		assertEquals(1, result.size());
-		assertEquals(12 * 60, result.get(0).getNb().intValue());
+		assertEquals(12 * 60, result.get(0).getDureeAAjouter().intValue());
 
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA55Count.class));

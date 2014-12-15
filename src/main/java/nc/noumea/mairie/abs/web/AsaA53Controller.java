@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -62,11 +61,11 @@ public class AsaA53Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurA53", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<CompteurAsaDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur() {
 
 		logger.debug("entered GET [asaA53/listeCompteurA53] => getListeCompteur ");
 
-		List<CompteurAsaDto> result = counterService.getListeCompteur();
+		List<CompteurDto> result = counterService.getListeCompteur();
 
 		if (result.size() == 0)
 			throw new NoContentException();

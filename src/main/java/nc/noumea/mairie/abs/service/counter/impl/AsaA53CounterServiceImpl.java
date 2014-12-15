@@ -6,12 +6,12 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -35,7 +35,8 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 
 		try {
 			Double nbJours = helperService.calculAlimManuelleCompteur(compteurDto);
-			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A53.getValue(), result, motifCompteur);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A53.getValue(),
+					result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -54,26 +55,26 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws IllegalAccessException
 	 */
 	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
-			IllegalAccessException {
+			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
+			throws InstantiationException, IllegalAccessException {
 
 		logger.info("updating counters for Agent [{}] with {} nbJours for dateDeb {} and dateFin {}...",
 				compteurDto.getIdAgent(), nbJours, compteurDto.getDateDebut(), compteurDto.getDateFin());
 
-		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class,
-				compteurDto.getIdOrganisationSyndicale());
+		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class, compteurDto
+				.getOrganisationSyndicaleDto().getIdOrganisation());
 		if (null == organisationSyndicale) {
 			logger.warn(OS_INEXISTANT);
 			srm.getErrors().add(String.format(OS_INEXISTANT));
 			return srm;
-		} else if(!organisationSyndicale.isActif()) {
+		} else if (!organisationSyndicale.isActif()) {
 			logger.warn(OS_INACTIVE);
 			srm.getErrors().add(String.format(OS_INACTIVE));
 			return srm;
 		}
-		
+
 		AgentAsaA53Count arc = (AgentAsaA53Count) counterRepository.getOSCounterByDate(AgentAsaA53Count.class,
-				compteurDto.getIdOrganisationSyndicale(), compteurDto.getDateDebut());
+				compteurDto.getOrganisationSyndicaleDto().getIdOrganisation(), compteurDto.getDateDebut());
 		if (arc == null) {
 			arc = new AgentAsaA53Count();
 			arc.setOrganisationSyndicale(organisationSyndicale);
@@ -92,19 +93,21 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc,
+				idRefTypeAbsence);
 
 		return srm;
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurAsaDto> getListeCompteur() {
-		List<CompteurAsaDto> result = new ArrayList<>();
+	public List<CompteurDto> getListeCompteur() {
+		List<CompteurDto> result = new ArrayList<>();
 
 		List<AgentAsaA53Count> listeArc = counterRepository.getListCounter(AgentAsaA53Count.class);
 		for (AgentAsaA53Count arc : listeArc) {
-			CompteurAsaDto dto = new CompteurAsaDto(arc);
+			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
+			CompteurDto dto = new CompteurDto(arc,list.size()>0 ? list.get(0) : null);
 			result.add(dto);
 		}
 		return result;
@@ -123,8 +126,8 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 				demande.getDateFin());
 		if (0 != jours) {
 			try {
-				srm = majCompteurToAgent(demande.getIdAgent(), ((DemandeAsa)demande).getOrganisationSyndicale().getIdOrganisationSyndicale(), 
-						jours, demande.getDateDebut(), srm);
+				srm = majCompteurToAgent(demande.getIdAgent(), ((DemandeAsa) demande).getOrganisationSyndicale()
+						.getIdOrganisationSyndicale(), jours, demande.getDateDebut(), srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update ASA_A53 counters :", e);
 			}
@@ -148,9 +151,9 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Integer idOrganisationSyndicale,  
-			Double jours, Date dateDebutDemande, ReturnMessageDto srm)
-			throws InstantiationException, IllegalAccessException {
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Integer idOrganisationSyndicale,
+			Double jours, Date dateDebutDemande, ReturnMessageDto srm) throws InstantiationException,
+			IllegalAccessException {
 
 		if (sirhWSConsumer.getAgent(idAgent) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
@@ -165,12 +168,12 @@ public class AsaA53CounterServiceImpl extends AsaCounterServiceImpl {
 			logger.warn(OS_INEXISTANT);
 			srm.getErrors().add(String.format(OS_INEXISTANT));
 			return srm;
-		} else if(!organisationSyndicale.isActif()) {
+		} else if (!organisationSyndicale.isActif()) {
 			logger.warn(OS_INACTIVE);
 			srm.getErrors().add(String.format(OS_INACTIVE));
 			return srm;
 		}
-		
+
 		AgentAsaA53Count arc = (AgentAsaA53Count) counterRepository.getOSCounterByDate(AgentAsaA53Count.class,
 				idOrganisationSyndicale, dateDebutDemande);
 

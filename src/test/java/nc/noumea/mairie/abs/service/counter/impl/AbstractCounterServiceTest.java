@@ -10,6 +10,7 @@ import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.MotifCompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -190,13 +191,15 @@ public class AbstractCounterServiceTest {
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
 				null);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);

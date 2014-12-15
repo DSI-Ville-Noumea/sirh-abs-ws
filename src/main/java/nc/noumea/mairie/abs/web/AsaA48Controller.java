@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -35,14 +34,13 @@ public class AsaA48Controller {
 	private IAgentMatriculeConverterService converterService;
 
 	/**
-	 * Modifie manuellement le compteur ASA A48 d un agent
-	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 * Modifie manuellement le compteur ASA A48 d un agent RequestBody : Format
+	 * du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addManual", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto addAsaA48ManuelForAgent(@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) CompteurDto compteurDto, 
-			HttpServletResponse response) {
+			@RequestBody(required = true) CompteurDto compteurDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [asaA48/addManual] => addAsaA48ManuelForAgent with parameters idAgent = {}", idAgent);
 
@@ -58,16 +56,16 @@ public class AsaA48Controller {
 	}
 
 	/**
-	 * Liste des compteurs ASA A48
-	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 * Liste des compteurs ASA A48 ResponseBody : Format du type timestamp :
+	 * "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurA48", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<CompteurAsaDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur() {
 
 		logger.debug("entered GET [asaA48/listeCompteurA48] => getListeCompteur ");
 
-		List<CompteurAsaDto> result = counterService.getListeCompteur();
+		List<CompteurDto> result = counterService.getListeCompteur();
 
 		if (result.size() == 0)
 			throw new NoContentException();

@@ -5,10 +5,10 @@ import java.util.Calendar;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
+import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.abs.dto.CompteurAsaDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -93,12 +93,13 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurAsaDto> getListeCompteur() {
-		List<CompteurAsaDto> result = new ArrayList<>();
+	public List<CompteurDto> getListeCompteur() {
+		List<CompteurDto> result = new ArrayList<>();
 
 		List<AgentAsaA54Count> listeArc = counterRepository.getListCounter(AgentAsaA54Count.class);
 		for (AgentAsaA54Count arc : listeArc) {
-			CompteurAsaDto dto = new CompteurAsaDto(arc);
+			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
+			CompteurDto dto = new CompteurDto(arc,list.size()>0 ? list.get(0) : null);
 			result.add(dto);
 		}
 		return result;

@@ -19,6 +19,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.MotifCompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -379,7 +380,9 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
 			compteurDto.setDureeARetrancher(10.0);
-			compteurDto.setIdMotifCompteur(1);
+			MotifCompteurDto motifDto = new MotifCompteurDto();
+			motifDto.setIdMotifCompteur(1);
+			compteurDto.setMotifCompteurDto(motifDto);
 			
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -418,7 +421,9 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		CompteurDto compteurDto = new CompteurDto();
 			compteurDto.setIdAgent(9005151);
 			compteurDto.setDureeARetrancher(10.0);
-			compteurDto.setIdMotifCompteur(1);
+			MotifCompteurDto motifDto = new MotifCompteurDto();
+			motifDto.setIdMotifCompteur(1);
+			compteurDto.setMotifCompteurDto(motifDto);
 
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
 
@@ -456,7 +461,9 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 
 		AgentRecupCount arc = new AgentRecupCount();
 		arc.setTotalMinutes(5);
@@ -496,7 +503,9 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 
 		AgentRecupCount arc = new AgentRecupCount();
 		arc.setTotalMinutes(15);
@@ -511,7 +520,7 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent()))
 				.thenReturn(arc);
-		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
@@ -539,7 +548,9 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		CompteurDto compteurDto = new CompteurDto();
 		compteurDto.setIdAgent(9005151);
 		compteurDto.setDureeARetrancher(10.0);
-		compteurDto.setIdMotifCompteur(1);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(true);
@@ -551,7 +562,7 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, compteurDto.getIdAgent())).thenReturn(
 				null);
-		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getIdMotifCompteur())).thenReturn(
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
 				new MotifCompteur());
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
