@@ -214,7 +214,8 @@ public class FiltreService implements IFiltreService {
 
 		RefTypeSaisiCongeAnnuel typeSaisieCongeAnnuel = null;
 		for (RefTypeAbsence type : refTypeAbs) {
-			if (idAgent != null) {
+			if (idAgent != null
+					&& type.getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
 				// on cherche le code base horaire absence de l'agent
 				RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(idAgent, new Date());
 				if (dtoBase.getIdRefTypeSaisiCongeAnnuel() != null) {
