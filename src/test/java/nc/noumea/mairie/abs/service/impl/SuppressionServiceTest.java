@@ -871,7 +871,7 @@ public class SuppressionServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
@@ -961,7 +961,7 @@ public class SuppressionServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
@@ -1051,7 +1051,7 @@ public class SuppressionServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
@@ -1141,7 +1141,7 @@ public class SuppressionServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
@@ -1231,7 +1231,7 @@ public class SuppressionServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
@@ -1321,7 +1321,7 @@ public class SuppressionServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());

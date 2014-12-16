@@ -154,7 +154,7 @@ public class DemandeDto {
 			case RECUP:
 				this.duree = (double) (((DemandeRecup) d).getDuree());
 				break;
-			case ASA:
+			case AS:
 				this.duree = ((DemandeAsa) d).getDuree();
 				this.isDateDebutAM = ((DemandeAsa) d).isDateDebutAM();
 				this.isDateDebutPM = ((DemandeAsa) d).isDateDebutPM();

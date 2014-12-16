@@ -582,7 +582,7 @@ public class DemandeRepositoryTest {
 		List<Integer> listeTypes = new ArrayList<Integer>();
 		listeTypes.add(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 		listeTypes.add(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
-		listeTypes.add(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		listeTypes.add(RefTypeGroupeAbsenceEnum.AS.getValue());
 		listeTypes.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 
 		// When
@@ -1220,7 +1220,7 @@ public class DemandeRepositoryTest {
 
 		RefTypeAbsence typeAsa = new RefTypeAbsence();
 		typeAsa.setGroupe(groupeAsa);
-		typeAsa.setLabel("ASA");
+		typeAsa.setLabel("AS");
 		absEntityManager.persist(typeAsa);
 
 		DemandeCongesAnnuels dConge = new DemandeCongesAnnuels();

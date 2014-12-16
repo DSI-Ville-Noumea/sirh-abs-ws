@@ -67,7 +67,7 @@ public class DataConsistencyRulesFactory {
 				return absReposCompDataConsistencyRules;
 			case RECUP:
 				return absRecupDataConsistencyRules;
-			case ASA:
+			case AS:
 				return getFactoryAsa(type);
 			case CONGES_EXCEP:
 				return absCongesExcepDataConsistencyRulesImpl;

@@ -188,7 +188,7 @@ public class AbsenceService implements IAbsenceService {
 						sirhWSConsumer.getAgentService(demandeRecup.getLatestEtatDemande().getIdAgent(),
 								helperService.getCurrentDate()));
 				break;
-			case ASA:
+			case AS:
 				DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
 				if (null == demandeAsa) {
 					return demandeDto;
@@ -540,7 +540,7 @@ public class AbsenceService implements IAbsenceService {
 				}
 				break;
 			case CONGES_EXCEP:
-			case ASA:
+			case AS:
 				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.VALIDEE) {
 					result.getErrors()
 							.add(String
@@ -861,7 +861,7 @@ public class AbsenceService implements IAbsenceService {
 						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				break;
-			case ASA:
+			case AS:
 				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa, idAgent, dateJour);
 

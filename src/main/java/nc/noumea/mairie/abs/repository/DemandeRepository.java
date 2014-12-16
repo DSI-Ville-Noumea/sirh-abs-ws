@@ -235,11 +235,11 @@ public class DemandeRepository implements IDemandeRepository {
 		// annuel et les ASA
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
-		sb.append("where d.type.groupe.idRefGroupeAbsence in( :ASA , :CONGE_EXCEP, :CONGE_ANNUEL ) ");
+		sb.append("where d.type.groupe.idRefGroupeAbsence in( :AS , :CONGE_EXCEP, :CONGE_ANNUEL ) ");
 		sb.append("order by d.idDemande desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
-		query.setParameter("ASA", RefTypeGroupeAbsenceEnum.ASA.getValue());
+		query.setParameter("AS", RefTypeGroupeAbsenceEnum.AS.getValue());
 		query.setParameter("CONGE_EXCEP", RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 

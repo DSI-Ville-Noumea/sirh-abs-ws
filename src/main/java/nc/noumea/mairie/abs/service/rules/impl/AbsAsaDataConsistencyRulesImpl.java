@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 @Service("AbsAsaDataConsistencyRulesImpl")
 public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
 
-	public static final String DEPASSEMENT_DROITS_ASA_MSG = "Les droits pour ce type d'absence ASA sont dépassés.";
-	public static final String AUCUN_DROITS_ASA_MSG = "L'agent [%d] ne possède pas de droit ASA.";
+	public static final String DEPASSEMENT_DROITS_ASA_MSG = "Les droits pour ce type d'absence syndicale sont dépassés.";
+	public static final String AUCUN_DROITS_ASA_MSG = "L'agent [%d] ne possède pas de droit pour les absences syndicales.";
 	protected static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
 	protected static final String OS_INACTIVE = "L'organisation syndicale n'est pas active.";
 

@@ -56,7 +56,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		srm = impl.checkDroitCompteurAsaA48(srm, demande);
 
 		assertEquals(1, srm.getErrors().size());
-		assertEquals(srm.getErrors().get(0), "L'agent [9005138] ne possède pas de droit ASA.");
+		assertEquals(srm.getErrors().get(0), "L'agent [9005138] ne possède pas de droit pour les absences syndicales.");
 	}
 
 	@Test

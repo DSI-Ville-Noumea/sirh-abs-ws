@@ -1029,8 +1029,8 @@
 <span class="path">/asaA48/addManual</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Modifie manuellement le compteur ASA A48 d un agent
- RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+                                 Modifie manuellement le compteur ASA A48 d un agent RequestBody : Format
+ du type timestamp : "/Date(1396306800000+1100)/"
 
                             </div>
 
@@ -1050,9 +1050,6 @@
                 <span class="json-field-name">dureeARetrancher</span>
 <span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idMotifCompteur</span>
-<span class="json-primitive-type">int</span>            </div>
-            <div class="json-field">
                 <span class="json-field-name">anneePrecedente</span>
 <span class="json-primitive-type">boolean</span>            </div>
             <div class="json-field">
@@ -1062,8 +1059,38 @@
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idOrganisationSyndicale</span>
+                <span class="json-field-name">organisationSyndicaleDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
 <span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
 </div>
                             </div>
@@ -1093,8 +1120,8 @@
 <span class="path">/asaA48/listeCompteurA48</span>                        </div>
 
                             <div class="resource-docs">
-                                 Liste des compteurs ASA A48
- ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+                                 Liste des compteurs ASA A48 ResponseBody : Format du type timestamp :
+ "/Date(1396306800000+1100)/"
 
                             </div>
 
@@ -1110,14 +1137,20 @@
                 <span class="json-field-name">idAgent</span>
 <span class="json-primitive-type">int</span>            </div>
             <div class="json-field">
+                <span class="json-field-name">dureeAAjouter</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeARetrancher</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">anneePrecedente</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
                 <span class="json-field-name">dateDebut</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
-            <div class="json-field">
-                <span class="json-field-name">nb</span>
-<span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">organisationSyndicaleDto</span>
     <span class="json-object">{
@@ -1134,6 +1167,21 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
 </div></span>    }
             </div>
 </div></span>    }
@@ -1169,9 +1217,6 @@
                 <span class="json-field-name">dureeARetrancher</span>
 <span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idMotifCompteur</span>
-<span class="json-primitive-type">int</span>            </div>
-            <div class="json-field">
                 <span class="json-field-name">anneePrecedente</span>
 <span class="json-primitive-type">boolean</span>            </div>
             <div class="json-field">
@@ -1181,8 +1226,38 @@
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idOrganisationSyndicale</span>
+                <span class="json-field-name">organisationSyndicaleDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
 <span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
 </div>
                             </div>
@@ -1229,14 +1304,20 @@
                 <span class="json-field-name">idAgent</span>
 <span class="json-primitive-type">int</span>            </div>
             <div class="json-field">
+                <span class="json-field-name">dureeAAjouter</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeARetrancher</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">anneePrecedente</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
                 <span class="json-field-name">dateDebut</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
-            <div class="json-field">
-                <span class="json-field-name">nb</span>
-<span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">organisationSyndicaleDto</span>
     <span class="json-object">{
@@ -1253,6 +1334,21 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
 </div></span>    }
             </div>
 </div></span>    }
@@ -1288,9 +1384,6 @@
                 <span class="json-field-name">dureeARetrancher</span>
 <span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idMotifCompteur</span>
-<span class="json-primitive-type">int</span>            </div>
-            <div class="json-field">
                 <span class="json-field-name">anneePrecedente</span>
 <span class="json-primitive-type">boolean</span>            </div>
             <div class="json-field">
@@ -1300,8 +1393,38 @@
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idOrganisationSyndicale</span>
+                <span class="json-field-name">organisationSyndicaleDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
 <span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
 </div>
                             </div>
@@ -1348,14 +1471,20 @@
                 <span class="json-field-name">idAgent</span>
 <span class="json-primitive-type">int</span>            </div>
             <div class="json-field">
+                <span class="json-field-name">dureeAAjouter</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeARetrancher</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">anneePrecedente</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
                 <span class="json-field-name">dateDebut</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
-            <div class="json-field">
-                <span class="json-field-name">nb</span>
-<span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">organisationSyndicaleDto</span>
     <span class="json-object">{
@@ -1372,6 +1501,21 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
 </div></span>    }
             </div>
 </div></span>    }
@@ -1407,9 +1551,6 @@
                 <span class="json-field-name">dureeARetrancher</span>
 <span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idMotifCompteur</span>
-<span class="json-primitive-type">int</span>            </div>
-            <div class="json-field">
                 <span class="json-field-name">anneePrecedente</span>
 <span class="json-primitive-type">boolean</span>            </div>
             <div class="json-field">
@@ -1419,8 +1560,38 @@
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idOrganisationSyndicale</span>
+                <span class="json-field-name">organisationSyndicaleDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
 <span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
 </div>
                             </div>
@@ -1467,14 +1638,20 @@
                 <span class="json-field-name">idAgent</span>
 <span class="json-primitive-type">int</span>            </div>
             <div class="json-field">
+                <span class="json-field-name">dureeAAjouter</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeARetrancher</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">anneePrecedente</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
                 <span class="json-field-name">dateDebut</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
-            <div class="json-field">
-                <span class="json-field-name">nb</span>
-<span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">organisationSyndicaleDto</span>
     <span class="json-object">{
@@ -1491,6 +1668,21 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
 </div></span>    }
             </div>
 </div></span>    }
@@ -1526,9 +1718,6 @@
                 <span class="json-field-name">dureeARetrancher</span>
 <span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idMotifCompteur</span>
-<span class="json-primitive-type">int</span>            </div>
-            <div class="json-field">
                 <span class="json-field-name">anneePrecedente</span>
 <span class="json-primitive-type">boolean</span>            </div>
             <div class="json-field">
@@ -1538,8 +1727,38 @@
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idOrganisationSyndicale</span>
+                <span class="json-field-name">organisationSyndicaleDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
 <span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
 </div>
                             </div>
@@ -1586,14 +1805,20 @@
                 <span class="json-field-name">idAgent</span>
 <span class="json-primitive-type">int</span>            </div>
             <div class="json-field">
+                <span class="json-field-name">dureeAAjouter</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dureeARetrancher</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">anneePrecedente</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
                 <span class="json-field-name">dateDebut</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
-            <div class="json-field">
-                <span class="json-field-name">nb</span>
-<span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
                 <span class="json-field-name">organisationSyndicaleDto</span>
     <span class="json-object">{
@@ -1610,6 +1835,21 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
 </div></span>    }
             </div>
 </div></span>    }
@@ -1734,9 +1974,6 @@
                 <span class="json-field-name">dureeARetrancher</span>
 <span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idMotifCompteur</span>
-<span class="json-primitive-type">int</span>            </div>
-            <div class="json-field">
                 <span class="json-field-name">anneePrecedente</span>
 <span class="json-primitive-type">boolean</span>            </div>
             <div class="json-field">
@@ -1746,8 +1983,38 @@
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idOrganisationSyndicale</span>
+                <span class="json-field-name">organisationSyndicaleDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
 <span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
 </div>
                             </div>
@@ -6827,9 +7094,6 @@
                 <span class="json-field-name">dureeARetrancher</span>
 <span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idMotifCompteur</span>
-<span class="json-primitive-type">int</span>            </div>
-            <div class="json-field">
                 <span class="json-field-name">anneePrecedente</span>
 <span class="json-primitive-type">boolean</span>            </div>
             <div class="json-field">
@@ -6839,8 +7103,38 @@
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idOrganisationSyndicale</span>
+                <span class="json-field-name">organisationSyndicaleDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
 <span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
 </div>
                             </div>
@@ -6915,9 +7209,6 @@
                 <span class="json-field-name">dureeARetrancher</span>
 <span class="json-primitive-type">double</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idMotifCompteur</span>
-<span class="json-primitive-type">int</span>            </div>
-            <div class="json-field">
                 <span class="json-field-name">anneePrecedente</span>
 <span class="json-primitive-type">boolean</span>            </div>
             <div class="json-field">
@@ -6927,8 +7218,38 @@
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">idOrganisationSyndicale</span>
+                <span class="json-field-name">organisationSyndicaleDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idOrganisation</span>
 <span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">sigle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">motifCompteurDto</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">libelle</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idMotifCompteur</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idRefTypeAbsence</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
 </div>
                             </div>

@@ -35,7 +35,7 @@ public class DemandeDtoTest {
 		ag.setIdAgent(9006765);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
@@ -89,7 +89,7 @@ public class DemandeDtoTest {
 		ag.setIdAgent(9006765);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
@@ -320,7 +320,7 @@ public class DemandeDtoTest {
 		ag.setIdAgent(9006765);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A54.getValue());
@@ -412,7 +412,7 @@ public class DemandeDtoTest {
 		ag.setIdAgent(9006765);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A55.getValue());
@@ -500,7 +500,7 @@ public class DemandeDtoTest {
 		ag.setIdAgent(9006765);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A52.getValue());
@@ -588,7 +588,7 @@ public class DemandeDtoTest {
 		ag.setIdAgent(9006765);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A53.getValue());
@@ -676,7 +676,7 @@ public class DemandeDtoTest {
 		ag.setIdAgent(9006765);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A50.getValue());
@@ -764,7 +764,7 @@ public class DemandeDtoTest {
 		ag.setIdAgent(9006765);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A49.getValue());

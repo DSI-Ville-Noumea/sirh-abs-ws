@@ -99,7 +99,7 @@ public class SuppressionService implements ISuppressionService {
 			case RECUP:
 				demande = getDemande(DemandeRecup.class, idDemande);
 				break;
-			case ASA:
+			case AS:
 				demande = getDemande(DemandeAsa.class, idDemande);
 				break;
 			case CONGES_EXCEP:

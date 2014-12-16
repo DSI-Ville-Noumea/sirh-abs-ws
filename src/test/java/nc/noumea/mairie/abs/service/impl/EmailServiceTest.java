@@ -26,7 +26,7 @@ public class EmailServiceTest {
 		List<Integer> listeTypes = new ArrayList<Integer>();
 		listeTypes.add(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 		listeTypes.add(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
-		listeTypes.add(RefTypeGroupeAbsenceEnum.ASA.getValue());
+		listeTypes.add(RefTypeGroupeAbsenceEnum.AS.getValue());
 		listeTypes.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 		listeTypes.add(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 

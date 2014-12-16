@@ -63,7 +63,7 @@ public class CounterServiceFactory {
 				return reposCompCounterServiceImpl;
 			case RECUP:
 				return recupCounterServiceImpl;
-			case ASA:
+			case AS:
 				return getFactoryAsa(type);
 			case CONGES_EXCEP:
 				return congesExcepCounterServiceImpl;
