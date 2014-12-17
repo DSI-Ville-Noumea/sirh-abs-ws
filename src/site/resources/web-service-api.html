@@ -115,6 +115,12 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/asaA52/saveRepresentant</span>
+                    <div>
+                            <a href="#/asaA52/saveRepresentant_POST_idOrganisationSyndicale">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/asaA53/addManual</span>
                     <div>
                             <a href="#/asaA53/addManual_POST_idAgent">POST</a>
@@ -370,7 +376,7 @@
                 <div class="resource-summary">
                     <span class="resource-summary-path">/organisation/listOrganisationActif</span>
                     <div>
-                            <a href="#/organisation/listOrganisationActif_GET">GET</a>
+                            <a href="#/organisation/listOrganisationActif_GET_idAgent_idRefTypeAbsence">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -1074,6 +1080,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1167,6 +1187,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1241,6 +1275,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1334,6 +1382,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1353,6 +1415,54 @@
             </div>
 </div></span>    }
     ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/asaA52/saveRepresentant_POST_idOrganisationSyndicale"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/asaA52/saveRepresentant</span>?<span class="url-param-key">idOrganisationSyndicale</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Modifie les representants de compteur ASA A52 d une organisation
+ syndicale
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
 </div>
                             </div>
                     </div>
@@ -1408,6 +1518,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1501,6 +1625,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1575,6 +1713,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1668,6 +1820,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1742,6 +1908,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1835,6 +2015,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -1998,6 +2192,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -2192,6 +2400,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -2521,6 +2743,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -2865,6 +3101,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -3227,6 +3477,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -3572,6 +3836,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -3919,6 +4197,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -4288,6 +4580,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -4783,6 +5089,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -5147,6 +5467,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -5493,6 +5827,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -6926,7 +7274,7 @@
 <span class="path">/organisation/addOS</span>                        </div>
 
                             <div class="resource-docs">
-                                 Saisie/modification d une organisation syndicale 
+                                 Saisie/modification d une organisation syndicale
 
                             </div>
 
@@ -6948,6 +7296,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
 </div>
                             </div>
@@ -7001,16 +7363,30 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
     ]</span>
 </div>
                             </div>
                     </div>
-                    <a id="/organisation/listOrganisationActif_GET"/>
+                    <a id="/organisation/listOrganisationActif_GET_idAgent_idRefTypeAbsence"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">GET</span>
-<span class="path">/organisation/listOrganisationActif</span>                        </div>
+<span class="path">/organisation/listOrganisationActif</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idRefTypeAbsence</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
                                  Liste des organisations syndicales actives
@@ -7037,6 +7413,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
     ]</span>
 </div>
@@ -7118,6 +7508,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -7233,6 +7637,20 @@
             <div class="json-field">
                 <span class="json-field-name">actif</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeAgents</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">actif</span>
+<span class="json-primitive-type">boolean</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
 </div></span>    }
             </div>
             <div class="json-field">
@@ -7468,7 +7886,7 @@
                 <span class="json-field-name">dateFin</span>
 <span class="json-primitive-type">timestamp</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">soldeAsaA55</span>
+                <span class="json-field-name">soldeAsa</span>
 <span class="json-primitive-type">int</span>            </div>
 </div></span>    }
     ]</span>
@@ -7493,6 +7911,29 @@
             <div class="json-field">
                 <span class="json-field-name">uniteDecompte</span>
 <span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">afficheSoldeAsaA52</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">soldeAsaA52</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">listeSoldeAsaA52</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">dateDebut</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateFin</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">soldeAsa</span>
+<span class="json-primitive-type">int</span>            </div>
 </div></span>    }
     ]</span>
             </div>
