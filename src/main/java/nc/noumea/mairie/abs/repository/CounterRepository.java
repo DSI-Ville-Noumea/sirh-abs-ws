@@ -12,6 +12,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
+import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
@@ -219,6 +220,20 @@ public class CounterRepository implements ICounterRepository {
 						"from AgentHistoAlimManuelle h where h.compteurAgent.idAgentCount = :idAgentCount order by h.dateModification desc ",
 						AgentHistoAlimManuelle.class);
 		q.setParameter("idAgentCount", compteurAgent.getIdAgentCount());
+
+		return q.getResultList();
+	}
+
+	@Override
+	public List<AgentAsaA52Count> getListOSCounterByDate(Integer idOrganisationSyndicale, Date dateDebut, Date dateFin) {
+
+		TypedQuery<AgentAsaA52Count> q = absEntityManager
+				.createQuery(
+						"from AgentAsaA52Count h where h.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale and h.dateDebut BETWEEN :dateDebut and :dateFin order by h.dateDebut asc ",
+						AgentAsaA52Count.class);
+		q.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
+		q.setParameter("dateDebut", dateDebut);
+		q.setParameter("dateFin", dateFin);
 
 		return q.getResultList();
 	}

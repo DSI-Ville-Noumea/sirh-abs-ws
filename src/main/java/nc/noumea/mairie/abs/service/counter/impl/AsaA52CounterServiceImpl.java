@@ -7,11 +7,13 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -194,6 +196,64 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 
 		counterRepository.persistEntity(arc);
 
+		return srm;
+	}
+
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto saveRepresentantA52(Integer idOrganisationSyndicale,
+			List<AgentOrganisationSyndicaleDto> listeAgentDto) {
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		// on verifie l'existante de l'OS
+		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class,
+				idOrganisationSyndicale);
+		if (null == organisationSyndicale) {
+			logger.warn(OS_INEXISTANT);
+			srm.getErrors().add(String.format(OS_INEXISTANT));
+			return srm;
+		} else if (!organisationSyndicale.isActif()) {
+			logger.warn(OS_INACTIVE);
+			srm.getErrors().add(String.format(OS_INACTIVE));
+			return srm;
+		}
+
+		for (AgentOrganisationSyndicaleDto ag : listeAgentDto) {
+			// on cherche l'agent de l'organisation
+			AgentOrganisationSyndicale agentOrganisationSyndicale = null;
+			List<AgentOrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentOrganisation(ag
+					.getIdAgent());
+			if (listeAgentOrganisationSyndicale.size() == 0) {
+				agentOrganisationSyndicale = new AgentOrganisationSyndicale();
+			} else if (listeAgentOrganisationSyndicale.size() == 1
+					&& listeAgentOrganisationSyndicale.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale() == idOrganisationSyndicale) {
+				agentOrganisationSyndicale = listeAgentOrganisationSyndicale.get(0);
+			} else {
+				for (AgentOrganisationSyndicale agTest : listeAgentOrganisationSyndicale) {
+					if (agTest.getOrganisationSyndicale().getIdOrganisationSyndicale() != idOrganisationSyndicale
+							&& agTest.isActif()) {
+						// si pas la bonne organisation et que agent actif
+						logger.warn(AGENT_OS_EXISTANT, agTest.getIdAgent());
+						srm.getErrors().add(String.format(AGENT_OS_EXISTANT, agTest.getIdAgent()));
+						return srm;
+					}
+				}
+				agentOrganisationSyndicale = OSRepository
+						.getAgentOrganisation(ag.getIdAgent(), idOrganisationSyndicale);
+				if (agentOrganisationSyndicale == null) {
+					agentOrganisationSyndicale = new AgentOrganisationSyndicale();
+				}
+			}
+			agentOrganisationSyndicale.setActif(ag.isActif());
+			agentOrganisationSyndicale.setIdAgent(ag.getIdAgent());
+			agentOrganisationSyndicale.setOrganisationSyndicale(organisationSyndicale);
+
+			// insert nouvelle ligne Agent Organisation syndicale
+			counterRepository.persistEntity(agentOrganisationSyndicale);
+
+			logger.info("Updated/Added AgentOrganisationSyndicale id {}.",
+					agentOrganisationSyndicale.getIdAgentOrganisationSyndicale());
+		}
 		return srm;
 	}
 }

@@ -7,7 +7,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 public class SoldeMonthDto {
 
-	private int soldeAsaA55;
+	private int soldeAsa;
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateDebut;
@@ -31,12 +31,12 @@ public class SoldeMonthDto {
 		this.dateFin = dateFin;
 	}
 
-	public int getSoldeAsaA55() {
-		return soldeAsaA55;
+	public int getSoldeAsa() {
+		return soldeAsa;
 	}
 
-	public void setSoldeAsaA55(int soldeAsaA55) {
-		this.soldeAsaA55 = soldeAsaA55;
+	public void setSoldeAsa(int soldeAsa) {
+		this.soldeAsa = soldeAsa;
 	}
 
 }

@@ -36,6 +36,7 @@
       	<class>nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount</class>
       	<class>nc.noumea.mairie.abs.domain.DemandeCongesAnnuels</class>
       	<class>nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel</class>
+      	<class>nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

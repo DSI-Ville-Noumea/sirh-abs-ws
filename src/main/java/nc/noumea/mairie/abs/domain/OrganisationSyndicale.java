@@ -1,10 +1,16 @@
 package nc.noumea.mairie.abs.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -34,6 +40,9 @@ public class OrganisationSyndicale {
 	@Column(name = "ACTIF", nullable = false)
 	@Type(type = "boolean")
 	private boolean actif;
+
+	@OneToMany(mappedBy = "organisationSyndicale", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<AgentOrganisationSyndicale> agents = new ArrayList<AgentOrganisationSyndicale>();
 
 	@Version
 	@Column(name = "version")
@@ -77,6 +86,14 @@ public class OrganisationSyndicale {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public List<AgentOrganisationSyndicale> getAgents() {
+		return agents;
+	}
+
+	public void setAgents(List<AgentOrganisationSyndicale> agents) {
+		this.agents = agents;
 	}
 
 }

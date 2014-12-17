@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.repository;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
@@ -34,4 +35,6 @@ public interface ICounterRepository {
 	<T> T getOSCounterByDate(Class<T> T, Integer idOrganisationSyndicale, Date date);
 
 	List<Integer> getListAgentCongeAnnuelCountForReset();
+
+	List<AgentAsaA52Count> getListOSCounterByDate(Integer idOrganisationSyndicale, Date dateDeb, Date dateFin);
 }

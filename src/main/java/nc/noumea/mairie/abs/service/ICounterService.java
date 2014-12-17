@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -34,4 +35,7 @@ public interface ICounterService {
 	List<Integer> getListAgentCongeAnnuelCountForReset();
 
 	ReturnMessageDto resetCompteurCongeAnnuel(Integer idAgentCongeAnnuelCount);
+
+	ReturnMessageDto saveRepresentantA52(Integer idOrganisationSyndicale,
+			List<AgentOrganisationSyndicaleDto> listeAgentDto);
 }

@@ -5,11 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
@@ -19,6 +21,7 @@ import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeMonthDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
+import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
@@ -37,6 +40,9 @@ public class SoldeService implements ISoldeService {
 
 	@Autowired
 	private ICounterRepository counterRepository;
+
+	@Autowired
+	private IOrganisationSyndicaleRepository organisationSyndicaleRepository;
 
 	@Autowired
 	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
@@ -62,6 +68,7 @@ public class SoldeService implements ISoldeService {
 			getSoldeAsaA48(idAgent, dto, dateDeb);
 			getSoldeAsaA54(idAgent, dto, dateDeb);
 			getSoldeAsaA55(idAgent, dto, dateDeb, dateFin);
+			getSoldeAsaA52(idAgent, dto, dateDeb, dateFin);
 			getSoldeCongesExcep(idAgent, dto, dateDeb, dateFin);
 		} else {
 			switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(typeDemande)) {
@@ -82,6 +89,9 @@ public class SoldeService implements ISoldeService {
 					break;
 				case ASA_A55:
 					getSoldeAsaA55(idAgent, dto, dateDeb, dateFin);
+					break;
+				case ASA_A52:
+					getSoldeAsaA52(idAgent, dto, dateDeb, dateFin);
 					break;
 				case MALADIES:
 					// TODO
@@ -147,12 +157,43 @@ public class SoldeService implements ISoldeService {
 		List<SoldeMonthDto> listDto = new ArrayList<SoldeMonthDto>();
 		for (AgentAsaA55Count arc : listeSoldeAsaA55) {
 			SoldeMonthDto dtoMonth = new SoldeMonthDto();
-			dtoMonth.setSoldeAsaA55(arc.getTotalMinutes());
+			dtoMonth.setSoldeAsa(arc.getTotalMinutes());
 			dtoMonth.setDateDebut(arc.getDateDebut());
 			dtoMonth.setDateFin(arc.getDateFin());
 			listDto.add(dtoMonth);
 		}
 		dto.setListeSoldeAsaA55(listDto);
+	}
+
+	private void getSoldeAsaA52(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin) {
+		// on traite les ASA A52 pour la date en parametre
+		// on affiche le solde courant
+
+		// on cherche si l'agent appartient à une OS
+		List<AgentOrganisationSyndicale> list = organisationSyndicaleRepository.getAgentOrganisationActif(idAgent);
+		if (list.size() == 0 || list.size() > 1) {
+			dto.setAfficheSoldeAsaA52(false);
+			dto.setSoldeAsaA52(0.0);
+			dto.setListeSoldeAsaA52(new ArrayList<SoldeMonthDto>());
+		} else {
+			AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class, list.get(0)
+					.getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb);
+			dto.setAfficheSoldeAsaA52(soldeAsaA52 == null ? false : true);
+			dto.setSoldeAsaA52((double) (soldeAsaA52 == null ? 0 : soldeAsaA52.getTotalMinutes()));
+			// on affiche tous les soldes de l'année
+			List<AgentAsaA52Count> listeSoldeAsaA52 = counterRepository.getListOSCounterByDate(list.get(0)
+					.getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb,
+					dateFin);
+			List<SoldeMonthDto> listDto = new ArrayList<SoldeMonthDto>();
+			for (AgentAsaA52Count arc : listeSoldeAsaA52) {
+				SoldeMonthDto dtoMonth = new SoldeMonthDto();
+				dtoMonth.setSoldeAsa(arc.getTotalMinutes());
+				dtoMonth.setDateDebut(arc.getDateDebut());
+				dtoMonth.setDateFin(arc.getDateFin());
+				listDto.add(dtoMonth);
+			}
+			dto.setListeSoldeAsaA52(listDto);
+		}
 	}
 
 	private void getSoldeCongesExcep(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin) {

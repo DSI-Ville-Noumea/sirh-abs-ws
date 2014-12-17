@@ -31,7 +31,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		// on cherche la demande
+		// on cherche l'organisation syndicale
 		OrganisationSyndicale organisationSyndicale = getOrganisationSyndicale(OrganisationSyndicale.class,
 				dto.getIdOrganisation());
 		if (organisationSyndicale == null) {

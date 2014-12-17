@@ -9,6 +9,7 @@ import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -55,6 +56,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected static final String TYPE_COMPTEUR_INEXISTANT = "Le type de compteur n'existe pas.";
 	protected static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
 	protected static final String OS_INACTIVE = "L'organisation syndicale n'est pas active.";
+	protected static final String AGENT_OS_EXISTANT = "L'agent [%d] fait déja partie d'une autre organisation syndicale.";
 
 	protected static final String RESET_COMPTEUR_ANNEE_PRECEDENTE = "Remise à 0 du compteur Année précédente";
 	protected static final String INITIATE_COMPTEUR = "Initialisation du compteur";
@@ -227,7 +229,14 @@ public abstract class AbstractCounterService implements ICounterService {
 
 	@Override
 	public ReturnMessageDto resetCompteurCongeAnnuel(Integer idAgentCongeAnnuelCount) {
+		ReturnMessageDto srm = new ReturnMessageDto();
+		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 
+		return srm;
+	}
+
+	@Override
+	public ReturnMessageDto saveRepresentantA52(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto) {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -71,5 +72,24 @@ public class AsaA52Controller {
 			throw new NoContentException();
 
 		return result;
+	}
+
+	/**
+	 * Modifie les representants de compteur ASA A52 d une organisation
+	 * syndicale
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/saveRepresentant", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto saveRepresentantA52(@RequestParam("idOrganisationSyndicale") int idOrganisationSyndicale,
+			@RequestBody(required = true) List<AgentOrganisationSyndicaleDto> listeAgentDto,
+			HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [asaA52/saveRepresentant] => saveRepresentantA52 with parameters idOrganisationSyndicale = {}",
+				idOrganisationSyndicale);
+
+		ReturnMessageDto srm = counterService.saveRepresentantA52(idOrganisationSyndicale, listeAgentDto);
+
+		return srm;
 	}
 }
