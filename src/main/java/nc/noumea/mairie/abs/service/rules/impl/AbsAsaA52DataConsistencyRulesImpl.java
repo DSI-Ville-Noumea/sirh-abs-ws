@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
+import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
@@ -16,7 +17,8 @@ import org.springframework.stereotype.Service;
 public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRulesImpl {
 
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
+			boolean isProvenanceSIRH) {
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
 		super.checkOrganisationSyndicale(srm, (DemandeAsa) demande);
@@ -27,11 +29,19 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	}
 
 	public ReturnMessageDto checkDroitCompteurAsaA52(ReturnMessageDto srm, DemandeAsa demande) {
-
 		AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class, demande
 				.getOrganisationSyndicale().getIdOrganisationSyndicale(), demande.getDateDebut());
 
 		if (null == soldeAsaA52) {
+			logger.warn(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
+			srm.getErrors().add(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
+			return srm;
+		}
+
+		// on regarde si l'agent fait partie de l'organisation syndicale
+		AgentOrganisationSyndicale agentOrag = organisationSyndicaleRepository.getAgentOrganisation(
+				demande.getIdAgent(), demande.getOrganisationSyndicale().getIdOrganisationSyndicale());
+		if (null == agentOrag || !agentOrag.isActif()) {
 			logger.warn(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
 			srm.getErrors().add(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
 			return srm;
@@ -68,10 +78,11 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
 
 		// on verifie d abord l etat de la demande
-		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur 
-		if(!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
+		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de
+		// depassement de compteur
+		if (!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
-		
+
 		AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class, demandeDto
 				.getOrganisationSyndicale().getIdOrganisation(), demandeDto.getDateDebut());
 

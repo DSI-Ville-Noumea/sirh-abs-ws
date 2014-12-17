@@ -3,7 +3,9 @@ package nc.noumea.mairie.abs.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
@@ -78,17 +80,33 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<OrganisationSyndicaleDto> getListOrganisationSyndicaleActives() {
-		List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
-		List<OrganisationSyndicale> listOrganisation = organisationRepository.findAllOrganisationActives();
+	public List<OrganisationSyndicaleDto> getListOrganisationSyndicaleActives(Integer idAgent, Integer idRefTypeAbsence) {
+		if (idRefTypeAbsence == RefTypeAbsenceEnum.ASA_A52.getValue()) {
+			// si decharge de service alors chercher la bonne oraganisation
+			// syndicale de l'agent
+			List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
+			List<AgentOrganisationSyndicale> listAgentOrganisation = organisationRepository
+					.getAgentOrganisationActif(idAgent);
 
-		for (OrganisationSyndicale org : listOrganisation) {
+			for (AgentOrganisationSyndicale org : listAgentOrganisation) {
 
-			OrganisationSyndicaleDto dto = new OrganisationSyndicaleDto(org);
-			res.add(dto);
+				OrganisationSyndicaleDto dto = new OrganisationSyndicaleDto(org.getOrganisationSyndicale());
+				res.add(dto);
 
+			}
+			return res;
+		} else {
+			List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
+			List<OrganisationSyndicale> listOrganisation = organisationRepository.findAllOrganisationActives();
+
+			for (OrganisationSyndicale org : listOrganisation) {
+
+				OrganisationSyndicaleDto dto = new OrganisationSyndicaleDto(org);
+				res.add(dto);
+
+			}
+			return res;
 		}
-		return res;
 	}
 
 }

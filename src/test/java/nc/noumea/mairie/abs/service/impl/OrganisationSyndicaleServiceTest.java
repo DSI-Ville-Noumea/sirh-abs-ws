@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
@@ -103,7 +104,8 @@ public class OrganisationSyndicaleServiceTest {
 		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
 		ReflectionTestUtils.setField(service, "organisationRepository", organisationRepository);
 
-		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives();
+		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives(9005138,
+				RefTypeAbsenceEnum.ASA_A53.getValue());
 
 		assertEquals(0, result.size());
 	}
@@ -126,7 +128,8 @@ public class OrganisationSyndicaleServiceTest {
 		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
 		ReflectionTestUtils.setField(service, "organisationRepository", organisationRepository);
 
-		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives();
+		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives(9005138,
+				RefTypeAbsenceEnum.ASA_A53.getValue());
 
 		assertEquals(1, result.size());
 		assertEquals(org.getLibelle(), result.get(0).getLibelle());

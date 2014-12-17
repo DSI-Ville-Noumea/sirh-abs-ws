@@ -11,5 +11,5 @@ public interface IOrganisationSyndicaleService {
 
 	List<OrganisationSyndicaleDto> getListOrganisationSyndicale();
 
-	List<OrganisationSyndicaleDto> getListOrganisationSyndicaleActives();
+	List<OrganisationSyndicaleDto> getListOrganisationSyndicaleActives(Integer idAgent, Integer idRefTypeAbsence);
 }

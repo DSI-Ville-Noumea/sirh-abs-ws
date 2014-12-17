@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -27,12 +28,12 @@ public class OrganisationSyndicaleController {
 	private IOrganisationSyndicaleService organisationService;
 
 	/**
-	 * Saisie/modification d une organisation syndicale 
+	 * Saisie/modification d une organisation syndicale
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addOS", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setOrganisationSyndicale(@RequestBody(required = true) OrganisationSyndicaleDto organisationDto, 
-			HttpServletResponse response) {
+	public ReturnMessageDto setOrganisationSyndicale(
+			@RequestBody(required = true) OrganisationSyndicaleDto organisationDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [organisation/addOS] => setOrganisationSyndicale for SIRH");
 
@@ -41,7 +42,7 @@ public class OrganisationSyndicaleController {
 		if (!srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 		}
-		
+
 		return srm;
 	}
 
@@ -64,11 +65,16 @@ public class OrganisationSyndicaleController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listOrganisationActif", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<OrganisationSyndicaleDto> listOrganisationSyndicaleActives() {
+	public List<OrganisationSyndicaleDto> listOrganisationSyndicaleActives(
+			@RequestParam(value = "idAgent", required = true) Integer idAgent,
+			@RequestParam(value = "idRefTypeAbsence", required = true) Integer idRefTypeAbsence) {
 
-		logger.debug("entered GET [organisation/listOrganisationActif] => listOrganisationSyndicaleActives");
+		logger.debug(
+				"entered GET [organisation/listOrganisationActif] => listOrganisationSyndicaleActives with parameter idAgent = {} and idRefTypeAbsence = {}",
+				idAgent, idRefTypeAbsence);
 
-		List<OrganisationSyndicaleDto> orga = organisationService.getListOrganisationSyndicaleActives();
+		List<OrganisationSyndicaleDto> orga = organisationService.getListOrganisationSyndicaleActives(idAgent,
+				idRefTypeAbsence);
 
 		return orga;
 	}
