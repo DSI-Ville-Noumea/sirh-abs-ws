@@ -123,7 +123,7 @@ public class OrganisationSyndicaleRepositoryTest {
 		absEntityManager.persist(org2);
 
 		// When
-		List<AgentOrganisationSyndicale> result = repository.getListeAgentOrganisation(2);
+		List<AgentOrganisationSyndicale> result = repository.getListeAgentOrganisation(orga.getIdOrganisationSyndicale());
 
 		// Then
 		assertEquals(1, result.size());
@@ -187,7 +187,7 @@ public class OrganisationSyndicaleRepositoryTest {
 		absEntityManager.persist(org1);
 
 		// When
-		AgentOrganisationSyndicale result = repository.getAgentOrganisation(9005138, 1);
+		AgentOrganisationSyndicale result = repository.getAgentOrganisation(9005138, orga.getIdOrganisationSyndicale());
 
 		// Then
 		assertEquals(org1.getIdAgent(), result.getIdAgent());
