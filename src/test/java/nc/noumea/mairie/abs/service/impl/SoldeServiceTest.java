@@ -13,14 +13,17 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
+import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
@@ -28,6 +31,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
+import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.service.counter.impl.CongesExcepCounterServiceImpl;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 
@@ -78,10 +82,16 @@ public class SoldeServiceTest {
 		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
 				listeSoldeSpecifiqueDto);
 
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
+				.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(
+				new ArrayList<AgentOrganisationSyndicale>());
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
+		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
@@ -94,12 +104,14 @@ public class SoldeServiceTest {
 		assertEquals("0.0", dto.getSoldeAsaA48().toString());
 		assertEquals("0.0", dto.getSoldeAsaA54().toString());
 		assertEquals("0.0", dto.getSoldeAsaA55().toString());
+		assertEquals("0.0", dto.getSoldeAsaA52().toString());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
 		assertFalse(dto.isAfficheSoldeAsaA48());
 		assertFalse(dto.isAfficheSoldeAsaA54());
 		assertFalse(dto.isAfficheSoldeAsaA55());
+		assertFalse(dto.isAfficheSoldeAsaA52());
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 	}
 
@@ -156,6 +168,30 @@ public class SoldeServiceTest {
 		solde.setTotalJours(cotaSoldeAnnee);
 		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
 
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
+		AgentAsaA52Count arc52 = new AgentAsaA52Count();
+		arc52.setOrganisationSyndicale(organisationSyndicale);
+		arc52.setTotalMinutes(12 * 60);
+		arc52.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		arc52.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
+
+		AgentAsaA52Count arc52bis = new AgentAsaA52Count();
+		arc52.setOrganisationSyndicale(organisationSyndicale);
+		arc52bis.setTotalMinutes(2 * 60);
+		arc52bis.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
+		arc52bis.setDateFin(new DateTime(2014, 3, 31, 23, 59, 0).toDate());
+
+		List<AgentAsaA52Count> listeArc52 = new ArrayList<AgentAsaA52Count>();
+		listeArc52.add(arc52);
+		listeArc52.add(arc52bis);
+
+		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
+		ag.setOrganisationSyndicale(organisationSyndicale);
+		List<AgentOrganisationSyndicale> list = new ArrayList<>();
+		list.add(ag);
+
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
@@ -164,6 +200,12 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateDeb)).thenReturn(arc55);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(solde);
 		Mockito.when(cr.getListAgentCounterByDate(9008765, dateDeb, dateFin)).thenReturn(listeArc55);
+		Mockito.when(
+				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
+						.getIdOrganisationSyndicale(), dateDeb)).thenReturn(arc52);
+		Mockito.when(
+				cr.getListOSCounterByDate(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb,
+						dateFin)).thenReturn(listeArc52);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -192,10 +234,15 @@ public class SoldeServiceTest {
 		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, dateDeb, dateFin)).thenReturn(
 				listeSoldeSpecifiqueDto);
 
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
+				.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
+		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null);
 
@@ -207,13 +254,16 @@ public class SoldeServiceTest {
 		assertEquals(12, dto.getSoldeAsaA48().intValue());
 		assertEquals(12, dto.getSoldeAsaA54().intValue());
 		assertEquals(12 * 60, dto.getSoldeAsaA55().intValue());
+		assertEquals(12 * 60, dto.getSoldeAsaA52().intValue());
 		assertTrue(dto.isAfficheSoldeConge());
 		assertTrue(dto.isAfficheSoldeRecup());
 		assertTrue(dto.isAfficheSoldeReposComp());
 		assertTrue(dto.isAfficheSoldeAsaA48());
 		assertTrue(dto.isAfficheSoldeAsaA54());
 		assertTrue(dto.isAfficheSoldeAsaA55());
+		assertTrue(dto.isAfficheSoldeAsaA52());
 		assertEquals(2, dto.getListeSoldeAsaA55().size());
+		assertEquals(2, dto.getListeSoldeAsaA52().size());
 		assertEquals(2, dto.getListeSoldeCongesExcep().size());
 		assertTrue(dto.isAfficheSoldeCongesExcep());
 	}
@@ -268,6 +318,30 @@ public class SoldeServiceTest {
 		solde.setTotalJours(cotaSoldeAnnee);
 		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
 
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
+		AgentAsaA52Count arc52 = new AgentAsaA52Count();
+		arc52.setOrganisationSyndicale(organisationSyndicale);
+		arc52.setTotalMinutes(12 * 60);
+		arc52.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		arc52.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
+
+		AgentAsaA52Count arc52bis = new AgentAsaA52Count();
+		arc52.setOrganisationSyndicale(organisationSyndicale);
+		arc52bis.setTotalMinutes(2 * 60);
+		arc52bis.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
+		arc52bis.setDateFin(new DateTime(2014, 3, 31, 23, 59, 0).toDate());
+
+		List<AgentAsaA52Count> listeArc52 = new ArrayList<AgentAsaA52Count>();
+		listeArc52.add(arc52);
+		listeArc52.add(arc52bis);
+
+		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
+		ag.setOrganisationSyndicale(organisationSyndicale);
+		List<AgentOrganisationSyndicale> list = new ArrayList<>();
+		list.add(ag);
+
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
@@ -284,6 +358,13 @@ public class SoldeServiceTest {
 		Mockito.when(
 				cr.getListAgentCounterByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
 						12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
+		Mockito.when(
+				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
+						.getIdOrganisationSyndicale(), new DateTime(2013, 1, 1, 0, 0, 0).toDate())).thenReturn(arc52);
+		Mockito.when(
+				cr.getListOSCounterByDate(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(),
+						new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 23, 59, 0).toDate()))
+				.thenReturn(listeArc52);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -303,10 +384,15 @@ public class SoldeServiceTest {
 		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
 				listeSoldeSpecifiqueDto);
 
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
+				.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
+		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 
 		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
@@ -329,6 +415,9 @@ public class SoldeServiceTest {
 		assertEquals(0, dto.getListeSoldeAsaA55().size());
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 		assertEquals(0, dto.getListeSoldeCongesExcep().size());
+		assertEquals(12 * 60, dto.getSoldeAsaA52().intValue());
+		assertTrue(dto.isAfficheSoldeAsaA52());
+		assertEquals(2, dto.getListeSoldeAsaA52().size());
 	}
 
 	@Test
@@ -355,6 +444,14 @@ public class SoldeServiceTest {
 		solde.setTotalJours(cotaSoldeAnnee);
 		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
 
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
+		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
+		ag.setOrganisationSyndicale(organisationSyndicale);
+		List<AgentOrganisationSyndicale> list = new ArrayList<>();
+		list.add(ag);
+
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
@@ -382,10 +479,15 @@ public class SoldeServiceTest {
 		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
 				listeSoldeSpecifiqueDto);
 
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
+				.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
+		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
@@ -403,6 +505,9 @@ public class SoldeServiceTest {
 		assertEquals(0, dto.getListeSoldeAsaA55().size());
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 		assertEquals(0, dto.getListeSoldeCongesExcep().size());
+		assertEquals(0, dto.getSoldeAsaA52().intValue());
+		assertFalse(dto.isAfficheSoldeAsaA52());
+		assertEquals(0, dto.getListeSoldeAsaA52().size());
 	}
 
 	@Test
@@ -428,6 +533,14 @@ public class SoldeServiceTest {
 		solde.setIdAgent(idAgent);
 		solde.setTotalJours(cotaSoldeAnnee);
 		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
+
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
+		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
+		ag.setOrganisationSyndicale(organisationSyndicale);
+		List<AgentOrganisationSyndicale> list = new ArrayList<>();
+		list.add(ag);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
@@ -456,10 +569,15 @@ public class SoldeServiceTest {
 		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
 				listeSoldeSpecifiqueDto);
 
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
+				.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
+		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
@@ -477,6 +595,9 @@ public class SoldeServiceTest {
 		assertEquals(0, dto.getListeSoldeAsaA55().size());
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 		assertEquals(0, dto.getListeSoldeCongesExcep().size());
+		assertEquals(0, dto.getSoldeAsaA52().intValue());
+		assertFalse(dto.isAfficheSoldeAsaA52());
+		assertEquals(0, dto.getListeSoldeAsaA52().size());
 	}
 
 	@Test
@@ -502,6 +623,14 @@ public class SoldeServiceTest {
 		solde.setIdAgent(idAgent);
 		solde.setTotalJours(cotaSoldeAnnee);
 		solde.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
+
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
+		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
+		ag.setOrganisationSyndicale(organisationSyndicale);
+		List<AgentOrganisationSyndicale> list = new ArrayList<>();
+		list.add(ag);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
@@ -530,10 +659,15 @@ public class SoldeServiceTest {
 		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
 				listeSoldeSpecifiqueDto);
 
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
+				.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
+		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
@@ -551,6 +685,9 @@ public class SoldeServiceTest {
 		assertEquals(0, dto.getListeSoldeAsaA55().size());
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 		assertEquals(0, dto.getListeSoldeCongesExcep().size());
+		assertEquals(0, dto.getSoldeAsaA52().intValue());
+		assertFalse(dto.isAfficheSoldeAsaA52());
+		assertEquals(0, dto.getListeSoldeAsaA52().size());
 	}
 
 	private void prepareDataTest(SoldeService service, Integer idAgent) {
@@ -970,8 +1107,4 @@ public class SoldeServiceTest {
 		assertEquals(motifCompteur.getLibelle(), listResult.get(0).getMotif().getLibelle());
 	}
 
-	@Test
-	public void getAgentSolde_returnListeCongesExcep() {
-
-	}
 }

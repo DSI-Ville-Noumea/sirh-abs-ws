@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 
 import org.junit.Test;
@@ -93,6 +94,106 @@ public class OrganisationSyndicaleRepositoryTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals(org1.getSigle(), result.get(0).getSigle());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeAgentOrganisation() {
+		// Given
+		OrganisationSyndicale orga = new OrganisationSyndicale();
+		orga.setIdOrganisationSyndicale(1);
+		orga.setActif(true);
+		absEntityManager.persist(orga);
+		OrganisationSyndicale orga2 = new OrganisationSyndicale();
+		orga2.setIdOrganisationSyndicale(2);
+		orga2.setActif(false);
+		absEntityManager.persist(orga2);
+		AgentOrganisationSyndicale org1 = new AgentOrganisationSyndicale();
+		org1.setIdAgent(9005138);
+		org1.setOrganisationSyndicale(orga);
+		org1.setActif(true);
+		absEntityManager.persist(org1);
+		AgentOrganisationSyndicale org2 = new AgentOrganisationSyndicale();
+		org2.setIdAgent(9005138);
+		org2.setOrganisationSyndicale(orga2);
+		org2.setActif(false);
+		absEntityManager.persist(org2);
+
+		// When
+		List<AgentOrganisationSyndicale> result = repository.getListeAgentOrganisation(2);
+
+		// Then
+		assertEquals(1, result.size());
+		assertEquals(org1.getIdAgent(), result.get(0).getIdAgent());
+		assertEquals(org1.getOrganisationSyndicale().getIdOrganisationSyndicale(), result.get(0)
+				.getOrganisationSyndicale().getIdOrganisationSyndicale());
+		assertEquals(org1.isActif(), result.get(0).isActif());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getAgentOrganisation() {
+		// Given
+		OrganisationSyndicale orga = new OrganisationSyndicale();
+		orga.setIdOrganisationSyndicale(1);
+		orga.setActif(true);
+		absEntityManager.persist(orga);
+		OrganisationSyndicale orga2 = new OrganisationSyndicale();
+		orga2.setIdOrganisationSyndicale(2);
+		orga2.setActif(true);
+		absEntityManager.persist(orga2);
+		AgentOrganisationSyndicale org1 = new AgentOrganisationSyndicale();
+		org1.setIdAgent(9005138);
+		org1.setOrganisationSyndicale(orga);
+		org1.setActif(true);
+		absEntityManager.persist(org1);
+		AgentOrganisationSyndicale org2 = new AgentOrganisationSyndicale();
+		org2.setIdAgent(9005138);
+		org2.setOrganisationSyndicale(orga2);
+		org2.setActif(false);
+		absEntityManager.persist(org2);
+
+		// When
+		List<AgentOrganisationSyndicale> result = repository.getAgentOrganisation(9005138);
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals(org1.getIdAgent(), result.get(0).getIdAgent());
+		assertEquals(org1.getOrganisationSyndicale().getIdOrganisationSyndicale(), result.get(0)
+				.getOrganisationSyndicale().getIdOrganisationSyndicale());
+		assertEquals(org1.isActif(), result.get(0).isActif());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getAgentOrganisation_WithOrganisation() {
+		// Given
+		OrganisationSyndicale orga = new OrganisationSyndicale();
+		orga.setIdOrganisationSyndicale(1);
+		absEntityManager.persist(orga);
+		AgentOrganisationSyndicale org1 = new AgentOrganisationSyndicale();
+		org1.setIdAgent(9005138);
+		org1.setOrganisationSyndicale(orga);
+		org1.setActif(true);
+		absEntityManager.persist(org1);
+
+		// When
+		AgentOrganisationSyndicale result = repository.getAgentOrganisation(9005138, 1);
+
+		// Then
+		assertEquals(org1.getIdAgent(), result.getIdAgent());
+		assertEquals(org1.getOrganisationSyndicale().getIdOrganisationSyndicale(), result.getOrganisationSyndicale()
+				.getIdOrganisationSyndicale());
+		assertEquals(org1.isActif(), result.isActif());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

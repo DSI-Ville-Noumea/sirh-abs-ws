@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
@@ -20,6 +21,7 @@ import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
+import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
 import org.joda.time.DateTime;
@@ -641,6 +643,53 @@ public class CounterRepositoryTest {
 		List<Integer> result = repository.getListAgentCongeAnnuelCountForReset();
 
 		assertEquals(3, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListOSCounterByDate_ForASA_A52_ReturnListAgentAsaA52Count() {
+		Date dateDeb = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 59).toDate();
+
+		// Given
+		OrganisationSyndicale organisationSyndicale2 = new OrganisationSyndicale();
+		organisationSyndicale2.setIdOrganisationSyndicale(2);
+		absEntityManager.persist(organisationSyndicale2);
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+		absEntityManager.persist(organisationSyndicale);
+		AgentAsaA52Count record = new AgentAsaA52Count();
+		record.setOrganisationSyndicale(organisationSyndicale);
+		record.setTotalMinutes(7 * 60);
+		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		record.setDateFin(new DateTime(2014, 1, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record);
+		AgentAsaA52Count record2 = new AgentAsaA52Count();
+		record.setOrganisationSyndicale(organisationSyndicale);
+		record2.setTotalMinutes(10 * 60);
+		record2.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
+		record2.setDateFin(new DateTime(2014, 3, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record2);
+		AgentAsaA52Count record3 = new AgentAsaA52Count();
+		record.setOrganisationSyndicale(organisationSyndicale2);
+		record3.setTotalMinutes(10 * 60);
+		record3.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
+		record3.setDateFin(new DateTime(2014, 3, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record3);
+
+		// When
+		List<AgentAsaA52Count> result = repository.getListOSCounterByDate(1, dateDeb, dateFin);
+
+		// Then
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		assertEquals(record.getTotalMinutes(), result.get(0).getTotalMinutes());
+		assertEquals(record.getIdAgent(), result.get(0).getIdAgent());
+		assertEquals(record.getOrganisationSyndicale().getIdOrganisationSyndicale(), result.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
