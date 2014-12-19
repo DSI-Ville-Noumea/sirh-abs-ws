@@ -7,7 +7,6 @@ public class RefTypeSaisiCongeAnnuelDto {
 	private Integer idRefTypeSaisiCongeAnnuel;
 	private String codeBaseHoraireAbsence;
 	private String description;
-	private Integer idRefTypeDemande;
 	private boolean calendarDateDebut;
 	private boolean chkDateDebut;
 	private boolean calendarDateFin;
@@ -22,8 +21,6 @@ public class RefTypeSaisiCongeAnnuelDto {
 
 	public RefTypeSaisiCongeAnnuelDto(RefTypeSaisiCongeAnnuel typeSaisieCongeAnnuel) {
 		this();
-		if (null != typeSaisieCongeAnnuel && null != typeSaisieCongeAnnuel.getType())
-			this.idRefTypeDemande = typeSaisieCongeAnnuel.getType().getIdRefTypeAbsence();
 
 		this.idRefTypeSaisiCongeAnnuel = typeSaisieCongeAnnuel.getIdRefTypeSaisiCongeAnnuel();
 		this.codeBaseHoraireAbsence = typeSaisieCongeAnnuel.getCodeBaseHoraireAbsence();
@@ -52,14 +49,6 @@ public class RefTypeSaisiCongeAnnuelDto {
 
 	public void setCodeBaseHoraireAbsence(String codeBaseHoraireAbsence) {
 		this.codeBaseHoraireAbsence = codeBaseHoraireAbsence;
-	}
-
-	public Integer getIdRefTypeDemande() {
-		return idRefTypeDemande;
-	}
-
-	public void setIdRefTypeDemande(Integer idRefTypeDemande) {
-		this.idRefTypeDemande = idRefTypeDemande;
 	}
 
 	public boolean isCalendarDateDebut() {
