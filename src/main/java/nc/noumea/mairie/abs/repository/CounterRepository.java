@@ -238,4 +238,9 @@ public class CounterRepository implements ICounterRepository {
 		return q.getResultList();
 	}
 
+	@Override
+	public void removeEntity(Object obj) {
+		absEntityManager.remove(obj);
+	}
+
 }

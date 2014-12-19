@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -797,6 +798,8 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 				OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
 				.thenReturn(organisationSyndicale);
 		Mockito.when(OSRepository.getAgentOrganisation(agDto.getIdAgent())).thenReturn(listAg);
+		Mockito.when(OSRepository.getListeAgentOrganisation(organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(listAg);
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
@@ -841,6 +844,8 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 				OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
 				.thenReturn(organisationSyndicale);
 		Mockito.when(OSRepository.getAgentOrganisation(agDto.getIdAgent())).thenReturn(listAg);
+		Mockito.when(OSRepository.getListeAgentOrganisation(organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(listAg);
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
@@ -885,6 +890,59 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 				OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
 				.thenReturn(organisationSyndicale);
 		Mockito.when(OSRepository.getAgentOrganisation(agDto.getIdAgent())).thenReturn(listAg);
+		Mockito.when(OSRepository.getListeAgentOrganisation(organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(listAg);
+
+		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", rr);
+
+		ReturnMessageDto result = service.saveRepresentantA52(organisationSyndicale.getIdOrganisationSyndicale(),
+				listAgDto);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("L'agent [9005138] fait déja partie d'une autre organisation syndicale.", result.getErrors()
+				.get(0));
+	}
+
+	@Test
+	public void saveRepresentantA52_DeleteOk() {
+
+		OrganisationSyndicale organisationSyndicaleDto = new OrganisationSyndicale();
+		organisationSyndicaleDto.setIdOrganisationSyndicale(2);
+		organisationSyndicaleDto.setActif(true);
+
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+		organisationSyndicale.setActif(true);
+
+		AgentOrganisationSyndicaleDto agDto = new AgentOrganisationSyndicaleDto();
+		agDto.setIdAgent(9005138);
+		agDto.setActif(true);
+
+		List<AgentOrganisationSyndicaleDto> listAgDto = new ArrayList<>();
+		listAgDto.add(agDto);
+
+		AgentOrganisationSyndicale ag2 = new AgentOrganisationSyndicale();
+		ag2.setIdAgent(9003069);
+		ag2.setActif(true);
+		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
+		ag.setIdAgent(9005138);
+		ag.setActif(true);
+		ag.setOrganisationSyndicale(organisationSyndicaleDto);
+		List<AgentOrganisationSyndicale> listAg = new ArrayList<>();
+		listAg.add(ag);
+		listAg.add(ag2);
+
+		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
+
+		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(
+				OSRepository.getEntity(OrganisationSyndicale.class, organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(organisationSyndicale);
+		Mockito.when(OSRepository.getAgentOrganisation(agDto.getIdAgent())).thenReturn(Arrays.asList(ag));
+		Mockito.when(OSRepository.getListeAgentOrganisation(organisationSyndicale.getIdOrganisationSyndicale()))
+				.thenReturn(listAg);
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
@@ -895,6 +953,7 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent [9005138] fait déja partie d'une autre organisation syndicale.", result.getErrors().get(0));
+		Mockito.verify(rr, Mockito.times(1)).removeEntity(Mockito.isA(AgentOrganisationSyndicale.class));
 	}
 
 }

@@ -14,6 +14,8 @@ public interface ICounterRepository {
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
 
+	void removeEntity(Object obj);
+
 	<T> T getAgentCounter(Class<T> T, Integer idAgent);
 
 	<T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date date);
