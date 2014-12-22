@@ -65,12 +65,12 @@ public class HelperServiceTest {
 		java.util.Date dateDebut = new java.util.Date();
 		try {
 			dateDebut = sdf.parse("2013-12-17 10:00:00");
-			dateFinAttendue = sdf.parse("2013-12-17 10:22:00");
+			dateFinAttendue = sdf.parse("2013-12-17 12:00:00");
 		} catch (ParseException pe) {
 			pe.printStackTrace();
 		}
 
-		Date result = service.getDateFin(typeSaisi, null, dateDebut, 22.0, false, false);
+		Date result = service.getDateFin(typeSaisi, null, dateDebut, 2.0, false, false);
 
 		assertEquals(result, dateFinAttendue);
 	}

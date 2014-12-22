@@ -761,7 +761,8 @@ public class AbsenceService implements IAbsenceService {
 			return;
 		}
 
-		if (demande.getType() != null && demande.getType().getTypeSaisiCongeAnnuel() != null) {
+		if (demande.getType() != null && demande.getType().getTypeSaisi() == null
+				&& demande.getType().getTypeSaisiCongeAnnuel() != null) {
 			// maj de la demande
 			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 
@@ -800,6 +801,7 @@ public class AbsenceService implements IAbsenceService {
 		if (demande.getType() != null
 				&& demande.getType().getIdRefTypeAbsence() == RefTypeAbsenceEnum.CONGE_ANNUEL.getValue()) {
 			listeEtats.add(RefEtatEnum.A_VALIDER);
+
 		} else {
 			listeEtats.add(RefEtatEnum.APPROUVEE);
 		}

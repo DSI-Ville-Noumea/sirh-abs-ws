@@ -83,7 +83,7 @@ public class HelperService {
 		}
 		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
 			DateTime recupDateFin = new DateTime(dateDeb);
-			return recupDateFin.plusMinutes(duree.intValue()).toDate();
+			return recupDateFin.plusMinutes(duree.intValue() * 60).toDate();
 		}
 		if (typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin()) {
 			Calendar cal = Calendar.getInstance();
