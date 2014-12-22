@@ -62,7 +62,5 @@ public class RefTypeAbsenceDtoTest {
 		assertEquals(ref.getGroupe().getCode(), result.getGroupeAbsence().getCode());
 		assertEquals(ref.getIdRefTypeAbsence(), result.getIdRefTypeAbsence());
 		assertEquals(typeSaisi.getType().getIdRefTypeAbsence(), result.getTypeSaisiDto().getIdRefTypeDemande());
-		assertEquals(typeSaisiCongeAnnuel.getType().getIdRefTypeAbsence(), result.getTypeSaisiCongeAnnuelDto()
-				.getIdRefTypeDemande());
 	}
 }
