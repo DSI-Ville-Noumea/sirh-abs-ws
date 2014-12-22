@@ -111,7 +111,7 @@ public class DemandeDto {
 		if (null != d.getType() && null != d.getType().getTypeSaisi())
 			this.typeSaisi = new RefTypeSaisiDto(d.getType().getTypeSaisi());
 
-		if (null != d.getType() && d.getType().getTypeSaisiCongeAnnuel() != null) {
+		if (null != d.getType() && d.getType().getTypeSaisi() == null && d.getType().getTypeSaisiCongeAnnuel() != null) {
 			DemandeCongesAnnuels demandeCongeAnnu = (DemandeCongesAnnuels) d;
 			this.typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuelDto(demandeCongeAnnu.getTypeSaisiCongeAnnuel());
 		}

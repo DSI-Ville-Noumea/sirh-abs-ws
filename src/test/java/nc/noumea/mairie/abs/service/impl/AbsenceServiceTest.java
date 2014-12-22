@@ -344,7 +344,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(10, obj.getDuree().intValue());
+				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -453,7 +453,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(10, obj.getDuree().intValue());
+				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -1842,7 +1842,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(10, obj.getDuree().intValue());
+				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -1951,7 +1951,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(10, obj.getDuree().intValue());
+				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -3112,7 +3112,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(10, obj.getDuree().intValue());
+				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -3209,7 +3209,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(10, obj.getDuree().intValue());
+				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -3962,7 +3962,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(10, obj.getDuree().intValue());
+				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -4065,7 +4065,7 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(10, obj.getDuree().intValue());
+				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}

@@ -477,7 +477,8 @@ public class AbsenceService implements IAbsenceService {
 
 	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 
-		if (demande.getType() != null && demande.getType().getTypeSaisiCongeAnnuel() != null) {
+		if (demande.getType() != null && demande.getType().getTypeSaisi() == null
+				&& demande.getType().getTypeSaisiCongeAnnuel() != null) {
 			// cas des congés annuels
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 					RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(), null);
@@ -839,26 +840,26 @@ public class AbsenceService implements IAbsenceService {
 				.getIdRefGroupeAbsence())) {
 			case REPOS_COMP:
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
-				demandeReposComp.setDuree(demandeDto.getDuree().intValue());
+				demandeReposComp.setDuree(demandeDto.getDuree().intValue() * 60);
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp, idAgent, dateJour);
 
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
-						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
-						demandeDto.isDateFinPM()));
+						demandeDto.getDateDebut(), Double.valueOf(demandeReposComp.getDuree()),
+						demandeDto.isDateFinAM(), demandeDto.isDateFinPM()));
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
-				demandeRecup.setDuree(demandeDto.getDuree().intValue());
+				demandeRecup.setDuree(demandeDto.getDuree().intValue() * 60);
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup, idAgent, dateJour);
 
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
-						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
+						demandeDto.getDateDebut(), Double.valueOf(demandeRecup.getDuree()), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				break;
 			case AS:
