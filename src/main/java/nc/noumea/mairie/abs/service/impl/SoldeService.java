@@ -16,6 +16,7 @@ import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
+import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeMonthDto;
@@ -178,12 +179,13 @@ public class SoldeService implements ISoldeService {
 		} else {
 			AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class, list.get(0)
 					.getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb);
+			OrganisationSyndicaleDto dtoOrga = new OrganisationSyndicaleDto(list.get(0).getOrganisationSyndicale());
+			dto.setOrganisationA52(dtoOrga);
 			dto.setAfficheSoldeAsaA52(soldeAsaA52 == null ? false : true);
 			dto.setSoldeAsaA52((double) (soldeAsaA52 == null ? 0 : soldeAsaA52.getTotalMinutes()));
 			// on affiche tous les soldes de l'année
 			List<AgentAsaA52Count> listeSoldeAsaA52 = counterRepository.getListOSCounterByDate(list.get(0)
-					.getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb,
-					dateFin);
+					.getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb, dateFin);
 			List<SoldeMonthDto> listDto = new ArrayList<SoldeMonthDto>();
 			for (AgentAsaA52Count arc : listeSoldeAsaA52) {
 				SoldeMonthDto dtoMonth = new SoldeMonthDto();

@@ -22,6 +22,7 @@ public class SoldeDto {
 	private List<SoldeMonthDto> listeSoldeAsaA55;
 	private boolean afficheSoldeAsaA52;
 	private Double soldeAsaA52;
+	private OrganisationSyndicaleDto organisationA52;
 	private List<SoldeMonthDto> listeSoldeAsaA52;
 
 	private boolean afficheSoldeCongesExcep;
@@ -189,6 +190,14 @@ public class SoldeDto {
 
 	public void setListeSoldeAsaA52(List<SoldeMonthDto> listeSoldeAsaA52) {
 		this.listeSoldeAsaA52 = listeSoldeAsaA52;
+	}
+
+	public OrganisationSyndicaleDto getOrganisationA52() {
+		return organisationA52;
+	}
+
+	public void setOrganisationA52(OrganisationSyndicaleDto organisationA52) {
+		this.organisationA52 = organisationA52;
 	}
 
 }
