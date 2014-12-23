@@ -295,6 +295,18 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
 								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()));
 
+						// on ajoute les memes actions que pour l'operateur dans
+						// le cas des services sans operateurs
+						demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(
+								RefEtatEnum.PROVISOIRE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+						demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(
+								RefEtatEnum.PROVISOIRE.getCodeEtat())
+								|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+						demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
+						demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
+						demandeDto.setAffichageBoutonDupliquer(false);
+
 						continue;
 					}
 				}
