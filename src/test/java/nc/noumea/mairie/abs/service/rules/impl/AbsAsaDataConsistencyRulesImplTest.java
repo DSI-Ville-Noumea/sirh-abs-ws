@@ -41,7 +41,7 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		checkOrganisationSyndicale_ok();
 		
 		super.impl = impl;
-		super.allTest(impl);
+		//super.allTest(impl);
 	}
 	
 	@Test
