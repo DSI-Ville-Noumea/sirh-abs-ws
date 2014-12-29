@@ -985,7 +985,7 @@ public class HelperServiceTest {
 
 	@Test
 	public void getDureeCongeAnnuel_AvecSamedi_baseA_SamediOffert() {
-		Double duree = 0.0;
+		Double duree = 2.0;
 
 		Date dateDebut = new DateTime(2014, 12, 5, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 5, 23, 59, 59).toDate();
@@ -993,6 +993,7 @@ public class HelperServiceTest {
 
 		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
 		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("A");
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
@@ -1236,6 +1237,7 @@ public class HelperServiceTest {
 
 	@Test
 	public void isSamediDecompte_returnOk() {
+		Double duree = 1.0;
 
 		Date dateDebut = new DateTime(2014, 12, 2, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 7, 23, 59, 59).toDate();
@@ -1249,13 +1251,14 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		HelperService service = new HelperService();
-		boolean result = service.isSamediDecompte(demande);
+		Double result = service.getNombreSamediDecompte(demande);
 
-		assertTrue(result);
+		assertEquals(duree, result);
 	}
 
 	@Test
 	public void isSamediDecompte_returnKo() {
+		Double duree = 0.0;
 
 		Date dateDebut = new DateTime(2014, 12, 2, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 4, 23, 59, 59).toDate();
@@ -1269,8 +1272,29 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		HelperService service = new HelperService();
-		boolean result = service.isSamediDecompte(demande);
+		Double result = service.getNombreSamediDecompte(demande);
 
-		assertFalse(result);
+		assertEquals(duree, result);
+	}
+	
+	public void getNombreSamediDecompte_2Samedi(){
+		Double duree = 2.0;
+
+		Date dateDebut = new DateTime(2014, 12, 2, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 15, 23, 59, 59).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+
+		HelperService service = new HelperService();
+		Double result = service.getNombreSamediDecompte(demande);
+
+		assertEquals(duree, result);
+		
 	}
 }

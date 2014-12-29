@@ -400,8 +400,8 @@ public class HelperService {
 			case "A":
 			case "D":
 				duree = calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())
-						- calculJoursNonComptes(demande.getDateDebut(), demande.getDateFin())
-						- (isSamediOffert(demande) ? 1 : 0);
+						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin())
+						+ getNombreSamediDecompte(demande) - getNombreSamediOffert(demande);
 				break;
 
 			case "E":
@@ -426,7 +426,7 @@ public class HelperService {
 		return duree;
 	}
 
-	private double calculJoursNonComptes(Date dateDebut, Date dateFin) {
+	private double calculJoursNonComptesDimancheFerieChome(Date dateDebut, Date dateFin) {
 		Double res = 0.0;
 		// on compte le nombre de dimanches entre les 2 dates
 		res += getNombreDimanche(dateDebut, dateFin);
@@ -477,8 +477,8 @@ public class HelperService {
 		return (double) compteur;
 	}
 
-	public boolean isSamediDecompte(DemandeCongesAnnuels demande) {
-		int compteur = 0;
+	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande) {
+		Double compteur = 0.0;
 		if (demande.getTypeSaisiCongeAnnuel() != null && demande.getTypeSaisiCongeAnnuel().isDecompteSamedi()) {
 			Calendar calendarDebut = new GregorianCalendar();
 			calendarDebut.setTime(demande.getDateDebut());
@@ -498,34 +498,13 @@ public class HelperService {
 			}
 
 		}
-		return compteur > 0;
+		return compteur;
 	}
 
-	private int getNombreSamediOffert(DemandeCongesAnnuels demande, Integer year) {
-		return demandeRepository.getNombreSamediOffertSurAnnee(demande, year);
+	public Double getNombreSamediOffert(DemandeCongesAnnuels demande) {
+		Double compteur = 0.0;
+		
+		return compteur;
 	}
 
-	public boolean isSamediOffert(DemandeCongesAnnuels demande) {
-
-		Calendar calendarDebut = new GregorianCalendar();
-		calendarDebut.setTime(demande.getDateDebut());
-
-		Calendar calendarFin = new GregorianCalendar();
-		calendarFin.setTime(demande.getDateFin());
-
-		// Différence
-		long diff = Math.abs(demande.getDateFin().getTime() - demande.getDateDebut().getTime());
-		long numberOfDay = (long) diff / 86400000;
-
-		for (int i = 0; i <= numberOfDay; i++) {
-			if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
-				int nbSamediDecompte = getNombreSamediOffert(demande, calendarDebut.get(Calendar.YEAR));
-				if (nbSamediDecompte == 0) {
-					return true;
-				}
-			}
-			calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
-		}
-		return false;
-	}
 }

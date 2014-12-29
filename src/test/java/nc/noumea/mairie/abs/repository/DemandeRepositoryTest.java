@@ -1305,7 +1305,7 @@ public class DemandeRepositoryTest {
 		d.setType(type);
 		d.setDateDebut(sdf.parse("15/05/2013"));
 		d.setDateFin(sdf.parse("16/05/2013"));
-		d.setSamediOffert(false);
+		d.setNbSamediOffert(0.0);
 		absEntityManager.persist(d);
 
 		// When
@@ -1335,7 +1335,7 @@ public class DemandeRepositoryTest {
 		d.setType(type);
 		d.setDateDebut(sdf.parse("15/05/2013"));
 		d.setDateFin(sdf.parse("16/05/2013"));
-		d.setSamediOffert(true);
+		d.setNbSamediOffert(1.0);
 		absEntityManager.persist(d);
 
 		// When

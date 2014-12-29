@@ -253,7 +253,7 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("where d.idAgent = :idAgent ");
 		sb.append("and d.type.groupe.idRefGroupeAbsence in(:CONGE_ANNUEL ) ");
 		sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
-		sb.append("and d.samediOffert is true ");
+		sb.append("and d.nbSamediOffert > 0 ");
 
 		TypedQuery<DemandeCongesAnnuels> query = absEntityManager
 				.createQuery(sb.toString(), DemandeCongesAnnuels.class);

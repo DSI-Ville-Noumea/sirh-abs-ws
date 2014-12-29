@@ -40,12 +40,12 @@ public class DemandeCongesAnnuels extends Demande {
 	private boolean dateFinPM;
 
 	@NotNull
-	@Column(name = "SAMEDI_DECOMPTE")
-	private boolean samediDecompte;
+	@Column(name = "NB_SAMEDI_DECOMPTE")
+	private Double nbSamediDecompte;
 
 	@NotNull
-	@Column(name = "SAMEDI_OFFERT")
-	private boolean samediOffert;
+	@Column(name = "NB_SAMEDI_OFFERT")
+	private Double nbSamediOffert;
 
 	@Column(name = "COMMENTAIRE")
 	private String commentaire;
@@ -102,22 +102,6 @@ public class DemandeCongesAnnuels extends Demande {
 		this.commentaire = commentaire;
 	}
 
-	public boolean isSamediDecompte() {
-		return samediDecompte;
-	}
-
-	public void setSamediDecompte(boolean samediDecompte) {
-		this.samediDecompte = samediDecompte;
-	}
-
-	public boolean isSamediOffert() {
-		return samediOffert;
-	}
-
-	public void setSamediOffert(boolean samediOffert) {
-		this.samediOffert = samediOffert;
-	}
-
 	public RefTypeSaisiCongeAnnuel getTypeSaisiCongeAnnuel() {
 		return typeSaisiCongeAnnuel;
 	}
@@ -132,6 +116,22 @@ public class DemandeCongesAnnuels extends Demande {
 
 	public void setDureeAnneeN1(Double dureeAnneeN1) {
 		this.dureeAnneeN1 = dureeAnneeN1;
+	}
+
+	public Double getNbSamediDecompte() {
+		return nbSamediDecompte;
+	}
+
+	public void setNbSamediDecompte(Double nbSamediDecompte) {
+		this.nbSamediDecompte = nbSamediDecompte;
+	}
+
+	public Double getNbSamediOffert() {
+		return nbSamediOffert;
+	}
+
+	public void setNbSamediOffert(Double nbSamediOffert) {
+		this.nbSamediOffert = nbSamediOffert;
 	}
 
 }
