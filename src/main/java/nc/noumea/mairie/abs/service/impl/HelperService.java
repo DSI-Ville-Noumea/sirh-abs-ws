@@ -491,8 +491,14 @@ public class HelperService {
 			long numberOfDay = (long) diff / 86400000;
 
 			for (int i = 0; i <= numberOfDay; i++) {
-				if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
-					compteur++;
+				if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY
+						&& calendarFin.get(Calendar.HOUR_OF_DAY) != 11) {
+					// si vendredi ou demi-vendredi
+					if (calendarDebut.get(Calendar.HOUR_OF_DAY) == 0) {
+						compteur = compteur + 1;
+					} else {
+						compteur = compteur + 0.5;
+					}
 				}
 				calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
 			}
@@ -503,7 +509,7 @@ public class HelperService {
 
 	public Double getNombreSamediOffert(DemandeCongesAnnuels demande) {
 		Double compteur = 0.0;
-		
+
 		return compteur;
 	}
 
