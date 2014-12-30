@@ -419,6 +419,13 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
+		// #12664
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, new Date(), false);
+
+		if (result.getErrors().size() != 0) {
+			return result;
+		}
+
 		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
 				.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
@@ -756,6 +763,13 @@ public class AbsenceService implements IAbsenceService {
 
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
 				Arrays.asList(RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE));
+
+		if (0 < result.getErrors().size()) {
+			return;
+		}
+
+		// #12664
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, new Date(), false);
 
 		if (0 < result.getErrors().size()) {
 			return;

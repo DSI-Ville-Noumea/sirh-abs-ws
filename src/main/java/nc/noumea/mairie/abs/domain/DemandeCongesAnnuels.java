@@ -40,11 +40,11 @@ public class DemandeCongesAnnuels extends Demande {
 	private boolean dateFinPM;
 
 	@NotNull
-	@Column(name = "NB_SAMEDI_DECOMPTE")
+	@Column(name = "NB_SAMEDI_DECOMPTE", columnDefinition = "numeric")
 	private Double nbSamediDecompte;
 
 	@NotNull
-	@Column(name = "NB_SAMEDI_OFFERT")
+	@Column(name = "NB_SAMEDI_OFFERT", columnDefinition = "numeric")
 	private Double nbSamediOffert;
 
 	@Column(name = "COMMENTAIRE")
