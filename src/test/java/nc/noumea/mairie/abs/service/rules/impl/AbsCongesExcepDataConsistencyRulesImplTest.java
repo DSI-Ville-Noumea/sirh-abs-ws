@@ -34,7 +34,139 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	@Test
 	public void testMethodeParenteHeritage() throws Throwable {
 		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
-		//super.allTest(impl);
+		super.allTest(impl);
+	}
+	
+	@Test
+	public void filtreDroitOfListeDemandesByDemande_DemandeOfAgent() {
+
+		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
+		super.filtreDroitOfListeDemandesByDemande_DemandeOfAgent();
+
+		// Then
+		// PROVISOIRE
+		assertFalse(result1.isAffichageBoutonAnnuler());
+		// SAISIE
+		assertFalse(result2.isAffichageBoutonAnnuler());
+		// APPROUVEE
+		assertTrue(result3.isAffichageBoutonAnnuler());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonAnnuler());
+		// VISEE_FAVORABLE
+		assertTrue(result5.isAffichageBoutonAnnuler());
+		// VISEE_DEFAVORABLE
+		assertTrue(result6.isAffichageBoutonAnnuler());
+		// PRISE
+		assertFalse(result7.isAffichageBoutonAnnuler());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonAnnuler());
+		// VALIDEE
+		assertTrue(result9.isAffichageBoutonAnnuler());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonAnnuler());
+		// EN ATTENTE
+		assertTrue(result11.isAffichageBoutonAnnuler());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonAnnuler());
+	}
+
+	@Test
+	public void filtreDroitOfListeDemandesByDemande_Operateur() {
+
+		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
+		super.filtreDroitOfListeDemandesByDemande_Operateur();
+
+		// Then
+		// PROVISOIRE
+		assertFalse(result1.isAffichageBoutonAnnuler());
+		// SAISIE
+		assertFalse(result2.isAffichageBoutonAnnuler());
+		// APPROUVEE
+		assertTrue(result3.isAffichageBoutonAnnuler());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonAnnuler());
+		// VISEE_FAVORABLE
+		assertTrue(result5.isAffichageBoutonAnnuler());
+		// VISEE_DEFAVORABLE
+		assertTrue(result6.isAffichageBoutonAnnuler());
+		// PRISE
+		assertTrue(result7.isAffichageBoutonAnnuler());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonAnnuler());
+		// VALIDEE
+		assertTrue(result9.isAffichageBoutonAnnuler());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonAnnuler());
+		// EN ATTENTE
+		assertTrue(result11.isAffichageBoutonAnnuler());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonAnnuler());
+	}
+	
+	@Test
+	public void filtreDroitOfListeDemandesByDemande_Approbateur() {
+
+		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
+		super.filtreDroitOfListeDemandesByDemande_Approbateur();
+
+		// Then
+		// PROVISOIRE
+		assertFalse(result1.isAffichageBoutonAnnuler());
+		// SAISIE
+		assertFalse(result2.isAffichageBoutonAnnuler());
+		// APPROUVEE
+		assertTrue(result3.isAffichageBoutonAnnuler());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonAnnuler());
+		// VISEE_FAVORABLE
+		assertTrue(result5.isAffichageBoutonAnnuler());
+		// VISEE_DEFAVORABLE
+		assertTrue(result6.isAffichageBoutonAnnuler());
+		// PRISE
+		assertTrue(result7.isAffichageBoutonAnnuler());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonAnnuler());
+		// VALIDEE
+		assertTrue(result9.isAffichageBoutonAnnuler());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonAnnuler());
+		// EN ATTENTE
+		assertTrue(result11.isAffichageBoutonAnnuler());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonAnnuler());
+	}
+	
+	@Test
+	public void filtreDroitOfListeDemandesByDemande_Delegataire() {
+
+		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
+		super.filtreDroitOfListeDemandesByDemande_Delegataire();
+
+		// Then
+		// PROVISOIRE
+		assertFalse(result1.isAffichageBoutonAnnuler());
+		// SAISIE
+		assertFalse(result2.isAffichageBoutonAnnuler());
+		// APPROUVEE
+		assertTrue(result3.isAffichageBoutonAnnuler());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonAnnuler());
+		// VISEE_FAVORABLE
+		assertTrue(result5.isAffichageBoutonAnnuler());
+		// VISEE_DEFAVORABLE
+		assertTrue(result6.isAffichageBoutonAnnuler());
+		// PRISE
+		assertTrue(result7.isAffichageBoutonAnnuler());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonAnnuler());
+		// VALIDEE
+		assertTrue(result9.isAffichageBoutonAnnuler());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonAnnuler());
+		// EN ATTENTE
+		assertTrue(result11.isAffichageBoutonAnnuler());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonAnnuler());
 	}
 
 	@Test

@@ -32,7 +32,7 @@ public class AbsAsaA55DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 	public void testMethodeParenteHeritage() throws Throwable {
 		
 		super.impl = new AbsAsaA55DataConsistencyRulesImpl();
-		//super.allTest();
+		super.allTest();
 	}
 	
 	@Test

@@ -32,39 +32,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 		super.filtreDroitOfListeDemandesByDemande_DemandeOfAgent();
 
 		// Then
-		// PROVISOIRE
-		assertFalse(result1.isAffichageBoutonAnnuler());
-		assertFalse(result1.isAffichageBoutonImprimer());
-		// SAISIE
-		assertFalse(result2.isAffichageBoutonAnnuler());
-		assertFalse(result2.isAffichageBoutonImprimer());
-		// APPROUVEE
-		assertTrue(result3.isAffichageBoutonAnnuler());
-		assertTrue(result3.isAffichageBoutonImprimer());
-		// REFUSEE
-		assertFalse(result4.isAffichageBoutonAnnuler());
-		assertTrue(result4.isAffichageBoutonImprimer());
-		// VISEE_FAVORABLE
-		assertTrue(result5.isAffichageBoutonAnnuler());
-		assertTrue(result5.isAffichageBoutonImprimer());
-		// VISEE_DEFAVORABLE
-		assertTrue(result6.isAffichageBoutonAnnuler());
-		assertTrue(result6.isAffichageBoutonImprimer());
-		// PRISE
-		assertFalse(result7.isAffichageBoutonAnnuler());
-		assertTrue(result7.isAffichageBoutonImprimer());
-		// ANNULEE
-		assertFalse(result8.isAffichageBoutonAnnuler());
-		assertTrue(result8.isAffichageBoutonImprimer());
-		// VALIDEE
-		assertFalse(result9.isAffichageBoutonAnnuler());
-		assertTrue(result9.isAffichageBoutonImprimer());
-		// REJETE
-		assertFalse(result10.isAffichageBoutonAnnuler());
-		assertTrue(result10.isAffichageBoutonImprimer());
-		// EN ATTENTE
-		assertFalse(result11.isAffichageBoutonAnnuler());
-		assertTrue(result11.isAffichageBoutonImprimer());
+		super.checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_DemandeOfAgent();
 	}
 
 	@Test
@@ -74,39 +42,27 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 		super.filtreDroitOfListeDemandesByDemande_Operateur();
 
 		// Then
-		// PROVISOIRE
-		assertFalse(result1.isAffichageBoutonAnnuler());
-		assertFalse(result1.isAffichageBoutonImprimer());
-		// SAISIE
-		assertFalse(result2.isAffichageBoutonAnnuler());
-		assertFalse(result2.isAffichageBoutonImprimer());
-		// APPROUVEE
-		assertTrue(result3.isAffichageBoutonAnnuler());
-		assertTrue(result3.isAffichageBoutonImprimer());
-		// REFUSEE
-		assertFalse(result4.isAffichageBoutonAnnuler());
-		assertTrue(result4.isAffichageBoutonImprimer());
-		// VISEE_FAVORABLE
-		assertTrue(result5.isAffichageBoutonAnnuler());
-		assertTrue(result5.isAffichageBoutonImprimer());
-		// VISEE_DEFAVORABLE
-		assertTrue(result6.isAffichageBoutonAnnuler());
-		assertTrue(result6.isAffichageBoutonImprimer());
-		// PRISE
-		assertFalse(result7.isAffichageBoutonAnnuler());
-		assertTrue(result7.isAffichageBoutonImprimer());
-		// ANNULEE
-		assertFalse(result8.isAffichageBoutonAnnuler());
-		assertTrue(result8.isAffichageBoutonImprimer());
-		// VALIDEE
-		assertFalse(result9.isAffichageBoutonAnnuler());
-		assertTrue(result9.isAffichageBoutonImprimer());
-		// REJETE
-		assertFalse(result10.isAffichageBoutonAnnuler());
-		assertTrue(result10.isAffichageBoutonImprimer());
-		// EN ATTENTE
-		assertFalse(result11.isAffichageBoutonAnnuler());
-		assertTrue(result11.isAffichageBoutonImprimer());
+		super.checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_Operateur();
+	}
+	
+	@Test
+	public void filtreDroitOfListeDemandesByDemande_Approbateur() {
+
+		super.impl = new AbsRecuperationDataConsistencyRulesImpl();
+		super.filtreDroitOfListeDemandesByDemande_Approbateur();
+
+		// Then
+		super.checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_Approbateur();
+	}
+	
+	@Test
+	public void filtreDroitOfListeDemandesByDemande_Delegataire() {
+
+		super.impl = new AbsRecuperationDataConsistencyRulesImpl();
+		super.filtreDroitOfListeDemandesByDemande_Delegataire();
+
+		// Then
+		super.checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_Delegataire();
 	}
 
 	@Test
