@@ -265,14 +265,15 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 				logger.info("Added AgentOrganisationSyndicale id {}.",
 						agentOrganisationSyndicale.getIdAgentOrganisationSyndicale());
 			}
-
 		}
 
 		// on supprime les autres
 		for (AgentOrganisationSyndicale agToDelete : droitsToDelete) {
-			counterRepository.removeEntity(agToDelete);
-			logger.info("Deleted AgentOrganisationSyndicale id {}.", agToDelete.getIdAgentOrganisationSyndicale());
-
+			if(null != organisationSyndicale.getAgents()
+					&& organisationSyndicale.getAgents().contains(agToDelete)) {
+				organisationSyndicale.getAgents().remove(agToDelete);
+				logger.info("Deleted AgentOrganisationSyndicale id {}.", agToDelete.getIdAgentOrganisationSyndicale());
+			}
 		}
 
 		return srm;
