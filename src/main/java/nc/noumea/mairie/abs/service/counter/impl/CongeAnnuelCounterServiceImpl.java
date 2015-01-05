@@ -23,7 +23,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto intitCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne) {
+	public ReturnMessageDto initCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne) {
 
 		logger.info("Trying to initiate manually counters for Agent {} ...", idAgentConcerne);
 

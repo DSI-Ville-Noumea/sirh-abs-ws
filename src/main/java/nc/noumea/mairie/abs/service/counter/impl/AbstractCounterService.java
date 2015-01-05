@@ -223,7 +223,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public ReturnMessageDto intitCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne) {
+	public ReturnMessageDto initCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne) {
 		return null;
 	}
 

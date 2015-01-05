@@ -51,7 +51,7 @@ public class CongeAnnuelController {
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		int convertedIdAgentConcerne = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConcerne);
 
-		ReturnMessageDto srm = counterService.intitCompteurCongeAnnuel(convertedIdAgent, convertedIdAgentConcerne);
+		ReturnMessageDto srm = counterService.initCompteurCongeAnnuel(convertedIdAgent, convertedIdAgentConcerne);
 
 		if (!srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);

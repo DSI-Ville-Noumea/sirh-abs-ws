@@ -62,7 +62,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.intitCompteurCongeAnnuel(idAgent, idAgentConcerne);
+		result = service.initCompteurCongeAnnuel(idAgent, idAgentConcerne);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le compteur existe déjà.", result.getErrors().get(0).toString());
@@ -89,7 +89,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.intitCompteurCongeAnnuel(idAgent, idAgentConcerne);
+		result = service.initCompteurCongeAnnuel(idAgent, idAgentConcerne);
 
 		assertEquals(0, result.getErrors().size());
 
