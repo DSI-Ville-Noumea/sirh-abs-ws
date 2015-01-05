@@ -40,12 +40,12 @@ public class CongeAnnuelController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/intitCompteurCongeAnnuel", method = RequestMethod.POST)
-	public ReturnMessageDto intitCompteurCongeAnnuel(@RequestParam(value = "idAgent", required = true) Integer idAgent,
+	public ReturnMessageDto initCompteurCongeAnnuel(@RequestParam(value = "idAgent", required = true) Integer idAgent,
 			@RequestParam(value = "idAgentConcerne", required = true) Integer idAgentConcerne,
 			HttpServletResponse response) {
 
 		logger.debug(
-				"entered GET [congeannuel/intitCompteurCongeAnnuel] => intitCompteurCongeAnnuel with parameters idAgent = {}, idAgentConcerne = {}",
+				"entered GET [congeannuel/intitCompteurCongeAnnuel] => initCompteurCongeAnnuel with parameters idAgent = {}, idAgentConcerne = {}",
 				idAgent, idAgentConcerne);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
