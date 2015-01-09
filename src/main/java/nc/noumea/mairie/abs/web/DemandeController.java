@@ -130,6 +130,7 @@ public class DemandeController {
 	/**
 	 * Recuperation d une demande <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 * ATTENTION UTILISE DANS SIRH-JOBS
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
