@@ -38,4 +38,6 @@ public interface ICounterService {
 
 	ReturnMessageDto saveRepresentantA52(Integer idOrganisationSyndicale,
 			List<AgentOrganisationSyndicaleDto> listeAgentDto);
+
+	ReturnMessageDto alimentationAutoCompteur(Integer idAgentCount);
 }

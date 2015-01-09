@@ -1,18 +1,23 @@
 package nc.noumea.mairie.abs.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,6 +237,72 @@ public class CongesAnnuelsRepositoryTest {
 
 		assertEquals(result, new Double(30));
 
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test 
+	@Transactional("absTransactionManager")
+	public void getWeekHistoForAgentAndDate_ok() {
+		
+		Date dateMonth = new Date();
+		
+		AgentWeekCongeAnnuel d = new AgentWeekCongeAnnuel();
+		d.setDateMonth(dateMonth);
+		d.setIdAgent(9005138);
+		d.setIdAgentWeekCongeAnnuel(1);
+		d.setJours(10.0);
+		d.setLastModification(new Date());
+		absEntityManager.persist(d);
+		
+		AgentWeekCongeAnnuel result = repository.getWeekHistoForAgentAndDate(9005138, dateMonth);
+		
+		assertNotNull(result);
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test 
+	@Transactional("absTransactionManager")
+	public void getWeekHistoForAgentAndDate_badAgent() {
+		
+		Date dateMonth = new Date();
+		
+		AgentWeekCongeAnnuel d = new AgentWeekCongeAnnuel();
+		d.setDateMonth(dateMonth);
+		d.setIdAgent(9005138);
+		d.setIdAgentWeekCongeAnnuel(1);
+		d.setJours(10.0);
+		d.setLastModification(new Date());
+		absEntityManager.persist(d);
+		
+		AgentWeekCongeAnnuel result = repository.getWeekHistoForAgentAndDate(9009999, dateMonth);
+		
+		assertNull(result);
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test 
+	@Transactional("absTransactionManager")
+	public void getWeekHistoForAgentAndDate_badDate() {
+		
+		DateTime dateMonth = new DateTime();
+		
+		AgentWeekCongeAnnuel d = new AgentWeekCongeAnnuel();
+		d.setDateMonth(dateMonth.toDate());
+		d.setIdAgent(9005138);
+		d.setIdAgentWeekCongeAnnuel(1);
+		d.setJours(10.0);
+		d.setLastModification(new Date());
+		absEntityManager.persist(d);
+		
+		AgentWeekCongeAnnuel result = repository.getWeekHistoForAgentAndDate(9005138, dateMonth.plusDays(1).toDate());
+		
+		assertNull(result);
+		
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}

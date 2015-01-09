@@ -1,9 +1,11 @@
 package nc.noumea.mairie.ws;
 
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
@@ -18,4 +20,7 @@ public interface ISirhWSConsumer {
 	boolean isJourHoliday(Date date);
 
 	RefTypeSaisiCongeAnnuelDto getBaseHoraireAbsence(Integer idAgent, Date date);
+
+	List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(
+			Integer idAgent, Date dateDebut, Date dateFin);
 }

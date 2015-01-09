@@ -3,10 +3,12 @@ package nc.noumea.mairie.ws;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
@@ -29,6 +31,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
 	private static final String isJourHolidayUrl = "utils/isHoliday";
 	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
+	private static final String sirhListPAPourAlimAutoCongesAnnuelsUrl = "absences/listPAPourAlimAutoCongesAnnuels";
 
 	@Override
 	public AgentWithServiceDto getAgentService(Integer idAgent, Date date) {
@@ -110,5 +113,22 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(RefTypeSaisiCongeAnnuelDto.class, res, url);
+	}
+	
+	@Override
+	public List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(Integer idAgent, Date dateDebut, Date dateFin) {
+		
+		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+
+		String url = String.format(sirhWsBaseUrl + sirhListPAPourAlimAutoCongesAnnuelsUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponseAsList(InfosAlimAutoCongesAnnuelsDto.class, res, url);
 	}
 }

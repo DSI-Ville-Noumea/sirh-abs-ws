@@ -1340,6 +1340,19 @@ public class HelperServiceTest {
 		Double result = service.getNombreSamediDecompte(demande);
 
 		assertEquals(duree, result);
-
+	}
+	
+	@Test
+	public void getFirstMondayOfCurrentMonth() {
+		
+		HelperService service = new HelperService();
+		Date lundi = service.getFirstMondayOfCurrentMonth();
+		
+		Calendar calLundi = Calendar.getInstance();
+		calLundi.setTime(lundi);
+		
+		assertTrue(8 > calLundi.get(Calendar.DAY_OF_MONTH));
+		assertEquals(2, calLundi.get(Calendar.DAY_OF_WEEK));
+		
 	}
 }

@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -183,4 +184,39 @@ public class RefAlimCongeAnnuel {
 		this.decembre = decembre;
 	}
 
+	@Transient 
+	public Double getQuotaCongesByMois(Integer mois) {
+		
+		if (mois == null)
+			return null;
+		
+		switch(mois) {
+			case 1: 
+				return getJanvier();
+			case 2: 
+				return getFevrier();
+			case 3: 
+				return getMars();
+			case 4: 
+				return getAvril();
+			case 5: 
+				return getMai();
+			case 6: 
+				return getJuin();
+			case 7:
+				return getJuillet();
+			case 8:
+				return getAout();
+			case 9:
+				return getSeptembre();
+			case 10:
+				return getOctobre();
+			case 11:
+				return getNovembre();
+			case 12:
+				return getDecembre();
+			default:
+				return null;
+		}
+	}
 }

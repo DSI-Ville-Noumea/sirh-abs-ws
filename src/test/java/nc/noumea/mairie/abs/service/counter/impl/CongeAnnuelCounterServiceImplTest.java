@@ -16,6 +16,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.MotifCompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -657,5 +658,53 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
 	}
+	
+	@Test
+	public void alimentationAutoCompteur_CompteurInexistant() {
+		
+		Integer idAgent = 9005138;
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent))
+				.thenReturn(null);
+
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		
+		ReturnMessageDto result = service.alimentationAutoCompteur(idAgent);
+		
+		assertEquals(result.getErrors().size(), 1);
+		assertEquals(result.getErrors().get(0), CongeAnnuelCounterServiceImpl.COMPTEUR_INEXISTANT);
+	}
+	
+//	@Test
+//	public void alimentationAutoCompteur_PAInexistant() {
+//		
+//		Integer idAgent = 10;
+//		Date dateDebut = null;
+//		Date dateFin = null;
+//		
+//		AgentCongeAnnuelCount acac = new AgentCongeAnnuelCount();
+//			acac.setIdAgent(9005138);
+//			acac.setIdAgentCount(idAgent);
+//			acac.setTotalJours(20.0);
+//			acac.setTotalJoursAnneeN1(10.0);
+//		
+//		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+//		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent))
+//				.thenReturn(acac);
+//		
+//		List<InfosAlimAutoCongesAnnuelsDto> listPA = new ArrayList<InfosAlimAutoCongesAnnuelsDto>();
+//		
+//		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+//		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
+//		
+//		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+//		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+//		
+//		ReturnMessageDto result = service.alimentationAutoCompteur(idAgent);
+//		
+//		assertEquals(result.getErrors().size(), 1);
+//		assertEquals(result.getErrors().get(0), CongeAnnuelCounterServiceImpl.COMPTEUR_INEXISTANT);
+//	}
 
 }

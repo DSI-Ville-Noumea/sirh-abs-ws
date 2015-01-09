@@ -1,26 +1,46 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
+import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("CongeAnnuelCounterServiceImpl")
 public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
+	@Autowired
+	private ITypeAbsenceRepository typeAbsenceRepository;
+
+	@Autowired
+	private ICongesAnnuelsRepository congesAnnuelsRepository;
+	
+	protected static final String BASE_CONGES_ALIM_AUTO_INEXISTANT = "La base congés [%d] n'existe pas dans ABS_REF_ALIM_CONGE_ANNUEL.";
+	protected static final String PA_INEXISTANT = "Pas de PA active pour l'agent : [%d].";
+	protected static final String COMPTEUR_DEJA_A_JOUR = "Compteur de congés annuels déjà mis à jour ce mois-ci pour l'agent : [%d].";
+	
 	@Override
 	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto initCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne) {
@@ -335,4 +355,85 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		
 		return srm;
 	}
+	
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto alimentationAutoCompteur(Integer idAgent) {
+		
+		logger.info("Alimentation auto CompteurCongeAnnuel for idAgent {} ...", idAgent);
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		// on recherche le compteur de l agent
+		AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(
+				AgentCongeAnnuelCount.class, idAgent);
+		
+		if (arc == null) {
+			logger.warn(COMPTEUR_INEXISTANT);
+			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
+			return srm;
+		}
+		
+		Date dateDebut = null;
+		Date dateFin = null;
+		
+		// on recupere la PA de l agent
+		List<InfosAlimAutoCongesAnnuelsDto> listPA = sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(arc.getIdAgent(), dateDebut, dateFin);
+		
+		if(null == listPA
+				|| (null != listPA && 0 < listPA.size())) {
+			logger.warn(PA_INEXISTANT, arc.getIdAgent());
+			srm.getErrors().add(String.format(PA_INEXISTANT, arc.getIdAgent()));
+			return srm;
+		}
+		
+		Double joursAAjouter = 0.0;
+		// on calcule le nombre de jours conges à ajouter sur le mois
+		for(InfosAlimAutoCongesAnnuelsDto PA : listPA) {
+			if(PA.isDroitConges()) {
+				RefAlimCongeAnnuel refAlimCongeAnnuel = typeAbsenceRepository.getEntity(RefAlimCongeAnnuel.class, PA.getIdBaseCongeAbsence());
+				
+				if(null == refAlimCongeAnnuel) {
+					logger.warn(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence());
+					srm.getErrors().add(String.format(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence()));
+				}
+				
+				Double quotaMois = refAlimCongeAnnuel.getQuotaCongesByMois(new DateTime(dateDebut).getMonthOfYear());
+				Double nombreJoursPA = helperService.calculNombreJours(PA.getDateDebut(), PA.getDateFin());
+				
+				Calendar calendar = GregorianCalendar.getInstance();
+				calendar.setTime(PA.getDateDebut());
+				Integer dernierJourMois = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+				
+				if(nombreJoursPA >= dernierJourMois) {
+					joursAAjouter = quotaMois;
+				}else{
+					joursAAjouter += Math.ceil((quotaMois * nombreJoursPA / 30) * 2) /2;
+				}
+			}
+		}
+		
+		Date dernierModif = new Date();
+		Date dateMonth = helperService.getFirstMondayOfCurrentMonth();
+		// on enregistre
+		AgentWeekCongeAnnuel awca = congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth);
+		
+		if (awca != null) {
+			logger.warn(COMPTEUR_DEJA_A_JOUR, idAgent);
+			srm.getErrors().add(String.format(COMPTEUR_DEJA_A_JOUR, idAgent));
+		}
+		awca = new AgentWeekCongeAnnuel();
+		awca.setIdAgent(idAgent);
+		awca.setDateMonth(dateMonth);
+		
+		awca.setLastModification(dernierModif);
+		awca.setJours(joursAAjouter);
+		
+		arc.setTotalJours(arc.getTotalJours() + joursAAjouter);
+		arc.setLastModification(dernierModif);
+		
+		return srm;
+	}
+	
+	
 }

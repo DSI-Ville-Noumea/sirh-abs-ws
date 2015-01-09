@@ -1,11 +1,13 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 
@@ -47,5 +49,20 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 			}
 		}
 		return somme;
+	}
+	
+	@Override
+	public AgentWeekCongeAnnuel getWeekHistoForAgentAndDate(Integer idAgent, Date dateMonth) {
+
+		TypedQuery<AgentWeekCongeAnnuel> query = absEntityManager
+				.createNamedQuery("findAgentWeekCongeAnnuelByIdAgentAndDateMonth", AgentWeekCongeAnnuel.class);
+
+		query.setParameter("idAgent", idAgent);
+		query.setParameter("dateMonth", dateMonth);
+		
+		// Exec query
+		List<AgentWeekCongeAnnuel> result = query.getResultList();
+
+		return (result.size() == 1 ? result.get(0) : null);
 	}
 }
