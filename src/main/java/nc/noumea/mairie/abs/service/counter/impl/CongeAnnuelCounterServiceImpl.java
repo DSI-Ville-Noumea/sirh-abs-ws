@@ -358,7 +358,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto alimentationAutoCompteur(Integer idAgent) {
+	public ReturnMessageDto alimentationAutoCompteur(Integer idAgent, Date dateDebut, Date dateFin) {
 		
 		logger.info("Alimentation auto CompteurCongeAnnuel for idAgent {} ...", idAgent);
 
@@ -374,16 +374,23 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			return srm;
 		}
 		
-		Date dateDebut = null;
-		Date dateFin = null;
+		Date dateMonth = helperService.getFirstMondayOfCurrentMonth();
+		AgentWeekCongeAnnuel awca = congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth);
+		
+		// si compteur deja mis a jour
+		if (awca != null) {
+			logger.warn(COMPTEUR_DEJA_A_JOUR, idAgent);
+			srm.getErrors().add(String.format(COMPTEUR_DEJA_A_JOUR, idAgent));
+			return srm;
+		}
 		
 		// on recupere la PA de l agent
 		List<InfosAlimAutoCongesAnnuelsDto> listPA = sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(arc.getIdAgent(), dateDebut, dateFin);
 		
 		if(null == listPA
-				|| (null != listPA && 0 < listPA.size())) {
+				|| (null != listPA && 0 == listPA.size())) {
 			logger.warn(PA_INEXISTANT, arc.getIdAgent());
-			srm.getErrors().add(String.format(PA_INEXISTANT, arc.getIdAgent()));
+			srm.getErrors().add(String.format(PA_INEXISTANT, idAgent));
 			return srm;
 		}
 		
@@ -396,6 +403,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 				if(null == refAlimCongeAnnuel) {
 					logger.warn(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence());
 					srm.getErrors().add(String.format(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence()));
+					return srm;
 				}
 				
 				Double quotaMois = refAlimCongeAnnuel.getQuotaCongesByMois(new DateTime(dateDebut).getMonthOfYear());
@@ -405,23 +413,13 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 				calendar.setTime(PA.getDateDebut());
 				Integer dernierJourMois = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 				
-				if(nombreJoursPA >= dernierJourMois) {
-					joursAAjouter = quotaMois;
-				}else{
-					joursAAjouter += Math.ceil((quotaMois * nombreJoursPA / 30) * 2) /2;
-				}
+				joursAAjouter += getNombreJoursDonnantDroitsAConges(dernierJourMois, quotaMois, nombreJoursPA);
 			}
 		}
 		
 		Date dernierModif = new Date();
-		Date dateMonth = helperService.getFirstMondayOfCurrentMonth();
 		// on enregistre
-		AgentWeekCongeAnnuel awca = congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth);
 		
-		if (awca != null) {
-			logger.warn(COMPTEUR_DEJA_A_JOUR, idAgent);
-			srm.getErrors().add(String.format(COMPTEUR_DEJA_A_JOUR, idAgent));
-		}
 		awca = new AgentWeekCongeAnnuel();
 		awca.setIdAgent(idAgent);
 		awca.setDateMonth(dateMonth);
@@ -435,5 +433,11 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		return srm;
 	}
 	
-	
+	protected Double getNombreJoursDonnantDroitsAConges(Integer dernierJourMois, Double quotaMois, Double nombreJoursPA) {
+		if(nombreJoursPA >= dernierJourMois) {
+			return quotaMois;
+		}else{
+			return Math.ceil((quotaMois * nombreJoursPA / 30) * 2) /2;
+		}
+	}
 }

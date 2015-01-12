@@ -244,7 +244,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public ReturnMessageDto alimentationAutoCompteur(Integer idAgentCongeAnnuelCount) {
+	public ReturnMessageDto alimentationAutoCompteur(Integer idAgentCongeAnnuelCount, Date dateDebut, Date dateFin) {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 

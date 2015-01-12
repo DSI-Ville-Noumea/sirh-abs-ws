@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.web;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -115,6 +117,33 @@ public class CongeAnnuelController {
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		ReturnMessageDto srm = counterService.majManuelleCompteurToAgent(convertedIdAgent, compteurDto);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+		
+		return srm;
+	}
+	
+	/**
+	 * Ajout/retire manuel au compteur de recuperation pour un agent
+	 * <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/alimentationAutoCongesAnnuels", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto alimentationAutoCongesAnnuels(@RequestParam("idAgent") int idAgent,
+			@RequestParam(value = "dateDebut", required = true) @DateTimeFormat(pattern = "YYYYMMdd") Date dateDebut,
+			@RequestParam(value = "dateFin", required = true) @DateTimeFormat(pattern = "YYYYMMdd") Date dateFin, 
+			HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [congeannuel/alimentationAutoCongesAnnuels] => alimentationAutoCongesAnnuels with parameters idAgent = {}, dateDebut = {}, dateFin = {}",
+				idAgent, dateDebut, dateFin);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		ReturnMessageDto srm = counterService.alimentationAutoCompteur(convertedIdAgent, dateDebut, dateFin);
 
 		if (!srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
