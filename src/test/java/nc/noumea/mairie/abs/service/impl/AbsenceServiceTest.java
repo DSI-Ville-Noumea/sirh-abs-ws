@@ -4830,7 +4830,7 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		dto.setIdDemande(1);
-		
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
 
@@ -4868,7 +4868,6 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@Test
 	public void setDemandeEtatSIRH_setDemandeEtatEnAttente_ok_Conge() {
@@ -4879,7 +4878,7 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		dto.setIdDemande(1);
-		
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
 
@@ -9683,8 +9682,6 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 	}
 
-
-
 	@Test
 	public void setDemandeEtatPris_EtatIncorrect_ReturnError_CongeAnnuel() {
 
@@ -9715,7 +9712,8 @@ public class AbsenceServiceTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("La demande 1 n'est pas à l'état VALIDEE ou APPROUVEE mais SAISIE.", result.getErrors().get(0).toString());
+		assertEquals("La demande 1 n'est pas à l'état VALIDEE ou APPROUVEE mais SAISIE.", result.getErrors().get(0)
+				.toString());
 		Mockito.verify(demandeRepository, Mockito.never()).removeEntity(Mockito.isA(Demande.class));
 	}
 
@@ -9771,7 +9769,6 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.getInfos().size());
 		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(EtatDemande.class));
 	}
-
 
 	@Test
 	public void getListeDemandesSIRHAValider_return1Liste_WithCongeAnnuel() {
@@ -9834,6 +9831,152 @@ public class AbsenceServiceTest {
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
 		assertFalse(listResult.get(0).isDepassementMultiple());
+
+	}
+
+	@Test
+	public void checkRecuperations_returnErrors() {
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2014, 01, 01, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 01, 07, 0, 0).toDate();
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.PRISE);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		Demande d = new Demande();
+		d.setIdDemande(1);
+		d.setType(type);
+		d.getEtatsDemande().add(etat);
+		listdemande.add(d);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.listeDemandesAgent(null, idAgent, dateDebut, dateFin,
+						RefTypeAbsenceEnum.RECUP.getValue(), RefTypeGroupeAbsenceEnum.RECUP.getValue())).thenReturn(
+				listdemande);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		ReturnMessageDto result = service.checkRecuperations(idAgent, dateDebut, dateFin);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("06/01/2014 : L'agent est en récupération sur cette période.", result.getErrors().get(0));
+
+	}
+
+	@Test
+	public void checkRecuperations_returnOK() {
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2014, 01, 01, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 01, 07, 0, 0).toDate();
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.SAISIE);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		Demande d = new Demande();
+		d.setIdDemande(1);
+		d.setType(type);
+		d.getEtatsDemande().add(etat);
+		listdemande.add(d);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.listeDemandesAgent(null, idAgent, dateDebut, dateFin,
+						RefTypeAbsenceEnum.RECUP.getValue(), RefTypeGroupeAbsenceEnum.RECUP.getValue())).thenReturn(
+				listdemande);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		ReturnMessageDto result = service.checkRecuperations(idAgent, dateDebut, dateFin);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+
+	}
+
+	@Test
+	public void checkReposCompensateurs_returnErrors() {
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2014, 01, 01, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 01, 07, 0, 0).toDate();
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.PRISE);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		Demande d = new Demande();
+		d.setIdDemande(1);
+		d.setType(type);
+		d.getEtatsDemande().add(etat);
+		listdemande.add(d);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.listeDemandesAgent(null, idAgent, dateDebut, dateFin,
+						RefTypeAbsenceEnum.REPOS_COMP.getValue(), RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue()))
+				.thenReturn(listdemande);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		ReturnMessageDto result = service.checkReposCompensateurs(idAgent, dateDebut, dateFin);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("06/01/2014 : L'agent est en repos compensateur sur cette période.", result.getErrors().get(0));
+
+	}
+
+	@Test
+	public void checkReposCompensateurs_returnOK() {
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2014, 01, 01, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 01, 07, 0, 0).toDate();
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.SAISIE);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		Demande d = new Demande();
+		d.setIdDemande(1);
+		d.setType(type);
+		d.getEtatsDemande().add(etat);
+		listdemande.add(d);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.listeDemandesAgent(null, idAgent, dateDebut, dateFin,
+						RefTypeAbsenceEnum.REPOS_COMP.getValue(), RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue()))
+				.thenReturn(listdemande);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		ReturnMessageDto result = service.checkReposCompensateurs(idAgent, dateDebut, dateFin);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 
 	}
 }

@@ -31,4 +31,8 @@ public interface IAbsenceService {
 	ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, List<DemandeEtatChangeDto> dto);
 
 	List<DemandeDto> getListeDemandesSIRHAValider();
+
+	ReturnMessageDto checkRecuperations(Integer convertedIdAgent, Date fromDate, Date toDate);
+
+	ReturnMessageDto checkReposCompensateurs(Integer convertedIdAgent, Date fromDate, Date toDate);
 }
