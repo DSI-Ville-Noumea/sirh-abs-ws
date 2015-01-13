@@ -9848,7 +9848,7 @@ public class AbsenceServiceTest {
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
-		Demande d = new Demande();
+		DemandeRecup d = new DemandeRecup();
 		d.setIdDemande(1);
 		d.setType(type);
 		d.getEtatsDemande().add(etat);
@@ -9856,9 +9856,9 @@ public class AbsenceServiceTest {
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(
-				demandeRepository.listeDemandesAgent(null, idAgent, dateDebut, dateFin,
-						RefTypeAbsenceEnum.RECUP.getValue(), RefTypeGroupeAbsenceEnum.RECUP.getValue())).thenReturn(
-				listdemande);
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						RefTypeAbsenceEnum.RECUP.getValue())).thenReturn(listdemande);
+		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, d.getIdDemande())).thenReturn(d);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -9867,7 +9867,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("06/01/2014 : L'agent est en récupération sur cette période.", result.getErrors().get(0));
+		assertEquals("01/01/2014 00:00 : L'agent est en récupération sur cette période.", result.getErrors().get(0));
 
 	}
 
@@ -9921,7 +9921,7 @@ public class AbsenceServiceTest {
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
-		Demande d = new Demande();
+		DemandeReposComp d = new DemandeReposComp();
 		d.setIdDemande(1);
 		d.setType(type);
 		d.getEtatsDemande().add(etat);
@@ -9929,9 +9929,9 @@ public class AbsenceServiceTest {
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(
-				demandeRepository.listeDemandesAgent(null, idAgent, dateDebut, dateFin,
-						RefTypeAbsenceEnum.REPOS_COMP.getValue(), RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue()))
-				.thenReturn(listdemande);
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						RefTypeAbsenceEnum.REPOS_COMP.getValue())).thenReturn(listdemande);
+		Mockito.when(demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande())).thenReturn(d);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -9940,7 +9940,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("06/01/2014 : L'agent est en repos compensateur sur cette période.", result.getErrors().get(0));
+		assertEquals("01/01/2014 00:00 : L'agent est en repos compensateur sur cette période.",
+				result.getErrors().get(0));
 
 	}
 

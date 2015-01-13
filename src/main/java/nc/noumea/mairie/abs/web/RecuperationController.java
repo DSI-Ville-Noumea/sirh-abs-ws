@@ -88,13 +88,14 @@ public class RecuperationController {
 
 	/**
 	 * Pour connaire sur une periode données si un agent est en récupération <br />
-	 * Parametres en entree : format du type timestamp : YYYYMMdd
+	 * Parametres en entree : format du type timestamp : dd/MM/yyyy HH:mm
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/checkRecuperations", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public ReturnMessageDto checkRecuperations(@RequestParam("idAgent") int idAgent,
-			@RequestParam(value = "dateDebut", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
-			@RequestParam(value = "dateFin", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate) {
+	public ReturnMessageDto checkRecuperations(
+			@RequestParam("idAgent") int idAgent,
+			@RequestParam(value = "dateDebut", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm") Date fromDate,
+			@RequestParam(value = "dateFin", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm") Date toDate) {
 
 		logger.debug(
 				"entered GET [recuperations/checkRecuperations] => checkRecuperations with parameters idAgent = {}, dateDebut = {}, dateFin = {}",

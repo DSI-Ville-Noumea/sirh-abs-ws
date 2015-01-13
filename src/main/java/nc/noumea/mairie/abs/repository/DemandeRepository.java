@@ -265,4 +265,25 @@ public class DemandeRepository implements IDemandeRepository {
 		List<DemandeCongesAnnuels> res = query.getResultList();
 		return res.size();
 	}
+
+	@Override
+	public List<Demande> listeDemandesAgentVerification(Integer idAgentConcerne, Date fromDate, Date toDate,
+			Integer idRefType) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from Demande d ");
+		sb.append("where 1=1 ");
+		sb.append("and d.idAgent = :idAgentConcerne ");
+		sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
+		sb.append("and( d.dateDebut between :fromDate and :toDate or d.dateFin between :fromDate and :toDate)");
+		sb.append("order by d.idDemande desc ");
+
+		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
+
+		query.setParameter("idAgentConcerne", idAgentConcerne);
+		query.setParameter("idRefTypeAbsence", idRefType);
+		query.setParameter("fromDate", fromDate);
+		query.setParameter("toDate", toDate);
+
+		return query.getResultList();
+	}
 }

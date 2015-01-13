@@ -53,7 +53,7 @@ public class Demande {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
 
-	@OneToMany(mappedBy = "demande", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "demande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
 	@OrderBy("idEtatDemande desc")
 	private List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
 

@@ -2,7 +2,6 @@ package nc.noumea.mairie.abs.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -95,6 +94,7 @@ public class AbsenceService implements IAbsenceService {
 	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyée n'est pas correct.";
 
 	// POUR LES MESSAGE A ENVOYE AU PROJET SIRH-PTG-WS
+	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez saisi des primes, absences ou heures supplémentaires sur des périodes où l’agent était absent.";
 	public static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
 	public static final String REPOS_COMP_MSG = "%s : L'agent est en repos compensateur sur cette période.";
 
@@ -1020,50 +1020,44 @@ public class AbsenceService implements IAbsenceService {
 	public ReturnMessageDto checkRecuperations(Integer convertedIdAgent, Date fromDate, Date toDate) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de recup de l'agent entre les dates
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(fromDate);
-		Calendar calFin = Calendar.getInstance();
-		calFin.setTime(fromDate);
-		while (cal.getTime().compareTo(toDate) <= 0) {
-			calFin.add(Calendar.DAY_OF_MONTH, 1);
-			List<Demande> listeDemande = demandeRepository.listeDemandesAgent(null, convertedIdAgent, fromDate,
-					calFin.getTime(), RefTypeAbsenceEnum.RECUP.getValue(), RefTypeGroupeAbsenceEnum.RECUP.getValue());
-			for (Demande demande : listeDemande) {
-				// si la demande est dans un bon etat
-				if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat())
-						|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
-					String msg = String.format(RECUP_MSG, new DateTime(cal.getTime()).toString("dd/MM/yyyy"));
-					result.getErrors().add(msg);
-				}
+
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeAbsenceEnum.RECUP.getValue());
+		for (Demande d : listeDemande) {
+			DemandeRecup demandeRecup = demandeRepository.getEntity(DemandeRecup.class, d.getIdDemande());
+			// si la demande est dans un bon etat
+			if (RefEtatEnum.APPROUVEE.equals(demandeRecup.getLatestEtatDemande().getEtat())
+					|| RefEtatEnum.PRISE.equals(demandeRecup.getLatestEtatDemande().getEtat())) {
+				String msg = String.format(RECUP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				result.getErrors().add(msg);
+			} else {
+				result.getInfos().add(AVERT_MESSAGE_ABS);
 			}
-			cal.add(Calendar.DAY_OF_MONTH, 1);
 		}
+
 		return result;
 	}
 
 	@Override
 	public ReturnMessageDto checkReposCompensateurs(Integer convertedIdAgent, Date fromDate, Date toDate) {
+
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de recup de l'agent entre les dates
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(fromDate);
-		Calendar calFin = Calendar.getInstance();
-		calFin.setTime(fromDate);
-		while (cal.getTime().compareTo(toDate) <= 0) {
-			calFin.add(Calendar.DAY_OF_MONTH, 1);
-			List<Demande> listeDemande = demandeRepository.listeDemandesAgent(null, convertedIdAgent, fromDate,
-					calFin.getTime(), RefTypeAbsenceEnum.REPOS_COMP.getValue(),
-					RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
-			for (Demande demande : listeDemande) {
-				// si la demande est dans un bon etat
-				if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat())
-						|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
-					String msg = String.format(REPOS_COMP_MSG, new DateTime(cal.getTime()).toString("dd/MM/yyyy"));
-					result.getErrors().add(msg);
-				}
+
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		for (Demande d : listeDemande) {
+			DemandeReposComp demandeRecup = demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande());
+			// si la demande est dans un bon etat
+			if (RefEtatEnum.APPROUVEE.equals(demandeRecup.getLatestEtatDemande().getEtat())
+					|| RefEtatEnum.PRISE.equals(demandeRecup.getLatestEtatDemande().getEtat())) {
+				String msg = String.format(REPOS_COMP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				result.getErrors().add(msg);
+			} else {
+				result.getInfos().add(AVERT_MESSAGE_ABS);
 			}
-			cal.add(Calendar.DAY_OF_MONTH, 1);
 		}
+
 		return result;
 	}
 }
