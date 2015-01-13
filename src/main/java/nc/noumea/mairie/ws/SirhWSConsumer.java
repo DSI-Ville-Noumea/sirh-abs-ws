@@ -9,6 +9,7 @@ import java.util.Map;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
+import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
@@ -32,6 +33,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String isJourHolidayUrl = "utils/isHoliday";
 	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
 	private static final String sirhListPAPourAlimAutoCongesAnnuelsUrl = "absences/listPAPourAlimAutoCongesAnnuels";
+	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
 
 	@Override
 	public AgentWithServiceDto getAgentService(Integer idAgent, Date date) {
@@ -130,5 +132,21 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponseAsList(InfosAlimAutoCongesAnnuelsDto.class, res, url);
+	}
+	
+	@Override
+	public List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin) {
+		
+		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+
+		String url = String.format(sirhWsBaseUrl + listeJoursFeriesUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponseAsList(JourDto.class, res, url);
 	}
 }

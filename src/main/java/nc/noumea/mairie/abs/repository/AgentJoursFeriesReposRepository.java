@@ -19,16 +19,30 @@ public class AgentJoursFeriesReposRepository implements
 	private EntityManager absEntityManager;
 	
 	@Override
+	public void persistEntity(Object obj) {
+		absEntityManager.persist(obj);
+	}
+
+	@Override
+	public void removeEntity(Object obj) {
+		absEntityManager.remove(obj);
+	}
+	
+	@Override
 	public AgentJoursFeriesRepos getAgentJoursFeriesReposByIdAgentAndJourFerie(
-			Integer idAgent, Date jourFerie) {
+			Integer idAgent, Date jourFerieChome) {
 
 		TypedQuery<AgentJoursFeriesRepos> query = null;
 		query = absEntityManager.createNamedQuery("findAgentJoursFeriesReposByIdAgentAndJourFerie", AgentJoursFeriesRepos.class);
 		query.setParameter("idAgent", idAgent);
-		query.setParameter("jourFerie", jourFerie);
+		query.setParameter("jourFerieChome", jourFerieChome);
 		query.setMaxResults(1);
 
-		return query.getSingleResult();
+		if(0 < query.getResultList().size()) {
+			return query.getSingleResult();
+		}
+		
+		return null;
 	}
 
 	@Override
