@@ -32,7 +32,7 @@ public class AgentJoursFeriesRepos {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 	
-	@Column(name = "JOUR_FERIE_REPOS")
+	@Column(name = "JOUR_FERIE_CHOME")
 	@Temporal(TemporalType.DATE)
 	private Date jourFerieChome;
 	
