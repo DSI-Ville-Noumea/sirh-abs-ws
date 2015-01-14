@@ -9904,9 +9904,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals(
-				"Soyez vigilant, vous avez saisi des primes, absences ou heures supplémentaires sur des périodes où l’agent était absent.",
-				result.getInfos().get(0));
+		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
 
 	}
 
@@ -9981,9 +9979,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals(
-				"Soyez vigilant, vous avez saisi des primes, absences ou heures supplémentaires sur des périodes où l’agent était absent.",
-				result.getInfos().get(0));
+		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
 
 	}
 
@@ -10058,9 +10054,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals(
-				"Soyez vigilant, vous avez saisi des primes, absences ou heures supplémentaires sur des périodes où l’agent était absent.",
-				result.getInfos().get(0));
+		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
 
 	}
 
@@ -10135,9 +10129,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals(
-				"Soyez vigilant, vous avez saisi des primes, absences ou heures supplémentaires sur des périodes où l’agent était absent.",
-				result.getInfos().get(0));
+		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
 
 	}
 
@@ -10211,9 +10203,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals(
-				"Soyez vigilant, vous avez saisi des primes, absences ou heures supplémentaires sur des périodes où l’agent était absent.",
-				result.getInfos().get(0));
+		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
 
 	}
 }
