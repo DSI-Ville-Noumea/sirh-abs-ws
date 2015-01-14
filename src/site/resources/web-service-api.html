@@ -157,6 +157,12 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/asa/checkAbsencesSyndicales</span>
+                    <div>
+                            <a href="#/asa/checkAbsencesSyndicales_GET_idAgent_dateDebut_dateFin">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/congeannuel/intitCompteurCongeAnnuel</span>
                     <div>
                             <a href="#/congeannuel/intitCompteurCongeAnnuel_POST_idAgent_idAgentConcerne">POST</a>
@@ -178,6 +184,24 @@
                     <span class="resource-summary-path">/congeannuel/addManual</span>
                     <div>
                             <a href="#/congeannuel/addManual_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/alimentationAutoCongesAnnuels</span>
+                    <div>
+                            <a href="#/congeannuel/alimentationAutoCongesAnnuels_POST_idAgent_dateDebut_dateFin">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/checkCongesAnnuels</span>
+                    <div>
+                            <a href="#/congeannuel/checkCongesAnnuels_GET_idAgent_dateDebut_dateFin">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/congeexceptionnel/checkCongesExceptionnels</span>
+                    <div>
+                            <a href="#/congeexceptionnel/checkCongesExceptionnels_GET_idAgent_dateDebut_dateFin">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -392,6 +416,12 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/recuperations/checkRecuperations</span>
+                    <div>
+                            <a href="#/recuperations/checkRecuperations_GET_idAgent_dateDebut_dateFin">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/reposcomps/addForPTG</span>
                     <div>
                             <a href="#/reposcomps/addForPTG_POST_idAgent_dateLundi_minutes">POST</a>
@@ -425,6 +455,12 @@
                     <span class="resource-summary-path">/reposcomps/getListeCompteurAnneeEnCours</span>
                     <div>
                             <a href="#/reposcomps/getListeCompteurAnneeEnCours_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/reposcomps/checkReposCompensateurs</span>
+                    <div>
+                            <a href="#/reposcomps/checkReposCompensateurs_GET_idAgent_dateDebut_dateFin">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -2051,6 +2087,40 @@
 </div>
                             </div>
                     </div>
+                    <a id="/asa/checkAbsencesSyndicales_GET_idAgent_dateDebut_dateFin"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/asa/checkAbsencesSyndicales</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Pour connaire sur une periode données si un agent est en absence
+ syndicale <br />
+ Parametres en entree : format du type timestamp : dd/MM/yyyy HH:mm
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
                     <a id="/congeannuel/intitCompteurCongeAnnuel_POST_idAgent_idAgentConcerne"/>
                     <div class="resource">
                         <div class="resource-header">
@@ -2146,8 +2216,7 @@
 <span class="path">/congeannuel/addManual</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Ajout/retire manuel au compteur de recuperation pour un agent
- <br />
+                                 Ajout/retire manuel au compteur de recuperation pour un agent <br />
  RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 
                             </div>
@@ -2226,6 +2295,105 @@
 </div></span>    }
 </div>
                             </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeannuel/alimentationAutoCongesAnnuels_POST_idAgent_dateDebut_dateFin"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/congeannuel/alimentationAutoCongesAnnuels</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Ajout/retire manuel au compteur de recuperation pour un agent <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeannuel/checkCongesAnnuels_GET_idAgent_dateDebut_dateFin"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/congeannuel/checkCongesAnnuels</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Pour connaire sur une periode données si un agent est en conge annuel <br />
+ Parametres en entree : format du type timestamp : dd/MM/yyyy HH:mm
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeexceptionnel/checkCongesExceptionnels_GET_idAgent_dateDebut_dateFin"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/congeexceptionnel/checkCongesExceptionnels</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Pour connaire sur une periode données si un agent est en conge exceptionnel <br />
+ Parametres en entree : format du type timestamp : dd/MM/yyyy HH:mm
+
+                            </div>
+
+
+
 
                             <div class="response-body">
                                 <div class="body-title">Response Body</div>
@@ -7398,11 +7566,10 @@
 <span class="path">/recuperations/addForPTG</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateLundi</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">minutes</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Ajoute des minutes au compteur de recuperation a un agent pour une semaine donnee
- <br />
- utile a SIRH-PTG-WS
- <br />
- Parametres en entree : format du type timestamp  : YYYYMMdd
+                                 Ajoute des minutes au compteur de recuperation a un agent pour une
+ semaine donnee <br />
+ utile a SIRH-PTG-WS <br />
+ Parametres en entree : format du type timestamp : YYYYMMdd
 
                             </div>
 
@@ -7421,8 +7588,7 @@
 <span class="path">/recuperations/addManual</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Ajout/retire manuel au compteur de recuperation pour un agent
- <br />
+                                 Ajout/retire manuel au compteur de recuperation pour un agent <br />
  RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 
                             </div>
@@ -7520,6 +7686,39 @@
 </div>
                             </div>
                     </div>
+                    <a id="/recuperations/checkRecuperations_GET_idAgent_dateDebut_dateFin"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/recuperations/checkRecuperations</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Pour connaire sur une periode données si un agent est en récupération <br />
+ Parametres en entree : format du type timestamp : dd/MM/yyyy HH:mm
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
                     <a id="/reposcomps/addForPTG_POST_idAgent_dateLundi_minutes"/>
                     <div class="resource">
                         <div class="resource-header">
@@ -7527,11 +7726,10 @@
 <span class="path">/reposcomps/addForPTG</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateLundi</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">minutes</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Ajoute des minutes au compteur de repos compensateur a un agent pour une semaine donnee
- <br />
- utile a SIRH-PTG-WS
- <br />
- Parametres en entree : format du type timestamp  : YYYYMMdd
+                                 Ajoute des minutes au compteur de repos compensateur a un agent pour une
+ semaine donnee <br />
+ utile a SIRH-PTG-WS <br />
+ Parametres en entree : format du type timestamp : YYYYMMdd
 
                             </div>
 
@@ -7550,8 +7748,7 @@
 <span class="path">/reposcomps/addManual</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Ajout/retire manuel au compteur de repos compensateur pour un agent
- <br />
+                                 Ajout/retire manuel au compteur de repos compensateur pour un agent <br />
  RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 
                             </div>
@@ -7656,8 +7853,7 @@
 <span class="path">/reposcomps/resetCompteurAnneePrecedente</span>?<span class="url-param-key">idAgentReposCompCount</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Remise a zero des compteurs de repos compensateur de l annee precedente
- <br />
+                                 Remise a zero des compteurs de repos compensateur de l annee precedente <br />
  utile a SIRH-JOBS le 31/08
 
                             </div>
@@ -7690,8 +7886,7 @@
 <span class="path">/reposcomps/resetCompteurAnneenCours</span>?<span class="url-param-key">idAgentReposCompCount</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Remise a zero des compteurs de repos compensateur de l annee en cours
- <br />
+                                 Remise a zero des compteurs de repos compensateur de l annee en cours <br />
  utile a SIRH-JOBS le 31/12
 
                             </div>
@@ -7756,6 +7951,40 @@
                                 <div class="body-title">Response Body</div>
                                 <div class="body-contents">    <span class="json-array">[
 <span class="json-primitive-type">int</span>    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/reposcomps/checkReposCompensateurs_GET_idAgent_dateDebut_dateFin"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/reposcomps/checkReposCompensateurs</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Pour connaire sur une periode données si un agent est en repos
+ compensateur <br />
+ Parametres en entree : format du type timestamp : dd/MM/yyyy HH:mm
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
 </div>
                             </div>
                     </div>

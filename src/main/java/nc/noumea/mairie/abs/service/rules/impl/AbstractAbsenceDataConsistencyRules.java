@@ -30,6 +30,7 @@ import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ws.IPtgWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -60,6 +61,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Autowired
 	protected ISirhWSConsumer sirhWSConsumer;
+
+	@Autowired
+	protected IPtgWsConsumer ptgWSConsumer;
 
 	@Autowired
 	protected IAgentMatriculeConverterService agentMatriculeService;
@@ -101,6 +105,19 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 		checkAgentInactivity(srm, idAgent, dateLundi);
 		checkStatutAgent(srm, demande);
+		checkNoPointages(srm, demande);
+	}
+
+	private void checkNoPointages(ReturnMessageDto srm, Demande demande) {
+		ReturnMessageDto result = ptgWSConsumer.checkPointage(demande.getIdAgent(), demande.getDateDebut(),
+				demande.getDateFin());
+
+		for (String info : result.getInfos()) {
+			srm.getInfos().add(info);
+		}
+		for (String erreur : result.getErrors()) {
+			srm.getErrors().add(erreur);
+		}
 	}
 
 	@Override

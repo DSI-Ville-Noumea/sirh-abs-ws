@@ -83,6 +83,8 @@
 	</bean>
 
 	<jee:jndi-lookup id="sirhWsBaseUrl" jndi-name="SIRH_WS_URL" expected-type="java.lang.String"/>
+
+	<jee:jndi-lookup id="sirhPtgWsBaseUrl" jndi-name="SIRH_PTG_WS_URL" expected-type="java.lang.String"/>
 	
 	<jee:jndi-lookup id="reportingBaseUrl" jndi-name="REPORTING_BASE_URL" expected-type="java.lang.String"/>
 	

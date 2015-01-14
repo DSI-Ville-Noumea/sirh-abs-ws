@@ -39,7 +39,14 @@
 		value="http://svi-tomcat0:8085/sirhws/" override="false" />
 		
 
-	<!--  -->
+	<!-- -->
+	<!-- WS DES POINTAGES -->
+	<!-- -->
+	<Environment description="SIRH PTG WS url" name="SIRH_PTG_WS_URL"
+		type="java.lang.String" override="false" value="http://localhost:8090/sirh-ptg-ws/" />
+
+
+	<!-- -->
 	<!-- BIRT -->
 	<!--  -->
 	<Environment name="REPORTING_BASE_URL" type="java.lang.String" description="BIRT report viewer base URL for SIRH reporting"
