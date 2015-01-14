@@ -12,6 +12,7 @@ import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +35,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
 	private static final String sirhListPAPourAlimAutoCongesAnnuelsUrl = "absences/listPAPourAlimAutoCongesAnnuels";
 	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
+	private static final String sirhAgentDirectionUrl = "agents/direction";
 
 	@Override
 	public AgentWithServiceDto getAgentService(Integer idAgent, Date date) {
@@ -148,5 +150,22 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponseAsList(JourDto.class, res, url);
+	}
+	
+	@Override
+	public SirhWsServiceDto getAgentDirection(Integer idAgent, Date date) {
+
+		String url = String.format(sirhWsBaseUrl + sirhAgentDirectionUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		if (date != null) {
+			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+			parameters.put("dateAffectation", sf.format(date));
+		}
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(SirhWsServiceDto.class, res, url);
 	}
 }

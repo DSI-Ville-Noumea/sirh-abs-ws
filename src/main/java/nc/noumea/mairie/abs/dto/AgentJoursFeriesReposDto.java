@@ -25,6 +25,4 @@ public class AgentJoursFeriesReposDto {
 			List<JoursFeriesSaisiesReposDto> joursFeriesEnRepos) {
 		this.joursFeriesEnRepos = joursFeriesEnRepos;
 	}
-	
-	
 }

@@ -14,6 +14,7 @@ import nc.noumea.mairie.abs.dto.AgentJoursFeriesReposDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.JoursFeriesSaisiesReposDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SaisieReposDto;
 import nc.noumea.mairie.abs.repository.IAgentJoursFeriesReposRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -83,9 +84,9 @@ public class SaisieJoursFeriesReposServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		
-		List<AgentJoursFeriesReposDto> result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
+		SaisieReposDto result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
 		
-		assertEquals(0, result.size());
+		assertEquals(0, result.getListAgentAvecRepos().size());
 	}
 	
 	@Test
@@ -117,10 +118,10 @@ public class SaisieJoursFeriesReposServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesReposRepository", agentJoursFeriesReposRepository);
 		
-		List<AgentJoursFeriesReposDto> result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
+		SaisieReposDto result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
 		
-		assertEquals(1, result.size());
-		assertEquals(0, result.get(0).getJoursFeriesEnRepos().size());
+		assertEquals(1, result.getListAgentAvecRepos().size());
+		assertEquals(0, result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().size());
 	}
 	
 	@Test
@@ -156,12 +157,12 @@ public class SaisieJoursFeriesReposServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesReposRepository", agentJoursFeriesReposRepository);
 		
-		List<AgentJoursFeriesReposDto> result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
+		SaisieReposDto result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
 		
-		assertEquals(1, result.size());
-		assertEquals(1, result.get(0).getJoursFeriesEnRepos().size());
-		assertEquals(new DateTime(2014,12,25,0,0,0).toDate(), result.get(0).getJoursFeriesEnRepos().get(0).getJourFerie());
-		assertFalse(result.get(0).getJoursFeriesEnRepos().get(0).isCheck());
+		assertEquals(1, result.getListAgentAvecRepos().size());
+		assertEquals(1, result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().size());
+		assertEquals(new DateTime(2014,12,25,0,0,0).toDate(), result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().get(0).getJourFerie());
+		assertFalse(result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().get(0).isCheck());
 	}
 	
 	@Test
@@ -202,12 +203,12 @@ public class SaisieJoursFeriesReposServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesReposRepository", agentJoursFeriesReposRepository);
 		
-		List<AgentJoursFeriesReposDto> result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
+		SaisieReposDto result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
 		
-		assertEquals(1, result.size());
-		assertEquals(1, result.get(0).getJoursFeriesEnRepos().size());
-		assertEquals(new DateTime(2014,12,25,0,0,0).toDate(), result.get(0).getJoursFeriesEnRepos().get(0).getJourFerie());
-		assertTrue(result.get(0).getJoursFeriesEnRepos().get(0).isCheck());
+		assertEquals(1, result.getListAgentAvecRepos().size());
+		assertEquals(1, result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().size());
+		assertEquals(new DateTime(2014,12,25,0,0,0).toDate(), result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().get(0).getJourFerie());
+		assertTrue(result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().get(0).isCheck());
 	}
 	
 	@Test
@@ -267,20 +268,20 @@ public class SaisieJoursFeriesReposServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesReposRepository", agentJoursFeriesReposRepository);
 		
-		List<AgentJoursFeriesReposDto> result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
+		SaisieReposDto result = service.getListAgentsWithJoursFeriesEnRepos(9005138, "codeService", dateDebut, dateFin);
 		
-		assertEquals(2, result.size());
-		assertEquals(2, result.get(0).getJoursFeriesEnRepos().size());
-		assertEquals(2, result.get(1).getJoursFeriesEnRepos().size());
-		assertEquals(new DateTime(2014,12,25,0,0,0).toDate(), result.get(0).getJoursFeriesEnRepos().get(0).getJourFerie());
-		assertEquals(new DateTime(2014,12,26,0,0,0).toDate(), result.get(0).getJoursFeriesEnRepos().get(1).getJourFerie());
-		assertTrue(result.get(0).getJoursFeriesEnRepos().get(0).isCheck());
-		assertTrue(result.get(0).getJoursFeriesEnRepos().get(1).isCheck());
+		assertEquals(2, result.getListAgentAvecRepos().size());
+		assertEquals(2, result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().size());
+		assertEquals(2, result.getListAgentAvecRepos().get(1).getJoursFeriesEnRepos().size());
+		assertEquals(new DateTime(2014,12,25,0,0,0).toDate(), result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().get(0).getJourFerie());
+		assertEquals(new DateTime(2014,12,26,0,0,0).toDate(), result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().get(1).getJourFerie());
+		assertTrue(result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().get(0).isCheck());
+		assertTrue(result.getListAgentAvecRepos().get(0).getJoursFeriesEnRepos().get(1).isCheck());
 		
-		assertEquals(new DateTime(2014,12,25,0,0,0).toDate(), result.get(1).getJoursFeriesEnRepos().get(0).getJourFerie());
-		assertTrue(result.get(1).getJoursFeriesEnRepos().get(0).isCheck());
-		assertEquals(new DateTime(2014,12,26,0,0,0).toDate(), result.get(1).getJoursFeriesEnRepos().get(1).getJourFerie());
-		assertFalse(result.get(1).getJoursFeriesEnRepos().get(1).isCheck());
+		assertEquals(new DateTime(2014,12,25,0,0,0).toDate(), result.getListAgentAvecRepos().get(1).getJoursFeriesEnRepos().get(0).getJourFerie());
+		assertTrue(result.getListAgentAvecRepos().get(1).getJoursFeriesEnRepos().get(0).isCheck());
+		assertEquals(new DateTime(2014,12,26,0,0,0).toDate(), result.getListAgentAvecRepos().get(1).getJoursFeriesEnRepos().get(1).getJourFerie());
+		assertFalse(result.getListAgentAvecRepos().get(1).getJoursFeriesEnRepos().get(1).isCheck());
 	}
 	
 	@Test

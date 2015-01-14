@@ -5,10 +5,11 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AgentJoursFeriesReposDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SaisieReposDto;
 
 public interface ISaisieJoursFeriesReposService {
 
-	List<AgentJoursFeriesReposDto> getListAgentsWithJoursFeriesEnRepos(Integer idAgent, String codeService,
+	SaisieReposDto getListAgentsWithJoursFeriesEnRepos(Integer idAgent, String codeService,
 			Date dateDebut, Date dateFin);
 
 	ReturnMessageDto setListAgentsWithJoursFeriesEnRepos(Integer idAgent,

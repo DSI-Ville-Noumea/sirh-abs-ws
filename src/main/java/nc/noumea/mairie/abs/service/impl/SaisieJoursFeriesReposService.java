@@ -11,6 +11,7 @@ import nc.noumea.mairie.abs.dto.AgentJoursFeriesReposDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.JoursFeriesSaisiesReposDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SaisieReposDto;
 import nc.noumea.mairie.abs.repository.IAgentJoursFeriesReposRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ISaisieJoursFeriesReposService;
@@ -42,15 +43,16 @@ public class SaisieJoursFeriesReposService implements ISaisieJoursFeriesReposSer
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<AgentJoursFeriesReposDto> getListAgentsWithJoursFeriesEnRepos(Integer idAgent, String codeService, Date dateDebut, Date dateFin) {
+	public SaisieReposDto getListAgentsWithJoursFeriesEnRepos(Integer idAgent, String codeService, Date dateDebut, Date dateFin) {
 		
 		logger.debug("Start getListAgentsWithJoursFeriesEnRepos");
 		
-		List<AgentJoursFeriesReposDto> result = new ArrayList<AgentJoursFeriesReposDto>();
+		SaisieReposDto result = new SaisieReposDto();
 		
 		List<AgentDto> listAgent = accessRightsService.getAgentsToApproveOrInput(idAgent, codeService);
 		
 		List<JourDto> listjourFerie = sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin);
+		result.setJoursFerieHeader(listjourFerie);
 		
 		// on boucle sur les lignes Agents
 		for(AgentDto agent : listAgent) {
@@ -68,7 +70,7 @@ public class SaisieJoursFeriesReposService implements ISaisieJoursFeriesReposSer
 					dto.getJoursFeriesEnRepos().add(joursDto);
 				}
 			}
-			result.add(dto);
+			result.getListAgentAvecRepos().add(dto);
 		}
 		
 		return result;

@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
+import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
@@ -83,7 +85,10 @@ public class AccessRightsService implements IAccessRightsService {
 			logger.debug("Aucun droit trouvé pour l'agent {}" + idAgent);
 			return result;
 		}
-
+		
+		SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(idAgent, new Date());
+//		result.setSaisieRepos(service.getSigle().toUpperCase().equals("DPM"));
+		result.setSaisieRepos(true);
 		return result;
 	}
 

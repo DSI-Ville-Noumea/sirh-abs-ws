@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AgentJoursFeriesReposDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SaisieReposDto;
 import nc.noumea.mairie.abs.service.ISaisieJoursFeriesReposService;
 
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class JoursFeriesReposController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getListAgentsWithJoursFeriesEnRepos", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<AgentJoursFeriesReposDto> getListAgentsWithJoursFeriesEnRepos(
+	public SaisieReposDto getListAgentsWithJoursFeriesEnRepos(
 			@RequestParam(value = "idAgent", required = true) Integer idAgent,
 			@RequestParam(value = "codeService", required = false) String codeService,
 			@RequestParam(value = "dateDebut", required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDebut,

@@ -14,6 +14,8 @@ public class AccessRightsDto {
 	private boolean visuSolde;
 	private boolean majSolde;
 	private boolean droitAcces;
+	
+	private boolean saisieRepos;
 
 	public boolean isSaisie() {
 		return saisie;
@@ -110,4 +112,13 @@ public class AccessRightsDto {
 	public void setDroitAcces(boolean droitAcces) {
 		this.droitAcces = droitAcces;
 	}
+
+	public boolean isSaisieRepos() {
+		return saisieRepos;
+	}
+
+	public void setSaisieRepos(boolean saisieRepos) {
+		this.saisieRepos = saisieRepos;
+	}
+	
 }
