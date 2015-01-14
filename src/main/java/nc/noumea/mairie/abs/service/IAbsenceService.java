@@ -35,4 +35,10 @@ public interface IAbsenceService {
 	ReturnMessageDto checkRecuperations(Integer convertedIdAgent, Date fromDate, Date toDate);
 
 	ReturnMessageDto checkReposCompensateurs(Integer convertedIdAgent, Date fromDate, Date toDate);
+
+	ReturnMessageDto checkAbsencesSyndicales(Integer convertedIdAgent, Date fromDate, Date toDate);
+
+	ReturnMessageDto checkCongesExceptionnels(Integer convertedIdAgent, Date fromDate, Date toDate);
+
+	ReturnMessageDto checkCongesAnnuels(Integer convertedIdAgent, Date fromDate, Date toDate);
 }

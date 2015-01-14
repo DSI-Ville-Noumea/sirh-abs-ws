@@ -36,5 +36,6 @@ public interface IDemandeRepository {
 
 	Integer getNombreSamediOffertSurAnnee(DemandeCongesAnnuels demande, Integer year);
 
-	List<Demande> listeDemandesAgentVerification(Integer idAgentConcerne, Date fromDate, Date toDate, Integer idRefType);
+	List<Demande> listeDemandesAgentVerification(Integer idAgentConcerne, Date fromDate, Date toDate,
+			Integer idRefGroupeAbsence);
 }

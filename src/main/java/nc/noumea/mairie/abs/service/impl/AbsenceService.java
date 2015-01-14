@@ -97,6 +97,9 @@ public class AbsenceService implements IAbsenceService {
 	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez saisi des primes, absences ou heures supplémentaires sur des périodes où l’agent était absent.";
 	public static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
 	public static final String REPOS_COMP_MSG = "%s : L'agent est en repos compensateur sur cette période.";
+	public static final String ASA_MSG = "%s : L'agent est en absence syndicale sur cette période.";
+	public static final String CONGE_EXCEP_MSG = "%s : L'agent est en congé exceptionnel sur cette période.";
+	public static final String CONGE_ANNUEL_MSG = "%s : L'agent est en congé annuel sur cette période.";
 
 	@Override
 	@Transactional(value = "absTransactionManager")
@@ -1022,7 +1025,7 @@ public class AbsenceService implements IAbsenceService {
 		// on cherche toutes les demandes de recup de l'agent entre les dates
 
 		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
-				toDate, RefTypeAbsenceEnum.RECUP.getValue());
+				toDate, RefTypeGroupeAbsenceEnum.RECUP.getValue());
 		for (Demande d : listeDemande) {
 			DemandeRecup demandeRecup = demandeRepository.getEntity(DemandeRecup.class, d.getIdDemande());
 			// si la demande est dans un bon etat
@@ -1040,18 +1043,85 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	public ReturnMessageDto checkReposCompensateurs(Integer convertedIdAgent, Date fromDate, Date toDate) {
-
 		ReturnMessageDto result = new ReturnMessageDto();
-		// on cherche toutes les demandes de recup de l'agent entre les dates
+		// on cherche toutes les demandes de repos comp de l'agent entre les
+		// dates
 
 		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
-				toDate, RefTypeAbsenceEnum.REPOS_COMP.getValue());
+				toDate, RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
 		for (Demande d : listeDemande) {
-			DemandeReposComp demandeRecup = demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande());
+			DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande());
 			// si la demande est dans un bon etat
-			if (RefEtatEnum.APPROUVEE.equals(demandeRecup.getLatestEtatDemande().getEtat())
-					|| RefEtatEnum.PRISE.equals(demandeRecup.getLatestEtatDemande().getEtat())) {
+			if (RefEtatEnum.APPROUVEE.equals(demandeReposComp.getLatestEtatDemande().getEtat())
+					|| RefEtatEnum.PRISE.equals(demandeReposComp.getLatestEtatDemande().getEtat())) {
 				String msg = String.format(REPOS_COMP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				result.getErrors().add(msg);
+			} else {
+				result.getInfos().add(AVERT_MESSAGE_ABS);
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public ReturnMessageDto checkAbsencesSyndicales(Integer convertedIdAgent, Date fromDate, Date toDate) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		// on cherche toutes les demandes d'ASA de l'agent entre les dates
+
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeGroupeAbsenceEnum.AS.getValue());
+		for (Demande d : listeDemande) {
+			DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, d.getIdDemande());
+			// si la demande est dans un bon etat
+			if (RefEtatEnum.APPROUVEE.equals(demandeAsa.getLatestEtatDemande().getEtat())
+					|| RefEtatEnum.PRISE.equals(demandeAsa.getLatestEtatDemande().getEtat())) {
+				String msg = String.format(ASA_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				result.getErrors().add(msg);
+			} else {
+				result.getInfos().add(AVERT_MESSAGE_ABS);
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public ReturnMessageDto checkCongesExceptionnels(Integer convertedIdAgent, Date fromDate, Date toDate) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		// on cherche toutes les demandes de congés exceptionnels de l'agent
+		// entre les dates
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+		for (Demande d : listeDemande) {
+			DemandeCongesExceptionnels demandeExcep = demandeRepository.getEntity(DemandeCongesExceptionnels.class,
+					d.getIdDemande());
+			// si la demande est dans un bon etat
+			if (RefEtatEnum.APPROUVEE.equals(demandeExcep.getLatestEtatDemande().getEtat())
+					|| RefEtatEnum.PRISE.equals(demandeExcep.getLatestEtatDemande().getEtat())) {
+				String msg = String.format(CONGE_EXCEP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				result.getErrors().add(msg);
+			} else {
+				result.getInfos().add(AVERT_MESSAGE_ABS);
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public ReturnMessageDto checkCongesAnnuels(Integer convertedIdAgent, Date fromDate, Date toDate) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		// on cherche toutes les demandes de congés annuels de l'agent
+		// entre les dates
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		for (Demande d : listeDemande) {
+			DemandeCongesAnnuels demandeAsa = demandeRepository.getEntity(DemandeCongesAnnuels.class, d.getIdDemande());
+			// si la demande est dans un bon etat
+			if (RefEtatEnum.APPROUVEE.equals(demandeAsa.getLatestEtatDemande().getEtat())
+					|| RefEtatEnum.PRISE.equals(demandeAsa.getLatestEtatDemande().getEtat())) {
+				String msg = String.format(CONGE_ANNUEL_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
 				result.getErrors().add(msg);
 			} else {
 				result.getInfos().add(AVERT_MESSAGE_ABS);
