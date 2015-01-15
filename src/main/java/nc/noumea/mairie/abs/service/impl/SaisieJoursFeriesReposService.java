@@ -132,7 +132,8 @@ public class SaisieJoursFeriesReposService implements ISaisieJoursFeriesReposSer
 					}
 				}
 				// si non on le cree
-				if(!isExist) {
+				if(!isExist
+						&& jourDto.isCheck()) {
 					AgentJoursFeriesRepos agentJourRepos = new AgentJoursFeriesRepos();
 						agentJourRepos.setDateModification(new Date());
 						agentJourRepos.setIdAgent(dto.getAgent().getIdAgent());

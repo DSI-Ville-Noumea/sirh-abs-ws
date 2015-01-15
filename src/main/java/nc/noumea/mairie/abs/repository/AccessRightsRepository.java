@@ -147,12 +147,12 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService) {
 
 		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
-				codeService == null ? "getListOfAgentsToInputOrApproveWithoutProfil" : "getListOfAgentsToInputOrApproveByServiceWithoutProfil",
+				codeService == null || "".equals(codeService) ? "getListOfAgentsToInputOrApproveWithoutProfil" : "getListOfAgentsToInputOrApproveByServiceWithoutProfil",
 				DroitsAgent.class);
 
 		q.setParameter("idAgent", idAgent);
 
-		if (codeService != null)
+		if (codeService != null && !"".equals(codeService))
 			q.setParameter("codeService", codeService);
 
 		return q.getResultList();

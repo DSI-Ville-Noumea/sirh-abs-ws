@@ -440,9 +440,11 @@ public class SaisieJoursFeriesReposServiceTest {
 		JoursFeriesSaisiesReposDto jourRepos = new JoursFeriesSaisiesReposDto();
 		jourRepos.setJourFerie(new DateTime(2014,12,25,0,0,0).toDate());
 		jourRepos.setCheck(true);
+		
 		JoursFeriesSaisiesReposDto jourRepos2 = new JoursFeriesSaisiesReposDto();
 		jourRepos2.setJourFerie(new DateTime(2014,12,26,0,0,0).toDate());
 		jourRepos2.setCheck(true);
+		
 		joursFeriesEnRepos.add(jourRepos);
 		joursFeriesEnRepos.add(jourRepos2);
 		
@@ -459,7 +461,12 @@ public class SaisieJoursFeriesReposServiceTest {
 		jourRepos3.setJourFerie(new DateTime(2014,12,25,0,0,0).toDate());
 		jourRepos3.setCheck(true);
 		
+		JoursFeriesSaisiesReposDto jourRepos4 = new JoursFeriesSaisiesReposDto();
+		jourRepos4.setJourFerie(new DateTime(2014,12,26,0,0,0).toDate());
+		jourRepos4.setCheck(false);
+		
 		joursFeriesEnRepos2.add(jourRepos3);
+		joursFeriesEnRepos2.add(jourRepos4);
 		
 		AgentJoursFeriesReposDto dto2 = new AgentJoursFeriesReposDto();
 		dto2.setAgent(agent2);

@@ -87,8 +87,8 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		
 		SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(idAgent, new Date());
-//		result.setSaisieRepos(service.getSigle().toUpperCase().equals("DPM"));
-		result.setSaisieRepos(true);
+		result.setSaisieRepos(service.getSigle().toUpperCase().equals("DPM"));
+		
 		return result;
 	}
 
