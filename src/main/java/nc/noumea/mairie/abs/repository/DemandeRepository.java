@@ -274,7 +274,7 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("where 1=1 ");
 		sb.append("and d.idAgent = :idAgentConcerne ");
 		sb.append("and d.type.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");
-		sb.append("and( d.dateDebut between :fromDate and :toDate or d.dateFin between :fromDate and :toDate)");
+		sb.append("and((:fromDate between  d.dateDebut and d.dateFin or :toDate between d.dateDebut and d.dateFin) or (d.dateDebut between :fromDate and :toDate or d.dateFin between :fromDate and :toDate))");
 		sb.append("order by d.idDemande desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);

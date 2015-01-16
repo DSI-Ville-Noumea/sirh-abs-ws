@@ -29,6 +29,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1295,11 +1296,11 @@ public class DemandeRepositoryTest {
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 		absEntityManager.persist(groupe);
-		
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
 		absEntityManager.persist(type);
-		
+
 		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
 		d.setIdAgent(9005138);
 		d.setType(type);
@@ -1325,11 +1326,11 @@ public class DemandeRepositoryTest {
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 		absEntityManager.persist(groupe);
-		
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
 		absEntityManager.persist(type);
-		
+
 		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
 		d.setIdAgent(9005138);
 		d.setType(type);
@@ -1343,6 +1344,74 @@ public class DemandeRepositoryTest {
 
 		// Then
 		assertEquals(1, (int) result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesAgentVerification_Return0() throws ParseException {
+		// Given
+		Integer idAgent = 9005138;
+		Date fromDate = new DateTime(2014, 1, 1, 0, 0).toDate();
+		Date toDate = new DateTime(2014, 1, 2, 0, 0).toDate();
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		absEntityManager.persist(groupe);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		absEntityManager.persist(type);
+
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(idAgent);
+		d.setType(type);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(sdf.parse("16/05/2013"));
+		d.setNbSamediOffert(1.0);
+		absEntityManager.persist(d);
+
+		// When
+		List<Demande> result = repository.listeDemandesAgentVerification(idAgent, fromDate, toDate,
+				RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		// Then
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesAgentVerification_Return1() throws ParseException {
+		// Given
+		Integer idAgent = 9005138;
+		Date fromDate = new DateTime(2014, 5, 15, 2, 0).toDate();
+		Date toDate = new DateTime(2014, 5, 15, 4, 0).toDate();
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		absEntityManager.persist(groupe);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		absEntityManager.persist(type);
+
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(idAgent);
+		d.setType(type);
+		d.setDateDebut(new DateTime(2014, 5, 15, 0, 0).toDate());
+		d.setDateFin(new DateTime(2014, 5, 16, 0, 0).toDate());
+		d.setNbSamediOffert(1.0);
+		absEntityManager.persist(d);
+
+		// When
+		List<Demande> result = repository.listeDemandesAgentVerification(idAgent, fromDate, toDate,
+				RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		// Then
+		assertEquals(1, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

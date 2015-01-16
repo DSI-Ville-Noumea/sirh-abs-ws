@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
@@ -130,6 +131,37 @@ public class OrganisationSyndicaleServiceTest {
 
 		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives(9005138,
 				RefTypeAbsenceEnum.ASA_A53.getValue());
+
+		assertEquals(1, result.size());
+		assertEquals(org.getLibelle(), result.get(0).getLibelle());
+		assertEquals(org.getSigle(), result.get(0).getSigle());
+		assertEquals(1, (int) result.get(0).getIdOrganisation());
+		assertEquals(org.isActif(), result.get(0).isActif());
+	}
+
+	@Test
+	public void getListOrganisationSyndicaleActives_Return1List_A52() {
+		// Given
+		OrganisationSyndicale org = new OrganisationSyndicale();
+		org.setIdOrganisationSyndicale(1);
+		org.setLibelle("lib");
+		org.setSigle("sigle");
+		org.setActif(true);
+
+		AgentOrganisationSyndicale agent = new AgentOrganisationSyndicale();
+		agent.setOrganisationSyndicale(org);
+
+		List<AgentOrganisationSyndicale> listAgent = new ArrayList<AgentOrganisationSyndicale>();
+		listAgent.add(agent);
+
+		IOrganisationSyndicaleRepository organisationRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationRepository.getAgentOrganisationActif(9005138)).thenReturn(listAgent);
+
+		OrganisationSyndicaleService service = new OrganisationSyndicaleService();
+		ReflectionTestUtils.setField(service, "organisationRepository", organisationRepository);
+
+		List<OrganisationSyndicaleDto> result = service.getListOrganisationSyndicaleActives(9005138,
+				RefTypeAbsenceEnum.ASA_A52.getValue());
 
 		assertEquals(1, result.size());
 		assertEquals(org.getLibelle(), result.get(0).getLibelle());
