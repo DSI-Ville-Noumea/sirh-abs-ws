@@ -28,6 +28,7 @@ import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
+import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.AccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -63,8 +64,12 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(droits);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(new SirhWsServiceDto());
+		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		AccessRightsDto result = service.getAgentAccessRights(idAgent);
@@ -82,6 +87,7 @@ public class AccessRightsServiceTest {
 		assertFalse(result.isVisuSolde());
 		assertFalse(result.isMajSolde());
 		assertFalse(result.isDroitAcces());
+		assertFalse(result.isSaisieRepos());
 	}
 
 	@Test
@@ -114,8 +120,12 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(da);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(new SirhWsServiceDto());
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		AccessRightsDto result = service.getAgentAccessRights(idAgent);
@@ -133,6 +143,7 @@ public class AccessRightsServiceTest {
 		assertTrue(result.isVisuSolde());
 		assertTrue(result.isMajSolde());
 		assertFalse(result.isDroitAcces());
+		assertFalse(result.isSaisieRepos());
 	}
 
 	@Test
@@ -183,8 +194,12 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(da);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(new SirhWsServiceDto());
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		AccessRightsDto result = service.getAgentAccessRights(idAgent);
@@ -202,6 +217,125 @@ public class AccessRightsServiceTest {
 		assertTrue(result.isVisuSolde());
 		assertTrue(result.isMajSolde());
 		assertFalse(result.isDroitAcces());
+		assertFalse(result.isSaisieRepos());
+	}
+
+	@Test
+	public void getAgentAccessRights_AgentHasRightSaisieRepos_AgentDPM() {
+
+		// Given
+		Integer idAgent = 906543;
+
+		Profil pr = new Profil();
+		pr.setSaisie(true);
+		pr.setModification(true);
+		pr.setSuppression(true);
+		pr.setImpression(true);
+		pr.setViserVisu(false);
+		pr.setViserModif(false);
+		pr.setApprouverVisu(false);
+		pr.setApprouverModif(false);
+		pr.setAnnuler(true);
+		pr.setVisuSolde(true);
+		pr.setMajSolde(true);
+		pr.setDroitAcces(false);
+
+		DroitProfil dpr = new DroitProfil();
+		dpr.setProfil(pr);
+
+		Droit da = new Droit();
+		da.setIdAgent(idAgent);
+		da.getDroitProfils().add(dpr);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(da);
+
+		SirhWsServiceDto serviceDto = new SirhWsServiceDto();
+		serviceDto.setSigle("DPM");
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(serviceDto);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		// When
+		AccessRightsDto result = service.getAgentAccessRights(idAgent);
+
+		// Then
+		assertTrue(result.isSaisie());
+		assertTrue(result.isModification());
+		assertTrue(result.isSuppression());
+		assertTrue(result.isImpression());
+		assertFalse(result.isViserVisu());
+		assertFalse(result.isViserModif());
+		assertFalse(result.isApprouverVisu());
+		assertFalse(result.isApprouverModif());
+		assertTrue(result.isAnnuler());
+		assertTrue(result.isVisuSolde());
+		assertTrue(result.isMajSolde());
+		assertFalse(result.isDroitAcces());
+		assertTrue(result.isSaisieRepos());
+	}
+
+	@Test
+	public void getAgentAccessRights_AgentHasNotRightSaisieRepos_AgentDPM_noDroitMAJCompteur() {
+
+		// Given
+		Integer idAgent = 906543;
+
+		Profil pr = new Profil();
+		pr.setSaisie(true);
+		pr.setModification(true);
+		pr.setSuppression(true);
+		pr.setImpression(true);
+		pr.setViserVisu(false);
+		pr.setViserModif(false);
+		pr.setApprouverVisu(false);
+		pr.setApprouverModif(false);
+		pr.setAnnuler(true);
+		pr.setVisuSolde(true);
+		pr.setMajSolde(false);
+		pr.setDroitAcces(false);
+
+		DroitProfil dpr = new DroitProfil();
+		dpr.setProfil(pr);
+
+		Droit da = new Droit();
+		da.setIdAgent(idAgent);
+		da.getDroitProfils().add(dpr);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(da);
+
+		SirhWsServiceDto serviceDto = new SirhWsServiceDto();
+		serviceDto.setSigle("DPM");
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(serviceDto);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		// When
+		AccessRightsDto result = service.getAgentAccessRights(idAgent);
+
+		// Then
+		assertTrue(result.isSaisie());
+		assertTrue(result.isModification());
+		assertTrue(result.isSuppression());
+		assertTrue(result.isImpression());
+		assertFalse(result.isViserVisu());
+		assertFalse(result.isViserModif());
+		assertFalse(result.isApprouverVisu());
+		assertFalse(result.isApprouverModif());
+		assertTrue(result.isAnnuler());
+		assertTrue(result.isVisuSolde());
+		assertFalse(result.isMajSolde());
+		assertFalse(result.isDroitAcces());
+		assertFalse(result.isSaisieRepos());
 	}
 
 	@Test

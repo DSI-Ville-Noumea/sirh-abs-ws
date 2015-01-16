@@ -79,15 +79,18 @@ public class AccessRightsService implements IAccessRightsService {
 				result.setVisuSolde(result.isVisuSolde() || pr.isVisuSolde());
 				result.setMajSolde(result.isMajSolde() || pr.isMajSolde());
 				result.setDroitAcces(result.isDroitAcces() || pr.isDroitAcces());
-
 			}
 		} catch (NoResultException e) {
 			logger.debug("Aucun droit trouvé pour l'agent {}" + idAgent);
 			return result;
 		}
 		
+		// seuls les operateurs de la DPM peuvent saisir les jours de repos
+		// seuls les operateurs peuvent mettre a jour les compteurs (solde)
 		SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(idAgent, new Date());
-		result.setSaisieRepos(service.getSigle().toUpperCase().equals("DPM"));
+		result.setSaisieRepos(null != service.getSigle() 
+				&& service.getSigle().toUpperCase().equals("DPM")
+				&& result.isMajSolde());
 		
 		return result;
 	}

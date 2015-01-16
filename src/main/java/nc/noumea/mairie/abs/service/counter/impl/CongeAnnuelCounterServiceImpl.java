@@ -7,18 +7,20 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentJoursFeriesRepos;
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
-import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.IAgentJoursFeriesReposRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
@@ -36,6 +38,9 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 	@Autowired
 	private ICongesAnnuelsRepository congesAnnuelsRepository;
+	
+	@Autowired
+	private IAgentJoursFeriesReposRepository agentJoursFeriesReposRepository;
 	
 	protected static final String BASE_CONGES_ALIM_AUTO_INEXISTANT = "La base congés [%d] n'existe pas dans ABS_REF_ALIM_CONGE_ANNUEL.";
 	protected static final String PA_INEXISTANT = "Pas de PA active pour l'agent : [%d].";
@@ -398,15 +403,15 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		// on calcule le nombre de jours conges à ajouter sur le mois
 		for(InfosAlimAutoCongesAnnuelsDto PA : listPA) {
 			if(PA.isDroitConges()) {
-				RefAlimCongeAnnuel refAlimCongeAnnuel = typeAbsenceRepository.getEntity(RefAlimCongeAnnuel.class, PA.getIdBaseCongeAbsence());
+				RefTypeSaisiCongeAnnuel typeCongeAnnuel = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, PA.getIdBaseCongeAbsence());
 				
-				if(null == refAlimCongeAnnuel) {
+				if(null == typeCongeAnnuel) {
 					logger.warn(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence());
 					srm.getErrors().add(String.format(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence()));
 					return srm;
 				}
 				
-				Double quotaMois = refAlimCongeAnnuel.getQuotaCongesByMois(new DateTime(dateDebut).getMonthOfYear());
+				Double quotaMois = typeCongeAnnuel.getRefAlimCongeAnnuel().getQuotaCongesByMois(new DateTime(dateDebut).getMonthOfYear());
 				Double nombreJoursPA = helperService.calculNombreJours(PA.getDateDebut(), PA.getDateFin());
 				
 				Calendar calendar = GregorianCalendar.getInstance();
@@ -414,6 +419,13 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 				Integer dernierJourMois = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 				
 				joursAAjouter += getNombreJoursDonnantDroitsAConges(dernierJourMois, quotaMois, nombreJoursPA);
+				
+				// cas partiuclier de la base C :
+				// pour la base C, on rajoute le quota mensuel – le nombre de jours fériés/chômés cochés (= en repos) sur le mois
+				if(null != typeCongeAnnuel.getCodeBaseHoraireAbsence()
+						&& "C".equals(typeCongeAnnuel.getCodeBaseHoraireAbsence().trim())) {
+					joursAAjouter -= getJoursReposFeriesbyAgent(idAgent, dateDebut, dateFin);
+				}
 			}
 		}
 		
@@ -431,6 +443,18 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		arc.setLastModification(dernierModif);
 		
 		return srm;
+	}
+	
+	protected Integer getJoursReposFeriesbyAgent(Integer idAgent, Date dateDebut, Date dateFin) {
+		
+		List<AgentJoursFeriesRepos> listJoursReposAgent = agentJoursFeriesReposRepository.getAgentJoursFeriesReposByIdAgentAndPeriode(idAgent, dateDebut, dateFin);
+		
+		Integer nombreJoursRepos = 0;
+		if(null != listJoursReposAgent
+				&& 0 < listJoursReposAgent.size()) {
+			nombreJoursRepos = listJoursReposAgent.size();
+		}
+		return nombreJoursRepos;
 	}
 	
 	protected Double getNombreJoursDonnantDroitsAConges(Integer dernierJourMois, Double quotaMois, Double nombreJoursPA) {
