@@ -85,8 +85,7 @@ public class Demande {
 	}
 
 	@Transient
-	public static Demande mappingDemandeDtoToDemande(DemandeDto demandeDto, Demande demande, Integer idAgent,
-			Date dateJour) {
+	public static Demande mappingDemandeDtoToDemande(DemandeDto demandeDto, Demande demande) {
 
 		// on mappe le DTO dans la Demande generique
 		demande.setDateDebut(demandeDto.getDateDebut());
@@ -96,12 +95,6 @@ public class Demande {
 			rta.setIdRefTypeAbsence(demandeDto.getIdTypeDemande());
 			demande.setType(rta);
 		}
-
-		EtatDemande etatDemande = new EtatDemande();
-		etatDemande.setDate(dateJour);
-		etatDemande.setIdAgent(idAgent);
-		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeDto.getIdRefEtat()));
-		demande.addEtatDemande(etatDemande);
 
 		return demande;
 	}

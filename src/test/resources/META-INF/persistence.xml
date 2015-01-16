@@ -42,6 +42,11 @@
       	<class>nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale</class>
       	<class>nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel</class>
       	<class>nc.noumea.mairie.abs.domain.AgentJoursFeriesRepos</class>
+      	<class>nc.noumea.mairie.abs.domain.EtatDemandeAsa</class>
+      	<class>nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels</class>
+      	<class>nc.noumea.mairie.abs.domain.EtatDemandeCongesExceptionnels</class>
+      	<class>nc.noumea.mairie.abs.domain.EtatDemandeRecup</class>
+      	<class>nc.noumea.mairie.abs.domain.EtatDemandeReposComp</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>

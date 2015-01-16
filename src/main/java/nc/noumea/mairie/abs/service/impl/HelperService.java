@@ -83,7 +83,8 @@ public class HelperService {
 		}
 		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
 			DateTime recupDateFin = new DateTime(dateDeb);
-			return recupDateFin.plusMinutes(duree.intValue()).toDate();
+			return recupDateFin.plusMinutes(duree.intValue() * 60).toDate();
+
 		}
 		if (typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin()) {
 			Calendar cal = Calendar.getInstance();
@@ -512,16 +513,18 @@ public class HelperService {
 
 		return compteur;
 	}
-	
+
 	public Date getFirstMondayOfCurrentMonth() {
 		DateTime date = new DateTime().withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-		
-		return date.dayOfMonth()       // Accès à la propriété 'Jour du Mois'
-		 .withMinimumValue() // prendre sa valeur minimum
-		 .plusDays(6)        // Ajouter 6 jours
-		 .dayOfWeek()        // Accès à la propriété 'Jour de la Semaine'
-		 .setCopy(DateTimeConstants.MONDAY) // Le positionner à lundi (arrondi à la valeur inférieure)
-		 .toDate();
+
+		return date.dayOfMonth() // Accès à la propriété 'Jour du Mois'
+				.withMinimumValue() // prendre sa valeur minimum
+				.plusDays(6) // Ajouter 6 jours
+				.dayOfWeek() // Accès à la propriété 'Jour de la Semaine'
+				.setCopy(DateTimeConstants.MONDAY) // Le positionner à lundi
+													// (arrondi à la valeur
+													// inférieure)
+				.toDate();
 	}
 
 }

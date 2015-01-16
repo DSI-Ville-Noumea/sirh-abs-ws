@@ -9,7 +9,13 @@ import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.EtatDemandeAsa;
+import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.EtatDemandeCongesExceptionnels;
+import nc.noumea.mairie.abs.domain.EtatDemandeRecup;
+import nc.noumea.mairie.abs.domain.EtatDemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 
@@ -189,11 +195,58 @@ public class DemandeDto {
 		}
 	}
 
-	public void updateEtat(EtatDemande etat, AgentWithServiceDto agentDto) {
+	public void updateEtat(EtatDemande etat, AgentWithServiceDto agentDto, RefGroupeAbsence groupe) {
 		idRefEtat = etat.getEtat().getCodeEtat();
 		dateSaisie = etat.getDate();
 		motif = etat.getMotif();
 		agentEtat = agentDto;
+		dateDebut = etat.getDateDebut();
+		dateFin = etat.getDateFin();
+
+		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(groupe.getIdRefGroupeAbsence())) {
+			case REPOS_COMP:
+				Integer dureeAnneeReposComp = ((EtatDemandeReposComp) etat).getDuree() == null ? 0
+						: ((EtatDemandeReposComp) etat).getDuree();
+				Integer dureeAnneePrecReposComp = ((EtatDemandeReposComp) etat).getDureeAnneeN1() == null ? 0
+						: ((EtatDemandeReposComp) etat).getDureeAnneeN1();
+				this.duree = (double) (dureeAnneeReposComp + dureeAnneePrecReposComp);
+				break;
+			case RECUP:
+				this.duree = (double) (((EtatDemandeRecup) etat).getDuree());
+				break;
+			case AS:
+				this.duree = ((EtatDemandeAsa) etat).getDuree();
+				this.isDateDebutAM = ((EtatDemandeAsa) etat).isDateDebutAM();
+				this.isDateDebutPM = ((EtatDemandeAsa) etat).isDateDebutPM();
+				this.isDateFinAM = ((EtatDemandeAsa) etat).isDateFinAM();
+				this.isDateFinPM = ((EtatDemandeAsa) etat).isDateFinPM();
+				if (null != ((EtatDemandeAsa) etat).getOrganisationSyndicale())
+					this.organisationSyndicale = new OrganisationSyndicaleDto(
+							((EtatDemandeAsa) etat).getOrganisationSyndicale());
+				break;
+			case CONGES_EXCEP:
+				this.duree = ((EtatDemandeCongesExceptionnels) etat).getDuree();
+				this.isDateDebutAM = ((EtatDemandeCongesExceptionnels) etat).isDateDebutAM();
+				this.isDateDebutPM = ((EtatDemandeCongesExceptionnels) etat).isDateDebutPM();
+				this.isDateFinAM = ((EtatDemandeCongesExceptionnels) etat).isDateFinAM();
+				this.isDateFinPM = ((EtatDemandeCongesExceptionnels) etat).isDateFinPM();
+				this.commentaire = ((EtatDemandeCongesExceptionnels) etat).getCommentaire();
+				break;
+			case CONGES_ANNUELS:
+				Double dureeAnneeCongeAnnuel = ((EtatDemandeCongesAnnuels) etat).getDuree() == null ? 0
+						: ((EtatDemandeCongesAnnuels) etat).getDuree();
+				Double dureeAnneePrecCongeAnnuel = ((EtatDemandeCongesAnnuels) etat).getDureeAnneeN1() == null ? 0
+						: ((EtatDemandeCongesAnnuels) etat).getDureeAnneeN1();
+				this.duree = (double) (dureeAnneeCongeAnnuel + dureeAnneePrecCongeAnnuel);
+				this.isDateDebutAM = ((EtatDemandeCongesAnnuels) etat).isDateDebutAM();
+				this.isDateDebutPM = ((EtatDemandeCongesAnnuels) etat).isDateDebutPM();
+				this.isDateFinAM = ((EtatDemandeCongesAnnuels) etat).isDateFinAM();
+				this.isDateFinPM = ((EtatDemandeCongesAnnuels) etat).isDateFinPM();
+				this.commentaire = ((EtatDemandeCongesAnnuels) etat).getCommentaire();
+				break;
+			default:
+				break;
+		}
 	}
 
 	public Integer getIdDemande() {

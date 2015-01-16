@@ -13,6 +13,7 @@ import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.EtatDemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
@@ -41,10 +42,11 @@ public class DemandeDtoTest {
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
 		type.setGroupe(groupe);
 
-		EtatDemande etatDemande = new EtatDemande();
+		EtatDemandeAsa etatDemande = new EtatDemandeAsa();
 		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
 		etatDemande.setDate(dateDemande);
 		etatDemande.setIdAgent(9005131);
+		etatDemande.setDateFin(dateDemande);
 		AgentWithServiceDto agentEtat = new AgentWithServiceDto();
 		agentEtat.setIdAgent(9005131);
 
@@ -57,7 +59,7 @@ public class DemandeDtoTest {
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
-		result.updateEtat(etatDemande, agentEtat);
+		result.updateEtat(etatDemande, agentEtat,d.getType().getGroupe());
 
 		// Then
 

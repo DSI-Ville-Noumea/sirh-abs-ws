@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
-import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.EtatDemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
@@ -32,15 +32,17 @@ public class EditionDemandeDtoTest {
 		agDto.setStatut("F");
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-			groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
-		
-		RefTypeAbsence type = new RefTypeAbsence();
-			type.setIdRefTypeAbsence(2);
-			type.setGroupe(groupe);
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
 
-		EtatDemande etatDemande = new EtatDemande();
-			etatDemande.setEtat(RefEtatEnum.APPROUVEE);
-			etatDemande.setDate(dateDemande);
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(2);
+		type.setGroupe(groupe);
+
+		EtatDemandeReposComp etatDemande = new EtatDemandeReposComp();
+		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemande.setDate(dateDemande);
+		etatDemande.setDuree(52);
+		etatDemande.setDureeAnneeN1(null);
 
 		DemandeReposComp d = new DemandeReposComp();
 		d.setIdDemande(1);
@@ -51,7 +53,7 @@ public class EditionDemandeDtoTest {
 		d.getEtatsDemande().add(etatDemande);
 
 		DemandeDto demandeDto = new DemandeDto(d, agDto);
-		demandeDto.updateEtat(d.getLatestEtatDemande(),new AgentWithServiceDto());
+		demandeDto.updateEtat(d.getLatestEtatDemande(), new AgentWithServiceDto(), d.getType().getGroupe());
 
 		SoldeDto soldeDto = new SoldeDto();
 		soldeDto.setSoldeCongeAnnee((double) 12);

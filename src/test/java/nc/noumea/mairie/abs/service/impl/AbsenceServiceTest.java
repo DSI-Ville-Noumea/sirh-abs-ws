@@ -25,6 +25,11 @@ import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.EtatDemandeAsa;
+import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.EtatDemandeCongesExceptionnels;
+import nc.noumea.mairie.abs.domain.EtatDemandeRecup;
+import nc.noumea.mairie.abs.domain.EtatDemandeReposComp;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -164,18 +169,21 @@ public class AbsenceServiceTest {
 
 		DemandeRecup dr = new DemandeRecup();
 
-		EtatDemande ed = new EtatDemande();
+		EtatDemandeRecup ed = new EtatDemandeRecup();
 		ed.setDate(dateMaj);
 		ed.setDemande((Demande) dr);
 		ed.setEtat(RefEtatEnum.PROVISOIRE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		ed.setDuree(5);
+		EtatDemandeRecup ed2 = new EtatDemandeRecup();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.SAISIE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
+		ed2.setDuree(10);
+		ed2.setDateDebut(dateDebut);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -239,18 +247,20 @@ public class AbsenceServiceTest {
 
 		DemandeRecup dr = new DemandeRecup();
 
-		EtatDemande ed = new EtatDemande();
+		EtatDemandeRecup ed = new EtatDemandeRecup();
 		ed.setDate(dateMaj);
 		ed.setDemande((Demande) dr);
 		ed.setEtat(RefEtatEnum.SAISIE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		EtatDemandeRecup ed2 = new EtatDemandeRecup();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.APPROUVEE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
+		ed2.setDuree(10);
+		ed2.setDateDebut(dateDebut);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -945,11 +955,15 @@ public class AbsenceServiceTest {
 		dto.setMotif("motif");
 
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setTypeSaisi(typeSaisi);
+		type.setGroupe(groupe);
 
-		Demande demande = Mockito.spy(new Demande());
+		DemandeRecup demande = Mockito.spy(new DemandeRecup());
 		demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -1611,10 +1625,10 @@ public class AbsenceServiceTest {
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(2);
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		type.setGroupe(groupe);
 
 		DemandeReposComp demande = Mockito.spy(new DemandeReposComp());
@@ -2773,19 +2787,22 @@ public class AbsenceServiceTest {
 
 		DemandeReposComp dr = new DemandeReposComp();
 
-		EtatDemande ed = new EtatDemande();
+		EtatDemandeReposComp ed = new EtatDemandeReposComp();
 		ed.setDate(dateMaj);
 		ed.setDemande((Demande) dr);
 		ed.setEtat(RefEtatEnum.PROVISOIRE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		EtatDemandeReposComp ed2 = new EtatDemandeReposComp();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.SAISIE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
 		ed2.setMotif("motif");
+		ed2.setDuree(10);
+		ed2.setDureeAnneeN1(10);
+		ed2.setDateDebut(dateDebut);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -2851,19 +2868,22 @@ public class AbsenceServiceTest {
 
 		DemandeReposComp dr = new DemandeReposComp();
 
-		EtatDemande ed = new EtatDemande();
+		EtatDemandeReposComp ed = new EtatDemandeReposComp();
 		ed.setDate(dateMaj);
 		ed.setDemande((Demande) dr);
 		ed.setEtat(RefEtatEnum.SAISIE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		EtatDemandeReposComp ed2 = new EtatDemandeReposComp();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.APPROUVEE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
 		ed2.setMotif("motif");
+		ed2.setDuree(10);
+		ed2.setDureeAnneeN1(10);
+		ed2.setDateDebut(dateDebut);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -2929,19 +2949,22 @@ public class AbsenceServiceTest {
 
 		DemandeCongesExceptionnels dr = new DemandeCongesExceptionnels();
 
-		EtatDemande ed = new EtatDemande();
+		EtatDemandeCongesExceptionnels ed = new EtatDemandeCongesExceptionnels();
 		ed.setDate(dateMaj);
 		ed.setDemande((Demande) dr);
 		ed.setEtat(RefEtatEnum.PROVISOIRE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		ed.setDuree(20.0);
+		EtatDemandeCongesExceptionnels ed2 = new EtatDemandeCongesExceptionnels();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.SAISIE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
 		ed2.setMotif("motif");
+		ed2.setDuree(10.0);
+		ed2.setDateDebut(dateDebut);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -3006,19 +3029,22 @@ public class AbsenceServiceTest {
 
 		DemandeCongesExceptionnels dr = new DemandeCongesExceptionnels();
 
-		EtatDemande ed = new EtatDemande();
+		EtatDemandeCongesExceptionnels ed = new EtatDemandeCongesExceptionnels();
 		ed.setDate(dateMaj);
 		ed.setDemande((Demande) dr);
 		ed.setEtat(RefEtatEnum.SAISIE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		ed.setDuree(2.0);
+		EtatDemandeCongesExceptionnels ed2 = new EtatDemandeCongesExceptionnels();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.APPROUVEE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
 		ed2.setMotif("motif");
+		ed2.setDuree(10.0);
+		ed2.setDateDebut(dateDebut);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -3099,10 +3125,16 @@ public class AbsenceServiceTest {
 		droitDroitsAgent.add(droitDroitAgent);
 		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeReposComp.class, dto.getIdDemande())).thenReturn(
 				new DemandeReposComp());
 		Mockito.doAnswer(new Answer<Object>() {
@@ -3199,7 +3231,13 @@ public class AbsenceServiceTest {
 		droitDroitsAgent.add(droitDroitAgent);
 		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeReposComp.class, dto.getIdDemande())).thenReturn(
 				new DemandeReposComp());
 		Mockito.doAnswer(new Answer<Object>() {
@@ -3424,7 +3462,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setChkDateFin(true);
 		typeSaisi.setSaisieKiosque(false);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesExceptionnels.class, dto.getIdDemande())).thenReturn(
 				new DemandeCongesExceptionnels());
 		Mockito.doAnswer(new Answer<Object>() {
@@ -3635,8 +3679,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setDuree(true);
 		typeSaisi.setChkDateDebut(true);
 		typeSaisi.setChkDateFin(true);
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -3755,7 +3804,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setChkDateDebut(false);
 		typeSaisi.setChkDateFin(false);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -3952,7 +4007,13 @@ public class AbsenceServiceTest {
 		droitDroitsAgent.add(droitDroitAgent);
 		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, dto.getIdDemande()))
 				.thenReturn(new DemandeRecup());
 		Mockito.doAnswer(new Answer<Object>() {
@@ -4052,10 +4113,16 @@ public class AbsenceServiceTest {
 		droitDroitsAgent.add(droitDroitAgent);
 		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(Mockito.anyInt())).thenReturn(result);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, dto.getIdDemande()))
 				.thenReturn(new DemandeRecup());
 		Mockito.doAnswer(new Answer<Object>() {
@@ -4280,18 +4347,20 @@ public class AbsenceServiceTest {
 
 		DemandeRecup dr = new DemandeRecup();
 
-		EtatDemande ed = new EtatDemande();
+		EtatDemandeRecup ed = new EtatDemandeRecup();
 		ed.setDate(dateMaj);
 		ed.setDemande((Demande) dr);
 		ed.setEtat(RefEtatEnum.PROVISOIRE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		ed.setDuree(30);
+		EtatDemandeRecup ed2 = new EtatDemandeRecup();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.SAISIE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
+		ed2.setDuree(10);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -4830,11 +4899,15 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		dto.setIdDemande(1);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
+		type.setGroupe(groupe);
 
-		Demande demande = Mockito.spy(new Demande());
+		DemandeRecup demande = Mockito.spy(new DemandeRecup());
 		demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -4878,11 +4951,15 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		dto.setIdDemande(1);
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		type.setGroupe(groupe);
 
-		Demande demande = Mockito.spy(new Demande());
+		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
 		demande.setType(type);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -5095,16 +5172,17 @@ public class AbsenceServiceTest {
 		dto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		dto.setIdDemande(1);
 
-		EtatDemande etatDemande = new EtatDemande();
+		EtatDemandeReposComp etatDemande = new EtatDemandeReposComp();
 		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemande.setDuree(10);
 		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
 		listEtat.add(etatDemande);
 
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
-		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
 
 		RefTypeAbsence type = new RefTypeAbsence();
-		type.setIdRefTypeAbsence(2);
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.REPOS_COMP.getValue());
 		type.setGroupe(groupe);
 
 		DemandeReposComp demande = Mockito.spy(new DemandeReposComp());
@@ -5731,7 +5809,13 @@ public class AbsenceServiceTest {
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 		typeSaisi.setDuree(true);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5841,7 +5925,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setChkDateDebut(true);
 		typeSaisi.setChkDateFin(false);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -5959,7 +6049,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setChkDateDebut(false);
 		typeSaisi.setChkDateFin(false);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -6078,7 +6174,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setChkDateDebut(true);
 		typeSaisi.setChkDateFin(true);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -6200,7 +6302,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setChkDateDebut(false);
 		typeSaisi.setChkDateFin(false);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -6319,7 +6427,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setChkDateDebut(true);
 		typeSaisi.setChkDateFin(true);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -6441,7 +6555,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setChkDateDebut(true);
 		typeSaisi.setChkDateFin(true);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -6560,7 +6680,13 @@ public class AbsenceServiceTest {
 		typeSaisi.setChkDateDebut(true);
 		typeSaisi.setChkDateFin(true);
 
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(
+				demandeRepository.getEntity(RefGroupeAbsence.class, dto.getGroupeAbsence().getIdRefGroupeAbsence()))
+				.thenReturn(groupe);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, dto.getIdDemande())).thenReturn(new DemandeAsa());
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -7713,13 +7839,15 @@ public class AbsenceServiceTest {
 		ed.setEtat(RefEtatEnum.PROVISOIRE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		EtatDemandeAsa ed2 = new EtatDemandeAsa();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.SAISIE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
 		ed2.setMotif("motif");
+		ed2.setDuree(20.0);
+		ed2.setDateDebut(dateDebut);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -8900,19 +9028,21 @@ public class AbsenceServiceTest {
 
 		DemandeCongesAnnuels dr = new DemandeCongesAnnuels();
 
-		EtatDemande ed = new EtatDemande();
+		EtatDemandeCongesAnnuels ed = new EtatDemandeCongesAnnuels();
 		ed.setDate(dateMaj);
 		ed.setDemande((Demande) dr);
 		ed.setEtat(RefEtatEnum.PROVISOIRE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		EtatDemandeCongesAnnuels ed2 = new EtatDemandeCongesAnnuels();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.SAISIE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
 		ed2.setMotif("motif");
+		ed2.setDuree(10.0);
+		ed2.setDateDebut(dateDebut);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -8977,19 +9107,21 @@ public class AbsenceServiceTest {
 
 		DemandeCongesAnnuels dr = new DemandeCongesAnnuels();
 
-		EtatDemande ed = new EtatDemande();
+		EtatDemandeCongesAnnuels ed = new EtatDemandeCongesAnnuels();
 		ed.setDate(dateMaj);
 		ed.setDemande((Demande) dr);
 		ed.setEtat(RefEtatEnum.SAISIE);
 		ed.setIdAgent(9005138);
 		ed.setIdEtatDemande(1);
-		EtatDemande ed2 = new EtatDemande();
+		EtatDemandeCongesAnnuels ed2 = new EtatDemandeCongesAnnuels();
 		ed2.setDate(dateMaj2);
 		ed2.setDemande((Demande) dr);
 		ed2.setEtat(RefEtatEnum.APPROUVEE);
 		ed2.setIdAgent(9005138);
 		ed2.setIdEtatDemande(2);
 		ed2.setMotif("motif");
+		ed2.setDuree(10.0);
+		ed2.setDateDebut(dateDebut);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 

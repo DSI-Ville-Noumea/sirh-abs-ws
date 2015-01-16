@@ -9,6 +9,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceUnit;
@@ -20,6 +22,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "ABS_ETAT_DEMANDE")
 @PersistenceUnit(unitName = "absPersistenceUnit")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class EtatDemande {
 
 	@Id
@@ -34,6 +37,14 @@ public class EtatDemande {
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
+
+	@Column(name = "DATE_DEBUT")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateDebut;
+
+	@Column(name = "DATE_FIN")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateFin;
 
 	@ManyToOne
 	@JoinColumn(name = "ID_DEMANDE", referencedColumnName = "ID_DEMANDE", updatable = true, insertable = true)
@@ -93,6 +104,22 @@ public class EtatDemande {
 
 	public void setMotif(String motif) {
 		this.motif = motif;
+	}
+
+	public Date getDateDebut() {
+		return dateDebut;
+	}
+
+	public void setDateDebut(Date dateDebut) {
+		this.dateDebut = dateDebut;
+	}
+
+	public Date getDateFin() {
+		return dateFin;
+	}
+
+	public void setDateFin(Date dateFin) {
+		this.dateFin = dateFin;
 	}
 
 }

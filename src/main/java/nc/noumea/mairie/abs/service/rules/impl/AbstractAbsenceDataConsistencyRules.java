@@ -103,7 +103,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 		checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
 		checkDemandeDejaSaisieSurMemePeriode(srm, demande);
-		checkAgentInactivity(srm, idAgent, dateLundi);
+		checkAgentInactivity(srm, demande.getIdAgent(), dateLundi);
 		checkStatutAgent(srm, demande);
 		checkNoPointages(srm, demande);
 	}
@@ -377,7 +377,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				dto.updateEtat(
 						d.getLatestEtatDemande(),
 						sirhWSConsumer.getAgentService(d.getLatestEtatDemande().getIdAgent(),
-								helperService.getCurrentDate()));
+								helperService.getCurrentDate()), d.getType().getGroupe());
 				listeDemandeDto.add(dto);
 			}
 			return listeDemandeDto;
@@ -396,7 +396,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					dto.updateEtat(
 							d.getLatestEtatDemande(),
 							sirhWSConsumer.getAgentService(d.getLatestEtatDemande().getIdAgent(),
-									helperService.getCurrentDate()));
+									helperService.getCurrentDate()), d.getType().getGroupe());
 					listeDemandeDto.add(dto);
 				}
 				isfiltreDateDemande = true;
@@ -411,7 +411,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				dto.updateEtat(
 						d.getLatestEtatDemande(),
 						sirhWSConsumer.getAgentService(d.getLatestEtatDemande().getIdAgent(),
-								helperService.getCurrentDate()));
+								helperService.getCurrentDate()), d.getType().getGroupe());
 				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 						.getCodeEtat()))) {
 					if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)
