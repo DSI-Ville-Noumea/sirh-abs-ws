@@ -205,13 +205,26 @@ public class FiltreService implements IFiltreService {
 	@Override
 	public List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idRefGroupeAbsence, Integer idAgent) {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
-		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
+		List<RefTypeAbsence> refTypeAbsTemp = new ArrayList<RefTypeAbsence>();
 		if (idRefGroupeAbsence == null) {
-			refTypeAbs = filtreRepository.findAllRefTypeAbsences();
+			refTypeAbsTemp = filtreRepository.findAllRefTypeAbsences();
 		} else {
-			refTypeAbs = filtreRepository.findAllRefTypeAbsencesWithGroup(idRefGroupeAbsence);
+			refTypeAbsTemp = filtreRepository.findAllRefTypeAbsencesWithGroup(idRefGroupeAbsence);
 		}
 
+		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
+		for(RefTypeAbsence typeAbs : refTypeAbsTemp){
+			if (typeAbs.getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
+				//si conge annuel on ajoute tout
+				refTypeAbs.add(typeAbs);				
+			}else{
+				//sinon on regarde que la saisie kiosque est autorisée
+				if(typeAbs.getTypeSaisi()!=null && typeAbs.getTypeSaisi().isSaisieKiosque()){
+					refTypeAbs.add(typeAbs);	
+				}				
+			}
+		}
+		
 		RefTypeSaisiCongeAnnuel typeSaisieCongeAnnuel = null;
 		for (RefTypeAbsence type : refTypeAbs) {
 			if (idAgent != null
