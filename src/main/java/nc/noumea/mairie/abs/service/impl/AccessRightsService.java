@@ -80,18 +80,30 @@ public class AccessRightsService implements IAccessRightsService {
 				result.setMajSolde(result.isMajSolde() || pr.isMajSolde());
 				result.setDroitAcces(result.isDroitAcces() || pr.isDroitAcces());
 			}
+
+			// seuls les operateurs de la DPM peuvent saisir les jours de repos
+			// seuls les operateurs peuvent mettre a jour les compteurs (solde)
+			// on recup les agents de l'operateur
+			if (result.isMajSolde()) {
+				boolean contientAgentDPM = false;
+				for (DroitDroitsAgent droitAg : da.getDroitDroitsAgent()) {
+					SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(droitAg.getDroitsAgent().getIdAgent(),
+							new Date());
+					if (null != service.getSigle() && service.getSigle().toUpperCase().equals("DPM")) {
+						contientAgentDPM = true;
+						break;
+					}
+				}
+
+				result.setSaisieRepos(contientAgentDPM);
+			} else {
+				result.setSaisieRepos(false);
+			}
 		} catch (NoResultException e) {
 			logger.debug("Aucun droit trouvé pour l'agent {}" + idAgent);
 			return result;
 		}
-		
-		// seuls les operateurs de la DPM peuvent saisir les jours de repos
-		// seuls les operateurs peuvent mettre a jour les compteurs (solde)
-		SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(idAgent, new Date());
-		result.setSaisieRepos(null != service.getSigle() 
-				&& service.getSigle().toUpperCase().equals("DPM")
-				&& result.isMajSolde());
-		
+
 		return result;
 	}
 
@@ -159,7 +171,7 @@ public class AccessRightsService implements IAccessRightsService {
 			// this will also delete all the agents its operateurs were filling
 			// in for
 			for (DroitDroitsAgent agentSaisiToDelete : droitToDelete.getDroitDroitsAgent()) {
-				//accessRightsRepository.clear();
+				// accessRightsRepository.clear();
 				accessRightsRepository.removeEntity(agentSaisiToDelete);
 			}
 			for (DroitProfil dp : droitToDelete.getDroitProfils()) {
