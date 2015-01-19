@@ -137,13 +137,13 @@ public class CongeAnnuelController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/alimentationAutoCongesAnnuels", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto alimentationAutoCongesAnnuels(@RequestParam("idAgent") Integer nomatrAgent,
+	public ReturnMessageDto alimentationAutoCongesAnnuels(@RequestParam("nomatr") Integer nomatrAgent,
 			@RequestParam(value = "dateDebut", required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDebut,
 			@RequestParam(value = "dateFin", required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date dateFin,
 			HttpServletResponse response) {
 
 		logger.debug(
-				"entered POST [congeannuel/alimentationAutoCongesAnnuels] => alimentationAutoCongesAnnuels with parameters idAgent = {}, dateDebut = {}, dateFin = {}",
+				"entered POST [congeannuel/alimentationAutoCongesAnnuels] => alimentationAutoCongesAnnuels with parameters nomatr = {}, dateDebut = {}, dateFin = {}",
 				nomatrAgent, dateDebut, dateFin);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(nomatrAgent);
