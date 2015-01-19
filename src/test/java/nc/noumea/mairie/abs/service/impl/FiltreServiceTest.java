@@ -14,6 +14,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
@@ -781,6 +782,9 @@ public class FiltreServiceTest {
 
 	@Test
 	public void getRefTypesAbsenceSaisieKiosque_Fonctionnaire() {
+		
+		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
+		groupeRecup.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
 		RefTypeSaisi typeSaisiFonctionnaire2 = new RefTypeSaisi();
 		typeSaisiFonctionnaire2.setFonctionnaire(true);
@@ -791,26 +795,29 @@ public class FiltreServiceTest {
 		RefTypeAbsence typeAbsenceFonctionnaire2 = new RefTypeAbsence();
 		typeAbsenceFonctionnaire2.setLabel("fonctionnaire2");
 		typeAbsenceFonctionnaire2.setTypeSaisi(typeSaisiFonctionnaire2);
+		typeAbsenceFonctionnaire2.setGroupe(groupeRecup);
 
 		RefTypeSaisi typeSaisiFonctionnaire = new RefTypeSaisi();
 		typeSaisiFonctionnaire.setFonctionnaire(true);
 		typeSaisiFonctionnaire.setContractuel(false);
 		typeSaisiFonctionnaire.setConventionCollective(false);
-		typeSaisiFonctionnaire.setSaisieKiosque(false);
+		typeSaisiFonctionnaire.setSaisieKiosque(true);
 
 		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
 		typeAbsenceFonctionnaire.setLabel("fonctionnaire");
 		typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
+		typeAbsenceFonctionnaire.setGroupe(groupeRecup);
 
 		RefTypeSaisi typeSaisiContractuel = new RefTypeSaisi();
 		typeSaisiContractuel.setFonctionnaire(false);
 		typeSaisiContractuel.setContractuel(true);
 		typeSaisiContractuel.setConventionCollective(false);
-		typeSaisiContractuel.setSaisieKiosque(false);
+		typeSaisiContractuel.setSaisieKiosque(true);
 
 		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
 		typeAbsenceContractuel.setLabel("contractuel");
 		typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
+		typeAbsenceContractuel.setGroupe(groupeRecup);
 
 		RefTypeSaisi typeSaisiConventionCollective = new RefTypeSaisi();
 		typeSaisiConventionCollective.setFonctionnaire(false);
@@ -821,6 +828,7 @@ public class FiltreServiceTest {
 		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
 		typeAbsenceConventionCollective.setLabel("conventionCollective");
 		typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
+		typeAbsenceConventionCollective.setGroupe(groupeRecup);
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
 		refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceFonctionnaire2, typeAbsenceContractuel,
@@ -862,31 +870,37 @@ public class FiltreServiceTest {
 		typeSaisiFonctionnaire.setFonctionnaire(true);
 		typeSaisiFonctionnaire.setContractuel(false);
 		typeSaisiFonctionnaire.setConventionCollective(false);
-		typeSaisiFonctionnaire.setSaisieKiosque(false);
+		typeSaisiFonctionnaire.setSaisieKiosque(true);
+		
+		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
+		groupeRecup.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
 		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
 		typeAbsenceFonctionnaire.setLabel("fonctionnaire");
 		typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
+		typeAbsenceFonctionnaire.setGroupe(groupeRecup);
 
 		RefTypeSaisi typeSaisiContractuel = new RefTypeSaisi();
 		typeSaisiContractuel.setFonctionnaire(false);
 		typeSaisiContractuel.setContractuel(true);
 		typeSaisiContractuel.setConventionCollective(false);
-		typeSaisiContractuel.setSaisieKiosque(false);
+		typeSaisiContractuel.setSaisieKiosque(true);
 
 		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
 		typeAbsenceContractuel.setLabel("contractuel");
 		typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
+		typeAbsenceContractuel.setGroupe(groupeRecup);
 
 		RefTypeSaisi typeSaisiConventionCollective = new RefTypeSaisi();
 		typeSaisiConventionCollective.setFonctionnaire(false);
 		typeSaisiConventionCollective.setContractuel(false);
 		typeSaisiConventionCollective.setConventionCollective(true);
-		typeSaisiConventionCollective.setSaisieKiosque(false);
+		typeSaisiConventionCollective.setSaisieKiosque(true);
 
 		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
 		typeAbsenceConventionCollective.setLabel("conventionCollective");
 		typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
+		typeAbsenceConventionCollective.setGroupe(groupeRecup);
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
 		refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel,
@@ -923,6 +937,9 @@ public class FiltreServiceTest {
 
 	@Test
 	public void getRefTypesAbsenceSaisieKiosque_Contractuels() {
+		
+		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
+		groupeRecup.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
 		RefTypeSaisi typeSaisiFonctionnaire = new RefTypeSaisi();
 		typeSaisiFonctionnaire.setFonctionnaire(true);
@@ -933,6 +950,7 @@ public class FiltreServiceTest {
 		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
 		typeAbsenceFonctionnaire.setLabel("fonctionnaire");
 		typeAbsenceFonctionnaire.setTypeSaisi(typeSaisiFonctionnaire);
+		typeAbsenceFonctionnaire.setGroupe(groupeRecup);
 
 		RefTypeSaisi typeSaisiContractuel = new RefTypeSaisi();
 		typeSaisiContractuel.setFonctionnaire(false);
@@ -943,6 +961,7 @@ public class FiltreServiceTest {
 		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
 		typeAbsenceContractuel.setLabel("contractuel");
 		typeAbsenceContractuel.setTypeSaisi(typeSaisiContractuel);
+		typeAbsenceContractuel.setGroupe(groupeRecup);
 
 		RefTypeSaisi typeSaisiConventionCollective = new RefTypeSaisi();
 		typeSaisiConventionCollective.setFonctionnaire(false);
@@ -953,6 +972,7 @@ public class FiltreServiceTest {
 		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
 		typeAbsenceConventionCollective.setLabel("conventionCollective");
 		typeAbsenceConventionCollective.setTypeSaisi(typeSaisiConventionCollective);
+		typeAbsenceConventionCollective.setGroupe(groupeRecup);
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
 		refTypeAbs.addAll(Arrays.asList(typeAbsenceFonctionnaire, typeAbsenceContractuel,
@@ -1007,7 +1027,7 @@ public class FiltreServiceTest {
 		typeSaisiFonctionnaire.setFonctionnaire(true);
 		typeSaisiFonctionnaire.setContractuel(false);
 		typeSaisiFonctionnaire.setConventionCollective(false);
-		typeSaisiFonctionnaire.setSaisieKiosque(false);
+		typeSaisiFonctionnaire.setSaisieKiosque(true);
 
 		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
 		typeAbsenceFonctionnaire.setLabel("fonctionnaire");
@@ -1018,7 +1038,7 @@ public class FiltreServiceTest {
 		typeSaisiContractuel.setFonctionnaire(false);
 		typeSaisiContractuel.setContractuel(true);
 		typeSaisiContractuel.setConventionCollective(false);
-		typeSaisiContractuel.setSaisieKiosque(false);
+		typeSaisiContractuel.setSaisieKiosque(true);
 
 		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
 		typeAbsenceContractuel.setLabel("contractuel");
@@ -1078,7 +1098,7 @@ public class FiltreServiceTest {
 		typeSaisiFonctionnaire.setFonctionnaire(true);
 		typeSaisiFonctionnaire.setContractuel(false);
 		typeSaisiFonctionnaire.setConventionCollective(false);
-		typeSaisiFonctionnaire.setSaisieKiosque(false);
+		typeSaisiFonctionnaire.setSaisieKiosque(true);
 
 		RefTypeAbsence typeAbsenceFonctionnaire = new RefTypeAbsence();
 		typeAbsenceFonctionnaire.setLabel("fonctionnaire");
@@ -1089,7 +1109,7 @@ public class FiltreServiceTest {
 		typeSaisiContractuel.setFonctionnaire(false);
 		typeSaisiContractuel.setContractuel(true);
 		typeSaisiContractuel.setConventionCollective(false);
-		typeSaisiContractuel.setSaisieKiosque(false);
+		typeSaisiContractuel.setSaisieKiosque(true);
 
 		RefTypeAbsence typeAbsenceContractuel = new RefTypeAbsence();
 		typeAbsenceContractuel.setLabel("contractuel");
@@ -1100,7 +1120,7 @@ public class FiltreServiceTest {
 		typeSaisiConventionCollective.setFonctionnaire(false);
 		typeSaisiConventionCollective.setContractuel(false);
 		typeSaisiConventionCollective.setConventionCollective(true);
-		typeSaisiConventionCollective.setSaisieKiosque(false);
+		typeSaisiConventionCollective.setSaisieKiosque(true);
 
 		RefTypeAbsence typeAbsenceConventionCollective = new RefTypeAbsence();
 		typeAbsenceConventionCollective.setLabel("conventionCollective");
