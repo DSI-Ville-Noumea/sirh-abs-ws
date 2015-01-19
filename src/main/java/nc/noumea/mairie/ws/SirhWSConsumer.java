@@ -118,10 +118,11 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		return readResponse(RefTypeSaisiCongeAnnuelDto.class, res, url);
 	}
-	
+
 	@Override
-	public List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(Integer idAgent, Date dateDebut, Date dateFin) {
-		
+	public List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(Integer idAgent, Date dateDebut,
+			Date dateFin) {
+
 		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
 
 		String url = String.format(sirhWsBaseUrl + sirhListPAPourAlimAutoCongesAnnuelsUrl);
@@ -135,10 +136,10 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		return readResponseAsList(InfosAlimAutoCongesAnnuelsDto.class, res, url);
 	}
-	
+
 	@Override
 	public List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin) {
-		
+
 		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
 
 		String url = String.format(sirhWsBaseUrl + listeJoursFeriesUrl);
@@ -151,7 +152,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		return readResponseAsList(JourDto.class, res, url);
 	}
-	
+
 	@Override
 	public SirhWsServiceDto getAgentDirection(Integer idAgent, Date date) {
 

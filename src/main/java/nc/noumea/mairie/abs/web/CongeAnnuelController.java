@@ -137,18 +137,16 @@ public class CongeAnnuelController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/alimentationAutoCongesAnnuels", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto alimentationAutoCongesAnnuels(@RequestParam("idAgent") Integer idAgent,
+	public ReturnMessageDto alimentationAutoCongesAnnuels(@RequestParam("idAgent") Integer nomatrAgent,
 			@RequestParam(value = "dateDebut", required = true) @DateTimeFormat(pattern = "YYYYMMdd") Date dateDebut,
 			@RequestParam(value = "dateFin", required = true) @DateTimeFormat(pattern = "YYYYMMdd") Date dateFin,
 			HttpServletResponse response) {
 
 		logger.debug(
 				"entered POST [congeannuel/alimentationAutoCongesAnnuels] => alimentationAutoCongesAnnuels with parameters idAgent = {}, dateDebut = {}, dateFin = {}",
-				idAgent, dateDebut, dateFin);
+				nomatrAgent, dateDebut, dateFin);
 
-		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-
-		return counterService.alimentationAutoCompteur(convertedIdAgent, dateDebut, dateFin);
+		return counterService.alimentationAutoCompteur(new Integer("900" + nomatrAgent.toString()), dateDebut, dateFin);
 	}
 
 	/**
