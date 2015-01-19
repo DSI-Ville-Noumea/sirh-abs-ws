@@ -137,7 +137,7 @@ public class CongeAnnuelController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/alimentationAutoCongesAnnuels", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto alimentationAutoCongesAnnuels(@RequestParam("idAgent") int idAgent,
+	public ReturnMessageDto alimentationAutoCongesAnnuels(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam(value = "dateDebut", required = true) @DateTimeFormat(pattern = "YYYYMMdd") Date dateDebut,
 			@RequestParam(value = "dateFin", required = true) @DateTimeFormat(pattern = "YYYYMMdd") Date dateFin,
 			HttpServletResponse response) {
@@ -148,13 +148,7 @@ public class CongeAnnuelController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		ReturnMessageDto srm = counterService.alimentationAutoCompteur(convertedIdAgent, dateDebut, dateFin);
-
-		if (!srm.getErrors().isEmpty()) {
-			response.setStatus(HttpServletResponse.SC_CONFLICT);
-		}
-
-		return srm;
+		return counterService.alimentationAutoCompteur(convertedIdAgent, dateDebut, dateFin);
 	}
 
 	/**
