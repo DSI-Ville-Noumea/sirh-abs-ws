@@ -21,10 +21,16 @@ public class AgentMatriculeConverterService implements IAgentMatriculeConverterS
 	@Override
 	public Integer tryConvertFromADIdAgentToSIRHIdAgent(Integer adIdAgent) {
 
-		if (adIdAgent == null || adIdAgent.toString().length() != 6)
+		if (adIdAgent == null)
 			return adIdAgent;
 
-		return addMissingDigit(adIdAgent);
+		if(adIdAgent.toString().length() == 4)
+			return convertNoMatrToIdAgent(adIdAgent);
+		
+		if(adIdAgent.toString().length() == 6)
+			return addMissingDigit(adIdAgent);
+		
+		return adIdAgent;
 	}
 
 	private Integer addMissingDigit(Integer adIdAgent) {
@@ -35,6 +41,13 @@ public class AgentMatriculeConverterService implements IAgentMatriculeConverterS
 		newIdSb.append(adIdAgent.toString().substring(2, 6));
 
 		return Integer.parseInt(newIdSb.toString());
+	}
+	
+	private Integer convertNoMatrToIdAgent(Integer noMatr) {
+		if(noMatr.toString().length() == 4) {
+			return 9000000 + noMatr;
+		}
+		return noMatr;
 	}
 
 	@Override
