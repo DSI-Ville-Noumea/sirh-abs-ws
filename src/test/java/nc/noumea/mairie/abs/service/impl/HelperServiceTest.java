@@ -1276,6 +1276,27 @@ public class HelperServiceTest {
 
 		assertEquals(duree, result);
 	}
+	
+	@Test
+	public void isNotSamediDecompte() {
+		Double duree = 0.0;
+
+		Date dateDebut = new DateTime(2014, 12, 2, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 7, 23, 59, 59).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setDecompteSamedi(false);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+
+		HelperService service = new HelperService();
+		Double result = service.getNombreSamediDecompte(demande);
+
+		assertEquals(duree, result);
+	}
 
 	@Test
 	public void getNombreSamediDecompte_2Samedi() {
@@ -1296,8 +1317,91 @@ public class HelperServiceTest {
 		Double result = service.getNombreSamediDecompte(demande);
 
 		assertEquals(duree, result);
-
 	}
+	
+//	@Test
+//	public void getNombreSamediDecompte_1SamediEtDemi() {
+//		Double duree = 1.5;
+//
+//		Date dateDebut = new DateTime(2014, 12, 5, 12, 0, 0).toDate();
+//		Date dateFin = new DateTime(2014, 12, 15, 23, 59, 59).toDate();
+//
+//		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+//		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+//
+//		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+//		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+//		demande.setDateDebut(dateDebut);
+//		demande.setDateFin(dateFin);
+//
+//		HelperService service = new HelperService();
+//		Double result = service.getNombreSamediDecompte(demande);
+//
+//		assertEquals(duree, result);
+//	}
+//	
+//	@Test
+//	public void getNombreSamediDecompte_1Samedi_repriseVendrediMidi() {
+//		Double duree = 1.0;
+//
+//		Date dateDebut = new DateTime(2014, 12, 4, 12, 0, 0).toDate();
+//		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
+//
+//		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+//		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+//
+//		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+//		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+//		demande.setDateDebut(dateDebut);
+//		demande.setDateFin(dateFin);
+//
+//		HelperService service = new HelperService();
+//		Double result = service.getNombreSamediDecompte(demande);
+//
+//		assertEquals(duree, result);
+//	}
+//	
+//	@Test
+//	public void getNombreSamediDecompte_DemiSamedi_repriseVendrediMidi() {
+//		Double duree = 0.5;
+//
+//		Date dateDebut = new DateTime(2014, 12, 5, 12, 0, 0).toDate();
+//		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
+//
+//		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+//		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+//
+//		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+//		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+//		demande.setDateDebut(dateDebut);
+//		demande.setDateFin(dateFin);
+//
+//		HelperService service = new HelperService();
+//		Double result = service.getNombreSamediDecompte(demande);
+//
+//		assertEquals(duree, result);
+//	}
+//	
+//	@Test
+//	public void getNombreSamediDecompte_0Samedi_repriseVendrediMidi() {
+//		Double duree = 1.0;
+//
+//		Date dateDebut = new DateTime(2014, 12, 8, 12, 0, 0).toDate();
+//		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
+//
+//		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+//		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+//
+//		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+//		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+//		demande.setDateDebut(dateDebut);
+//		demande.setDateFin(dateFin);
+//
+//		HelperService service = new HelperService();
+//		Double result = service.getNombreSamediDecompte(demande);
+//
+//		assertEquals(duree, result);
+//	}
 
 	@Test
 	public void getNombreSamediDecompte_DemiSamedi() {
@@ -1318,7 +1422,6 @@ public class HelperServiceTest {
 		Double result = service.getNombreSamediDecompte(demande);
 
 		assertEquals(duree, result);
-
 	}
 
 	@Test

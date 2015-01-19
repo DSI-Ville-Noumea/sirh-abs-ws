@@ -10,4 +10,6 @@ public interface ICongesAnnuelsRepository {
 
 	AgentWeekCongeAnnuel getWeekHistoForAgentAndDate(Integer idAgent,
 			Date dateMonth);
+	
+	void persistEntity(Object obj);
 }

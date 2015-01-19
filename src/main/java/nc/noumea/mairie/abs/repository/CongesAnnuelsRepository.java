@@ -20,6 +20,11 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 	private EntityManager absEntityManager;
 
 	@Override
+	public void persistEntity(Object obj) {
+		absEntityManager.persist(obj);
+	}
+	
+	@Override
 	public Double getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(Integer idAgent, Integer idDemande) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select dr from DemandeCongesAnnuels dr inner join dr.etatsDemande ed where dr.idAgent = :idAgent ");
