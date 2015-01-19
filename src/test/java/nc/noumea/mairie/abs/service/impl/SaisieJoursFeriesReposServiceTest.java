@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.JoursFeriesSaisiesReposDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SaisieReposDto;
+import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 import nc.noumea.mairie.abs.repository.IAgentJoursFeriesReposRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -97,7 +98,11 @@ public class SaisieJoursFeriesReposServiceTest {
 		
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
 		AgentDto agent = new AgentDto();
+		agent.setIdAgent(9005131);
 		listAgent.add(agent);
+		
+		SirhWsServiceDto serviceAgent =  new SirhWsServiceDto();
+		serviceAgent.setSigle("dpm");
 		
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getAgentsToApproveOrInput(9005138, "codeService")).thenReturn(listAgent);
@@ -106,6 +111,7 @@ public class SaisieJoursFeriesReposServiceTest {
 		
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(serviceAgent);
 		
 		List<AgentJoursFeriesRepos> listJoursReposAgent = new ArrayList<AgentJoursFeriesRepos>();
 		
@@ -130,8 +136,12 @@ public class SaisieJoursFeriesReposServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 		
+		SirhWsServiceDto serviceAgent =  new SirhWsServiceDto();
+		serviceAgent.setSigle("dpm");
+		
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
 		AgentDto agent = new AgentDto();
+		agent.setIdAgent(9005138);
 		listAgent.add(agent);
 		
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
@@ -145,6 +155,7 @@ public class SaisieJoursFeriesReposServiceTest {
 		
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(serviceAgent);
 		
 		List<AgentJoursFeriesRepos> listJoursReposAgent = new ArrayList<AgentJoursFeriesRepos>();
 		
@@ -171,6 +182,9 @@ public class SaisieJoursFeriesReposServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 		
+		SirhWsServiceDto serviceAgent =  new SirhWsServiceDto();
+		serviceAgent.setSigle("dpm");
+		
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
 		AgentDto agent = new AgentDto();
 		agent.setIdAgent(9005138);
@@ -187,6 +201,7 @@ public class SaisieJoursFeriesReposServiceTest {
 		
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(serviceAgent);
 		
 		List<AgentJoursFeriesRepos> listJoursReposAgent = new ArrayList<AgentJoursFeriesRepos>();
 		AgentJoursFeriesRepos repos = new AgentJoursFeriesRepos();
@@ -217,6 +232,9 @@ public class SaisieJoursFeriesReposServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 		
+		SirhWsServiceDto serviceAgent =  new SirhWsServiceDto();
+		serviceAgent.setSigle("dpm");
+		
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
 		AgentDto agent = new AgentDto();
 		agent.setIdAgent(9005138);
@@ -240,6 +258,7 @@ public class SaisieJoursFeriesReposServiceTest {
 		
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(serviceAgent);
 		
 		List<AgentJoursFeriesRepos> listJoursReposAgent = new ArrayList<AgentJoursFeriesRepos>();
 		AgentJoursFeriesRepos repos = new AgentJoursFeriesRepos();

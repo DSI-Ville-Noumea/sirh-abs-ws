@@ -55,7 +55,7 @@ public class SaisieJoursFeriesReposService implements ISaisieJoursFeriesReposSer
 		List<AgentDto> listAgent = new ArrayList<>();
 		for (AgentDto ag : listAgentTemp) {
 			SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(ag.getIdAgent(), new Date());
-			if (null != service.getSigle() && service.getSigle().toUpperCase().equals("DPM")) {
+			if (null != service && null != service.getSigle() && service.getSigle().toUpperCase().equals("DPM")) {
 				listAgent.add(ag);
 			}
 		}
