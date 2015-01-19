@@ -40,7 +40,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 
 	private ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 	@Test
 	public void testMethodeParenteHeritage() {
