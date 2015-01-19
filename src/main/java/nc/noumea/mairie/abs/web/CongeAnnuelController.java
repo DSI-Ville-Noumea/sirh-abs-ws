@@ -138,8 +138,8 @@ public class CongeAnnuelController {
 	@ResponseBody
 	@RequestMapping(value = "/alimentationAutoCongesAnnuels", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto alimentationAutoCongesAnnuels(@RequestParam("idAgent") Integer nomatrAgent,
-			@RequestParam(value = "dateDebut", required = true) @DateTimeFormat(pattern = "YYYYMMdd") Date dateDebut,
-			@RequestParam(value = "dateFin", required = true) @DateTimeFormat(pattern = "YYYYMMdd") Date dateFin,
+			@RequestParam(value = "dateDebut", required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDebut,
+			@RequestParam(value = "dateFin", required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date dateFin,
 			HttpServletResponse response) {
 
 		logger.debug(

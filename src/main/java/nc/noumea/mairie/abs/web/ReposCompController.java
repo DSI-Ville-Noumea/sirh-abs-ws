@@ -48,12 +48,12 @@ public class ReposCompController {
 	 * Ajoute des minutes au compteur de repos compensateur a un agent pour une
 	 * semaine donnee <br />
 	 * utile a SIRH-PTG-WS <br />
-	 * Parametres en entree : format du type timestamp : YYYYMMdd
+	 * Parametres en entree : format du type timestamp : yyyyMMdd
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addForPTG", method = RequestMethod.POST)
 	public void addReposCompForAgentAndWeek(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("dateLundi") @DateTimeFormat(pattern = "YYYYMMdd") Date dateMonday,
+			@RequestParam("dateLundi") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonday,
 			@RequestParam("minutes") int minutes) {
 
 		logger.debug(

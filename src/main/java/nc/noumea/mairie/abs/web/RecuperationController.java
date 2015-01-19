@@ -47,12 +47,12 @@ public class RecuperationController {
 	 * Ajoute des minutes au compteur de recuperation a un agent pour une
 	 * semaine donnee <br />
 	 * utile a SIRH-PTG-WS <br />
-	 * Parametres en entree : format du type timestamp : YYYYMMdd
+	 * Parametres en entree : format du type timestamp : yyyyMMdd
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addForPTG", method = RequestMethod.POST)
 	public void addRecuperationForAgentAndWeek(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("dateLundi") @DateTimeFormat(pattern = "YYYYMMdd") Date dateMonday,
+			@RequestParam("dateLundi") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonday,
 			@RequestParam("minutes") int minutes) {
 
 		logger.debug(

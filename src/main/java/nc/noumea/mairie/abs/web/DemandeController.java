@@ -177,7 +177,7 @@ public class DemandeController {
 
 	/**
 	 * Liste des demandes d un agent <br />
-	 * Parametres en entree : format du type timestamp : YYYYMMdd <br />
+	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
@@ -185,9 +185,9 @@ public class DemandeController {
 	public List<DemandeDto> getListeDemandesAbsenceAgent(
 			@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
-			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
-			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
-			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date dateDemande,
+			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
+			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDemande,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType,
 			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence) {
@@ -243,7 +243,7 @@ public class DemandeController {
 
 	/**
 	 * Gestion des demandes <br />
-	 * Parametres en entree : format du type timestamp : YYYYMMdd <br />
+	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
@@ -251,9 +251,9 @@ public class DemandeController {
 	public List<DemandeDto> getListeDemandesAbsence(
 			@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
-			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
-			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
-			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date dateDemande,
+			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
+			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDemande,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType,
 			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence,
@@ -399,14 +399,14 @@ public class DemandeController {
 
 	/**
 	 * Liste des demandes pour SIRH <br />
-	 * Parametres en entree : format du type timestamp : YYYYMMdd <br />
+	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<DemandeDto> getListeDemandesAbsenceSIRH(
-			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
-			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
+			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType,
 			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche,
