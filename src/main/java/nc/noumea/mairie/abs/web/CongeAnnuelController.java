@@ -146,7 +146,9 @@ public class CongeAnnuelController {
 				"entered POST [congeannuel/alimentationAutoCongesAnnuels] => alimentationAutoCongesAnnuels with parameters idAgent = {}, dateDebut = {}, dateFin = {}",
 				nomatrAgent, dateDebut, dateFin);
 
-		return counterService.alimentationAutoCompteur(new Integer("900" + nomatrAgent.toString()), dateDebut, dateFin);
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(nomatrAgent);
+		
+		return counterService.alimentationAutoCompteur(convertedIdAgent, dateDebut, dateFin);
 	}
 
 	/**

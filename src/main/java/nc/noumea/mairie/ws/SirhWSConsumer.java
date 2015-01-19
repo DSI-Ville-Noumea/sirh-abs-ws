@@ -46,7 +46,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		parameters.put("idAgent", String.valueOf(idAgent));
 
 		if (date != null) {
-			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 			parameters.put("date", sf.format(date));
 		}
 
@@ -91,7 +91,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	public boolean isJourHoliday(Date date) {
 		String url = String.format(sirhWsBaseUrl + isJourHolidayUrl);
 		HashMap<String, String> params = new HashMap<>();
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 		params.put("date", sf.format(date));
 
 		ClientResponse res = createAndFireGetRequest(params, url);
@@ -106,7 +106,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	@Override
 	public RefTypeSaisiCongeAnnuelDto getBaseHoraireAbsence(Integer idAgent, Date date) {
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 
 		String url = String.format(sirhWsBaseUrl + sirhBaseCongeUrl);
 
@@ -123,14 +123,14 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	public List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(Integer idAgent, Date dateDebut,
 			Date dateFin) {
 
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 		String url = String.format(sirhWsBaseUrl + sirhListPAPourAlimAutoCongesAnnuelsUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
-		parameters.put("dateDebut", sf.format(dateDebut));
-		parameters.put("dateFin", sf.format(dateFin));
+		parameters.put("dateDebut", sdf.format(dateDebut));
+		parameters.put("dateFin", sdf.format(dateFin));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
@@ -140,13 +140,13 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	@Override
 	public List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin) {
 
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 		String url = String.format(sirhWsBaseUrl + listeJoursFeriesUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("dateDebut", sf.format(dateDebut));
-		parameters.put("dateFin", sf.format(dateFin));
+		parameters.put("dateDebut", sdf.format(dateDebut));
+		parameters.put("dateFin", sdf.format(dateFin));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
@@ -161,7 +161,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
 		if (date != null) {
-			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 			parameters.put("dateAffectation", sf.format(date));
 		}
 
