@@ -394,8 +394,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			return srm;
 		}
 		
-		Date dateMonth = helperService.getFirstMondayOfCurrentMonth();
-		AgentWeekCongeAnnuel awca = congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth);
+		AgentWeekCongeAnnuel awca = congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateDebut);
 		
 		// si compteur deja mis a jour
 		if (awca != null) {
@@ -449,7 +448,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		
 		awca = new AgentWeekCongeAnnuel();
 		awca.setIdAgent(idAgent);
-		awca.setDateMonth(dateMonth);
+		awca.setDateMonth(dateDebut);
 		
 		awca.setLastModification(dernierModif);
 		awca.setJours(joursAAjouter);

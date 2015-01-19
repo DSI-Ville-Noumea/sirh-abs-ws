@@ -691,7 +691,6 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Integer idAgent = 10;
 		Date dateDebut = null;
 		Date dateFin = null;
-		Date dateMonth = new Date();
 		
 		AgentCongeAnnuelCount acac = Mockito.spy(new AgentCongeAnnuelCount());
 			acac.setIdAgent(9005138);
@@ -708,15 +707,11 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
 		
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getFirstMondayOfCurrentMonth()).thenReturn(dateMonth);
-		
 		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
-		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(new AgentWeekCongeAnnuel());
+		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateDebut)).thenReturn(new AgentWeekCongeAnnuel());
 		
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
 		
 		ReturnMessageDto result = service.alimentationAutoCompteur(idAgent, dateDebut, dateFin);
@@ -750,15 +745,11 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
 		
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getFirstMondayOfCurrentMonth()).thenReturn(dateMonth);
-		
 		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
 		
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
 		
 		
@@ -799,9 +790,6 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
 		
-		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getFirstMondayOfCurrentMonth()).thenReturn(dateMonth);
-		
 		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
 		
@@ -810,7 +798,6 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		
@@ -852,7 +839,6 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getFirstMondayOfCurrentMonth()).thenReturn(dateMonth);
 		Mockito.when(helperService.calculNombreJours(dateDebut, dateFin)).thenReturn(20.0);
 		
 		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
@@ -910,7 +896,6 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getFirstMondayOfCurrentMonth()).thenReturn(dateMonth);
 		Mockito.when(helperService.calculNombreJours(dateDebut, dateFin)).thenReturn(20.0);
 		
 		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
@@ -973,7 +958,6 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getFirstMondayOfCurrentMonth()).thenReturn(dateMonth);
 		Mockito.when(helperService.calculNombreJours(dateDebut, dateFin)).thenReturn(20.0);
 		
 		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
