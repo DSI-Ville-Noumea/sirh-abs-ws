@@ -46,6 +46,8 @@ public class HelperService {
 	public static String UNITE_DECOMPTE_JOURS = "jours";
 	public static String UNITE_DECOMPTE_MINUTES = "minutes";
 
+	private static int NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT = 1;
+
 	public Date getCurrentDate() {
 		return new Date();
 	}
@@ -391,7 +393,7 @@ public class HelperService {
 			cal.set(Calendar.MILLISECOND, MILLISECONDS);
 			return cal.getTime();
 		}
-
+		
 		return null;
 	}
 
@@ -437,7 +439,7 @@ public class HelperService {
 
 	}
 
-	private Double getNombreJoursFeriesChomes(Date dateDebut, Date dateFin) {
+	protected Double getNombreJoursFeriesChomes(Date dateDebut, Date dateFin) {
 		int compteur = 0;
 		Calendar calendarDebut = new GregorianCalendar();
 		calendarDebut.setTime(dateDebut);
@@ -454,77 +456,90 @@ public class HelperService {
 			calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
 		}
 		return (double) compteur;
-
 	}
 
-	private Double getNombreDimanche(Date dateDebut, Date dateFin) {
+	protected Double getNombreDimanche(Date dateDebut, Date dateFin) {
+		
 		int compteur = 0;
-		Calendar calendarDebut = new GregorianCalendar();
-		calendarDebut.setTime(dateDebut);
-
-		Calendar calendarFin = new GregorianCalendar();
-		calendarFin.setTime(dateFin);
-
-		// Différence
-		long diff = Math.abs(dateFin.getTime() - dateDebut.getTime());
-		long numberOfDay = (long) diff / 86400000;
-
-		for (int i = 0; i <= numberOfDay; i++) {
-			if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-				compteur++;
-			}
-			calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
+		// on calcule le nombre de vendredi
+		DateTime startDate = new DateTime(dateDebut)
+		.withHourOfDay(0).withMinuteOfHour(0); // on met les heures et minutes a zero afin de bien comptabiliser dans la boucle while
+		DateTime endDate = new DateTime(dateFin);
+	    
+		DateTime thisMonday = startDate.withDayOfWeek(DateTimeConstants.SUNDAY);
+		
+		if (startDate.isAfter(thisMonday)) {
+		    startDate = thisMonday.plusWeeks(1); // start on next SUNDAY
+		} else {
+		    startDate = thisMonday; // start on this SUNDAY
+		}
+		while (startDate.isBefore(endDate)) {
+		    startDate = startDate.plusWeeks(1);
+		    compteur++;
 		}
 		return (double) compteur;
 	}
 
 	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande) {
+		
 		Double compteur = 0.0;
+		
 		if (demande.getTypeSaisiCongeAnnuel() != null && demande.getTypeSaisiCongeAnnuel().isDecompteSamedi()) {
-			Calendar calendarDebut = new GregorianCalendar();
-			calendarDebut.setTime(demande.getDateDebut());
-
-			Calendar calendarFin = new GregorianCalendar();
-			calendarFin.setTime(demande.getDateFin());
-
-			// Différence
-			long diff = Math.abs(demande.getDateFin().getTime() - demande.getDateDebut().getTime());
-			long numberOfDay = (long) diff / 86400000;
-
-			for (int i = 0; i <= numberOfDay; i++) {
-				if (calendarDebut.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY
-						&& calendarFin.get(Calendar.HOUR_OF_DAY) != 11) {
-					// si vendredi ou demi-vendredi
-					if (calendarDebut.get(Calendar.HOUR_OF_DAY) == 0) {
-						compteur = compteur + 1;
-					} else {
-						compteur = compteur + 0.5;
-					}
-				}
-				calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
+			
+			// on calcule le nombre de vendredi
+			DateTime startDate = new DateTime(demande.getDateDebut())
+			.withHourOfDay(0).withMinuteOfHour(0); // on met les heures et minutes a zero afin de bien comptabiliser le nombre de vendredi dans la boucle while
+			DateTime endDate = new DateTime(demande.getDateFin());
+	        
+			DateTime thisMonday = startDate.withDayOfWeek(DateTimeConstants.FRIDAY);
+			
+			if (startDate.isAfter(thisMonday)) {
+			    startDate = thisMonday.plusWeeks(1); // start on next FRIDAY
+			} else {
+			    startDate = thisMonday; // start on this FRIDAY
 			}
-
+			while (startDate.isBefore(endDate)) {
+			    startDate = startDate.plusWeeks(1);
+			    compteur += 1;
+			}
+	        
+			// cas ou le 1er jour est un vendredi
+			// on gere le cas ou l agent a pose l apres-midi
+			DateTime dateDebut = new DateTime(demande.getDateDebut());
+			if(dateDebut.getDayOfWeek() == DateTimeConstants.FRIDAY) {
+				if(dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
+					compteur -= 0.5; // si commence l apres-midi, on ne decompte qu un demi-samedi
+				}
+			}
+			
+			// cas ou le dernier jour est un vendredi
+			// on gere le cas ou l agent a pose que le matin ou que l apres-midi
+			DateTime dateFin = new DateTime(demande.getDateFin());
+			if(dateFin.getDayOfWeek() == DateTimeConstants.FRIDAY) {
+				if(dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
+					compteur -= 1; // si la personne revient travailler le vendredi apres-midi, on ne decompte pas le samedi
+				}
+			}
 		}
 		return compteur;
 	}
 
 	public Double getNombreSamediOffert(DemandeCongesAnnuels demande) {
-		Double compteur = 0.0;
-
-		return compteur;
+		
+		// on cherche le nombre de samedi deja offert
+		Integer nombreSamediOffert = demandeRepository.getNombreSamediOffertSurAnnee(demande, new DateTime(demande.getDateDebut()).getYear());
+		
+		// si le nombre de samedi superieur ou egal au quota, on n offre plus de samedi 
+		if(NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT <= nombreSamediOffert) {
+			return 0.0;
+		}
+		
+		// on recupere le nombre de samedi complet a decompter
+		// si au moins un samedi complet, on offre un samedi
+		if(1 > getNombreSamediDecompte(demande))
+			return 0.0;
+		
+		// si samedi pas encore offert, on retourne un samedi offert
+		return (double)NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT;
 	}
-
-	public Date getFirstMondayOfCurrentMonth() {
-		DateTime date = new DateTime().withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-
-		return date.dayOfMonth() // Accès à la propriété 'Jour du Mois'
-				.withMinimumValue() // prendre sa valeur minimum
-				.plusDays(6) // Ajouter 6 jours
-				.dayOfWeek() // Accès à la propriété 'Jour de la Semaine'
-				.setCopy(DateTimeConstants.MONDAY) // Le positionner à lundi
-													// (arrondi à la valeur
-													// inférieure)
-				.toDate();
-	}
-
 }

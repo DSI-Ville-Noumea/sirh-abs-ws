@@ -1348,6 +1348,36 @@ public class DemandeRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getNombreSamediOffertSurAnnee_badDate() throws ParseException {
+		// Given
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		absEntityManager.persist(groupe);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		absEntityManager.persist(type);
+
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(9005138);
+		d.setType(type);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(sdf.parse("16/05/2013"));
+		d.setNbSamediOffert(1.0);
+		absEntityManager.persist(d);
+
+		// When
+		Integer result = repository.getNombreSamediOffertSurAnnee(d, 2012);
+
+		// Then
+		assertEquals(0, (int) result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 
 	@Test
 	@Transactional("absTransactionManager")

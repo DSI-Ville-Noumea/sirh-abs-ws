@@ -985,9 +985,40 @@ public class HelperServiceTest {
 
 	@Test
 	public void getDureeCongeAnnuel_AvecSamedi_baseA_SamediOffert() {
-		Double duree = 2.0;
+		Double duree = 1.0;
 
 		Date dateDebut = new DateTime(2014, 12, 5, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 5, 23, 59, 59).toDate();
+		Date dateReprise = new DateTime(2014, 12, 5, 15, 24, 0).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("A");
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande, 2014)).thenReturn(0);
+
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getDureeCongeAnnuel_AvecDemiSamedi_baseA_SamediOffert() {
+		Double duree = 1.0; // on decompte un jour : vendredi PM et samedi AM
+
+		Date dateDebut = new DateTime(2014, 12, 5, 12, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 5, 23, 59, 59).toDate();
 		Date dateReprise = new DateTime(2014, 12, 5, 15, 24, 0).toDate();
 
@@ -1016,7 +1047,7 @@ public class HelperServiceTest {
 
 	@Test
 	public void getDureeCongeAnnuel_AvecSamedi_baseA_SamediNonOffert() {
-		Double duree = 1.0;
+		Double duree = 2.0;
 
 		Date dateDebut = new DateTime(2014, 12, 5, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 5, 23, 59, 59).toDate();
@@ -1024,6 +1055,7 @@ public class HelperServiceTest {
 
 		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
 		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("A");
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
@@ -1319,89 +1351,110 @@ public class HelperServiceTest {
 		assertEquals(duree, result);
 	}
 	
-//	@Test
-//	public void getNombreSamediDecompte_1SamediEtDemi() {
-//		Double duree = 1.5;
-//
-//		Date dateDebut = new DateTime(2014, 12, 5, 12, 0, 0).toDate();
-//		Date dateFin = new DateTime(2014, 12, 15, 23, 59, 59).toDate();
-//
-//		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
-//		typeSaisiCongeAnnuel.setDecompteSamedi(true);
-//
-//		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
-//		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
-//		demande.setDateDebut(dateDebut);
-//		demande.setDateFin(dateFin);
-//
-//		HelperService service = new HelperService();
-//		Double result = service.getNombreSamediDecompte(demande);
-//
-//		assertEquals(duree, result);
-//	}
-//	
-//	@Test
-//	public void getNombreSamediDecompte_1Samedi_repriseVendrediMidi() {
-//		Double duree = 1.0;
-//
-//		Date dateDebut = new DateTime(2014, 12, 4, 12, 0, 0).toDate();
-//		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
-//
-//		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
-//		typeSaisiCongeAnnuel.setDecompteSamedi(true);
-//
-//		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
-//		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
-//		demande.setDateDebut(dateDebut);
-//		demande.setDateFin(dateFin);
-//
-//		HelperService service = new HelperService();
-//		Double result = service.getNombreSamediDecompte(demande);
-//
-//		assertEquals(duree, result);
-//	}
-//	
-//	@Test
-//	public void getNombreSamediDecompte_DemiSamedi_repriseVendrediMidi() {
-//		Double duree = 0.5;
-//
-//		Date dateDebut = new DateTime(2014, 12, 5, 12, 0, 0).toDate();
-//		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
-//
-//		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
-//		typeSaisiCongeAnnuel.setDecompteSamedi(true);
-//
-//		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
-//		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
-//		demande.setDateDebut(dateDebut);
-//		demande.setDateFin(dateFin);
-//
-//		HelperService service = new HelperService();
-//		Double result = service.getNombreSamediDecompte(demande);
-//
-//		assertEquals(duree, result);
-//	}
-//	
-//	@Test
-//	public void getNombreSamediDecompte_0Samedi_repriseVendrediMidi() {
-//		Double duree = 1.0;
-//
-//		Date dateDebut = new DateTime(2014, 12, 8, 12, 0, 0).toDate();
-//		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
-//
-//		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
-//		typeSaisiCongeAnnuel.setDecompteSamedi(true);
-//
-//		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
-//		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
-//		demande.setDateDebut(dateDebut);
-//		demande.setDateFin(dateFin);
-//
-//		HelperService service = new HelperService();
-//		Double result = service.getNombreSamediDecompte(demande);
-//
-//		assertEquals(duree, result);
-//	}
+	@Test
+	public void getNombreSamediDecompte_1SamediEtDemi() {
+		Double duree = 1.5;
+
+		Date dateDebut = new DateTime(2014, 12, 5, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 15, 23, 59, 59).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+
+		HelperService service = new HelperService();
+		Double result = service.getNombreSamediDecompte(demande);
+
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreSamediDecompte_1Samedi_repriseVendrediMidi() {
+		Double duree = 1.0;
+
+		Date dateDebut = new DateTime(2014, 12, 4, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+
+		HelperService service = new HelperService();
+		Double result = service.getNombreSamediDecompte(demande);
+
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreSamediDecompte_DemiSamedi_repriseVendrediMidi() {
+		Double duree = 0.5;
+
+		Date dateDebut = new DateTime(2014, 12, 5, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+
+		HelperService service = new HelperService();
+		Double result = service.getNombreSamediDecompte(demande);
+
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreSamediDecompte_0Samedi_repriseVendrediMidi() {
+		Double duree = 0.0;
+
+		Date dateDebut = new DateTime(2014, 12, 8, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+
+		HelperService service = new HelperService();
+		Double result = service.getNombreSamediDecompte(demande);
+
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreSamediDecompte_CA_DemiJournee_VendrediMatin() {
+		Double duree = 0.0;
+
+		Date dateDebut = new DateTime(2014, 12, 12, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 12, 11, 59, 59).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+
+		HelperService service = new HelperService();
+		Double result = service.getNombreSamediDecompte(demande);
+
+		assertEquals(duree, result);
+	}
 
 	@Test
 	public void getNombreSamediDecompte_DemiSamedi() {
@@ -1446,16 +1499,211 @@ public class HelperServiceTest {
 	}
 	
 	@Test
-	public void getFirstMondayOfCurrentMonth() {
+	public void getNombreDimanche_2Dimanche() {
+		
+		Double duree = 2.0;
+
+		Date dateDebut = new DateTime(2015, 1, 5, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 19, 11, 59, 59).toDate();
 		
 		HelperService service = new HelperService();
-		Date lundi = service.getFirstMondayOfCurrentMonth();
+		Double result = service.getNombreDimanche(dateDebut, dateFin);
 		
-		Calendar calLundi = Calendar.getInstance();
-		calLundi.setTime(lundi);
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreDimanche_3Dimanche_DebutDimancheMidi() {
 		
-		assertTrue(8 > calLundi.get(Calendar.DAY_OF_MONTH));
-		assertEquals(2, calLundi.get(Calendar.DAY_OF_WEEK));
+		Double duree = 3.0;
+
+		Date dateDebut = new DateTime(2015, 1, 4, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 19, 11, 59, 59).toDate();
 		
+		HelperService service = new HelperService();
+		Double result = service.getNombreDimanche(dateDebut, dateFin);
+		
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreDimanche_3Dimanche_FinDimancheMidi() {
+		
+		Double duree = 3.0;
+
+		Date dateDebut = new DateTime(2015, 1, 4, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 18, 11, 59, 59).toDate();
+		
+		HelperService service = new HelperService();
+		Double result = service.getNombreDimanche(dateDebut, dateFin);
+		
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreDimanche_1Dimanche_DebutDimanche_FinDimancheMidi() {
+		
+		Double duree = 1.0;
+
+		Date dateDebut = new DateTime(2015, 1, 18, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 18, 11, 59, 59).toDate();
+		
+		HelperService service = new HelperService();
+		Double result = service.getNombreDimanche(dateDebut, dateFin);
+		
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreDimanche_1Dimanche_DebutDimancheMidi_FinDimancheSoir() {
+		
+		Double duree = 1.0;
+
+		Date dateDebut = new DateTime(2015, 1, 18, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 18, 23, 59, 59).toDate();
+		
+		HelperService service = new HelperService();
+		Double result = service.getNombreDimanche(dateDebut, dateFin);
+		
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreJoursFeriesChomes_1JourFerie() {
+		
+		Double nombre = 1.0;
+		
+		Date dateDebut = new DateTime(2015, 1, 1, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 18, 23, 59, 59).toDate();
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 1, 12, 0, 0).toDate())).thenReturn(true);
+		
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin);
+		
+		assertEquals(nombre, result);
+	}
+	
+	@Test
+	public void getNombreJoursFeriesChomes_2JoursFerie() {
+		
+		Double nombre = 2.0;
+		
+		Date dateDebut = new DateTime(2015, 1, 1, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 18, 23, 59, 59).toDate();
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 1, 12, 0, 0).toDate())).thenReturn(true);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 10, 12, 0, 0).toDate())).thenReturn(true);
+		
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin);
+		
+		assertEquals(nombre, result);
+	}
+	
+	@Test
+	public void getNombreJoursFeriesChomes_1JourFerie_SameDateDebutEtFin() {
+		
+		Double nombre = 1.0;
+		
+		Date dateDebut = new DateTime(2015, 1, 19, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 19, 23, 59, 59).toDate();
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 19, 12, 0, 0).toDate())).thenReturn(true);
+		
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin);
+		
+		assertEquals(nombre, result);
+	}
+	
+	@Test
+	public void getNombreJoursFeriesChomes_1JourFerie_SameDateDebutEtFin_DateDimanche() {
+		
+		Double nombre = 0.0;
+		
+		Date dateDebut = new DateTime(2015, 1, 18, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 18, 23, 59, 59).toDate();
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 18, 12, 0, 0).toDate())).thenReturn(true);
+		
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin);
+		
+		assertEquals(nombre, result);
+	}
+	
+	@Test
+	public void getNombreSamediOffert_samediDejaOffert() {
+		
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDateDebut(new DateTime(2014,12,1,0,0,0).toDate());
+		demande.setDateFin(new DateTime(2014,12,31,0,0,0).toDate());
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande, new DateTime(demande.getDateDebut()).getYear())).thenReturn(1);
+		
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		Double result = service.getNombreSamediOffert(demande);
+		
+		assertEquals(result.doubleValue(), 0,0);
+	}
+	
+	@Test
+	public void getNombreSamediOffert_samediOffertOK() {
+		
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(new DateTime(2014,12,1,0,0,0).toDate());
+		demande.setDateFin(new DateTime(2014,12,31,0,0,0).toDate());
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande, new DateTime(demande.getDateDebut()).getYear())).thenReturn(0);
+		
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		Double result = service.getNombreSamediOffert(demande);
+		
+		assertEquals(result.doubleValue(), 1,0);
+	}
+	
+	@Test
+	public void getNombreSamediOffert_samediNonOffert_demiSamedi() {
+		
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(new DateTime(2014,12,5,12,0,0).toDate());
+		demande.setDateFin(new DateTime(2014,12,10,23,59,0).toDate());
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande, new DateTime(demande.getDateDebut()).getYear())).thenReturn(0);
+		
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		
+		Double result = service.getNombreSamediOffert(demande);
+		
+		assertEquals(result.doubleValue(), 0,0);
 	}
 }
