@@ -31,6 +31,7 @@ import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -502,7 +503,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		if(0 < srm.getErrors().size())
 			return srm;
 		
-		/////////////////////////////////////
+		//////////////////////////////////////
 		// on recherche le compteur de l agent
 		AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(
 				AgentCongeAnnuelCount.class, dto.getIdAgent());
@@ -513,7 +514,6 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			persistCongeAnnuelRestitutionMassiveHisto(dto, COMPTEUR_INEXISTANT, new Date());
 			return srm;
 		}
-		
 		
 		/////////////////////////////////////
 		// la personne a pose un conge? 
@@ -538,19 +538,45 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			return srm;
 		}
 		
+		///////////////////////////////
+		// compte les samedis decomptes a rendre
+		DemandeCongesAnnuels demandeCA = (DemandeCongesAnnuels) listCongesAgentpris.get(0);
 		
-		
+		Double samediAAjouter = getSamediDecompteARendre(demandeCA, dto);
+
 		/////////////////////////////////////
-		// quelles compteurs réalimente-t-on? N-1 ou N?
-		int precedentYear = GregorianCalendar.getInstance().get(Calendar.YEAR) - 1;
-		GregorianCalendar calStr1 = new GregorianCalendar();
-		calStr1.setTime(dto.getDateRestitution());
-		int yearDateMonday = calStr1.get(Calendar.YEAR);
-		
+		// nombre de jour a redonner au total 
+		Double jourTmp = 0.0;
+		if(dto.isJournee()) {
+			jourTmp = 1.0;
+		}else{
+			jourTmp = 0.5;
+		}
+		jourTmp += samediAAjouter;
+
+		/////////////////////////////////////////////
+		// quels compteurs réalimenter? N-1 et/ou N?
 		Double joursAAjouter = 0.0;
 		Double joursAAjouterN1 = 0.0;
+		if(demandeCA.getDureeAnneeN1() > 0) {
+			if(demandeCA.getDureeAnneeN1() < jourTmp) {
+				joursAAjouterN1 = demandeCA.getDureeAnneeN1();
+				jourTmp -= demandeCA.getDureeAnneeN1();
+			}else{
+				joursAAjouterN1 = jourTmp;
+				jourTmp = 0.0;
+			}
+		}
+		if(demandeCA.getDuree() > 0) {
+			joursAAjouter = jourTmp;
+		}
 		
-		/////////////////////////////////////
+		//////////////////////////////////////
+		// redonner le samedi offert si besoin
+		Double samediOffert = getSamediOffertARendre(demandeCA, dto);
+		demandeCA.setNbSamediOffert(demandeCA.getNbSamediOffert() - samediOffert);
+		
+		/////////////////////
 		// on enregistre
 		Date dernierModif = new Date();
 		
@@ -563,8 +589,6 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		arc.setLastModification(dernierModif);
 		arc.setTotalJours(arc.getTotalJours() + joursAAjouter);
 		arc.setTotalJoursAnneeN1(arc.getTotalJoursAnneeN1() + joursAAjouterN1);
-		
-		
 		
 		persistCongeAnnuelRestitutionMassiveHisto(dto, "OK", dernierModif);
 		
@@ -616,5 +640,32 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		}else{
 			srm.getErrors().add(String.format(BASE_CA_NON_TROUVEE, idAgent));
 		}
+	}
+	
+	protected Double getSamediDecompteARendre(DemandeCongesAnnuels demandeCA, RestitutionMassiveDto dto) {
+		
+		DateTime dateARestituer = new DateTime(dto.getDateRestitution());
+		if(dateARestituer.getDayOfWeek() == DateTimeConstants.FRIDAY
+				&& 0 < demandeCA.getNbSamediDecompte()){
+			if(dto.isJournee() || dto.isApresMidi()) {
+				return 1.0;
+			}
+			if(dto.isMatin()) {
+				return 0.5;
+			}
+		}
+		return 0.0;
+	}
+	
+	protected Double getSamediOffertARendre(DemandeCongesAnnuels demandeCA, RestitutionMassiveDto dto) {
+		
+		DateTime dateARestituer = new DateTime(dto.getDateRestitution());
+		if(dateARestituer.getDayOfWeek() == DateTimeConstants.FRIDAY
+				&& 0 < demandeCA.getNbSamediOffert()){
+			if(dto.isJournee() || dto.isApresMidi()) {
+				return 1.0;
+			}
+		}
+		return 0.0;
 	}
 }

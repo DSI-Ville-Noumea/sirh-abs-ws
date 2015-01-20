@@ -491,12 +491,12 @@ public class HelperService {
 			.withHourOfDay(0).withMinuteOfHour(0); // on met les heures et minutes a zero afin de bien comptabiliser le nombre de vendredi dans la boucle while
 			DateTime endDate = new DateTime(demande.getDateFin());
 	        
-			DateTime thisMonday = startDate.withDayOfWeek(DateTimeConstants.FRIDAY);
+			DateTime thisFriday = startDate.withDayOfWeek(DateTimeConstants.FRIDAY);
 			
-			if (startDate.isAfter(thisMonday)) {
-			    startDate = thisMonday.plusWeeks(1); // start on next FRIDAY
+			if (startDate.isAfter(thisFriday)) {
+			    startDate = thisFriday.plusWeeks(1); // start on next FRIDAY
 			} else {
-			    startDate = thisMonday; // start on this FRIDAY
+			    startDate = thisFriday; // start on this FRIDAY
 			}
 			while (startDate.isBefore(endDate)) {
 			    startDate = startDate.plusWeeks(1);
