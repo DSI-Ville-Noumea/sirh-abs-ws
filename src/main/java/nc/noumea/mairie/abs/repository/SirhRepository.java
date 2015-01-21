@@ -10,6 +10,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spmatr;
 
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,11 @@ public class SirhRepository implements ISirhRepository {
 
 	@PersistenceContext(unitName = "sirhPersistenceUnit")
 	private EntityManager sirhEntityManager;
+
+	@Override
+	public void persistEntity(Object obj) {
+		sirhEntityManager.persist(obj);
+	}
 
 	@Override
 	public Spadmn getAgentCurrentPosition(Integer nomatr, Date asOfDate) {
@@ -53,5 +59,10 @@ public class SirhRepository implements ISirhRepository {
 			return null;
 
 		return result.get(0);
+	}
+
+	@Override
+	public Spmatr findSpmatrForAgent(Integer nomatr) {
+		return sirhEntityManager.find(Spmatr.class, nomatr);
 	}
 }

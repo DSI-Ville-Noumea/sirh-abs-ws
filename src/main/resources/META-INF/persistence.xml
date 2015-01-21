@@ -60,6 +60,8 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>nc.noumea.mairie.domain.Spadmn</class>
         <class>nc.noumea.mairie.domain.Spcarr</class>
+        <class>nc.noumea.mairie.domain.Spcc</class>
+        <class>nc.noumea.mairie.domain.Spmatr</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.DB2400Dialect"/>

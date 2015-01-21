@@ -36,6 +36,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhListPAPourAlimAutoCongesAnnuelsUrl = "absences/listPAPourAlimAutoCongesAnnuels";
 	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
 	private static final String sirhAgentDirectionUrl = "agents/direction";
+	private static final String isPaieEnCoursUrl = "utils/isPaieEnCours";
 
 	@Override
 	public AgentWithServiceDto getAgentService(Integer idAgent, Date date) {
@@ -168,5 +169,15 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(SirhWsServiceDto.class, res, url);
+	}
+
+	@Override
+	public ReturnMessageDto isPaieEnCours() {
+		String url = String.format(sirhWsBaseUrl + isPaieEnCoursUrl);
+		Map<String, String> parameters = new HashMap<String, String>();
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(ReturnMessageDto.class, res, url);
 	}
 }

@@ -11,6 +11,7 @@ import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -542,4 +543,11 @@ public class HelperService {
 		// si samedi pas encore offert, on retourne un samedi offert
 		return (double)NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT;
 	}
+	public TypeChainePaieEnum getTypeChainePaieFromStatut(Spcarr carr) {
+		if (isConventionCollective(carr))
+			return TypeChainePaieEnum.SCV;
+		else
+			return TypeChainePaieEnum.SHC;
+	}
+
 }

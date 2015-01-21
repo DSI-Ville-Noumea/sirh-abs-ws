@@ -1,7 +1,9 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,10 +41,16 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
+import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spcc;
+import nc.noumea.mairie.domain.SpccId;
+import nc.noumea.mairie.domain.Spmatr;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -85,6 +93,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private HelperService helperService;
+
+	@Autowired
+	private IAgentMatriculeConverterService agentMatriculeService;
 
 	@Autowired
 	private CounterServiceFactory counterServiceFactory;
@@ -471,31 +482,47 @@ public class AbsenceService implements IAbsenceService {
 	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
 			Demande demande, ReturnMessageDto result) {
 
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande
-				.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+		// redmine #12994 : bloque ce job si une paye est en cours pour les
+		// congés annuels
+		ReturnMessageDto paieEnCours = sirhWSConsumer.isPaieEnCours();
+		if (demande.getType().getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()
+				&& paieEnCours.getErrors().size() > 0) {
+			result.getErrors()
+					.add("Vous ne pouvez annuler cette demande car un calcul de salaire est en cours. Merci de réessayer ultérieurement.");
+		} else {
+			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+					demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 
-		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
-				Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
+			result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
+					Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
 
-		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
-				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
+			result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
+					demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
-		if (0 < result.getErrors().size()) {
-			return result;
+			if (0 < result.getErrors().size()) {
+				return result;
+			}
+
+			ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
+					.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+			result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
+
+			if (0 < result.getErrors().size()) {
+				return result;
+			}
+
+			// redmine #12994 : on traite l'incidence en paie dans le cas d'un
+			// congé annuel
+			result = traiteIncidencePaie(demande, result);
+			if (result.getErrors().size() > 0) {
+				return result;
+			}
+
+			// maj de la demande
+			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+
+			result.getInfos().add(String.format("La demande est annulée."));
 		}
-
-		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
-				.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
-		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
-
-		if (0 < result.getErrors().size()) {
-			return result;
-		}
-
-		// maj de la demande
-		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
-
-		result.getInfos().add(String.format("La demande est annulée."));
 
 		return result;
 	}
@@ -597,6 +624,12 @@ public class AbsenceService implements IAbsenceService {
 									.getLatestEtatDemande().getEtat().toString());
 					return result;
 				}
+
+				result = traiteIncidencePaie(demande, result);
+				if (result.getErrors().size() > 0) {
+					return result;
+				}
+
 				break;
 			default:
 				break;
@@ -622,6 +655,198 @@ public class AbsenceService implements IAbsenceService {
 		logger.info("Updated demande id {}.", idDemande);
 
 		return result;
+	}
+
+	protected ReturnMessageDto traiteIncidencePaie(Demande demande, ReturnMessageDto result) {
+		// dans le cas des congés annuels, il faut regarder si l'agent
+		// est Convention ou contractuel pour gerer l'incidence en paie
+		// on fait cette demarche pour chaque jour de la demande de
+		// congé annuel
+		Calendar calendarDebut = Calendar.getInstance();
+		calendarDebut.setTime(demande.getDateDebut());
+		Calendar calendarFin = Calendar.getInstance();
+		calendarFin.setTime(demande.getDateFin());
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdfMairie = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat sdfMairiePerrap = new SimpleDateFormat("yyyyMM");
+		SimpleDateFormat sdfHeure = new SimpleDateFormat("HH");
+
+		// si 1 seule journée de posée
+		if (calendarDebut.get(Calendar.DAY_OF_MONTH) == calendarFin.get(Calendar.DAY_OF_MONTH)) {
+			Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+					agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), calendarDebut.getTime());
+			if (carr == null) {
+				result.getErrors()
+						.add(String
+								.format("La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
+										demande.getIdDemande(), demande.getIdAgent(),
+										sdf.format(calendarDebut.getTime())));
+				logger.error(
+						"Demande id {} de l'agent {} ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date {}. Stopping process.",
+						demande.getIdDemande(), demande.getIdAgent(), sdf.format(calendarDebut.getTime()));
+				return result;
+			} else {
+				if (helperService.isContractuel(carr) || helperService.isConventionCollective(carr)) {
+					if ((sdfHeure.format(calendarDebut.getTime()).equals("00") && sdfHeure
+							.format(calendarFin.getTime()).equals("11"))
+							|| (sdfHeure.format(calendarDebut.getTime()).equals("12") && sdfHeure.format(
+									calendarFin.getTime()).equals("23"))) {
+						creeSpccDemiJournee(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+								new Integer(sdfMairie.format(calendarDebut.getTime())),
+								new Integer(sdfMairiePerrap.format(calendarDebut.getTime())), carr);
+					} else {
+						creeSpccJournee(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+								new Integer(sdfMairie.format(calendarDebut.getTime())),
+								new Integer(sdfMairiePerrap.format(calendarDebut.getTime())), carr);
+					}
+				}
+			}
+
+		} else {
+			// plusieurs journées de posées
+			// on traite le premier jour
+			Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+					agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), demande.getDateDebut());
+			if (carr == null) {
+				result.getErrors()
+						.add(String
+								.format("La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
+										demande.getIdDemande(), demande.getIdAgent(),
+										sdf.format(demande.getDateDebut())));
+				logger.error(
+						"Demande id {} de l'agent {} ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date {}. Stopping process.",
+						demande.getIdDemande(), demande.getIdAgent(), sdf.format(demande.getDateDebut()));
+				return result;
+			} else {
+				if (helperService.isContractuel(carr) || helperService.isConventionCollective(carr)) {
+					if (sdfHeure.format(demande.getDateDebut()).equals("12")) {
+						creeSpccDemiJournee(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+								new Integer(sdfMairie.format(demande.getDateDebut())),
+								new Integer(sdfMairiePerrap.format(demande.getDateDebut())), carr);
+						calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
+						calendarDebut.set(Calendar.HOUR_OF_DAY, 0);
+						calendarDebut.set(Calendar.MINUTE, 0);
+						calendarDebut.set(Calendar.SECOND, 0);
+					} else {
+						creeSpccJournee(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+								new Integer(sdfMairie.format(demande.getDateDebut())),
+								new Integer(sdfMairiePerrap.format(demande.getDateDebut())), carr);
+						calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
+						calendarDebut.set(Calendar.HOUR_OF_DAY, 0);
+						calendarDebut.set(Calendar.MINUTE, 0);
+						calendarDebut.set(Calendar.SECOND, 0);
+					}
+				}
+			}
+			// on traite le dernier jour
+			carr = sirhRepository.getAgentCurrentCarriere(
+					agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), demande.getDateFin());
+			if (carr == null) {
+				result.getErrors()
+						.add(String
+								.format("La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
+										demande.getIdDemande(), demande.getIdAgent(), sdf.format(demande.getDateFin())));
+				logger.error(
+						"Demande id {} de l'agent {} ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date {}. Stopping process.",
+						demande.getIdDemande(), demande.getIdAgent(), sdf.format(demande.getDateFin()));
+				return result;
+			} else {
+				if (helperService.isContractuel(carr) || helperService.isConventionCollective(carr)) {
+					if (sdfHeure.format(demande.getDateFin()).equals("11")) {
+						creeSpccDemiJournee(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+								new Integer(sdfMairie.format(demande.getDateFin())),
+								new Integer(sdfMairiePerrap.format(demande.getDateFin())), carr);
+						calendarFin.add(Calendar.DAY_OF_MONTH, -1);
+						calendarFin.set(Calendar.HOUR_OF_DAY, 0);
+						calendarFin.set(Calendar.MINUTE, 0);
+						calendarFin.set(Calendar.SECOND, 0);
+					} else {
+						creeSpccJournee(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+								new Integer(sdfMairie.format(demande.getDateFin())),
+								new Integer(sdfMairiePerrap.format(demande.getDateFin())), carr);
+						calendarFin.add(Calendar.DAY_OF_MONTH, -1);
+						calendarFin.set(Calendar.HOUR_OF_DAY, 0);
+						calendarFin.set(Calendar.MINUTE, 0);
+						calendarFin.set(Calendar.SECOND, 0);
+					}
+				}
+			}
+
+			// on traite le reste
+			while (calendarDebut.compareTo(calendarFin) <= 0) {
+				carr = sirhRepository.getAgentCurrentCarriere(
+						agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+						calendarDebut.getTime());
+				if (carr == null) {
+					result.getErrors()
+							.add(String
+									.format("La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
+											demande.getIdDemande(), demande.getIdAgent(),
+											sdf.format(calendarDebut.getTime())));
+					logger.error(
+							"Demande id {} de l'agent {} ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date {}. Stopping process.",
+							demande.getIdDemande(), demande.getIdAgent(), sdf.format(calendarDebut.getTime()));
+					return result;
+				} else {
+					if (helperService.isContractuel(carr) || helperService.isConventionCollective(carr)) {
+						creeSpccJournee(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+								new Integer(sdfMairie.format(calendarDebut.getTime())),
+								new Integer(sdfMairiePerrap.format(calendarDebut.getTime())), carr);
+					}
+				}
+				calendarDebut.add(Calendar.DAY_OF_MONTH, 1);
+			}
+
+		}
+		return result;
+	}
+
+	private void creeSpccJournee(Integer nomatr, Integer datjou, Integer perrap, Spcarr carr) {
+		SpccId spccId = new SpccId();
+		spccId.setNomatr(nomatr);
+		spccId.setDatjou(datjou);
+		Spcc spcc = new Spcc();
+		spcc.setId(spccId);
+		spcc.setCode(1);
+		// on met à jour SPMATR
+		Spmatr matr = miseAjourSpmatr(nomatr, perrap, carr);
+		sirhRepository.persistEntity(spcc);
+		sirhRepository.persistEntity(matr);
+
+	}
+
+	private void creeSpccDemiJournee(Integer nomatr, Integer datjou, Integer perrap, Spcarr carr) {
+		SpccId spccId = new SpccId();
+		spccId.setNomatr(nomatr);
+		spccId.setDatjou(datjou);
+		Spcc spcc = new Spcc();
+		spcc.setId(spccId);
+		spcc.setCode(2);
+		// on met à jour SPMATR
+		Spmatr matr = miseAjourSpmatr(nomatr, perrap, carr);
+		sirhRepository.persistEntity(spcc);
+		sirhRepository.persistEntity(matr);
+
+	}
+
+	private Spmatr miseAjourSpmatr(Integer nomatr, Integer perrap, Spcarr carr) {
+
+		Spmatr matr = sirhRepository.findSpmatrForAgent(nomatr);
+
+		if (matr == null) {
+			TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(carr);
+			matr = new Spmatr();
+			matr.setNomatr(nomatr);
+			matr.setPerrap(perrap);
+			matr.setTypeChainePaie(chainePaie);
+			return matr;
+		}
+
+		if (matr.getPerrap() > perrap) {
+			matr.setPerrap(perrap);
+		}
+		return matr;
+
 	}
 
 	private EtatDemande mappingEtatDemandeSpecifique(EtatDemande etatDemande, Demande demande,

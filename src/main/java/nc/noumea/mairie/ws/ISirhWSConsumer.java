@@ -29,4 +29,6 @@ public interface ISirhWSConsumer {
 	List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin);
 
 	SirhWsServiceDto getAgentDirection(Integer idAgent, Date date);
+
+	ReturnMessageDto isPaieEnCours();
 }
