@@ -42,10 +42,12 @@ import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
+import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
@@ -10934,6 +10936,41 @@ public class AbsenceServiceTest {
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
 		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spcc.class));
 		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spmatr.class));
+	}
+
+	@Test
+	public void getListeMoisAlimAutoCongeAnnuel_ZeroMois() {
+
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListeMoisAlimAutoCongeAnnuel()).thenReturn(new ArrayList<Date>());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getListeMoisAlimAutoCongeAnnuel();
+
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getListeMoisAlimAutoCongeAnnuel_PlusieursMois() {
+		List<Date> list = new ArrayList<Date>();
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+		DateTime dateMonth2 = new DateTime(2014, 11, 1, 0, 0, 0);
+		list.add(dateMonth.toDate());
+		list.add(dateMonth2.toDate());
+
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListeMoisAlimAutoCongeAnnuel()).thenReturn(list);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getListeMoisAlimAutoCongeAnnuel();
+
+		assertEquals(2, result.size());
+		assertEquals(dateMonth.toDate(), result.get(0).getDateMois());
+		assertEquals(dateMonth2.toDate(), result.get(1).getDateMois());
 	}
 
 }

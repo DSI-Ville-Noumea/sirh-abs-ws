@@ -23,7 +23,7 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 	public void persistEntity(Object obj) {
 		absEntityManager.persist(obj);
 	}
-	
+
 	@Override
 	public Double getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(Integer idAgent, Integer idDemande) {
 		StringBuilder sb = new StringBuilder();
@@ -55,19 +55,31 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 		}
 		return somme;
 	}
-	
+
 	@Override
 	public AgentWeekCongeAnnuel getWeekHistoForAgentAndDate(Integer idAgent, Date dateMonth) {
 
-		TypedQuery<AgentWeekCongeAnnuel> query = absEntityManager
-				.createNamedQuery("findAgentWeekCongeAnnuelByIdAgentAndDateMonth", AgentWeekCongeAnnuel.class);
+		TypedQuery<AgentWeekCongeAnnuel> query = absEntityManager.createNamedQuery(
+				"findAgentWeekCongeAnnuelByIdAgentAndDateMonth", AgentWeekCongeAnnuel.class);
 
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("dateMonth", dateMonth);
-		
+
 		// Exec query
 		List<AgentWeekCongeAnnuel> result = query.getResultList();
 
 		return (result.size() == 1 ? result.get(0) : null);
+	}
+
+	@Override
+	public List<Date> getListeMoisAlimAutoCongeAnnuel() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(c.dateMonth) from CongeAnnuelAlimAutoHisto c ");
+		sb.append("order by c.dateMonth desc ");
+
+		TypedQuery<Date> query = absEntityManager.createQuery(sb.toString(), Date.class);
+
+		return query.getResultList();
 	}
 }

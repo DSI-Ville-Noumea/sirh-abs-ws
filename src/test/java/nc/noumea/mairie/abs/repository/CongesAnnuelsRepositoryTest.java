@@ -7,11 +7,13 @@ import static org.junit.Assert.assertNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
+import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -240,13 +242,13 @@ public class CongesAnnuelsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getWeekHistoForAgentAndDate_ok() {
-		
+
 		Date dateMonth = new Date();
-		
+
 		AgentWeekCongeAnnuel d = new AgentWeekCongeAnnuel();
 		d.setDateMonth(dateMonth);
 		d.setIdAgent(9005138);
@@ -254,21 +256,21 @@ public class CongesAnnuelsRepositoryTest {
 		d.setJours(10.0);
 		d.setLastModification(new Date());
 		absEntityManager.persist(d);
-		
+
 		AgentWeekCongeAnnuel result = repository.getWeekHistoForAgentAndDate(9005138, dateMonth);
-		
+
 		assertNotNull(result);
-		
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getWeekHistoForAgentAndDate_badAgent() {
-		
+
 		Date dateMonth = new Date();
-		
+
 		AgentWeekCongeAnnuel d = new AgentWeekCongeAnnuel();
 		d.setDateMonth(dateMonth);
 		d.setIdAgent(9005138);
@@ -276,21 +278,21 @@ public class CongesAnnuelsRepositoryTest {
 		d.setJours(10.0);
 		d.setLastModification(new Date());
 		absEntityManager.persist(d);
-		
+
 		AgentWeekCongeAnnuel result = repository.getWeekHistoForAgentAndDate(9009999, dateMonth);
-		
+
 		assertNull(result);
-		
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getWeekHistoForAgentAndDate_badDate() {
-		
+
 		DateTime dateMonth = new DateTime();
-		
+
 		AgentWeekCongeAnnuel d = new AgentWeekCongeAnnuel();
 		d.setDateMonth(dateMonth.toDate());
 		d.setIdAgent(9005138);
@@ -298,11 +300,52 @@ public class CongesAnnuelsRepositoryTest {
 		d.setJours(10.0);
 		d.setLastModification(new Date());
 		absEntityManager.persist(d);
-		
+
 		AgentWeekCongeAnnuel result = repository.getWeekHistoForAgentAndDate(9005138, dateMonth.plusDays(1).toDate());
-		
+
 		assertNull(result);
-		
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeMoisAlimAutoCongeAnnuel_0Date() {
+
+		List<Date> result = repository.getListeMoisAlimAutoCongeAnnuel();
+
+		assertEquals(result.size(), 0);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeMoisAlimAutoCongeAnnuel_OK() {
+
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+		DateTime dateMonth2 = new DateTime(2014, 11, 1, 0, 0, 0);
+
+		CongeAnnuelAlimAutoHisto d3 = new CongeAnnuelAlimAutoHisto();
+		d3.setDateMonth(dateMonth2.toDate());
+		absEntityManager.persist(d3);
+
+		CongeAnnuelAlimAutoHisto d2 = new CongeAnnuelAlimAutoHisto();
+		d2.setDateMonth(dateMonth.toDate());
+		absEntityManager.persist(d2);
+
+		CongeAnnuelAlimAutoHisto d = new CongeAnnuelAlimAutoHisto();
+		d.setDateMonth(dateMonth.toDate());
+		absEntityManager.persist(d);
+
+		List<Date> result = repository.getListeMoisAlimAutoCongeAnnuel();
+
+		assertEquals(result.size(), 2);
+		assertEquals(dateMonth.toDate(), result.get(0));
+		assertEquals(dateMonth2.toDate(), result.get(1));
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -147,7 +148,7 @@ public class CongeAnnuelController {
 				nomatrAgent, dateDebut, dateFin);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(nomatrAgent);
-		
+
 		return counterService.alimentationAutoCompteur(convertedIdAgent, dateDebut, dateFin);
 	}
 
@@ -173,6 +174,21 @@ public class CongeAnnuelController {
 			throw new NotFoundException();
 
 		ReturnMessageDto result = absenceService.checkCongesAnnuels(convertedIdAgent, fromDate, toDate);
+
+		return result;
+	}
+
+	/**
+	 * Pour connaire sur les mois sur lesquels la routine d'alimentation auto de
+	 * fin de mois des conges annuels est passée
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getListeMoisAlimAutoCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<MoisAlimAutoCongesAnnuelsDto> getListeMoisAlimAutoCongeAnnuel() {
+
+		logger.debug("entered GET [congeannuel/getListeMoisAlimAutoCongeAnnuel] => getListeMoisAlimAutoCongeAnnuel ");
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = absenceService.getListeMoisAlimAutoCongeAnnuel();
 
 		return result;
 	}

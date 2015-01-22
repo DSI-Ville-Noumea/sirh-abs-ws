@@ -32,8 +32,10 @@ import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
+import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
@@ -105,6 +107,11 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private IOrganisationSyndicaleRepository OSRepository;
+
+	@Autowired
+	private ICongesAnnuelsRepository congeAnnuelRepository;
+	
+	
 
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
@@ -1461,6 +1468,18 @@ public class AbsenceService implements IAbsenceService {
 			}
 		}
 
+		return result;
+	}
+
+	@Override
+	public List<MoisAlimAutoCongesAnnuelsDto> getListeMoisAlimAutoCongeAnnuel() {
+		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
+		for(Date d : congeAnnuelRepository.getListeMoisAlimAutoCongeAnnuel()){
+			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
+			mois.setDateMois(d);
+			result.add(mois);
+		}
+		
 		return result;
 	}
 }
