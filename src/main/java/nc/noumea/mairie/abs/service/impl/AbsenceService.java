@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.persistence.FlushModeType;
 
+import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
@@ -30,6 +31,8 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
+import nc.noumea.mairie.abs.dto.AgentDto;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
@@ -110,8 +113,6 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ICongesAnnuelsRepository congeAnnuelRepository;
-	
-	
 
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
@@ -1474,12 +1475,28 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<MoisAlimAutoCongesAnnuelsDto> getListeMoisAlimAutoCongeAnnuel() {
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
-		for(Date d : congeAnnuelRepository.getListeMoisAlimAutoCongeAnnuel()){
+		for (Date d : congeAnnuelRepository.getListeMoisAlimAutoCongeAnnuel()) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
 			mois.setDateMois(d);
 			result.add(mois);
 		}
-		
+
+		return result;
+	}
+
+	@Override
+	public List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuel(Date dateMois) {
+		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
+		for (CongeAnnuelAlimAutoHisto histo : congeAnnuelRepository.getListeAlimAutoCongeAnnuel(dateMois)) {
+			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
+			mois.setAgent(new AgentDto(ag));
+			mois.setDateModification(histo.getDateModification());
+			mois.setStatus(histo.getStatus());
+			mois.setDateMois(histo.getDateMonth());
+			result.add(mois);
+		}
+
 		return result;
 	}
 }

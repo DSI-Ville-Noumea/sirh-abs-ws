@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javax.persistence.FlushModeType;
 
+import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
@@ -39,6 +40,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -10971,6 +10973,61 @@ public class AbsenceServiceTest {
 		assertEquals(2, result.size());
 		assertEquals(dateMonth.toDate(), result.get(0).getDateMois());
 		assertEquals(dateMonth2.toDate(), result.get(1).getDateMois());
+	}
+
+	@Test
+	public void getListeAlimAutoCongeAnnuel_ZeroMois() {
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListeAlimAutoCongeAnnuel(dateMonth.toDate())).thenReturn(
+				new ArrayList<CongeAnnuelAlimAutoHisto>());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getListeAlimAutoCongeAnnuel(dateMonth.toDate());
+
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getListeAlimAutoCongeAnnuel_PlusieursMois() {
+		List<CongeAnnuelAlimAutoHisto> list = new ArrayList<CongeAnnuelAlimAutoHisto>();
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+
+		CongeAnnuelAlimAutoHisto c2 = new CongeAnnuelAlimAutoHisto();
+		c2.setIdAgent(9005138);
+		c2.setDateMonth(dateMonth.toDate());
+		CongeAnnuelAlimAutoHisto c = new CongeAnnuelAlimAutoHisto();
+		c.setIdAgent(9005156);
+		c.setDateMonth(dateMonth.toDate());
+		list.add(c);
+		list.add(c2);
+
+		AgentGeneriqueDto ag2 = new AgentGeneriqueDto();
+		ag2.setIdAgent(c2.getIdAgent());
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setIdAgent(c.getIdAgent());
+
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListeAlimAutoCongeAnnuel(dateMonth.toDate())).thenReturn(list);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(9005138)).thenReturn(ag);
+		Mockito.when(sirhWSConsumer.getAgent(9005156)).thenReturn(ag2);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getListeAlimAutoCongeAnnuel(dateMonth.toDate());
+
+		assertEquals(2, result.size());
+		assertEquals(dateMonth.toDate(), result.get(0).getDateMois());
+		assertEquals(c2.getIdAgent(), result.get(0).getAgent().getIdAgent());
+		assertEquals(dateMonth.toDate(), result.get(1).getDateMois());
+		assertEquals(c.getIdAgent(), result.get(1).getAgent().getIdAgent());
 	}
 
 }

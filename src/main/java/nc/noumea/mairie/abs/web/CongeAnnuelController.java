@@ -149,7 +149,7 @@ public class CongeAnnuelController {
 				nomatrAgent, dateDebut, dateFin);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(nomatrAgent);
-		
+
 		return counterService.alimentationAutoCompteur(convertedIdAgent, dateDebut, dateFin);
 	}
 
@@ -192,7 +192,8 @@ public class CongeAnnuelController {
 		List<MoisAlimAutoCongesAnnuelsDto> result = absenceService.getListeMoisAlimAutoCongeAnnuel();
 
 		return result;
-	
+	}
+
 	/**
 	 * Restitution masive de conge annuel <br />
 	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
@@ -209,5 +210,25 @@ public class CongeAnnuelController {
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		return counterService.restitutionMassiveCA(convertedIdAgent, dto);
+	}
+
+	/**
+	 * Pour un mois donné, donne toutes les informations d'alimenation auto des
+	 * congés annuels <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getListeAlimAutoCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuel(
+			@RequestBody(required = true) MoisAlimAutoCongesAnnuelsDto moisAlimAutoDto, HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [congeannuel/getListeAlimAutoCongeAnnuel] => alimentationAutoCongesAnnuels with parameter moisAlimAutoDto = {}",
+				moisAlimAutoDto.getDtoToString(moisAlimAutoDto));
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = absenceService.getListeAlimAutoCongeAnnuel(moisAlimAutoDto
+				.getDateMois());
+
+		return result;
 	}
 }

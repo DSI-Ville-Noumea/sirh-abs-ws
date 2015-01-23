@@ -44,4 +44,6 @@ public interface IAbsenceService {
 	ReturnMessageDto checkCongesAnnuels(Integer convertedIdAgent, Date fromDate, Date toDate);
 
 	List<MoisAlimAutoCongesAnnuelsDto> getListeMoisAlimAutoCongeAnnuel();
+
+	List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuel(Date dateMois);
 }

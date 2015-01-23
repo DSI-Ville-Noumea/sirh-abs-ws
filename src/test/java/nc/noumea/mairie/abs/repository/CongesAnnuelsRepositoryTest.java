@@ -351,7 +351,51 @@ public class CongesAnnuelsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeAlimAutoCongeAnnuel_0Date() {
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+
+		List<CongeAnnuelAlimAutoHisto> result = repository.getListeAlimAutoCongeAnnuel(dateMonth.toDate());
+
+		assertEquals(result.size(), 0);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeAlimAutoCongeAnnuel_OK() {
+
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+		DateTime dateMonth2 = new DateTime(2014, 11, 1, 0, 0, 0);
+
+		CongeAnnuelAlimAutoHisto d3 = new CongeAnnuelAlimAutoHisto();
+		d3.setDateMonth(dateMonth2.toDate());
+		absEntityManager.persist(d3);
+
+		CongeAnnuelAlimAutoHisto d2 = new CongeAnnuelAlimAutoHisto();
+		d2.setDateMonth(dateMonth.toDate());
+		d2.setIdAgent(9005139);
+		absEntityManager.persist(d2);
+
+		CongeAnnuelAlimAutoHisto d = new CongeAnnuelAlimAutoHisto();
+		d.setDateMonth(dateMonth.toDate());
+		d.setIdAgent(9005138);
+		absEntityManager.persist(d);
+
+		List<CongeAnnuelAlimAutoHisto> result = repository.getListeAlimAutoCongeAnnuel(dateMonth.toDate());
+
+		assertEquals(result.size(), 2);
+		assertEquals(d.getIdAgent(), result.get(0).getIdAgent());
+		assertEquals(d2.getIdAgent(), result.get(1).getIdAgent());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
 	
 	@Test 
 	@Transactional("absTransactionManager")
