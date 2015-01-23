@@ -7,6 +7,7 @@ import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 
@@ -41,4 +42,6 @@ public interface ICounterService {
 
 	ReturnMessageDto alimentationAutoCompteur(Integer idAgent, Date dateDebut,
 			Date dateFin);
+
+	ReturnMessageDto restitutionMassiveCA(Integer idAgent, RestitutionMassiveDto dto);
 }

@@ -8,8 +8,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +25,7 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 	public void persistEntity(Object obj) {
 		absEntityManager.persist(obj);
 	}
-
+	
 	@Override
 	public Double getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(Integer idAgent, Integer idDemande) {
 		StringBuilder sb = new StringBuilder();
@@ -55,7 +57,7 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 		}
 		return somme;
 	}
-
+	
 	@Override
 	public AgentWeekCongeAnnuel getWeekHistoForAgentAndDate(Integer idAgent, Date dateMonth) {
 
@@ -64,7 +66,7 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("dateMonth", dateMonth);
-
+		
 		// Exec query
 		List<AgentWeekCongeAnnuel> result = query.getResultList();
 
@@ -80,6 +82,45 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		TypedQuery<Date> query = absEntityManager.createQuery(sb.toString(), Date.class);
 
+		return query.getResultList();
+	}
+}
+	
+	@Override
+	public List<DemandeCongesAnnuels> getListeDemandesCongesAnnuelsPrisesByAgent(Integer idAgentConcerne, Date fromDate, Date toDate) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from DemandeCongesAnnuels d ");
+		sb.append("inner join d.etatsDemande ed ");
+		sb.append("where d.idAgent = :idAgentConcerne ");
+		sb.append("and d.dateDebut <= :fromDate and d.dateFin >= :toDate ");
+		sb.append("and ed.etat in ( :PRISE ) ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 group by ed2.demande.idDemande ) ");
+		
+		TypedQuery<DemandeCongesAnnuels> query = absEntityManager.createQuery(sb.toString(), DemandeCongesAnnuels.class);
+		
+		query.setParameter("idAgentConcerne", idAgentConcerne);
+		query.setParameter("fromDate", fromDate);
+		query.setParameter("toDate", toDate);
+		query.setParameter("PRISE", RefEtatEnum.PRISE);
+		
+		return query.getResultList();
+	}
+	
+	@Override
+	public List<CongeAnnuelRestitutionMassiveHisto> getRestitutionCAByAgentAndDate(RestitutionMassiveDto dto) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from CongeAnnuelRestitutionMassiveHisto d ");
+		sb.append("where d.idAgent = :idAgent ");
+		sb.append("and d.dateRestitution = :dateRestitution ");
+		sb.append("and d.status = 'OK' ");
+		
+		TypedQuery<CongeAnnuelRestitutionMassiveHisto> query = absEntityManager.createQuery(sb.toString(), CongeAnnuelRestitutionMassiveHisto.class);
+		
+		query.setParameter("idAgent", dto.getIdAgent());
+		query.setParameter("dateRestitution", dto.getDateRestitution());
+		
 		return query.getResultList();
 	}
 }

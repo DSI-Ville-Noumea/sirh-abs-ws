@@ -12,6 +12,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -63,6 +64,8 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur Année en cours";
 
 	protected static final String ERROR_TECHNIQUE = "Erreur technique : ICounterService défaut d'implémentation";
+	
+	protected static final String AGENT_NON_HABILITE = "L'agent n'est pas habilité à saisir une demande.";
 
 	/**
 	 * appeler par PTG exclusivement l historique utilise a pour seul but de
@@ -248,6 +251,13 @@ public abstract class AbstractCounterService implements ICounterService {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 
+		return srm;
+	}
+
+	@Override
+	public ReturnMessageDto restitutionMassiveCA(Integer idAgent, RestitutionMassiveDto dto) {
+		ReturnMessageDto srm = new ReturnMessageDto();
+		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 		return srm;
 	}
 }

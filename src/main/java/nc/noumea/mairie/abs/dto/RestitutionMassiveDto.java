@@ -2,9 +2,14 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 public class RestitutionMassiveDto {
 
 	private Integer idAgent;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateRestitution;
 	private boolean isMatin;
 	private boolean isApresMidi;

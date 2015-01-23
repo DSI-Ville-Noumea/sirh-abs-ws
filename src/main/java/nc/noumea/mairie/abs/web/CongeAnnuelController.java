@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
+import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -148,7 +149,7 @@ public class CongeAnnuelController {
 				nomatrAgent, dateDebut, dateFin);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(nomatrAgent);
-
+		
 		return counterService.alimentationAutoCompteur(convertedIdAgent, dateDebut, dateFin);
 	}
 
@@ -191,5 +192,22 @@ public class CongeAnnuelController {
 		List<MoisAlimAutoCongesAnnuelsDto> result = absenceService.getListeMoisAlimAutoCongeAnnuel();
 
 		return result;
+	
+	/**
+	 * Restitution masive de conge annuel <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/restitutionMassive", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto addRestitutionMassive(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) RestitutionMassiveDto dto, HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [congeannuel/restitutionMassive] => addRestitutionMassive with parameters idAgent = {}",
+				idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		return counterService.restitutionMassiveCA(convertedIdAgent, dto);
 	}
 }

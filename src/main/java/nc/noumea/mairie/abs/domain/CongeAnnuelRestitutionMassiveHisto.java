@@ -41,10 +41,24 @@ public class CongeAnnuelRestitutionMassiveHisto {
 	@Column(name = "STATUS")
 	private String status;
 	
-	@NotNull
 	@Column(name = "JOURS", columnDefinition = "numeric")
 	private Double jours;
 
+	@Column(name = "MOTIF")
+	private String motif;
+
+	@NotNull
+	@Column(name = "JOURNEE")
+	private boolean journee;
+
+	@NotNull
+	@Column(name = "AM")
+	private boolean matin;
+
+	@NotNull
+	@Column(name = "PM")
+	private boolean apresMidi;
+	
 	public Integer getIdCongeAnnuelRestitutionMassiveTask() {
 		return idCongeAnnuelRestitutionMassiveTask;
 	}
@@ -92,6 +106,38 @@ public class CongeAnnuelRestitutionMassiveHisto {
 
 	public void setJours(Double jours) {
 		this.jours = jours;
+	}
+
+	public String getMotif() {
+		return motif;
+	}
+
+	public void setMotif(String motif) {
+		this.motif = motif;
+	}
+
+	public boolean isMatin() {
+		return matin;
+	}
+
+	public void setMatin(boolean matin) {
+		this.matin = matin;
+	}
+
+	public boolean isApresMidi() {
+		return apresMidi;
+	}
+
+	public void setApresMidi(boolean apresMidi) {
+		this.apresMidi = apresMidi;
+	}
+
+	public boolean isJournee() {
+		return journee;
+	}
+
+	public void setJournee(boolean journee) {
+		this.journee = journee;
 	}
 	
 }

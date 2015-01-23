@@ -500,8 +500,10 @@ public class HelperService {
 			    startDate = thisFriday; // start on this FRIDAY
 			}
 			while (startDate.isBefore(endDate)) {
+				if(!sirhWSConsumer.isJourHoliday(startDate.plusDays(1).toDate())) { // +1 jour pour samedi
+					compteur += 1;
+				}
 			    startDate = startDate.plusWeeks(1);
-			    compteur += 1;
 			}
 	        
 			// cas ou le 1er jour est un vendredi
