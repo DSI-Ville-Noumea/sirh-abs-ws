@@ -61,7 +61,7 @@ public abstract class AbstractCounterService implements ICounterService {
 
 	protected static final String RESET_COMPTEUR_ANNEE_PRECEDENTE = "Remise à 0 du compteur Année précédente";
 	protected static final String INITIATE_COMPTEUR = "Initialisation du compteur";
-	protected static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur Année en cours";
+	protected static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur de l'année en cours";
 
 	protected static final String ERROR_TECHNIQUE = "Erreur technique : ICounterService défaut d'implémentation";
 	

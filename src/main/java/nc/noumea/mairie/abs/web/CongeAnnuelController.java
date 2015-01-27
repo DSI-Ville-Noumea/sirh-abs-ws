@@ -102,10 +102,6 @@ public class CongeAnnuelController {
 
 		ReturnMessageDto srm = counterService.resetCompteurCongeAnnuel(idAgentCongeAnnuelCount);
 
-		if (!srm.getErrors().isEmpty()) {
-			response.setStatus(HttpServletResponse.SC_CONFLICT);
-		}
-
 		return srm;
 	}
 
