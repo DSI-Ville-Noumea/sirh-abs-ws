@@ -1738,158 +1738,158 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 	}
 	
 	// on rend que le vendredi et non le samedi car jeudi en conge
-//	@Test
-//	public void restitutionMassiveCA_Vendredi_compteurAnneeN_jeudiNonTravaille() {
-//		
-//		Integer idAgent = 9005138;
-//		
-//		RestitutionMassiveDto dto = new RestitutionMassiveDto();
-//		dto.setDateRestitution(new DateTime(2014,12,12,0,0,0).toDate());
-//		dto.setJournee(true);
-//		dto.setApresMidi(false);
-//		dto.setMatin(false);
-//		dto.setIdAgent(9005138);
-//		dto.setMotif("motif");
-//		
-//		RefTypeSaisiCongeAnnuel typeConge = new RefTypeSaisiCongeAnnuel();
-//		typeConge.setCodeBaseHoraireAbsence("A");
-//		
-//		RefTypeSaisiCongeAnnuelDto dtoBase = new RefTypeSaisiCongeAnnuelDto();
-//		dtoBase.setIdRefTypeSaisiCongeAnnuel(1);
-//		
-//		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
-//		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
-//				dtoBase.getIdRefTypeSaisiCongeAnnuel())).thenReturn(typeConge);
-//		
-//		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-//		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(dto.getIdAgent(), dto.getDateRestitution())).thenReturn(dtoBase);
-//		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
-//
-//		AgentCongeAnnuelCount acac = Mockito.spy(new AgentCongeAnnuelCount());
-//		acac.setTotalJours(0.0);
-//		acac.setTotalJoursAnneeN1(0.0);
-//		
-//		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-//		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, dto.getIdAgent())).thenReturn(acac);
-//		
-//		Date fromDate = new Date();
-//		
-//		HelperService helperService = Mockito.mock(HelperService.class);
-//		Mockito.when(helperService.getDateDebutCongeAnnuel(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class), Mockito.anyBoolean(), Mockito.anyBoolean()))
-//			.thenReturn(fromDate);
-//		Mockito.when(helperService.getDateFinCongeAnnuel(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.any(Date.class)))
-//		.thenReturn(fromDate);
-//		
-//		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
-//		demande.setDateDebut(new DateTime(2014,12,11,0,0,0).toDate());
-//		demande.setDateFin(new DateTime(2014,12,31,0,0,0).toDate());
-//		demande.setDuree(25.0);
-//		demande.setDureeAnneeN1(0.0);
-//		demande.setNbSamediDecompte(4.0);
-//		demande.setNbSamediOffert(0.0);
-//		
-//		List<DemandeCongesAnnuels> listCongesAgentpris = Mockito.spy(new ArrayList<DemandeCongesAnnuels>());
-//		listCongesAgentpris.add(demande);
-//
-//		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-//		Mockito.when(congesAnnuelsRepository.getRestitutionCAByAgentAndDate(dto)).thenReturn(new ArrayList<CongeAnnuelRestitutionMassiveHisto>());
-//		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(dto.getIdAgent(), fromDate, fromDate))
-//		.thenReturn(listCongesAgentpris);
-//		
-//		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-//		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
-//		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
-//		ReflectionTestUtils.setField(service, "helperService", helperService);
-//		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
-//		
-//		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto);
-//		
-//		assertEquals(0, result.getErrors().size());
-//		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(CongeAnnuelRestitutionMassiveHisto.class));
-//		assertEquals(acac.getTotalJours(), 1,0);
-//		assertEquals(acac.getTotalJoursAnneeN1(), 0,0);
-//		assertEquals(demande.getDuree(), 25,0);
-//		assertEquals(demande.getDureeAnneeN1(), 0,0);
-//		assertEquals(demande.getNbSamediDecompte(), 4,0);
-//		assertEquals(demande.getNbSamediOffert(), 0,0);
-//	}
+	@Test
+	public void restitutionMassiveCA_Vendredi_compteurAnneeN_jeudiNonTravaille() {
+		
+		Integer idAgent = 9005138;
+		
+		RestitutionMassiveDto dto = new RestitutionMassiveDto();
+		dto.setDateRestitution(new DateTime(2014,12,12,0,0,0).toDate());
+		dto.setJournee(true);
+		dto.setApresMidi(false);
+		dto.setMatin(false);
+		dto.setIdAgent(9005138);
+		dto.setMotif("motif");
+		
+		RefTypeSaisiCongeAnnuel typeConge = new RefTypeSaisiCongeAnnuel();
+		typeConge.setCodeBaseHoraireAbsence("A");
+		
+		RefTypeSaisiCongeAnnuelDto dtoBase = new RefTypeSaisiCongeAnnuelDto();
+		dtoBase.setIdRefTypeSaisiCongeAnnuel(1);
+		
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+				dtoBase.getIdRefTypeSaisiCongeAnnuel())).thenReturn(typeConge);
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(dto.getIdAgent(), dto.getDateRestitution())).thenReturn(dtoBase);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+
+		AgentCongeAnnuelCount acac = Mockito.spy(new AgentCongeAnnuelCount());
+		acac.setTotalJours(0.0);
+		acac.setTotalJoursAnneeN1(0.0);
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, dto.getIdAgent())).thenReturn(acac);
+		
+		Date fromDate = new Date();
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDateDebutCongeAnnuel(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class), Mockito.anyBoolean(), Mockito.anyBoolean()))
+			.thenReturn(fromDate);
+		Mockito.when(helperService.getDateFinCongeAnnuel(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.any(Date.class)))
+		.thenReturn(fromDate);
+		
+		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
+		demande.setDateDebut(new DateTime(2014,12,11,0,0,0).toDate());
+		demande.setDateFin(new DateTime(2014,12,31,0,0,0).toDate());
+		demande.setDuree(25.0);
+		demande.setDureeAnneeN1(0.0);
+		demande.setNbSamediDecompte(4.0);
+		demande.setNbSamediOffert(0.0);
+		
+		List<DemandeCongesAnnuels> listCongesAgentpris = Mockito.spy(new ArrayList<DemandeCongesAnnuels>());
+		listCongesAgentpris.add(demande);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getRestitutionCAByAgentAndDate(dto)).thenReturn(new ArrayList<CongeAnnuelRestitutionMassiveHisto>());
+		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(dto.getIdAgent(), fromDate, fromDate))
+		.thenReturn(listCongesAgentpris);
+		
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		
+		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto);
+		
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(CongeAnnuelRestitutionMassiveHisto.class));
+		assertEquals(acac.getTotalJours(), 1,0);
+		assertEquals(acac.getTotalJoursAnneeN1(), 0,0);
+		assertEquals(demande.getDuree(), 25,0);
+		assertEquals(demande.getDureeAnneeN1(), 0,0);
+		assertEquals(demande.getNbSamediDecompte(), 4,0);
+		assertEquals(demande.getNbSamediOffert(), 0,0);
+	}
 	
 	// on rend le vendredi apres-midi et le samedi complet decompte
-//	@Test
-//	public void restitutionMassiveCA_VendrediPM_compteurAnneeN1_travailleVendrediMatin() {
-//		
-//		Integer idAgent = 9005138;
-//		
-//		RestitutionMassiveDto dto = new RestitutionMassiveDto();
-//		dto.setDateRestitution(new DateTime(2014,12,12,0,0,0).toDate());
-//		dto.setJournee(false);
-//		dto.setApresMidi(true);
-//		dto.setMatin(false);
-//		dto.setIdAgent(9005138);
-//		dto.setMotif("motif");
-//		
-//		RefTypeSaisiCongeAnnuel typeConge = new RefTypeSaisiCongeAnnuel();
-//		typeConge.setCodeBaseHoraireAbsence("A");
-//		
-//		RefTypeSaisiCongeAnnuelDto dtoBase = new RefTypeSaisiCongeAnnuelDto();
-//		dtoBase.setIdRefTypeSaisiCongeAnnuel(1);
-//		
-//		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
-//		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
-//				dtoBase.getIdRefTypeSaisiCongeAnnuel())).thenReturn(typeConge);
-//		
-//		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-//		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(dto.getIdAgent(), dto.getDateRestitution())).thenReturn(dtoBase);
-//		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
-//
-//		AgentCongeAnnuelCount acac = Mockito.spy(new AgentCongeAnnuelCount());
-//		acac.setTotalJours(0.0);
-//		acac.setTotalJoursAnneeN1(0.0);
-//		
-//		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-//		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, dto.getIdAgent())).thenReturn(acac);
-//		
-//		Date fromDate = new Date();
-//		
-//		HelperService helperService = Mockito.mock(HelperService.class);
-//		Mockito.when(helperService.getDateDebutCongeAnnuel(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class), Mockito.anyBoolean(), Mockito.anyBoolean()))
-//			.thenReturn(fromDate);
-//		Mockito.when(helperService.getDateFinCongeAnnuel(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.any(Date.class)))
-//		.thenReturn(fromDate);
-//		
-//		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
-//		demande.setDateDebut(new DateTime(2014,12,12,12,0,0).toDate());
-//		demande.setDateFin(new DateTime(2014,12,31,0,0,0).toDate());
-//		demande.setDuree(0.0);
-//		demande.setDureeAnneeN1(25.0);
-//		demande.setNbSamediDecompte(4.0);
-//		demande.setNbSamediOffert(0.0);
-//		
-//		List<DemandeCongesAnnuels> listCongesAgentpris = Mockito.spy(new ArrayList<DemandeCongesAnnuels>());
-//		listCongesAgentpris.add(demande);
-//
-//		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-//		Mockito.when(congesAnnuelsRepository.getRestitutionCAByAgentAndDate(dto)).thenReturn(new ArrayList<CongeAnnuelRestitutionMassiveHisto>());
-//		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(dto.getIdAgent(), fromDate, fromDate))
-//		.thenReturn(listCongesAgentpris);
-//		
-//		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-//		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
-//		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
-//		ReflectionTestUtils.setField(service, "helperService", helperService);
-//		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
-//		
-//		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto);
-//		
-//		assertEquals(0, result.getErrors().size());
-//		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(CongeAnnuelRestitutionMassiveHisto.class));
-//		assertEquals(acac.getTotalJours(), 0,0);
-//		assertEquals(acac.getTotalJoursAnneeN1(), 1,0);
-//		assertEquals(demande.getDuree(), 0,0);
-//		assertEquals(demande.getDureeAnneeN1(), 25,0);
-//		assertEquals(demande.getNbSamediDecompte(), 4,0);
-//		assertEquals(demande.getNbSamediOffert(), 0,0);
-//	}
+	@Test
+	public void restitutionMassiveCA_VendrediPM_compteurAnneeN1_travailleVendrediMatin() {
+		
+		Integer idAgent = 9005138;
+		
+		RestitutionMassiveDto dto = new RestitutionMassiveDto();
+		dto.setDateRestitution(new DateTime(2014,12,12,0,0,0).toDate());
+		dto.setJournee(false);
+		dto.setApresMidi(true);
+		dto.setMatin(false);
+		dto.setIdAgent(9005138);
+		dto.setMotif("motif");
+		
+		RefTypeSaisiCongeAnnuel typeConge = new RefTypeSaisiCongeAnnuel();
+		typeConge.setCodeBaseHoraireAbsence("A");
+		
+		RefTypeSaisiCongeAnnuelDto dtoBase = new RefTypeSaisiCongeAnnuelDto();
+		dtoBase.setIdRefTypeSaisiCongeAnnuel(1);
+		
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+				dtoBase.getIdRefTypeSaisiCongeAnnuel())).thenReturn(typeConge);
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(dto.getIdAgent(), dto.getDateRestitution())).thenReturn(dtoBase);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+
+		AgentCongeAnnuelCount acac = Mockito.spy(new AgentCongeAnnuelCount());
+		acac.setTotalJours(0.0);
+		acac.setTotalJoursAnneeN1(0.0);
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, dto.getIdAgent())).thenReturn(acac);
+		
+		Date fromDate = new Date();
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDateDebutCongeAnnuel(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class), Mockito.anyBoolean(), Mockito.anyBoolean()))
+			.thenReturn(fromDate);
+		Mockito.when(helperService.getDateFinCongeAnnuel(Mockito.any(RefTypeSaisiCongeAnnuel.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.any(Date.class)))
+		.thenReturn(fromDate);
+		
+		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
+		demande.setDateDebut(new DateTime(2014,12,12,12,0,0).toDate());
+		demande.setDateFin(new DateTime(2014,12,31,0,0,0).toDate());
+		demande.setDuree(0.0);
+		demande.setDureeAnneeN1(25.0);
+		demande.setNbSamediDecompte(4.0);
+		demande.setNbSamediOffert(0.0);
+		
+		List<DemandeCongesAnnuels> listCongesAgentpris = Mockito.spy(new ArrayList<DemandeCongesAnnuels>());
+		listCongesAgentpris.add(demande);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getRestitutionCAByAgentAndDate(dto)).thenReturn(new ArrayList<CongeAnnuelRestitutionMassiveHisto>());
+		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(dto.getIdAgent(), fromDate, fromDate))
+		.thenReturn(listCongesAgentpris);
+		
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		
+		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto);
+		
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(CongeAnnuelRestitutionMassiveHisto.class));
+		assertEquals(acac.getTotalJours(), 0,0);
+		assertEquals(acac.getTotalJoursAnneeN1(), 1,0);
+		assertEquals(demande.getDuree(), 0,0);
+		assertEquals(demande.getDureeAnneeN1(), 25,0);
+		assertEquals(demande.getNbSamediDecompte(), 4,0);
+		assertEquals(demande.getNbSamediOffert(), 0,0);
+	}
 	
 	@Test
 	public void restitutionMassiveCA_VendrediPM_compteurAnneeN1_CongeVendrediMatin() {

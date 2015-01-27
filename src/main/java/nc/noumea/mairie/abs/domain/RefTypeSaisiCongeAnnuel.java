@@ -65,6 +65,9 @@ public class RefTypeSaisiCongeAnnuel {
 	@Column(name = "QUOTA_MULTIPLE")
 	private Integer quotaMultiple;
 
+	@Column(name = "QUOTA_DECOMPTE")
+	private Integer quotaDecompte;
+
 	@NotNull
 	@Column(name = "DECOMPTE_SAMEDI", nullable = false)
 	@Type(type = "boolean")
@@ -181,6 +184,14 @@ public class RefTypeSaisiCongeAnnuel {
 
 	public void setRefAlimCongeAnnuel(RefAlimCongeAnnuel refAlimCongeAnnuel) {
 		this.refAlimCongeAnnuel = refAlimCongeAnnuel;
+	}
+
+	public Integer getQuotaDecompte() {
+		return quotaDecompte;
+	}
+
+	public void setQuotaDecompte(Integer quotaDecompte) {
+		this.quotaDecompte = quotaDecompte;
 	}
 
 }

@@ -415,10 +415,10 @@ public class HelperService {
 
 			case "C":
 				duree = calculNombreJours(demande.getDateDebut(), dateReprise);
-				duree = Math.ceil((duree / demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) * 3);
-				if (duree < 3) {
+				duree = Math.ceil((duree / demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) * demande.getTypeSaisiCongeAnnuel().getQuotaDecompte());
+				if (duree < demande.getTypeSaisiCongeAnnuel().getQuotaDecompte()) {
 					duree = calculNombreJours(demande.getDateDebut(), dateReprise);
-				} else if (duree > 3 && duree <= demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) {
+				} else if (duree > demande.getTypeSaisiCongeAnnuel().getQuotaDecompte() && duree <= demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) {
 					duree = 3.0;
 				}
 				break;

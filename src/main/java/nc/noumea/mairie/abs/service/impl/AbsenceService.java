@@ -967,8 +967,7 @@ public class AbsenceService implements IAbsenceService {
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, demandeDto.getAgentWithServiceDto()
-				.getIdAgent(), demande, dateJour, true);
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour, true);
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();

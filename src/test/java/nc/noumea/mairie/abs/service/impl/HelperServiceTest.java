@@ -1193,6 +1193,7 @@ public class HelperServiceTest {
 		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
 		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
 		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+		typeSaisiCongeAnnuel.setQuotaDecompte(3);
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
@@ -1214,6 +1215,7 @@ public class HelperServiceTest {
 		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
 		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
 		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+		typeSaisiCongeAnnuel.setQuotaDecompte(3);
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
@@ -1235,6 +1237,7 @@ public class HelperServiceTest {
 		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
 		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
 		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+		typeSaisiCongeAnnuel.setQuotaDecompte(3);
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
@@ -1256,6 +1259,7 @@ public class HelperServiceTest {
 		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
 		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
 		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+		typeSaisiCongeAnnuel.setQuotaDecompte(3);
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);

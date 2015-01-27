@@ -461,6 +461,228 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 	}
 
 	@Test
+	public void checkMultipleCycle_baseC_withMultiple_dureeInferieurCycle() {
+		Integer idOperateur = 9005138;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		ReturnMessageDto dtoErre = new ReturnMessageDto();
+		dtoErre.getErrors().add("erreur pas utilisateur SIRH");
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setCommentaire(null);
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setIdAgent(9003041);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(4.0);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idOperateur, demande.getIdAgent())).thenReturn(false);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idOperateur)).thenReturn(dtoErre);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0),
+				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
+	}
+
+	@Test
+	public void checkMultipleCycle_baseC_withMultiple_dureeInferieurCycle_ForOperator() {
+		Integer idOperateur = 9005138;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		ReturnMessageDto dtoErre = new ReturnMessageDto();
+		dtoErre.getErrors().add("erreur pas utilisateur SIRH");
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setCommentaire(null);
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setIdAgent(9003041);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(4.0);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idOperateur, demande.getIdAgent())).thenReturn(true);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idOperateur)).thenReturn(dtoErre);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
+
+		assertEquals(0, srm.getErrors().size());
+		assertEquals(1, srm.getInfos().size());
+		assertEquals(srm.getInfos().get(0),
+				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
+	}
+
+	@Test
+	public void checkMultipleCycle_baseC_withMultiple_dureeInferieurCycle_ForSirh() {
+		Integer idOperateur = 9005138;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		ReturnMessageDto dtoErre = new ReturnMessageDto();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setCommentaire(null);
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setIdAgent(9003041);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(4.0);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idOperateur, demande.getIdAgent())).thenReturn(false);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idOperateur)).thenReturn(dtoErre);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
+
+		assertEquals(0, srm.getErrors().size());
+		assertEquals(1, srm.getInfos().size());
+		assertEquals(srm.getInfos().get(0),
+				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
+	}
+
+	@Test
+	public void checkMultipleCycle_baseC_withMultiple_dureeSuperieurCycle() {
+		Integer idOperateur = 9005138;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		ReturnMessageDto dtoErre = new ReturnMessageDto();
+		dtoErre.getErrors().add("erreur pas utilisateur SIRH");
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setCommentaire(null);
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setIdAgent(9003041);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(7.0);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idOperateur, demande.getIdAgent())).thenReturn(false);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idOperateur)).thenReturn(dtoErre);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0),
+				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
+	}
+
+	@Test
+	public void checkMultipleCycle_baseC_withMultiple_dureeSuperieurCycle_ForOperator() {
+		Integer idOperateur = 9005138;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		ReturnMessageDto dtoErre = new ReturnMessageDto();
+		dtoErre.getErrors().add("erreur pas utilisateur SIRH");
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setCommentaire(null);
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setIdAgent(9003041);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(8.0);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idOperateur, demande.getIdAgent())).thenReturn(true);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idOperateur)).thenReturn(dtoErre);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0),
+				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
+	}
+
+	@Test
+	public void checkMultipleCycle_baseC_withMultiple_dureeSuperieurCycle_ForSirh() {
+		Integer idOperateur = 9005138;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		ReturnMessageDto dtoErre = new ReturnMessageDto();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setCommentaire(null);
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setIdAgent(9003041);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(9.0);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isOperateurOfAgent(idOperateur, demande.getIdAgent())).thenReturn(false);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idOperateur)).thenReturn(dtoErre);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0),
+				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
+	}
+
+	@Test
 	public void checkMultipleCycle_withMultiple() {
 		Integer idOperateur = 9005138;
 
