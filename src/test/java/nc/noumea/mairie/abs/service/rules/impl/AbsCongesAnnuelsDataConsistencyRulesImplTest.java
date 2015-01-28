@@ -364,7 +364,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		srm = impl.checkDepassementDroitsAcquis(srm, demande);
 
-		assertEquals(1, srm.getErrors().size());
+		assertEquals(0, srm.getErrors().size());
+		assertEquals(1, srm.getInfos().size());
 	}
 
 	@Test
@@ -400,6 +401,142 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		srm = impl.checkDepassementDroitsAcquis(srm, demande);
 
 		assertEquals(0, srm.getErrors().size());
+		assertEquals(0, srm.getInfos().size());
+	}
+
+	@Test
+	public void checkDepassementDroitsAcquis_true_moins3Jours() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setIdDemande(1);
+		demande.setDateDebut(new Date());
+		demande.setIdAgent(agentWithServiceDto.getIdAgent());
+		demande.setDuree(23.0);
+
+		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
+		soldeCongeAnnuel.setTotalJours(20.0);
+		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getIdAgent())).thenReturn(
+				soldeCongeAnnuel);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(
+				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(
+						demande.getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
+
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
+
+		srm = impl.checkDepassementDroitsAcquis(srm, demande);
+
+		assertEquals(0, srm.getErrors().size());
+		assertEquals(0, srm.getInfos().size());
+	}
+	
+	@Test
+	public void checkDepassementCompteurAgent_false() {
+
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+
+		DemandeDto demande = new DemandeDto();
+		demande.setIdDemande(1);
+		demande.setDateDebut(new Date());
+		demande.setAgentWithServiceDto(agentWithServiceDto);
+		demande.setDuree(10.0);
+
+		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
+		soldeCongeAnnuel.setTotalJours(2.0);
+		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getAgentWithServiceDto().getIdAgent())).thenReturn(
+				soldeCongeAnnuel);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(
+				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(
+						demande.getAgentWithServiceDto().getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
+
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
+
+		boolean result = impl.checkDepassementCompteurAgent(demande);
+
+		assertTrue(result);
+	}
+
+	@Test
+	public void checkDepassementCompteurAgent_true() {
+
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+
+		DemandeDto demande = new DemandeDto();
+		demande.setIdDemande(1);
+		demande.setDateDebut(new Date());
+		demande.setAgentWithServiceDto(agentWithServiceDto);
+		demande.setDuree(10.0);
+
+		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
+		soldeCongeAnnuel.setTotalJours(20.0);
+		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getAgentWithServiceDto().getIdAgent())).thenReturn(
+				soldeCongeAnnuel);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(
+				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(
+						demande.getAgentWithServiceDto().getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
+
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
+
+		boolean result = impl.checkDepassementCompteurAgent(demande);
+
+		assertFalse(result);
+	}
+
+	@Test
+	public void checkDepassementCompteurAgent_true_moins3Jours() {
+
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+
+		DemandeDto demande = new DemandeDto();
+		demande.setIdDemande(1);
+		demande.setDateDebut(new Date());
+		demande.setAgentWithServiceDto(agentWithServiceDto);
+		demande.setDuree(23.0);
+
+		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
+		soldeCongeAnnuel.setTotalJours(20.0);
+		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getAgentWithServiceDto().getIdAgent())).thenReturn(
+				soldeCongeAnnuel);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(
+				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(
+						demande.getAgentWithServiceDto().getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
+
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
+
+		boolean result = impl.checkDepassementCompteurAgent(demande);
+
+		assertFalse(result);
 	}
 
 	@Test
