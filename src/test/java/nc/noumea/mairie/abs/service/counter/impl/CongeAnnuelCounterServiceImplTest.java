@@ -34,6 +34,7 @@ import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.repository.TypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
+import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -251,9 +252,15 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(new ReturnMessageDto());
+
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
 		ReturnMessageDto result = service.majCompteurToAgent(srm, demande, dto);
 
@@ -265,12 +272,12 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 	}
 
 	@Test
-	public void majCompteurToAgent_soldeNegatif() {
+	public void majCompteurToAgent_soldeNegatif_enregistrementOk() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
-		demande.setDuree(2.0);
+		demande.setDuree(6.0);
 		demande.setDureeAnneeN1(0.0);
 		demande.setIdAgent(9005138);
 
@@ -288,17 +295,26 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getAgent(demande.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(new ReturnMessageDto());
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		ReturnMessageDto result = service.majCompteurToAgent(srm, demande, dto);
 
-		assertEquals(1, result.getErrors().size());
-		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0));
+		assertEquals(0, result.getErrors().size());
 
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
-		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
 	}
 
 	@Test
@@ -328,10 +344,16 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
 
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(new ReturnMessageDto());
+
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
 		ReturnMessageDto result = service.majCompteurToAgent(srm, demande, dto);
 
@@ -351,7 +373,13 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		demande.setDuree(10.0);
 		demande.setDureeAnneeN1(20.0);
 
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(new ReturnMessageDto());
+		
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
 		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
 
@@ -367,7 +395,13 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		demande.setDuree(10.0);
 		demande.setDureeAnneeN1(20.0);
 
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(new ReturnMessageDto());
+		
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
 		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
 
@@ -389,7 +423,13 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		demande.setDureeAnneeN1(20.0);
 		demande.setEtatsDemande(etatsDemande);
 
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(new ReturnMessageDto());
+		
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
 		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
 
@@ -411,7 +451,13 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		demande.setDureeAnneeN1(20.0);
 		demande.setEtatsDemande(etatsDemande);
 
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(new ReturnMessageDto());
+		
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
 		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
 
@@ -433,11 +479,48 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		demande.setDureeAnneeN1(20.0);
 		demande.setEtatsDemande(etatsDemande);
 
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(new ReturnMessageDto());
+		
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
 		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
 
 		assertEquals(30, result.intValue());
+	}
+
+	@Test
+	public void calculJoursCompteur_debit_EtatApprouve_ET_DepassementCompteur() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.SAISIE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+		demande.setEtatsDemande(etatsDemande);
+
+		ReturnMessageDto dto = new ReturnMessageDto();
+		dto.getInfos().add("depassement compteur");
+		
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(dto);
+		
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
+
+		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(0, result.intValue());
 	}
 
 	@Test
@@ -455,7 +538,13 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		demande.setDureeAnneeN1(20.0);
 		demande.setEtatsDemande(etatsDemande);
 
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class)))
+				.thenReturn(new ReturnMessageDto());
+		
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
 		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
 

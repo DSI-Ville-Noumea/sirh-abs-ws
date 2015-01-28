@@ -544,7 +544,8 @@ public class AbsenceService implements IAbsenceService {
 					RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(), null);
 			ReturnMessageDto srm = new ReturnMessageDto();
 			srm = absenceDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srm, demande);
-			if (srm.getErrors().size() > 0) {
+			if (srm.getInfos().size() > 0
+					&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
 				EtatDemande etatDemande = new EtatDemande();
 
 				etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, new ReturnMessageDto(), demande
@@ -1306,6 +1307,7 @@ public class AbsenceService implements IAbsenceService {
 				demandeCongesAnnuels = (DemandeCongesAnnuels) demande;
 				demandeCongesAnnuels.setDuree(helperService.getDureeCongeAnnuel(demandeCongesAnnuels,
 						demandeDto.getDateReprise()));
+				demandeCongesAnnuels.setDureeAnneeN1(0.0);
 				demandeCongesAnnuels.setNbSamediOffert(helperService.getNombreSamediOffert(demandeCongesAnnuels));
 				demandeCongesAnnuels.setNbSamediDecompte(helperService.getNombreSamediDecompte(demandeCongesAnnuels));
 				demandeCongesAnnuels.setDateDebutAM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false

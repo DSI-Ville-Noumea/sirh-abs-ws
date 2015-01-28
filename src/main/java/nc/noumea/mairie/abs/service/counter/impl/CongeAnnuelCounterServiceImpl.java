@@ -29,10 +29,12 @@ import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
+import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +52,10 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	
 	@Autowired
 	private IDemandeRepository demandeRepository;
+	
+	@Autowired
+	@Qualifier("AbsCongesAnnuelsDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl;
 	
 	protected static final String BASE_CONGES_ALIM_AUTO_INEXISTANT = "La base congés [%d] n'existe pas dans ABS_REF_ALIM_CONGE_ANNUEL.";
 	protected static final String PA_INEXISTANT = "Pas de PA active pour l'agent : [%d].";
@@ -167,7 +173,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			DemandeEtatChangeDto demandeEtatChangeDto) {
 
 		logger.info("Trying to update conge annuel counters for Agent [{}] ...", demande.getIdAgent());
-
+		
 		Double jours = calculJoursCompteur(demandeEtatChangeDto, demande);
 		if (0 != jours) {
 			try {
@@ -181,6 +187,17 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 	protected Double calculJoursCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		Double jours = 0.0;
+		
+		// si on approuve, et que le compteur est en depassement
+		// pas de mise a jour du compteur
+		// la DRH doit d abord valider
+		ReturnMessageDto srm = new ReturnMessageDto();
+		srm = absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srm, demande);
+		if (srm.getInfos().size() > 0 
+				&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) { 
+			return jours;
+		}
+		
 		// si on approuve, le compteur decremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
 				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
@@ -237,14 +254,8 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
 			return srm;
 		}
-
-		// on verifie que le solde est positif seulement si on debite le
-		// compteur
-		if (0 > jours && 0 > arc.getTotalJours() + arc.getTotalJoursAnneeN1() + jours) {
-			logger.warn(SOLDE_COMPTEUR_NEGATIF);
-			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
-			return srm;
-		}
+		
+		// on ne bloque pas si le compteur est negatif
 
 		Double joursAnneeN1 = 0.0;
 		Double joursAnneeEnCours = 0.0;
