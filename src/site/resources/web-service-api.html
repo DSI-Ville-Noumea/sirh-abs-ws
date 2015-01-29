@@ -199,6 +199,24 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/getListeMoisAlimAutoCongeAnnuel</span>
+                    <div>
+                            <a href="#/congeannuel/getListeMoisAlimAutoCongeAnnuel_GET">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/restitutionMassive</span>
+                    <div>
+                            <a href="#/congeannuel/restitutionMassive_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/getListeAlimAutoCongeAnnuel</span>
+                    <div>
+                            <a href="#/congeannuel/getListeAlimAutoCongeAnnuel_POST">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/congeexceptionnel/checkCongesExceptionnels</span>
                     <div>
                             <a href="#/congeexceptionnel/checkCongesExceptionnels_GET_idAgent_dateDebut_dateFin">GET</a>
@@ -2392,6 +2410,194 @@
 <span class="json-primitive-type">string</span>    ]</span>
             </div>
 </div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeannuel/getListeMoisAlimAutoCongeAnnuel_GET"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/congeannuel/getListeMoisAlimAutoCongeAnnuel</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Pour connaire sur les mois sur lesquels la routine d'alimentation auto de
+ fin de mois des conges annuels est passée
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">dateMois</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agent</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateModification</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">status</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeannuel/restitutionMassive_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/congeannuel/restitutionMassive</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Restitution masive de conge annuel <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateRestitution</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">matin</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">apresMidi</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">journee</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">motif</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeannuel/getListeAlimAutoCongeAnnuel_POST"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/congeannuel/getListeAlimAutoCongeAnnuel</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Pour un mois donné, donne toutes les informations d'alimenation auto des
+ congés annuels <br />
+ RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">dateMois</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agent</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateModification</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">status</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">dateMois</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">agent</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">dateModification</span>
+<span class="json-primitive-type">timestamp</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">status</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
 </div>
                             </div>
                     </div>
@@ -6261,7 +6467,7 @@
             </div>
             <div class="json-field">
                 <span class="json-field-name">statusCode</span>
-<span class="json-primitive-type">string</span><div class="json-primitive-restrictions">one of [ CONTINUE, SWITCHING_PROTOCOLS, PROCESSING, CHECKPOINT, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION, NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTI_STATUS, ALREADY_REPORTED, IM_USED, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND, MOVED_TEMPORARILY, SEE_OTHER, NOT_MODIFIED, USE_PROXY, TEMPORARY_REDIRECT, RESUME_INCOMPLETE, BAD_REQUEST, UNAUTHORIZED, PAYMENT_REQUIRED, FORBIDDEN, NOT_FOUND, METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, PROXY_AUTHENTICATION_REQUIRED, REQUEST_TIMEOUT, CONFLICT, GONE, LENGTH_REQUIRED, PRECONDITION_FAILED, REQUEST_ENTITY_TOO_LARGE, REQUEST_URI_TOO_LONG, UNSUPPORTED_MEDIA_TYPE, REQUESTED_RANGE_NOT_SATISFIABLE, EXPECTATION_FAILED, I_AM_A_TEAPOT, INSUFFICIENT_SPACE_ON_RESOURCE, METHOD_FAILURE, DESTINATION_LOCKED, UNPROCESSABLE_ENTITY, LOCKED, FAILED_DEPENDENCY, UPGRADE_REQUIRED, PRECONDITION_REQUIRED, TOO_MANY_REQUESTS, REQUEST_HEADER_FIELDS_TOO_LARGE, INTERNAL_SERVER_ERROR, NOT_IMPLEMENTED, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT, HTTP_VERSION_NOT_SUPPORTED, VARIANT_ALSO_NEGOTIATES, INSUFFICIENT_STORAGE, LOOP_DETECTED, BANDWIDTH_LIMIT_EXCEEDED, NOT_EXTENDED, NETWORK_AUTHENTICATION_REQUIRED ]</div>            </div>
+<span class="json-primitive-type">string</span><div class="json-primitive-restrictions">one of [ CONTINUE, SWITCHING_PROTOCOLS, PROCESSING, CHECKPOINT, OK, CREATED, ACCEPTED, NON_AUTHORITATIVE_INFORMATION, NO_CONTENT, RESET_CONTENT, PARTIAL_CONTENT, MULTI_STATUS, ALREADY_REPORTED, IM_USED, MULTIPLE_CHOICES, MOVED_PERMANENTLY, FOUND, MOVED_TEMPORARILY, SEE_OTHER, NOT_MODIFIED, USE_PROXY, TEMPORARY_REDIRECT, PERMANENT_REDIRECT, BAD_REQUEST, UNAUTHORIZED, PAYMENT_REQUIRED, FORBIDDEN, NOT_FOUND, METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, PROXY_AUTHENTICATION_REQUIRED, REQUEST_TIMEOUT, CONFLICT, GONE, LENGTH_REQUIRED, PRECONDITION_FAILED, PAYLOAD_TOO_LARGE, REQUEST_ENTITY_TOO_LARGE, URI_TOO_LONG, REQUEST_URI_TOO_LONG, UNSUPPORTED_MEDIA_TYPE, REQUESTED_RANGE_NOT_SATISFIABLE, EXPECTATION_FAILED, I_AM_A_TEAPOT, INSUFFICIENT_SPACE_ON_RESOURCE, METHOD_FAILURE, DESTINATION_LOCKED, UNPROCESSABLE_ENTITY, LOCKED, FAILED_DEPENDENCY, UPGRADE_REQUIRED, PRECONDITION_REQUIRED, TOO_MANY_REQUESTS, REQUEST_HEADER_FIELDS_TOO_LARGE, INTERNAL_SERVER_ERROR, NOT_IMPLEMENTED, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT, HTTP_VERSION_NOT_SUPPORTED, VARIANT_ALSO_NEGOTIATES, INSUFFICIENT_STORAGE, LOOP_DETECTED, BANDWIDTH_LIMIT_EXCEEDED, NOT_EXTENDED, NETWORK_AUTHENTICATION_REQUIRED ]</div>            </div>
 </div></span>    }
 </div>
                             </div>
