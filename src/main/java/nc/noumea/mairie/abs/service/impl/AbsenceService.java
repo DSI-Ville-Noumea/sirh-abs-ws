@@ -502,7 +502,7 @@ public class AbsenceService implements IAbsenceService {
 					demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 
 			result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
-					Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE));
+					Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.A_VALIDER));
 
 			result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 					demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
@@ -1099,7 +1099,7 @@ public class AbsenceService implements IAbsenceService {
 			ReturnMessageDto result) {
 
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
-				Arrays.asList(RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE));
+				Arrays.asList(RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE, RefEtatEnum.A_VALIDER));
 
 		if (0 < result.getErrors().size()) {
 			return;

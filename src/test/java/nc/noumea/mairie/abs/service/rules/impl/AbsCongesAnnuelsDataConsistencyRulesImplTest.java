@@ -3,9 +3,12 @@ package nc.noumea.mairie.abs.service.rules.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -451,6 +454,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demande.setDateDebut(new Date());
 		demande.setAgentWithServiceDto(agentWithServiceDto);
 		demande.setDuree(10.0);
+		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
 		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
 		soldeCongeAnnuel.setTotalJours(2.0);
@@ -484,7 +488,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demande.setDateDebut(new Date());
 		demande.setAgentWithServiceDto(agentWithServiceDto);
 		demande.setDuree(10.0);
-
+		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		
 		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
 		soldeCongeAnnuel.setTotalJours(20.0);
 		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
@@ -517,6 +522,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demande.setDateDebut(new Date());
 		demande.setAgentWithServiceDto(agentWithServiceDto);
 		demande.setDuree(23.0);
+		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
 		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
 		soldeCongeAnnuel.setTotalJours(20.0);
@@ -1173,5 +1179,52 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
 		assertEquals(1, srm.getErrors().size());
+	}
+	
+	@Test
+	public void checkEtatDemandePourDepassementCompteurAgent() {
+		
+		DemandeDto demandeDtoVALIDEE = new DemandeDto();
+			demandeDtoVALIDEE.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		DemandeDto demandeDtoREJETE = new DemandeDto();
+			demandeDtoREJETE.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		DemandeDto demandeDtoANNULEE = new DemandeDto();
+			demandeDtoANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		DemandeDto demandeDtoPRISE = new DemandeDto();
+			demandeDtoPRISE.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		DemandeDto demandeDtoREFUSEE = new DemandeDto();
+			demandeDtoREFUSEE.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		
+		List<DemandeDto> listDto = new ArrayList<DemandeDto>();
+		listDto.addAll(Arrays.asList(demandeDtoVALIDEE, demandeDtoREJETE, demandeDtoANNULEE, demandeDtoPRISE, demandeDtoREFUSEE));
+			
+		for(DemandeDto demandeDto : listDto) {
+			if(impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
+				fail("Bad Etat Demande for checkDepassementCompteurAgent");
+			}
+		}
+		
+		DemandeDto demandeDtoPROVISOIRE = new DemandeDto();
+			demandeDtoPROVISOIRE.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		DemandeDto demandeDtoSAISIE = new DemandeDto();
+			demandeDtoSAISIE.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		DemandeDto demandeDtoVISEE_FAVORABLE = new DemandeDto();
+			demandeDtoVISEE_FAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		DemandeDto demandeDtoVISEE_DEFAVORABLE = new DemandeDto();
+			demandeDtoVISEE_DEFAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		DemandeDto demandeDtoAPPROUVEE = new DemandeDto();
+			demandeDtoAPPROUVEE.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		DemandeDto demandeDtoEN_ATTENTE = new DemandeDto();
+			demandeDtoEN_ATTENTE.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		
+		listDto = new ArrayList<DemandeDto>();
+		listDto.addAll(Arrays.asList(demandeDtoPROVISOIRE, demandeDtoSAISIE, demandeDtoVISEE_FAVORABLE, demandeDtoVISEE_DEFAVORABLE,
+				demandeDtoAPPROUVEE, demandeDtoEN_ATTENTE));
+			
+		for(DemandeDto demandeDto : listDto) {
+			if(!impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
+				fail("Bad Etat Demande " + demandeDto.getIdRefEtat() + " for checkDepassementCompteurAgent");
+			}
+		}
 	}
 }

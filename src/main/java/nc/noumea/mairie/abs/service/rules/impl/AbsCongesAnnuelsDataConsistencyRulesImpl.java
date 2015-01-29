@@ -249,16 +249,36 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 
 	@Override
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+		
+		// on verifie d abord l etat de la demande
+		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur 
+		if(!checkEtatDemandePourDepassementCompteurAgent(demandeDto))
+			return false;
+		
 		ReturnMessageDto dtoErreur = new ReturnMessageDto();
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
-		demande.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
-		demande.setIdDemande(demandeDto.getIdDemande());
-		demande.setDuree(demandeDto.getDuree());
+			demande.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
+			demande.setIdDemande(demandeDto.getIdDemande());
+			demande.setDuree(demandeDto.getDuree());
+		
 		dtoErreur = checkDepassementDroitsAcquis(dtoErreur, demande);
 		if (dtoErreur.getInfos().size() > 0) {
 			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	protected boolean checkEtatDemandePourDepassementCompteurAgent(DemandeDto demandeDto) {
+
+		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+			return false;
+		}
+
+		return true;
 	}
 }

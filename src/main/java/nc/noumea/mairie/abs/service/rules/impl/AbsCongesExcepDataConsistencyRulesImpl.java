@@ -86,8 +86,27 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 
 	@Override
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+		
+		// on verifie d abord l etat de la demande
+		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur 
+		if(!checkEtatDemandePourDepassementCompteurAgent(demandeDto))
+			return false;
+				
 		return checkDepassementCompteurAgent(demandeDto.getIdTypeDemande(), demandeDto.getDateDebut(), demandeDto
 				.getAgentWithServiceDto().getIdAgent(), demandeDto.getDuree());
+	}
+	
+	protected boolean checkEtatDemandePourDepassementCompteurAgent(DemandeDto demandeDto) {
+
+		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private boolean checkDepassementCompteurAgent(Integer idTypeDemande, Date dateDebutDemande, Integer idAgent,
