@@ -3,11 +3,14 @@ package nc.noumea.mairie.domain;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "SPCC")
+@NamedQueries({ @NamedQuery(name = "getSpccByNomatrAndDateAndCode", query = "select spcc from Spcc spcc where spcc.id.nomatr = :nomatr and spcc.id.datjou = :dateFormatMairie and spcc.code = :code)") })
 public class Spcc {
 
 	@EmbeddedId

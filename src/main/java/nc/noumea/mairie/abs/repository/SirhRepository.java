@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spcc;
 import nc.noumea.mairie.domain.Spmatr;
 
 import org.springframework.stereotype.Repository;
@@ -31,7 +32,12 @@ public class SirhRepository implements ISirhRepository {
 	public void persistEntity(Object obj) {
 		sirhEntityManager.persist(obj);
 	}
-
+	
+	@Override
+	public void removeEntity(Object obj) {
+		sirhEntityManager.remove(obj);
+	}
+	
 	@Override
 	public Spadmn getAgentCurrentPosition(Integer nomatr, Date asOfDate) {
 		TypedQuery<Spadmn> qSpadmn = sirhEntityManager.createNamedQuery("getAgentSpadmnAsOfDate", Spadmn.class);
@@ -67,9 +73,26 @@ public class SirhRepository implements ISirhRepository {
 
 		return result.get(0);
 	}
-
+	
 	@Override
 	public Spmatr findSpmatrForAgent(Integer nomatr) {
 		return sirhEntityManager.find(Spmatr.class, nomatr);
+	}
+	
+	@Override
+	public Spcc getSpcc(Integer nomatr, Date asOfDate, Integer code) {
+		TypedQuery<Spcc> query = sirhEntityManager.createNamedQuery("getSpccByNomatrAndDateAndCode", Spcc.class);
+		query.setParameter("nomatr", nomatr);
+		query.setParameter("code", code);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		int dateFormatMairie = Integer.valueOf(sdf.format(asOfDate));
+		query.setParameter("dateFormatMairie", dateFormatMairie);
+
+		if (0 == query.getResultList().size()) {
+			return null;
+		}
+
+		return query.getSingleResult();
 	}
 }

@@ -1817,7 +1817,6 @@ public class AbsenceServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		ReturnMessageDto resultPaieEnCours = new ReturnMessageDto();
-		resultPaieEnCours.getErrors().add("Une paie est en cours");
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isPaieEnCours()).thenReturn(resultPaieEnCours);
@@ -1915,7 +1914,6 @@ public class AbsenceServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		ReturnMessageDto resultPaieEnCours = new ReturnMessageDto();
-		resultPaieEnCours.getErrors().add("Une paie est en cours");
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isPaieEnCours()).thenReturn(resultPaieEnCours);
@@ -2017,7 +2015,6 @@ public class AbsenceServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		ReturnMessageDto resultPaieEnCours = new ReturnMessageDto();
-		resultPaieEnCours.getErrors().add("Une paie est en cours");
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isPaieEnCours()).thenReturn(resultPaieEnCours);
@@ -10815,10 +10812,18 @@ public class AbsenceServiceTest {
 	@Test
 	public void traiteIncidencePaie_NoSpcarr() {
 		ReturnMessageDto result = new ReturnMessageDto();
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		
 		Demande demande = new Demande();
 		demande.setDateDebut(new Date());
 		demande.setDateFin(new Date());
 		demande.setIdAgent(9005138);
+		demande.setType(type);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.any(Date.class)))
@@ -10844,10 +10849,18 @@ public class AbsenceServiceTest {
 	@Test
 	public void traiteIncidencePaie_Fonctionnaire() {
 		ReturnMessageDto result = new ReturnMessageDto();
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		
 		Demande demande = new Demande();
 		demande.setDateDebut(new Date());
 		demande.setDateFin(new Date());
 		demande.setIdAgent(9005138);
+		demande.setType(type);
 
 		SpcarrId id = new SpcarrId(5138, 20140101);
 		Spcarr carr = new Spcarr();
@@ -10884,10 +10897,18 @@ public class AbsenceServiceTest {
 	@Test
 	public void traiteIncidencePaie_Contractuel_1Jour() {
 		ReturnMessageDto result = new ReturnMessageDto();
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		
 		Demande demande = new Demande();
 		demande.setDateDebut(new DateTime(2014, 2, 2, 0, 0, 0).toDate());
 		demande.setDateFin(new DateTime(2014, 2, 2, 23, 59, 59).toDate());
 		demande.setIdAgent(9005138);
+		demande.setType(type);
 
 		SpcarrId id = new SpcarrId(5138, 20140101);
 		Spcarr carr = new Spcarr();
@@ -10924,10 +10945,18 @@ public class AbsenceServiceTest {
 	@Test
 	public void traiteIncidencePaie_Contractuel_1DemiJour() {
 		ReturnMessageDto result = new ReturnMessageDto();
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		
 		Demande demande = new Demande();
 		demande.setDateDebut(new DateTime(2014, 2, 2, 0, 0, 0).toDate());
 		demande.setDateFin(new DateTime(2014, 2, 2, 11, 59, 59).toDate());
 		demande.setIdAgent(9005138);
+		demande.setType(type);
 
 		SpcarrId id = new SpcarrId(5138, 20140101);
 		Spcarr carr = new Spcarr();
@@ -10964,10 +10993,18 @@ public class AbsenceServiceTest {
 	@Test
 	public void traiteIncidencePaie_Contractuel_1JourEtDemiJour() {
 		ReturnMessageDto result = new ReturnMessageDto();
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		
 		Demande demande = new Demande();
 		demande.setDateDebut(new DateTime(2014, 2, 2, 0, 0, 0).toDate());
 		demande.setDateFin(new DateTime(2014, 2, 3, 11, 59, 59).toDate());
 		demande.setIdAgent(9005138);
+		demande.setType(type);
 
 		SpcarrId id = new SpcarrId(5138, 20140101);
 		Spcarr carr = new Spcarr();
@@ -11004,10 +11041,18 @@ public class AbsenceServiceTest {
 	@Test
 	public void traiteIncidencePaie_Contractuel_PlusieursJour() {
 		ReturnMessageDto result = new ReturnMessageDto();
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		
 		Demande demande = new Demande();
 		demande.setDateDebut(new DateTime(2014, 2, 2, 12, 0, 0).toDate());
 		demande.setDateFin(new DateTime(2014, 2, 4, 11, 59, 59).toDate());
 		demande.setIdAgent(9005138);
+		demande.setType(type);
 
 		SpcarrId id = new SpcarrId(5138, 20140101);
 		Spcarr carr = new Spcarr();
@@ -11130,7 +11175,7 @@ public class AbsenceServiceTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void setDemandeEtat_setDemandeEtatAnnule_ok_IncidencePaie() {
+	public void setDemandeEtat_setDemandeEtatAnnule_RC_ok_PasIncidencePaie() {
 
 		Integer idAgent = 9005138;
 		ReturnMessageDto result = null;
@@ -11207,7 +11252,6 @@ public class AbsenceServiceTest {
 						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
 
 		ReturnMessageDto resultPaieEnCours = new ReturnMessageDto();
-		resultPaieEnCours.getErrors().add("Une paie est en cours");
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isPaieEnCours()).thenReturn(resultPaieEnCours);
@@ -11244,7 +11288,241 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.getErrors().size());
 		assertEquals("La demande est annulée.", result.getInfos().get(0));
 		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
-		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(0)).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(0)).persistEntity(Mockito.isA(Spmatr.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void setDemandeEtat_setDemandeEtatAnnule_CA_AucunSPCC() {
+
+		Integer idAgent = 9005138;
+		ReturnMessageDto result = null;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		dto.setIdDemande(1);
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
+		listEtat.add(etatDemande);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		type.setGroupe(groupe);
+
+		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
+		demande.setDuree(10.0);
+		demande.setIdAgent(idAgent);
+		demande.setEtatsDemande(listEtat);
+		demande.setType(type);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
+				.thenReturn(true);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return new ReturnMessageDto();
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAnnulee(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return new ReturnMessageDto();
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+						Mockito.anyString());
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
+
+		ICounterService counterService = Mockito.mock(ICounterService.class);
+		Mockito.when(
+				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
+
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+		Mockito.when(
+				counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
+						.getType().getIdRefTypeAbsence())).thenReturn(counterService);
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(
+				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
+						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
+
+		ReturnMessageDto resultPaieEnCours = new ReturnMessageDto();
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isPaieEnCours()).thenReturn(resultPaieEnCours);
+
+		Spcarr carr = new Spcarr(5138, 20140101);
+		carr.setDateFin(0);
+		carr.setCdcate(8);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent())).thenReturn(5138);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+
+		result = service.setDemandeEtat(idAgent, dto);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals("La demande est annulée.", result.getInfos().get(0));
+		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
+		Mockito.verify(sirhRepository, Mockito.times(0)).removeEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(0)).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(0)).persistEntity(Mockito.isA(Spmatr.class));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void setDemandeEtat_setDemandeEtatAnnule_CA_1deleteSPCC() {
+
+		Integer idAgent = 9005138;
+		ReturnMessageDto result = null;
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
+		dto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		dto.setIdDemande(1);
+
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+		List<EtatDemande> listEtat = new ArrayList<EtatDemande>();
+		listEtat.add(etatDemande);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		type.setGroupe(groupe);
+
+		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
+		demande.setDuree(10.0);
+		demande.setIdAgent(idAgent);
+		demande.setEtatsDemande(listEtat);
+		demande.setType(type);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
+
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
+				.thenReturn(true);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return new ReturnMessageDto();
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkEtatsDemandeAnnulee(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(List.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return new ReturnMessageDto();
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkChampMotifPourEtatDonne(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(),
+						Mockito.anyString());
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
+
+		ICounterService counterService = Mockito.mock(ICounterService.class);
+		Mockito.when(
+				counterService.majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class),
+						Mockito.isA(DemandeEtatChangeDto.class))).thenReturn(srm);
+
+		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
+		Mockito.when(
+				counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
+						.getType().getIdRefTypeAbsence())).thenReturn(counterService);
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(
+				accessRightsService.verifAccessRightDemande(Mockito.anyInt(), Mockito.anyInt(),
+						Mockito.isA(ReturnMessageDto.class))).thenReturn(new ReturnMessageDto());
+
+		ReturnMessageDto resultPaieEnCours = new ReturnMessageDto();
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isPaieEnCours()).thenReturn(resultPaieEnCours);
+
+		Spcarr carr = new Spcarr(5138, 20140101);
+		carr.setDateFin(0);
+		carr.setCdcate(8);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(carr);
+		Mockito.when(sirhRepository.getSpcc(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(new Spcc());
+
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent())).thenReturn(5138);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		result = service.setDemandeEtat(idAgent, dto);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals("La demande est annulée.", result.getInfos().get(0));
+		Mockito.verify(demande, Mockito.times(1)).addEtatDemande(Mockito.isA(EtatDemande.class));
+		Mockito.verify(sirhRepository, Mockito.times(1)).removeEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(0)).persistEntity(Mockito.isA(Spcc.class));
 		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spmatr.class));
 	}
 

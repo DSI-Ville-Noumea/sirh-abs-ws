@@ -81,6 +81,21 @@
 		<property name="persistenceUnitName" value="sirhPersistenceUnit" />
 		<property name="dataSource" ref="sirhDb400DataSource" />
 	</bean>
+	
+	<!-- Custom ChainedTransactionManager Awaiting Spring Issue https://jira.springsource.org/browse/SPR-3844 
+		to be released (probably in Spring 4) to switch to official implementation -->
+	<tx:annotation-driven mode="aspectj"
+		transaction-manager="chainedTransactionManager" />
+	<bean id="chainedTransactionManager" class="nc.noumea.mairie.technical.ChainedTransactionManager"
+		primary="true">
+		<constructor-arg>
+			<list>
+				<ref bean="absTransactionManager" />
+				<ref bean="sirhTransactionManager" />
+			</list>
+		</constructor-arg>
+		<qualifier value="chainedTransactionManager" />
+	</bean>
 
 	<jee:jndi-lookup id="sirhWsBaseUrl" jndi-name="SIRH_WS_URL" expected-type="java.lang.String"/>
 
