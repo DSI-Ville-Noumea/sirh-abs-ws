@@ -23,9 +23,11 @@ import nc.noumea.mairie.abs.dto.SoldeMonthDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
+import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
+import nc.noumea.mairie.domain.SpSold;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,9 @@ public class SoldeService implements ISoldeService {
 	@Autowired
 	@Qualifier("CongesExcepCounterServiceImpl")
 	private ICounterService congesExcepCounterServiceImpl;
+
+	@Autowired
+	protected ISirhRepository sirhRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -106,11 +111,17 @@ public class SoldeService implements ISoldeService {
 	}
 
 	private void getSoldeConges(Integer idAgent, SoldeDto dto) {
-		// on traite les congés annuels
-		AgentCongeAnnuelCount soldeConge = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
+		SpSold soldeConge = sirhRepository.getSpsold(idAgent);
 		dto.setAfficheSoldeConge(true);
-		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
-		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
+		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getSoldeAnneeEnCours());
+		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getSoldeAnneePrec());
+	
+		// on traite les congés annuels
+		//TODO A remettre pour passage en PROD des abesnces
+//		AgentCongeAnnuelCount soldeConge = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
+//		dto.setAfficheSoldeConge(true);
+//		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
+//		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
 	}
 
 	private void getSoldeRecup(Integer idAgent, SoldeDto dto) {

@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
@@ -19,6 +20,12 @@ public class SirhRepository implements ISirhRepository {
 
 	@PersistenceContext(unitName = "sirhPersistenceUnit")
 	private EntityManager sirhEntityManager;
+
+	@Override
+	public SpSold getSpsold(Integer idAgent) {
+		Integer nomatr = Integer.valueOf(idAgent.toString().substring(3, idAgent.toString().length()));
+		return sirhEntityManager.find(SpSold.class, nomatr);
+	}
 
 	@Override
 	public void persistEntity(Object obj) {
