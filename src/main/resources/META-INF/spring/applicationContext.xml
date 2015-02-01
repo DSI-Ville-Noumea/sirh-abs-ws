@@ -104,5 +104,14 @@
 	<jee:jndi-lookup id="reportingBaseUrl" jndi-name="REPORTING_BASE_URL" expected-type="java.lang.String"/>
 	
 	<jee:jndi-lookup id="reportServerPath" jndi-name="REPORTING_SERVER_SIRH_ABS_REPORT_PATH" expected-type="java.lang.String"/>
+
+
+
+	<!-- -->
+	<!-- PARAMETRE TEMPORAIRE POUR GERER PROD/RECETTE pour le solde des congés 
+		annuels -->
+	<!-- -->
+	<jee:jndi-lookup id="typeEnv" jndi-name="TYPE_ENV"
+		expected-type="java.lang.String" />
 	
 </beans>

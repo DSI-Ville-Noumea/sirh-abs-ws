@@ -58,6 +58,10 @@ public class SoldeService implements ISoldeService {
 	@Autowired
 	protected ISirhRepository sirhRepository;
 
+	@Autowired
+	@Qualifier("typeEnv")
+	private String typeEnvironnement;
+
 	@Override
 	@Transactional(readOnly = true)
 	public SoldeDto getAgentSolde(Integer idAgent, Date dateDeb, Date dateFin, Integer typeDemande) {
@@ -111,17 +115,18 @@ public class SoldeService implements ISoldeService {
 	}
 
 	private void getSoldeConges(Integer idAgent, SoldeDto dto) {
-		SpSold soldeConge = sirhRepository.getSpsold(idAgent);
-		dto.setAfficheSoldeConge(true);
-		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getSoldeAnneeEnCours());
-		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getSoldeAnneePrec());
-	
-		// on traite les congés annuels
-		//TODO A remettre pour passage en PROD des abesnces
-//		AgentCongeAnnuelCount soldeConge = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
-//		dto.setAfficheSoldeConge(true);
-//		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
-//		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
+		if (typeEnvironnement.equals("PROD")) {
+			SpSold soldeConge = sirhRepository.getSpsold(idAgent);
+			dto.setAfficheSoldeConge(true);
+			dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getSoldeAnneeEnCours());
+			dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getSoldeAnneePrec());
+		} else if (typeEnvironnement.equals("RECETTE")) {
+			// on traite les congés annuels
+			AgentCongeAnnuelCount soldeConge = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
+			dto.setAfficheSoldeConge(true);
+			dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
+			dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
+		}
 	}
 
 	private void getSoldeRecup(Integer idAgent, SoldeDto dto) {

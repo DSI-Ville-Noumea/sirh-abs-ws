@@ -98,6 +98,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "PROD");
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
@@ -257,6 +258,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "PROD");
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null);
 
@@ -415,6 +417,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "PROD");
 
 		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
@@ -519,6 +522,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "PROD");
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
@@ -617,6 +621,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "PROD");
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
@@ -715,6 +720,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "PROD");
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
@@ -795,6 +801,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirh);
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "PROD");
 	}
 
 	@Test
