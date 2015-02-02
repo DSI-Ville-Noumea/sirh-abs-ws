@@ -43,5 +43,5 @@ public interface ICounterService {
 	ReturnMessageDto alimentationAutoCompteur(Integer idAgent, Date dateDebut,
 			Date dateFin);
 
-	ReturnMessageDto restitutionMassiveCA(Integer idAgent, RestitutionMassiveDto dto);
+	ReturnMessageDto restitutionMassiveCA(Integer idAgent, RestitutionMassiveDto dto, List<Integer> listIdAgent);
 }

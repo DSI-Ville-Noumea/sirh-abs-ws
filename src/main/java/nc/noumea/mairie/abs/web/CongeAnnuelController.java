@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.web;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -205,7 +206,10 @@ public class CongeAnnuelController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		return counterService.restitutionMassiveCA(convertedIdAgent, dto);
+		// TODO rechercher les agsnts concernés
+		List<Integer> listIdAgent = new ArrayList<Integer>();
+
+		return counterService.restitutionMassiveCA(convertedIdAgent, dto, listIdAgent);
 	}
 
 	/**

@@ -46,17 +46,17 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 	@Autowired
 	private ICongesAnnuelsRepository congesAnnuelsRepository;
-	
+
 	@Autowired
 	private IAgentJoursFeriesReposRepository agentJoursFeriesReposRepository;
-	
+
 	@Autowired
 	private IDemandeRepository demandeRepository;
-	
+
 	@Autowired
 	@Qualifier("AbsCongesAnnuelsDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl;
-	
+
 	protected static final String BASE_CONGES_ALIM_AUTO_INEXISTANT = "La base congés [%d] n'existe pas dans ABS_REF_ALIM_CONGE_ANNUEL.";
 	protected static final String PA_INEXISTANT = "Pas de PA active pour l'agent : [%d].";
 	protected static final String COMPTEUR_DEJA_A_JOUR = "Compteur de congés annuels déjà mis à jour ce mois-ci pour l'agent : [%d].";
@@ -64,12 +64,11 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	protected static final String BASE_CA_NON_TROUVEE = "Base congé non trouvée pour l'agent [%d].";
 	protected static final String MAUVAIS_BASE_CA = "Mauvaise base congé pour l'agent [%d].";
 	protected static final String MOTIF_OBLIGATOIRE = "Le motif est obligatoire.";
-	protected static final String AUCUN_AGENT = "Pas d'agent sélectionné.";
 	protected static final String TYPE_RESTITUTION_OBLIGATOIRE = "Le type de restitution est obligatoire.";
 	protected static final String DATE_JOUR_RESTITUER_KO = "La date du jour à restituer doit être antérieure à aujourd'hui.";
 	protected static final String RESTITUTION_EXISTANTE = "L'agent [%d] a déjà eu une restitution pour ce même jour.";
 	protected static final String COMPTEUR_CA_RESTITUTION_INEXISTANT = "Le compteur n'existe pas pour l'agent [%d].";
-	
+
 	@Override
 	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto initCompteurCongeAnnuel(Integer idAgent, Integer idAgentConcerne) {
@@ -173,7 +172,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			DemandeEtatChangeDto demandeEtatChangeDto) {
 
 		logger.info("Trying to update conge annuel counters for Agent [{}] ...", demande.getIdAgent());
-		
+
 		Double jours = calculJoursCompteur(demandeEtatChangeDto, demande);
 		if (0 != jours) {
 			try {
@@ -187,17 +186,17 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 	protected Double calculJoursCompteur(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		Double jours = 0.0;
-		
+
 		// si on approuve, et que le compteur est en depassement
 		// pas de mise a jour du compteur
 		// la DRH doit d abord valider
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm = absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srm, demande);
-		if (srm.getInfos().size() > 0 
-				&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) { 
+		if (srm.getInfos().size() > 0
+				&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
 			return jours;
 		}
-		
+
 		// si on approuve, le compteur decremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
 				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
@@ -254,7 +253,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
 			return srm;
 		}
-		
+
 		// on ne bloque pas si le compteur est negatif
 
 		Double joursAnneeN1 = 0.0;
@@ -289,16 +288,13 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 		return srm;
 	}
-	
-
 
 	/**
-	 * appeler depuis SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
-	 * mise a jour
+	 * appeler depuis SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE mise a jour
 	 */
 	@Override
-	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto srm,
-			MotifCompteur motifCompteur) {
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
+			ReturnMessageDto srm, MotifCompteur motifCompteur) {
 
 		logger.info("Trying to update manually conge annuel counters for Agent {} ...", compteurDto.getIdAgent());
 
@@ -314,12 +310,12 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		}
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, jours, joursAnneeN1, RefTypeAbsenceEnum.CONGE_ANNUEL.getValue(), srm, motifCompteur);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, jours, joursAnneeN1,
+					RefTypeAbsenceEnum.CONGE_ANNUEL.getValue(), srm, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update conge annuel counters :", e);
 		}
 	}
-
 
 	/**
 	 * Mise à jour manuelle du compteur de congé annuel
@@ -334,8 +330,8 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	 * @throws IllegalAccessException
 	 */
 	private ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Double jours, Double joursAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
-			throws InstantiationException, IllegalAccessException {
+			Double jours, Double joursAnneeN1, Integer idRefTypeAbsence, ReturnMessageDto srm,
+			MotifCompteur motifCompteur) throws InstantiationException, IllegalAccessException {
 
 		if (sirhWSConsumer.getAgent(compteurDto.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
@@ -344,8 +340,8 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 		logger.info("updating counters for Agent [{}] with {} minutes...", compteurDto.getIdAgent(), jours);
 
-		AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(AgentCongeAnnuelCount.class,
-				compteurDto.getIdAgent());
+		AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(
+				AgentCongeAnnuelCount.class, compteurDto.getIdAgent());
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
@@ -385,15 +381,16 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
-		
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc,
+				idRefTypeAbsence);
+
 		return srm;
 	}
-	
+
 	@Override
 	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto alimentationAutoCompteur(Integer idAgent, Date dateDebut, Date dateFin) {
-		
+
 		logger.info("Start Alimentation auto CompteurCongeAnnuel for idAgent {} ...", idAgent);
 
 		ReturnMessageDto srm = new ReturnMessageDto();
@@ -401,221 +398,224 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		// on recherche le compteur de l agent
 		AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(
 				AgentCongeAnnuelCount.class, idAgent);
-		
+
 		if (arc == null) {
 			logger.error(COMPTEUR_INEXISTANT);
 			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
 			return srm;
 		}
-		
+
 		AgentWeekCongeAnnuel awca = congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateDebut);
-		
+
 		// si compteur deja mis a jour
 		if (awca != null) {
 			logger.error(COMPTEUR_DEJA_A_JOUR, idAgent);
 			srm.getErrors().add(String.format(COMPTEUR_DEJA_A_JOUR, idAgent));
 			return srm;
 		}
-		
+
 		// on recupere la PA de l agent
-		List<InfosAlimAutoCongesAnnuelsDto> listPA = sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(arc.getIdAgent(), dateDebut, dateFin);
-		
-		if(null == listPA
-				|| (null != listPA && 0 == listPA.size())) {
+		List<InfosAlimAutoCongesAnnuelsDto> listPA = sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(
+				arc.getIdAgent(), dateDebut, dateFin);
+
+		if (null == listPA || (null != listPA && 0 == listPA.size())) {
 			logger.error(PA_INEXISTANT, arc.getIdAgent());
 			srm.getErrors().add(String.format(PA_INEXISTANT, idAgent));
 			return srm;
 		}
-		
+
 		Double joursAAjouter = 0.0;
 		// on calcule le nombre de jours conges à ajouter sur le mois
-		for(InfosAlimAutoCongesAnnuelsDto PA : listPA) {
-			if(PA.isDroitConges()) {
-				RefTypeSaisiCongeAnnuel typeCongeAnnuel = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, PA.getIdBaseCongeAbsence());
-				
-				if(null == typeCongeAnnuel) {
+		for (InfosAlimAutoCongesAnnuelsDto PA : listPA) {
+			if (PA.isDroitConges()) {
+				RefTypeSaisiCongeAnnuel typeCongeAnnuel = typeAbsenceRepository.getEntity(
+						RefTypeSaisiCongeAnnuel.class, PA.getIdBaseCongeAbsence());
+
+				if (null == typeCongeAnnuel) {
 					logger.error(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence());
 					srm.getErrors().add(String.format(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence()));
 					return srm;
 				}
-				
-				Double quotaMois = typeCongeAnnuel.getRefAlimCongeAnnuel().getQuotaCongesByMois(new DateTime(dateDebut).getMonthOfYear());
+
+				Double quotaMois = typeCongeAnnuel.getRefAlimCongeAnnuel().getQuotaCongesByMois(
+						new DateTime(dateDebut).getMonthOfYear());
 				Double nombreJoursPA = helperService.calculNombreJours(PA.getDateDebut(), PA.getDateFin());
-				
+
 				Calendar calendar = GregorianCalendar.getInstance();
 				calendar.setTime(PA.getDateDebut());
 				Integer dernierJourMois = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-				
+
 				joursAAjouter += getNombreJoursDonnantDroitsAConges(dernierJourMois, quotaMois, nombreJoursPA);
-				
+
 				// cas partiuclier de la base C :
-				// pour la base C, on rajoute le quota mensuel – le nombre de jours fériés/chômés cochés (= en repos) sur le mois
-				if(null != typeCongeAnnuel.getCodeBaseHoraireAbsence()
+				// pour la base C, on rajoute le quota mensuel – le nombre de
+				// jours fériés/chômés cochés (= en repos) sur le mois
+				if (null != typeCongeAnnuel.getCodeBaseHoraireAbsence()
 						&& "C".equals(typeCongeAnnuel.getCodeBaseHoraireAbsence().trim())) {
 					joursAAjouter -= getJoursReposFeriesbyAgent(idAgent, dateDebut, dateFin);
 				}
 			}
 		}
-		
+
 		Date dernierModif = new Date();
 		// on enregistre
-		
+
 		awca = new AgentWeekCongeAnnuel();
 		awca.setIdAgent(idAgent);
 		awca.setDateMonth(dateDebut);
-		
+
 		awca.setLastModification(dernierModif);
 		awca.setJours(joursAAjouter);
-		
+
 		arc.setTotalJours(arc.getTotalJours() + joursAAjouter);
 		arc.setLastModification(dernierModif);
-		
+
 		congesAnnuelsRepository.persistEntity(awca);
-		
+
 		logger.info("Finally Alimentation auto CompteurCongeAnnuel for idAgent {} ...", idAgent);
-		
+
 		return srm;
 	}
-	
+
 	protected Integer getJoursReposFeriesbyAgent(Integer idAgent, Date dateDebut, Date dateFin) {
-		
-		List<AgentJoursFeriesRepos> listJoursReposAgent = agentJoursFeriesReposRepository.getAgentJoursFeriesReposByIdAgentAndPeriode(idAgent, dateDebut, dateFin);
-		
+
+		List<AgentJoursFeriesRepos> listJoursReposAgent = agentJoursFeriesReposRepository
+				.getAgentJoursFeriesReposByIdAgentAndPeriode(idAgent, dateDebut, dateFin);
+
 		Integer nombreJoursRepos = 0;
-		if(null != listJoursReposAgent
-				&& 0 < listJoursReposAgent.size()) {
+		if (null != listJoursReposAgent && 0 < listJoursReposAgent.size()) {
 			nombreJoursRepos = listJoursReposAgent.size();
 		}
 		return nombreJoursRepos;
 	}
-	
+
 	protected Double getNombreJoursDonnantDroitsAConges(Integer dernierJourMois, Double quotaMois, Double nombreJoursPA) {
-		if(nombreJoursPA >= dernierJourMois) {
+		if (nombreJoursPA >= dernierJourMois) {
 			return quotaMois;
-		}else{
-			return Math.ceil((quotaMois * nombreJoursPA / 30) * 2) /2;
+		} else {
+			return Math.ceil((quotaMois * nombreJoursPA / 30) * 2) / 2;
 		}
 	}
-	
+
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto restitutionMassiveCA(Integer idAgent, RestitutionMassiveDto dto) {
-		
-		logger.info("Start restitutionMassiveCA for idAgent {} ...", dto.getIdAgent());
-		
+	public ReturnMessageDto restitutionMassiveCA(Integer idAgentConnecte, RestitutionMassiveDto dto,
+			List<Integer> listIdAgent) {
+
 		ReturnMessageDto srm = new ReturnMessageDto();
-		
-		// verification des droits SIRH
-		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
-		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
-			logger.warn(AGENT_NON_HABILITE);
-			srm.getErrors().add(String.format(AGENT_NON_HABILITE));
-			return srm;
-		}
-		
-		/////////////////////////////////////
-		// on check le DTO
-		srm = checkRestitutionMassiveDto(dto, srm);
-		if(0 < srm.getErrors().size()) {
-			return srm;
-		}
-		
-		/////////////////////////////////////
-		// on teste s il n y a pas deja eu une restitution massive 
-		// pour l agent sur le meme jour
-		srm = checkCADejaRestitue(srm, dto);
-		if(0 < srm.getErrors().size()) {
-			return srm;
-		}
-		
-		/////////////////////////////////////
-		// Ne concerne QUE les agents en base congé A et D
-		srm = checkAgentIsBaseCongeAOrD(dto.getIdAgent(), dto.getDateRestitution(), srm);
-		if(0 < srm.getErrors().size())
-			return srm;
-		
-		//////////////////////////////////////
-		// on recherche le compteur de l agent
-		AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(
-				AgentCongeAnnuelCount.class, dto.getIdAgent());
-		
-		if (arc == null) {
-			logger.error(String.format(COMPTEUR_CA_RESTITUTION_INEXISTANT, dto.getIdAgent()));
-			srm.getErrors().add(String.format(COMPTEUR_CA_RESTITUTION_INEXISTANT, dto.getIdAgent()));
-			persistCongeAnnuelRestitutionMassiveHisto(dto, COMPTEUR_CA_RESTITUTION_INEXISTANT, new Date(), null);
-			return srm;
-		}
-		
-		/////////////////////////////////////
-		// la personne a pose un conge? 
-		RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		for (Integer idAgentList : listIdAgent) {
+
+			logger.info("Start restitutionMassiveCA for idAgent {} ...", idAgentList);
+
+			// verification des droits SIRH
+			ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte);
+			if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+				logger.warn(AGENT_NON_HABILITE);
+				srm.getErrors().add(String.format(AGENT_NON_HABILITE));
+				return srm;
+			}
+
+			// ///////////////////////////////////
+			// on check le DTO
+			srm = checkRestitutionMassiveDto(dto, srm);
+			if (0 < srm.getErrors().size()) {
+				return srm;
+			}
+
+			// ///////////////////////////////////
+			// on teste s il n y a pas deja eu une restitution massive
+			// pour l agent sur le meme jour
+			srm = checkCADejaRestitue(srm, dto, idAgentList);
+			if (0 < srm.getErrors().size())
+				continue;
+
+			// ///////////////////////////////////
+			// Ne concerne QUE les agents en base congé A et D
+			srm = checkAgentIsBaseCongeAOrD(idAgentList, dto.getDateRestitution(), srm);
+			if (0 < srm.getErrors().size())
+				continue;
+
+			// ////////////////////////////////////
+			// on recherche le compteur de l agent
+			AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(
+					AgentCongeAnnuelCount.class, idAgentList);
+
+			if (arc == null) {
+				logger.error(String.format(COMPTEUR_CA_RESTITUTION_INEXISTANT, idAgentList));
+				srm.getErrors().add(String.format(COMPTEUR_CA_RESTITUTION_INEXISTANT, idAgentList));
+				persistCongeAnnuelRestitutionMassiveHisto(idAgentList, dto, COMPTEUR_CA_RESTITUTION_INEXISTANT,
+						new Date(), null);
+				continue;
+			}
+
+			// ///////////////////////////////////
+			// la personne a pose un conge?
+			RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
 			refTypeSaisiCongeAnnuel.setCalendarDateDebut(true);
 			refTypeSaisiCongeAnnuel.setCalendarDateFin(true);
 			refTypeSaisiCongeAnnuel.setChkDateDebut(true);
 			refTypeSaisiCongeAnnuel.setChkDateFin(true);
-		
-		List<DemandeCongesAnnuels> listCongesAgentpris = congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(
-				dto.getIdAgent(), 
-				helperService.getDateDebutCongeAnnuel(refTypeSaisiCongeAnnuel, dto.getDateRestitution(), dto.isMatin(), dto.isApresMidi()), 
-				helperService.getDateFinCongeAnnuel(refTypeSaisiCongeAnnuel, dto.getDateRestitution(), null, dto.isMatin(), dto.isApresMidi(), null));
-		
-		if(null == listCongesAgentpris
-				|| listCongesAgentpris.isEmpty()) {
-			logger.error(String.format(AGENT_AUCUN_CA, dto.getIdAgent()));
-			srm.getErrors().add(String.format(AGENT_AUCUN_CA, dto.getIdAgent()));
-			persistCongeAnnuelRestitutionMassiveHisto(dto, AGENT_AUCUN_CA, new Date(), null);
-			return srm;
-		}
-		
-		///////////////////////////////
-		// compte les samedis decomptes a rendre
-		DemandeCongesAnnuels demandeCA = listCongesAgentpris.get(0);
-		
-		Double samediAAjouter = getSamediDecompteARendre(demandeCA, dto);
 
-		/////////////////////////////////////
-		// nombre de jour a redonner au total 
-		Double jourTmp = 0.0;
-		if(dto.isJournee()) {
-			jourTmp = 1.0;
-		}else{
-			jourTmp = 0.5;
-		}
-		jourTmp += samediAAjouter;
+			List<DemandeCongesAnnuels> listCongesAgentpris = congesAnnuelsRepository
+					.getListeDemandesCongesAnnuelsPrisesByAgent(idAgentList, helperService.getDateDebutCongeAnnuel(
+							refTypeSaisiCongeAnnuel, dto.getDateRestitution(), dto.isMatin(), dto.isApresMidi()),
+							helperService.getDateFinCongeAnnuel(refTypeSaisiCongeAnnuel, dto.getDateRestitution(),
+									null, dto.isMatin(), dto.isApresMidi(), null));
 
-		/////////////////////////////////////////////
-		// quels compteurs réalimenter? N-1 et/ou N?
-		Double joursAAjouter = 0.0;
-		Double joursAAjouterN1 = 0.0;
-		if(null != demandeCA.getDureeAnneeN1() 
-				&& demandeCA.getDureeAnneeN1() > 0) {
-			if(demandeCA.getDureeAnneeN1() < jourTmp) {
-				joursAAjouterN1 = demandeCA.getDureeAnneeN1();
-				jourTmp -= demandeCA.getDureeAnneeN1();
-			}else{
-				joursAAjouterN1 = jourTmp;
-				jourTmp = 0.0;
+			if (null == listCongesAgentpris || listCongesAgentpris.isEmpty()) {
+				logger.error(String.format(AGENT_AUCUN_CA, idAgentList));
+				srm.getErrors().add(String.format(AGENT_AUCUN_CA, idAgentList));
+				persistCongeAnnuelRestitutionMassiveHisto(idAgentList, dto, AGENT_AUCUN_CA, new Date(), null);
+				continue;
 			}
-		}
-		if(null != demandeCA.getDuree()
-				&& demandeCA.getDuree() > 0) {
-			joursAAjouter = jourTmp;
-		}
-		
-		//////////////////////////////////////
-		// redonner le samedi offert si besoin
-		// on enregistre la demande de Conge Annuel si samedi offert modifie
-		Double samediOffert = getSamediOffertARendre(demandeCA, dto);
-		demandeCA.setNbSamediOffert(demandeCA.getNbSamediOffert() - samediOffert);
-		
-		//////////////////////////////////////
-		Date dernierModif = new Date();
 
-		//////////////////////////////////////
-		// et on ajoute une ligne d'historique a la demande 
-		// si le samedi offert est modifie
-		if(0.0 != samediOffert) {
-			EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
+			// /////////////////////////////
+			// compte les samedis decomptes a rendre
+			DemandeCongesAnnuels demandeCA = listCongesAgentpris.get(0);
+
+			Double samediAAjouter = getSamediDecompteARendre(demandeCA, dto);
+
+			// ///////////////////////////////////
+			// nombre de jour a redonner au total
+			Double jourTmp = 0.0;
+			if (dto.isJournee()) {
+				jourTmp = 1.0;
+			} else {
+				jourTmp = 0.5;
+			}
+			jourTmp += samediAAjouter;
+
+			// ///////////////////////////////////////////
+			// quels compteurs réalimenter? N-1 et/ou N?
+			Double joursAAjouter = 0.0;
+			Double joursAAjouterN1 = 0.0;
+			if (null != demandeCA.getDureeAnneeN1() && demandeCA.getDureeAnneeN1() > 0) {
+				if (demandeCA.getDureeAnneeN1() < jourTmp) {
+					joursAAjouterN1 = demandeCA.getDureeAnneeN1();
+					jourTmp -= demandeCA.getDureeAnneeN1();
+				} else {
+					joursAAjouterN1 = jourTmp;
+					jourTmp = 0.0;
+				}
+			}
+			if (null != demandeCA.getDuree() && demandeCA.getDuree() > 0) {
+				joursAAjouter = jourTmp;
+			}
+
+			// ////////////////////////////////////
+			// redonner le samedi offert si besoin
+			// on enregistre la demande de Conge Annuel si samedi offert modifie
+			Double samediOffert = getSamediOffertARendre(demandeCA, dto);
+			demandeCA.setNbSamediOffert(demandeCA.getNbSamediOffert() - samediOffert);
+
+			// ////////////////////////////////////
+			Date dernierModif = new Date();
+
+			// ////////////////////////////////////
+			// et on ajoute une ligne d'historique a la demande
+			// si le samedi offert est modifie
+			if (0.0 != samediOffert) {
+				EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
 				etatDemande.setMotif(dto.getMotif());
 				etatDemande.setNbSamediOffert(demandeCA.getNbSamediOffert());
 				etatDemande.setCommentaire(demandeCA.getCommentaire());
@@ -630,149 +630,147 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 				etatDemande.setDuree(demandeCA.getDuree());
 				etatDemande.setDureeAnneeN1(demandeCA.getDureeAnneeN1());
 				etatDemande.setEtat(RefEtatEnum.PRISE);
-				etatDemande.setIdAgent(idAgent);
+				etatDemande.setIdAgent(idAgentConnecte);
 				etatDemande.setNbSamediDecompte(demandeCA.getNbSamediDecompte());
 				etatDemande.setTypeSaisiCongeAnnuel(demandeCA.getTypeSaisiCongeAnnuel());
 
-			counterRepository.persistEntity(etatDemande);
+				counterRepository.persistEntity(etatDemande);
+			}
+
+			// on enregistre une ligne historique du compteur
+			AgentWeekCongeAnnuel weekCA = new AgentWeekCongeAnnuel();
+			weekCA.setIdAgent(idAgentList);
+			weekCA.setDateMonth(getDateResitution(dto));
+			weekCA.setLastModification(dernierModif);
+			weekCA.setJours(joursAAjouter + joursAAjouterN1);
+
+			// on enregistre le compteur
+			arc.setLastModification(dernierModif);
+			arc.setTotalJours(arc.getTotalJours() + joursAAjouter);
+			arc.setTotalJoursAnneeN1(arc.getTotalJoursAnneeN1() + joursAAjouterN1);
+
+			// on enregistre l'historique de la restitution massive
+			persistCongeAnnuelRestitutionMassiveHisto(idAgentList, dto, "OK", dernierModif, joursAAjouter
+					+ joursAAjouterN1);
+
+			counterRepository.persistEntity(weekCA);
+
+			srm.getInfos().add("Restitution massive enregistrée pour l'agent " + idAgentList);
+
+			logger.info("Finally restitutionMassiveCA for idAgent {} ...", idAgentList);
 		}
-		
-		// on enregistre une ligne historique du compteur
-		AgentWeekCongeAnnuel weekCA = new AgentWeekCongeAnnuel();
-		weekCA.setIdAgent(dto.getIdAgent());
-		weekCA.setDateMonth(getDateResitution(dto));
-		weekCA.setLastModification(dernierModif);
-		weekCA.setJours(joursAAjouter + joursAAjouterN1);
-		
-		// on enregistre le compteur
-		arc.setLastModification(dernierModif);
-		arc.setTotalJours(arc.getTotalJours() + joursAAjouter);
-		arc.setTotalJoursAnneeN1(arc.getTotalJoursAnneeN1() + joursAAjouterN1);
-		
-		// on enregistre l'historique de la restitution massive
-		persistCongeAnnuelRestitutionMassiveHisto(dto, "OK", dernierModif, joursAAjouter + joursAAjouterN1);
-		
-		counterRepository.persistEntity(weekCA);
-		
-		srm.getInfos().add("Restitution massive enregistrée pour l'agent " + dto.getIdAgent());
-		
-		logger.info("Finally restitutionMassiveCA for idAgent {} ...", dto.getIdAgent());
-		
+
 		return srm;
 	}
-	
-	private Date getDateResitution(RestitutionMassiveDto dto){
-		if(dto.isApresMidi()){
-			return new DateTime(dto.getDateRestitution())
-			.withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0).toDate(); 
+
+	private Date getDateResitution(RestitutionMassiveDto dto) {
+		if (dto.isApresMidi()) {
+			return new DateTime(dto.getDateRestitution()).withHourOfDay(12).withMinuteOfHour(0).withSecondOfMinute(0)
+					.toDate();
 		}
 		return dto.getDateRestitution();
 	}
-	
+
 	protected ReturnMessageDto checkRestitutionMassiveDto(RestitutionMassiveDto dto, ReturnMessageDto srm) {
-		
-		if(null == dto.getDateRestitution() || !dto.getDateRestitution().before(new Date())) {
+
+		if (null == dto.getDateRestitution() || !dto.getDateRestitution().before(new Date())) {
 			srm.getErrors().add(DATE_JOUR_RESTITUER_KO);
 		}
-		if(!dto.isApresMidi() && !dto.isMatin() && !dto.isJournee()) {
+		if (!dto.isApresMidi() && !dto.isMatin() && !dto.isJournee()) {
 			srm.getErrors().add(TYPE_RESTITUTION_OBLIGATOIRE);
 		}
-		if(null == dto.getIdAgent()) {
-			srm.getErrors().add(AUCUN_AGENT);
-		}
-		if(null == dto.getMotif() || "".equals(dto.getMotif().trim())) {
+		if (null == dto.getMotif() || "".equals(dto.getMotif().trim())) {
 			srm.getErrors().add(MOTIF_OBLIGATOIRE);
 		}
 		return srm;
 	}
-	
-	private void persistCongeAnnuelRestitutionMassiveHisto(RestitutionMassiveDto dto, String status, Date dernierModif, Double jours){
+
+	private void persistCongeAnnuelRestitutionMassiveHisto(Integer idAgentList, RestitutionMassiveDto dto,
+			String status, Date dernierModif, Double jours) {
 		CongeAnnuelRestitutionMassiveHisto histo = new CongeAnnuelRestitutionMassiveHisto();
-			histo.setIdAgent(dto.getIdAgent());
-			histo.setDateModification(dernierModif);
-			histo.setDateRestitution(getDateResitution(dto));
-			histo.setStatus(status);
-			histo.setMotif(dto.getMotif());
-			histo.setJours(jours);
-			histo.setJournee(dto.isJournee());
-			histo.setMatin(dto.isMatin());
-			histo.setApresMidi(dto.isApresMidi());
+		histo.setIdAgent(idAgentList);
+		histo.setDateModification(dernierModif);
+		histo.setDateRestitution(getDateResitution(dto));
+		histo.setStatus(status);
+		histo.setMotif(dto.getMotif());
+		histo.setJours(jours);
+		histo.setJournee(dto.isJournee());
+		histo.setMatin(dto.isMatin());
+		histo.setApresMidi(dto.isApresMidi());
 		counterRepository.persistEntity(histo);
 	}
-	
+
 	protected ReturnMessageDto checkAgentIsBaseCongeAOrD(Integer idAgent, Date dateRestitution, ReturnMessageDto srm) {
-		
+
 		RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(idAgent, dateRestitution);
 		if (null != dtoBase && null != dtoBase.getIdRefTypeSaisiCongeAnnuel()) {
 			RefTypeSaisiCongeAnnuel typeConge = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
 					dtoBase.getIdRefTypeSaisiCongeAnnuel());
-			
-			if(null == typeConge
+
+			if (null == typeConge
 					|| null == typeConge.getCodeBaseHoraireAbsence()
-					|| (!"A".equals(typeConge.getCodeBaseHoraireAbsence().trim())
-							&& !"D".equals(typeConge.getCodeBaseHoraireAbsence().trim()))) {
+					|| (!"A".equals(typeConge.getCodeBaseHoraireAbsence().trim()) && !"D".equals(typeConge
+							.getCodeBaseHoraireAbsence().trim()))) {
 				srm.getErrors().add(String.format(MAUVAIS_BASE_CA, idAgent));
 			}
-		}else{
+		} else {
 			srm.getErrors().add(String.format(BASE_CA_NON_TROUVEE, idAgent));
 		}
 		return srm;
 	}
-	
+
 	protected Double getSamediDecompteARendre(DemandeCongesAnnuels demandeCA, RestitutionMassiveDto dto) {
-		
+
 		DateTime dateARestituer = new DateTime(dto.getDateRestitution());
-		if(dateARestituer.getDayOfWeek() == DateTimeConstants.FRIDAY
-				&& 0 < demandeCA.getNbSamediDecompte()){
-			if(dto.isJournee() || dto.isApresMidi()) {
+		if (dateARestituer.getDayOfWeek() == DateTimeConstants.FRIDAY && 0 < demandeCA.getNbSamediDecompte()) {
+			if (dto.isJournee() || dto.isApresMidi()) {
 				return 1.0;
 			}
-			if(dto.isMatin()) {
+			if (dto.isMatin()) {
 				return 0.5;
 			}
 		}
 		return 0.0;
 	}
-	
+
 	protected Double getSamediOffertARendre(DemandeCongesAnnuels demandeCA, RestitutionMassiveDto dto) {
-		
+
 		DateTime dateARestituer = new DateTime(dto.getDateRestitution());
-		if(dateARestituer.getDayOfWeek() == DateTimeConstants.FRIDAY
-				&& 0 < demandeCA.getNbSamediOffert()
-				&& 0 == demandeCA.getNbSamediDecompte()){
-			if(dto.isJournee()) {
+		if (dateARestituer.getDayOfWeek() == DateTimeConstants.FRIDAY && 0 < demandeCA.getNbSamediOffert()
+				&& 0 == demandeCA.getNbSamediDecompte()) {
+			if (dto.isJournee()) {
 				return 1.0;
 			}
 		}
 		return 0.0;
 	}
-	
-	protected ReturnMessageDto checkCADejaRestitue(ReturnMessageDto srm, RestitutionMassiveDto dto) {
-		
-		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionCAHisto = congesAnnuelsRepository.getRestitutionCAByAgentAndDate(dto);
-		if(null != listRestitutionCAHisto 
-				&& !listRestitutionCAHisto.isEmpty()) {
-			
-			if(dto.isJournee()) {
-				logger.error(String.format(RESTITUTION_EXISTANTE, dto.getIdAgent()));
-				srm.getErrors().add(String.format(RESTITUTION_EXISTANTE, dto.getIdAgent()));
+
+	protected ReturnMessageDto checkCADejaRestitue(ReturnMessageDto srm, RestitutionMassiveDto dto, Integer idAgentList) {
+
+		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionCAHisto = congesAnnuelsRepository
+				.getRestitutionCAByAgentAndDate(dto,idAgentList);
+		if (null != listRestitutionCAHisto && !listRestitutionCAHisto.isEmpty()) {
+
+			if (dto.isJournee()) {
+				logger.error(String.format(RESTITUTION_EXISTANTE, idAgentList));
+				srm.getErrors().add(String.format(RESTITUTION_EXISTANTE, idAgentList));
 				return srm;
 			}
-			
-			for(CongeAnnuelRestitutionMassiveHisto caHisto : listRestitutionCAHisto) {
-				if(caHisto.isJournee()) {
-					logger.error(String.format(RESTITUTION_EXISTANTE, dto.getIdAgent()));
-					srm.getErrors().add(String.format(RESTITUTION_EXISTANTE, dto.getIdAgent()));
+
+			for (CongeAnnuelRestitutionMassiveHisto caHisto : listRestitutionCAHisto) {
+				if (caHisto.isJournee()) {
+					logger.error(String.format(RESTITUTION_EXISTANTE, idAgentList));
+					srm.getErrors().add(String.format(RESTITUTION_EXISTANTE, idAgentList));
 					return srm;
 				}
-				if(caHisto.isMatin() && dto.isMatin()) {
-					logger.error(String.format(RESTITUTION_EXISTANTE, dto.getIdAgent()));
-					srm.getErrors().add(String.format(RESTITUTION_EXISTANTE, dto.getIdAgent()));
+				if (caHisto.isMatin() && dto.isMatin()) {
+					logger.error(String.format(RESTITUTION_EXISTANTE, idAgentList));
+					srm.getErrors().add(String.format(RESTITUTION_EXISTANTE, idAgentList));
 					return srm;
 				}
-				if(caHisto.isApresMidi() && dto.isApresMidi()) {
-					logger.error(String.format(RESTITUTION_EXISTANTE, dto.getIdAgent()));
-					srm.getErrors().add(String.format(RESTITUTION_EXISTANTE, dto.getIdAgent()));
+				if (caHisto.isApresMidi() && dto.isApresMidi()) {
+					logger.error(String.format(RESTITUTION_EXISTANTE, idAgentList));
+					srm.getErrors().add(String.format(RESTITUTION_EXISTANTE, idAgentList));
 					return srm;
 				}
 			}

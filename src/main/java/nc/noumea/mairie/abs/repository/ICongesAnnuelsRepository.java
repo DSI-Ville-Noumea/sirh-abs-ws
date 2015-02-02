@@ -23,7 +23,7 @@ public interface ICongesAnnuelsRepository {
 			Integer idAgentConcerne, Date fromDate, Date toDate);
 
 	List<CongeAnnuelRestitutionMassiveHisto> getRestitutionCAByAgentAndDate(
-			RestitutionMassiveDto dto);
+			RestitutionMassiveDto dto, Integer idAgentList);
 
 	List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuel(Date dateMois);
 }

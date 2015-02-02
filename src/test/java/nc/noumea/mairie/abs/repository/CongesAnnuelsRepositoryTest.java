@@ -244,13 +244,13 @@ public class CongesAnnuelsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getWeekHistoForAgentAndDate_ok() {
-		
+
 		Date dateMonth = new Date();
-		
+
 		AgentWeekCongeAnnuel d = new AgentWeekCongeAnnuel();
 		d.setDateMonth(dateMonth);
 		d.setIdAgent(9005138);
@@ -258,21 +258,21 @@ public class CongesAnnuelsRepositoryTest {
 		d.setJours(10.0);
 		d.setLastModification(new Date());
 		absEntityManager.persist(d);
-		
+
 		AgentWeekCongeAnnuel result = repository.getWeekHistoForAgentAndDate(9005138, dateMonth);
-		
+
 		assertNotNull(result);
-		
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getWeekHistoForAgentAndDate_badAgent() {
-		
+
 		Date dateMonth = new Date();
-		
+
 		AgentWeekCongeAnnuel d = new AgentWeekCongeAnnuel();
 		d.setDateMonth(dateMonth);
 		d.setIdAgent(9005138);
@@ -280,21 +280,21 @@ public class CongesAnnuelsRepositoryTest {
 		d.setJours(10.0);
 		d.setLastModification(new Date());
 		absEntityManager.persist(d);
-		
+
 		AgentWeekCongeAnnuel result = repository.getWeekHistoForAgentAndDate(9009999, dateMonth);
-		
+
 		assertNull(result);
-		
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getWeekHistoForAgentAndDate_badDate() {
-		
+
 		DateTime dateMonth = new DateTime();
-		
+
 		AgentWeekCongeAnnuel d = new AgentWeekCongeAnnuel();
 		d.setDateMonth(dateMonth.toDate());
 		d.setIdAgent(9005138);
@@ -302,11 +302,11 @@ public class CongesAnnuelsRepositoryTest {
 		d.setJours(10.0);
 		d.setLastModification(new Date());
 		absEntityManager.persist(d);
-		
+
 		AgentWeekCongeAnnuel result = repository.getWeekHistoForAgentAndDate(9005138, dateMonth.plusDays(1).toDate());
-		
+
 		assertNull(result);
-		
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
@@ -396,11 +396,10 @@ public class CongesAnnuelsRepositoryTest {
 		absEntityManager.clear();
 	}
 
-	
-	@Test 
+	@Test
 	@Transactional("absTransactionManager")
 	public void listeDemandesCongesAnnuelsPrisesByAgent_testEtat() throws ParseException {
-		
+
 		Integer idAgent = 9005138;
 
 		RefTypeAbsence type = new RefTypeAbsence();
@@ -517,18 +516,18 @@ public class CongesAnnuelsRepositoryTest {
 		etatDemandeAVALIDEE.setIdAgent(9000001);
 		etatDemandeAVALIDEE.setEtat(RefEtatEnum.A_VALIDER);
 		absEntityManager.persist(etatDemandeAVALIDEE);
-		
-		List<DemandeCongesAnnuels> listResults = repository.getListeDemandesCongesAnnuelsPrisesByAgent(
-				idAgent, sdf.parse("15/06/2013"), sdf.parse("25/06/2013"));
-		
+
+		List<DemandeCongesAnnuels> listResults = repository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent,
+				sdf.parse("15/06/2013"), sdf.parse("25/06/2013"));
+
 		assertEquals(1, listResults.size());
-		assertEquals(listResults.get(0).getDuree(), 99,0);
+		assertEquals(listResults.get(0).getDuree(), 99, 0);
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void listeDemandesCongesAnnuelsPrisesByAgent_testAgent() throws ParseException {
-		
+
 		Integer idAgent = 9005138;
 
 		RefTypeAbsence type = new RefTypeAbsence();
@@ -562,17 +561,17 @@ public class CongesAnnuelsRepositoryTest {
 		etatDemandePRISE2.setEtat(RefEtatEnum.PRISE);
 		absEntityManager.persist(etatDemandePRISE2);
 
-		List<DemandeCongesAnnuels> listResults = repository.getListeDemandesCongesAnnuelsPrisesByAgent(
-				idAgent, sdf.parse("15/06/2013"), sdf.parse("25/06/2013"));
-		
+		List<DemandeCongesAnnuels> listResults = repository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent,
+				sdf.parse("15/06/2013"), sdf.parse("25/06/2013"));
+
 		assertEquals(1, listResults.size());
-		assertEquals(listResults.get(0).getDuree(), 99,0);
+		assertEquals(listResults.get(0).getDuree(), 99, 0);
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void listeDemandesCongesAnnuelsPrisesByAgent_testDate() throws ParseException {
-		
+
 		Integer idAgent = 9005138;
 
 		RefTypeAbsence type = new RefTypeAbsence();
@@ -620,19 +619,17 @@ public class CongesAnnuelsRepositoryTest {
 		etatDemandePRISE3.setEtat(RefEtatEnum.PRISE);
 		absEntityManager.persist(etatDemandePRISE3);
 
-		List<DemandeCongesAnnuels> listResults = repository.getListeDemandesCongesAnnuelsPrisesByAgent(
-				idAgent, sdf.parse("15/06/2013"), sdf.parse("25/06/2013"));
-		
-		assertEquals(1, listResults.size());
-		assertEquals(listResults.get(0).getDuree(), 44,0);
-	}
-	
+		List<DemandeCongesAnnuels> listResults = repository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent,
+				sdf.parse("15/06/2013"), sdf.parse("25/06/2013"));
 
-	
-	@Test 
+		assertEquals(1, listResults.size());
+		assertEquals(listResults.get(0).getDuree(), 44, 0);
+	}
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void listeDemandesCongesAnnuelsPrisesByAgent_PeriodeRechercheeIncluseDansUnCA() throws ParseException {
-		
+
 		Integer idAgent = 9005138;
 
 		RefTypeAbsence type = new RefTypeAbsence();
@@ -652,110 +649,110 @@ public class CongesAnnuelsRepositoryTest {
 		etatDemandePRISE.setEtat(RefEtatEnum.PRISE);
 		absEntityManager.persist(etatDemandePRISE);
 
-		List<DemandeCongesAnnuels> listResults = repository.getListeDemandesCongesAnnuelsPrisesByAgent(
-				idAgent, new DateTime(2013,6,10,0,0,0).toDate(), new DateTime(2013,6,10,11,59,59).toDate());
-		
+		List<DemandeCongesAnnuels> listResults = repository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent,
+				new DateTime(2013, 6, 10, 0, 0, 0).toDate(), new DateTime(2013, 6, 10, 11, 59, 59).toDate());
+
 		assertEquals(1, listResults.size());
-		assertEquals(listResults.get(0).getDuree(), 99,0);
+		assertEquals(listResults.get(0).getDuree(), 99, 0);
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getRestitutionCAByAgentAndDate_1result() {
-		
+		Integer idAgent = 9005138;
+
 		CongeAnnuelRestitutionMassiveHisto histo = new CongeAnnuelRestitutionMassiveHisto();
-			histo.setIdAgent(9005138);
-			histo.setDateModification(new Date());
-			histo.setDateRestitution(new DateTime(2015,1,23,0,0,0).toDate());
-			histo.setJours(1.0);
-			histo.setStatus("OK");
-			histo.setMotif("motif");
-			histo.setJournee(true);
-			histo.setMatin(false);
-			histo.setApresMidi(false);
+		histo.setIdAgent(idAgent);
+		histo.setDateModification(new Date());
+		histo.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+		histo.setJours(1.0);
+		histo.setStatus("OK");
+		histo.setMotif("motif");
+		histo.setJournee(true);
+		histo.setMatin(false);
+		histo.setApresMidi(false);
 		absEntityManager.persist(histo);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
-		dto.setIdAgent(9005138);
-		dto.setDateRestitution(new DateTime(2015,1,23,0,0,0).toDate());
-		
-		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto);
-		
+		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+
+		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto, idAgent);
+
 		assertEquals(1, result.size());
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getRestitutionCAByAgentAndDate_badDate() {
-		
+		Integer idAgent = 9005138;
+
 		CongeAnnuelRestitutionMassiveHisto histo = new CongeAnnuelRestitutionMassiveHisto();
-			histo.setIdAgent(9005138);
-			histo.setDateModification(new Date());
-			histo.setDateRestitution(new DateTime(2015,12,23,0,0,0).toDate());
-			histo.setJours(1.0);
-			histo.setStatus("OK");
-			histo.setMotif("motif");
-			histo.setJournee(true);
-			histo.setMatin(false);
-			histo.setApresMidi(false);
+		histo.setIdAgent(idAgent);
+		histo.setDateModification(new Date());
+		histo.setDateRestitution(new DateTime(2015, 12, 23, 0, 0, 0).toDate());
+		histo.setJours(1.0);
+		histo.setStatus("OK");
+		histo.setMotif("motif");
+		histo.setJournee(true);
+		histo.setMatin(false);
+		histo.setApresMidi(false);
 		absEntityManager.persist(histo);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
-		dto.setIdAgent(9005138);
-		dto.setDateRestitution(new DateTime(2015,1,23,0,0,0).toDate());
-		
-		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto);
-		
+		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+
+		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto, idAgent);
+
 		assertEquals(0, result.size());
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getRestitutionCAByAgentAndDate_badAgent() {
-		
+		Integer idAgent = 9005138;
+
 		CongeAnnuelRestitutionMassiveHisto histo = new CongeAnnuelRestitutionMassiveHisto();
-			histo.setIdAgent(9009999);
-			histo.setDateModification(new Date());
-			histo.setDateRestitution(new DateTime(2015,1,23,0,0,0).toDate());
-			histo.setJours(1.0);
-			histo.setStatus("OK");
-			histo.setMotif("motif");
-			histo.setJournee(true);
-			histo.setMatin(false);
-			histo.setApresMidi(false);
+		histo.setIdAgent(9009999);
+		histo.setDateModification(new Date());
+		histo.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+		histo.setJours(1.0);
+		histo.setStatus("OK");
+		histo.setMotif("motif");
+		histo.setJournee(true);
+		histo.setMatin(false);
+		histo.setApresMidi(false);
 		absEntityManager.persist(histo);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
-		dto.setIdAgent(9005138);
-		dto.setDateRestitution(new DateTime(2015,1,23,0,0,0).toDate());
-		
-		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto);
-		
+		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+
+		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto, idAgent);
+
 		assertEquals(0, result.size());
 	}
-	
-	@Test 
+
+	@Test
 	@Transactional("absTransactionManager")
 	public void getRestitutionCAByAgentAndDate_badStatus() {
-		
+		Integer idAgent = 9005138;
+
 		CongeAnnuelRestitutionMassiveHisto histo = new CongeAnnuelRestitutionMassiveHisto();
-			histo.setIdAgent(9005138);
-			histo.setDateModification(new Date());
-			histo.setDateRestitution(new DateTime(2015,1,23,0,0,0).toDate());
-			histo.setJours(1.0);
-			histo.setStatus("error");
-			histo.setMotif("motif");
-			histo.setJournee(true);
-			histo.setMatin(false);
-			histo.setApresMidi(false);
+		histo.setIdAgent(idAgent);
+		histo.setDateModification(new Date());
+		histo.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+		histo.setJours(1.0);
+		histo.setStatus("error");
+		histo.setMotif("motif");
+		histo.setJournee(true);
+		histo.setMatin(false);
+		histo.setApresMidi(false);
 		absEntityManager.persist(histo);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
-		dto.setIdAgent(9005138);
-		dto.setDateRestitution(new DateTime(2015,1,23,0,0,0).toDate());
-		
-		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto);
-		
+		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+
+		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto, idAgent);
+
 		assertEquals(0, result.size());
 	}
 }

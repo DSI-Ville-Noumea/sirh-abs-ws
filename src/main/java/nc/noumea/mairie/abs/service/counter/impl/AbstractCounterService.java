@@ -64,7 +64,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur de l'année en cours";
 
 	protected static final String ERROR_TECHNIQUE = "Erreur technique : ICounterService défaut d'implémentation";
-	
+
 	protected static final String AGENT_NON_HABILITE = "L'agent n'est pas habilité à saisir une demande.";
 
 	/**
@@ -239,7 +239,8 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public ReturnMessageDto saveRepresentantA52(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto) {
+	public ReturnMessageDto saveRepresentantA52(Integer idOrganisationSyndicale,
+			List<AgentOrganisationSyndicaleDto> listeAgentDto) {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 
@@ -255,7 +256,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public ReturnMessageDto restitutionMassiveCA(Integer idAgent, RestitutionMassiveDto dto) {
+	public ReturnMessageDto restitutionMassiveCA(Integer idAgent, RestitutionMassiveDto dto, List<Integer> listIdAgent) {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 		return srm;

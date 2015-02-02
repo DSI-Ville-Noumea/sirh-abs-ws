@@ -125,7 +125,8 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 	}
 
 	@Override
-	public List<CongeAnnuelRestitutionMassiveHisto> getRestitutionCAByAgentAndDate(RestitutionMassiveDto dto) {
+	public List<CongeAnnuelRestitutionMassiveHisto> getRestitutionCAByAgentAndDate(RestitutionMassiveDto dto,
+			Integer idAgentList) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from CongeAnnuelRestitutionMassiveHisto d ");
@@ -136,7 +137,7 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 		TypedQuery<CongeAnnuelRestitutionMassiveHisto> query = absEntityManager.createQuery(sb.toString(),
 				CongeAnnuelRestitutionMassiveHisto.class);
 
-		query.setParameter("idAgent", dto.getIdAgent());
+		query.setParameter("idAgent", idAgentList);
 		query.setParameter("dateRestitution", dto.getDateRestitution());
 
 		return query.getResultList();
