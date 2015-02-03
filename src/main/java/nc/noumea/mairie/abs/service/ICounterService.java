@@ -40,8 +40,9 @@ public interface ICounterService {
 	ReturnMessageDto saveRepresentantA52(Integer idOrganisationSyndicale,
 			List<AgentOrganisationSyndicaleDto> listeAgentDto);
 
-	ReturnMessageDto alimentationAutoCompteur(Integer idAgent, Date dateDebut,
-			Date dateFin);
+	ReturnMessageDto alimentationAutoCompteur(Integer idAgent, Date dateDebut, Date dateFin);
 
 	ReturnMessageDto restitutionMassiveCA(Integer idAgent, RestitutionMassiveDto dto, List<Integer> listIdAgent);
+
+	ReturnMessageDto checkRestitutionMassiveDto(RestitutionMassiveDto dto, ReturnMessageDto srm);
 }

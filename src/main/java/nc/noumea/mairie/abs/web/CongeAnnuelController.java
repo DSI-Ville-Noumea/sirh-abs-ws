@@ -206,10 +206,21 @@ public class CongeAnnuelController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		// TODO rechercher les agsnts concernés
-		List<Integer> listIdAgent = new ArrayList<Integer>();
+		ReturnMessageDto srm = new ReturnMessageDto();
 
-		return counterService.restitutionMassiveCA(convertedIdAgent, dto, listIdAgent);
+		// ///////////////////////////////////
+		// on check le DTO
+		srm = counterService.checkRestitutionMassiveDto(dto, srm);
+		if (0 < srm.getErrors().size()) {
+			return srm;
+		}
+
+		// rechercher les agents concernés
+		List<Integer> listIdAgent = new ArrayList<Integer>();
+		listIdAgent = absenceService.getListeIdAgentConcerneRestitutionMassive(dto);
+
+		srm = counterService.restitutionMassiveCA(convertedIdAgent, dto, listIdAgent);
+		return srm;
 	}
 
 	/**

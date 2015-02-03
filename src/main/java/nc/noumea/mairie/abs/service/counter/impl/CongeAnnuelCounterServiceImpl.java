@@ -21,7 +21,6 @@ import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
-import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAgentJoursFeriesReposRepository;
@@ -61,8 +60,6 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	protected static final String PA_INEXISTANT = "Pas de PA active pour l'agent : [%d].";
 	protected static final String COMPTEUR_DEJA_A_JOUR = "Compteur de congés annuels déjà mis à jour ce mois-ci pour l'agent : [%d].";
 	protected static final String AGENT_AUCUN_CA = "L'agent [%d] n'était pas en congé à cette date.";
-	protected static final String BASE_CA_NON_TROUVEE = "Base congé non trouvée pour l'agent [%d].";
-	protected static final String MAUVAIS_BASE_CA = "Mauvaise base congé pour l'agent [%d].";
 	protected static final String MOTIF_OBLIGATOIRE = "Le motif est obligatoire.";
 	protected static final String TYPE_RESTITUTION_OBLIGATOIRE = "Le type de restitution est obligatoire.";
 	protected static final String DATE_JOUR_RESTITUER_KO = "La date du jour à restituer doit être antérieure à aujourd'hui.";
@@ -519,26 +516,13 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			}
 		
 			/////////////////////////////////////
-			// on check le DTO
-			srm = checkRestitutionMassiveDto(dto, srm);
-			if(0 < srm.getErrors().size()) {
-				return srm;
-			}
-		
-			/////////////////////////////////////
-			// on teste s il n y a pas deja eu une restitution massive 
+			// on teste s il n y a pas deja eu une restitution massive
 			// pour l agent sur le meme jour
 			srm = checkCADejaRestitue(srm, dto, idAgentList);
 			if (0 < srm.getErrors().size())
 				continue;
-		
-			/////////////////////////////////////
-			// Ne concerne QUE les agents en base congé A et D
-				srm = checkAgentIsBaseCongeAOrD(idAgentList, dto.getDateRestitution(), srm);
-			if(0 < srm.getErrors().size())
-					continue;
-			
-			//////////////////////////////////////
+
+			// ////////////////////////////////////
 			// on recherche le compteur de l agent
 			AgentCongeAnnuelCount arc = (AgentCongeAnnuelCount) counterRepository.getAgentCounter(
 						AgentCongeAnnuelCount.class, idAgentList);
@@ -674,7 +658,8 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		return dto.getDateRestitution();
 	}
 	
-	protected ReturnMessageDto checkRestitutionMassiveDto(RestitutionMassiveDto dto, ReturnMessageDto srm) {
+	@Override
+	public ReturnMessageDto checkRestitutionMassiveDto(RestitutionMassiveDto dto, ReturnMessageDto srm) {
 		
 		if(null == dto.getDateRestitution() || !dto.getDateRestitution().before(new Date())) {
 			srm.getErrors().add(DATE_JOUR_RESTITUER_KO);
@@ -703,30 +688,6 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		counterRepository.persistEntity(histo);
 	}
 	
-	protected ReturnMessageDto checkAgentIsBaseCongeAOrD(Integer idAgent, Date dateRestitution, ReturnMessageDto srm) {
-		
-		RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(idAgent, dateRestitution);
-		if (null != dtoBase && null != dtoBase.getIdRefTypeSaisiCongeAnnuel()) {
-			RefTypeSaisiCongeAnnuel typeConge = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
-					dtoBase.getIdRefTypeSaisiCongeAnnuel());
-			
-			if(null == typeConge
-					|| null == typeConge.getCodeBaseHoraireAbsence()
-					|| (!"A".equals(typeConge.getCodeBaseHoraireAbsence().trim()) && !"D".equals(typeConge
-							.getCodeBaseHoraireAbsence().trim()))) {
-				srm.getErrors().add(String.format(MAUVAIS_BASE_CA, idAgent));
-			}
-		}else{
-			srm.getErrors().add(String.format(BASE_CA_NON_TROUVEE, idAgent));
-		}
-		return srm;
-	}
-	
-	/**
-	 * on teste si le jour a rendre est un vendredi
-	 * ET qu au moins un samedi est decomtpe dans la demande de CA
-	 * ET que le samedi n est pas un jour ferie ou chome
-	 */
 	protected Double getSamediDecompteARendre(DemandeCongesAnnuels demandeCA, RestitutionMassiveDto dto) {
 		
 		DateTime dateARestituer = new DateTime(dto.getDateRestitution());
@@ -777,7 +738,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	protected ReturnMessageDto checkCADejaRestitue(ReturnMessageDto srm, RestitutionMassiveDto dto, Integer idAgentList) {
 		
 		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionCAHisto = congesAnnuelsRepository
-				.getRestitutionCAByAgentAndDate(dto,idAgentList);
+				.getRestitutionCAByAgentAndDate(dto, idAgentList);
 		if (null != listRestitutionCAHisto && !listRestitutionCAHisto.isEmpty()) {
 			
 			if(dto.isJournee()) {

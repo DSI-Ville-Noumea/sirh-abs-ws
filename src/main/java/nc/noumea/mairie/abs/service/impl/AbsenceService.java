@@ -35,6 +35,8 @@ import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
+import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
@@ -42,6 +44,7 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
+import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
@@ -113,9 +116,14 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	private ICongesAnnuelsRepository congeAnnuelRepository;
 
+	@Autowired
+	private ITypeAbsenceRepository typeAbsenceRepository;
+
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
 	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyée n'est pas correct.";
+	protected static final String BASE_CA_NON_TROUVEE = "Base congé non trouvée pour l'agent [%d].";
+	protected static final String MAUVAIS_BASE_CA = "Mauvaise base congé pour l'agent [%d].";
 
 	// POUR LES MESSAGE A ENVOYE AU PROJET SIRH-PTG-WS
 	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez pointé sur une absence.";
@@ -500,8 +508,9 @@ public class AbsenceService implements IAbsenceService {
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 					demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 
-			result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
-					Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.A_VALIDER));
+			result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande, Arrays.asList(
+					RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE,
+					RefEtatEnum.A_VALIDER));
 
 			result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
 					demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
@@ -661,66 +670,60 @@ public class AbsenceService implements IAbsenceService {
 
 		return result;
 	}
-	
+
 	/**
-	 * Pour les contractuels et CC uniquement :
-     * Les demandes à l’état « prise » ont déjà été injectées dans la paye. 
-     * Les demandes annulées doivent être supprimées de SPCC : supprimer toutes les lignes concernées par le congé annulé.
-     * Une ligne doit être créée dans SPMATR.
+	 * Pour les contractuels et CC uniquement : Les demandes à l’état « prise »
+	 * ont déjà été injectées dans la paye. Les demandes annulées doivent être
+	 * supprimées de SPCC : supprimer toutes les lignes concernées par le congé
+	 * annulé. Une ligne doit être créée dans SPMATR.
 	 */
 	protected void supprimeIncidencePaie(Demande demande) {
-		
+
 		// uniquement pour les conges annuels
-		if(!demande.getType().getGroupe().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
+		if (!demande.getType().getGroupe().getIdRefGroupeAbsence()
+				.equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
 			return;
 		}
-		
+
 		SimpleDateFormat sdfMairiePerrap = new SimpleDateFormat("yyyyMM");
-		
+
 		DateTime dateTimeDebut = new DateTime(demande.getDateDebut());
 		DateTime dateTimeFin = new DateTime(demande.getDateFin());
-		
+
 		if (dateTimeDebut.getDayOfMonth() == dateTimeFin.getDayOfMonth()) {
-			supprimeSpcc(demande, 
-					dateTimeDebut.toDate(),
-					new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), 
+			supprimeSpcc(demande, dateTimeDebut.toDate(), new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())),
 					isDemiJourneeForSpcc(dateTimeDebut.toDate(), dateTimeFin.toDate()));
-			
+
 		} else {
-			//////////////////////////////////
+			// ////////////////////////////////
 			// plusieurs journées de posées //
-			//////////////////////////////////
-			
+			// ////////////////////////////////
+
 			// on traite le premier jour
-			supprimeSpcc(demande, 
-					demande.getDateDebut(),
-					new Integer(sdfMairiePerrap.format(demande.getDateDebut())), 
+			supprimeSpcc(demande, demande.getDateDebut(), new Integer(sdfMairiePerrap.format(demande.getDateDebut())),
 					isDemiJourneeForSpcc(demande.getDateDebut(), null));
-			
+
 			dateTimeDebut = dateTimeDebut.plusDays(1).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-			
-			/////////////////////////////
+
+			// ///////////////////////////
 			// on traite le dernier jour
-			supprimeSpcc(demande, 
-					demande.getDateFin(),
-					new Integer(sdfMairiePerrap.format(demande.getDateFin())),
+			supprimeSpcc(demande, demande.getDateFin(), new Integer(sdfMairiePerrap.format(demande.getDateFin())),
 					isDemiJourneeForSpcc(null, demande.getDateFin()));
-			
+
 			dateTimeFin = dateTimeFin.minusDays(1).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
-			
-			////////////////////////
+
+			// //////////////////////
 			// on traite le reste
 			while (dateTimeDebut.isBefore(dateTimeFin)) {
-				
-				supprimeSpcc(demande, 
-						dateTimeDebut.toDate(), 
-						new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), 
-						false);
-				
+
+				supprimeSpcc(demande, dateTimeDebut.toDate(),
+						new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), false);
+
 				dateTimeDebut = dateTimeDebut.plusDays(1);
 			}
 		}
 	}
+
 	/**
 	 * Envoie a la paie
 	 */
@@ -729,115 +732,104 @@ public class AbsenceService implements IAbsenceService {
 		// est Convention ou contractuel pour gerer l'incidence en paie
 		// on fait cette demarche pour chaque jour de la demande de
 		// congé annuel
-		
+
 		// uniquement pour les conges annuels
-		if(!demande.getType().getGroupe().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
+		if (!demande.getType().getGroupe().getIdRefGroupeAbsence()
+				.equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
 			return result;
 		}
-		
+
 		DateTime dateTimeDebut = new DateTime(demande.getDateDebut());
 		DateTime dateTimeFin = new DateTime(demande.getDateFin());
-		
+
 		SimpleDateFormat sdfMairiePerrap = new SimpleDateFormat("yyyyMM");
 
-		/////////////////////////////////
+		// ///////////////////////////////
 		// si 1 seule journée de posée //
-		/////////////////////////////////
+		// ///////////////////////////////
 		if (dateTimeDebut.getDayOfMonth() == dateTimeFin.getDayOfMonth()) {
-			result = creeSpcc(result,
-						demande, 
-						dateTimeDebut.toDate(),
-						new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), 
-						isDemiJourneeForSpcc(dateTimeDebut.toDate(), dateTimeFin.toDate()));
-			
-			if(!result.getErrors().isEmpty())
+			result = creeSpcc(result, demande, dateTimeDebut.toDate(),
+					new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())),
+					isDemiJourneeForSpcc(dateTimeDebut.toDate(), dateTimeFin.toDate()));
+
+			if (!result.getErrors().isEmpty())
 				return result;
-			
+
 		} else {
-			//////////////////////////////////
+			// ////////////////////////////////
 			// plusieurs journées de posées //
-			//////////////////////////////////
-			
+			// ////////////////////////////////
+
 			// on traite le premier jour
-			result = creeSpcc(result,
-					demande, 
-					demande.getDateDebut(),
-					new Integer(sdfMairiePerrap.format(demande.getDateDebut())), 
+			result = creeSpcc(result, demande, demande.getDateDebut(),
+					new Integer(sdfMairiePerrap.format(demande.getDateDebut())),
 					isDemiJourneeForSpcc(demande.getDateDebut(), null));
-			
-			if(!result.getErrors().isEmpty())
+
+			if (!result.getErrors().isEmpty())
 				return result;
-			
+
 			dateTimeDebut = dateTimeDebut.plusDays(1).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-			
-			/////////////////////////////
+
+			// ///////////////////////////
 			// on traite le dernier jour
-			result = creeSpcc(result,
-					demande, 
-					demande.getDateFin(),
+			result = creeSpcc(result, demande, demande.getDateFin(),
 					new Integer(sdfMairiePerrap.format(demande.getDateFin())),
 					isDemiJourneeForSpcc(null, demande.getDateFin()));
-			
-			if(!result.getErrors().isEmpty())
+
+			if (!result.getErrors().isEmpty())
 				return result;
-			
+
 			dateTimeFin = dateTimeFin.minusDays(1).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
-			
-			////////////////////////
+
+			// //////////////////////
 			// on traite le reste
 			while (dateTimeDebut.isBefore(dateTimeFin)) {
-				
-				result = creeSpcc(result,
-						demande, 
-						dateTimeDebut.toDate(),
-						new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), 
-						false);
-				
-				if(!result.getErrors().isEmpty())
+
+				result = creeSpcc(result, demande, dateTimeDebut.toDate(),
+						new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), false);
+
+				if (!result.getErrors().isEmpty())
 					return result;
-				
+
 				dateTimeDebut = dateTimeDebut.plusDays(1);
 			}
 
 		}
 		return result;
 	}
-	
+
 	/**
 	 * verifie si demi journee ou journee entiere
 	 */
 	private boolean isDemiJourneeForSpcc(Date dateDebut, Date dateFin) {
-		
-		if(null == dateFin && null != dateDebut
-				&& 12 == new DateTime(dateDebut).getHourOfDay()) {
+
+		if (null == dateFin && null != dateDebut && 12 == new DateTime(dateDebut).getHourOfDay()) {
 			return true;
 		}
-		
-		if(null == dateDebut && null != dateFin
-				&& 11 == new DateTime(dateFin).getHourOfDay()) {
+
+		if (null == dateDebut && null != dateFin && 11 == new DateTime(dateFin).getHourOfDay()) {
 			return true;
 		}
-		
-		if ((0 == new DateTime(dateDebut).getHourOfDay() 
-				&& 11 == new DateTime(dateFin).getHourOfDay())
-				|| (12 == new DateTime(dateDebut).getHourOfDay()  
-					&& 23 == new DateTime(dateFin).getHourOfDay())) {
+
+		if ((0 == new DateTime(dateDebut).getHourOfDay() && 11 == new DateTime(dateFin).getHourOfDay())
+				|| (12 == new DateTime(dateDebut).getHourOfDay() && 23 == new DateTime(dateFin).getHourOfDay())) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * log les erreurs
 	 */
-	private ReturnMessageDto setErrorIncidencePaie(ReturnMessageDto result, Integer idDemande, Integer idAgent, Date date) {
+	private ReturnMessageDto setErrorIncidencePaie(ReturnMessageDto result, Integer idDemande, Integer idAgent,
+			Date date) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
+
 		result.getErrors()
-			.add(String
-				.format("La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
-						idDemande, idAgent, sdf.format(date)));
+				.add(String
+						.format("La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
+								idDemande, idAgent, sdf.format(date)));
 		logger.error(
 				"Demande id {} de l'agent {} ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date {}. Stopping process.",
 				idDemande, idAgent, sdf.format(date));
@@ -848,25 +840,30 @@ public class AbsenceService implements IAbsenceService {
 	/**
 	 * Cree SPCC et met a jour SPMATR pour un unique jour donne
 	 * 
-	 * @param result ReturnMessageDto
-	 * @param demande Demande
-	 * @param datjou Date
-	 * @param perrap Integer
-	 * @param isDemijournee boolean
+	 * @param result
+	 *            ReturnMessageDto
+	 * @param demande
+	 *            Demande
+	 * @param datjou
+	 *            Date
+	 * @param perrap
+	 *            Integer
+	 * @param isDemijournee
+	 *            boolean
 	 * @return ReturnMessageDto
 	 */
-	private ReturnMessageDto creeSpcc(ReturnMessageDto result, Demande demande, Date datjou, Integer perrap, boolean isDemijournee) {
-		
+	private ReturnMessageDto creeSpcc(ReturnMessageDto result, Demande demande, Date datjou, Integer perrap,
+			boolean isDemijournee) {
+
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
-				datjou);
-		
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou);
+
 		if (carr == null) {
 			return setErrorIncidencePaie(result, demande.getIdDemande(), demande.getIdAgent(), datjou);
 		} else if (helperService.isContractuel(carr) || helperService.isConventionCollective(carr)) {
-			
+
 			SimpleDateFormat sdfMairie = new SimpleDateFormat("yyyyMMdd");
-			
+
 			SpccId spccId = new SpccId();
 			spccId.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()));
 			spccId.setDatjou(new Integer(sdfMairie.format(datjou)));
@@ -876,46 +873,47 @@ public class AbsenceService implements IAbsenceService {
 			// demi journee, code = 2
 			spcc.setCode(isDemijournee ? 2 : 1);
 			// on met à jour SPMATR
-			Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), perrap, carr);
-			
+			Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+					perrap, carr);
+
 			sirhRepository.persistEntity(spcc);
 			sirhRepository.persistEntity(matr);
 		}
 		return result;
 	}
-	
+
 	private void supprimeSpcc(Demande demande, Date datjou, Integer perrap, boolean isDemijournee) {
-		
+
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
-				datjou);
-		
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou);
+
 		if (carr == null) {
 			return;
 		}
-		
+
 		Integer code = isDemijournee ? 2 : 1;
-		
-		Spcc spcc = sirhRepository.getSpcc(
-				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), 
-				datjou, 
-				code);
-		
-		if(null != spcc) {
+
+		Spcc spcc = sirhRepository.getSpcc(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+				datjou, code);
+
+		if (null != spcc) {
 			sirhRepository.removeEntity(spcc);
 			// on met à jour SPMATR
-			Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), perrap, carr);
+			Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+					perrap, carr);
 			sirhRepository.persistEntity(matr);
 		}
 	}
 
-
 	/**
 	 * Met a jour SPMATR
 	 * 
-	 * @param nomatr Integer
-	 * @param perrap Integer
-	 * @param carr Spcarr
+	 * @param nomatr
+	 *            Integer
+	 * @param perrap
+	 *            Integer
+	 * @param carr
+	 *            Spcarr
 	 * @return Spmatr
 	 */
 	private Spmatr miseAjourSpmatr(Integer nomatr, Integer perrap, Spcarr carr) {
@@ -1577,6 +1575,35 @@ public class AbsenceService implements IAbsenceService {
 			result.add(mois);
 		}
 
+		return result;
+	}
+
+	@Override
+	public List<Integer> getListeIdAgentConcerneRestitutionMassive(RestitutionMassiveDto dto) {
+		List<Integer> result = new ArrayList<>();
+		// on cherche tous les agents en congés pour cette date
+		List<Integer> listIdAgentConge = congeAnnuelRepository.getListeDemandesCongesAnnuelsPrisesForDate(dto
+				.getDateRestitution());
+		for (Integer idAgent : listIdAgentConge) {
+			// on cherche sa base horaire
+			RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer
+					.getBaseHoraireAbsence(idAgent, dto.getDateRestitution());
+			if (null != dtoBase && null != dtoBase.getIdRefTypeSaisiCongeAnnuel()) {
+				RefTypeSaisiCongeAnnuel typeConge = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+						dtoBase.getIdRefTypeSaisiCongeAnnuel());
+				if (null == typeConge
+						|| null == typeConge.getCodeBaseHoraireAbsence()
+						|| (!"A".equals(typeConge.getCodeBaseHoraireAbsence().trim()) && !"D".equals(typeConge
+								.getCodeBaseHoraireAbsence().trim()))) {
+					logger.debug(String.format(MAUVAIS_BASE_CA, idAgent));
+				} else {
+					if (!result.contains(idAgent))
+						result.add(idAgent);
+				}
+			} else {
+				logger.error(String.format(BASE_CA_NON_TROUVEE, idAgent));
+			}
+		}
 		return result;
 	}
 }

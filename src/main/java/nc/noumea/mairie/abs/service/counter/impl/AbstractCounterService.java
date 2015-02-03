@@ -261,4 +261,10 @@ public abstract class AbstractCounterService implements ICounterService {
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 		return srm;
 	}
+
+	@Override
+	public ReturnMessageDto checkRestitutionMassiveDto(RestitutionMassiveDto dto, ReturnMessageDto srm) {
+		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
+		return srm;
+	}
 }

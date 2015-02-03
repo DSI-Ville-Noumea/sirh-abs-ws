@@ -142,4 +142,23 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		return query.getResultList();
 	}
+
+	@Override
+	public List<Integer> getListeDemandesCongesAnnuelsPrisesForDate(Date dateRestitution) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(d.idAgent) as idAgent from DemandeCongesAnnuels d ");
+		sb.append("inner join d.etatsDemande ed ");
+		sb.append("where :date between d.dateDebut and d.dateFin ");
+		sb.append("and ed.etat in ( :PRISE ) ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 group by ed2.demande.idDemande ) ");
+		sb.append("order by idAgent ");
+
+		TypedQuery<Integer> query = absEntityManager.createQuery(sb.toString(), Integer.class);
+
+		query.setParameter("date", dateRestitution);
+		query.setParameter("PRISE", RefEtatEnum.PRISE);
+
+		return query.getResultList();
+	}
 }

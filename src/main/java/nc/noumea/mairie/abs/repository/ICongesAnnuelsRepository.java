@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
-import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 
@@ -19,11 +19,13 @@ public interface ICongesAnnuelsRepository {
 
 	List<Date> getListeMoisAlimAutoCongeAnnuel();
 
-	List<DemandeCongesAnnuels> getListeDemandesCongesAnnuelsPrisesByAgent(
-			Integer idAgentConcerne, Date fromDate, Date toDate);
+	List<DemandeCongesAnnuels> getListeDemandesCongesAnnuelsPrisesByAgent(Integer idAgentConcerne, Date fromDate,
+			Date toDate);
 
-	List<CongeAnnuelRestitutionMassiveHisto> getRestitutionCAByAgentAndDate(
-			RestitutionMassiveDto dto, Integer idAgentList);
+	List<CongeAnnuelRestitutionMassiveHisto> getRestitutionCAByAgentAndDate(RestitutionMassiveDto dto,
+			Integer idAgentList);
 
 	List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuel(Date dateMois);
+
+	List<Integer> getListeDemandesCongesAnnuelsPrisesForDate(Date dateRestitution);
 }

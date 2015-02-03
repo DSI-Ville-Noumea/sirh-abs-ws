@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
+import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface IAbsenceService {
@@ -46,4 +47,6 @@ public interface IAbsenceService {
 	List<MoisAlimAutoCongesAnnuelsDto> getListeMoisAlimAutoCongeAnnuel();
 
 	List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuel(Date dateMois);
+
+	List<Integer> getListeIdAgentConcerneRestitutionMassive(RestitutionMassiveDto dto);
 }

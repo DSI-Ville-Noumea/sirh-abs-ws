@@ -522,6 +522,9 @@ public class CongesAnnuelsRepositoryTest {
 
 		assertEquals(1, listResults.size());
 		assertEquals(listResults.get(0).getDuree(), 99, 0);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -566,6 +569,9 @@ public class CongesAnnuelsRepositoryTest {
 
 		assertEquals(1, listResults.size());
 		assertEquals(listResults.get(0).getDuree(), 99, 0);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -624,6 +630,9 @@ public class CongesAnnuelsRepositoryTest {
 
 		assertEquals(1, listResults.size());
 		assertEquals(listResults.get(0).getDuree(), 44, 0);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -654,6 +663,9 @@ public class CongesAnnuelsRepositoryTest {
 
 		assertEquals(1, listResults.size());
 		assertEquals(listResults.get(0).getDuree(), 99, 0);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -679,6 +691,9 @@ public class CongesAnnuelsRepositoryTest {
 		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto, idAgent);
 
 		assertEquals(1, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -704,6 +719,9 @@ public class CongesAnnuelsRepositoryTest {
 		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto, idAgent);
 
 		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -729,6 +747,9 @@ public class CongesAnnuelsRepositoryTest {
 		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto, idAgent);
 
 		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 
 	@Test
@@ -754,5 +775,70 @@ public class CongesAnnuelsRepositoryTest {
 		List<CongeAnnuelRestitutionMassiveHisto> result = repository.getRestitutionCAByAgentAndDate(dto, idAgent);
 
 		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeDemandesCongesAnnuelsPrisesForDate_zeroAgent() {
+
+		RestitutionMassiveDto dto = new RestitutionMassiveDto();
+		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+
+		List<Integer> result = repository.getListeDemandesCongesAnnuelsPrisesForDate(dto.getDateRestitution());
+
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeDemandesCongesAnnuelsPrisesForDate_2Agent() {
+		DemandeCongesAnnuels d3 = new DemandeCongesAnnuels();
+		d3.setIdAgent(9005131);
+		d3.setDateDebut(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+		d3.setDateFin(new DateTime(2015, 1, 24, 0, 0, 0).toDate());
+		absEntityManager.persist(d3);
+		EtatDemande etatPris3 = new EtatDemande();
+		etatPris3.setEtat(RefEtatEnum.PRISE);
+		etatPris3.setDemande(d3);
+		absEntityManager.persist(etatPris3);
+
+		DemandeCongesAnnuels d2 = new DemandeCongesAnnuels();
+		d2.setIdAgent(9003041);
+		d2.setDateDebut(new DateTime(2015, 1, 20, 0, 0, 0).toDate());
+		d2.setDateFin(new DateTime(2015, 1, 22, 0, 0, 0).toDate());
+
+		absEntityManager.persist(d2);
+		EtatDemande etatPris2 = new EtatDemande();
+		etatPris2.setEtat(RefEtatEnum.PRISE);
+		etatPris2.setDemande(d2);
+		absEntityManager.persist(etatPris2);
+
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(9005138);
+		d.setDateDebut(new DateTime(2015, 1, 20, 0, 0, 0).toDate());
+		d.setDateFin(new DateTime(2015, 1, 24, 0, 0, 0).toDate());
+		absEntityManager.persist(d);
+		EtatDemande etatPris = new EtatDemande();
+		etatPris.setEtat(RefEtatEnum.PRISE);
+		etatPris.setDemande(d);
+		absEntityManager.persist(etatPris);
+
+		RestitutionMassiveDto dto = new RestitutionMassiveDto();
+		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+
+		List<Integer> result = repository.getListeDemandesCongesAnnuelsPrisesForDate(dto.getDateRestitution());
+
+		assertEquals(2, result.size());
+		assertEquals(d3.getIdAgent(), result.get(0));
+		assertEquals(d.getIdAgent(), result.get(1));
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 }
