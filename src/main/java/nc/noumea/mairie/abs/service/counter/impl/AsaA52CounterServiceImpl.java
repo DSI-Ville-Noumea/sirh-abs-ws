@@ -87,7 +87,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 		String textLog = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Mise en place de " + nbMinutes + " minutes pour la période du "
+			textLog = "Mise en place de " + helperService.getHeureMinuteToString(nbMinutes) + " pour la période du "
 					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
 		}
 

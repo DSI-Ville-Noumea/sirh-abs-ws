@@ -285,7 +285,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 				Object[] args = invocation.getArguments();
 				AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
 
-				String textLog = "Retrait de -250 minutes sur l'année précédente.";
+				String textLog = "Retrait de - 4h 10m sur l'année précédente.";
 				assertEquals(textLog, obj.getText());
 
 				return true;
@@ -306,6 +306,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		Mockito.when(helperService.getHeureMinuteToString(-250)).thenReturn("- 4h 10m");
 
 		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
@@ -335,7 +336,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 				Object[] args = invocation.getArguments();
 				AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
 
-				String textLog = "Retrait de -150 minutes sur l'année précédente.";
+				String textLog = "Retrait de - 2h 30m sur l'année précédente.";
 				assertEquals(textLog, obj.getText());
 
 				return true;
@@ -356,6 +357,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		Mockito.when(helperService.getHeureMinuteToString(-150)).thenReturn("- 2h 30m");
 
 		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
@@ -405,7 +407,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 				Object[] args = invocation.getArguments();
 				AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
 
-				String textLog = "Retrait de -20 minutes sur l'année.";
+				String textLog = "Retrait de - 20m sur l'année.";
 				assertEquals(textLog, obj.getText());
 
 				return true;
@@ -426,6 +428,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+		Mockito.when(helperService.getHeureMinuteToString(-20)).thenReturn("- 20m");
 
 		ReposCompCounterServiceImpl service = new ReposCompCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);

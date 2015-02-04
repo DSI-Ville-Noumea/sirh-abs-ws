@@ -156,7 +156,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		histo.setDateModification(helperService.getCurrentDate());
 		histo.setMotifCompteur(null);
 		histo.setMotifTechnique(RESET_COMPTEUR_ANNEE_PRECEDENTE);
-		String textLog = "Retrait de " + (0 - arc.getTotalMinutesAnneeN1()) + " minutes sur l'année précédente.";
+		String textLog = "Retrait de " + helperService.getHeureMinuteToString((0 - arc.getTotalMinutesAnneeN1()))
+				+ " sur l'année précédente.";
 		histo.setText(textLog);
 		histo.setCompteurAgent(arc);
 
@@ -194,7 +195,8 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		histo.setDateModification(helperService.getCurrentDate());
 		histo.setMotifCompteur(null);
 		histo.setMotifTechnique(RESET_COMPTEUR_ANNEE_EN_COURS);
-		String textLog = "Retrait de " + (0 - arc.getTotalMinutes()) + " minutes sur l'année.";
+		String textLog = "Retrait de " + helperService.getHeureMinuteToString((0 - arc.getTotalMinutes()))
+				+ " sur l'année.";
 
 		histo.setText(textLog);
 		histo.setCompteurAgent(arc);
@@ -285,8 +287,9 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		}
 
 		// on verifie que le solde est positif
-		controlCompteurPositif(minutes==null ? null : new Double(minutes), new Double(arc.getTotalMinutes()), srm);
-		controlCompteurPositif(minutesAnneeN1==null ? null : new Double(minutesAnneeN1), new Double(arc.getTotalMinutesAnneeN1()), srm);
+		controlCompteurPositif(minutes == null ? null : new Double(minutes), new Double(arc.getTotalMinutes()), srm);
+		controlCompteurPositif(minutesAnneeN1 == null ? null : new Double(minutesAnneeN1),
+				new Double(arc.getTotalMinutesAnneeN1()), srm);
 		if (!srm.getErrors().isEmpty()) {
 			return srm;
 		}
@@ -294,16 +297,16 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		String textLog = "";
 		if (null != compteurDto.getDureeAAjouter()) {
 			if (compteurDto.isAnneePrecedente()) {
-				textLog = "Ajout de " + minutesAnneeN1 + " minutes sur le compteur de l'année précédente.";
+				textLog = "Ajout de " + helperService.getHeureMinuteToString(minutesAnneeN1) + " sur le compteur de l'année précédente.";
 			} else {
-				textLog = "Ajout de " + minutes + " minutes sur le compteur de l'année.";
+				textLog = "Ajout de " + helperService.getHeureMinuteToString(minutes) + " sur le compteur de l'année.";
 			}
 		}
 		if (null != compteurDto.getDureeARetrancher()) {
 			if (compteurDto.isAnneePrecedente()) {
-				textLog = "Retrait de " + minutesAnneeN1 + " minutes sur le compteur de l'année précédente.";
+				textLog = "Retrait de " + helperService.getHeureMinuteToString(minutesAnneeN1) + " sur le compteur de l'année précédente.";
 			} else {
-				textLog = "Retrait de " + minutes + " minutes sur le compteur de l'année.";
+				textLog = "Retrait de " + helperService.getHeureMinuteToString(minutes) + " sur le compteur de l'année.";
 			}
 		}
 

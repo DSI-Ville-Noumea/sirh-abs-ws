@@ -394,7 +394,7 @@ public class HelperService {
 			cal.set(Calendar.MILLISECOND, MILLISECONDS);
 			return cal.getTime();
 		}
-		
+
 		return null;
 	}
 
@@ -416,10 +416,12 @@ public class HelperService {
 
 			case "C":
 				duree = calculNombreJours(demande.getDateDebut(), dateReprise);
-				duree = Math.ceil((duree / demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) * demande.getTypeSaisiCongeAnnuel().getQuotaDecompte());
+				duree = Math.ceil((duree / demande.getTypeSaisiCongeAnnuel().getQuotaMultiple())
+						* demande.getTypeSaisiCongeAnnuel().getQuotaDecompte());
 				if (duree < demande.getTypeSaisiCongeAnnuel().getQuotaDecompte()) {
 					duree = calculNombreJours(demande.getDateDebut(), dateReprise);
-				} else if (duree > demande.getTypeSaisiCongeAnnuel().getQuotaDecompte() && duree <= demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) {
+				} else if (duree > demande.getTypeSaisiCongeAnnuel().getQuotaDecompte()
+						&& duree <= demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) {
 					duree = 3.0;
 				}
 				break;
@@ -461,23 +463,37 @@ public class HelperService {
 	}
 
 	protected Double getNombreDimanche(Date dateDebut, Date dateFin) {
-		
+
 		int compteur = 0;
 		// on calcule le nombre de vendredi
-		DateTime startDate = new DateTime(dateDebut)
-		.withHourOfDay(0).withMinuteOfHour(0); // on met les heures et minutes a zero afin de bien comptabiliser dans la boucle while
+		DateTime startDate = new DateTime(dateDebut).withHourOfDay(0).withMinuteOfHour(0); // on
+																							// met
+																							// les
+																							// heures
+																							// et
+																							// minutes
+																							// a
+																							// zero
+																							// afin
+																							// de
+																							// bien
+																							// comptabiliser
+																							// dans
+																							// la
+																							// boucle
+																							// while
 		DateTime endDate = new DateTime(dateFin);
-	    
+
 		DateTime thisMonday = startDate.withDayOfWeek(DateTimeConstants.SUNDAY);
-		
+
 		if (startDate.isAfter(thisMonday)) {
-		    startDate = thisMonday.plusWeeks(1); // start on next SUNDAY
+			startDate = thisMonday.plusWeeks(1); // start on next SUNDAY
 		} else {
-		    startDate = thisMonday; // start on this SUNDAY
+			startDate = thisMonday; // start on this SUNDAY
 		}
 		while (startDate.isBefore(endDate)) {
-		    startDate = startDate.plusWeeks(1);
-		    compteur++;
+			startDate = startDate.plusWeeks(1);
+			compteur++;
 		}
 		return (double) compteur;
 	}
@@ -505,16 +521,16 @@ public class HelperService {
 	}
 
 	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande) {
-		
+
 		Double compteur = 0.0;
-		
+
 		if (demande.getTypeSaisiCongeAnnuel() != null && demande.getTypeSaisiCongeAnnuel().isDecompteSamedi()) {
-			
+
 			// on calcule le nombre de vendredi
 			DateTime startDate = new DateTime(demande.getDateDebut())
 			.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0); // on met les heures et minutes a zero afin de bien comptabiliser le nombre de vendredi dans la boucle while
 			DateTime endDate = new DateTime(demande.getDateFin());
-			
+
 			// on boucle sur tous les jours de la periode
 			while (startDate.isBefore(endDate)) {
 				
@@ -541,7 +557,7 @@ public class HelperService {
 				
 			    startDate = startDate.plusDays(1);
 			}
-	        
+
 			// cas ou le 1er jour est un vendredi
 			// on gere le cas ou l agent a pose l apres-midi
 			DateTime dateDebut = new DateTime(demande.getDateDebut());
@@ -560,7 +576,7 @@ public class HelperService {
 					}
 				}
 			}
-			
+
 			// cas ou le dernier jour est un vendredi
 			// on gere le cas ou l agent a pose que le matin ou que l apres-midi
 			DateTime dateFin = new DateTime(demande.getDateFin());
@@ -584,28 +600,47 @@ public class HelperService {
 	}
 
 	public Double getNombreSamediOffert(DemandeCongesAnnuels demande) {
-		
+
 		// on cherche le nombre de samedi deja offert
-		Integer nombreSamediOffert = demandeRepository.getNombreSamediOffertSurAnnee(demande, new DateTime(demande.getDateDebut()).getYear());
-		
-		// si le nombre de samedi superieur ou egal au quota, on n offre plus de samedi 
-		if(NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT <= nombreSamediOffert) {
+		Integer nombreSamediOffert = demandeRepository.getNombreSamediOffertSurAnnee(demande,
+				new DateTime(demande.getDateDebut()).getYear());
+
+		// si le nombre de samedi superieur ou egal au quota, on n offre plus de
+		// samedi
+		if (NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT <= nombreSamediOffert) {
 			return 0.0;
 		}
-		
+
 		// on recupere le nombre de samedi complet a decompter
 		// si au moins un samedi complet, on offre un samedi
-		if(1 > getNombreSamediDecompte(demande))
+		if (1 > getNombreSamediDecompte(demande))
 			return 0.0;
-		
+
 		// si samedi pas encore offert, on retourne un samedi offert
-		return (double)NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT;
+		return (double) NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT;
 	}
+
 	public TypeChainePaieEnum getTypeChainePaieFromStatut(Spcarr carr) {
 		if (isConventionCollective(carr))
 			return TypeChainePaieEnum.SCV;
 		else
 			return TypeChainePaieEnum.SHC;
+	}
+
+	public String getHeureMinuteToString(int nombreMinute) {
+		if (nombreMinute < 0) {
+			nombreMinute = -nombreMinute;
+		}
+		int heure = nombreMinute / 60;
+		int minute = nombreMinute % 60;
+		String res = "";
+		if (heure > 0)
+			res += heure + "h";
+		if (minute > 0)
+			res += minute + "m";
+
+		return res;
+
 	}
 
 }

@@ -2023,4 +2023,22 @@ public class HelperServiceTest {
 		
 		assertEquals(result.doubleValue(), 0,0);
 	}
+	
+	@Test
+	public void getHeureMinuteToString_Negatif() {
+
+		HelperService service = new HelperService();
+		String result = service.getHeureMinuteToString(-50);
+		
+		assertEquals(result, "50m");
+	}
+	
+	@Test
+	public void getHeureMinuteToString_Positif() {
+
+		HelperService service = new HelperService();
+		String result = service.getHeureMinuteToString(150);
+		
+		assertEquals(result, "2h30m");
+	}
 }

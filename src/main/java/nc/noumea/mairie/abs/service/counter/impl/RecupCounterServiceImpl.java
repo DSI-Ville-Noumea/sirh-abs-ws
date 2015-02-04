@@ -241,10 +241,10 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 
 		String textLog = "";
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Ajout de " + minutes + " minutes.";
+			textLog = "Ajout de " + helperService.getHeureMinuteToString(minutes) + " .";
 		}
 		if (null != compteurDto.getDureeARetrancher()) {
-			textLog = "Retrait de " + minutes + " minutes.";
+			textLog = "Retrait de " + helperService.getHeureMinuteToString(minutes) + " .";
 		}
 
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);

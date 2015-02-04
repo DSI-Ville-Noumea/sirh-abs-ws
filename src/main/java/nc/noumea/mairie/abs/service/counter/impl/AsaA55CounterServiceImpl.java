@@ -33,7 +33,8 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		try {
 			Double dMinutes = helperService.calculAlimManuelleCompteur(compteurDto);
 			Integer minutes = null != dMinutes ? dMinutes.intValue() : 0;
-			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, RefTypeAbsenceEnum.ASA_A55.getValue(), result, motifCompteur);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, RefTypeAbsenceEnum.ASA_A55.getValue(),
+					result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -52,8 +53,8 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws IllegalAccessException
 	 */
 	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			int nbMinutes, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
-			IllegalAccessException {
+			int nbMinutes, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
+			throws InstantiationException, IllegalAccessException {
 
 		if (sirhWSConsumer.getAgent(compteurDto.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
@@ -74,8 +75,9 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		String textLog = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Mise en place de " + nbMinutes + " minutes pour la période du "
-					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
+			textLog = "Mise en place de " + helperService.getHeureMinuteToString(nbMinutes)
+					+ " pour la période du " + sdf.format(compteurDto.getDateDebut()) + " au "
+					+ sdf.format(compteurDto.getDateFin()) + ".";
 		}
 
 		arc.setTotalMinutes(nbMinutes);
@@ -84,7 +86,8 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc,
+				idRefTypeAbsence);
 
 		return srm;
 	}
@@ -97,7 +100,7 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		List<AgentAsaA55Count> listeArc = counterRepository.getListCounter(AgentAsaA55Count.class);
 		for (AgentAsaA55Count arc : listeArc) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
-			CompteurDto dto = new CompteurDto(arc,list.size()>0 ? list.get(0) : null);
+			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
 			result.add(dto);
 		}
 		return result;
@@ -173,5 +176,4 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		return srm;
 	}
 
-	
 }

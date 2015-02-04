@@ -146,7 +146,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		histo.setIdAgentConcerne(arc.getIdAgent());
 		histo.setDateModification(helperService.getCurrentDate());
 		histo.setMotifCompteur(null);
-		histo.setMotifTechnique(RESET_COMPTEUR_ANNEE_EN_COURS);
+		histo.setMotifTechnique(RESET_COMPTEUR_ANNEE_EN_COURS);		
 		String textLog = "Retrait de " + (0 - arc.getTotalJours()) + " jours sur la nouvelle année.";
 		histo.setText(textLog);
 		histo.setCompteurAgent(arc);
