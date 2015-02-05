@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 @Service("AbsCongesAnnuelsDataConsistencyRulesImpl")
 public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
-	
+
 	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Votre solde congé est en dépassement de plus de 5 jours.";
 
 	@Autowired
@@ -46,8 +46,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 				case "C":
 					nbJours = helperService.calculNombreJours(demande.getDateDebut(), demande.getDateFin());
 					if (nbJours % demande.getTypeSaisiCongeAnnuel().getQuotaMultiple() != 0) {
-						if ((accessRightsRepository.isOperateurOfAgent(idAgent, demande.getIdAgent())
-								|| sirhWSConsumer.isUtilisateurSIRH(idAgent).getErrors().size() == 0)
+						if ((accessRightsRepository.isOperateurOfAgent(idAgent, demande.getIdAgent()) || sirhWSConsumer
+								.isUtilisateurSIRH(idAgent).getErrors().size() == 0)
 								&& nbJours <= demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) {
 							logger.warn(String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
 									.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()));
@@ -97,9 +97,12 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 	}
 
 	protected ReturnMessageDto checkChampMotifDemandeSaisi(ReturnMessageDto srm, DemandeCongesAnnuels demande) {
-		if (null == demande.getCommentaire() || "".equals(demande.getCommentaire().trim())) {
-			logger.warn(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
-			srm.getErrors().add(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
+
+		if (demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence().equals("C")) {
+			if (null == demande.getCommentaire() || "".equals(demande.getCommentaire().trim())) {
+				logger.warn(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
+				srm.getErrors().add(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
+			}
 		}
 
 		return srm;
@@ -249,18 +252,19 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 
 	@Override
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
-		
+
 		// on verifie d abord l etat de la demande
-		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur 
-		if(!checkEtatDemandePourDepassementCompteurAgent(demandeDto))
+		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de
+		// depassement de compteur
+		if (!checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
-		
+
 		ReturnMessageDto dtoErreur = new ReturnMessageDto();
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
-			demande.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
-			demande.setIdDemande(demandeDto.getIdDemande());
-			demande.setDuree(demandeDto.getDuree());
-		
+		demande.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
+		demande.setIdDemande(demandeDto.getIdDemande());
+		demande.setDuree(demandeDto.getDuree());
+
 		dtoErreur = checkDepassementDroitsAcquis(dtoErreur, demande);
 		if (dtoErreur.getInfos().size() > 0) {
 			return true;
@@ -268,7 +272,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 			return false;
 		}
 	}
-	
+
 	protected boolean checkEtatDemandePourDepassementCompteurAgent(DemandeDto demandeDto) {
 
 		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())

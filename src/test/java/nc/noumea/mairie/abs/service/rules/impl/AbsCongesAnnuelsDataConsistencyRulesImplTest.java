@@ -43,7 +43,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		super.impl = new AbsCongesAnnuelsDataConsistencyRulesImpl();
 		super.allTest(impl);
 	}
-	
+
 	@Test
 	public void filtreDroitOfListeDemandesByDemande_DemandeOfAgent() {
 
@@ -109,7 +109,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		// A VALIDER
 		assertTrue(result12.isAffichageBoutonAnnuler());
 	}
-	
+
 	@Test
 	public void filtreDroitOfListeDemandesByDemande_Approbateur() {
 
@@ -142,7 +142,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		// A VALIDER
 		assertTrue(result12.isAffichageBoutonAnnuler());
 	}
-	
+
 	@Test
 	public void filtreDroitOfListeDemandesByDemande_Delegataire() {
 
@@ -292,7 +292,11 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		RefTypeAbsence type = new RefTypeAbsence();
 
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
 		demande.setCommentaire("commentaire");
 		demande.setType(type);
 
@@ -308,7 +312,11 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		RefTypeAbsence type = new RefTypeAbsence();
 
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
 		demande.setCommentaire(null);
 		demande.setType(type);
 
@@ -325,7 +333,11 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		RefTypeAbsence type = new RefTypeAbsence();
 
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
 		demande.setCommentaire("");
 		demande.setType(type);
 
@@ -442,7 +454,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(0, srm.getInfos().size());
 	}
-	
+
 	@Test
 	public void checkDepassementCompteurAgent_false() {
 
@@ -461,13 +473,14 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getAgentWithServiceDto().getIdAgent())).thenReturn(
-				soldeCongeAnnuel);
+		Mockito.when(
+				counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getAgentWithServiceDto()
+						.getIdAgent())).thenReturn(soldeCongeAnnuel);
 
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(
-				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(
-						demande.getAgentWithServiceDto().getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
+				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(demande
+						.getAgentWithServiceDto().getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
 
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
@@ -489,19 +502,20 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demande.setAgentWithServiceDto(agentWithServiceDto);
 		demande.setDuree(10.0);
 		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		
+
 		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
 		soldeCongeAnnuel.setTotalJours(20.0);
 		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getAgentWithServiceDto().getIdAgent())).thenReturn(
-				soldeCongeAnnuel);
+		Mockito.when(
+				counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getAgentWithServiceDto()
+						.getIdAgent())).thenReturn(soldeCongeAnnuel);
 
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(
-				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(
-						demande.getAgentWithServiceDto().getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
+				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(demande
+						.getAgentWithServiceDto().getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
 
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
@@ -529,13 +543,14 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		soldeCongeAnnuel.setTotalJoursAnneeN1(0.0);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getAgentWithServiceDto().getIdAgent())).thenReturn(
-				soldeCongeAnnuel);
+		Mockito.when(
+				counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, demande.getAgentWithServiceDto()
+						.getIdAgent())).thenReturn(soldeCongeAnnuel);
 
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(
-				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(
-						demande.getAgentWithServiceDto().getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
+				congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(demande
+						.getAgentWithServiceDto().getIdAgent(), demande.getIdDemande())).thenReturn(0.0);
 
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
@@ -674,8 +689,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(1, srm.getInfos().size());
-		assertEquals(srm.getInfos().get(0),
-				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
+		assertEquals(srm.getInfos().get(0), "Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
 	}
 
 	@Test
@@ -711,8 +725,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(1, srm.getInfos().size());
-		assertEquals(srm.getInfos().get(0),
-				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
+		assertEquals(srm.getInfos().get(0), "Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
 	}
 
 	@Test
@@ -1180,49 +1193,50 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		assertEquals(1, srm.getErrors().size());
 	}
-	
+
 	@Test
 	public void checkEtatDemandePourDepassementCompteurAgent() {
-		
+
 		DemandeDto demandeDtoVALIDEE = new DemandeDto();
-			demandeDtoVALIDEE.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeDtoVALIDEE.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		DemandeDto demandeDtoREJETE = new DemandeDto();
-			demandeDtoREJETE.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		demandeDtoREJETE.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		DemandeDto demandeDtoANNULEE = new DemandeDto();
-			demandeDtoANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		demandeDtoANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		DemandeDto demandeDtoPRISE = new DemandeDto();
-			demandeDtoPRISE.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		demandeDtoPRISE.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		DemandeDto demandeDtoREFUSEE = new DemandeDto();
-			demandeDtoREFUSEE.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		
+		demandeDtoREFUSEE.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+
 		List<DemandeDto> listDto = new ArrayList<DemandeDto>();
-		listDto.addAll(Arrays.asList(demandeDtoVALIDEE, demandeDtoREJETE, demandeDtoANNULEE, demandeDtoPRISE, demandeDtoREFUSEE));
-			
-		for(DemandeDto demandeDto : listDto) {
-			if(impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
+		listDto.addAll(Arrays.asList(demandeDtoVALIDEE, demandeDtoREJETE, demandeDtoANNULEE, demandeDtoPRISE,
+				demandeDtoREFUSEE));
+
+		for (DemandeDto demandeDto : listDto) {
+			if (impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
 				fail("Bad Etat Demande for checkDepassementCompteurAgent");
 			}
 		}
-		
+
 		DemandeDto demandeDtoPROVISOIRE = new DemandeDto();
-			demandeDtoPROVISOIRE.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDtoPROVISOIRE.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
 		DemandeDto demandeDtoSAISIE = new DemandeDto();
-			demandeDtoSAISIE.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		demandeDtoSAISIE.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 		DemandeDto demandeDtoVISEE_FAVORABLE = new DemandeDto();
-			demandeDtoVISEE_FAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		demandeDtoVISEE_FAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		DemandeDto demandeDtoVISEE_DEFAVORABLE = new DemandeDto();
-			demandeDtoVISEE_DEFAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		demandeDtoVISEE_DEFAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
 		DemandeDto demandeDtoAPPROUVEE = new DemandeDto();
-			demandeDtoAPPROUVEE.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demandeDtoAPPROUVEE.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		DemandeDto demandeDtoEN_ATTENTE = new DemandeDto();
-			demandeDtoEN_ATTENTE.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-		
+		demandeDtoEN_ATTENTE.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+
 		listDto = new ArrayList<DemandeDto>();
-		listDto.addAll(Arrays.asList(demandeDtoPROVISOIRE, demandeDtoSAISIE, demandeDtoVISEE_FAVORABLE, demandeDtoVISEE_DEFAVORABLE,
-				demandeDtoAPPROUVEE, demandeDtoEN_ATTENTE));
-			
-		for(DemandeDto demandeDto : listDto) {
-			if(!impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
+		listDto.addAll(Arrays.asList(demandeDtoPROVISOIRE, demandeDtoSAISIE, demandeDtoVISEE_FAVORABLE,
+				demandeDtoVISEE_DEFAVORABLE, demandeDtoAPPROUVEE, demandeDtoEN_ATTENTE));
+
+		for (DemandeDto demandeDto : listDto) {
+			if (!impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
 				fail("Bad Etat Demande " + demandeDto.getIdRefEtat() + " for checkDepassementCompteurAgent");
 			}
 		}
