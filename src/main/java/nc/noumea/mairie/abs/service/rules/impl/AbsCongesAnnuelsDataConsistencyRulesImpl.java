@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Service("AbsCongesAnnuelsDataConsistencyRulesImpl")
 public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
 
-	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Votre solde congé est en dépassement de plus de 5 jours.";
+	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Votre solde congé est en dépassement de %s jours.";
 
 	@Autowired
 	protected ICongesAnnuelsRepository congesAnnuelsRepository;
@@ -132,8 +132,16 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		if (null == soldeCongeAnnuel
 				|| (soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1()) - sommeDemandeEnCours
 						- ((DemandeCongesAnnuels) demande).getDuree() < -5) {
-			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
-			srm.getInfos().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
+			double solde =0.0;
+			if (soldeCongeAnnuel != null) {
+				 solde = (soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1())
+						- sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
+			} else {
+				 solde = sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
+			}
+
+			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, String.valueOf(solde)));
+			srm.getInfos().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, String.valueOf(solde)));
 		}
 
 		return srm;

@@ -56,7 +56,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	@Qualifier("AbsCongesAnnuelsDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl;
 	
-	protected static final String BASE_CONGES_ALIM_AUTO_INEXISTANT = "La base congés [%d] n'existe pas dans ABS_REF_ALIM_CONGE_ANNUEL.";
+	protected static final String BASE_CONGES_ALIM_AUTO_INEXISTANT = "La base congé [%d] n'existe pas dans ABS_REF_ALIM_CONGE_ANNUEL.";
 	protected static final String PA_INEXISTANT = "Pas de PA active pour l'agent : [%d].";
 	protected static final String COMPTEUR_DEJA_A_JOUR = "Compteur de congés annuels déjà mis à jour ce mois-ci pour l'agent : [%d].";
 	protected static final String AGENT_AUCUN_CA = "L'agent [%d] n'était pas en congé à cette date.";
