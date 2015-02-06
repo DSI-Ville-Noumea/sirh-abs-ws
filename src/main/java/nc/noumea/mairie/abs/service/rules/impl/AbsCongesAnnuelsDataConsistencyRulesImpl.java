@@ -132,12 +132,12 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		if (null == soldeCongeAnnuel
 				|| (soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1()) - sommeDemandeEnCours
 						- ((DemandeCongesAnnuels) demande).getDuree() < -5) {
-			double solde =0.0;
+			double solde = 0.0;
 			if (soldeCongeAnnuel != null) {
-				 solde = (soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1())
+				solde = (soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1())
 						- sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
 			} else {
-				 solde = sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
+				solde = 0 - sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
 			}
 
 			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, String.valueOf(solde)));
