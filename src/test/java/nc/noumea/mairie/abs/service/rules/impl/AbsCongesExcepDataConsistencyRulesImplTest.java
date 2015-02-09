@@ -15,10 +15,12 @@ import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICongesExceptionnelsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -256,9 +258,12 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 
 	@Test
 	public void isAfficherBoutonImprimer() {
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDto.setGroupeAbsence(groupeAbsence);
 
 		boolean result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
@@ -269,15 +274,15 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -293,7 +298,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -301,7 +306,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 	}
 
 	@Test

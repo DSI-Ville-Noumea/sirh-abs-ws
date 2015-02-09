@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
@@ -348,15 +349,37 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
-		// cf redmine #11822
-		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
-			return false;
-		} else {
-			return true;
+		// cf redmine #13378
+		if (demandeDto.getGroupeAbsence() != null) {
+			switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence()
+					.getIdRefGroupeAbsence())) {
+				case REPOS_COMP:
+				case RECUP:
+					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
+						return true;
+					}
+					break;
+				case AS:
+				case CONGES_EXCEP:
+					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
+						return true;
+					}
+					break;
+				case CONGES_ANNUELS:
+					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
+						return true;
+					}
+					break;
+				default:
+					break;
+			}
 		}
+		return false;
+
 	}
 
 	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {

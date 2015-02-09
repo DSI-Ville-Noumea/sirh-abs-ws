@@ -2945,25 +2945,25 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// SAISIE
 		assertFalse(result2.isAffichageBoutonImprimer());
 		// APPROUVEE
-		assertTrue(result3.isAffichageBoutonImprimer());
+		assertFalse(result3.isAffichageBoutonImprimer());
 		// REFUSEE
 		assertFalse(result4.isAffichageBoutonImprimer());
 		// VISEE_FAVORABLE
-		assertTrue(result5.isAffichageBoutonImprimer());
+		assertFalse(result5.isAffichageBoutonImprimer());
 		// VISEE_DEFAVORABLE
-		assertTrue(result6.isAffichageBoutonImprimer());
+		assertFalse(result6.isAffichageBoutonImprimer());
 		// PRISE
-		assertTrue(result7.isAffichageBoutonImprimer());
+		assertFalse(result7.isAffichageBoutonImprimer());
 		// ANNULEE
-		assertTrue(result8.isAffichageBoutonImprimer());
+		assertFalse(result8.isAffichageBoutonImprimer());
 		// VALIDEE
-		assertTrue(result9.isAffichageBoutonImprimer());
+		assertFalse(result9.isAffichageBoutonImprimer());
 		// REJETE
 		assertFalse(result10.isAffichageBoutonImprimer());
 		// EN ATTENTE
-		assertTrue(result11.isAffichageBoutonImprimer());
+		assertFalse(result11.isAffichageBoutonImprimer());
 		// A VALIDER
-		assertTrue(result12.isAffichageBoutonImprimer());
+		assertFalse(result12.isAffichageBoutonImprimer());
 	}
 
 	protected void checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_Operateur() {

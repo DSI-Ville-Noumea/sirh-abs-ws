@@ -14,7 +14,9 @@ import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 import org.junit.Test;
@@ -183,9 +185,12 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 	
 	@Test
 	public void isAfficherBoutonImprimer() {
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+			groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 		
 		DemandeDto demandeDto = new DemandeDto();
 			demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+			demandeDto.setGroupeAbsence(groupeAbsence);
 		
 		boolean result = impl.isAfficherBoutonImprimer(demandeDto);
 		assertFalse(result);
@@ -196,15 +201,15 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -220,7 +225,7 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -228,7 +233,7 @@ public class AbsAsaDataConsistencyRulesImplTest extends DefaultAbsenceDataConsis
 		
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 	}
 	
 	@Test

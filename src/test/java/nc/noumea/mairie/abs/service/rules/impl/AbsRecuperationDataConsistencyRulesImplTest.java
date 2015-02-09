@@ -6,7 +6,9 @@ import static org.junit.Assert.assertTrue;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
@@ -151,9 +153,11 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 
 	@Test
 	public void isAfficherBoutonImprimer() {
-
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDto.setGroupeAbsence(groupeAbsence);
 
 		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
 		boolean result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -165,11 +169,11 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -181,7 +185,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -189,7 +193,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
@@ -197,6 +201,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		result = impl.isAfficherBoutonImprimer(demandeDto);
-		assertTrue(result);
+		assertFalse(result);
 	}
 }
