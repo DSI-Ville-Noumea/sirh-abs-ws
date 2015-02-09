@@ -2947,7 +2947,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// APPROUVEE
 		assertTrue(result3.isAffichageBoutonImprimer());
 		// REFUSEE
-		assertTrue(result4.isAffichageBoutonImprimer());
+		assertFalse(result4.isAffichageBoutonImprimer());
 		// VISEE_FAVORABLE
 		assertTrue(result5.isAffichageBoutonImprimer());
 		// VISEE_DEFAVORABLE
@@ -2959,7 +2959,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// VALIDEE
 		assertTrue(result9.isAffichageBoutonImprimer());
 		// REJETE
-		assertTrue(result10.isAffichageBoutonImprimer());
+		assertFalse(result10.isAffichageBoutonImprimer());
 		// EN ATTENTE
 		assertTrue(result11.isAffichageBoutonImprimer());
 		// A VALIDER

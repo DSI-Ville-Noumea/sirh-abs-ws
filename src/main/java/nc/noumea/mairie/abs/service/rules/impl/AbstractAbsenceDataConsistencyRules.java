@@ -350,7 +350,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
 		// cf redmine #11822
 		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) {
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
 			return false;
 		} else {
 			return true;
