@@ -32,11 +32,14 @@ public interface ICounterRepository {
 
 	List<AgentHistoAlimManuelle> getListHistoOrganisationSyndicale(AgentCount compteurAgent);
 
-	List<AgentAsaA55Count> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin);
+	List<AgentAsaA55Count> getListAgentCounterA55ByDate(Integer idAgent, Date dateDebut, Date dateFin);
 
 	<T> T getOSCounterByDate(Class<T> T, Integer idOrganisationSyndicale, Date date);
 
 	List<Integer> getListAgentCongeAnnuelCountForReset();
 
 	List<AgentAsaA52Count> getListOSCounterByDate(Integer idOrganisationSyndicale, Date dateDeb, Date dateFin);
+
+	List<AgentAsaA52Count> getListOSCounterByDateAndOrganisation(Integer idOrganisationSyndicale, Date dateDebut,
+			Date dateFin, Integer idCompteur);
 }

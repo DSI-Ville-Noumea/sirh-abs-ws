@@ -76,8 +76,21 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 			return srm;
 		}
 
-		AgentAsaA52Count arc = (AgentAsaA52Count) counterRepository.getOSCounterByDate(AgentAsaA52Count.class,
-				compteurDto.getOrganisationSyndicaleDto().getIdOrganisation(), compteurDto.getDateDebut());
+		AgentAsaA52Count arc = null;
+		if (compteurDto.getIdCompteur() != null) {
+			// on est en modification
+			arc = (AgentAsaA52Count) counterRepository.getEntity(AgentAsaA52Count.class, compteurDto.getIdCompteur());
+		}
+		// on verifie qu'il n'existe pas dejà un
+		// compteur pour ces dates
+		List<AgentAsaA52Count> listeSoldeAsaA52 = counterRepository.getListOSCounterByDateAndOrganisation(
+				organisationSyndicale.getIdOrganisationSyndicale(), compteurDto.getDateDebut(),
+				compteurDto.getDateFin(), compteurDto.getIdCompteur());
+		if (listeSoldeAsaA52.size() > 0) {
+			logger.warn(COMPTEUR_EXISTANT_DATE, organisationSyndicale.getSigle());
+			srm.getErrors().add(String.format(COMPTEUR_EXISTANT_DATE, organisationSyndicale.getSigle()));
+			return srm;
+		}
 
 		if (arc == null) {
 			arc = new AgentAsaA52Count();
@@ -269,8 +282,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 
 		// on supprime les autres
 		for (AgentOrganisationSyndicale agToDelete : droitsToDelete) {
-			if(null != organisationSyndicale.getAgents()
-					&& organisationSyndicale.getAgents().contains(agToDelete)) {
+			if (null != organisationSyndicale.getAgents() && organisationSyndicale.getAgents().contains(agToDelete)) {
 				organisationSyndicale.getAgents().remove(agToDelete);
 				logger.info("Deleted AgentOrganisationSyndicale id {}.", agToDelete.getIdAgentOrganisationSyndicale());
 			}

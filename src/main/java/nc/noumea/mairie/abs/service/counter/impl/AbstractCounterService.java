@@ -54,6 +54,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	protected static final String ERREUR_DUREE_SAISIE = "Un seul des champs Durée à ajouter ou Durée à retrancher doit être saisi.";
 	protected static final String COMPTEUR_INEXISTANT = "Le compteur n'existe pas.";
 	protected static final String COMPTEUR_EXISTANT = "Le compteur existe déjà.";
+	protected static final String COMPTEUR_EXISTANT_DATE = "Un compteur pour l'organisation syndicale [%s] existe déjà sur ces dates.";
 	protected static final String TYPE_COMPTEUR_INEXISTANT = "Le type de compteur n'existe pas.";
 	protected static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
 	protected static final String OS_INACTIVE = "L'organisation syndicale n'est pas active.";

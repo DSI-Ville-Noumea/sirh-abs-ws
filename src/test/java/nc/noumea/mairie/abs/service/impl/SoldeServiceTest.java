@@ -206,7 +206,7 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, dateDeb)).thenReturn(arc54);
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateDeb)).thenReturn(arc55);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(soldeCongeAnnu);
-		Mockito.when(cr.getListAgentCounterByDate(9008765, dateDeb, dateFin)).thenReturn(listeArc55);
+		Mockito.when(cr.getListAgentCounterA55ByDate(9008765, dateDeb, dateFin)).thenReturn(listeArc55);
 		Mockito.when(
 				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
 						.getIdOrganisationSyndicale(), dateDeb)).thenReturn(arc52);
@@ -372,7 +372,7 @@ public class SoldeServiceTest {
 				.thenReturn(arcc55);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(soldeCongeAnnu);
 		Mockito.when(
-				cr.getListAgentCounterByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
+				cr.getListAgentCounterA55ByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
 						12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
 		Mockito.when(
 				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
@@ -1153,7 +1153,7 @@ public class SoldeServiceTest {
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getListHisto(9005138, compteurAgent)).thenReturn(list);
 		Mockito.when(
-				counterRepository.getListAgentCounterByDate(9005138, new DateTime(2014, 1, 1, 0, 0, 0).toDate(),
+				counterRepository.getListAgentCounterA55ByDate(9005138, new DateTime(2014, 1, 1, 0, 0, 0).toDate(),
 						new DateTime(2014, 12, 31, 23, 59, 59).toDate())).thenReturn(listCompteurAgent);
 
 		SoldeService service = new SoldeService();

@@ -189,7 +189,7 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public List<AgentAsaA55Count> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin) {
+	public List<AgentAsaA55Count> getListAgentCounterA55ByDate(Integer idAgent, Date dateDebut, Date dateFin) {
 
 		TypedQuery<AgentAsaA55Count> q = absEntityManager
 				.createQuery(
@@ -227,10 +227,13 @@ public class CounterRepository implements ICounterRepository {
 	@Override
 	public List<AgentAsaA52Count> getListOSCounterByDate(Integer idOrganisationSyndicale, Date dateDebut, Date dateFin) {
 
-		TypedQuery<AgentAsaA52Count> q = absEntityManager
-				.createQuery(
-						"from AgentAsaA52Count h where h.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale and h.dateDebut BETWEEN :dateDebut and :dateFin order by h.dateDebut asc ",
-						AgentAsaA52Count.class);
+		StringBuilder sb = new StringBuilder();
+		sb.append("from AgentAsaA52Count h ");
+		sb.append("where h.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale ");
+		sb.append("and h.dateDebut BETWEEN :dateDebut and :dateFin ");
+		sb.append("order by h.dateDebut asc ");
+
+		TypedQuery<AgentAsaA52Count> q = absEntityManager.createQuery(sb.toString(), AgentAsaA52Count.class);
 		q.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
 		q.setParameter("dateDebut", dateDebut);
 		q.setParameter("dateFin", dateFin);
@@ -241,6 +244,28 @@ public class CounterRepository implements ICounterRepository {
 	@Override
 	public void removeEntity(Object obj) {
 		absEntityManager.remove(obj);
+	}
+
+	@Override
+	public List<AgentAsaA52Count> getListOSCounterByDateAndOrganisation(Integer idOrganisationSyndicale,
+			Date dateDebut, Date dateFin, Integer idCompteur) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("from AgentAsaA52Count h ");
+		sb.append("where h.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale ");
+		sb.append("and((:dateDebut between  h.dateDebut and h.dateFin or :dateFin between h.dateDebut and h.dateFin) or (h.dateDebut between :dateDebut and :dateFin or h.dateFin between :dateDebut and :dateFin)) ");
+		if (idCompteur != null)
+			sb.append("and h.idAgentCount != :idCompteur ");
+		sb.append("order by h.dateDebut asc ");
+
+		TypedQuery<AgentAsaA52Count> q = absEntityManager.createQuery(sb.toString(), AgentAsaA52Count.class);
+		q.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
+		q.setParameter("dateDebut", dateDebut);
+		q.setParameter("dateFin", dateFin);
+		if (idCompteur != null)
+			q.setParameter("idCompteur", idCompteur);
+
+		return q.getResultList();
 	}
 
 }

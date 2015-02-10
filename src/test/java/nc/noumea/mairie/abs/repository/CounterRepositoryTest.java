@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -567,7 +569,7 @@ public class CounterRepositoryTest {
 		absEntityManager.persist(record3);
 
 		// When
-		List<AgentAsaA55Count> result = repository.getListAgentCounterByDate(9001767, dateDeb, dateFin);
+		List<AgentAsaA55Count> result = repository.getListAgentCounterA55ByDate(9001767, dateDeb, dateFin);
 
 		// Then
 		assertNotNull(result);
@@ -648,7 +650,6 @@ public class CounterRepositoryTest {
 		absEntityManager.clear();
 	}
 
-
 	@Test
 	@Transactional("absTransactionManager")
 	public void getListOSCounterByDate_ForASA_A52_ReturnListAgentAsaA52Count() {
@@ -689,7 +690,65 @@ public class CounterRepositoryTest {
 		assertEquals(1, result.size());
 		assertEquals(record.getTotalMinutes(), result.get(0).getTotalMinutes());
 		assertEquals(record.getIdAgent(), result.get(0).getIdAgent());
-		assertEquals(record.getOrganisationSyndicale().getIdOrganisationSyndicale(), result.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale());
+		assertEquals(record.getOrganisationSyndicale().getIdOrganisationSyndicale(), result.get(0)
+				.getOrganisationSyndicale().getIdOrganisationSyndicale());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListOSCounterByDateAndOrganisation_Return0() throws ParseException {
+		// Given
+		Date fromDate = new DateTime(2014, 1, 1, 0, 0).toDate();
+		Date toDate = new DateTime(2014, 1, 2, 0, 0).toDate();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setSigle("SIGLE");
+		absEntityManager.persist(organisationSyndicale);
+
+		AgentAsaA52Count d = new AgentAsaA52Count();
+		d.setOrganisationSyndicale(organisationSyndicale);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(sdf.parse("16/05/2013"));
+		absEntityManager.persist(d);
+
+		// When
+		List<AgentAsaA52Count> result = repository.getListOSCounterByDateAndOrganisation(
+				organisationSyndicale.getIdOrganisationSyndicale(), fromDate, toDate, null);
+
+		// Then
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListOSCounterByDateAndOrganisation_Return1() throws ParseException {
+		// Given
+		Date fromDate = new DateTime(2014, 5, 15, 2, 0).toDate();
+		Date toDate = new DateTime(2014, 5, 15, 4, 0).toDate();
+
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setSigle("SIGLE");
+		absEntityManager.persist(organisationSyndicale);
+
+		AgentAsaA52Count d = new AgentAsaA52Count();
+		d.setOrganisationSyndicale(organisationSyndicale);
+		d.setDateDebut(new DateTime(2014, 5, 15, 0, 0).toDate());
+		d.setDateFin(new DateTime(2014, 5, 16, 0, 0).toDate());
+		absEntityManager.persist(d);
+
+		// When
+		List<AgentAsaA52Count> result = repository.getListOSCounterByDateAndOrganisation(
+				organisationSyndicale.getIdOrganisationSyndicale(), fromDate, toDate, null);
+
+		// Then
+		assertEquals(1, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

@@ -13,6 +13,8 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 public class CompteurDto {
+	
+	private Integer idCompteur;
 
 	private Integer idAgent;
 
@@ -83,6 +85,7 @@ public class CompteurDto {
 	}
 
 	public CompteurDto(AgentAsaA48Count arc, AgentHistoAlimManuelle histo) {
+		this.idCompteur = arc.getIdAgentCount();
 		this.idAgent = arc.getIdAgent();
 		this.dureeAAjouter = arc.getTotalJours();
 		this.dateDebut = arc.getDateDebut();
@@ -94,6 +97,7 @@ public class CompteurDto {
 	}
 
 	public CompteurDto(AgentAsaA53Count arc, AgentHistoAlimManuelle histo) {
+		this.idCompteur = arc.getIdAgentCount();
 		this.idAgent = arc.getIdAgent();
 		this.dureeAAjouter = arc.getTotalJours();
 		this.dateDebut = arc.getDateDebut();
@@ -107,6 +111,7 @@ public class CompteurDto {
 	}
 
 	public CompteurDto(AgentAsaA52Count arc, AgentHistoAlimManuelle histo) {
+		this.idCompteur = arc.getIdAgentCount();
 		this.idAgent = arc.getIdAgent();
 		this.dureeAAjouter = (double) arc.getTotalMinutes();
 		this.dateDebut = arc.getDateDebut();
@@ -120,6 +125,7 @@ public class CompteurDto {
 	}
 
 	public CompteurDto(AgentAsaA54Count arc, AgentHistoAlimManuelle histo) {
+		this.idCompteur = arc.getIdAgentCount();
 		this.idAgent = arc.getIdAgent();
 		this.dureeAAjouter = arc.getTotalJours();
 		this.dateDebut = arc.getDateDebut();
@@ -131,6 +137,7 @@ public class CompteurDto {
 	}
 
 	public CompteurDto(AgentAsaA55Count arc, AgentHistoAlimManuelle histo) {
+		this.idCompteur = arc.getIdAgentCount();
 		this.idAgent = arc.getIdAgent();
 		this.dureeAAjouter = (double) arc.getTotalMinutes();
 		this.dateDebut = arc.getDateDebut();
@@ -159,6 +166,14 @@ public class CompteurDto {
 
 	public void setMotifCompteurDto(MotifCompteurDto motifCompteurDto) {
 		this.motifCompteurDto = motifCompteurDto;
+	}
+
+	public Integer getIdCompteur() {
+		return idCompteur;
+	}
+
+	public void setIdCompteur(Integer idCompteur) {
+		this.idCompteur = idCompteur;
 	}
 
 }

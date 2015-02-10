@@ -169,8 +169,8 @@ public class SoldeService implements ISoldeService {
 		dto.setAfficheSoldeAsaA55(soldeAsaA55 == null ? false : true);
 		dto.setSoldeAsaA55((double) (soldeAsaA55 == null ? 0 : soldeAsaA55.getTotalMinutes()));
 		// on affiche tous les soldes de l'année
-		List<AgentAsaA55Count> listeSoldeAsaA55 = counterRepository
-				.getListAgentCounterByDate(idAgent, dateDeb, dateFin);
+		List<AgentAsaA55Count> listeSoldeAsaA55 = counterRepository.getListAgentCounterA55ByDate(idAgent, dateDeb,
+				dateFin);
 		List<SoldeMonthDto> listDto = new ArrayList<SoldeMonthDto>();
 		for (AgentAsaA55Count arc : listeSoldeAsaA55) {
 			SoldeMonthDto dtoMonth = new SoldeMonthDto();
@@ -265,8 +265,8 @@ public class SoldeService implements ISoldeService {
 					listAgentCount.add(countA54);
 				break;
 			case ASA_A55:
-				List<AgentAsaA55Count> countA55 = counterRepository
-						.getListAgentCounterByDate(idAgent, dateDeb, dateFin);
+				List<AgentAsaA55Count> countA55 = counterRepository.getListAgentCounterA55ByDate(idAgent, dateDeb,
+						dateFin);
 				if (countA55 != null)
 					listAgentCount.addAll(countA55);
 				break;
