@@ -86,7 +86,7 @@ public class HelperService {
 		}
 		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
 			DateTime recupDateFin = new DateTime(dateDeb);
-			return recupDateFin.plusMinutes(duree.intValue() * 60).toDate();
+			return recupDateFin.plusMinutes(duree.intValue()).toDate();
 
 		}
 		if (typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin()) {
@@ -405,8 +405,23 @@ public class HelperService {
 			case "D":
 				duree = calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())
 						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin())
-						- getNombreJourSemaine(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY) // on retire le nombre de samedi 
-						+ getNombreSamediDecompte(demande) - getNombreSamediOffert(demande); // puis on calcule le nombre de samedi decompte selon les RG
+						- getNombreJourSemaine(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY) // on
+																															// retire
+																															// le
+																															// nombre
+																															// de
+																															// samedi
+						+ getNombreSamediDecompte(demande) - getNombreSamediOffert(demande); // puis
+																								// on
+																								// calcule
+																								// le
+																								// nombre
+																								// de
+																								// samedi
+																								// decompte
+																								// selon
+																								// les
+																								// RG
 				break;
 
 			case "E":
@@ -497,25 +512,39 @@ public class HelperService {
 		}
 		return (double) compteur;
 	}
-	
+
 	protected Double getNombreJourSemaine(Date dateDebut, Date dateFin, int jourDonne) {
-		
+
 		int compteur = 0;
 		// on calcule le nombre de vendredi
-		DateTime startDate = new DateTime(dateDebut)
-		.withHourOfDay(0).withMinuteOfHour(0); // on met les heures et minutes a zero afin de bien comptabiliser dans la boucle while
+		DateTime startDate = new DateTime(dateDebut).withHourOfDay(0).withMinuteOfHour(0); // on
+																							// met
+																							// les
+																							// heures
+																							// et
+																							// minutes
+																							// a
+																							// zero
+																							// afin
+																							// de
+																							// bien
+																							// comptabiliser
+																							// dans
+																							// la
+																							// boucle
+																							// while
 		DateTime endDate = new DateTime(dateFin);
-	    
+
 		DateTime thisDay = startDate.withDayOfWeek(jourDonne);
-		
+
 		if (startDate.isAfter(thisDay)) {
-		    startDate = thisDay.plusWeeks(1); // start on next SUNDAY
+			startDate = thisDay.plusWeeks(1); // start on next SUNDAY
 		} else {
-		    startDate = thisDay; // start on this SUNDAY
+			startDate = thisDay; // start on this SUNDAY
 		}
 		while (startDate.isBefore(endDate)) {
-		    startDate = startDate.plusWeeks(1);
-		    compteur++;
+			startDate = startDate.plusWeeks(1);
+			compteur++;
 		}
 		return (double) compteur;
 	}
@@ -527,52 +556,57 @@ public class HelperService {
 		if (demande.getTypeSaisiCongeAnnuel() != null && demande.getTypeSaisiCongeAnnuel().isDecompteSamedi()) {
 
 			// on calcule le nombre de vendredi
-			DateTime startDate = new DateTime(demande.getDateDebut())
-			.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0); // on met les heures et minutes a zero afin de bien comptabiliser le nombre de vendredi dans la boucle while
+			DateTime startDate = new DateTime(demande.getDateDebut()).withHourOfDay(0).withMinuteOfHour(0)
+					.withSecondOfMinute(0); // on met les heures et minutes a
+											// zero afin de bien comptabiliser
+											// le nombre de vendredi dans la
+											// boucle while
 			DateTime endDate = new DateTime(demande.getDateFin());
 
 			// on boucle sur tous les jours de la periode
 			while (startDate.isBefore(endDate)) {
-				
+
 				// si jeudi
-				if(startDate.getDayOfWeek() == DateTimeConstants.THURSDAY) {
+				if (startDate.getDayOfWeek() == DateTimeConstants.THURSDAY) {
 					// est ce que vendredi ferie
-					if(sirhWSConsumer.isJourHoliday(startDate.plusDays(1).toDate())) {
+					if (sirhWSConsumer.isJourHoliday(startDate.plusDays(1).toDate())) {
 						// est ce que samedi non chome
-						if(!sirhWSConsumer.isJourHoliday(startDate.plusDays(2).toDate())) {
+						if (!sirhWSConsumer.isJourHoliday(startDate.plusDays(2).toDate())) {
 							// alors on ajoute un samedi decompte
 							compteur += 1;
 						}
 					}
 				}
-				
+
 				// si vendredi et non ferie
-				if(startDate.getDayOfWeek() == DateTimeConstants.FRIDAY
+				if (startDate.getDayOfWeek() == DateTimeConstants.FRIDAY
 						&& !sirhWSConsumer.isJourHoliday(startDate.toDate())) {
 					// est ce que samedi non chome
-					if(!sirhWSConsumer.isJourHoliday(startDate.plusDays(1).toDate())) {
+					if (!sirhWSConsumer.isJourHoliday(startDate.plusDays(1).toDate())) {
 						compteur += 1;
 					}
 				}
-				
-			    startDate = startDate.plusDays(1);
+
+				startDate = startDate.plusDays(1);
 			}
 
 			// cas ou le 1er jour est un vendredi
 			// on gere le cas ou l agent a pose l apres-midi
 			DateTime dateDebut = new DateTime(demande.getDateDebut());
-			if(dateDebut.getDayOfWeek() == DateTimeConstants.FRIDAY
+			if (dateDebut.getDayOfWeek() == DateTimeConstants.FRIDAY
 					&& !sirhWSConsumer.isJourHoliday(dateDebut.plusDays(1).toDate())) {
-				if(dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
-					compteur -= 0.5; // si commence l apres-midi, on ne decompte qu un demi-samedi
+				if (dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
+					compteur -= 0.5; // si commence l apres-midi, on ne decompte
+										// qu un demi-samedi
 				}
-			// cas ou le 1er jour est un jeudi
-			} else if(dateDebut.getDayOfWeek() == DateTimeConstants.THURSDAY) {
+				// cas ou le 1er jour est un jeudi
+			} else if (dateDebut.getDayOfWeek() == DateTimeConstants.THURSDAY) {
 				// et vendredi ferie et samedi non chome
-				if(sirhWSConsumer.isJourHoliday(dateDebut.plusDays(1).toDate())
+				if (sirhWSConsumer.isJourHoliday(dateDebut.plusDays(1).toDate())
 						&& !sirhWSConsumer.isJourHoliday(dateDebut.plusDays(2).toDate())) {
-					if(dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
-						compteur -= 0.5; // si commence l apres-midi, on ne decompte qu un demi-samedi
+					if (dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
+						compteur -= 0.5; // si commence l apres-midi, on ne
+											// decompte qu un demi-samedi
 					}
 				}
 			}
@@ -580,18 +614,22 @@ public class HelperService {
 			// cas ou le dernier jour est un vendredi
 			// on gere le cas ou l agent a pose que le matin ou que l apres-midi
 			DateTime dateFin = new DateTime(demande.getDateFin());
-			if(dateFin.getDayOfWeek() == DateTimeConstants.FRIDAY
+			if (dateFin.getDayOfWeek() == DateTimeConstants.FRIDAY
 					&& !sirhWSConsumer.isJourHoliday(dateFin.plusDays(1).toDate())) {
-				if(dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
-					compteur -= 1; // si la personne revient travailler le vendredi apres-midi, on ne decompte pas le samedi
+				if (dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
+					compteur -= 1; // si la personne revient travailler le
+									// vendredi apres-midi, on ne decompte pas
+									// le samedi
 				}
-			// cas ou le dernier jour est un jeudi ET vendredi ferie
-			} else if(dateFin.getDayOfWeek() == DateTimeConstants.THURSDAY) {
+				// cas ou le dernier jour est un jeudi ET vendredi ferie
+			} else if (dateFin.getDayOfWeek() == DateTimeConstants.THURSDAY) {
 				// et vendredi ferie et samedi non chome
-				if(sirhWSConsumer.isJourHoliday(dateFin.plusDays(1).toDate())
+				if (sirhWSConsumer.isJourHoliday(dateFin.plusDays(1).toDate())
 						&& !sirhWSConsumer.isJourHoliday(dateFin.plusDays(2).toDate())) {
-					if(dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
-						compteur -= 1; // si la personne revient travailler le jeudi apres-midi, on ne decompte pas le samedi
+					if (dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
+						compteur -= 1; // si la personne revient travailler le
+										// jeudi apres-midi, on ne decompte pas
+										// le samedi
 					}
 				}
 			}

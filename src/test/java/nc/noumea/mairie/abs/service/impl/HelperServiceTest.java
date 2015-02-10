@@ -70,7 +70,7 @@ public class HelperServiceTest {
 			pe.printStackTrace();
 		}
 
-		Date result = service.getDateFin(typeSaisi, null, dateDebut, 2.0, false, false);
+		Date result = service.getDateFin(typeSaisi, null, dateDebut, 120.0, false, false);
 
 		assertEquals(result, dateFinAttendue);
 	}

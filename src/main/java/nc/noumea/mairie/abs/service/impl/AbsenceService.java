@@ -1272,26 +1272,55 @@ public class AbsenceService implements IAbsenceService {
 				.getIdRefGroupeAbsence())) {
 			case REPOS_COMP:
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
-				demandeReposComp.setDuree(demandeDto.getDuree().intValue() * 60);
+				String dureeApresVirgule = "0";
+				try {
+
+					dureeApresVirgule = demandeDto
+							.getDuree()
+							.toString()
+							.substring(demandeDto.getDuree().toString().indexOf(".") + 1,
+									demandeDto.getDuree().toString().length());
+					if (dureeApresVirgule.length() == 1) {
+						dureeApresVirgule = dureeApresVirgule + "0";
+					}
+				} catch (NumberFormatException e) {
+
+				}
+				int dur = demandeDto.getDuree().intValue() * 60 + new Integer(dureeApresVirgule);
+				demandeReposComp.setDuree(dur);
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp);
 
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
-						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
+						demandeDto.getDateDebut(), (double) demandeReposComp.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
-				demandeRecup.setDuree(demandeDto.getDuree().intValue() * 60);
+				String dureeApresVirgule2 = "0";
+				try {
+					dureeApresVirgule2 = demandeDto
+							.getDuree()
+							.toString()
+							.substring(demandeDto.getDuree().toString().indexOf(".") + 1,
+									demandeDto.getDuree().toString().length());
+					if (dureeApresVirgule2.length() == 1) {
+						dureeApresVirgule = dureeApresVirgule2 + "0";
+					}
+				} catch (NumberFormatException e) {
+
+				}
+				int dur2 = demandeDto.getDuree().intValue() * 60 + new Integer(dureeApresVirgule2);
+				demandeRecup.setDuree(dur2);
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup);
 
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
-						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
+						demandeDto.getDateDebut(), (double) demandeRecup.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				break;
 			case AS:
