@@ -247,7 +247,7 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public Integer getNombreSamediOffertSurAnnee(DemandeCongesAnnuels demande, Integer year) {
+	public Integer getNombreSamediOffertSurAnnee(Integer idAgent, Integer year) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from DemandeCongesAnnuels d ");
 		sb.append("where d.idAgent = :idAgent ");
@@ -258,7 +258,7 @@ public class DemandeRepository implements IDemandeRepository {
 		TypedQuery<DemandeCongesAnnuels> query = absEntityManager
 				.createQuery(sb.toString(), DemandeCongesAnnuels.class);
 
-		query.setParameter("idAgent", demande.getIdAgent());
+		query.setParameter("idAgent", idAgent);
 		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 		query.setParameter("fromDate", new DateTime(year, 1, 1, 0, 0, 0).toDate());
 		query.setParameter("toDate", new DateTime(year, 12, 31, 23, 59, 0).toDate());

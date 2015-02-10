@@ -34,7 +34,7 @@ public interface IDemandeRepository {
 
 	List<Demande> listeDemandesSIRHAValider();
 
-	Integer getNombreSamediOffertSurAnnee(DemandeCongesAnnuels demande, Integer year);
+	Integer getNombreSamediOffertSurAnnee(Integer idAgent, Integer year);
 
 	List<Demande> listeDemandesAgentVerification(Integer idAgentConcerne, Date fromDate, Date toDate,
 			Integer idRefGroupeAbsence);

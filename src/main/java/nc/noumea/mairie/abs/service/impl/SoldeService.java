@@ -22,6 +22,7 @@ import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeMonthDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
+import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
@@ -29,6 +30,7 @@ import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 import nc.noumea.mairie.domain.SpSold;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,9 @@ public class SoldeService implements ISoldeService {
 
 	@Autowired
 	private ICounterRepository counterRepository;
+
+	@Autowired
+	private IDemandeRepository demandeRepository;
 
 	@Autowired
 	private IOrganisationSyndicaleRepository organisationSyndicaleRepository;
@@ -120,12 +125,15 @@ public class SoldeService implements ISoldeService {
 			dto.setAfficheSoldeConge(true);
 			dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getSoldeAnneeEnCours());
 			dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getSoldeAnneePrec());
+			dto.setSamediOffert(false);
 		} else if (typeEnvironnement.equals("RECETTE")) {
 			// on traite les congés annuels
 			AgentCongeAnnuelCount soldeConge = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
 			dto.setAfficheSoldeConge(true);
 			dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
 			dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
+			dto.setSamediOffert(demandeRepository.getNombreSamediOffertSurAnnee(idAgent,
+					new DateTime(new Date()).getYear()) == 0 ? false : true);
 		}
 	}
 

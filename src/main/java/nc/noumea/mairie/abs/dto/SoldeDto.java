@@ -6,6 +6,7 @@ import java.util.List;
 public class SoldeDto {
 
 	private boolean afficheSoldeConge;
+	private boolean samediOffert;
 	private Double soldeCongeAnnee;
 	private Double soldeCongeAnneePrec;
 	private boolean afficheSoldeRecup;
@@ -198,6 +199,14 @@ public class SoldeDto {
 
 	public void setOrganisationA52(OrganisationSyndicaleDto organisationA52) {
 		this.organisationA52 = organisationA52;
+	}
+
+	public boolean isSamediOffert() {
+		return samediOffert;
+	}
+
+	public void setSamediOffert(boolean samediOffert) {
+		this.samediOffert = samediOffert;
 	}
 
 }

@@ -645,7 +645,7 @@ public class HelperService {
 	public Double getNombreSamediOffert(DemandeCongesAnnuels demande) {
 
 		// on cherche le nombre de samedi deja offert
-		Integer nombreSamediOffert = demandeRepository.getNombreSamediOffertSurAnnee(demande,
+		Integer nombreSamediOffert = demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(),
 				new DateTime(demande.getDateDebut()).getYear());
 
 		// si le nombre de samedi superieur ou egal au quota, on n offre plus de

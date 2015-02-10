@@ -1310,7 +1310,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d);
 
 		// When
-		Integer result = repository.getNombreSamediOffertSurAnnee(d, 2013);
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013);
 
 		// Then
 		assertEquals(0, (int) result);
@@ -1340,7 +1340,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d);
 
 		// When
-		Integer result = repository.getNombreSamediOffertSurAnnee(d, 2013);
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013);
 
 		// Then
 		assertEquals(1, (int) result);
@@ -1348,7 +1348,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getNombreSamediOffertSurAnnee_badDate() throws ParseException {
@@ -1370,7 +1370,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d);
 
 		// When
-		Integer result = repository.getNombreSamediOffertSurAnnee(d, 2012);
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2012);
 
 		// Then
 		assertEquals(0, (int) result);
