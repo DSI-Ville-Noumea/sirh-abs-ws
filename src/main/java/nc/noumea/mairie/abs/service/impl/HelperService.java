@@ -168,6 +168,11 @@ public class HelperService {
 			}
 			return duree;
 		}
+		if(!typeSaisi.isCalendarDateFin()){
+			if (UNITE_DECOMPTE_JOURS.equals(typeSaisi.getUniteDecompte())) {
+				return calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
+			}
+		}
 
 		return 0.0;
 	}
