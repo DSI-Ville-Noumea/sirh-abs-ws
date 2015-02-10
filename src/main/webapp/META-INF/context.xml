@@ -60,7 +60,7 @@
 		annuels -->
 	<!-- -->
 	<Environment name="TYPE_ENV" type="java.lang.String"
-		description="Environnement de l'application (RECETTE ou PROD)" value="PROD"
+		description="Environnement de l'application (RECETTE ou PROD)" value="RECETTE"
 		override="false" />
 		
 </Context>
