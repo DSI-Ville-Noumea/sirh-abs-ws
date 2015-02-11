@@ -10,6 +10,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface IAbsenceDataConsistencyRules {
@@ -49,4 +50,7 @@ public interface IAbsenceDataConsistencyRules {
 			ReturnMessageDto srm);
 
 	ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande);
+
+	void checkSamediOffertToujoursOk(DemandeEtatChangeDto demandeEtatChangeDto,
+			Demande demande);
 }

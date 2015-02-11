@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 
 public interface IDemandeRepository {
 
@@ -34,7 +33,7 @@ public interface IDemandeRepository {
 
 	List<Demande> listeDemandesSIRHAValider();
 
-	Integer getNombreSamediOffertSurAnnee(Integer idAgent, Integer year);
+	Integer getNombreSamediOffertSurAnnee(Integer idAgent, Integer year, Integer idDemande);
 
 	List<Demande> listeDemandesAgentVerification(Integer idAgentConcerne, Date fromDate, Date toDate,
 			Integer idRefGroupeAbsence);

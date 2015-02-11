@@ -50,7 +50,7 @@ public class DemandeCongesAnnuels extends Demande {
 	@Column(name = "COMMENTAIRE")
 	private String commentaire;
 
-	@OneToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "ID_REF_TYPE_SAISI_CONGE_ANNUEL")
 	private RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel;
 

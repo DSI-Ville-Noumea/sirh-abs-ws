@@ -12,6 +12,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
@@ -292,5 +293,33 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		}
 
 		return true;
+	}
+	
+	/**
+	 * #13362
+	 * si une demande passe de REFUSEE a APPROUVEE, il faut verifier qu une autre demande n a pas utilisee
+	 * le samedi offert pendant que la demande etait REFUSEE
+	 * sinon on retire le samedi offert de la demande
+	 */
+	@Override
+	public void checkSamediOffertToujoursOk(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
+		
+		// si on passe de REFUSEE a APPROUVEE
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.REFUSEE)) {
+			// si un samedi offert etait utilise
+			if(((DemandeCongesAnnuels) demande).getNbSamediOffert() > 0) {
+				Double nombreSamediOffert = helperService.getNombreSamediOffert((DemandeCongesAnnuels) demande);
+				
+				if(0.0 == nombreSamediOffert) {
+					((DemandeCongesAnnuels) demande).setNbSamediOffert(0.0);
+					((DemandeCongesAnnuels) demande).setDuree(
+							helperService.getDureeCongeAnnuel(
+									(DemandeCongesAnnuels) demande,
+									null));
+					((DemandeCongesAnnuels) demande).setDureeAnneeN1(0.0);
+				}
+			}
+		}
 	}
 }

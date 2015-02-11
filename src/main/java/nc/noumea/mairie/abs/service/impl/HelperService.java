@@ -646,7 +646,7 @@ public class HelperService {
 
 		// on cherche le nombre de samedi deja offert
 		Integer nombreSamediOffert = demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(),
-				new DateTime(demande.getDateDebut()).getYear());
+				new DateTime(demande.getDateDebut()).getYear(), demande.getIdDemande());
 
 		// si le nombre de samedi superieur ou egal au quota, on n offre plus de
 		// samedi

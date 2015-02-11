@@ -247,13 +247,19 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public Integer getNombreSamediOffertSurAnnee(Integer idAgent, Integer year) {
+	public Integer getNombreSamediOffertSurAnnee(Integer idAgent, Integer year, Integer idDemande) {
+		
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d from DemandeCongesAnnuels d ");
+		sb.append("select d from DemandeCongesAnnuels d inner join d.etatsDemande ed ");
 		sb.append("where d.idAgent = :idAgent ");
 		sb.append("and d.type.groupe.idRefGroupeAbsence in(:CONGE_ANNUEL ) ");
 		sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
 		sb.append("and d.nbSamediOffert > 0 ");
+		if(null != idDemande) {
+			sb.append("and d.idDemande <> :idDemande ");
+		}
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgent group by ed2.demande ) ");
+		sb.append("and ed.etat not in ( :REJETE, :REFUSEE ) ");
 
 		TypedQuery<DemandeCongesAnnuels> query = absEntityManager
 				.createQuery(sb.toString(), DemandeCongesAnnuels.class);
@@ -262,6 +268,12 @@ public class DemandeRepository implements IDemandeRepository {
 		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 		query.setParameter("fromDate", new DateTime(year, 1, 1, 0, 0, 0).toDate());
 		query.setParameter("toDate", new DateTime(year, 12, 31, 23, 59, 0).toDate());
+		if(null != idDemande) {
+			query.setParameter("idDemande", idDemande);
+		}
+		query.setParameter("REJETE", RefEtatEnum.REJETE);
+		query.setParameter("REFUSEE", RefEtatEnum.REFUSEE);
+		
 		List<DemandeCongesAnnuels> res = query.getResultList();
 		return res.size();
 	}

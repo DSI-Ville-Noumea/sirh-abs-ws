@@ -133,7 +133,7 @@ public class SoldeService implements ISoldeService {
 			dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
 			dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
 			dto.setSamediOffert(demandeRepository.getNombreSamediOffertSurAnnee(idAgent,
-					new DateTime(new Date()).getYear()) == 0 ? false : true);
+					new DateTime(new Date()).getYear(), null) == 0 ? false : true);
 		}
 	}
 

@@ -19,6 +19,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -1240,5 +1241,101 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 				fail("Bad Etat Demande " + demandeDto.getIdRefEtat() + " for checkDepassementCompteurAgent");
 			}
 		}
+	}
+	
+	@Test
+	public void checkSamediOffertToujoursOk_PasSamediOffert() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.REFUSEE);
+		
+		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
+		demande.addEtatDemande(etat);
+		demande.setNbSamediOffert(0.0);
+		demande.setDuree(0.0);
+		demande.setDureeAnneeN1(0.0);
+		
+		impl.checkSamediOffertToujoursOk(demandeEtatChangeDto, demande);
+		
+		assertEquals(demande.getDuree().doubleValue(), 0,0);
+		assertEquals(demande.getDureeAnneeN1().doubleValue(), 0,0);
+		assertEquals(demande.getNbSamediOffert().doubleValue(), 0,0);
+	}
+	
+	@Test
+	public void checkSamediOffertToujoursOk_SamediOffertAutreDemande() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.REFUSEE);
+		
+		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
+		demande.addEtatDemande(etat);
+		demande.setNbSamediOffert(1.0);
+		demande.setDuree(0.0);
+		demande.setDureeAnneeN1(0.0);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getNombreSamediOffert(demande)).thenReturn(0.0);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		impl.checkSamediOffertToujoursOk(demandeEtatChangeDto, demande);
+		
+		assertEquals(demande.getDuree().doubleValue(), 0,0);
+		assertEquals(demande.getDureeAnneeN1().doubleValue(), 0,0);
+		assertEquals(demande.getNbSamediOffert().doubleValue(), 0,0);
+	}
+	
+	@Test
+	public void checkSamediOffertToujoursOk_SamediNonOffertAutreDemande() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.REFUSEE);
+		
+		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
+		demande.addEtatDemande(etat);
+		demande.setNbSamediOffert(1.0);
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getNombreSamediOffert(demande)).thenReturn(1.0);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		impl.checkSamediOffertToujoursOk(demandeEtatChangeDto, demande);
+		
+		assertEquals(demande.getDuree().doubleValue(), 10,0);
+		assertEquals(demande.getDureeAnneeN1().doubleValue(), 20,0);
+		assertEquals(demande.getNbSamediOffert().doubleValue(), 1,0);
+	}
+	
+	@Test
+	public void checkSamediOffertToujoursOk_badEtat() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.SAISIE);
+		
+		DemandeCongesAnnuels demande = Mockito.spy(new DemandeCongesAnnuels());
+		demande.addEtatDemande(etat);
+		demande.setNbSamediOffert(1.0);
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getNombreSamediOffert(demande)).thenReturn(0.0);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		impl.checkSamediOffertToujoursOk(demandeEtatChangeDto, demande);
+		
+		assertEquals(demande.getDuree().doubleValue(), 10,0);
+		assertEquals(demande.getDureeAnneeN1().doubleValue(), 20,0);
+		assertEquals(demande.getNbSamediOffert().doubleValue(), 1,0);
 	}
 }

@@ -21,6 +21,7 @@ import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -1310,7 +1311,112 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d);
 
 		// When
-		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013);
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, null);
+
+		// Then
+		assertEquals(0, (int) result);
+		
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getNombreSamediOffertSurAnnee_Return0BecauseEtatDemandeRefusee() throws ParseException {
+		// Given
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		absEntityManager.persist(groupe);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		absEntityManager.persist(type);
+
+		EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
+		etatDemande.setEtat(RefEtatEnum.REFUSEE);
+		
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(9005138);
+		d.setType(type);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(sdf.parse("16/05/2013"));
+		d.setNbSamediOffert(1.0);
+		d.addEtatDemande(etatDemande);
+		absEntityManager.persist(d);
+		absEntityManager.persist(etatDemande);
+
+		// When
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande()+1);
+
+		// Then
+		assertEquals(0, (int) result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getNombreSamediOffertSurAnnee_Return0BecauseEtatDemandeRejetee() throws ParseException {
+		// Given
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		absEntityManager.persist(groupe);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		absEntityManager.persist(type);
+
+		EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
+		etatDemande.setEtat(RefEtatEnum.REJETE);
+		
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(9005138);
+		d.setType(type);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(sdf.parse("16/05/2013"));
+		d.setNbSamediOffert(1.0);
+		d.addEtatDemande(etatDemande);
+		absEntityManager.persist(d);
+		absEntityManager.persist(etatDemande);
+
+		// When
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande()+1);
+
+		// Then
+		assertEquals(0, (int) result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getNombreSamediOffertSurAnnee_Return0_sameDemande() throws ParseException {
+		// Given
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		absEntityManager.persist(groupe);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		absEntityManager.persist(type);
+
+		EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
+		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+		
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(9005138);
+		d.setType(type);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(sdf.parse("16/05/2013"));
+		d.setNbSamediOffert(1.0);
+		d.addEtatDemande(etatDemande);
+		absEntityManager.persist(d);
+		absEntityManager.persist(etatDemande);
+
+		// When
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande());
 
 		// Then
 		assertEquals(0, (int) result);
@@ -1331,16 +1437,21 @@ public class DemandeRepositoryTest {
 		type.setGroupe(groupe);
 		absEntityManager.persist(type);
 
+		EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
+		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+		
 		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
 		d.setIdAgent(9005138);
 		d.setType(type);
 		d.setDateDebut(sdf.parse("15/05/2013"));
 		d.setDateFin(sdf.parse("16/05/2013"));
 		d.setNbSamediOffert(1.0);
+		d.addEtatDemande(etatDemande);
 		absEntityManager.persist(d);
+		absEntityManager.persist(etatDemande);
 
 		// When
-		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013);
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande()+1);
 
 		// Then
 		assertEquals(1, (int) result);
@@ -1370,7 +1481,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(d);
 
 		// When
-		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2012);
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2012, null);
 
 		// Then
 		assertEquals(0, (int) result);

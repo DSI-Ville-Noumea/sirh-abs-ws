@@ -469,6 +469,11 @@ public class AbsenceService implements IAbsenceService {
 		if (result.getErrors().size() != 0) {
 			return result;
 		}
+		
+		// #13362 dans le cadre des congés annuels, on regarde si le samedi offert n est pas offert une autre demande
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+		absenceDataConsistencyRulesImpl.checkSamediOffertToujoursOk(demandeEtatChangeDto, demande);
 
 		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
 				.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
