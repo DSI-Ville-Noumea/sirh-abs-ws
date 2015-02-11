@@ -282,11 +282,13 @@ public class DemandeRepository implements IDemandeRepository {
 	public List<Demande> listeDemandesAgentVerification(Integer idAgentConcerne, Date fromDate, Date toDate,
 			Integer idRefGroupeAbsence) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d from Demande d ");
+		sb.append("select d from Demande d inner join d.etatsDemande ed ");
 		sb.append("where 1=1 ");
 		sb.append("and d.idAgent = :idAgentConcerne ");
 		sb.append("and d.type.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");
 		sb.append("and((:fromDate between  d.dateDebut and d.dateFin or :toDate between d.dateDebut and d.dateFin) or (d.dateDebut between :fromDate and :toDate or d.dateFin between :fromDate and :toDate))");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgentConcerne group by ed2.demande ) ");
+		sb.append("and ed.etat in ( :VISEE_FAVORABLE, :VISEE_DEFAVORABLE, :APPROUVEE, :A_VALIDER, :EN_ATTENTE, :PRISE, :VALIDEE ) ");
 		sb.append("order by d.idDemande desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
@@ -295,6 +297,13 @@ public class DemandeRepository implements IDemandeRepository {
 		query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
 		query.setParameter("fromDate", fromDate);
 		query.setParameter("toDate", toDate);
+		query.setParameter("VISEE_FAVORABLE", RefEtatEnum.VISEE_FAVORABLE);
+		query.setParameter("VISEE_DEFAVORABLE", RefEtatEnum.VISEE_DEFAVORABLE);
+		query.setParameter("APPROUVEE", RefEtatEnum.APPROUVEE);
+		query.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER);
+		query.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
+		query.setParameter("PRISE", RefEtatEnum.PRISE);
+		query.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
 
 		return query.getResultList();
 	}

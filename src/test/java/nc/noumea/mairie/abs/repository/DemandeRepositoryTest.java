@@ -1492,7 +1492,7 @@ public class DemandeRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void listeDemandesAgentVerification_Return0() throws ParseException {
+	public void listeDemandesAgentVerification_Return0_badDate() throws ParseException {
 		// Given
 		Integer idAgent = 9005138;
 		Date fromDate = new DateTime(2014, 1, 1, 0, 0).toDate();
@@ -1505,13 +1505,18 @@ public class DemandeRepositoryTest {
 		type.setGroupe(groupe);
 		absEntityManager.persist(type);
 
-		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		EtatDemande etat = new EtatDemande();
+		etat.setDate(new Date());
+		etat.setEtat(RefEtatEnum.APPROUVEE);
+		
+		Demande d = new Demande();
 		d.setIdAgent(idAgent);
 		d.setType(type);
 		d.setDateDebut(sdf.parse("15/05/2013"));
 		d.setDateFin(sdf.parse("16/05/2013"));
-		d.setNbSamediOffert(1.0);
 		absEntityManager.persist(d);
+		etat.setDemande(d);
+		absEntityManager.persist(etat);
 
 		// When
 		List<Demande> result = repository.listeDemandesAgentVerification(idAgent, fromDate, toDate,
@@ -1531,6 +1536,7 @@ public class DemandeRepositoryTest {
 		Integer idAgent = 9005138;
 		Date fromDate = new DateTime(2014, 5, 15, 2, 0).toDate();
 		Date toDate = new DateTime(2014, 5, 15, 4, 0).toDate();
+		
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 		absEntityManager.persist(groupe);
@@ -1546,13 +1552,34 @@ public class DemandeRepositoryTest {
 		d.setDateFin(new DateTime(2014, 5, 16, 0, 0).toDate());
 		d.setNbSamediOffert(1.0);
 		absEntityManager.persist(d);
+		
+		for(int i=0; i<12; i++) {
+			
+			EtatDemande etat = new EtatDemande();
+			etat.setDate(new Date());
+			etat.setEtat(RefEtatEnum.getRefEtatEnum(i));
+			etat.setDemande(d);
+			d.getEtatsDemande().add(etat);
+			absEntityManager.persist(d);
+			absEntityManager.persist(etat);
+			
+			// When
+			List<Demande> result = repository.listeDemandesAgentVerification(idAgent, fromDate, toDate,
+					RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 
-		// When
-		List<Demande> result = repository.listeDemandesAgentVerification(idAgent, fromDate, toDate,
-				RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
-
-		// Then
-		assertEquals(1, result.size());
+			// Then
+			if(i == RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()
+					|| i == RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()
+					|| i == RefEtatEnum.APPROUVEE.getCodeEtat()
+					|| i == RefEtatEnum.A_VALIDER.getCodeEtat()
+					|| i == RefEtatEnum.EN_ATTENTE.getCodeEtat()
+					|| i == RefEtatEnum.PRISE.getCodeEtat()
+					|| i == RefEtatEnum.VALIDEE.getCodeEtat()) {
+				assertEquals(1, result.size());
+			}else{
+				assertEquals(0, result.size());
+			}
+		}
 
 		absEntityManager.flush();
 		absEntityManager.clear();
