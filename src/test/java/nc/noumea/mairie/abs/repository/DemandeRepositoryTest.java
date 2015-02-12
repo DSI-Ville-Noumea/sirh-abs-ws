@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -799,6 +800,45 @@ public class DemandeRepositoryTest {
 		// Then
 		assertEquals(2, result.size());
 		assertEquals("30", ((DemandeRecup) result.get(1)).getDuree().toString());
+		assertEquals("15", ((DemandeReposComp) result.get(0)).getDuree().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesSIRH_Filter_2idAgents_Return2Demande() {
+		// Given
+		DemandeRecup dr = new DemandeRecup();
+		dr.setIdAgent(9005140);
+		dr.setDateDebut(new Date());
+		dr.setDateFin(null);
+		dr.setDuree(30);
+		absEntityManager.persist(dr);
+
+		DemandeCongesAnnuels ca = new DemandeCongesAnnuels();
+		ca.setIdAgent(9005142);
+		ca.setDateDebut(new Date());
+		ca.setDateFin(null);
+		ca.setDuree(30.0);
+		absEntityManager.persist(ca);
+
+
+		DemandeReposComp drc = new DemandeReposComp();
+		drc.setIdAgent(9005138);
+		drc.setDateDebut(new Date());
+		drc.setDateFin(null);
+		drc.setDuree(15);
+		drc.setDureeAnneeN1(10);
+		absEntityManager.persist(drc);
+
+		// When
+		List<Demande> result = repository.listeDemandesSIRH(null, null, null, null, Arrays.asList(9005142, 9005138), null);
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals("30.0", ((DemandeCongesAnnuels) result.get(1)).getDuree().toString());
 		assertEquals("15", ((DemandeReposComp) result.get(0)).getDuree().toString());
 
 		absEntityManager.flush();
