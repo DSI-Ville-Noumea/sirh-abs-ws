@@ -176,7 +176,8 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@Override
 	public List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche, Integer idRefGroupeAbsence) {
+			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence) {
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
 		sb.append("where 1=1 ");
@@ -189,8 +190,8 @@ public class DemandeRepository implements IDemandeRepository {
 			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
 		}
 		// agent
-		if (idAgentRecherche != null) {
-			sb.append("and d.idAgent = :idAgentRecherche ");
+		if (listIdAgentRecherche != null) {
+			sb.append("and d.idAgent in :idAgentRecherche ");
 		}
 		// type
 		if (idRefType != null) {
@@ -215,8 +216,8 @@ public class DemandeRepository implements IDemandeRepository {
 			query.setParameter("toDate", toDate);
 		}
 		// agent
-		if (idAgentRecherche != null) {
-			query.setParameter("idAgentRecherche", idAgentRecherche);
+		if (listIdAgentRecherche != null) {
+			query.setParameter("idAgentRecherche", listIdAgentRecherche);
 		}
 		// type
 		if (idRefType != null) {

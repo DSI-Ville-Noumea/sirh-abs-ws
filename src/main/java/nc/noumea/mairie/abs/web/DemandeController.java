@@ -411,18 +411,26 @@ public class DemandeController {
 			@RequestParam(value = "type", required = false) Integer idRefType,
 			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche,
 			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence,
-			@RequestParam(value = "aValider", required = true) boolean aValider) {
+			@RequestParam(value = "aValider", required = true) boolean aValider,
+			@RequestParam(value = "idAgents", required = false) String idAgents) {
 
 		logger.debug(
-				"entered GET [demandes/listeDemandesSIRH] => getListeDemandesAbsenceSIRH with parameters  from = {}, to = {},  etat = {}, groupe = {}, type = {}, idAgentConcerne= {} and aValider= {}",
-				fromDate, toDate, idRefEtat, idRefGroupeAbsence, idRefType, idAgentRecherche, aValider);
+				"entered GET [demandes/listeDemandesSIRH] => getListeDemandesAbsenceSIRH with parameters  from = {}, to = {},  etat = {}, groupe = {}, type = {}, idAgentConcerne= {}, aValider= {} and codeService = {}",
+				fromDate, toDate, idRefEtat, idRefGroupeAbsence, idRefType, idAgentRecherche, aValider, idAgents);
 
+		List<Integer> agentIds = new ArrayList<Integer>();
+		if (idAgents != null) {
+			for (String id : idAgents.split(",")) {
+				agentIds.add(id.equals("") ? 0 : Integer.valueOf(id));
+			}
+		}
+		
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 		if (aValider) {
 			result = absenceService.getListeDemandesSIRHAValider();
 		} else {
 			result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType, idAgentRecherche,
-					idRefGroupeAbsence);
+					idRefGroupeAbsence, agentIds);
 		}
 
 		if (result.size() == 0)

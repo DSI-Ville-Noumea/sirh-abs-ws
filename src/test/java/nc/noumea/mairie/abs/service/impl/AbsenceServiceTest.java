@@ -4704,7 +4704,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
@@ -8234,7 +8234,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
@@ -9972,7 +9972,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());

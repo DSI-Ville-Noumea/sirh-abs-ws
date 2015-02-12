@@ -1074,9 +1074,11 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche, Integer idRefGroupeAbsence) {
+			Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds) {
+		
 		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
-				idAgentRecherche, idRefGroupeAbsence);
+				agentIds, idRefGroupeAbsence);
+		
 		List<RefEtat> listEtats = null;
 		if (idRefEtat != null) {
 			RefEtat etat = demandeRepository.getEntity(RefEtat.class, idRefEtat);
@@ -1086,6 +1088,7 @@ public class AbsenceService implements IAbsenceService {
 
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				listEtats, null);
+		
 		for (DemandeDto dto : listeDto) {
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(dto
 					.getGroupeAbsence().getIdRefGroupeAbsence(), dto.getIdTypeDemande());
