@@ -464,7 +464,8 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// #12664
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, new Date(), false);
+		if(!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()))
+			absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, new Date(), false);
 
 		if (result.getErrors().size() != 0) {
 			return result;
