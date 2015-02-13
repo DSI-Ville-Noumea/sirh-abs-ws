@@ -190,7 +190,7 @@ public class DemandeRepository implements IDemandeRepository {
 			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
 		}
 		// agent
-		if (listIdAgentRecherche != null) {
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
 			sb.append("and d.idAgent in :idAgentRecherche ");
 		}
 		// type
@@ -216,7 +216,7 @@ public class DemandeRepository implements IDemandeRepository {
 			query.setParameter("toDate", toDate);
 		}
 		// agent
-		if (listIdAgentRecherche != null) {
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
 			query.setParameter("idAgentRecherche", listIdAgentRecherche);
 		}
 		// type

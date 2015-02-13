@@ -1076,6 +1076,11 @@ public class AbsenceService implements IAbsenceService {
 	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds) {
 		
+		if(null != idAgentRecherche && 0 != idAgentRecherche) {
+			agentIds = new ArrayList<Integer>();
+			agentIds.add(idAgentRecherche);
+		}
+		
 		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
 				agentIds, idRefGroupeAbsence);
 		
@@ -1200,8 +1205,6 @@ public class AbsenceService implements IAbsenceService {
 
 		if (demande.getType() != null && demande.getType().getTypeSaisi() == null
 				&& demande.getType().getTypeSaisiCongeAnnuel() != null) {
-			// maj de la demande
-			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 
 			ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
 					.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
@@ -1210,6 +1213,9 @@ public class AbsenceService implements IAbsenceService {
 			if (0 < result.getErrors().size()) {
 				return;
 			}
+			
+			// maj de la demande
+			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
 		} else {
 			ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
 					.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());

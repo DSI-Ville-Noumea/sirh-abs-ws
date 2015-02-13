@@ -421,7 +421,9 @@ public class DemandeController {
 		List<Integer> agentIds = new ArrayList<Integer>();
 		if (idAgents != null) {
 			for (String id : idAgents.split(",")) {
-				agentIds.add(id.equals("") ? 0 : Integer.valueOf(id));
+				if(!"".equals(id)) {
+					agentIds.add(Integer.valueOf(id));
+				}
 			}
 		}
 		
