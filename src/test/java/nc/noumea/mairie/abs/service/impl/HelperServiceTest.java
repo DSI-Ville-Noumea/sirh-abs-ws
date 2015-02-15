@@ -8,15 +8,18 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -698,7 +701,6 @@ public class HelperServiceTest {
 		demande.setTypeSaisiCongeAnnuel(typeSaisi);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(1);
@@ -729,7 +731,6 @@ public class HelperServiceTest {
 		demande.setTypeSaisiCongeAnnuel(typeSaisi);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(1);
@@ -759,13 +760,13 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 		demande.setTypeSaisiCongeAnnuel(typeSaisi);
 
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2014, 12, 8, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
+		
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 4, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 5, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 6, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 7, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 8, 0, 0, 0).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 9, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursFeries);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(1);
@@ -795,13 +796,13 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 		demande.setTypeSaisiCongeAnnuel(typeSaisi);
 
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2014, 12, 7, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
+		
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 4, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 5, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 6, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 7, 0, 0, 0).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 8, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 9, 0, 0, 0).toDate())).thenReturn(false);
+		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursFeries);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(1);
@@ -975,7 +976,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(0);
@@ -1006,7 +1006,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(0);
@@ -1037,7 +1036,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(0);
@@ -1068,7 +1066,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(1);
@@ -1099,7 +1096,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(1);
@@ -1129,11 +1125,13 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(dateFin);
 
+		List<JourDto> listJoursFerie = new ArrayList<JourDto>();
+		JourDto jourFerie1 = new JourDto();
+		jourFerie1.setJour(new DateTime(2014, 12, 8, 0, 0, 0).toDate());
+		listJoursFerie.add(jourFerie1);
+		
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 5, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 6, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 7, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 8, 0, 0, 0).toDate())).thenReturn(true);
+		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursFerie);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(1);
@@ -1294,8 +1292,7 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
-
+		
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
@@ -1320,7 +1317,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1346,7 +1342,7 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		HelperService service = new HelperService();
-		Double result = service.getNombreSamediDecompte(demande);
+		Double result = service.getNombreSamediDecompte(demande, null);
 
 		assertEquals(duree, result);
 	}
@@ -1367,7 +1363,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1392,9 +1387,13 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(dateFin);
 
+		List<JourDto> listJoursFeries = new ArrayList<>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2014, 12, 13, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
+				
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 6, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 13, 0, 0, 0).toDate())).thenReturn(true);
+		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursFeries);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1420,7 +1419,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1446,7 +1444,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1472,7 +1469,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1497,14 +1493,13 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(dateFin);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 12, 0, 0, 0).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 13, 0, 0, 0).toDate())).thenReturn(false);
+		List<JourDto> listJoursFeries = new ArrayList<>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2014, 12, 12, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreSamediDecompte(demande);
+		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
 	}
@@ -1524,14 +1519,13 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(dateFin);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 12, 0, 0, 0).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 13, 0, 0, 0).toDate())).thenReturn(false);
+		List<JourDto> listJoursFeries = new ArrayList<>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2014, 12, 12, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreSamediDecompte(demande);
+		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
 	}
@@ -1551,16 +1545,13 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(dateFin);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 12, 0, 0, 0).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 13, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 12, 11, 59, 59).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 13, 11, 59, 59).toDate())).thenReturn(false);
+		List<JourDto> listJoursFeries = new ArrayList<>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2014, 12, 12, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreSamediDecompte(demande);
+		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
 	}
@@ -1580,16 +1571,13 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(dateFin);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 12, 0, 0, 0).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 13, 0, 0, 0).toDate())).thenReturn(false);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 12, 12, 0, 0).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 13, 12, 0, 0).toDate())).thenReturn(false);
+		List<JourDto> listJoursFeries = new ArrayList<>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2014, 12, 12, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreSamediDecompte(demande);
+		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
 	}
@@ -1609,14 +1597,16 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(dateFin);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 12, 0, 0, 0).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2014, 12, 13, 0, 0, 0).toDate())).thenReturn(true);
+		List<JourDto> listJoursFeries = new ArrayList<>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2014, 12, 12, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
+		JourDto jourFerie2 = new JourDto();
+		jourFerie2.setJour(new DateTime(2014, 12, 13, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie2);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreSamediDecompte(demande);
+		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
 	}
@@ -1637,7 +1627,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1663,7 +1652,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1689,7 +1677,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1715,7 +1702,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1741,7 +1727,6 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1766,13 +1751,13 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 		demande.setDateFin(dateFin);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(true);
+		List<JourDto> listJoursFeries = new ArrayList<>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2014, 12, 6, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreSamediDecompte(demande);
+		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
 	}
@@ -1855,13 +1840,13 @@ public class HelperServiceTest {
 		Date dateDebut = new DateTime(2015, 1, 1, 12, 0, 0).toDate();
 		Date dateFin = new DateTime(2015, 1, 18, 23, 59, 59).toDate();
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 1, 12, 0, 0).toDate())).thenReturn(true);
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2015, 1, 1, 12, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin);
+		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin, listJoursFeries);
 
 		assertEquals(nombre, result);
 	}
@@ -1874,14 +1859,16 @@ public class HelperServiceTest {
 		Date dateDebut = new DateTime(2015, 1, 1, 12, 0, 0).toDate();
 		Date dateFin = new DateTime(2015, 1, 18, 23, 59, 59).toDate();
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 1, 12, 0, 0).toDate())).thenReturn(true);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 10, 12, 0, 0).toDate())).thenReturn(true);
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2015, 1, 1, 0, 0, 0).toDate());
+		JourDto jourFerie2 = new JourDto();
+		jourFerie2.setJour(new DateTime(2015, 1, 10, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
+		listJoursFeries.add(jourFerie2);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin);
+		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin, listJoursFeries);
 
 		assertEquals(nombre, result);
 	}
@@ -1894,13 +1881,13 @@ public class HelperServiceTest {
 		Date dateDebut = new DateTime(2015, 1, 19, 12, 0, 0).toDate();
 		Date dateFin = new DateTime(2015, 1, 19, 23, 59, 59).toDate();
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 19, 12, 0, 0).toDate())).thenReturn(true);
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2015, 1, 19, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin);
+		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin, listJoursFeries);
 
 		assertEquals(nombre, result);
 	}
@@ -1913,13 +1900,13 @@ public class HelperServiceTest {
 		Date dateDebut = new DateTime(2015, 1, 18, 12, 0, 0).toDate();
 		Date dateFin = new DateTime(2015, 1, 18, 23, 59, 59).toDate();
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(new DateTime(2015, 1, 18, 12, 0, 0).toDate())).thenReturn(true);
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2015, 1, 18, 0, 0, 0).toDate());
+		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-
-		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin);
+		Double result = service.getNombreJoursFeriesChomes(dateDebut, dateFin, listJoursFeries);
 
 		assertEquals(nombre, result);
 	}
@@ -1939,7 +1926,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
-		Double result = service.getNombreSamediOffert(demande);
+		Double result = service.getNombreSamediOffert(demande, null);
 
 		assertEquals(result.doubleValue(), 0, 0);
 	}
@@ -1961,7 +1948,6 @@ public class HelperServiceTest {
 						new DateTime(demande.getDateDebut()).getYear(), demande.getIdDemande())).thenReturn(0);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -1989,7 +1975,6 @@ public class HelperServiceTest {
 						new DateTime(demande.getDateDebut()).getYear(), demande.getIdDemande())).thenReturn(0);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.isJourHoliday(Mockito.any(Date.class))).thenReturn(false);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);

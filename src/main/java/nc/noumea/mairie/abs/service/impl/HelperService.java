@@ -3,12 +3,14 @@ package nc.noumea.mairie.abs.service.impl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
@@ -408,15 +410,18 @@ public class HelperService {
 		switch (demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence()) {
 			case "A":
 			case "D":
+				
+				List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
+				
 				duree = calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())
-						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin())
+						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin(), listJoursFeries)
 						- getNombreJourSemaine(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY) // on
 																															// retire
 																															// le
 																															// nombre
 																															// de
 																															// samedi
-						+ getNombreSamediDecompte(demande) - getNombreSamediOffert(demande); // puis
+						+ getNombreSamediDecompte(demande, listJoursFeries) - getNombreSamediOffert(demande, listJoursFeries); // puis
 																								// on
 																								// calcule
 																								// le
@@ -453,18 +458,19 @@ public class HelperService {
 		return duree;
 	}
 
-	private double calculJoursNonComptesDimancheFerieChome(Date dateDebut, Date dateFin) {
+	private double calculJoursNonComptesDimancheFerieChome(Date dateDebut, Date dateFin, List<JourDto> listJoursFeries) {
 		Double res = 0.0;
 		// on compte le nombre de dimanches entre les 2 dates
 		res += getNombreDimanche(dateDebut, dateFin);
 		// on compte le nombre de jours fériés ou chomes entre les 2 dates
-		res += getNombreJoursFeriesChomes(dateDebut, dateFin);
+		res += getNombreJoursFeriesChomes(dateDebut, dateFin, listJoursFeries);
 		return res;
 
 	}
 
-	protected Double getNombreJoursFeriesChomes(Date dateDebut, Date dateFin) {
+	protected Double getNombreJoursFeriesChomes(Date dateDebut, Date dateFin, List<JourDto> listJoursFeries) {
 		int compteur = 0;
+		
 		Calendar calendarDebut = new GregorianCalendar();
 		calendarDebut.setTime(dateDebut);
 
@@ -472,8 +478,9 @@ public class HelperService {
 		calendarFin.setTime(dateFin);
 
 		while (calendarDebut.compareTo(calendarFin) <= 0) {
+			
 			if (calendarDebut.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-				if (sirhWSConsumer.isJourHoliday(calendarDebut.getTime())) {
+				if (isJourHoliday(listJoursFeries, calendarDebut.getTime())) {
 					compteur++;
 				}
 			}
@@ -555,6 +562,11 @@ public class HelperService {
 	}
 
 	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande) {
+		List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
+		return getNombreSamediDecompte(demande, listJoursFeries);
+	}
+	
+	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande, List<JourDto> listJoursFeries) {
 
 		Double compteur = 0.0;
 
@@ -574,9 +586,9 @@ public class HelperService {
 				// si jeudi
 				if (startDate.getDayOfWeek() == DateTimeConstants.THURSDAY) {
 					// est ce que vendredi ferie
-					if (sirhWSConsumer.isJourHoliday(startDate.plusDays(1).toDate())) {
+					if (isJourHoliday(listJoursFeries, startDate.plusDays(1).toDate())) {
 						// est ce que samedi non chome
-						if (!sirhWSConsumer.isJourHoliday(startDate.plusDays(2).toDate())) {
+						if (!isJourHoliday(listJoursFeries, startDate.plusDays(2).toDate())) {
 							// alors on ajoute un samedi decompte
 							compteur += 1;
 						}
@@ -585,9 +597,9 @@ public class HelperService {
 
 				// si vendredi et non ferie
 				if (startDate.getDayOfWeek() == DateTimeConstants.FRIDAY
-						&& !sirhWSConsumer.isJourHoliday(startDate.toDate())) {
+						&& !isJourHoliday(listJoursFeries, startDate.toDate())) {
 					// est ce que samedi non chome
-					if (!sirhWSConsumer.isJourHoliday(startDate.plusDays(1).toDate())) {
+					if (!isJourHoliday(listJoursFeries, startDate.plusDays(1).toDate())) {
 						compteur += 1;
 					}
 				}
@@ -599,7 +611,7 @@ public class HelperService {
 			// on gere le cas ou l agent a pose l apres-midi
 			DateTime dateDebut = new DateTime(demande.getDateDebut());
 			if (dateDebut.getDayOfWeek() == DateTimeConstants.FRIDAY
-					&& !sirhWSConsumer.isJourHoliday(dateDebut.plusDays(1).toDate())) {
+					&& !isJourHoliday(listJoursFeries, dateDebut.plusDays(1).toDate())) {
 				if (dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
 					compteur -= 0.5; // si commence l apres-midi, on ne decompte
 										// qu un demi-samedi
@@ -607,8 +619,8 @@ public class HelperService {
 				// cas ou le 1er jour est un jeudi
 			} else if (dateDebut.getDayOfWeek() == DateTimeConstants.THURSDAY) {
 				// et vendredi ferie et samedi non chome
-				if (sirhWSConsumer.isJourHoliday(dateDebut.plusDays(1).toDate())
-						&& !sirhWSConsumer.isJourHoliday(dateDebut.plusDays(2).toDate())) {
+				if (isJourHoliday(listJoursFeries, dateDebut.plusDays(1).toDate())
+						&& !isJourHoliday(listJoursFeries, dateDebut.plusDays(2).toDate())) {
 					if (dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
 						compteur -= 0.5; // si commence l apres-midi, on ne
 											// decompte qu un demi-samedi
@@ -620,7 +632,7 @@ public class HelperService {
 			// on gere le cas ou l agent a pose que le matin ou que l apres-midi
 			DateTime dateFin = new DateTime(demande.getDateFin());
 			if (dateFin.getDayOfWeek() == DateTimeConstants.FRIDAY
-					&& !sirhWSConsumer.isJourHoliday(dateFin.plusDays(1).toDate())) {
+					&& !isJourHoliday(listJoursFeries, dateFin.plusDays(1).toDate())) {
 				if (dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
 					compteur -= 1; // si la personne revient travailler le
 									// vendredi apres-midi, on ne decompte pas
@@ -629,8 +641,8 @@ public class HelperService {
 				// cas ou le dernier jour est un jeudi ET vendredi ferie
 			} else if (dateFin.getDayOfWeek() == DateTimeConstants.THURSDAY) {
 				// et vendredi ferie et samedi non chome
-				if (sirhWSConsumer.isJourHoliday(dateFin.plusDays(1).toDate())
-						&& !sirhWSConsumer.isJourHoliday(dateFin.plusDays(2).toDate())) {
+				if (isJourHoliday(listJoursFeries, dateFin.plusDays(1).toDate())
+						&& !isJourHoliday(listJoursFeries, dateFin.plusDays(2).toDate())) {
 					if (dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
 						compteur -= 1; // si la personne revient travailler le
 										// jeudi apres-midi, on ne decompte pas
@@ -641,8 +653,26 @@ public class HelperService {
 		}
 		return compteur;
 	}
+	
+	private boolean isJourHoliday(List<JourDto> listJoursFeries, Date dateJour) {
+		if(null != listJoursFeries) {
+			DateTime dateTimeJour = new DateTime(dateJour);
+			for(JourDto jourFerie : listJoursFeries) {
+				DateTime dateTimeFerie = new DateTime(jourFerie.getJour());
+				if(dateTimeFerie.getDayOfYear() == dateTimeJour.getDayOfYear()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public Double getNombreSamediOffert(DemandeCongesAnnuels demande) {
+		List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
+		return getNombreSamediOffert(demande, listJoursFeries);
+	}
+
+	public Double getNombreSamediOffert(DemandeCongesAnnuels demande, List<JourDto> listJoursFeries) {
 
 		// on cherche le nombre de samedi deja offert
 		Integer nombreSamediOffert = demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(),
@@ -656,7 +686,7 @@ public class HelperService {
 
 		// on recupere le nombre de samedi complet a decompter
 		// si au moins un samedi complet, on offre un samedi
-		if (1 > getNombreSamediDecompte(demande))
+		if (1 > getNombreSamediDecompte(demande, listJoursFeries))
 			return 0.0;
 
 		// si samedi pas encore offert, on retourne un samedi offert
