@@ -518,6 +518,37 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 	}
 
 	@Test
+	public void calculJoursCompteur_credit_EtatPrise_annuleDemande() {
+		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
+		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.PRISE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDuree(10.0);
+		demande.setDureeAnneeN1(20.0);
+		demande.setEtatsDemande(etatsDemande);
+
+		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito
+				.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(
+				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+				new ReturnMessageDto());
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl",
+				absCongesAnnuelsDataConsistencyRulesImpl);
+
+		Double result = service.calculJoursCompteur(demandeEtatChangeDto, demande);
+
+		assertEquals(30, result.intValue());
+	}
+
+	@Test
 	public void calculJoursCompteur_debit_EtatApprouve_ET_DepassementCompteur() {
 		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
 		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());

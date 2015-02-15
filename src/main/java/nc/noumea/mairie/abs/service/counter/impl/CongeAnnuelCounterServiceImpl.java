@@ -209,7 +209,8 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		// incremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())
 				&& (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE) || demande
-						.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE))) {
+						.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE)
+						 || demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.PRISE))) {
 			jours = ((DemandeCongesAnnuels) demande).getDuree() + ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
 		}
 
