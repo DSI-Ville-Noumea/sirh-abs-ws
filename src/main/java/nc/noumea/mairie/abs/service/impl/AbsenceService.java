@@ -424,7 +424,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// maj de la demande
-		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+		majEtatDemande(idAgent, demandeEtatChangeDto, demande, false);
 
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())) {
 			result.getInfos().add(String.format("La demande est visée favorablement."));
@@ -476,6 +476,13 @@ public class AbsenceService implements IAbsenceService {
 				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		absenceDataConsistencyRulesImpl.checkSamediOffertToujoursOk(demandeEtatChangeDto, demande);
 
+		ReturnMessageDto srmIsDepassementCompteurCA = new ReturnMessageDto();
+		srmIsDepassementCompteurCA = absenceDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srmIsDepassementCompteurCA, demande);
+		boolean isDepassementCA = false;
+		if(0 < srmIsDepassementCompteurCA.getInfos().size()) {
+			isDepassementCA = true;
+		}
+		
 		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
 				.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
@@ -485,7 +492,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// maj de la demande
-		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+		majEtatDemande(idAgent, demandeEtatChangeDto, demande, isDepassementCA);
 
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) {
 			result.getInfos().add(String.format("La demande est refusée."));
@@ -538,7 +545,7 @@ public class AbsenceService implements IAbsenceService {
 			supprimeIncidencePaie(demande);
 
 			// maj de la demande
-			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+			majEtatDemande(idAgent, demandeEtatChangeDto, demande, false);
 
 			result.getInfos().add(String.format("La demande est annulée."));
 		}
@@ -546,16 +553,12 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 
-	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
+	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, boolean isDepassementCA) {
 
 		if (demande.getType() != null && demande.getType().getTypeSaisi() == null
 				&& demande.getType().getTypeSaisiCongeAnnuel() != null) {
 			// cas des congés annuels
-			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
-					RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(), null);
-			ReturnMessageDto srm = new ReturnMessageDto();
-			srm = absenceDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srm, demande);
-			if (srm.getInfos().size() > 0
+			if (isDepassementCA
 					&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
 				EtatDemande etatDemande = new EtatDemande();
 
@@ -1045,7 +1048,7 @@ public class AbsenceService implements IAbsenceService {
 			DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
 			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 			demandeEtatChangeDto.setMotif(null);
-			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+			majEtatDemande(idAgent, demandeEtatChangeDto, demande, false);
 		}
 
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
@@ -1215,7 +1218,7 @@ public class AbsenceService implements IAbsenceService {
 			}
 			
 			// maj de la demande
-			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+			majEtatDemande(idAgent, demandeEtatChangeDto, demande, false);
 		} else {
 			ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
 					.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
@@ -1226,7 +1229,7 @@ public class AbsenceService implements IAbsenceService {
 			}
 
 			// maj de la demande
-			majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+			majEtatDemande(idAgent, demandeEtatChangeDto, demande, false);
 		}
 
 		if (demandeEtatChangeDto.getIdRefEtat() == RefEtatEnum.REJETE.getCodeEtat()) {
@@ -1256,7 +1259,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// maj de la demande
-		majEtatDemande(idAgent, demandeEtatChangeDto, demande);
+		majEtatDemande(idAgent, demandeEtatChangeDto, demande, false);
 
 		result.getInfos().add(String.format("La demande est en attente."));
 	}
