@@ -87,6 +87,17 @@ public class HelperService {
 			}
 		}
 		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
+			if (typeSaisi.getUniteDecompte() != null && typeSaisi.getUniteDecompte().equals(UNITE_DECOMPTE_MINUTES)) {
+				DateTime recupDateFin = new DateTime(dateDeb);
+				String durEntier = duree.toString().substring(0, duree.toString().indexOf("."));
+				String durDecimal = duree.toString().substring(duree.toString().indexOf(".") + 1,
+						duree.toString().length());
+				Double heure = new Double(durEntier) * 60;
+				Double minute = durDecimal.substring(0, 1).equals("0") ? new Double(durDecimal) : 10.0 * new Double(
+						durDecimal);
+				Double dur = heure + minute;
+				return recupDateFin.plusMinutes(dur.intValue()).toDate();
+			}
 			DateTime recupDateFin = new DateTime(dateDeb);
 			return recupDateFin.plusMinutes(duree.intValue()).toDate();
 
@@ -166,11 +177,19 @@ public class HelperService {
 
 		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
 			if (UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
-				return duree * 60;
+				String durEntier = duree.toString().substring(0, duree.toString().indexOf("."));
+				String durDecimal = duree.toString().substring(duree.toString().indexOf(".") + 1,
+						duree.toString().length());
+				Double heure = new Double(durEntier) * 60;
+				Double minute = durDecimal.substring(0, 1).equals("0") ? new Double(durDecimal) : 10.0 * new Double(
+						durDecimal);
+				Double dur = heure + minute;
+				return dur;
+
 			}
 			return duree;
 		}
-		if(!typeSaisi.isCalendarDateFin()){
+		if (!typeSaisi.isCalendarDateFin()) {
 			if (UNITE_DECOMPTE_JOURS.equals(typeSaisi.getUniteDecompte())) {
 				return calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
 			}
@@ -410,28 +429,31 @@ public class HelperService {
 		switch (demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence()) {
 			case "A":
 			case "D":
-				
-				List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
-				
+
+				List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(),
+						demande.getDateFin());
+
 				duree = calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())
-						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin(), listJoursFeries)
+						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin(),
+								listJoursFeries)
 						- getNombreJourSemaine(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY) // on
 																															// retire
 																															// le
 																															// nombre
 																															// de
 																															// samedi
-						+ getNombreSamediDecompte(demande, listJoursFeries) - getNombreSamediOffert(demande, listJoursFeries); // puis
-																								// on
-																								// calcule
-																								// le
-																								// nombre
-																								// de
-																								// samedi
-																								// decompte
-																								// selon
-																								// les
-																								// RG
+						+ getNombreSamediDecompte(demande, listJoursFeries)
+						- getNombreSamediOffert(demande, listJoursFeries); // puis
+				// on
+				// calcule
+				// le
+				// nombre
+				// de
+				// samedi
+				// decompte
+				// selon
+				// les
+				// RG
 				break;
 
 			case "E":
@@ -470,7 +492,7 @@ public class HelperService {
 
 	protected Double getNombreJoursFeriesChomes(Date dateDebut, Date dateFin, List<JourDto> listJoursFeries) {
 		int compteur = 0;
-		
+
 		Calendar calendarDebut = new GregorianCalendar();
 		calendarDebut.setTime(dateDebut);
 
@@ -478,7 +500,7 @@ public class HelperService {
 		calendarFin.setTime(dateFin);
 
 		while (calendarDebut.compareTo(calendarFin) <= 0) {
-			
+
 			if (calendarDebut.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
 				if (isJourHoliday(listJoursFeries, calendarDebut.getTime())) {
 					compteur++;
@@ -562,10 +584,11 @@ public class HelperService {
 	}
 
 	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande) {
-		List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
+		List<JourDto> listJoursFeries = sirhWSConsumer
+				.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
 		return getNombreSamediDecompte(demande, listJoursFeries);
 	}
-	
+
 	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande, List<JourDto> listJoursFeries) {
 
 		Double compteur = 0.0;
@@ -653,13 +676,13 @@ public class HelperService {
 		}
 		return compteur;
 	}
-	
+
 	private boolean isJourHoliday(List<JourDto> listJoursFeries, Date dateJour) {
-		if(null != listJoursFeries) {
+		if (null != listJoursFeries) {
 			DateTime dateTimeJour = new DateTime(dateJour);
-			for(JourDto jourFerie : listJoursFeries) {
+			for (JourDto jourFerie : listJoursFeries) {
 				DateTime dateTimeFerie = new DateTime(jourFerie.getJour());
-				if(dateTimeFerie.getDayOfYear() == dateTimeJour.getDayOfYear()) {
+				if (dateTimeFerie.getDayOfYear() == dateTimeJour.getDayOfYear()) {
 					return true;
 				}
 			}
@@ -668,7 +691,8 @@ public class HelperService {
 	}
 
 	public Double getNombreSamediOffert(DemandeCongesAnnuels demande) {
-		List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
+		List<JourDto> listJoursFeries = sirhWSConsumer
+				.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
 		return getNombreSamediOffert(demande, listJoursFeries);
 	}
 
