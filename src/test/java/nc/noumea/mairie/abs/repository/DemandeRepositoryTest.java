@@ -151,8 +151,8 @@ public class DemandeRepositoryTest {
 
 		// Then
 		assertEquals(2, result.size());
-		assertEquals("20", ((DemandeReposComp) result.get(0)).getDuree().toString());
-		assertEquals("30", ((DemandeRecup) result.get(1)).getDuree().toString());
+		assertEquals("20", ((DemandeReposComp) result.get(1)).getDuree().toString());
+		assertEquals("30", ((DemandeRecup) result.get(0)).getDuree().toString());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -199,8 +199,8 @@ public class DemandeRepositoryTest {
 
 		// Then
 		assertEquals(2, result.size());
-		assertEquals("40", ((DemandeRecup) result.get(1)).getDuree().toString());
-		assertEquals("20", ((DemandeReposComp) result.get(0)).getDuree().toString());
+		assertEquals("40", ((DemandeRecup) result.get(0)).getDuree().toString());
+		assertEquals("20", ((DemandeReposComp) result.get(1)).getDuree().toString());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -311,8 +311,8 @@ public class DemandeRepositoryTest {
 
 		// Then
 		assertEquals(2, result.size());
-		assertEquals("40", ((DemandeRecup) result.get(1)).getDuree().toString());
-		assertEquals("20", ((DemandeReposComp) result.get(0)).getDuree().toString());
+		assertEquals("40", ((DemandeRecup) result.get(0)).getDuree().toString());
+		assertEquals("20", ((DemandeReposComp) result.get(1)).getDuree().toString());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -332,21 +332,21 @@ public class DemandeRepositoryTest {
 
 		DemandeRecup d2 = new DemandeRecup();
 		d2.setIdAgent(9005131);
-		d2.setDateDebut(sdf.parse("15/06/2013"));
+		d2.setDateDebut(sdf.parse("17/06/2013"));
 		d2.setDateFin(null);
 		d2.setDuree(40);
 		absEntityManager.persist(d2);
 
 		DemandeRecup d3 = new DemandeRecup();
 		d3.setIdAgent(9005132);
-		d3.setDateDebut(sdf.parse("15/07/2013"));
+		d3.setDateDebut(sdf.parse("14/07/2013"));
 		d3.setDateFin(null);
 		d3.setDuree(50);
 		absEntityManager.persist(d3);
 
 		DemandeReposComp dpr = new DemandeReposComp();
 		dpr.setIdAgent(9005130);
-		dpr.setDateDebut(sdf.parse("15/05/2013"));
+		dpr.setDateDebut(sdf.parse("16/05/2013"));
 		dpr.setDateFin(null);
 		dpr.setDuree(30);
 		dpr.setDureeAnneeN1(10);
@@ -401,13 +401,13 @@ public class DemandeRepositoryTest {
 		// Then
 		assertEquals(6, result.size());
 
-		assertEquals(50, ((DemandeRecup) result.get(3)).getDuree().intValue());
-		assertEquals(40, ((DemandeRecup) result.get(4)).getDuree().intValue());
+		assertEquals(50, ((DemandeRecup) result.get(1)).getDuree().intValue());
+		assertEquals(40, ((DemandeRecup) result.get(2)).getDuree().intValue());
 		assertEquals(30, ((DemandeRecup) result.get(5)).getDuree().intValue());
 
 		assertEquals(50, ((DemandeReposComp) result.get(0)).getDuree().intValue());
-		assertEquals(40, ((DemandeReposComp) result.get(1)).getDuree().intValue());
-		assertEquals(30, ((DemandeReposComp) result.get(2)).getDuree().intValue());
+		assertEquals(40, ((DemandeReposComp) result.get(3)).getDuree().intValue());
+		assertEquals(30, ((DemandeReposComp) result.get(4)).getDuree().intValue());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -434,14 +434,14 @@ public class DemandeRepositoryTest {
 
 		DemandeRecup d3 = new DemandeRecup();
 		d3.setIdAgent(9005132);
-		d3.setDateDebut(sdf.parse("15/07/2013"));
+		d3.setDateDebut(sdf.parse("14/07/2013"));
 		d3.setDateFin(null);
 		d3.setDuree(50);
 		absEntityManager.persist(d3);
 
 		DemandeReposComp drp = new DemandeReposComp();
 		drp.setIdAgent(9005130);
-		drp.setDateDebut(sdf.parse("15/05/2013"));
+		drp.setDateDebut(sdf.parse("14/05/2013"));
 		drp.setDateFin(null);
 		drp.setDuree(30);
 		drp.setDureeAnneeN1(10);
@@ -449,7 +449,7 @@ public class DemandeRepositoryTest {
 
 		DemandeReposComp drp2 = new DemandeReposComp();
 		drp2.setIdAgent(9005131);
-		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateDebut(sdf.parse("14/06/2013"));
 		drp2.setDateFin(null);
 		drp2.setDuree(40);
 		drp2.setDureeAnneeN1(10);
@@ -500,11 +500,11 @@ public class DemandeRepositoryTest {
 		// Then
 		assertEquals(4, result.size());
 
-		assertEquals(50, ((DemandeRecup) result.get(2)).getDuree().intValue());
-		assertEquals(40, ((DemandeRecup) result.get(3)).getDuree().intValue());
+		assertEquals(50, ((DemandeRecup) result.get(1)).getDuree().intValue());
+		assertEquals(40, ((DemandeRecup) result.get(2)).getDuree().intValue());
 
 		assertEquals(50, ((DemandeReposComp) result.get(0)).getDuree().intValue());
-		assertEquals(40, ((DemandeReposComp) result.get(1)).getDuree().intValue());
+		assertEquals(40, ((DemandeReposComp) result.get(3)).getDuree().intValue());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -812,18 +812,17 @@ public class DemandeRepositoryTest {
 		// Given
 		DemandeRecup dr = new DemandeRecup();
 		dr.setIdAgent(9005140);
-		dr.setDateDebut(new Date());
+		dr.setDateDebut(new DateTime(2013, 05, 02, 0, 0).toDate());
 		dr.setDateFin(null);
 		dr.setDuree(30);
 		absEntityManager.persist(dr);
 
 		DemandeCongesAnnuels ca = new DemandeCongesAnnuels();
 		ca.setIdAgent(9005142);
-		ca.setDateDebut(new Date());
+		ca.setDateDebut(new DateTime(2013, 05, 03, 0, 0).toDate());
 		ca.setDateFin(null);
 		ca.setDuree(30.0);
 		absEntityManager.persist(ca);
-
 
 		DemandeReposComp drc = new DemandeReposComp();
 		drc.setIdAgent(9005138);
@@ -834,7 +833,8 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drc);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRH(null, null, null, null, Arrays.asList(9005142, 9005138), null);
+		List<Demande> result = repository.listeDemandesSIRH(null, null, null, null, Arrays.asList(9005142, 9005138),
+				null);
 
 		// Then
 		assertEquals(2, result.size());
@@ -949,8 +949,8 @@ public class DemandeRepositoryTest {
 
 		// Then
 		assertEquals(2, result.size());
-		assertEquals("40", ((DemandeRecup) result.get(1)).getDuree().toString());
-		assertEquals("20", ((DemandeReposComp) result.get(0)).getDuree().toString());
+		assertEquals("40", ((DemandeRecup) result.get(0)).getDuree().toString());
+		assertEquals("20", ((DemandeReposComp) result.get(1)).getDuree().toString());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -985,7 +985,7 @@ public class DemandeRepositoryTest {
 
 		DemandeReposComp drp2 = new DemandeReposComp();
 		drp2.setIdAgent(9005138);
-		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateDebut(sdf.parse("16/06/2013"));
 		drp2.setDateFin(null);
 		drp2.setDuree(20);
 		drp2.setDureeAnneeN1(10);
@@ -1044,8 +1044,8 @@ public class DemandeRepositoryTest {
 
 		// Then
 		assertEquals(2, result.size());
-		assertEquals("40", ((DemandeRecup) result.get(1)).getDuree().toString());
-		assertEquals("20", ((DemandeReposComp) result.get(0)).getDuree().toString());
+		assertEquals("40", ((DemandeRecup) result.get(0)).getDuree().toString());
+		assertEquals("20", ((DemandeReposComp) result.get(1)).getDuree().toString());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -1071,7 +1071,7 @@ public class DemandeRepositoryTest {
 
 		DemandeAsa d = new DemandeAsa();
 		d.setIdAgent(9005138);
-		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateDebut(sdf.parse("15/04/2013"));
 		d.setDateFin(null);
 		d.setDuree(10.0);
 		d.setType(typeAsaA48);
@@ -1079,7 +1079,7 @@ public class DemandeRepositoryTest {
 
 		DemandeAsa d2 = new DemandeAsa();
 		d2.setIdAgent(9005138);
-		d2.setDateDebut(sdf.parse("15/06/2013"));
+		d2.setDateDebut(sdf.parse("15/05/2013"));
 		d2.setDateFin(null);
 		d2.setDuree(20.0);
 		d2.setType(typeAsaA48);
@@ -1087,7 +1087,7 @@ public class DemandeRepositoryTest {
 
 		DemandeAsa drp = new DemandeAsa();
 		drp.setIdAgent(9005138);
-		drp.setDateDebut(sdf.parse("15/05/2013"));
+		drp.setDateDebut(sdf.parse("15/06/2013"));
 		drp.setDateFin(null);
 		drp.setDuree(30.0);
 		drp.setType(typeAsaA49);
@@ -1095,7 +1095,7 @@ public class DemandeRepositoryTest {
 
 		DemandeAsa drp2 = new DemandeAsa();
 		drp2.setIdAgent(9005138);
-		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateDebut(sdf.parse("15/07/2013"));
 		drp2.setDateFin(null);
 		drp2.setDuree(40.0);
 		drp2.setType(typeAsaA49);
@@ -1280,7 +1280,7 @@ public class DemandeRepositoryTest {
 
 		DemandeAsa d = new DemandeAsa();
 		d.setIdAgent(9005138);
-		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateDebut(sdf.parse("16/05/2013"));
 		d.setDateFin(null);
 		d.setType(typeAsa);
 		absEntityManager.persist(d);
@@ -1293,7 +1293,7 @@ public class DemandeRepositoryTest {
 
 		DemandeAsa dR2 = new DemandeAsa();
 		dR2.setIdAgent(9005139);
-		dR2.setDateDebut(sdf.parse("15/06/2013"));
+		dR2.setDateDebut(sdf.parse("17/06/2013"));
 		dR2.setDateFin(null);
 		dR2.setType(typeAsa);
 		absEntityManager.persist(dR2);
@@ -1306,7 +1306,7 @@ public class DemandeRepositoryTest {
 
 		DemandeRecup drp = new DemandeRecup();
 		drp.setIdAgent(9005139);
-		drp.setDateDebut(sdf.parse("15/05/2013"));
+		drp.setDateDebut(sdf.parse("18/05/2013"));
 		drp.setDateFin(null);
 		drp.setType(typeRecup);
 		absEntityManager.persist(drp);
@@ -1355,7 +1355,7 @@ public class DemandeRepositoryTest {
 
 		// Then
 		assertEquals(0, (int) result);
-		
+
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
@@ -1374,7 +1374,7 @@ public class DemandeRepositoryTest {
 
 		EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
 		etatDemande.setEtat(RefEtatEnum.REFUSEE);
-		
+
 		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
 		d.setIdAgent(9005138);
 		d.setType(type);
@@ -1386,7 +1386,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(etatDemande);
 
 		// When
-		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande()+1);
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande() + 1);
 
 		// Then
 		assertEquals(0, (int) result);
@@ -1409,7 +1409,7 @@ public class DemandeRepositoryTest {
 
 		EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
 		etatDemande.setEtat(RefEtatEnum.REJETE);
-		
+
 		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
 		d.setIdAgent(9005138);
 		d.setType(type);
@@ -1421,7 +1421,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(etatDemande);
 
 		// When
-		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande()+1);
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande() + 1);
 
 		// Then
 		assertEquals(0, (int) result);
@@ -1444,7 +1444,7 @@ public class DemandeRepositoryTest {
 
 		EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
 		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
-		
+
 		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
 		d.setIdAgent(9005138);
 		d.setType(type);
@@ -1479,7 +1479,7 @@ public class DemandeRepositoryTest {
 
 		EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
 		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
-		
+
 		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
 		d.setIdAgent(9005138);
 		d.setType(type);
@@ -1491,7 +1491,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(etatDemande);
 
 		// When
-		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande()+1);
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande() + 1);
 
 		// Then
 		assertEquals(1, (int) result);
@@ -1548,7 +1548,7 @@ public class DemandeRepositoryTest {
 		EtatDemande etat = new EtatDemande();
 		etat.setDate(new Date());
 		etat.setEtat(RefEtatEnum.APPROUVEE);
-		
+
 		Demande d = new Demande();
 		d.setIdAgent(idAgent);
 		d.setType(type);
@@ -1576,7 +1576,7 @@ public class DemandeRepositoryTest {
 		Integer idAgent = 9005138;
 		Date fromDate = new DateTime(2014, 5, 15, 2, 0).toDate();
 		Date toDate = new DateTime(2014, 5, 15, 4, 0).toDate();
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 		absEntityManager.persist(groupe);
@@ -1592,9 +1592,9 @@ public class DemandeRepositoryTest {
 		d.setDateFin(new DateTime(2014, 5, 16, 0, 0).toDate());
 		d.setNbSamediOffert(1.0);
 		absEntityManager.persist(d);
-		
-		for(int i=0; i<12; i++) {
-			
+
+		for (int i = 0; i < 12; i++) {
+
 			EtatDemande etat = new EtatDemande();
 			etat.setDate(new Date());
 			etat.setEtat(RefEtatEnum.getRefEtatEnum(i));
@@ -1602,21 +1602,18 @@ public class DemandeRepositoryTest {
 			d.getEtatsDemande().add(etat);
 			absEntityManager.persist(d);
 			absEntityManager.persist(etat);
-			
+
 			// When
 			List<Demande> result = repository.listeDemandesAgentVerification(idAgent, fromDate, toDate,
 					RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 
 			// Then
-			if(i == RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()
-					|| i == RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()
-					|| i == RefEtatEnum.APPROUVEE.getCodeEtat()
-					|| i == RefEtatEnum.A_VALIDER.getCodeEtat()
-					|| i == RefEtatEnum.EN_ATTENTE.getCodeEtat()
-					|| i == RefEtatEnum.PRISE.getCodeEtat()
+			if (i == RefEtatEnum.VISEE_FAVORABLE.getCodeEtat() || i == RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()
+					|| i == RefEtatEnum.APPROUVEE.getCodeEtat() || i == RefEtatEnum.A_VALIDER.getCodeEtat()
+					|| i == RefEtatEnum.EN_ATTENTE.getCodeEtat() || i == RefEtatEnum.PRISE.getCodeEtat()
 					|| i == RefEtatEnum.VALIDEE.getCodeEtat()) {
 				assertEquals(1, result.size());
-			}else{
+			} else {
 				assertEquals(0, result.size());
 			}
 		}

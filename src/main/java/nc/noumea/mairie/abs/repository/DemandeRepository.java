@@ -82,7 +82,7 @@ public class DemandeRepository implements IDemandeRepository {
 			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
 		}
 
-		sb.append("order by d.idDemande desc ");
+		sb.append("order by d.dateDebut desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
 
@@ -202,7 +202,7 @@ public class DemandeRepository implements IDemandeRepository {
 			sb.append("and d.type.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");
 		}
 
-		sb.append("order by d.idDemande desc ");
+		sb.append("order by d.dateDebut desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
 
@@ -237,7 +237,7 @@ public class DemandeRepository implements IDemandeRepository {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d ");
 		sb.append("where d.type.groupe.idRefGroupeAbsence in( :AS , :CONGE_EXCEP, :CONGE_ANNUEL ) ");
-		sb.append("order by d.idDemande desc ");
+		sb.append("order by d.dateDebut desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
 		query.setParameter("AS", RefTypeGroupeAbsenceEnum.AS.getValue());
