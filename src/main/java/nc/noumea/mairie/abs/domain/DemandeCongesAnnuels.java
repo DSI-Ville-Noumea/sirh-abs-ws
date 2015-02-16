@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -50,7 +49,8 @@ public class DemandeCongesAnnuels extends Demande {
 	@Column(name = "COMMENTAIRE")
 	private String commentaire;
 
-	@OneToOne(cascade = CascadeType.DETACH)
+	@NotNull
+	@OneToOne(fetch = FetchType.EAGER, optional = true, orphanRemoval = false)
 	@JoinColumn(name = "ID_REF_TYPE_SAISI_CONGE_ANNUEL")
 	private RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel;
 
