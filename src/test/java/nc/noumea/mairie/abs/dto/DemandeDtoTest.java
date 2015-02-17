@@ -59,7 +59,7 @@ public class DemandeDtoTest {
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
-		result.updateEtat(etatDemande, agentEtat,d.getType().getGroupe());
+		result.updateEtat(etatDemande, agentEtat, d.getType().getGroupe());
 
 		// Then
 
@@ -840,7 +840,6 @@ public class DemandeDtoTest {
 		assertFalse(result.isDateFinPM());
 	}
 
-
 	@Test
 	public void ctor_DemandeCongeExcep() {
 
@@ -876,7 +875,7 @@ public class DemandeDtoTest {
 		etatDemandeVisaD.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
 		etatDemandeVisaD.setDate(dateDemande);
 		etatDemandeVisaD.setMotif("motif visa d");
-		
+
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
 		type.setIdRefTypeAbsence(24);
@@ -915,7 +914,6 @@ public class DemandeDtoTest {
 		assertFalse(result.isDateFinAM());
 		assertFalse(result.isDateFinPM());
 	}
-
 
 	@Test
 	public void ctor_DemandeCongeAnnuel() {
@@ -968,6 +966,7 @@ public class DemandeDtoTest {
 		d.getEtatsDemande().add(etatDemandeRefuse);
 		d.getEtatsDemande().add(etatDemandeVisaD);
 		d.setDuree(10.0);
+		d.setNbSamediOffert(1.0);
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
@@ -991,8 +990,8 @@ public class DemandeDtoTest {
 		assertFalse(result.isDateDebutPM());
 		assertFalse(result.isDateFinAM());
 		assertFalse(result.isDateFinPM());
+		assertTrue(result.isSamediOffert());
 	}
-
 
 	@Test
 	public void ctor_DemandeCongeAnnuel_WithAnneN1() {
@@ -1046,6 +1045,8 @@ public class DemandeDtoTest {
 		d.getEtatsDemande().add(etatDemandeVisaD);
 		d.setDuree(10.0);
 		d.setDureeAnneeN1(5.0);
+		d.setNbSamediOffert(0.0);
+		;
 
 		// When
 		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
@@ -1069,5 +1070,6 @@ public class DemandeDtoTest {
 		assertFalse(result.isDateDebutPM());
 		assertFalse(result.isDateFinAM());
 		assertFalse(result.isDateFinPM());
+		assertFalse(result.isSamediOffert());
 	}
 }
