@@ -9633,6 +9633,7 @@ public class AbsenceServiceTest {
 		dr.setIdAgent(9005138);
 		dr.setIdDemande(idDemande);
 		dr.setType(rta);
+		dr.setNbSamediOffert(0.0);
 
 		Date date = new Date();
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -9663,6 +9664,7 @@ public class AbsenceServiceTest {
 		assertFalse(result.isAffichageBoutonImprimer());
 		assertFalse(result.isAffichageBoutonModifier());
 		assertFalse(result.isAffichageBoutonSupprimer());
+		assertFalse(result.isSamediOffert());
 		assertEquals("motif", result.getMotif());
 	}
 
@@ -9712,6 +9714,7 @@ public class AbsenceServiceTest {
 		dr.setIdAgent(9005138);
 		dr.setIdDemande(idDemande);
 		dr.setType(rta);
+		dr.setNbSamediOffert(1.0);
 
 		IDemandeRepository demandeRepo = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepo.getEntity(Demande.class, idDemande)).thenReturn(d);
@@ -9743,6 +9746,7 @@ public class AbsenceServiceTest {
 		assertFalse(result.isAffichageBoutonModifier());
 		assertFalse(result.isAffichageBoutonSupprimer());
 		assertEquals("motif", result.getMotif());
+		assertFalse(result.isSamediOffert());
 	}
 
 	@Test
