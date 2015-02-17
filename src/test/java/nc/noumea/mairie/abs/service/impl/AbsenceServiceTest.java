@@ -9748,7 +9748,7 @@ public class AbsenceServiceTest {
 		assertFalse(result.isAffichageBoutonModifier());
 		assertFalse(result.isAffichageBoutonSupprimer());
 		assertEquals("motif", result.getMotif());
-		assertFalse(result.isSamediOffert());
+		assertTrue(result.isSamediOffert());
 	}
 
 	@Test
