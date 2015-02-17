@@ -277,14 +277,38 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			demande.setDureeAnneeN1(0.0);
 		}
 
+		Double joursOld = arc.getTotalJours();
+		Double joursAnneeN1Old = arc.getTotalJoursAnneeN1();
+		
 		arc.setTotalJours(arc.getTotalJours() + joursAnneeEnCours);
 		arc.setTotalJoursAnneeN1(arc.getTotalJoursAnneeN1() + joursAnneeN1);
 		arc.setLastModification(helperService.getCurrentDate());
 
+		updateDemandeWithNewSolde(demande, joursOld, arc.getTotalJours(), joursAnneeN1Old, arc.getTotalJoursAnneeN1());
+		
 		counterRepository.persistEntity(arc);
 		counterRepository.persistEntity(demande);
 
 		return srm;
+	}
+
+	/**
+	 * #13519 maj solde sur la demande
+	 * 
+	 * @param demande demande a mettre a jour
+	 * @param joursOld ancien solde en jours
+	 * @param JoursNew nouveau solde en jours
+	 * @param minutesOld ancien solde en minutes
+	 * @param minutesNew nouveau solde en minutes
+	 */
+	protected void updateDemandeWithNewSolde (DemandeCongesAnnuels demande, 
+			Double joursOld, Double JoursNew, 
+			Double joursAnneeN1Old, Double joursAnneeN1New) {
+		
+		demande.setTotalJoursNew(JoursNew);
+		demande.setTotalJoursOld(joursOld);
+		demande.setTotalJoursAnneeN1New(joursAnneeN1New);
+		demande.setTotalJoursAnneeN1Old(joursAnneeN1Old);
 	}
 	
 	/**
@@ -504,18 +528,19 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			List<Integer> listIdAgent) {
 		
 		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		// verification des droits SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			logger.warn(AGENT_NON_HABILITE);
+			srm.getErrors().add(String.format(AGENT_NON_HABILITE));
+			return srm;
+		}
+	
 		for (Integer idAgentList : listIdAgent) {
 		
 			logger.info("Start restitutionMassiveCA for idAgent {} ...", idAgentList);
 
-			// verification des droits SIRH
-				ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte);
-			if (!isUtilisateurSIRH.getErrors().isEmpty()) {
-				logger.warn(AGENT_NON_HABILITE);
-				srm.getErrors().add(String.format(AGENT_NON_HABILITE));
-				return srm;
-			}
-		
 			/////////////////////////////////////
 			// on teste s il n y a pas deja eu une restitution massive
 			// pour l agent sur le meme jour

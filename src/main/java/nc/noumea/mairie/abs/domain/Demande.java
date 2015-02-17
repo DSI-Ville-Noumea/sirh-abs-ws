@@ -41,7 +41,7 @@ public class Demande {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 
-	@OneToOne(optional = true)
+	@OneToOne(fetch = FetchType.EAGER, optional = true, orphanRemoval = false)
 	@JoinColumn(name = "ID_TYPE_DEMANDE")
 	private RefTypeAbsence type;
 

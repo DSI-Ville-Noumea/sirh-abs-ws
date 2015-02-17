@@ -52,6 +52,22 @@ public class EtatDemandeCongesAnnuels extends EtatDemande {
 	@OneToOne(fetch = FetchType.EAGER, optional = true, orphanRemoval = false)
 	@JoinColumn(name = "ID_REF_TYPE_SAISI_CONGE_ANNUEL")
 	private RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel;
+	
+	// solde annee en cours avant decompte de la demande
+	@Column(name = "TOTAL_JOURS_OLD", columnDefinition = "numeric")
+	private Double totalJoursOld;
+	
+	// solde annee en cours apres decompte de la demande
+	@Column(name = "TOTAL_JOURS_NEW", columnDefinition = "numeric")
+	private Double totalJoursNew;
+	
+	// solde annee N-1 avant decompte de la demande
+	@Column(name = "TOTAL_JOURS_ANNEE_N1_OLD", columnDefinition = "numeric")
+	private Double totalJoursAnneeN1Old;
+	
+	// solde annee N-1 apres decompte de la demande
+	@Column(name = "TOTAL_JOURS_ANNEE_N1_NEW", columnDefinition = "numeric")
+	private Double totalJoursAnneeN1New;
 
 	public Double getDuree() {
 		return duree;
@@ -131,6 +147,38 @@ public class EtatDemandeCongesAnnuels extends EtatDemande {
 
 	public void setNbSamediOffert(Double nbSamediOffert) {
 		this.nbSamediOffert = nbSamediOffert;
+	}
+
+	public Double getTotalJoursOld() {
+		return totalJoursOld;
+	}
+
+	public void setTotalJoursOld(Double totalJoursOld) {
+		this.totalJoursOld = totalJoursOld;
+	}
+
+	public Double getTotalJoursNew() {
+		return totalJoursNew;
+	}
+
+	public void setTotalJoursNew(Double totalJoursNew) {
+		this.totalJoursNew = totalJoursNew;
+	}
+
+	public Double getTotalJoursAnneeN1Old() {
+		return totalJoursAnneeN1Old;
+	}
+
+	public void setTotalJoursAnneeN1Old(Double totalJoursAnneeN1Old) {
+		this.totalJoursAnneeN1Old = totalJoursAnneeN1Old;
+	}
+
+	public Double getTotalJoursAnneeN1New() {
+		return totalJoursAnneeN1New;
+	}
+
+	public void setTotalJoursAnneeN1New(Double totalJoursAnneeN1New) {
+		this.totalJoursAnneeN1New = totalJoursAnneeN1New;
 	}
 
 }

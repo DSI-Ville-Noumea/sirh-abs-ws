@@ -38,6 +38,22 @@ public class EtatDemandeAsa extends EtatDemande {
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_ORGANISATION_SYNDICALE")
 	private OrganisationSyndicale organisationSyndicale;
+	
+	// solde avant decompte de la demande
+	@Column(name = "TOTAL_MINUTES_OLD", columnDefinition = "numeric")
+	private Integer totalMinutesOld;
+	
+	// solde apres decompte de la demande
+	@Column(name = "TOTAL_MINUTES_NEW", columnDefinition = "numeric")
+	private Integer totalMinutesNew;
+	
+	// solde avant decompte de la demande
+	@Column(name = "TOTAL_JOURS_OLD", columnDefinition = "numeric")
+	private Double totalJoursOld;
+	
+	// solde apres decompte de la demande
+	@Column(name = "TOTAL_JOURS_NEW", columnDefinition = "numeric")
+	private Double totalJoursNew;
 
 	public boolean isDateDebutAM() {
 		return dateDebutAM;
@@ -85,6 +101,38 @@ public class EtatDemandeAsa extends EtatDemande {
 
 	public void setOrganisationSyndicale(OrganisationSyndicale organisationSyndicale) {
 		this.organisationSyndicale = organisationSyndicale;
+	}
+
+	public Integer getTotalMinutesOld() {
+		return totalMinutesOld;
+	}
+
+	public void setTotalMinutesOld(Integer totalMinutesOld) {
+		this.totalMinutesOld = totalMinutesOld;
+	}
+
+	public Integer getTotalMinutesNew() {
+		return totalMinutesNew;
+	}
+
+	public void setTotalMinutesNew(Integer totalMinutesNew) {
+		this.totalMinutesNew = totalMinutesNew;
+	}
+
+	public Double getTotalJoursOld() {
+		return totalJoursOld;
+	}
+
+	public void setTotalJoursOld(Double totalJoursOld) {
+		this.totalJoursOld = totalJoursOld;
+	}
+
+	public Double getTotalJoursNew() {
+		return totalJoursNew;
+	}
+
+	public void setTotalJoursNew(Double totalJoursNew) {
+		this.totalJoursNew = totalJoursNew;
 	}
 
 }

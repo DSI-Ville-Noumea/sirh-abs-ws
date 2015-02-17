@@ -956,6 +956,10 @@ public class AbsenceService implements IAbsenceService {
 				etatDemandeReposComp.setDateFin(demandeReposComp.getDateFin());
 				etatDemandeReposComp.setDuree(demandeReposComp.getDuree());
 				etatDemandeReposComp.setDureeAnneeN1(demandeReposComp.getDureeAnneeN1());
+				etatDemandeReposComp.setTotalMinutesAnneeN1Old(demandeReposComp.getTotalMinutesAnneeN1Old());
+				etatDemandeReposComp.setTotalMinutesAnneeN1New(demandeReposComp.getTotalMinutesAnneeN1New());
+				etatDemandeReposComp.setTotalMinutesOld(demandeReposComp.getTotalMinutesOld());
+				etatDemandeReposComp.setTotalMinutesNew(demandeReposComp.getTotalMinutesNew());
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = (DemandeRecup) demande;
@@ -964,6 +968,8 @@ public class AbsenceService implements IAbsenceService {
 				etatDemandeRecup.setDateDebut(demandeRecup.getDateDebut());
 				etatDemandeRecup.setDateFin(demandeRecup.getDateFin());
 				etatDemandeRecup.setDuree(demandeRecup.getDuree());
+				etatDemandeRecup.setTotalMinutesOld(demandeRecup.getTotalMinutesOld());
+				etatDemandeRecup.setTotalMinutesNew(demandeRecup.getTotalMinutesNew());
 				break;
 			case AS:
 				DemandeAsa demandeAsa = (DemandeAsa) demande;
@@ -978,6 +984,11 @@ public class AbsenceService implements IAbsenceService {
 				etatDemandeAsa.setDateFinPM(demandeAsa.isDateFinPM());
 				if (demandeAsa.getOrganisationSyndicale() != null)
 					etatDemandeAsa.setOrganisationSyndicale(demandeAsa.getOrganisationSyndicale());
+				
+				etatDemandeAsa.setTotalMinutesOld(demandeAsa.getTotalMinutesOld());
+				etatDemandeAsa.setTotalMinutesNew(demandeAsa.getTotalMinutesNew());
+				etatDemandeAsa.setTotalJoursOld(demandeAsa.getTotalJoursOld());
+				etatDemandeAsa.setTotalJoursNew(demandeAsa.getTotalJoursNew());
 				break;
 			case CONGES_EXCEP:
 				DemandeCongesExceptionnels demandeCongeExcep = (DemandeCongesExceptionnels) demande;
@@ -1008,6 +1019,10 @@ public class AbsenceService implements IAbsenceService {
 				etatDemandeCongeAnnuel.setNbSamediOffert(demandeCongeAnnuel.getNbSamediOffert());
 				etatDemandeCongeAnnuel.setCommentaire(demandeCongeAnnuel.getCommentaire());
 				etatDemandeCongeAnnuel.setTypeSaisiCongeAnnuel(demandeCongeAnnuel.getTypeSaisiCongeAnnuel());
+				etatDemandeCongeAnnuel.setTotalJoursAnneeN1Old(demandeCongeAnnuel.getTotalJoursAnneeN1Old());
+				etatDemandeCongeAnnuel.setTotalJoursAnneeN1New(demandeCongeAnnuel.getTotalJoursAnneeN1New());
+				etatDemandeCongeAnnuel.setTotalJoursOld(demandeCongeAnnuel.getTotalJoursOld());
+				etatDemandeCongeAnnuel.setTotalJoursNew(demandeCongeAnnuel.getTotalJoursNew());
 				break;
 			default:
 				break;

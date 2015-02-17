@@ -7,6 +7,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.CompteurDto;
@@ -120,7 +121,7 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 				demande.getDateFin());
 		if (0.0 != jours) {
 			try {
-				srm = majCompteurToAgent(demande.getIdAgent(), jours, srm);
+				srm = majCompteurToAgent((DemandeAsa)demande, jours, srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 			}
@@ -144,17 +145,17 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Double jours, ReturnMessageDto srm)
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(DemandeAsa demande, Double jours, ReturnMessageDto srm)
 			throws InstantiationException, IllegalAccessException {
 
-		if (sirhWSConsumer.getAgent(idAgent) == null) {
-			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+		if (sirhWSConsumer.getAgent(demande.getIdAgent()) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", demande.getIdAgent());
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} jours...", idAgent, jours);
+		logger.info("updating counters for Agent [{}] with {} jours...", demande.getIdAgent(), jours);
 
-		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounter(AgentAsaA48Count.class, idAgent);
+		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounter(AgentAsaA48Count.class, demande.getIdAgent());
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
@@ -169,9 +170,14 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 			srm.getInfos().add(String.format(SOLDE_COMPTEUR_NEGATIF_AUTORISE));
 		}
 
+		// #13519 maj solde sur la demande
+		Double joursOld = arc.getTotalJours();
+		
 		arc.setTotalJours(arc.getTotalJours() + jours);
 		arc.setLastModification(helperService.getCurrentDate());
 
+		super.updateDemandeWithNewSolde(demande, joursOld, arc.getTotalJours(), 0, 0);
+		
 		counterRepository.persistEntity(arc);
 
 		return srm;

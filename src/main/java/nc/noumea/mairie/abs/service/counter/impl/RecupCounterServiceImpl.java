@@ -72,7 +72,7 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 
 		if(0 != minutes) {
 			try {
-				return majCompteurToAgent(demande.getIdAgent(), minutes, srm);
+				return majCompteurToAgent((DemandeRecup)demande, minutes, srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 			}
@@ -168,21 +168,21 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Integer minutes, ReturnMessageDto srm)
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(DemandeRecup demande, Integer minutes, ReturnMessageDto srm)
 			throws InstantiationException, IllegalAccessException {
 
-		if (sirhWSConsumer.getAgent(idAgent) == null) {
-			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+		if (sirhWSConsumer.getAgent(demande.getIdAgent()) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", demande.getIdAgent());
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} minutes...", idAgent, minutes);
+		logger.info("updating counters for Agent [{}] with {} minutes...", demande.getIdAgent(), minutes);
 
-		AgentRecupCount arc = (AgentRecupCount) counterRepository.getAgentCounter(AgentRecupCount.class, idAgent);
+		AgentRecupCount arc = (AgentRecupCount) counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent());
 
 		if (arc == null) {
 			arc = new AgentRecupCount();
-			arc.setIdAgent(idAgent);
+			arc.setIdAgent(demande.getIdAgent());
 		}
 
 		// on verifie que le solde est positif seulement si on debite le
@@ -192,13 +192,33 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
 			return srm;
 		}
-
+		// #13519 maj solde sur la demande
+		Integer minutesOld = arc.getTotalMinutes();
+		
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
 		arc.setLastModification(helperService.getCurrentDate());
 
+		updateDemandeWithNewSolde(demande, minutesOld, arc.getTotalMinutes());
+		
 		counterRepository.persistEntity(arc);
 
 		return srm;
+	}
+
+	/**
+	 * #13519 maj solde sur la demande
+	 * 
+	 * @param demande demande a mettre a jour
+	 * @param joursOld ancien solde en jours
+	 * @param JoursNew nouveau solde en jours
+	 * @param minutesOld ancien solde en minutes
+	 * @param minutesNew nouveau solde en minutes
+	 */
+	protected void updateDemandeWithNewSolde (DemandeRecup demande, 
+			Integer minutesOld, Integer minutesNew) {
+		
+		demande.setTotalMinutesOld(minutesOld);
+		demande.setTotalMinutesNew(minutesNew);
 	}
 
 	/**

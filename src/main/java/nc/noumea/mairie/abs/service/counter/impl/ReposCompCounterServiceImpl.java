@@ -425,13 +425,38 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 			demande.setDureeAnneeN1(0);
 		}
 
+		// #13519 maj solde sur la demande
+		Integer minutesOld = arc.getTotalMinutes();
+		Integer minutesAnneeN1Old = arc.getTotalMinutesAnneeN1();
+		
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutesAnneeEnCours);
 		arc.setTotalMinutesAnneeN1(arc.getTotalMinutesAnneeN1() + minutesAnneeN1);
 		arc.setLastModification(helperService.getCurrentDate());
+		
+		updateDemandeWithNewSolde(demande, minutesOld, arc.getTotalMinutes(), minutesAnneeN1Old, arc.getTotalMinutesAnneeN1());
 
 		counterRepository.persistEntity(arc);
 		counterRepository.persistEntity(demande);
 
 		return srm;
+	}
+
+	/**
+	 * #13519 maj solde sur la demande
+	 * 
+	 * @param demande demande a mettre a jour
+	 * @param joursOld ancien solde en jours
+	 * @param JoursNew nouveau solde en jours
+	 * @param minutesOld ancien solde en minutes
+	 * @param minutesNew nouveau solde en minutes
+	 */
+	protected void updateDemandeWithNewSolde (DemandeReposComp demande, 
+			Integer minutesOld, Integer minutesNew,
+			Integer minutesAnneeN1Old, Integer minutesAnneeN1New) {
+		
+		demande.setTotalMinutesOld(minutesOld);
+		demande.setTotalMinutesNew(minutesNew);
+		demande.setTotalMinutesAnneeN1Old(minutesAnneeN1Old);
+		demande.setTotalMinutesAnneeN1New(minutesAnneeN1New);
 	}
 }

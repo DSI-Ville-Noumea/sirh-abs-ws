@@ -16,6 +16,14 @@ public class DemandeRecup extends Demande {
 	@NotNull
 	@Column(name = "DUREE")
 	private Integer duree;
+	
+	// solde annee en cours avant decompte de la demande
+	@Column(name = "TOTAL_MINUTES_OLD", columnDefinition = "numeric")
+	private Integer totalMinutesOld;
+	
+	// solde annee en cours apres decompte de la demande
+	@Column(name = "TOTAL_MINUTES_NEW", columnDefinition = "numeric")
+	private Integer totalMinutesNew;
 
 	public DemandeRecup() {
 	}
@@ -31,6 +39,21 @@ public class DemandeRecup extends Demande {
 	public void setDuree(Integer duree) {
 		this.duree = duree;
 	}
-	
+
+	public Integer getTotalMinutesOld() {
+		return totalMinutesOld;
+	}
+
+	public void setTotalMinutesOld(Integer totalMinutesOld) {
+		this.totalMinutesOld = totalMinutesOld;
+	}
+
+	public Integer getTotalMinutesNew() {
+		return totalMinutesNew;
+	}
+
+	public void setTotalMinutesNew(Integer totalMinutesNew) {
+		this.totalMinutesNew = totalMinutesNew;
+	}
 	
 }

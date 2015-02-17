@@ -143,7 +143,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 				demande.getDateFin());
 		if (0 != minutes) {
 			try {
-				srm = majCompteurToAgent(demande.getIdAgent(), ((DemandeAsa) demande).getOrganisationSyndicale()
+				srm = majCompteurToAgent((DemandeAsa)demande, ((DemandeAsa) demande).getOrganisationSyndicale()
 						.getIdOrganisationSyndicale(), minutes, demande.getDateDebut(), srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update ASA_A52 counters :", e);
@@ -165,16 +165,16 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected <T1, T2> ReturnMessageDto majCompteurToAgent(Integer idAgent, Integer idOrganisationSyndicale,
+	protected <T1, T2> ReturnMessageDto majCompteurToAgent(DemandeAsa demande, Integer idOrganisationSyndicale,
 			int minutes, Date dateDebutDemande, ReturnMessageDto srm) throws InstantiationException,
 			IllegalAccessException {
 
-		if (sirhWSConsumer.getAgent(idAgent) == null) {
-			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+		if (sirhWSConsumer.getAgent(demande.getIdAgent()) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", demande.getIdAgent());
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating counters for Agent [{}] with {} minutes...", idAgent, minutes);
+		logger.info("updating counters for Agent [{}] with {} minutes...", demande.getIdAgent(), minutes);
 
 		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class,
 				idOrganisationSyndicale);
@@ -203,10 +203,15 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF_AUTORISE);
 			srm.getInfos().add(String.format(SOLDE_COMPTEUR_NEGATIF_AUTORISE));
 		}
+		
+		// #13519 maj solde sur la demande
+		Integer minutesOld = arc.getTotalMinutes();
 
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
 		arc.setLastModification(helperService.getCurrentDate());
 
+		super.updateDemandeWithNewSolde(demande, 0.0, 0.0, minutesOld, arc.getTotalMinutes());
+		
 		counterRepository.persistEntity(arc);
 
 		return srm;

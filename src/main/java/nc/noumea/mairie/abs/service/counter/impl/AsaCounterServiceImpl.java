@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.service.counter.impl;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
@@ -65,5 +66,24 @@ public class AsaCounterServiceImpl extends AbstractCounterService {
 		}
 
 		return jours;
+	}
+
+	/**
+	 * #13519 maj solde sur la demande
+	 * 
+	 * @param demande demande a mettre a jour
+	 * @param joursOld ancien solde en jours
+	 * @param JoursNew nouveau solde en jours
+	 * @param minutesOld ancien solde en minutes
+	 * @param minutesNew nouveau solde en minutes
+	 */
+	protected void updateDemandeWithNewSolde (DemandeAsa demande, 
+			Double joursOld, Double JoursNew, 
+			Integer minutesOld, Integer minutesNew) {
+		
+		demande.setTotalJoursNew(JoursNew);
+		demande.setTotalJoursOld(joursOld);
+		demande.setTotalMinutesNew(minutesNew);
+		demande.setTotalMinutesOld(minutesOld);
 	}
 }
