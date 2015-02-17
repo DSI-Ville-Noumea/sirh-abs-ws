@@ -1609,7 +1609,11 @@ public class AbsenceService implements IAbsenceService {
 		for (CongeAnnuelAlimAutoHisto histo : congeAnnuelRepository.getListeAlimAutoCongeAnnuel(dateMois)) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
 			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
-			mois.setAgent(new AgentDto(ag));
+			AgentDto agDto = new AgentDto();
+			if (ag != null && ag.getIdAgent() != null) {
+				agDto = new AgentDto(ag);
+			}
+			mois.setAgent(agDto);
 			mois.setDateModification(histo.getDateModification());
 			mois.setStatus(histo.getStatus());
 			mois.setDateMois(histo.getDateMonth());
