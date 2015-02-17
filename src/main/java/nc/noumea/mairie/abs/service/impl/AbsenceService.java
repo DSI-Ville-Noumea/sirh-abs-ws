@@ -1308,10 +1308,10 @@ public class AbsenceService implements IAbsenceService {
 			case REPOS_COMP:
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
 
+				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp);
+
 				demandeReposComp.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(),
 						demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()).intValue());
-
-				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp);
 
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));

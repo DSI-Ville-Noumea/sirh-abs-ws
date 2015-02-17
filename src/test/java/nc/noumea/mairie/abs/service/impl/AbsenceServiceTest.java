@@ -377,6 +377,9 @@ public class AbsenceServiceTest {
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
 						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
+		Mockito.when(
+				helperService.getDuree(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble())).thenReturn(600.0);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -486,6 +489,9 @@ public class AbsenceServiceTest {
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
 						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
+		Mockito.when(
+				helperService.getDuree(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble())).thenReturn(600.0);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -1172,8 +1178,9 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
 				.thenReturn(true);
 
-		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
-		
+		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito
+				.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
+
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return new ReturnMessageDto();
@@ -1212,14 +1219,13 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
 						.getType().getIdRefTypeAbsence())).thenReturn(counterService);
-		
-		Mockito.doNothing().when(absenceDataConsistencyRulesImpl)
-				.checkSamediOffertToujoursOk(dto, demande);
-		
+
+		Mockito.doNothing().when(absenceDataConsistencyRulesImpl).checkSamediOffertToujoursOk(dto, demande);
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence()))
-				.thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(
+				dataConsistencyRulesFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
+						.getType().getIdRefTypeAbsence())).thenReturn(absenceDataConsistencyRulesImpl);
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -1227,8 +1233,7 @@ public class AbsenceServiceTest {
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
 				return result;
 			}
-		})
-				.when(absenceDataConsistencyRulesImpl)
+		}).when(absenceDataConsistencyRulesImpl)
 				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
 
 		AbsenceService service = new AbsenceService();
@@ -1277,8 +1282,9 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
 				.thenReturn(true);
 
-		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
-		
+		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito
+				.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
+
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return new ReturnMessageDto();
@@ -1324,14 +1330,13 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
 						.getType().getIdRefTypeAbsence())).thenReturn(counterService);
-		
-		Mockito.doNothing().when(absenceDataConsistencyRulesImpl)
-				.checkSamediOffertToujoursOk(dto, demande);
-		
+
+		Mockito.doNothing().when(absenceDataConsistencyRulesImpl).checkSamediOffertToujoursOk(dto, demande);
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence()))
-				.thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(
+				dataConsistencyRulesFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
+						.getType().getIdRefTypeAbsence())).thenReturn(absenceDataConsistencyRulesImpl);
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -1339,8 +1344,7 @@ public class AbsenceServiceTest {
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
 				return result;
 			}
-		})
-				.when(absenceDataConsistencyRulesImpl)
+		}).when(absenceDataConsistencyRulesImpl)
 				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
 
 		AbsenceService service = new AbsenceService();
@@ -1390,8 +1394,9 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
 				.thenReturn(true);
 
-		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
-		
+		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito
+				.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
+
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return new ReturnMessageDto();
@@ -1430,14 +1435,13 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
 						.getType().getIdRefTypeAbsence())).thenReturn(counterService);
-		
-		Mockito.doNothing().when(absenceDataConsistencyRulesImpl)
-				.checkSamediOffertToujoursOk(dto, demande);
-		
+
+		Mockito.doNothing().when(absenceDataConsistencyRulesImpl).checkSamediOffertToujoursOk(dto, demande);
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence()))
-				.thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(
+				dataConsistencyRulesFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
+						.getType().getIdRefTypeAbsence())).thenReturn(absenceDataConsistencyRulesImpl);
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -1445,10 +1449,9 @@ public class AbsenceServiceTest {
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
 				return result;
 			}
-		})
-				.when(absenceDataConsistencyRulesImpl)
+		}).when(absenceDataConsistencyRulesImpl)
 				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
-		
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
@@ -2373,7 +2376,6 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -2384,6 +2386,9 @@ public class AbsenceServiceTest {
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
 						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
+		Mockito.when(
+				helperService.getDuree(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble())).thenReturn(600.0);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -2493,6 +2498,9 @@ public class AbsenceServiceTest {
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
 						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
+		Mockito.when(
+				helperService.getDuree(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble())).thenReturn(650.0);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -3672,6 +3680,9 @@ public class AbsenceServiceTest {
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
 						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
+		Mockito.when(
+				helperService.getDuree(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble())).thenReturn(600.0);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -3764,7 +3775,6 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(650, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -3775,6 +3785,9 @@ public class AbsenceServiceTest {
 				helperService.getDateFin(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
 						Mockito.any(Date.class), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean()))
 				.thenReturn(dateFin);
+		Mockito.when(
+				helperService.getDuree(Mockito.any(RefTypeSaisi.class), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyDouble())).thenReturn(650.0);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -4540,7 +4553,6 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -4649,7 +4661,6 @@ public class AbsenceServiceTest {
 
 				assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), obj.getEtatsDemande().get(0).getEtat().getCodeEtat());
 				assertEquals(9005138, obj.getIdAgent().intValue());
-				assertEquals(600, obj.getDuree().intValue());
 
 				return true;
 			}
@@ -7329,7 +7340,8 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
 				.thenReturn(true);
 
-		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
+		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito
+				.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return new ReturnMessageDto();
@@ -7375,14 +7387,13 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
 						.getType().getIdRefTypeAbsence())).thenReturn(counterService);
-		
-		Mockito.doNothing().when(absenceDataConsistencyRulesImpl)
-				.checkSamediOffertToujoursOk(dto, demande);
-		
+
+		Mockito.doNothing().when(absenceDataConsistencyRulesImpl).checkSamediOffertToujoursOk(dto, demande);
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence()))
-				.thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(
+				dataConsistencyRulesFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
+						.getType().getIdRefTypeAbsence())).thenReturn(absenceDataConsistencyRulesImpl);
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -7390,8 +7401,7 @@ public class AbsenceServiceTest {
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
 				return result;
 			}
-		})
-				.when(absenceDataConsistencyRulesImpl)
+		}).when(absenceDataConsistencyRulesImpl)
 				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
 
 		AbsenceService service = new AbsenceService();
@@ -7439,7 +7449,8 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()))
 				.thenReturn(true);
 
-		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
+		AbsCongesAnnuelsDataConsistencyRulesImpl absenceDataConsistencyRulesImpl = Mockito
+				.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return new ReturnMessageDto();
@@ -7485,14 +7496,13 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
 						.getType().getIdRefTypeAbsence())).thenReturn(counterService);
-		
-		Mockito.doNothing().when(absenceDataConsistencyRulesImpl)
-				.checkSamediOffertToujoursOk(dto, demande);
-		
+
+		Mockito.doNothing().when(absenceDataConsistencyRulesImpl).checkSamediOffertToujoursOk(dto, demande);
+
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence()))
-				.thenReturn(absenceDataConsistencyRulesImpl);
+		Mockito.when(
+				dataConsistencyRulesFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande
+						.getType().getIdRefTypeAbsence())).thenReturn(absenceDataConsistencyRulesImpl);
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -7500,8 +7510,7 @@ public class AbsenceServiceTest {
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
 				return result;
 			}
-		})
-				.when(absenceDataConsistencyRulesImpl)
+		}).when(absenceDataConsistencyRulesImpl)
 				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
 
 		AbsenceService service = new AbsenceService();
@@ -10279,8 +10288,10 @@ public class AbsenceServiceTest {
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(), null))
 				.thenReturn(absCongesAnnuelsDataConsistencyRulesImpl);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(), RefTypeAbsenceEnum.CONGE_ANNUEL.getValue()))
-		.thenReturn(absCongesAnnuelsDataConsistencyRulesImpl);
+		Mockito.when(
+				dataConsistencyRulesFactory.getFactory(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(),
+						RefTypeAbsenceEnum.CONGE_ANNUEL.getValue())).thenReturn(
+				absCongesAnnuelsDataConsistencyRulesImpl);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -10370,9 +10381,10 @@ public class AbsenceServiceTest {
 				.checkDepassementDroitsAcquis(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
-		Mockito.when(dataConsistencyRulesFactory.getFactory(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(), 
-				RefTypeAbsenceEnum.CONGE_ANNUEL.getValue()))
-				.thenReturn(absCongesAnnuelsDataConsistencyRulesImpl);
+		Mockito.when(
+				dataConsistencyRulesFactory.getFactory(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(),
+						RefTypeAbsenceEnum.CONGE_ANNUEL.getValue())).thenReturn(
+				absCongesAnnuelsDataConsistencyRulesImpl);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(), null))
 				.thenReturn(absCongesAnnuelsDataConsistencyRulesImpl);
 
