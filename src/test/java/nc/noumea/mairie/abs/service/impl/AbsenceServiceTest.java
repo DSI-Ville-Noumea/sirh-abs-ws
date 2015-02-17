@@ -9623,6 +9623,7 @@ public class AbsenceServiceTest {
 		ed2.setMotif("motif");
 		ed2.setDuree(10.0);
 		ed2.setDateDebut(dateDebut);
+		ed2.setNbSamediOffert(0.0);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
@@ -9704,6 +9705,7 @@ public class AbsenceServiceTest {
 		ed2.setMotif("motif");
 		ed2.setDuree(10.0);
 		ed2.setDateDebut(dateDebut);
+		ed2.setNbSamediOffert(1.0);
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
 		listEtatDemande.addAll(Arrays.asList(ed2, ed));
 
