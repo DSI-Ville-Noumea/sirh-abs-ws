@@ -100,6 +100,7 @@ public class DemandeController {
 
 		DemandeDto res = new DemandeDto();
 		res.setDuree(duree);
+		res.setSamediOffert(helperService.getNombreSamediOffert(demande) == 0.0 ? false : true);
 
 		return res;
 	}
@@ -421,12 +422,12 @@ public class DemandeController {
 		List<Integer> agentIds = new ArrayList<Integer>();
 		if (idAgents != null) {
 			for (String id : idAgents.split(",")) {
-				if(!"".equals(id)) {
+				if (!"".equals(id)) {
 					agentIds.add(Integer.valueOf(id));
 				}
 			}
 		}
-		
+
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 		if (aValider) {
 			result = absenceService.getListeDemandesSIRHAValider();

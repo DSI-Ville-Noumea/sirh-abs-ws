@@ -46,6 +46,7 @@ public class DemandeDto {
 	private boolean isDateFinAM;
 	private boolean isDateFinPM;
 	private Double duree;
+	private boolean isSamediOffert;
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateReprise;
@@ -184,6 +185,7 @@ public class DemandeDto {
 				Double dureeAnneePrecCongeAnnuel = ((DemandeCongesAnnuels) d).getDureeAnneeN1() == null ? 0
 						: ((DemandeCongesAnnuels) d).getDureeAnneeN1();
 				this.duree = (double) (dureeAnneeCongeAnnuel + dureeAnneePrecCongeAnnuel);
+				this.isSamediOffert = ((DemandeCongesAnnuels) d).getNbSamediOffert()>=1.0?true : false;
 				this.isDateDebutAM = ((DemandeCongesAnnuels) d).isDateDebutAM();
 				this.isDateDebutPM = ((DemandeCongesAnnuels) d).isDateDebutPM();
 				this.isDateFinAM = ((DemandeCongesAnnuels) d).isDateFinAM();
@@ -238,6 +240,7 @@ public class DemandeDto {
 				Double dureeAnneePrecCongeAnnuel = ((EtatDemandeCongesAnnuels) etat).getDureeAnneeN1() == null ? 0
 						: ((EtatDemandeCongesAnnuels) etat).getDureeAnneeN1();
 				this.duree = (double) (dureeAnneeCongeAnnuel + dureeAnneePrecCongeAnnuel);
+				this.isSamediOffert = ((EtatDemandeCongesAnnuels) etat).getNbSamediOffert() >= 1.0 ? true : false;
 				this.isDateDebutAM = ((EtatDemandeCongesAnnuels) etat).isDateDebutAM();
 				this.isDateDebutPM = ((EtatDemandeCongesAnnuels) etat).isDateDebutPM();
 				this.isDateFinAM = ((EtatDemandeCongesAnnuels) etat).isDateFinAM();
@@ -586,6 +589,14 @@ public class DemandeDto {
 
 	public void setDepassementMultiple(boolean isDepassementMultiple) {
 		this.isDepassementMultiple = isDepassementMultiple;
+	}
+
+	public boolean isSamediOffert() {
+		return isSamediOffert;
+	}
+
+	public void setSamediOffert(boolean isSamediOffert) {
+		this.isSamediOffert = isSamediOffert;
 	}
 
 }
