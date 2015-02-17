@@ -464,25 +464,27 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// #12664
-		if(!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()))
+		if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()))
 			absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, new Date(), false);
 
 		if (result.getErrors().size() != 0) {
 			return result;
 		}
-		
-		// #13362 dans le cadre des congés annuels, on regarde si le samedi offert n est pas offert une autre demande
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
-				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+
+		// #13362 dans le cadre des congés annuels, on regarde si le samedi
+		// offert n est pas offert une autre demande
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demande
+				.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		absenceDataConsistencyRulesImpl.checkSamediOffertToujoursOk(demandeEtatChangeDto, demande);
 
 		ReturnMessageDto srmIsDepassementCompteurCA = new ReturnMessageDto();
-		srmIsDepassementCompteurCA = absenceDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srmIsDepassementCompteurCA, demande);
+		srmIsDepassementCompteurCA = absenceDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
+				srmIsDepassementCompteurCA, demande);
 		boolean isDepassementCA = false;
-		if(0 < srmIsDepassementCompteurCA.getInfos().size()) {
+		if (0 < srmIsDepassementCompteurCA.getInfos().size()) {
 			isDepassementCA = true;
 		}
-		
+
 		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe()
 				.getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
@@ -553,13 +555,13 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 
-	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, boolean isDepassementCA) {
+	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
+			boolean isDepassementCA) {
 
 		if (demande.getType() != null && demande.getType().getTypeSaisi() == null
 				&& demande.getType().getTypeSaisiCongeAnnuel() != null) {
 			// cas des congés annuels
-			if (isDepassementCA
-					&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
+			if (isDepassementCA && demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
 				EtatDemande etatDemande = new EtatDemande();
 
 				etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, new ReturnMessageDto(), demande
@@ -984,7 +986,7 @@ public class AbsenceService implements IAbsenceService {
 				etatDemandeAsa.setDateFinPM(demandeAsa.isDateFinPM());
 				if (demandeAsa.getOrganisationSyndicale() != null)
 					etatDemandeAsa.setOrganisationSyndicale(demandeAsa.getOrganisationSyndicale());
-				
+
 				etatDemandeAsa.setTotalMinutesOld(demandeAsa.getTotalMinutesOld());
 				etatDemandeAsa.setTotalMinutesNew(demandeAsa.getTotalMinutesNew());
 				etatDemandeAsa.setTotalJoursOld(demandeAsa.getTotalJoursOld());
@@ -1093,15 +1095,15 @@ public class AbsenceService implements IAbsenceService {
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds) {
-		
-		if(null != idAgentRecherche && 0 != idAgentRecherche) {
+
+		if (null != idAgentRecherche && 0 != idAgentRecherche) {
 			agentIds = new ArrayList<Integer>();
 			agentIds.add(idAgentRecherche);
 		}
-		
+
 		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
 				agentIds, idRefGroupeAbsence);
-		
+
 		List<RefEtat> listEtats = null;
 		if (idRefEtat != null) {
 			RefEtat etat = demandeRepository.getEntity(RefEtat.class, idRefEtat);
@@ -1111,7 +1113,7 @@ public class AbsenceService implements IAbsenceService {
 
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				listEtats, null);
-		
+
 		for (DemandeDto dto : listeDto) {
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(dto
 					.getGroupeAbsence().getIdRefGroupeAbsence(), dto.getIdTypeDemande());
@@ -1231,7 +1233,7 @@ public class AbsenceService implements IAbsenceService {
 			if (0 < result.getErrors().size()) {
 				return;
 			}
-			
+
 			// maj de la demande
 			majEtatDemande(idAgent, demandeEtatChangeDto, demande, false);
 		} else {
@@ -1305,55 +1307,32 @@ public class AbsenceService implements IAbsenceService {
 				.getIdRefGroupeAbsence())) {
 			case REPOS_COMP:
 				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
-				String dureeApresVirgule = "0";
-				try {
 
-					dureeApresVirgule = demandeDto
-							.getDuree()
-							.toString()
-							.substring(demandeDto.getDuree().toString().indexOf(".") + 1,
-									demandeDto.getDuree().toString().length());
-					if (dureeApresVirgule.length() == 1) {
-						dureeApresVirgule = dureeApresVirgule + "0";
-					}
-				} catch (NumberFormatException e) {
+				demandeReposComp.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(),
+						demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()).intValue());
 
-				}
-				int dur = demandeDto.getDuree().intValue() * 60 + new Integer(dureeApresVirgule);
-				demandeReposComp.setDuree(dur);
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp);
 
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
-						demandeDto.getDateDebut(), (double) demandeReposComp.getDuree(), demandeDto.isDateFinAM(),
+						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				break;
 			case RECUP:
 				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
-				String dureeApresVirgule2 = "0";
-				try {
-					dureeApresVirgule2 = demandeDto
-							.getDuree()
-							.toString()
-							.substring(demandeDto.getDuree().toString().indexOf(".") + 1,
-									demandeDto.getDuree().toString().length());
-					if (dureeApresVirgule2.length() == 1) {
-						dureeApresVirgule = dureeApresVirgule2 + "0";
-					}
-				} catch (NumberFormatException e) {
 
-				}
-				int dur2 = demandeDto.getDuree().intValue() * 60 + new Integer(dureeApresVirgule2);
-				demandeRecup.setDuree(dur2);
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup);
+
+				demandeRecup.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
+						demande.getDateFin(), demandeDto.getDuree()).intValue());
 
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
-						demandeDto.getDateDebut(), (double) demandeRecup.getDuree(), demandeDto.isDateFinAM(),
+						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
 						demandeDto.isDateFinPM()));
 				break;
 			case AS:
