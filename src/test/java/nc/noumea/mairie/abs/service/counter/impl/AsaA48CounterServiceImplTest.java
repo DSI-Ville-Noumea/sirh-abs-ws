@@ -9,7 +9,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
-import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
@@ -257,7 +257,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		Demande demande = new Demande();
+		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9008765);
 		demande.setDateDebut(new Date());
 		demande.setDateFin(new Date());
@@ -292,7 +292,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		Demande demande = new Demande();
+		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9008765);
 		demande.setDateDebut(new Date());
 		demande.setDateFin(new Date());
@@ -330,7 +330,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		Demande demande = new Demande();
+		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9008765);
 		demande.setDateDebut(new Date());
 		demande.setDateFin(new Date());
