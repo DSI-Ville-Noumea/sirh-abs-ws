@@ -268,4 +268,15 @@ public abstract class AbstractCounterService implements ICounterService {
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 		return srm;
 	}
+	
+	@Override
+	public List<RestitutionMassiveDto> getHistoRestitutionMassiveCA(Integer idAgentConnecte) {
+		return null;
+	}
+	
+	@Override
+	public RestitutionMassiveDto getDetailsHistoRestitutionMassive(Integer idAgentConnecte,
+			RestitutionMassiveDto dto) {
+		return null;
+	}
 }

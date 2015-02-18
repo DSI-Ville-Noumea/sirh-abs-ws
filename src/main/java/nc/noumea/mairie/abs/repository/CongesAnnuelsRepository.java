@@ -9,7 +9,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
-import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -124,21 +124,38 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		return query.getResultList();
 	}
-
+	
 	@Override
-	public List<CongeAnnuelRestitutionMassiveHisto> getRestitutionCAByAgentAndDate(RestitutionMassiveDto dto,
-			Integer idAgentList) {
-
+	public CongeAnnuelRestitutionMassive getCongeAnnuelRestitutionMassiveByDate(RestitutionMassiveDto dto) {
+		
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d from CongeAnnuelRestitutionMassiveHisto d ");
-		sb.append("where d.idAgent = :idAgent ");
-		sb.append("and d.dateRestitution = :dateRestitution ");
-		sb.append("and d.status = 'OK' ");
+		sb.append("select d from CongeAnnuelRestitutionMassive d ");
+		sb.append("where d.dateRestitution = :dateRestitution ");
+		sb.append("and d.journee = :journee ");
+		sb.append("and d.matin = :matin ");
+		sb.append("and d.apresMidi = :apresMidi ");
 
-		TypedQuery<CongeAnnuelRestitutionMassiveHisto> query = absEntityManager.createQuery(sb.toString(),
-				CongeAnnuelRestitutionMassiveHisto.class);
+		TypedQuery<CongeAnnuelRestitutionMassive> query = absEntityManager.createQuery(sb.toString(),
+				CongeAnnuelRestitutionMassive.class);
 
-		query.setParameter("idAgent", idAgentList);
+		query.setParameter("dateRestitution", dto.getDateRestitution());
+		query.setParameter("journee", dto.isJournee());
+		query.setParameter("matin", dto.isMatin());
+		query.setParameter("apresMidi", dto.isApresMidi());
+
+		return (query.getResultList().size() > 0 ? query.getResultList().get(0) : null);
+	}
+	
+	@Override
+	public List<CongeAnnuelRestitutionMassive> getListCongeAnnuelRestitutionMassiveByDate(RestitutionMassiveDto dto) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from CongeAnnuelRestitutionMassive d ");
+		sb.append("where d.dateRestitution = :dateRestitution ");
+
+		TypedQuery<CongeAnnuelRestitutionMassive> query = absEntityManager.createQuery(sb.toString(),
+				CongeAnnuelRestitutionMassive.class);
+
 		query.setParameter("dateRestitution", dto.getDateRestitution());
 
 		return query.getResultList();
@@ -176,6 +193,19 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		return query.getResultList();
 	}
+	
+	@Override
+	public List<CongeAnnuelRestitutionMassive> getHistoRestitutionMassiveOrderByDate() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from CongeAnnuelRestitutionMassive d ");
+		sb.append("order by d.dateRestitution desc ");
+
+		TypedQuery<CongeAnnuelRestitutionMassive> query = absEntityManager.createQuery(sb.toString(),
+				CongeAnnuelRestitutionMassive.class);
+
+		return query.getResultList();
+	}
 
 	@Override
 	public RefAlimCongeAnnuel getRefAlimCongeAnnuelByMois(Integer idRefTypeSaisiCongeAnnuel, Integer year) {
@@ -191,4 +221,5 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 		
 		return query.getSingleResult() ;
 	}
+
 }

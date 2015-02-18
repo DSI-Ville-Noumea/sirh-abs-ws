@@ -223,6 +223,41 @@ public class CongeAnnuelController {
 		srm = counterService.restitutionMassiveCA(convertedIdAgent, dto, listIdAgent);
 		return srm;
 	}
+	
+	/**
+	 * Retourne l'historique des restitutions masives de conge annuel <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getHistoRestitutionMassive", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RestitutionMassiveDto> getHistoRestitutionMassive(@RequestParam("idAgent") int idAgent, HttpServletResponse response) {
+		
+		logger.debug(
+				"entered GET [congeannuel/getHistoRestitutionMassive] => getHistoRestitutionMassive with parameters idAgent = {}",
+				idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		return counterService.getHistoRestitutionMassiveCA(convertedIdAgent);
+	}
+	
+	/**
+	 * Retourne l'historique des restitutions masives de conge annuel <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getDetailsHistoRestitutionMassive", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public RestitutionMassiveDto getDetailsHistoRestitutionMassive(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) RestitutionMassiveDto dto, HttpServletResponse response) {
+		
+		logger.debug(
+				"entered GET [congeannuel/getDetailsHistoRestitutionMassive] => getDetailsHistoRestitutionMassive with parameters idAgent = {}",
+				idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		return counterService.getDetailsHistoRestitutionMassive(convertedIdAgent, dto);
+	}
 
 	/**
 	 * Pour un mois donné, donne toutes les informations d'alimenation auto des

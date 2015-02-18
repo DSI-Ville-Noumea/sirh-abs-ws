@@ -45,4 +45,10 @@ public interface ICounterService {
 	ReturnMessageDto restitutionMassiveCA(Integer idAgent, RestitutionMassiveDto dto, List<Integer> listIdAgent);
 
 	ReturnMessageDto checkRestitutionMassiveDto(RestitutionMassiveDto dto, ReturnMessageDto srm);
+
+	List<RestitutionMassiveDto> getHistoRestitutionMassiveCA(
+			Integer idAgentConnecte);
+
+	RestitutionMassiveDto getDetailsHistoRestitutionMassive(
+			Integer idAgentConnecte, RestitutionMassiveDto dto);
 }
