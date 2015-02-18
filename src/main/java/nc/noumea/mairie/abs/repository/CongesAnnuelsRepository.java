@@ -11,6 +11,7 @@ import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 
@@ -87,7 +88,7 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 	}
 
 	@Override
-	public List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuel(Date dateMois) {
+	public List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuelByMois(Date dateMois) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select c from CongeAnnuelAlimAutoHisto c ");
@@ -160,5 +161,34 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 		query.setParameter("PRISE", RefEtatEnum.PRISE);
 
 		return query.getResultList();
+	}
+
+	@Override
+	public List<RefAlimCongeAnnuel> getListeRefAlimCongeAnnuelByBaseConge(Integer idRefTypeSaisiCongeAnnuel) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select r from RefAlimCongeAnnuel r ");
+		sb.append("where r.id.idRefTypeSaisiCongeAnnuel = :idRefTypeSaisiCongeAnnuel ");
+		sb.append("order by r.id.annee desc ");
+
+		TypedQuery<RefAlimCongeAnnuel> query = absEntityManager.createQuery(sb.toString(), RefAlimCongeAnnuel.class);
+
+		query.setParameter("idRefTypeSaisiCongeAnnuel", idRefTypeSaisiCongeAnnuel);
+
+		return query.getResultList();
+	}
+
+	@Override
+	public RefAlimCongeAnnuel getRefAlimCongeAnnuelByMois(Integer idRefTypeSaisiCongeAnnuel, Integer year) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select r from RefAlimCongeAnnuel r ");
+		sb.append("where r.idRefTypeSaisiCongeAnnuel = :idRefTypeSaisiCongeAnnuel ");
+		sb.append("and by r.annee =:annee ");
+
+		TypedQuery<RefAlimCongeAnnuel> query = absEntityManager.createQuery(sb.toString(), RefAlimCongeAnnuel.class);
+
+		query.setParameter("idRefTypeSaisiCongeAnnuel", idRefTypeSaisiCongeAnnuel);
+		query.setParameter("annee", year);
+		
+		return query.getSingleResult() ;
 	}
 }

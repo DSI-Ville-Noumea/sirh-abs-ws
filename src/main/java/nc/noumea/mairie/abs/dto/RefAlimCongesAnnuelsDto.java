@@ -1,67 +1,50 @@
-package nc.noumea.mairie.abs.domain;
+package nc.noumea.mairie.abs.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 
-@Entity
-@Table(name = "ABS_REF_ALIM_CONGE_ANNUEL")
-@PersistenceUnit(unitName = "absPersistenceUnit")
-public class RefAlimCongeAnnuel {
+public class RefAlimCongesAnnuelsDto {
 
-	@Id
-	private RefAlimCongeAnnuelId id;
-
-	@NotNull
-	@Column(name = "JANVIER", nullable = false, columnDefinition = "numeric")
+	private Integer annee;
 	private Double janvier;
-
-	@NotNull
-	@Column(name = "FEVRIER", nullable = false, columnDefinition = "numeric")
 	private Double fevrier;
-
-	@NotNull
-	@Column(name = "MARS", nullable = false, columnDefinition = "numeric")
 	private Double mars;
-
-	@NotNull
-	@Column(name = "AVRIL", nullable = false, columnDefinition = "numeric")
 	private Double avril;
-
-	@NotNull
-	@Column(name = "MAI", nullable = false, columnDefinition = "numeric")
 	private Double mai;
-
-	@NotNull
-	@Column(name = "JUIN", nullable = false, columnDefinition = "numeric")
 	private Double juin;
-
-	@NotNull
-	@Column(name = "JUILLET", nullable = false, columnDefinition = "numeric")
 	private Double juillet;
-
-	@NotNull
-	@Column(name = "AOUT", nullable = false, columnDefinition = "numeric")
 	private Double aout;
-
-	@NotNull
-	@Column(name = "SEPTEMBRE", nullable = false, columnDefinition = "numeric")
 	private Double septembre;
-
-	@NotNull
-	@Column(name = "OCTOBRE", nullable = false, columnDefinition = "numeric")
 	private Double octobre;
-
-	@NotNull
-	@Column(name = "NOVEMBRE", nullable = false, columnDefinition = "numeric")
 	private Double novembre;
-
-	@NotNull
-	@Column(name = "DECEMBRE", nullable = false, columnDefinition = "numeric")
 	private Double decembre;
+
+	public RefAlimCongesAnnuelsDto(RefAlimCongeAnnuel ref) {
+		this.annee = ref.getId().getAnnee();
+		this.janvier = ref.getJanvier();
+		this.fevrier = ref.getFevrier();
+		this.mars = ref.getMars();
+		this.avril = ref.getAvril();
+		this.mai = ref.getMai();
+		this.juin = ref.getJuin();
+		this.juillet = ref.getJuillet();
+		this.aout = ref.getAout();
+		this.septembre = ref.getSeptembre();
+		this.octobre = ref.getOctobre();
+		this.novembre = ref.getNovembre();
+		this.decembre = ref.getDecembre();
+	}
+
+	public RefAlimCongesAnnuelsDto() {
+		super();
+	}
+
+	public Integer getAnnee() {
+		return annee;
+	}
+
+	public void setAnnee(Integer annee) {
+		this.annee = annee;
+	}
 
 	public Double getJanvier() {
 		return janvier;
@@ -157,14 +140,6 @@ public class RefAlimCongeAnnuel {
 
 	public void setDecembre(Double decembre) {
 		this.decembre = decembre;
-	}
-
-	public RefAlimCongeAnnuelId getId() {
-		return id;
-	}
-
-	public void setId(RefAlimCongeAnnuelId id) {
-		this.id = id;
 	}
 
 }

@@ -7,6 +7,7 @@ import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 
 public interface ICongesAnnuelsRepository {
@@ -25,7 +26,11 @@ public interface ICongesAnnuelsRepository {
 	List<CongeAnnuelRestitutionMassiveHisto> getRestitutionCAByAgentAndDate(RestitutionMassiveDto dto,
 			Integer idAgentList);
 
-	List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuel(Date dateMois);
+	List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuelByMois(Date dateMois);
 
 	List<Integer> getListeDemandesCongesAnnuelsPrisesForDate(Date dateRestitution);
+
+	List<RefAlimCongeAnnuel> getListeRefAlimCongeAnnuelByBaseConge(Integer idRefTypeSaisiCongeAnnuel);
+
+	RefAlimCongeAnnuel getRefAlimCongeAnnuelByMois(Integer idRefTypeSaisiCongeAnnuel, Integer year);
 }

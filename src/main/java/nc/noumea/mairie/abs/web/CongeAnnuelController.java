@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
+import nc.noumea.mairie.abs.dto.RefAlimCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAbsenceService;
@@ -237,8 +238,26 @@ public class CongeAnnuelController {
 				"entered POST [congeannuel/getListeAlimAutoCongeAnnuel] => alimentationAutoCongesAnnuels with parameter moisAlimAutoDto = {}",
 				moisAlimAutoDto.getDtoToString(moisAlimAutoDto));
 
-		List<MoisAlimAutoCongesAnnuelsDto> result = absenceService.getListeAlimAutoCongeAnnuel(moisAlimAutoDto
+		List<MoisAlimAutoCongesAnnuelsDto> result = absenceService.getListeAlimAutoCongeAnnuelByMois(moisAlimAutoDto
 				.getDateMois());
+
+		return result;
+	}
+
+	/**
+	 * Liste de toutes les alimentations mensuelles par Base Congé
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getListRefAlimCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefAlimCongesAnnuelsDto> getListRefAlimCongeAnnuel(
+			@RequestParam(required = true) Integer idRefTypeSaisiCongeAnnuel) {
+
+		logger.debug(
+				"entered GET [congeannuel/getListRefAlimCongeAnnuel] => getListRefAlimCongeAnnuel with parameter idRefTypeSaisiCongeAnnuel = {}",
+				idRefTypeSaisiCongeAnnuel);
+
+		List<RefAlimCongesAnnuelsDto> result = absenceService
+				.getListeRefAlimCongeAnnuelByBaseConge(idRefTypeSaisiCongeAnnuel);
 
 		return result;
 	}

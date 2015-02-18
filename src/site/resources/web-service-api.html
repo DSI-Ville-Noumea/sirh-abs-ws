@@ -217,6 +217,12 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/getListRefAlimCongeAnnuel</span>
+                    <div>
+                            <a href="#/congeannuel/getListRefAlimCongeAnnuel_GET_idRefTypeSaisiCongeAnnuel">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/congeexceptionnel/checkCongesExceptionnels</span>
                     <div>
                             <a href="#/congeexceptionnel/checkCongesExceptionnels_GET_idAgent_dateDebut_dateFin">GET</a>
@@ -2631,6 +2637,69 @@
 </div>
                             </div>
                     </div>
+                    <a id="/congeannuel/getListRefAlimCongeAnnuel_GET_idRefTypeSaisiCongeAnnuel"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/congeannuel/getListRefAlimCongeAnnuel</span>?<span class="url-param-key">idRefTypeSaisiCongeAnnuel</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste de toutes les alimentations mensuelles par Base Congé
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">annee</span>
+<span class="json-primitive-type">int</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">janvier</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">fevrier</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">mars</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">avril</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">mai</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">juin</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">juillet</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">aout</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">septembre</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">octobre</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">novembre</span>
+<span class="json-primitive-type">double</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">decembre</span>
+<span class="json-primitive-type">double</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
                     <a id="/congeexceptionnel/checkCongesExceptionnels_GET_idAgent_dateDebut_dateFin"/>
                     <div class="resource">
                         <div class="resource-header">
@@ -3015,6 +3084,9 @@
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
                             </div>
@@ -3354,6 +3426,9 @@
             </div>
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
 <span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
@@ -3709,6 +3784,9 @@
             </div>
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
 <span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
@@ -4084,6 +4162,9 @@
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
                             </div>
@@ -4439,6 +4520,9 @@
             </div>
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
 <span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>
@@ -4797,6 +4881,9 @@
             </div>
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
 <span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>
@@ -5177,6 +5264,9 @@
             </div>
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
 <span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>
@@ -5684,6 +5774,9 @@
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
                             </div>
@@ -6059,6 +6152,9 @@
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
 <span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
+<span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>
 </div>
@@ -6415,6 +6511,9 @@
             </div>
             <div class="json-field">
                 <span class="json-field-name">depassementMultiple</span>
+<span class="json-primitive-type">boolean</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">samediOffert</span>
 <span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
     ]</span>

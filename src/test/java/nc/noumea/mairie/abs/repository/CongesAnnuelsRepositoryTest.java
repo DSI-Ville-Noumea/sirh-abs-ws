@@ -17,6 +17,8 @@ import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuelId;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
@@ -357,7 +359,7 @@ public class CongesAnnuelsRepositoryTest {
 	public void getListeAlimAutoCongeAnnuel_0Date() {
 		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
 
-		List<CongeAnnuelAlimAutoHisto> result = repository.getListeAlimAutoCongeAnnuel(dateMonth.toDate());
+		List<CongeAnnuelAlimAutoHisto> result = repository.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate());
 
 		assertEquals(result.size(), 0);
 
@@ -386,7 +388,7 @@ public class CongesAnnuelsRepositoryTest {
 		d.setIdAgent(9005138);
 		absEntityManager.persist(d);
 
-		List<CongeAnnuelAlimAutoHisto> result = repository.getListeAlimAutoCongeAnnuel(dateMonth.toDate());
+		List<CongeAnnuelAlimAutoHisto> result = repository.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate());
 
 		assertEquals(result.size(), 2);
 		assertEquals(d.getIdAgent(), result.get(0).getIdAgent());
@@ -837,6 +839,72 @@ public class CongesAnnuelsRepositoryTest {
 		assertEquals(2, result.size());
 		assertEquals(d3.getIdAgent(), result.get(0));
 		assertEquals(d.getIdAgent(), result.get(1));
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeRefAlimCongeAnnuelByBaseConge_ReturnZero() {
+
+		List<RefAlimCongeAnnuel> result = repository.getListeRefAlimCongeAnnuelByBaseConge(1);
+
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeRefAlimCongeAnnuelByBaseConge_ReturnRefAlimCongeAnnuel() {
+
+		RefAlimCongeAnnuelId id = new RefAlimCongeAnnuelId();
+		id.setIdRefTypeSaisiCongeAnnuel(1);
+		id.setAnnee(2014);
+
+		RefAlimCongeAnnuel ref2 = new RefAlimCongeAnnuel();
+		ref2.setId(id);
+		ref2.setJanvier(2.5);
+		ref2.setFevrier(2.5);
+		ref2.setMars(2.5);
+		ref2.setAvril(2.5);
+		ref2.setMai(2.5);
+		ref2.setJuin(2.5);
+		ref2.setJuillet(2.5);
+		ref2.setAout(2.5);
+		ref2.setSeptembre(2.5);
+		ref2.setOctobre(2.5);
+		ref2.setNovembre(2.5);
+		ref2.setDecembre(2.5);
+		absEntityManager.persist(ref2);
+
+		RefAlimCongeAnnuelId id2 = new RefAlimCongeAnnuelId();
+		id2.setIdRefTypeSaisiCongeAnnuel(1);
+		id2.setAnnee(2015);
+
+		RefAlimCongeAnnuel ref = new RefAlimCongeAnnuel();
+		ref.setId(id2);
+		ref.setJanvier(2.5);
+		ref.setFevrier(2.5);
+		ref.setMars(2.5);
+		ref.setAvril(2.5);
+		ref.setMai(2.5);
+		ref.setJuin(2.5);
+		ref.setJuillet(2.5);
+		ref.setAout(2.5);
+		ref.setSeptembre(2.5);
+		ref.setOctobre(2.5);
+		ref.setNovembre(2.5);
+		ref.setDecembre(2.5);
+		absEntityManager.persist(ref);
+
+		List<RefAlimCongeAnnuel> result = repository.getListeRefAlimCongeAnnuelByBaseConge(1);
+
+		assertEquals(2, result.size());
+		assertEquals(ref.getId().getAnnee(), result.get(0).getId().getAnnee());
+		assertEquals(ref2.getId().getAnnee(), result.get(1).getId().getAnnee());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

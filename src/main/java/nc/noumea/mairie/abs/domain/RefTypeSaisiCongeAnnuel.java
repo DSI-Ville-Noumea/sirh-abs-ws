@@ -1,15 +1,12 @@
 package nc.noumea.mairie.abs.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -77,10 +74,6 @@ public class RefTypeSaisiCongeAnnuel {
 	@Column(name = "CONSECUTIF", nullable = false)
 	@Type(type = "boolean")
 	private boolean consecutif;
-
-	@OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ID_REF_TYPE_SAISI_CONGE_ANNUEL")
-	private RefAlimCongeAnnuel refAlimCongeAnnuel;
 
 	public Integer getIdRefTypeSaisiCongeAnnuel() {
 		return idRefTypeSaisiCongeAnnuel;
@@ -176,14 +169,6 @@ public class RefTypeSaisiCongeAnnuel {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public RefAlimCongeAnnuel getRefAlimCongeAnnuel() {
-		return refAlimCongeAnnuel;
-	}
-
-	public void setRefAlimCongeAnnuel(RefAlimCongeAnnuel refAlimCongeAnnuel) {
-		this.refAlimCongeAnnuel = refAlimCongeAnnuel;
 	}
 
 	public Integer getQuotaDecompte() {

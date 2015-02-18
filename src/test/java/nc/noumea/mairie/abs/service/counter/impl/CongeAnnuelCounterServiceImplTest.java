@@ -997,14 +997,17 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreJours(dateDebut, dateFin)).thenReturn(20.0);
 
-		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
-		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
-
 		RefAlimCongeAnnuel refAlimCongeAnnuel = new RefAlimCongeAnnuel();
 		refAlimCongeAnnuel.setFevrier(10.0);
 
 		RefTypeSaisiCongeAnnuel typeCongeAnnuel = new RefTypeSaisiCongeAnnuel();
-		typeCongeAnnuel.setRefAlimCongeAnnuel(refAlimCongeAnnuel);
+		typeCongeAnnuel.setIdRefTypeSaisiCongeAnnuel(1);
+
+		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
+		Mockito.when(
+				congesAnnuelsRepository.getRefAlimCongeAnnuelByMois(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(),
+						2014)).thenReturn(refAlimCongeAnnuel);
 
 		TypeAbsenceRepository typeAbsenceRepository = Mockito.mock(TypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, pa.getIdBaseCongeAbsence()))
@@ -1054,15 +1057,18 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreJours(dateDebut, dateFin)).thenReturn(20.0);
 
-		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
-		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
-
 		RefAlimCongeAnnuel refAlimCongeAnnuel = new RefAlimCongeAnnuel();
 		refAlimCongeAnnuel.setFevrier(10.0);
 
 		RefTypeSaisiCongeAnnuel typeCongeAnnuel = new RefTypeSaisiCongeAnnuel();
-		typeCongeAnnuel.setRefAlimCongeAnnuel(refAlimCongeAnnuel);
+		typeCongeAnnuel.setIdRefTypeSaisiCongeAnnuel(3);
 		typeCongeAnnuel.setCodeBaseHoraireAbsence("C");
+
+		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
+		Mockito.when(
+				congesAnnuelsRepository.getRefAlimCongeAnnuelByMois(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(),
+						2014)).thenReturn(refAlimCongeAnnuel);
 
 		TypeAbsenceRepository typeAbsenceRepository = Mockito.mock(TypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, pa.getIdBaseCongeAbsence()))
@@ -1120,15 +1126,18 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreJours(dateDebut, dateFin)).thenReturn(20.0);
 
-		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
-		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
-
 		RefAlimCongeAnnuel refAlimCongeAnnuel = new RefAlimCongeAnnuel();
 		refAlimCongeAnnuel.setFevrier(10.0);
 
 		RefTypeSaisiCongeAnnuel typeCongeAnnuel = new RefTypeSaisiCongeAnnuel();
-		typeCongeAnnuel.setRefAlimCongeAnnuel(refAlimCongeAnnuel);
+		typeCongeAnnuel.setIdRefTypeSaisiCongeAnnuel(2);
 		typeCongeAnnuel.setCodeBaseHoraireAbsence("C");
+
+		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
+		Mockito.when(
+				congesAnnuelsRepository.getRefAlimCongeAnnuelByMois(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(),
+						2014)).thenReturn(refAlimCongeAnnuel);
 
 		TypeAbsenceRepository typeAbsenceRepository = Mockito.mock(TypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, pa.getIdBaseCongeAbsence()))

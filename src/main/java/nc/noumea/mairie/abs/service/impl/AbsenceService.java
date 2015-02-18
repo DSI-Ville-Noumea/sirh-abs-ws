@@ -23,6 +23,7 @@ import nc.noumea.mairie.abs.domain.EtatDemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.EtatDemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemandeReposComp;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
@@ -35,6 +36,7 @@ import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
+import nc.noumea.mairie.abs.dto.RefAlimCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -1604,9 +1606,9 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuel(Date dateMois) {
+	public List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuelByMois(Date dateMois) {
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
-		for (CongeAnnuelAlimAutoHisto histo : congeAnnuelRepository.getListeAlimAutoCongeAnnuel(dateMois)) {
+		for (CongeAnnuelAlimAutoHisto histo : congeAnnuelRepository.getListeAlimAutoCongeAnnuelByMois(dateMois)) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
 			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
 			AgentDto agDto = new AgentDto();
@@ -1648,6 +1650,17 @@ public class AbsenceService implements IAbsenceService {
 			} else {
 				logger.error(String.format(BASE_CA_NON_TROUVEE, idAgent));
 			}
+		}
+		return result;
+	}
+
+	@Override
+	public List<RefAlimCongesAnnuelsDto> getListeRefAlimCongeAnnuelByBaseConge(Integer idRefTypeSaisiCongeAnnuel) {
+		List<RefAlimCongesAnnuelsDto> result = new ArrayList<RefAlimCongesAnnuelsDto>();
+		for (RefAlimCongeAnnuel ref : congeAnnuelRepository
+				.getListeRefAlimCongeAnnuelByBaseConge(idRefTypeSaisiCongeAnnuel)) {
+			RefAlimCongesAnnuelsDto dto = new RefAlimCongesAnnuelsDto(ref);
+			result.add(dto);
 		}
 		return result;
 	}
