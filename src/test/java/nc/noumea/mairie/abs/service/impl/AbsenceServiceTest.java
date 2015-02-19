@@ -10651,7 +10651,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
+		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération'.", result.getInfos().get(0));
 
 	}
 
@@ -10726,7 +10726,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
+		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur'.", result.getInfos().get(0));
 
 	}
 
@@ -10801,7 +10801,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
+		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale'.", result.getInfos().get(0));
 
 	}
 
@@ -10876,7 +10876,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
+		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel'.", result.getInfos().get(0));
 
 	}
 
@@ -10950,7 +10950,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("Soyez vigilant, vous avez pointé sur une absence.", result.getInfos().get(0));
+		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel'.", result.getInfos().get(0));
 
 	}
 
