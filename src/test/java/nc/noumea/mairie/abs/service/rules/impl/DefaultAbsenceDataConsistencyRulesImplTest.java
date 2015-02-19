@@ -129,6 +129,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Demande demande = new Demande();
 		demande.setIdDemande(1);
 		demande.setIdAgent(9005138);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
 
 		EtatDemande etat = new EtatDemande();
 		etat.setEtat(RefEtatEnum.PROVISOIRE);
@@ -225,7 +227,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		demande.setIdDemande(1);
 		demande.setIdAgent(9005138);
 		demande.setDateDebut(new LocalDateTime(2013, 9, 10, 12, 1).toDate());
-		demande.setDateFin(new LocalDateTime(2013, 9, 20, 14, 0).toDate());
+		demande.setDateFin(new LocalDateTime(2013, 9, 20, 14, 1).toDate());
 
 		EtatDemande etat = new EtatDemande();
 		etat.setEtat(RefEtatEnum.PROVISOIRE);
@@ -262,7 +264,45 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	}
 
 	@Test
-	public void checkDemandeDejaSaisieSurMemePeriode_DateDebutKo() {
+	public void checkDemandeDejaSaisieSurMemePeriode_OtherDemandePeriodePlusGrande() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		demande.setIdAgent(9005138);
+		demande.setDateDebut(new LocalDateTime(2013, 6, 10, 12, 0).toDate());
+		demande.setDateFin(new LocalDateTime(2013, 12, 20, 13, 58).toDate());
+
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.PROVISOIRE);
+		demande.getEtatsDemande().add(etat);
+
+		List<Demande> listDemande = new ArrayList<Demande>();
+		Demande demandeExist1 = new Demande();
+		EtatDemande etat1 = new EtatDemande();
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		demandeExist1.getEtatsDemande().add(etat1);
+		demandeExist1.setDateDebut(new LocalDateTime(2013, 9, 1, 14, 0).toDate());
+		demandeExist1.setDateFin(new LocalDateTime(2013, 9, 10, 12, 0).toDate());
+		demandeExist1.setIdDemande(2);
+		listDemande.addAll(Arrays.asList(demandeExist1));
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
+				.thenReturn(listDemande);
+
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+
+		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm
+				.getErrors().get(0).toString());
+	}
+
+	@Test
+	public void checkDemandeDejaSaisieSurMemePeriode_OtherDemandePeriodePlusPetite() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
@@ -281,8 +321,46 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		EtatDemande etat1 = new EtatDemande();
 		etat1.setEtat(RefEtatEnum.SAISIE);
 		demandeExist1.getEtatsDemande().add(etat1);
+		demandeExist1.setDateDebut(new LocalDateTime(2013, 6, 1, 14, 0).toDate());
+		demandeExist1.setDateFin(new LocalDateTime(2013, 12, 10, 12, 0).toDate());
+		demandeExist1.setIdDemande(2);
+		listDemande.addAll(Arrays.asList(demandeExist1));
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
+				.thenReturn(listDemande);
+
+		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
+
+		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm
+				.getErrors().get(0).toString());
+	}
+
+	@Test
+	public void checkDemandeDejaSaisieSurMemePeriode_DateDebutKo() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		demande.setIdAgent(9005138);
+		demande.setDateDebut(new LocalDateTime(2013, 9, 10, 12, 0).toDate());
+		demande.setDateFin(new LocalDateTime(2013, 9, 20, 13, 59).toDate());
+
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.PROVISOIRE);
+		demande.getEtatsDemande().add(etat);
+
+		List<Demande> listDemande = new ArrayList<Demande>();
+		Demande demandeExist1 = new Demande();
+		EtatDemande etat1 = new EtatDemande();
+		etat1.setEtat(RefEtatEnum.SAISIE);
+		demandeExist1.getEtatsDemande().add(etat1);
 		demandeExist1.setDateDebut(new LocalDateTime(2013, 9, 1, 14, 0).toDate());
-		demandeExist1.setDateFin(new LocalDateTime(2013, 9, 10, 12, 0).toDate());
+		demandeExist1.setDateFin(new LocalDateTime(2013, 9, 10, 12, 10).toDate());
 		demandeExist1.setIdDemande(2);
 		Demande demandeExist2 = new Demande();
 		EtatDemande etat2 = new EtatDemande();

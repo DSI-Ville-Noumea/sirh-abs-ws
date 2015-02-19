@@ -35,6 +35,7 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.IPtgWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
+import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,6 +140,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		List<Demande> listDemande = demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null,
 				null);
 
+		Interval intervalDemande = new Interval(demande.getDateDebut().getTime(), demande.getDateFin().getTime());
+		
 		for (Demande demandeExistante : listDemande) {
 
 			if ((null == demande.getIdDemande() || (null != demande.getIdDemande() && !demandeExistante.getIdDemande()
@@ -149,21 +152,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					&& !RefEtatEnum.ANNULEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
 					&& !RefEtatEnum.REJETE.equals(demandeExistante.getLatestEtatDemande().getEtat())) {
 
-				// date de debut couverte par une autre demande
-				if ((demande.getDateDebut().before(demandeExistante.getDateFin()) || demande.getDateDebut().equals(
-						demandeExistante.getDateFin()))
-						&& (demande.getDateDebut().after(demandeExistante.getDateDebut()) || demande.getDateDebut()
-								.equals(demandeExistante.getDateDebut()))
-
-				) {
-					logger.warn(String.format(DEMANDE_DEJA_COUVERTE_MSG));
-					srm.getErrors().add(DEMANDE_DEJA_COUVERTE_MSG);
-					return srm;
-				}
-				if ((demande.getDateFin().before(demandeExistante.getDateFin()) || demande.getDateFin().equals(
-						demandeExistante.getDateFin()))
-						&& (demande.getDateFin().after(demandeExistante.getDateDebut()) || demande.getDateFin().equals(
-								demandeExistante.getDateDebut()))) {
+				Interval intervalDemandeExistante = new Interval(demandeExistante.getDateDebut().getTime(), demandeExistante.getDateFin().getTime());
+				
+				if(intervalDemandeExistante.overlaps(intervalDemande)) {
 					logger.warn(String.format(DEMANDE_DEJA_COUVERTE_MSG));
 					srm.getErrors().add(DEMANDE_DEJA_COUVERTE_MSG);
 					return srm;
