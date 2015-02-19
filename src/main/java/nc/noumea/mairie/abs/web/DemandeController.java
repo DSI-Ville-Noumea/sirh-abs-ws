@@ -15,7 +15,6 @@ import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.EditionDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
@@ -231,13 +230,10 @@ public class DemandeController {
 
 		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
 
-		SoldeDto soldeDto = soldeService.getAgentSolde(demandeDto.getAgentWithServiceDto().getIdAgent(), new Date(),
-				new Date(), null);
-
 		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(demandeDto
 				.getAgentWithServiceDto().getIdAgent());
 
-		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, soldeDto, approbateurDto);
+		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, approbateurDto);
 
 		return new ModelAndView("xmlView", "object", dtoFinal);
 	}

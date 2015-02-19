@@ -51,16 +51,13 @@ public class EditionDemandeDtoTest {
 		d.setIdAgent(ag.getIdAgent());
 		d.setType(type);
 		d.getEtatsDemande().add(etatDemande);
+		d.setTotalMinutesOld(12);
+		d.setTotalMinutesNew(14);
+		d.setTotalMinutesAnneeN1Old(16);
+		d.setTotalMinutesAnneeN1New(17);
 
 		DemandeDto demandeDto = new DemandeDto(d, agDto);
 		demandeDto.updateEtat(d.getLatestEtatDemande(), new AgentWithServiceDto(), d.getType().getGroupe());
-
-		SoldeDto soldeDto = new SoldeDto();
-		soldeDto.setSoldeCongeAnnee((double) 12);
-		soldeDto.setSoldeCongeAnneePrec((double) 12.2);
-		soldeDto.setSoldeRecup((double) 22);
-		soldeDto.setSoldeReposCompAnnee((double) 14);
-		soldeDto.setSoldeReposCompAnneePrec((double) 0);
 
 		AgentGeneriqueDto agAppro = new AgentGeneriqueDto();
 		agAppro.setNomUsage("CHARVET");
@@ -69,7 +66,7 @@ public class EditionDemandeDtoTest {
 		AgentWithServiceDto approbateurDto = new AgentWithServiceDto(agAppro);
 
 		// When
-		EditionDemandeDto result = new EditionDemandeDto(demandeDto, soldeDto, approbateurDto);
+		EditionDemandeDto result = new EditionDemandeDto(demandeDto, approbateurDto);
 
 		// Then
 		assertEquals("CHARVET", result.getApprobateur().getNom());
@@ -90,10 +87,9 @@ public class EditionDemandeDtoTest {
 		assertEquals(4, (int) result.getDemande().getIdRefEtat());
 		assertEquals(dateDemande, result.getDemande().getDateSaisie());
 
-		assertEquals("22.0", result.getSolde().getSoldeRecup().toString());
-		assertEquals("14.0", result.getSolde().getSoldeReposCompAnnee().toString());
-		assertEquals("0.0", result.getSolde().getSoldeReposCompAnneePrec().toString());
-		assertEquals("12.0", result.getSolde().getSoldeCongeAnnee().toString());
-		assertEquals("12.2", result.getSolde().getSoldeCongeAnneePrec().toString());
+		assertEquals("14", result.getDemande().getTotalMinutesNew().toString());
+		assertEquals("12", result.getDemande().getTotalMinutesOld().toString());
+		assertEquals("17", result.getDemande().getTotalMinutesAnneeN1New().toString());
+		assertEquals("16", result.getDemande().getTotalMinutesAnneeN1Old().toString());
 	}
 }

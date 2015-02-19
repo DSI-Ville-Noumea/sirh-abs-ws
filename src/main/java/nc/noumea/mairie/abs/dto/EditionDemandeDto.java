@@ -9,14 +9,11 @@ public class EditionDemandeDto {
 
 	private AgentWithServiceDto approbateur;
 
-	private SoldeDto solde;
-
 	public EditionDemandeDto() {
 	}
 
-	public EditionDemandeDto(DemandeDto demandeDto, SoldeDto soldeDto, AgentWithServiceDto approbateurDto) {
+	public EditionDemandeDto(DemandeDto demandeDto, AgentWithServiceDto approbateurDto) {
 		demande = demandeDto;
-		solde = soldeDto;
 		approbateur = approbateurDto;
 	}
 
@@ -26,14 +23,6 @@ public class EditionDemandeDto {
 
 	public void setDemande(DemandeDto demande) {
 		this.demande = demande;
-	}
-
-	public SoldeDto getSolde() {
-		return solde;
-	}
-
-	public void setSolde(SoldeDto solde) {
-		this.solde = solde;
 	}
 
 	public AgentWithServiceDto getApprobateur() {

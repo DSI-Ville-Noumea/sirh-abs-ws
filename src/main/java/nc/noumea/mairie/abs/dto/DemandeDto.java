@@ -87,6 +87,16 @@ public class DemandeDto {
 	private RefTypeSaisiDto typeSaisi;
 	private RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel;
 
+	// Pour les soldes des demandes
+	private Double totalJoursNew;
+	private Double totalJoursOld;
+	private Double totalJoursAnneeN1New;
+	private Double totalJoursAnneeN1Old;
+	private Integer totalMinutesNew;
+	private Integer totalMinutesOld;
+	private Integer totalMinutesAnneeN1New;
+	private Integer totalMinutesAnneeN1Old;
+
 	public DemandeDto() {
 	}
 
@@ -157,9 +167,15 @@ public class DemandeDto {
 				Integer dureeAnneePrecReposComp = ((DemandeReposComp) d).getDureeAnneeN1() == null ? 0
 						: ((DemandeReposComp) d).getDureeAnneeN1();
 				this.duree = (double) (dureeAnneeReposComp + dureeAnneePrecReposComp);
+				this.totalMinutesOld = ((DemandeReposComp) d).getTotalMinutesOld();
+				this.totalMinutesNew = ((DemandeReposComp) d).getTotalMinutesNew();
+				this.totalMinutesAnneeN1Old = ((DemandeReposComp) d).getTotalMinutesAnneeN1Old();
+				this.totalMinutesAnneeN1New = ((DemandeReposComp) d).getTotalMinutesAnneeN1New();
 				break;
 			case RECUP:
 				this.duree = (double) (((DemandeRecup) d).getDuree());
+				this.totalMinutesOld = ((DemandeRecup) d).getTotalMinutesOld();
+				this.totalMinutesNew = ((DemandeRecup) d).getTotalMinutesNew();
 				break;
 			case AS:
 				this.duree = ((DemandeAsa) d).getDuree();
@@ -170,6 +186,10 @@ public class DemandeDto {
 				if (null != ((DemandeAsa) d).getOrganisationSyndicale())
 					this.organisationSyndicale = new OrganisationSyndicaleDto(
 							((DemandeAsa) d).getOrganisationSyndicale());
+				this.totalMinutesOld = ((DemandeAsa) d).getTotalMinutesOld();
+				this.totalMinutesNew = ((DemandeAsa) d).getTotalMinutesNew();
+				this.totalJoursOld = ((DemandeAsa) d).getTotalJoursOld();
+				this.totalJoursNew = ((DemandeAsa) d).getTotalJoursNew();
 				break;
 			case CONGES_EXCEP:
 				this.duree = ((DemandeCongesExceptionnels) d).getDuree();
@@ -185,12 +205,16 @@ public class DemandeDto {
 				Double dureeAnneePrecCongeAnnuel = ((DemandeCongesAnnuels) d).getDureeAnneeN1() == null ? 0
 						: ((DemandeCongesAnnuels) d).getDureeAnneeN1();
 				this.duree = (double) (dureeAnneeCongeAnnuel + dureeAnneePrecCongeAnnuel);
-				this.isSamediOffert = ((DemandeCongesAnnuels) d).getNbSamediOffert()>=1.0?true : false;
+				this.isSamediOffert = ((DemandeCongesAnnuels) d).getNbSamediOffert() >= 1.0 ? true : false;
 				this.isDateDebutAM = ((DemandeCongesAnnuels) d).isDateDebutAM();
 				this.isDateDebutPM = ((DemandeCongesAnnuels) d).isDateDebutPM();
 				this.isDateFinAM = ((DemandeCongesAnnuels) d).isDateFinAM();
 				this.isDateFinPM = ((DemandeCongesAnnuels) d).isDateFinPM();
 				this.commentaire = ((DemandeCongesAnnuels) d).getCommentaire();
+				this.totalJoursOld = ((DemandeCongesAnnuels) d).getTotalJoursOld();
+				this.totalJoursNew = ((DemandeCongesAnnuels) d).getTotalJoursNew();
+				this.totalJoursAnneeN1Old = ((DemandeCongesAnnuels) d).getTotalJoursAnneeN1Old();
+				this.totalJoursAnneeN1New = ((DemandeCongesAnnuels) d).getTotalJoursAnneeN1New();
 				break;
 			default:
 				break;
@@ -597,6 +621,70 @@ public class DemandeDto {
 
 	public void setSamediOffert(boolean isSamediOffert) {
 		this.isSamediOffert = isSamediOffert;
+	}
+
+	public Double getTotalJoursNew() {
+		return totalJoursNew;
+	}
+
+	public void setTotalJoursNew(Double totalJoursNew) {
+		this.totalJoursNew = totalJoursNew;
+	}
+
+	public Double getTotalJoursOld() {
+		return totalJoursOld;
+	}
+
+	public void setTotalJoursOld(Double totalJoursOld) {
+		this.totalJoursOld = totalJoursOld;
+	}
+
+	public Double getTotalJoursAnneeN1New() {
+		return totalJoursAnneeN1New;
+	}
+
+	public void setTotalJoursAnneeN1New(Double totalJoursAnneeN1New) {
+		this.totalJoursAnneeN1New = totalJoursAnneeN1New;
+	}
+
+	public Double getTotalJoursAnneeN1Old() {
+		return totalJoursAnneeN1Old;
+	}
+
+	public void setTotalJoursAnneeN1Old(Double totalJoursAnneeN1Old) {
+		this.totalJoursAnneeN1Old = totalJoursAnneeN1Old;
+	}
+
+	public Integer getTotalMinutesNew() {
+		return totalMinutesNew;
+	}
+
+	public void setTotalMinutesNew(Integer totalMinutesNew) {
+		this.totalMinutesNew = totalMinutesNew;
+	}
+
+	public Integer getTotalMinutesOld() {
+		return totalMinutesOld;
+	}
+
+	public void setTotalMinutesOld(Integer totalMinutesOld) {
+		this.totalMinutesOld = totalMinutesOld;
+	}
+
+	public Integer getTotalMinutesAnneeN1New() {
+		return totalMinutesAnneeN1New;
+	}
+
+	public void setTotalMinutesAnneeN1New(Integer totalMinutesAnneeN1New) {
+		this.totalMinutesAnneeN1New = totalMinutesAnneeN1New;
+	}
+
+	public Integer getTotalMinutesAnneeN1Old() {
+		return totalMinutesAnneeN1Old;
+	}
+
+	public void setTotalMinutesAnneeN1Old(Integer totalMinutesAnneeN1Old) {
+		this.totalMinutesAnneeN1Old = totalMinutesAnneeN1Old;
 	}
 
 }

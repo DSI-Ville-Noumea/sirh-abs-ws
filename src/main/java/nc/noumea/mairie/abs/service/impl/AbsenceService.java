@@ -1318,11 +1318,11 @@ public class AbsenceService implements IAbsenceService {
 
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp);
 
-				demandeReposComp.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(),
-						demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()).intValue());
-
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+				demandeReposComp.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(),
+						demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()).intValue());
 
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
 						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
@@ -1333,11 +1333,11 @@ public class AbsenceService implements IAbsenceService {
 
 				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup);
 
-				demandeRecup.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
-						demande.getDateFin(), demandeDto.getDuree()).intValue());
-
 				if (null == demande.getType().getTypeSaisi())
 					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+
+				demandeRecup.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
+						demande.getDateFin(), demandeDto.getDuree()).intValue());
 
 				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
 						demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
