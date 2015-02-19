@@ -1,8 +1,8 @@
 package nc.noumea.mairie.abs.domain;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @PersistenceUnit(unitName = "absPersistenceUnit")
 public class RefAlimCongeAnnuel {
 
-	@Id
+	@EmbeddedId
 	private RefAlimCongeAnnuelId id;
 
 	@NotNull

@@ -29,7 +29,7 @@ public interface ICongesAnnuelsRepository {
 
 	List<RefAlimCongeAnnuel> getListeRefAlimCongeAnnuelByBaseConge(Integer idRefTypeSaisiCongeAnnuel);
 
-	RefAlimCongeAnnuel getRefAlimCongeAnnuelByMois(Integer idRefTypeSaisiCongeAnnuel, Integer year);
+	RefAlimCongeAnnuel getRefAlimCongeAnnuel(Integer idRefTypeSaisiCongeAnnuel, Integer year);
 
 	List<CongeAnnuelRestitutionMassive> getHistoRestitutionMassiveOrderByDate();
 

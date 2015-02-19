@@ -52,4 +52,6 @@ public interface IAbsenceService {
 	List<Integer> getListeIdAgentConcerneRestitutionMassive(RestitutionMassiveDto dto);
 
 	List<RefAlimCongesAnnuelsDto> getListeRefAlimCongeAnnuelByBaseConge(Integer idRefTypeSaisiCongeAnnuel);
+
+	ReturnMessageDto setRefAlimCongeAnnuel(Integer convertedIdAgent, RefAlimCongesAnnuelsDto refAlimCongesAnnuelsDto);
 }

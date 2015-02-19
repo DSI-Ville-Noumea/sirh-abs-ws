@@ -296,4 +296,27 @@ public class CongeAnnuelController {
 
 		return result;
 	}
+
+	/**
+	 * Ajout ou modification de la table abs_ref_alim_conges_annuels <br />
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/setRefAlimCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setRefAlimCongeAnnuel(
+			@RequestBody(required = true) RefAlimCongesAnnuelsDto refAlimCongesAnnuelsDto,
+			@RequestParam("idAgent") int idAgent, HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [congeannuel/setRefAlimCongeAnnuel] => setRefAlimCongeAnnuel with parameter refAlimCongesAnnuelsDto = {} and idAgent = {}",
+				refAlimCongesAnnuelsDto.getDtoToString(refAlimCongesAnnuelsDto), idAgent);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		ReturnMessageDto result = absenceService.setRefAlimCongeAnnuel(convertedIdAgent, refAlimCongesAnnuelsDto);
+
+		if (null == result)
+			throw new NoContentException();
+
+		return result;
+	}
 }

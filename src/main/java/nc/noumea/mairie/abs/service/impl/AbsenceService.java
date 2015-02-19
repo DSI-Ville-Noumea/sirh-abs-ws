@@ -24,6 +24,7 @@ import nc.noumea.mairie.abs.domain.EtatDemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemandeReposComp;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuelId;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
@@ -101,6 +102,10 @@ public class AbsenceService implements IAbsenceService {
 	private IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl;
 
 	@Autowired
+	@Qualifier("AbsCongesAnnuelsDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl;
+
+	@Autowired
 	private HelperService helperService;
 
 	@Autowired
@@ -126,6 +131,7 @@ public class AbsenceService implements IAbsenceService {
 	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyée n'est pas correct.";
 	protected static final String BASE_CA_NON_TROUVEE = "Base congé non trouvée pour l'agent [%d].";
 	protected static final String MAUVAIS_BASE_CA = "Mauvaise base congé pour l'agent [%d].";
+	public static final String AGENT_NON_HABILITE = "L'agent n'est pas habilité pour cette opération.";
 
 	// POUR LES MESSAGE A ENVOYE AU PROJET SIRH-PTG-WS
 	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez pointé sur une absence.";
@@ -1662,6 +1668,58 @@ public class AbsenceService implements IAbsenceService {
 			RefAlimCongesAnnuelsDto dto = new RefAlimCongesAnnuelsDto(ref);
 			result.add(dto);
 		}
+		return result;
+	}
+
+	@Override
+	@Transactional(value = "chainedTransactionManager")
+	public ReturnMessageDto setRefAlimCongeAnnuel(Integer convertedIdAgent,
+			RefAlimCongesAnnuelsDto refAlimCongesAnnuelsDto) {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		// verification des droits SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(convertedIdAgent);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			logger.warn(AGENT_NON_HABILITE);
+			result.getErrors().add(String.format(AGENT_NON_HABILITE));
+			return result;
+		}
+
+		RefAlimCongeAnnuel refAlim = congeAnnuelRepository.getRefAlimCongeAnnuel(
+				refAlimCongesAnnuelsDto.getIdRefTypeSaisiCongeAnnuel(), refAlimCongesAnnuelsDto.getAnnee());
+
+		if (null == refAlim) {
+			refAlim = new RefAlimCongeAnnuel();
+			RefAlimCongeAnnuelId id = new RefAlimCongeAnnuelId();
+			id.setAnnee(refAlimCongesAnnuelsDto.getAnnee());
+			id.setIdRefTypeSaisiCongeAnnuel(refAlimCongesAnnuelsDto.getIdRefTypeSaisiCongeAnnuel());
+			refAlim.setId(id);
+		}
+
+		refAlim.setJanvier(refAlimCongesAnnuelsDto.getJanvier());
+		refAlim.setFevrier(refAlimCongesAnnuelsDto.getFevrier());
+		refAlim.setMars(refAlimCongesAnnuelsDto.getMars());
+		refAlim.setAvril(refAlimCongesAnnuelsDto.getAvril());
+		refAlim.setMai(refAlimCongesAnnuelsDto.getMai());
+		refAlim.setJuin(refAlimCongesAnnuelsDto.getJuin());
+		refAlim.setJuillet(refAlimCongesAnnuelsDto.getJuillet());
+		refAlim.setAout(refAlimCongesAnnuelsDto.getAout());
+		refAlim.setSeptembre(refAlimCongesAnnuelsDto.getSeptembre());
+		refAlim.setOctobre(refAlimCongesAnnuelsDto.getOctobre());
+		refAlim.setNovembre(refAlimCongesAnnuelsDto.getNovembre());
+		refAlim.setDecembre(refAlimCongesAnnuelsDto.getDecembre());
+
+		if (!result.getErrors().isEmpty()) {
+			return result;
+		}
+
+		// congeAnnuelRepository.persistEntity(refAlim);
+		demandeRepository.persistEntity(refAlim);
+
+		logger.debug("Alimentation des congés annuels sauvegardée.");
+		result.getInfos().add("Alimentation des congés annuels sauvegardée.");
+
 		return result;
 	}
 }

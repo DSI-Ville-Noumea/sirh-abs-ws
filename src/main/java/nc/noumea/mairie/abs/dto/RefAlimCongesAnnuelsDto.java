@@ -1,9 +1,11 @@
 package nc.noumea.mairie.abs.dto;
 
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
+import flexjson.JSONSerializer;
 
 public class RefAlimCongesAnnuelsDto {
 
+	private Integer idRefTypeSaisiCongeAnnuel;
 	private Integer annee;
 	private Double janvier;
 	private Double fevrier;
@@ -19,6 +21,7 @@ public class RefAlimCongesAnnuelsDto {
 	private Double decembre;
 
 	public RefAlimCongesAnnuelsDto(RefAlimCongeAnnuel ref) {
+		this.idRefTypeSaisiCongeAnnuel = ref.getId().getIdRefTypeSaisiCongeAnnuel();
 		this.annee = ref.getId().getAnnee();
 		this.janvier = ref.getJanvier();
 		this.fevrier = ref.getFevrier();
@@ -140,6 +143,19 @@ public class RefAlimCongesAnnuelsDto {
 
 	public void setDecembre(Double decembre) {
 		this.decembre = decembre;
+	}
+
+	public String getDtoToString(RefAlimCongesAnnuelsDto dto) {
+		String json = new JSONSerializer().exclude("*.class").deepSerialize(dto);
+		return json;
+	}
+
+	public Integer getIdRefTypeSaisiCongeAnnuel() {
+		return idRefTypeSaisiCongeAnnuel;
+	}
+
+	public void setIdRefTypeSaisiCongeAnnuel(Integer idRefTypeSaisiCongeAnnuel) {
+		this.idRefTypeSaisiCongeAnnuel = idRefTypeSaisiCongeAnnuel;
 	}
 
 }

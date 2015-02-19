@@ -470,7 +470,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 					return srm;
 				}
 				
-				RefAlimCongeAnnuel refAlim = congesAnnuelsRepository.getRefAlimCongeAnnuelByMois(
+				RefAlimCongeAnnuel refAlim = congesAnnuelsRepository.getRefAlimCongeAnnuel(
 						typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), new DateTime(dateDebut).getYear());
 
 				Double quotaMois = getQuotaCongesByMois(refAlim, new DateTime(dateDebut).getMonthOfYear());

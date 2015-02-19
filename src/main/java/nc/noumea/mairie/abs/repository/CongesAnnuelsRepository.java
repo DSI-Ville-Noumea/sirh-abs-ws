@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
@@ -208,18 +209,21 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 	}
 
 	@Override
-	public RefAlimCongeAnnuel getRefAlimCongeAnnuelByMois(Integer idRefTypeSaisiCongeAnnuel, Integer year) {
+	public RefAlimCongeAnnuel getRefAlimCongeAnnuel(Integer idRefTypeSaisiCongeAnnuel, Integer year) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select r from RefAlimCongeAnnuel r ");
-		sb.append("where r.idRefTypeSaisiCongeAnnuel = :idRefTypeSaisiCongeAnnuel ");
-		sb.append("and by r.annee =:annee ");
+		sb.append("where r.id.idRefTypeSaisiCongeAnnuel = :idRefTypeSaisiCongeAnnuel ");
+		sb.append("and r.id.annee =:annee ");
 
 		TypedQuery<RefAlimCongeAnnuel> query = absEntityManager.createQuery(sb.toString(), RefAlimCongeAnnuel.class);
 
 		query.setParameter("idRefTypeSaisiCongeAnnuel", idRefTypeSaisiCongeAnnuel);
 		query.setParameter("annee", year);
-		
-		return query.getSingleResult() ;
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 }

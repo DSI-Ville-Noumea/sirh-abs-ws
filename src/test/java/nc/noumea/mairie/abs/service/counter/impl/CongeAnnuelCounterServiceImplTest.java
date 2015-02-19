@@ -1011,8 +1011,8 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
 		Mockito.when(
-				congesAnnuelsRepository.getRefAlimCongeAnnuelByMois(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(),
-						2014)).thenReturn(refAlimCongeAnnuel);
+				congesAnnuelsRepository.getRefAlimCongeAnnuel(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), 2014))
+				.thenReturn(refAlimCongeAnnuel);
 
 		TypeAbsenceRepository typeAbsenceRepository = Mockito.mock(TypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, pa.getIdBaseCongeAbsence()))
@@ -1072,8 +1072,8 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
 		Mockito.when(
-				congesAnnuelsRepository.getRefAlimCongeAnnuelByMois(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(),
-						2014)).thenReturn(refAlimCongeAnnuel);
+				congesAnnuelsRepository.getRefAlimCongeAnnuel(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), 2014))
+				.thenReturn(refAlimCongeAnnuel);
 
 		TypeAbsenceRepository typeAbsenceRepository = Mockito.mock(TypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, pa.getIdBaseCongeAbsence()))
@@ -1141,8 +1141,8 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
 		Mockito.when(
-				congesAnnuelsRepository.getRefAlimCongeAnnuelByMois(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(),
-						2014)).thenReturn(refAlimCongeAnnuel);
+				congesAnnuelsRepository.getRefAlimCongeAnnuel(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), 2014))
+				.thenReturn(refAlimCongeAnnuel);
 
 		TypeAbsenceRepository typeAbsenceRepository = Mockito.mock(TypeAbsenceRepository.class);
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, pa.getIdBaseCongeAbsence()))

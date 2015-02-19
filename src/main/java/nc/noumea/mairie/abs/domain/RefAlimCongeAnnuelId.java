@@ -11,7 +11,7 @@ public class RefAlimCongeAnnuelId implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8946838331838630488L;
+	private static final long serialVersionUID = 1L;
 
 	@Column(name = "ID_REF_TYPE_SAISI_CONGE_ANNUEL")
 	private Integer idRefTypeSaisiCongeAnnuel;
