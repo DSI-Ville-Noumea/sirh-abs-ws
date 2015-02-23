@@ -731,12 +731,12 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 					srm.getErrors().add(String.format(RESTITUTION_EXISTANTE));
 					return srm;
 				}
-				if(dto.isMatin() && (restitutionExistante.isApresMidi() || restitutionExistante.isJournee())) {
+				if(dto.isMatin() && restitutionExistante.isJournee()) {
 					logger.warn(RESTITUTION_EXISTANTE);
 					srm.getErrors().add(String.format(RESTITUTION_EXISTANTE));
 					return srm;
 				}
-				if(dto.isApresMidi() && (restitutionExistante.isMatin() || restitutionExistante.isJournee())) {
+				if(dto.isApresMidi() && restitutionExistante.isJournee()) {
 					logger.warn(RESTITUTION_EXISTANTE);
 					srm.getErrors().add(String.format(RESTITUTION_EXISTANTE));
 					return srm;

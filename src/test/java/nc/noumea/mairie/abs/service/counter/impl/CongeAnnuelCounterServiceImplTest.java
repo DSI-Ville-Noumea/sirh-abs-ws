@@ -2822,7 +2822,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 	}
 
 	@Test
-	public void checkAutreRestitutionMemeJour_1Restitution_1error() {
+	public void checkAutreRestitutionMemeJour_1Restitution_0error() {
 
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
 		dto.setMatin(false);
@@ -2846,8 +2846,35 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		srm = service.checkAutreRestitutionMemeJour(dto, srm);
 
-		assertEquals(1, srm.getErrors().size());
-		assertEquals(CongeAnnuelCounterServiceImpl.RESTITUTION_EXISTANTE, srm.getErrors().get(0));
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkAutreRestitutionMemeJour_Restitution_0error() {
+
+		RestitutionMassiveDto dto = new RestitutionMassiveDto();
+		dto.setMatin(true);
+		dto.setApresMidi(false);
+		dto.setJournee(false);
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		CongeAnnuelRestitutionMassive restitutionExistante = new CongeAnnuelRestitutionMassive();
+		restitutionExistante.setMatin(false);
+		restitutionExistante.setApresMidi(true);
+		restitutionExistante.setJournee(false);
+		List<CongeAnnuelRestitutionMassive> listRestitution = new ArrayList<CongeAnnuelRestitutionMassive>();
+		listRestitution.add(restitutionExistante);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getListCongeAnnuelRestitutionMassiveByDate(dto)).thenReturn(
+				listRestitution);
+
+		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+
+		srm = service.checkAutreRestitutionMemeJour(dto, srm);
+
+		assertEquals(0, srm.getErrors().size());
 	}
 
 	@Test
@@ -2877,6 +2904,63 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(CongeAnnuelCounterServiceImpl.RESTITUTION_EXISTANTE, srm.getErrors().get(0));
+	}
+
+	@Test
+	public void checkAutreRestitutionMemeJour_Restitution_1OtherError() {
+
+		RestitutionMassiveDto dto = new RestitutionMassiveDto();
+		dto.setMatin(false);
+		dto.setApresMidi(true);
+		dto.setJournee(false);
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		CongeAnnuelRestitutionMassive restitutionExistante = new CongeAnnuelRestitutionMassive();
+		restitutionExistante.setMatin(false);
+		restitutionExistante.setApresMidi(false);
+		restitutionExistante.setJournee(true);
+		List<CongeAnnuelRestitutionMassive> listRestitution = new ArrayList<CongeAnnuelRestitutionMassive>();
+		listRestitution.add(restitutionExistante);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getListCongeAnnuelRestitutionMassiveByDate(dto)).thenReturn(
+				listRestitution);
+
+		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+
+		srm = service.checkAutreRestitutionMemeJour(dto, srm);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(CongeAnnuelCounterServiceImpl.RESTITUTION_EXISTANTE, srm.getErrors().get(0));
+	}
+
+	@Test
+	public void checkAutreRestitutionMemeJour_Restitution_SameDay() {
+
+		RestitutionMassiveDto dto = new RestitutionMassiveDto();
+		dto.setMatin(false);
+		dto.setApresMidi(false);
+		dto.setJournee(true);
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		CongeAnnuelRestitutionMassive restitutionExistante = new CongeAnnuelRestitutionMassive();
+		restitutionExistante.setMatin(false);
+		restitutionExistante.setApresMidi(false);
+		restitutionExistante.setJournee(true);
+		List<CongeAnnuelRestitutionMassive> listRestitution = new ArrayList<CongeAnnuelRestitutionMassive>();
+		listRestitution.add(restitutionExistante);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getListCongeAnnuelRestitutionMassiveByDate(dto)).thenReturn(
+				listRestitution);
+
+		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+
+		srm = service.checkAutreRestitutionMemeJour(dto, srm);
+
+		assertEquals(0, srm.getErrors().size());
 	}
 
 	@Test
