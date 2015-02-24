@@ -10633,6 +10633,7 @@ public class AbsenceServiceTest {
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
 		DemandeRecup d = new DemandeRecup();
+		d.setDateDebut(new DateTime(2014, 01, 01, 0, 0).toDate());
 		d.setIdDemande(1);
 		d.setType(type);
 		d.getEtatsDemande().add(etat);
@@ -10651,7 +10652,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération'.", result.getInfos().get(0));
+		assertEquals("01/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération'.", result.getInfos().get(0));
 
 	}
 
@@ -10670,6 +10671,7 @@ public class AbsenceServiceTest {
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
 		DemandeReposComp d = new DemandeReposComp();
+		d.setDateDebut(new DateTime(2014, 01, 01, 0, 0).toDate());
 		d.setIdDemande(1);
 		d.setType(type);
 		d.getEtatsDemande().add(etat);
@@ -10708,6 +10710,7 @@ public class AbsenceServiceTest {
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
 		DemandeReposComp d = new DemandeReposComp();
+		d.setDateDebut(new DateTime(2014, 1, 5, 0, 0).toDate());
 		d.setIdDemande(1);
 		d.setType(type);
 		d.getEtatsDemande().add(etat);
@@ -10726,7 +10729,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur'.", result.getInfos().get(0));
+		assertEquals("05/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur'.", result.getInfos().get(0));
 
 	}
 
@@ -10783,6 +10786,7 @@ public class AbsenceServiceTest {
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
 		DemandeAsa d = new DemandeAsa();
+		d.setDateDebut(new DateTime(2014, 01, 2, 0, 0).toDate());
 		d.setIdDemande(1);
 		d.setType(type);
 		d.getEtatsDemande().add(etat);
@@ -10801,7 +10805,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale'.", result.getInfos().get(0));
+		assertEquals("02/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale'.", result.getInfos().get(0));
 
 	}
 
@@ -10858,6 +10862,7 @@ public class AbsenceServiceTest {
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
 		DemandeCongesExceptionnels d = new DemandeCongesExceptionnels();
+		d.setDateDebut(new DateTime(2014, 1, 4, 0, 0).toDate());
 		d.setIdDemande(1);
 		d.setType(type);
 		d.getEtatsDemande().add(etat);
@@ -10876,7 +10881,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel'.", result.getInfos().get(0));
+		assertEquals("04/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel'.", result.getInfos().get(0));
 
 	}
 
@@ -10932,6 +10937,7 @@ public class AbsenceServiceTest {
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setGroupe(groupe);
 		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setDateDebut(new DateTime(2014, 1, 3, 0, 0).toDate());
 		d.setIdDemande(1);
 		d.setType(type);
 		d.getEtatsDemande().add(etat);
@@ -10950,7 +10956,7 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("20/02/2015 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel'.", result.getInfos().get(0));
+		assertEquals("03/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel'.", result.getInfos().get(0));
 
 	}
 
