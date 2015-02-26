@@ -805,6 +805,11 @@ public class AccessRightsService implements IAccessRightsService {
 	@Transactional(readOnly = true)
 	public AgentWithServiceDto getApprobateurOfAgent(Integer idAgent) {
 		DroitsAgent droitAgent = accessRightsRepository.getDroitsAgent(idAgent);
+		
+		if(null == droitAgent) {
+			return null;
+		}
+		
 		Droit droitApprobateur = accessRightsRepository.getApprobateurOfAgent(droitAgent);
 		AgentWithServiceDto agentApprobateurDto = sirhWSConsumer.getAgentService(droitApprobateur.getIdAgent(),
 				helperService.getCurrentDate());
