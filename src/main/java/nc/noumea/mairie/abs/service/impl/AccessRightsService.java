@@ -89,7 +89,7 @@ public class AccessRightsService implements IAccessRightsService {
 				for (DroitDroitsAgent droitAg : da.getDroitDroitsAgent()) {
 					SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(droitAg.getDroitsAgent().getIdAgent(),
 							new Date());
-					if (null != service.getSigle() && service.getSigle().toUpperCase().equals("DPM")) {
+					if (service != null && null != service.getSigle() && service.getSigle().toUpperCase().equals("DPM")) {
 						contientAgentDPM = true;
 						break;
 					}
@@ -814,7 +814,7 @@ public class AccessRightsService implements IAccessRightsService {
 //		if(null == droitAgent) {
 //			return null;
 //		}
-		
+
 		Droit droitApprobateur = accessRightsRepository.getApprobateurOfAgent(droitAgent);
 		AgentWithServiceDto agentApprobateurDto = sirhWSConsumer.getAgentService(droitApprobateur.getIdAgent(),
 				helperService.getCurrentDate());
