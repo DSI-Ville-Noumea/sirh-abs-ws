@@ -114,7 +114,11 @@ public class AccessRightsService implements IAccessRightsService {
 		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
 			AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			agentDtos.add(agentDto);
+			if(null == agentDto) {
+				logger.debug("Aucun agent actif trouvé dans SIRH {}" + da.getIdAgent());
+			}else{
+				agentDtos.add(agentDto);
+			}
 		}
 		Collections.sort(agentDtos, new AgentWithServiceDtoComparator());
 		return agentDtos;
@@ -125,6 +129,7 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> listeDto) {
 
 		List<AgentWithServiceDto> listeAgentErreur = new ArrayList<AgentWithServiceDto>();
+		List<Droit> listeAgentErreurDelete = new ArrayList<Droit>();
 		List<Droit> listeAgentAppro = accessRightsRepository.getAgentsApprobateurs();
 
 		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);
@@ -806,9 +811,9 @@ public class AccessRightsService implements IAccessRightsService {
 	public AgentWithServiceDto getApprobateurOfAgent(Integer idAgent) {
 		DroitsAgent droitAgent = accessRightsRepository.getDroitsAgent(idAgent);
 		
-		if(null == droitAgent) {
-			return null;
-		}
+//		if(null == droitAgent) {
+//			return null;
+//		}
 		
 		Droit droitApprobateur = accessRightsRepository.getApprobateurOfAgent(droitAgent);
 		AgentWithServiceDto agentApprobateurDto = sirhWSConsumer.getAgentService(droitApprobateur.getIdAgent(),
