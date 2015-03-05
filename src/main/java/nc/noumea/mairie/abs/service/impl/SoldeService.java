@@ -147,7 +147,7 @@ public class SoldeService implements ISoldeService {
 	private void getSoldeReposComp(Integer idAgent, SoldeDto dto, ReturnMessageDto msg) {
 		// on traite les respo comp
 		AgentReposCompCount soldeReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent);
-		msg = absReposCompDataConsistencyRules.checkStatutAgent(msg, idAgent);
+		msg = absReposCompDataConsistencyRules.checkStatutAgent(msg, idAgent, false);
 		dto.setAfficheSoldeReposComp(msg.getErrors().isEmpty() ? true : false);
 		dto.setSoldeReposCompAnnee((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutes()));
 		dto.setSoldeReposCompAnneePrec((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutesAnneeN1()));

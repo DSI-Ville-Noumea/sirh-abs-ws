@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javax.persistence.FlushModeType;
 
+import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
@@ -51,6 +52,7 @@ import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
+import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
@@ -63,6 +65,7 @@ import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.rules.impl.AbsCongesAnnuelsDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
+import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.SpcarrId;
 import nc.noumea.mairie.domain.Spcc;
@@ -10652,7 +10655,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("01/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération'.", result.getInfos().get(0));
+		assertEquals("01/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération'.", result
+				.getInfos().get(0));
 
 	}
 
@@ -10729,7 +10733,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("05/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur'.", result.getInfos().get(0));
+		assertEquals("05/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur'.",
+				result.getInfos().get(0));
 
 	}
 
@@ -10805,7 +10810,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("02/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale'.", result.getInfos().get(0));
+		assertEquals("02/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale'.",
+				result.getInfos().get(0));
 
 	}
 
@@ -10881,7 +10887,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("04/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel'.", result.getInfos().get(0));
+		assertEquals("04/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel'.",
+				result.getInfos().get(0));
 
 	}
 
@@ -10956,7 +10963,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("03/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel'.", result.getInfos().get(0));
+		assertEquals("03/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel'.", result
+				.getInfos().get(0));
 
 	}
 
@@ -11907,6 +11915,50 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, result.size());
 		assertEquals(new Integer(9005138), result.get(0));
+	}
+
+	@Test
+	public void miseAJourSpsold_ErrorNoSolde() {
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, 9005138)).thenReturn(null);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+
+		ReturnMessageDto result = service.miseAJourSpsold(9005138);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le compteur de congé annuel n'existe pas.", result.getErrors().get(0));
+	}
+
+	@Test
+	public void miseAJourSpsold_OK() {
+		Integer idAgent = 9005138;
+		AgentCongeAnnuelCount count = new AgentCongeAnnuelCount();
+		count.setIdAgent(idAgent);
+		count.setTotalJours(0.0);
+		count.setTotalJoursAnneeN1(12.0);
+
+		SpSold soldeConge = new SpSold();
+		soldeConge.setNomatr(5138);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(count);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getSpsold(idAgent)).thenReturn(soldeConge);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+
+		ReturnMessageDto result = service.miseAJourSpsold(idAgent);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(SpSold.class));
 	}
 
 }

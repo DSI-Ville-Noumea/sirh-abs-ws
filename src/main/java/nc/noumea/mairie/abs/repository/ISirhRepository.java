@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.repository;
 import java.util.Date;
 
 import nc.noumea.mairie.domain.SpSold;
+import nc.noumea.mairie.domain.SpSorc;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcc;
@@ -23,4 +24,6 @@ public interface ISirhRepository {
 	void removeEntity(Object obj);
 
 	Spcc getSpcc(Integer nomatr, Date asOfDate, Integer code);
+
+	SpSorc getSpsorc(Integer idAgent);
 }

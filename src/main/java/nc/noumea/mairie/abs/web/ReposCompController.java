@@ -185,4 +185,20 @@ public class ReposCompController {
 
 		return result;
 	}
+
+	/**
+	 * Mise à jour de SPSORC pour les bulletins de salaires <br />
+	 * utile a SIRH-JOBS
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/miseAJourSpsorc", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public ReturnMessageDto miseAJourSpsorc(@RequestParam("idAgent") Integer idAgent, HttpServletResponse response) {
+
+		logger.debug("entered POST [reposcomps/miseAJourSpsorc] => miseAJourSpsorc with parameters idAgent = {}",
+				idAgent);
+
+		ReturnMessageDto srm = absenceService.miseAJourSpsorc(idAgent);
+
+		return srm;
+	}
 }

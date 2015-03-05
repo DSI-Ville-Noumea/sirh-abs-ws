@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.persistence.FlushModeType;
 
+import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
+import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
@@ -43,6 +45,7 @@ import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
+import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
@@ -56,6 +59,8 @@ import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
+import nc.noumea.mairie.domain.SpSold;
+import nc.noumea.mairie.domain.SpSorc;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcc;
 import nc.noumea.mairie.domain.SpccId;
@@ -126,12 +131,22 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	private ITypeAbsenceRepository typeAbsenceRepository;
 
+	@Autowired
+	@Qualifier("typeEnv")
+	private String typeEnvironnement;
+
+	@Autowired
+	private ICounterRepository counterRepository;
+
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
 	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyée n'est pas correct.";
 	protected static final String BASE_CA_NON_TROUVEE = "Base congé non trouvée pour l'agent [%d].";
 	protected static final String MAUVAIS_BASE_CA = "Mauvaise base congé pour l'agent [%d].";
 	public static final String AGENT_NON_HABILITE = "L'agent n'est pas habilité pour cette opération.";
+	protected static final String COMPTEUR_INEXISTANT_SPSOLD = "Le compteur de congé annuel n'existe pas.";
+	protected static final String COMPTEUR_INEXISTANT_SPSORC = "Le compteur de repos compensateur n'existe pas.";
+	public static final String STATUT_AGENT = "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
 
 	// POUR LES MESSAGE A ENVOYE AU PROJET SIRH-PTG-WS
 	public static final String AVERT_MESSAGE_ABS = "%s : Soyez vigilant, vous avez pointé sur une absence de type '%s'.";
@@ -1732,6 +1747,74 @@ public class AbsenceService implements IAbsenceService {
 		logger.debug("Alimentation des congés annuels sauvegardée.");
 		result.getInfos().add("Alimentation des congés annuels sauvegardée.");
 
+		return result;
+	}
+
+	@Override
+	public ReturnMessageDto miseAJourSpsold(Integer idAgent) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		if (typeEnvironnement.equals("RECETTE")) {
+			// on cherche le solde de l'agent
+			AgentCongeAnnuelCount soldeCongeAgent = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class,
+					idAgent);
+			if (soldeCongeAgent == null) {
+				logger.warn(COMPTEUR_INEXISTANT_SPSOLD);
+				result.getErrors().add(String.format(COMPTEUR_INEXISTANT_SPSOLD));
+				return result;
+			}
+
+			// on cherche Spsold
+			SpSold soldeConge = sirhRepository.getSpsold(idAgent);
+			// si pas de ligne on en crée une
+			if (soldeConge == null) {
+				soldeConge = new SpSold();
+				soldeConge.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent));
+			}
+			soldeConge.setSoldeAnneeEnCours(soldeCongeAgent.getTotalJours());
+			soldeConge.setSoldeAnneePrec(soldeCongeAgent.getTotalJoursAnneeN1());
+
+			sirhRepository.persistEntity(soldeConge);
+		}
+		return result;
+	}
+
+	@Override
+	public ReturnMessageDto miseAJourSpsorc(Integer idAgent) {
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
+		// contractuel,convention coll
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
+		if (!(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
+			logger.debug(String.format(STATUT_AGENT, idAgent));
+			result.getInfos().add(String.format(STATUT_AGENT, idAgent));
+			return result;
+		}
+
+		if (typeEnvironnement.equals("RECETTE")) {
+			// on cherche le solde de l'agent
+			AgentReposCompCount soldeReposCompAgent = counterRepository.getAgentCounter(AgentReposCompCount.class,
+					idAgent);
+			if (soldeReposCompAgent == null) {
+				logger.warn(COMPTEUR_INEXISTANT_SPSORC);
+				result.getErrors().add(String.format(COMPTEUR_INEXISTANT_SPSORC));
+				return result;
+			}
+
+			// on cherche Spsorc
+			SpSorc soldeReposComp = sirhRepository.getSpsorc(idAgent);
+			// si pas de ligne on en crée une
+			if (soldeReposComp == null) {
+				soldeReposComp = new SpSorc();
+				soldeReposComp.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent));
+			}
+			soldeReposComp.setSoldeAnneeEnCours((double) soldeReposCompAgent.getTotalMinutes());
+			soldeReposComp.setSoldeAnneePrec((double) soldeReposCompAgent.getTotalMinutesAnneeN1());
+			soldeReposComp.setNombrePris(0.0);
+
+			sirhRepository.persistEntity(soldeReposComp);
+		}
 		return result;
 	}
 }

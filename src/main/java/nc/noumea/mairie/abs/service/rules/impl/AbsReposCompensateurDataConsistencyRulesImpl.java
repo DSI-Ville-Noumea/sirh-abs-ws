@@ -28,21 +28,23 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
 			boolean isProvenanceSIRH) {
-		checkStatutAgent(srm, demande.getIdAgent());
+		checkStatutAgent(srm, demande.getIdAgent(), isProvenanceSIRH);
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkDepassementDroitsAcquis(srm, demande);
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
 	}
 
-	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Integer idAgent) {
-		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
-		// contractuel,convention coll
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
-		if (!(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
-			logger.warn(String.format(STATUT_AGENT, idAgent));
-			srm.getErrors().add(String.format(STATUT_AGENT, idAgent));
+	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Integer idAgent, boolean isProvenanceSIRH) {
+		if (!isProvenanceSIRH) {
+			// on recherche sa carriere pour avoir son statut (Fonctionnaire,
+			// contractuel,convention coll
+			Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+					agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
+			if (!(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
+				logger.warn(String.format(STATUT_AGENT, idAgent));
+				srm.getErrors().add(String.format(STATUT_AGENT, idAgent));
+			}
 		}
 
 		return srm;

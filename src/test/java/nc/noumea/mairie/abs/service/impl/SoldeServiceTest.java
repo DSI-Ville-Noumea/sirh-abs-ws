@@ -75,8 +75,10 @@ public class SoldeServiceTest {
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
 				return result;
 			}
-		}).when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
@@ -223,8 +225,10 @@ public class SoldeServiceTest {
 				// result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		}).when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(Boolean.class));
 
 		SoldeSpecifiqueDto soldeSpecifiqueDto = new SoldeSpecifiqueDto();
 		soldeSpecifiqueDto.setLibelle("libelle 1");
@@ -391,8 +395,10 @@ public class SoldeServiceTest {
 				// result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		}).when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
@@ -495,8 +501,10 @@ public class SoldeServiceTest {
 						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		}).when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
@@ -595,8 +603,10 @@ public class SoldeServiceTest {
 						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		}).when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
@@ -694,8 +704,10 @@ public class SoldeServiceTest {
 						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		}).when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
@@ -781,8 +793,10 @@ public class SoldeServiceTest {
 						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		}).when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class));
+		})
+				.when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 

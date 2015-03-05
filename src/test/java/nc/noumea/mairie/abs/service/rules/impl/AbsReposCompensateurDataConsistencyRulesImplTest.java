@@ -193,13 +193,13 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
 
-		srm = impl.checkStatutAgent(srm, demande.getIdAgent());
+		srm = impl.checkStatutAgent(srm, demande.getIdAgent(), false);
 
 		assertEquals(0, srm.getErrors().size());
 	}
 
 	@Test
-	public void checkStatutAgent_isFonctionnaire() {
+	public void checkStatutAgent_isFonctionnaireFromKiosque() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
@@ -228,12 +228,47 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
 
-		srm = impl.checkStatutAgent(srm, demande.getIdAgent());
+		srm = impl.checkStatutAgent(srm, demande.getIdAgent(), false);
 
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(
 				"L'agent [9005131] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.",
 				srm.getErrors().get(0).toString());
+	}
+
+	@Test
+	public void checkStatutAgent_isFonctionnaireFromSIRH() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		demande.setIdAgent(9005131);
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setNomatr(5131);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(2);
+
+		Date date = new LocalDate(2013, 9, 29).toDate();
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5131, date)).thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent())).thenReturn(5131);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		AbsReposCompensateurDataConsistencyRulesImpl impl = new AbsReposCompensateurDataConsistencyRulesImpl();
+		ReflectionTestUtils.setField(impl, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "agentMatriculeService", agentMatriculeServ);
+
+		srm = impl.checkStatutAgent(srm, demande.getIdAgent(), true);
+
+		assertEquals(0, srm.getErrors().size());
 	}
 
 	@Test
