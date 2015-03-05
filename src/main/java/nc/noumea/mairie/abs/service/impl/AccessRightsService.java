@@ -628,7 +628,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(
-				droitOperateurOrViseur.getDroitDroitsAgent());
+				droitProfilOperateurOrViseur.getDroitDroitsAgent());
 
 		for (AgentDto ag : agents) {
 
@@ -653,13 +653,13 @@ public class AccessRightsService implements IAccessRightsService {
 					continue;
 
 				// once found, if this agent is not in the operator list, add it
-				if (!droitOperateurOrViseur.getDroitDroitsAgent().contains(ddaInAppro)) {
+				if (!droitProfilOperateurOrViseur.getDroitDroitsAgent().contains(ddaInAppro)) {
 					DroitDroitsAgent dda = new DroitDroitsAgent();
 					dda.setDroit(droitOperateurOrViseur);
 					dda.setDroitsAgent(ddaInAppro.getDroitsAgent());
 					dda.setDroitProfil(droitProfilOperateurOrViseur);
 
-					droitOperateurOrViseur.getDroitDroitsAgent().add(dda);
+					droitProfilOperateurOrViseur.getDroitDroitsAgent().add(dda);
 
 					if (dda.getIdDroitDroitsAgent() == null)
 						accessRightsRepository.persisEntity(dda);
