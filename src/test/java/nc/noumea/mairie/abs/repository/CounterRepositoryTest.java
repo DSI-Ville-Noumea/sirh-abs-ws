@@ -664,18 +664,21 @@ public class CounterRepositoryTest {
 		organisationSyndicale.setIdOrganisationSyndicale(1);
 		absEntityManager.persist(organisationSyndicale);
 		AgentAsaA52Count record = new AgentAsaA52Count();
+		record.setIdAgent(9005138);
 		record.setOrganisationSyndicale(organisationSyndicale);
 		record.setTotalMinutes(7 * 60);
 		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		record.setDateFin(new DateTime(2014, 1, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record);
 		AgentAsaA52Count record2 = new AgentAsaA52Count();
+		record2.setIdAgent(9005138);
 		record.setOrganisationSyndicale(organisationSyndicale);
 		record2.setTotalMinutes(10 * 60);
 		record2.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
 		record2.setDateFin(new DateTime(2014, 3, 31, 0, 0, 0).toDate());
 		absEntityManager.persist(record2);
 		AgentAsaA52Count record3 = new AgentAsaA52Count();
+		record3.setIdAgent(9005138);
 		record.setOrganisationSyndicale(organisationSyndicale2);
 		record3.setTotalMinutes(10 * 60);
 		record3.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
@@ -683,7 +686,7 @@ public class CounterRepositoryTest {
 		absEntityManager.persist(record3);
 
 		// When
-		List<AgentAsaA52Count> result = repository.getListOSCounterByDate(1, dateDeb, dateFin);
+		List<AgentAsaA52Count> result = repository.getListOSCounterByDate(1, dateDeb, dateFin, 9005138);
 
 		// Then
 		assertNotNull(result);

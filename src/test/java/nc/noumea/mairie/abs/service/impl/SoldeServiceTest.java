@@ -181,13 +181,15 @@ public class SoldeServiceTest {
 		organisationSyndicale.setIdOrganisationSyndicale(1);
 
 		AgentAsaA52Count arc52 = new AgentAsaA52Count();
+		arc52.setIdAgent(idAgent);
 		arc52.setOrganisationSyndicale(organisationSyndicale);
 		arc52.setTotalMinutes(12 * 60);
 		arc52.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arc52.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
 
 		AgentAsaA52Count arc52bis = new AgentAsaA52Count();
-		arc52.setOrganisationSyndicale(organisationSyndicale);
+		arc52bis.setIdAgent(idAgent);
+		arc52bis.setOrganisationSyndicale(organisationSyndicale);
 		arc52bis.setTotalMinutes(2 * 60);
 		arc52bis.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
 		arc52bis.setDateFin(new DateTime(2014, 3, 31, 23, 59, 0).toDate());
@@ -214,7 +216,7 @@ public class SoldeServiceTest {
 						.getIdOrganisationSyndicale(), dateDeb)).thenReturn(arc52);
 		Mockito.when(
 				cr.getListOSCounterByDate(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb,
-						dateFin)).thenReturn(listeArc52);
+						dateFin, idAgent)).thenReturn(listeArc52);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -342,13 +344,15 @@ public class SoldeServiceTest {
 		organisationSyndicale.setIdOrganisationSyndicale(1);
 
 		AgentAsaA52Count arc52 = new AgentAsaA52Count();
+		arc52.setIdAgent(idAgent);
 		arc52.setOrganisationSyndicale(organisationSyndicale);
 		arc52.setTotalMinutes(12 * 60);
 		arc52.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arc52.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
 
 		AgentAsaA52Count arc52bis = new AgentAsaA52Count();
-		arc52.setOrganisationSyndicale(organisationSyndicale);
+		arc52bis.setIdAgent(idAgent);
+		arc52bis.setOrganisationSyndicale(organisationSyndicale);
 		arc52bis.setTotalMinutes(2 * 60);
 		arc52bis.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
 		arc52bis.setDateFin(new DateTime(2014, 3, 31, 23, 59, 0).toDate());
@@ -383,7 +387,7 @@ public class SoldeServiceTest {
 						.getIdOrganisationSyndicale(), new DateTime(2013, 1, 1, 0, 0, 0).toDate())).thenReturn(arc52);
 		Mockito.when(
 				cr.getListOSCounterByDate(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(),
-						new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 23, 59, 0).toDate()))
+						new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 23, 59, 0).toDate(),idAgent))
 				.thenReturn(listeArc52);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito

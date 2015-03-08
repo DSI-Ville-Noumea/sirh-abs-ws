@@ -114,9 +114,17 @@ public class AccessRightsService implements IAccessRightsService {
 		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
 			AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			if(null == agentDto) {
-				logger.debug("Aucun agent actif trouvé dans SIRH {}" + da.getIdAgent());
-			}else{
+			if (null == agentDto) {
+				// c'est que l'agent n'a pas d'affectation en cours alors on
+				// cherche l'agent sans son service
+				AgentGeneriqueDto agGenerique = sirhWSConsumer.getAgent(da.getIdAgent());
+				if (null == agGenerique) {
+					logger.debug("Aucun agent actif trouvé dans SIRH {}" + da.getIdAgent());
+				} else {
+					AgentWithServiceDto ag = new AgentWithServiceDto(agGenerique);
+					agentDtos.add(ag);
+				}
+			} else {
 				agentDtos.add(agentDto);
 			}
 		}
@@ -810,10 +818,10 @@ public class AccessRightsService implements IAccessRightsService {
 	@Transactional(readOnly = true)
 	public AgentWithServiceDto getApprobateurOfAgent(Integer idAgent) {
 		DroitsAgent droitAgent = accessRightsRepository.getDroitsAgent(idAgent);
-		
-//		if(null == droitAgent) {
-//			return null;
-//		}
+
+		// if(null == droitAgent) {
+		// return null;
+		// }
 
 		Droit droitApprobateur = accessRightsRepository.getApprobateurOfAgent(droitAgent);
 		AgentWithServiceDto agentApprobateurDto = sirhWSConsumer.getAgentService(droitApprobateur.getIdAgent(),
