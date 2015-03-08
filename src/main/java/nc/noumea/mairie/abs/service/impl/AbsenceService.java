@@ -49,6 +49,7 @@ import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
+import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
@@ -127,6 +128,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ICongesAnnuelsRepository congeAnnuelRepository;
+
+	@Autowired
+	private IReposCompensateurRepository reposCompensateurRepository;
 
 	@Autowired
 	private ITypeAbsenceRepository typeAbsenceRepository;
@@ -1809,9 +1813,10 @@ public class AbsenceService implements IAbsenceService {
 				soldeReposComp = new SpSorc();
 				soldeReposComp.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent));
 			}
-			soldeReposComp.setSoldeAnneeEnCours((double) soldeReposCompAgent.getTotalMinutes());
-			soldeReposComp.setSoldeAnneePrec((double) soldeReposCompAgent.getTotalMinutesAnneeN1());
-			soldeReposComp.setNombrePris(0.0);
+
+			soldeReposComp.setSoldeAnneeEnCours((double) (soldeReposCompAgent.getTotalMinutes() / 60));
+			soldeReposComp.setSoldeAnneePrec((double) (soldeReposCompAgent.getTotalMinutesAnneeN1() / 60));
+			soldeReposComp.setNombrePris(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(idAgent)/60);
 
 			sirhRepository.persistEntity(soldeReposComp);
 		}
