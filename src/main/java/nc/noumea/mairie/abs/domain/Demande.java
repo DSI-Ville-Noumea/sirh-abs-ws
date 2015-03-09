@@ -41,7 +41,7 @@ public class Demande {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 
-	@OneToOne(fetch = FetchType.EAGER, optional = true, orphanRemoval = false)
+	@OneToOne(fetch = FetchType.LAZY, optional = true, orphanRemoval = false)
 	@JoinColumn(name = "ID_TYPE_DEMANDE")
 	private RefTypeAbsence type;
 
@@ -53,7 +53,7 @@ public class Demande {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
 
-	@OneToMany(mappedBy = "demande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "demande", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
 	@OrderBy("idEtatDemande desc")
 	private List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
 

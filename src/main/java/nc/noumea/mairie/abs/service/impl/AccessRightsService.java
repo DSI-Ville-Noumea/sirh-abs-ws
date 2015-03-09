@@ -137,7 +137,6 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> listeDto) {
 
 		List<AgentWithServiceDto> listeAgentErreur = new ArrayList<AgentWithServiceDto>();
-		List<Droit> listeAgentErreurDelete = new ArrayList<Droit>();
 		List<Droit> listeAgentAppro = accessRightsRepository.getAgentsApprobateurs();
 
 		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);

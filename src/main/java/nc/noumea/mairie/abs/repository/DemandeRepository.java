@@ -57,7 +57,7 @@ public class DemandeRepository implements IDemandeRepository {
 	public List<Demande> listeDemandesAgent(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate,
 			Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d from Demande d ");
+		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
 		sb.append("where 1=1 ");
 
 		if (idAgentConcerne != null) {
@@ -179,7 +179,7 @@ public class DemandeRepository implements IDemandeRepository {
 			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d from Demande d ");
+		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
 		sb.append("where 1=1 ");
 		// date
 		if (fromDate != null && toDate == null) {
@@ -227,6 +227,8 @@ public class DemandeRepository implements IDemandeRepository {
 		if (idRefGroupeAbsence != null) {
 			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
 		}
+		
+		query.setMaxResults(300);
 		return query.getResultList();
 	}
 
@@ -235,15 +237,20 @@ public class DemandeRepository implements IDemandeRepository {
 		// pour le moment la DRH ne doit valider que les congés excep, congé
 		// annuel et les ASA
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d from Demande d ");
+		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
 		sb.append("where d.type.groupe.idRefGroupeAbsence in( :AS , :CONGE_EXCEP, :CONGE_ANNUEL ) ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
+		sb.append("and ed.etat in ( :APPROUVEE, :EN_ATTENTE, :A_VALIDER ) ");
 		sb.append("order by d.dateDebut desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
 		query.setParameter("AS", RefTypeGroupeAbsenceEnum.AS.getValue());
 		query.setParameter("CONGE_EXCEP", RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
-
+		query.setParameter("APPROUVEE", RefEtatEnum.APPROUVEE);
+		query.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
+		query.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER);
+		
 		return query.getResultList();
 	}
 

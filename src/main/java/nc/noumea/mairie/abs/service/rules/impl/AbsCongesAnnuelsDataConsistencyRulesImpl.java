@@ -139,12 +139,12 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 				solde = (soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1())
 						- sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
 			} else {
-				logger.warn(String.format(COMPTEUR_INEXISTANT, String.valueOf(solde)));
+				logger.debug(String.format(COMPTEUR_INEXISTANT, String.valueOf(solde)));
 				srm.getErrors().add(String.format(COMPTEUR_INEXISTANT, String.valueOf(solde)));
 				solde = 0 - sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
 			}
 
-			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, String.valueOf(solde)));
+			logger.debug(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, String.valueOf(solde)));
 			srm.getInfos().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, String.valueOf(solde)));
 		}
 

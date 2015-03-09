@@ -110,6 +110,16 @@ public class DemandeDto {
 		}
 	}
 
+	public DemandeDto(Demande d, AgentGeneriqueDto agentDto) {
+		this(d);
+		if (agentDto != null) {
+			this.agentWithServiceDto =  new AgentWithServiceDto(agentDto);
+		} else {
+			this.agentWithServiceDto = new AgentWithServiceDto();
+			this.agentWithServiceDto.setIdAgent(d.getIdAgent());
+		}
+	}
+
 	public DemandeDto(Demande d) {
 		super();
 		AgentWithServiceDto agentDto = new AgentWithServiceDto();

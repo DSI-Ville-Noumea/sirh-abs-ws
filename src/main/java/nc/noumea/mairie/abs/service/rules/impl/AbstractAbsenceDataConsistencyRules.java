@@ -19,6 +19,7 @@ import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -387,14 +388,14 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		if (listeSansFiltre.size() == 0)
 			return listeDemandeDto;
 
+		List<AgentGeneriqueDto> listAgentsExistants = new ArrayList<AgentGeneriqueDto>();
+		
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d, sirhWSConsumer.getAgentService(d.getIdAgent(),
-						helperService.getCurrentDate()));
+				DemandeDto dto = new DemandeDto(d, getAgentOptimise(listAgentsExistants, d.getIdAgent()));
 				dto.updateEtat(
 						d.getLatestEtatDemande(),
-						sirhWSConsumer.getAgentService(d.getLatestEtatDemande().getIdAgent(),
-								helperService.getCurrentDate()), d.getType().getGroupe());
+						new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande().getIdAgent())), d.getType().getGroupe());
 				listeDemandeDto.add(dto);
 			}
 			return listeDemandeDto;
@@ -408,12 +409,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
-					DemandeDto dto = new DemandeDto(d, sirhWSConsumer.getAgentService(d.getIdAgent(),
-							helperService.getCurrentDate()));
+					DemandeDto dto = new DemandeDto(d, getAgentOptimise(listAgentsExistants, d.getIdAgent()));
 					dto.updateEtat(
 							d.getLatestEtatDemande(),
-							sirhWSConsumer.getAgentService(d.getLatestEtatDemande().getIdAgent(),
-									helperService.getCurrentDate()), d.getType().getGroupe());
+							new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande().getIdAgent())), d.getType().getGroupe());
 					listeDemandeDto.add(dto);
 				}
 				isfiltreDateDemande = true;
@@ -423,12 +422,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d, sirhWSConsumer.getAgentService(d.getIdAgent(),
-						helperService.getCurrentDate()));
+				DemandeDto dto = new DemandeDto(d, getAgentOptimise(listAgentsExistants, d.getIdAgent()));
 				dto.updateEtat(
 						d.getLatestEtatDemande(),
-						sirhWSConsumer.getAgentService(d.getLatestEtatDemande().getIdAgent(),
-								helperService.getCurrentDate()), d.getType().getGroupe());
+						new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande().getIdAgent())), d.getType().getGroupe());
 				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 						.getCodeEtat()))) {
 					if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)
@@ -441,6 +438,25 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		}
 
 		return listeDemandeDto;
+	}
+	
+	private AgentGeneriqueDto getAgentOptimise(List<AgentGeneriqueDto> listAgentsExistants, Integer idAgent) {
+		
+		if(null == idAgent) {
+			return null;
+		}
+		
+		// on regarde dans les agents deja retournes par sirh-ws
+		for(AgentGeneriqueDto agentExistant : listAgentsExistants) {
+			if(agentExistant.getIdAgent().equals(idAgent)) {
+				return agentExistant;
+			}
+		}
+		
+		AgentGeneriqueDto result = sirhWSConsumer.getAgent(idAgent);
+		listAgentsExistants.add(result);
+		
+		return result;
 	}
 
 	@Override
