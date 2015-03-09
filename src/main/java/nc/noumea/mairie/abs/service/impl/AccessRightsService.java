@@ -957,4 +957,22 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		return idApprobateurOfDelegataire;
 	}
+
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto setDelegataire(Integer idAgentAppro, InputterDto inputterDto, ReturnMessageDto result) {
+		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentAppro);
+
+		// on recupere la liste des
+		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgentAppro);
+
+		// on trie la liste des sous agents
+		DroitProfil delegataire = getDelegataireApprobateur(idAgentAppro, droitSousAgentsByApprobateur);
+
+		// /////////////////// DELEGATAIRE /////////////////////////////////////
+		// on traite le delegataire
+		traiteDelegataire(inputterDto, delegataire, droitApprobateur, result);
+		// //////////////////// FIN DELEGATAIRE ///////////////////////////////
+		return result;
+	}
 }

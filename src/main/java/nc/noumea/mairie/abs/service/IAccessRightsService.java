@@ -37,14 +37,16 @@ public interface IAccessRightsService {
 	ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents);
 
 	AgentWithServiceDto getApprobateurOfAgent(Integer convertedIdAgent);
-	
+
 	boolean verifAccessRightListDemande(Integer idAgentConnecte, Integer idAgentOfDemande, ReturnMessageDto returnDto);
 
 	List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent);
-	
+
 	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService);
 
 	ReturnMessageDto verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto);
-	
+
 	Integer getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne);
+
+	ReturnMessageDto setDelegataire(Integer idAgentAppro, InputterDto inputterDto, ReturnMessageDto returnDto);
 }

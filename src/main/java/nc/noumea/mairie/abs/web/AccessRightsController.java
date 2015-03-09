@@ -54,8 +54,7 @@ public class AccessRightsController {
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
-		if (agent == null
-				|| agent.getIdAgent() == null)
+		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		return accessRightService.getAgentAccessRights(convertedIdAgent);
@@ -264,8 +263,7 @@ public class AccessRightsController {
 		int convertedIdOperateurOrViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateurOrViseur);
 
 		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdOperateurOrViseur);
-		if (agent == null
-				|| agent.getIdAgent() == null)
+		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
 		ReturnMessageDto result = accessRightService.setAgentsToInput(convertedIdAgent, convertedIdOperateurOrViseur,
@@ -273,6 +271,29 @@ public class AccessRightsController {
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
+
+		return result;
+	}
+
+	/**
+	 * Saisie/modification du delegataire d un approbateur --> UTILE à SIRH
+	 */
+	@ResponseBody
+	@RequestMapping(value = "delegataire", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setDelegataire(@RequestParam("idAgent") Integer idAgent,
+			@RequestBody InputterDto inputterDto, HttpServletResponse response) {
+
+		logger.debug("entered POST [droits/delegataire] => setDelegataire with parameter idAgent = {}", idAgent);
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent)) {
+			result.getErrors().add(String.format("L'agent [%s] n'est pas approbateur.", convertedIdAgent));
+			return result;
+		}
+
+		result = accessRightService.setDelegataire(convertedIdAgent, inputterDto, result);
 
 		return result;
 	}
