@@ -328,6 +328,13 @@ public class AbsenceService implements IAbsenceService {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 		if (null != idAgentConnecte && !idAgentConnecte.equals(idAgentConcerne)) {
 			listDroitAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null);
+
+			// redmine #14201 : on cherche si l'agent est délégataire
+			Integer idApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte,
+					null);
+			if (idApprobateurOfDelegataire != null) {
+				listDroitAgent.addAll(accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire, null));
+			}
 		}
 
 		for (DemandeDto demandeDto : listeDto) {
@@ -1816,7 +1823,7 @@ public class AbsenceService implements IAbsenceService {
 
 			soldeReposComp.setSoldeAnneeEnCours((double) (soldeReposCompAgent.getTotalMinutes() / 60));
 			soldeReposComp.setSoldeAnneePrec((double) (soldeReposCompAgent.getTotalMinutesAnneeN1() / 60));
-			soldeReposComp.setNombrePris(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(idAgent)/60);
+			soldeReposComp.setNombrePris(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(idAgent) / 60);
 
 			sirhRepository.persistEntity(soldeReposComp);
 		}

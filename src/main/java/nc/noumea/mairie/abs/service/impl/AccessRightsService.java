@@ -873,6 +873,23 @@ public class AccessRightsService implements IAccessRightsService {
 			result.add(svDto);
 		}
 
+		// redmine #14201 : on cherche si l'agent est délégataire
+		Integer idApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
+		if (idApprobateurOfDelegataire != null) {
+			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
+					null)) {
+
+				if (codeServices.contains(da.getCodeService()))
+					continue;
+
+				codeServices.add(da.getCodeService());
+				ServiceDto svDto = new ServiceDto();
+				svDto.setCodeService(da.getCodeService());
+				svDto.setService(da.getLibelleService());
+				result.add(svDto);
+			}
+		}
+
 		return result;
 	}
 
@@ -893,6 +910,20 @@ public class AccessRightsService implements IAccessRightsService {
 			agDto.setNom(ag.getDisplayNom());
 			agDto.setPrenom(ag.getDisplayPrenom());
 			result.add(agDto);
+		}
+
+		// redmine #14201 : on cherche si l'agent est délégataire
+		Integer idApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
+		if (idApprobateurOfDelegataire != null) {
+			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
+					codeService)) {
+				AgentDto agDto = new AgentDto();
+				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+				agDto.setIdAgent(da.getIdAgent());
+				agDto.setNom(ag.getDisplayNom());
+				agDto.setPrenom(ag.getDisplayPrenom());
+				result.add(agDto);
+			}
 		}
 
 		return result;
