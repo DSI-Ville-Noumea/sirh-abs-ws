@@ -192,7 +192,7 @@ public class ReposCompController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/miseAJourSpsorc", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public ReturnMessageDto miseAJourSpsorc(@RequestParam("idAgent") Integer idAgent, HttpServletResponse response) {
+	public ReturnMessageDto miseAJourSpsorc(@RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug("entered POST [reposcomps/miseAJourSpsorc] => miseAJourSpsorc with parameters idAgent = {}",
 				idAgent);

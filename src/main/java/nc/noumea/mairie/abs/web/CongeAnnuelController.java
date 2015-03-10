@@ -327,7 +327,7 @@ public class CongeAnnuelController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/miseAJourSpsold", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public ReturnMessageDto miseAJourSpsold(@RequestParam("idAgent") Integer idAgent, HttpServletResponse response) {
+	public ReturnMessageDto miseAJourSpsold(@RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug("entered POST [congeannuel/miseAJourSpsold] => miseAJourSpsold with parameters idAgent = {}",
 				idAgent);
