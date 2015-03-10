@@ -91,6 +91,12 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/droits/delegataire</span>
+                    <div>
+                            <a href="#/droits/delegataire_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/asaA48/addManual</span>
                     <div>
                             <a href="#/asaA48/addManual_POST_idAgent">POST</a>
@@ -238,6 +244,12 @@
                     <span class="resource-summary-path">/congeannuel/setRefAlimCongeAnnuel</span>
                     <div>
                             <a href="#/congeannuel/setRefAlimCongeAnnuel_POST_idAgent">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/miseAJourSpsold</span>
+                    <div>
+                            <a href="#/congeannuel/miseAJourSpsold_GET_idAgent">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -515,6 +527,12 @@
                     <span class="resource-summary-path">/reposcomps/checkReposCompensateurs</span>
                     <div>
                             <a href="#/reposcomps/checkReposCompensateurs_GET_idAgent_dateDebut_dateFin">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/reposcomps/miseAJourSpsorc</span>
+                    <div>
+                            <a href="#/reposcomps/miseAJourSpsorc_GET_idAgent">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -1100,6 +1118,77 @@
 <span class="json-primitive-type">int</span>            </div>
 </div></span>    }
     ]</span>
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/delegataire_POST_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/droits/delegataire</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Saisie/modification du delegataire d un approbateur --> UTILE à SIRH
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">delegataire</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">operateurs</span>
+    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+            </div>
+</div></span>    }
 </div>
                             </div>
 
@@ -2987,6 +3076,39 @@
 </div></span>    }
 </div>
                             </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeannuel/miseAJourSpsold_GET_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/congeannuel/miseAJourSpsold</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Mise à jour de SPSOLD pour les bulletins de salaires <br />
+ utile a SIRH-JOBS
+
+                            </div>
+
+
+
 
                             <div class="response-body">
                                 <div class="body-title">Response Body</div>
@@ -9004,6 +9126,39 @@
                                  Pour connaire sur une periode données si un agent est en repos
  compensateur <br />
  Parametres en entree : format du type timestamp : dd/MM/yyyy HH:mm
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/reposcomps/miseAJourSpsorc_GET_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/reposcomps/miseAJourSpsorc</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Mise à jour de SPSORC pour les bulletins de salaires <br />
+ utile a SIRH-JOBS
 
                             </div>
 

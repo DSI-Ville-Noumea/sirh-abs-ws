@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
+import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
@@ -55,6 +56,7 @@ import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
+import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
@@ -66,6 +68,7 @@ import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.rules.impl.AbsCongesAnnuelsDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.domain.SpSold;
+import nc.noumea.mairie.domain.SpSorc;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.SpcarrId;
 import nc.noumea.mairie.domain.Spcc;
@@ -11959,6 +11962,152 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(SpSold.class));
+	}
+
+	@Test
+	public void miseAJourSpsorc_ErrorFonctionnaire() {
+		Date dateJ = new Date();
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(12);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJ);
+
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, dateJ)).thenReturn(carr);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		ReturnMessageDto result = service.miseAJourSpsorc(9005138);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("L'agent [9005138] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.", result.getInfos().get(0));
+	}
+
+	@Test
+	public void miseAJourSpsorc_ErrorNoSold() {
+		Date dateJ = new Date();
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(4);
+
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJ);
+
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, dateJ)).thenReturn(carr);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, 9005138)).thenReturn(null);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		ReturnMessageDto result = service.miseAJourSpsorc(9005138);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le compteur de repos compensateur n'existe pas.", result.getErrors().get(0));
+		Mockito.verify(sirhRepository, Mockito.times(0)).persistEntity(Mockito.isA(SpSorc.class));
+	}
+
+	@Test
+	public void miseAJourSpsorc_OK_NewSporc() {
+		Date dateJ = new Date();
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(4);
+
+		AgentReposCompCount count = new AgentReposCompCount();
+		count.setIdAgent(9005138);
+		count.setTotalMinutes(0);
+		count.setTotalMinutesAnneeN1(12);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJ);
+
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, dateJ)).thenReturn(carr);
+		Mockito.when(sirhRepository.getSpsorc(9005138)).thenReturn(null);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, 9005138)).thenReturn(count);
+
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		Mockito.when(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(9005138)).thenReturn(45.5);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+
+		ReturnMessageDto result = service.miseAJourSpsorc(9005138);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(SpSorc.class));
+	}
+
+	@Test
+	public void miseAJourSpsorc_OK_OldSporc() {
+		Date dateJ = new Date();
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(4);
+
+		AgentReposCompCount count = new AgentReposCompCount();
+		count.setIdAgent(9005138);
+		count.setTotalMinutes(0);
+		count.setTotalMinutesAnneeN1(12);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJ);
+
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, dateJ)).thenReturn(carr);
+		Mockito.when(sirhRepository.getSpsorc(9005138)).thenReturn(new SpSorc());
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, 9005138)).thenReturn(count);
+
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		Mockito.when(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(9005138)).thenReturn(45.5);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+
+		ReturnMessageDto result = service.miseAJourSpsorc(9005138);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(SpSorc.class));
 	}
 
 }

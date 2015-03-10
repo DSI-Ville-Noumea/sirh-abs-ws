@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,6 +10,7 @@ import javax.persistence.TypedQuery;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -50,15 +52,18 @@ public class ReposCompensateurRepository implements IReposCompensateurRepository
 	public Double getSommeDureeDemandePrises2Ans(Integer idAgent) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select dr from DemandeReposComp dr inner join dr.etatsDemande ed where dr.idAgent = :idAgent ");
-		sb.append(" and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgent group by ed2.demande ) ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgent group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :PRIS ) ");
-		//sb.append(b);
-		//TODO à finir
+		sb.append("and EXTRACT(year from dr.dateDebut) between :debut and :fin ");
 
 		TypedQuery<DemandeReposComp> q = absEntityManager.createQuery(sb.toString(), DemandeReposComp.class);
 
+		Integer year = new DateTime(new Date()).getYear();
+
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("PRIS", RefEtatEnum.PRISE);
+		q.setParameter("debut", (year - 1));
+		q.setParameter("fin", year);
 
 		List<DemandeReposComp> r = q.getResultList();
 		double somme = 0.0;
