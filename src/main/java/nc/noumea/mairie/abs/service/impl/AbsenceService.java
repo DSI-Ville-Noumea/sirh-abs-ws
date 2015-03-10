@@ -1762,6 +1762,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(value = "chainedTransactionManager")
 	public ReturnMessageDto miseAJourSpsold(Integer idAgent) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		if (typeEnvironnement.equals("RECETTE")) {
@@ -1790,6 +1791,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(value = "chainedTransactionManager")
 	public ReturnMessageDto miseAJourSpsorc(Integer idAgent) {
 		ReturnMessageDto result = new ReturnMessageDto();
 

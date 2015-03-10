@@ -192,9 +192,9 @@ public class ReposCompController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/miseAJourSpsorc", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public ReturnMessageDto miseAJourSpsorc(@RequestParam("idAgent") Integer idAgent) {
+	public ReturnMessageDto miseAJourSpsorc(@RequestParam("idAgent") int idAgent) {
 
-		logger.debug("entered POST [reposcomps/miseAJourSpsorc] => miseAJourSpsorc with parameters idAgent = {}",
+		logger.debug("entered GET [reposcomps/miseAJourSpsorc] => miseAJourSpsorc with parameters idAgent = {}",
 				idAgent);
 
 		ReturnMessageDto srm = absenceService.miseAJourSpsorc(idAgent);
