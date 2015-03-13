@@ -5,6 +5,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.ApprobateurDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
@@ -16,9 +17,11 @@ public interface IAccessRightsService {
 
 	boolean canUserAccessAccessRights(Integer idAgent);
 
-	List<AgentWithServiceDto> getApprobateurs();
+	List<ApprobateurDto> getApprobateurs();
 
 	List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> dto);
+
+	InputterDto getDelegator(int idAgent);
 
 	InputterDto getInputter(int idAgent);
 

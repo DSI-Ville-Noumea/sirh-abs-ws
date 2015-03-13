@@ -9,6 +9,7 @@ import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.ApprobateurDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
@@ -65,7 +66,7 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<AgentWithServiceDto> listApprobateurs() {
+	public List<ApprobateurDto> listApprobateurs() {
 
 		logger.debug("entered GET [droits/approbateurs] => listApprobateurs with no parameter --> for SIRH ");
 

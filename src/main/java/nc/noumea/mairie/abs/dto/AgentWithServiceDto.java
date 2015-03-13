@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.dto;
 
-
 public class AgentWithServiceDto extends AgentDto {
 
 	private String service;

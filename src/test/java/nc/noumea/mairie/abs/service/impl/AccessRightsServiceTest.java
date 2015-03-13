@@ -25,6 +25,7 @@ import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.ApprobateurDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
@@ -584,7 +585,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		List<AgentWithServiceDto> result = service.getApprobateurs();
+		List<ApprobateurDto> result = service.getApprobateurs();
 
 		// Then
 		assertEquals(0, result.size());
@@ -628,12 +629,12 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		List<AgentWithServiceDto> dto = service.getApprobateurs();
+		List<ApprobateurDto> dto = service.getApprobateurs();
 
 		// Then
 		assertEquals(1, dto.size());
-		assertEquals("CODE", dto.get(0).getCodeService());
-		assertEquals("DIRECTION", dto.get(0).getDirection());
+		assertEquals("CODE", dto.get(0).getApprobateur().getCodeService());
+		assertEquals("DIRECTION", dto.get(0).getApprobateur().getDirection());
 	}
 
 	@Test
@@ -681,14 +682,14 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		List<AgentWithServiceDto> dto = service.getApprobateurs();
+		List<ApprobateurDto> dto = service.getApprobateurs();
 
 		// Then
 		assertEquals(2, dto.size());
-		assertEquals("CODE2", dto.get(0).getCodeService());
-		assertEquals("DIRECTION2", dto.get(0).getDirection());
-		assertEquals("CODE", dto.get(1).getCodeService());
-		assertEquals("F", dto.get(1).getStatut());
+		assertEquals("CODE2", dto.get(0).getApprobateur().getCodeService());
+		assertEquals("DIRECTION2", dto.get(0).getApprobateur().getDirection());
+		assertEquals("CODE", dto.get(1).getApprobateur().getCodeService());
+		assertEquals("F", dto.get(1).getApprobateur().getStatut());
 	}
 
 	@Test

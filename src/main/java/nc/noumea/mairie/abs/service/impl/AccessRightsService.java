@@ -18,6 +18,7 @@ import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.ApprobateurDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
@@ -26,7 +27,7 @@ import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
-import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
+import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -109,12 +110,12 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<AgentWithServiceDto> getApprobateurs() {
-		List<AgentWithServiceDto> agentDtos = new ArrayList<AgentWithServiceDto>();
+	public List<ApprobateurDto> getApprobateurs() {
+		List<ApprobateurDto> agentDtos = new ArrayList<ApprobateurDto>();
 		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
-			AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
+			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			if (null == agentDto) {
+			if (null == agentServiceDto) {
 				// c'est que l'agent n'a pas d'affectation en cours alors on
 				// cherche l'agent sans son service
 				AgentGeneriqueDto agGenerique = sirhWSConsumer.getAgent(da.getIdAgent());
@@ -122,13 +123,21 @@ public class AccessRightsService implements IAccessRightsService {
 					logger.debug("Aucun agent actif trouvé dans SIRH {}" + da.getIdAgent());
 				} else {
 					AgentWithServiceDto ag = new AgentWithServiceDto(agGenerique);
-					agentDtos.add(ag);
+					ApprobateurDto agentDto = new ApprobateurDto();
+					agentDto.setApprobateur(ag);
+					InputterDto deleg = getDelegator(da.getIdAgent());
+					agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
+					agentDtos.add(agentDto);
 				}
 			} else {
+				ApprobateurDto agentDto = new ApprobateurDto();
+				agentDto.setApprobateur(agentServiceDto);
+				InputterDto deleg = getDelegator(da.getIdAgent());
+				agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
 				agentDtos.add(agentDto);
 			}
 		}
-		Collections.sort(agentDtos, new AgentWithServiceDtoComparator());
+		Collections.sort(agentDtos, new ApprobateurDtoComparator());
 		return agentDtos;
 	}
 
@@ -239,6 +248,32 @@ public class AccessRightsService implements IAccessRightsService {
 	@Transactional(readOnly = true)
 	public boolean canUserAccessAccessRights(Integer idAgent) {
 		return accessRightsRepository.isUserApprobateur(idAgent);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public InputterDto getDelegator(int idAgent) {
+		InputterDto result = new InputterDto();
+
+		List<Droit> droit = accessRightsRepository.getDroitSousApprobateur(idAgent);
+
+		if (droit == null) {
+			logger.warn("L'agent {} n'est pas approbateur.", idAgent);
+			return result;
+		}
+		for (Droit d : droit) {
+			if (accessRightsRepository.isUserDelegataireOfApprobateur(idAgent, d.getIdAgent())) {
+				AgentGeneriqueDto delegataire = sirhWSConsumer.getAgent(d.getIdAgent());
+
+				if (delegataire == null)
+					logger.warn("L'agent délégataire {} n'existe pas.", d.getIdAgent());
+				else
+					result.setDelegataire(new AgentDto(delegataire));
+
+			}
+		}
+
+		return result;
 	}
 
 	@Override
