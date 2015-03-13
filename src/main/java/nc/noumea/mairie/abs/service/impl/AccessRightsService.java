@@ -151,11 +151,11 @@ public class AccessRightsService implements IAccessRightsService {
 		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);
 
 		for (AgentWithServiceDto agentDto : listeDto) {
-			if (accessRightsRepository.isUserOperateur(agentDto.getIdAgent())
-					|| accessRightsRepository.isUserViseur(agentDto.getIdAgent())) {
-				listeAgentErreur.add(agentDto);
-				continue;
-			}
+//			if (accessRightsRepository.isUserOperateur(agentDto.getIdAgent())
+//					|| accessRightsRepository.isUserViseur(agentDto.getIdAgent())) {
+//				listeAgentErreur.add(agentDto);
+//				continue;
+//			}
 
 			Droit d = null;
 
@@ -367,23 +367,23 @@ public class AccessRightsService implements IAccessRightsService {
 				continue;
 			}
 			// Check that the new viseur is not already approbateur or viseur
-			if (accessRightsRepository.isUserApprobateur(viseurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
-						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-				result.getErrors().add(
-						String.format(
-								"L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-				continue;
-			}
-			if (accessRightsRepository.isUserOperateur(viseurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
-						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-				result.getErrors().add(
-						String.format("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-				continue;
-			}
+//			if (accessRightsRepository.isUserApprobateur(viseurDto.getIdAgent())) {
+//				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
+//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+//				result.getErrors().add(
+//						String.format(
+//								"L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
+//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+//				continue;
+//			}
+//			if (accessRightsRepository.isUserOperateur(viseurDto.getIdAgent())) {
+//				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
+//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+//				result.getErrors().add(
+//						String.format("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
+//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+//				continue;
+//			}
 
 			// on regarde si le droit existe deja pour cette personne
 			newViseur = accessRightsRepository.getAgentAccessRights(viseurDto.getIdAgent());
@@ -451,32 +451,32 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			// Check that the new operateur is not already delegataire or
 			// approbateur or viseur
-			if (accessRightsRepository.isUserApprobateur(operateurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
-						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-				result.getErrors().add(
-						String.format(
-								"L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-				continue;
-			}
-			if (accessRightsRepository.isUserViseur(operateurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
-						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-				result.getErrors().add(
-						String.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-				continue;
-			}
-			if (accessRightsRepository.isUserDelegataire(operateurDto.getIdAgent())) {
-				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
-						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-				result.getErrors().add(
-						String.format(
-								"L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-				continue;
-			}
+//			if (accessRightsRepository.isUserApprobateur(operateurDto.getIdAgent())) {
+//				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
+//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+//				result.getErrors().add(
+//						String.format(
+//								"L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
+//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+//				continue;
+//			}
+//			if (accessRightsRepository.isUserViseur(operateurDto.getIdAgent())) {
+//				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
+//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+//				result.getErrors().add(
+//						String.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
+//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+//				continue;
+//			}
+//			if (accessRightsRepository.isUserDelegataire(operateurDto.getIdAgent())) {
+//				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
+//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+//				result.getErrors().add(
+//						String.format(
+//								"L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
+//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+//				continue;
+//			}
 
 			// on regarde si le droit existe deja pour cette personne
 			newOperateur = accessRightsRepository.getAgentAccessRights(operateurDto.getIdAgent());
@@ -542,15 +542,15 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		// Check that the new delegataire is not an operator
-		if (accessRightsRepository.isUserOperateur(dto.getDelegataire().getIdAgent())) {
-			logger.warn("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-					ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-			result.getErrors().add(
-					String.format("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-							ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-			return;
-
-		}
+//		if (accessRightsRepository.isUserOperateur(dto.getDelegataire().getIdAgent())) {
+//			logger.warn("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+//					ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+//			result.getErrors().add(
+//					String.format("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+//							ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+//			return;
+//
+//		}
 
 		// on supprime d abord le delegataire precedent
 		if (delegataire != null) {
@@ -986,20 +986,20 @@ public class AccessRightsService implements IAccessRightsService {
 				}
 				if (!trouve) {
 					logger.warn(
-							"Vous n'êtes ni opérateur,ni approbateur, ni viseur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
+							"Vous n'êtes ni opérateur, ni approbateur, ni viseur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
 							idAgentOfDemande);
 					returnDto
 							.getErrors()
 							.add(String
-									.format("Vous n'êtes ni opérateur,ni approbateur, ni viseur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
+									.format("Vous n'êtes ni opérateur, ni approbateur, ni viseur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
 											idAgentOfDemande));
 				}
 			} else {
-				logger.warn("Vous n'êtes ni opérateur,ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes.");
+				logger.warn("Vous n'êtes ni opérateur, ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes.");
 				returnDto
 						.getErrors()
 						.add(String
-								.format("Vous n'êtes ni opérateur,ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes."));
+								.format("Vous n'êtes ni opérateur, ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes."));
 			}
 		}
 		return returnDto;

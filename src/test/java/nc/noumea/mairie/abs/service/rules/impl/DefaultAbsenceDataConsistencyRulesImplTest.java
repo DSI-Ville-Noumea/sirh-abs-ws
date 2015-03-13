@@ -109,6 +109,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		filtreDroitOfListeDemandesByDemande_Viseur();
 		filtreDroitOfListeDemandesByDemande_Operateur();
 		filtreDroitOfListeDemandesByDemande_DemandeOfAgent();
+		filtreDroitOfListeDemandesByDemande_Operateur_ET_ApprobateurSameGroup();
 		checkStatutAgent_Fonctionnaire_ok();
 		checkStatutAgent_Fonctionnaire_ko();
 		checkStatutAgent_Contractuel_ok();
@@ -1383,6 +1384,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result1.isAffichageValidation());
 		assertFalse(result1.isModifierValidation());
 		assertNull(result1.getValeurValidation());
+		assertFalse(result1.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result2.getIdRefEtat().intValue());
 		assertEquals(9005131, result2.getAgentWithServiceDto().getIdAgent().intValue());
@@ -1400,6 +1402,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result2.isAffichageValidation());
 		assertFalse(result2.isModifierValidation());
 		assertNull(result2.getValeurValidation());
+		assertFalse(result2.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result3.getIdRefEtat().intValue());
 		assertEquals(9005132, result3.getAgentWithServiceDto().getIdAgent().intValue());
@@ -1432,6 +1435,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result4.isAffichageValidation());
 		assertFalse(result4.isModifierValidation());
 		assertNull(result4.getValeurValidation());
+		assertFalse(result4.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result5.getIdRefEtat().intValue());
 		assertEquals(9005134, result5.getAgentWithServiceDto().getIdAgent().intValue());
@@ -1449,6 +1453,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result5.isAffichageValidation());
 		assertFalse(result5.isModifierValidation());
 		assertNull(result5.getValeurValidation());
+		assertFalse(result5.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result6.getIdRefEtat().intValue());
 		assertEquals(9005135, result6.getAgentWithServiceDto().getIdAgent().intValue());
@@ -1464,6 +1469,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertNull(result6.getValeurVisa());
 		assertFalse(result6.isModifierValidation());
 		assertNull(result6.getValeurValidation());
+		assertFalse(result6.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result7.getIdRefEtat().intValue());
 		assertEquals(9005136, result7.getAgentWithServiceDto().getIdAgent().intValue());
@@ -1496,6 +1502,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertFalse(result8.isAffichageValidation());
 		assertFalse(result8.isModifierValidation());
 		assertNull(result8.getValeurValidation());
+		assertFalse(result8.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
 		assertEquals(9005138, result9.getAgentWithServiceDto().getIdAgent().intValue());
@@ -1909,6 +1916,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// les droits
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.OPERATEUR.toString());
+		profil.setAnnuler(true);
+		profil.setApprouverModif(false);
+		profil.setApprouverVisu(false);
+		profil.setDroitAcces(false);
+		profil.setImpression(true);
+		profil.setMajSolde(false);
+		profil.setModification(true);
+		profil.setSaisie(true);
+		profil.setSuppression(true);
+		profil.setViserModif(false);
+		profil.setViserVisu(false);
+		profil.setVisuSolde(true);
 
 		DroitProfil droitProfil = new DroitProfil();
 		droitProfil.setProfil(profil);
@@ -2193,6 +2212,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// les droits
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.VISEUR.toString());
+		profil.setAnnuler(false);
+		profil.setApprouverModif(false);
+		profil.setApprouverVisu(true);
+		profil.setDroitAcces(false);
+		profil.setImpression(false);
+		profil.setMajSolde(false);
+		profil.setModification(false);
+		profil.setSaisie(false);
+		profil.setSuppression(false);
+		profil.setViserModif(true);
+		profil.setViserVisu(true);
+		profil.setVisuSolde(true);
 
 		DroitProfil droitProfil = new DroitProfil();
 		droitProfil.setProfil(profil);
@@ -2503,6 +2534,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// les droits
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.APPROBATEUR.toString());
+		profil.setAnnuler(true);
+		profil.setApprouverModif(true);
+		profil.setApprouverVisu(true);
+		profil.setDroitAcces(true);
+		profil.setImpression(true);
+		profil.setMajSolde(false);
+		profil.setModification(true);
+		profil.setSaisie(true);
+		profil.setSuppression(true);
+		profil.setViserModif(false);
+		profil.setViserVisu(true);
+		profil.setVisuSolde(true);
 
 		DroitProfil droitProfil = new DroitProfil();
 		droitProfil.setProfil(profil);
@@ -2791,6 +2834,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// les droits
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		profil.setAnnuler(true);
+		profil.setApprouverModif(true);
+		profil.setApprouverVisu(true);
+		profil.setDroitAcces(false);
+		profil.setImpression(true);
+		profil.setMajSolde(false);
+		profil.setModification(true);
+		profil.setSaisie(true);
+		profil.setSuppression(true);
+		profil.setViserModif(false);
+		profil.setViserVisu(true);
+		profil.setVisuSolde(true);
 
 		DroitProfil droitProfil = new DroitProfil();
 		droitProfil.setProfil(profil);
@@ -2996,6 +3051,327 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
 		assertEquals(9005141, result12.getAgentWithServiceDto().getIdAgent().intValue());
+		assertTrue(result12.isAffichageApprobation());
+		assertFalse(result12.isAffichageBoutonModifier());
+		assertFalse(result12.isAffichageBoutonSupprimer());
+		assertFalse(result12.isAffichageBoutonDupliquer());
+		assertTrue(result12.isAffichageVisa());
+		assertFalse(result12.isModifierApprobation());
+		assertFalse(result12.isModifierVisa());
+		assertNull(result12.getValeurApprobation());
+		assertNull(result12.getValeurVisa());
+
+		checkBoutonImprimer_filtreDroitOfListeDemandesByDemande();
+	}
+
+	@Test
+	public void filtreDroitOfListeDemandesByDemande_Operateur_ET_ApprobateurSameGroup() {
+
+		Integer idAgentConnecte = 9005129;
+		AgentWithServiceDto agDto12 = new AgentWithServiceDto();
+		agDto12.setIdAgent(9005141);
+		AgentWithServiceDto agDto11 = new AgentWithServiceDto();
+		agDto11.setIdAgent(9005140);
+		AgentWithServiceDto agDto10 = new AgentWithServiceDto();
+		agDto10.setIdAgent(9005139);
+		AgentWithServiceDto agDto9 = new AgentWithServiceDto();
+		agDto9.setIdAgent(9005138);
+		AgentWithServiceDto agDto8 = new AgentWithServiceDto();
+		agDto8.setIdAgent(9005137);
+		AgentWithServiceDto agDto7 = new AgentWithServiceDto();
+		agDto7.setIdAgent(9005136);
+		AgentWithServiceDto agDto6 = new AgentWithServiceDto();
+		agDto6.setIdAgent(9005135);
+		AgentWithServiceDto agDto5 = new AgentWithServiceDto();
+		agDto5.setIdAgent(9005134);
+		AgentWithServiceDto agDto4 = new AgentWithServiceDto();
+		agDto4.setIdAgent(9005133);
+		AgentWithServiceDto agDto3 = new AgentWithServiceDto();
+		agDto3.setIdAgent(9005132);
+		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
+		agDto2.setIdAgent(9005131);
+		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
+		agDto1.setIdAgent(9005130);
+
+		// les demandes
+		DemandeDto demandeDtoProvisoire = new DemandeDto();
+		demandeDtoProvisoire.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
+		demandeDtoProvisoire.setAgentWithServiceDto(agDto1);
+		DemandeDto demandeDtoSaisie = new DemandeDto();
+		demandeDtoSaisie.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
+		demandeDtoSaisie.setAgentWithServiceDto(agDto2);
+		DemandeDto demandeDtoApprouve = new DemandeDto();
+		demandeDtoApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demandeDtoApprouve.setAgentWithServiceDto(agDto3);
+		DemandeDto demandeDtoRefusee = new DemandeDto();
+		demandeDtoRefusee.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		demandeDtoRefusee.setAgentWithServiceDto(agDto4);
+		DemandeDto demandeDtoVisee_F = new DemandeDto();
+		demandeDtoVisee_F.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		demandeDtoVisee_F.setAgentWithServiceDto(agDto5);
+		DemandeDto demandeDtoVisee_D = new DemandeDto();
+		demandeDtoVisee_D.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		demandeDtoVisee_D.setAgentWithServiceDto(agDto6);
+		DemandeDto demandeDtoPrise = new DemandeDto();
+		demandeDtoPrise.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
+		demandeDtoPrise.setAgentWithServiceDto(agDto7);
+		DemandeDto demandeDtoAnnulee = new DemandeDto();
+		demandeDtoAnnulee.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		demandeDtoAnnulee.setAgentWithServiceDto(agDto8);
+		DemandeDto demandeDtoValidee = new DemandeDto();
+		demandeDtoValidee.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+		demandeDtoValidee.setAgentWithServiceDto(agDto9);
+		DemandeDto demandeDtoRejete = new DemandeDto();
+		demandeDtoRejete.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
+		demandeDtoRejete.setAgentWithServiceDto(agDto10);
+		DemandeDto demandeDtoEnAttente = new DemandeDto();
+		demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
+		DemandeDto demandeDtoAValider = new DemandeDto();
+		demandeDtoAValider.setIdRefEtat(RefEtatEnum.A_VALIDER.getCodeEtat());
+		demandeDtoAValider.setAgentWithServiceDto(agDto12);
+		
+		//////// 1er groupe de l operateur //////////
+		// les droits
+		Profil profilOperateur = new Profil();
+		profilOperateur.setLibelle(ProfilEnum.OPERATEUR.toString());
+		profilOperateur.setAnnuler(true);
+		profilOperateur.setApprouverModif(false);
+		profilOperateur.setApprouverVisu(false);
+		profilOperateur.setDroitAcces(false);
+		profilOperateur.setImpression(true);
+		profilOperateur.setMajSolde(false);
+		profilOperateur.setModification(true);
+		profilOperateur.setSaisie(true);
+		profilOperateur.setSuppression(true);
+		profilOperateur.setViserModif(false);
+		profilOperateur.setViserVisu(false);
+		profilOperateur.setVisuSolde(true);
+
+		DroitProfil droitProfilOperateur = new DroitProfil();
+		droitProfilOperateur.setProfil(profilOperateur);
+
+		DroitDroitsAgent ddaOperateur = new DroitDroitsAgent();
+		ddaOperateur.setDroitProfil(droitProfilOperateur);
+
+		//////// 2e groupe de l approbateur //////////
+		// les droits
+		Profil profilApprobateur = new Profil();
+		profilApprobateur.setLibelle(ProfilEnum.APPROBATEUR.toString());
+		profilApprobateur.setAnnuler(true);
+		profilApprobateur.setApprouverModif(true);
+		profilApprobateur.setApprouverVisu(true);
+		profilApprobateur.setDroitAcces(true);
+		profilApprobateur.setImpression(true);
+		profilApprobateur.setMajSolde(false);
+		profilApprobateur.setModification(true);
+		profilApprobateur.setSaisie(true);
+		profilApprobateur.setSuppression(true);
+		profilApprobateur.setViserModif(false);
+		profilApprobateur.setViserVisu(true);
+		profilApprobateur.setVisuSolde(true);
+
+		DroitProfil droitProfilApprobateur = new DroitProfil();
+		droitProfilApprobateur.setProfil(profilApprobateur);
+
+		DroitDroitsAgent ddaApprobateur = new DroitDroitsAgent();
+		ddaApprobateur.setDroitProfil(droitProfilApprobateur);
+
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.add(ddaApprobateur);
+		droitDroitsAgent.add(ddaOperateur);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005130);
+		da.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(9005131);
+		da1.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9005132);
+		da2.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da3 = new DroitsAgent();
+		da3.setIdAgent(9005133);
+		da3.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da4 = new DroitsAgent();
+		da4.setIdAgent(9005134);
+		da4.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da5 = new DroitsAgent();
+		da5.setIdAgent(9005135);
+		da5.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da6 = new DroitsAgent();
+		da6.setIdAgent(9005136);
+		da6.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da7 = new DroitsAgent();
+		da7.setIdAgent(9005137);
+		da7.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da8 = new DroitsAgent();
+		da8.setIdAgent(9005138);
+		da8.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da9 = new DroitsAgent();
+		da9.setIdAgent(9005139);
+		da9.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da10 = new DroitsAgent();
+		da10.setIdAgent(9005140);
+		da10.setDroitDroitsAgent(droitDroitsAgent);
+		DroitsAgent da11 = new DroitsAgent();
+		da11.setIdAgent(9005141);
+		da11.setDroitDroitsAgent(droitDroitsAgent);
+
+		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
+		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
+		
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
+				listDroitAgent);
+
+		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
+
+		// When
+		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent);
+		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent);
+		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent);
+		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent);
+		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent);
+		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent);
+		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent);
+		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent);
+		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent);
+		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent);
+		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent);
+		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent);
+
+		// Then
+		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
+		assertEquals(9005130, result1.getAgentWithServiceDto().getIdAgent().intValue());
+		assertTrue(result1.isAffichageApprobation());
+		assertTrue(result1.isAffichageBoutonModifier());
+		assertTrue(result1.isAffichageBoutonSupprimer());
+		assertFalse(result1.isAffichageBoutonDupliquer());
+		assertTrue(result1.isAffichageVisa());
+		assertFalse(result1.isModifierApprobation());
+		assertFalse(result1.isModifierVisa());
+		assertNull(result1.getValeurApprobation());
+		assertNull(result1.getValeurVisa());
+
+		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result2.getIdRefEtat().intValue());
+		assertEquals(9005131, result2.getAgentWithServiceDto().getIdAgent().intValue());
+		assertTrue(result2.isAffichageApprobation());
+		assertTrue(result2.isAffichageBoutonModifier());
+		assertTrue(result2.isAffichageBoutonSupprimer());
+		assertFalse(result2.isAffichageBoutonDupliquer());
+		assertTrue(result2.isAffichageVisa());
+		assertTrue(result2.isModifierApprobation());
+		assertFalse(result2.isModifierVisa());
+		assertNull(result2.getValeurApprobation());
+		assertNull(result2.getValeurVisa());
+
+		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result3.getIdRefEtat().intValue());
+		assertEquals(9005132, result3.getAgentWithServiceDto().getIdAgent().intValue());
+		assertTrue(result3.isAffichageApprobation());
+		assertFalse(result3.isAffichageBoutonModifier());
+		assertFalse(result3.isAffichageBoutonSupprimer());
+		assertFalse(result3.isAffichageBoutonDupliquer());
+		assertTrue(result3.isAffichageVisa());
+		assertTrue(result3.isModifierApprobation());
+		assertFalse(result3.isModifierVisa());
+		assertNull(result3.getValeurApprobation());
+		assertNull(result3.getValeurVisa());
+
+		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result4.getIdRefEtat().intValue());
+		assertEquals(9005133, result4.getAgentWithServiceDto().getIdAgent().intValue());
+		assertTrue(result4.isAffichageApprobation());
+		assertFalse(result4.isAffichageBoutonModifier());
+		assertFalse(result4.isAffichageBoutonSupprimer());
+		assertFalse(result4.isAffichageBoutonDupliquer());
+		assertTrue(result4.isAffichageVisa());
+		assertTrue(result4.isModifierApprobation());
+		assertFalse(result4.isModifierVisa());
+		assertNull(result4.getValeurApprobation());
+		assertNull(result4.getValeurVisa());
+
+		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result5.getIdRefEtat().intValue());
+		assertEquals(9005134, result5.getAgentWithServiceDto().getIdAgent().intValue());
+		assertTrue(result5.isAffichageApprobation());
+		assertFalse(result5.isAffichageBoutonModifier());
+		assertFalse(result5.isAffichageBoutonSupprimer());
+		assertFalse(result5.isAffichageBoutonDupliquer());
+		assertTrue(result5.isAffichageVisa());
+		assertTrue(result5.isModifierApprobation());
+		assertFalse(result5.isModifierVisa());
+		assertNull(result5.getValeurApprobation());
+		assertNull(result5.getValeurVisa());
+
+		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result6.getIdRefEtat().intValue());
+		assertEquals(9005135, result6.getAgentWithServiceDto().getIdAgent().intValue());
+		assertTrue(result6.isAffichageApprobation());
+		assertFalse(result6.isAffichageBoutonModifier());
+		assertFalse(result6.isAffichageBoutonSupprimer());
+		assertFalse(result6.isAffichageBoutonDupliquer());
+		assertTrue(result6.isAffichageVisa());
+		assertTrue(result6.isModifierApprobation());
+		assertFalse(result6.isModifierVisa());
+		assertNull(result6.getValeurApprobation());
+		assertNull(result6.getValeurVisa());
+
+		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result7.getIdRefEtat().intValue());
+		assertEquals(9005136, result7.getAgentWithServiceDto().getIdAgent().intValue());
+		assertTrue(result7.isAffichageApprobation());
+		assertFalse(result7.isAffichageBoutonModifier());
+		assertFalse(result7.isAffichageBoutonSupprimer());
+		assertFalse(result7.isAffichageBoutonDupliquer());
+		assertTrue(result7.isAffichageVisa());
+		assertFalse(result7.isModifierApprobation());
+		assertFalse(result7.isModifierVisa());
+		assertNull(result7.getValeurApprobation());
+		assertNull(result7.getValeurVisa());
+
+		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result8.getIdRefEtat().intValue());
+		assertEquals(9005137, result8.getAgentWithServiceDto().getIdAgent().intValue());
+		assertTrue(result8.isAffichageApprobation());
+		assertFalse(result8.isAffichageBoutonModifier());
+		assertFalse(result8.isAffichageBoutonSupprimer());
+		assertFalse(result8.isAffichageBoutonDupliquer());
+		assertTrue(result8.isAffichageVisa());
+		assertFalse(result8.isModifierApprobation());
+		assertFalse(result8.isModifierVisa());
+		assertNull(result8.getValeurApprobation());
+		assertNull(result8.getValeurVisa());
+
+		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
+		assertTrue(result9.isAffichageApprobation());
+		assertFalse(result9.isAffichageBoutonModifier());
+		assertFalse(result9.isAffichageBoutonSupprimer());
+		assertFalse(result9.isAffichageBoutonDupliquer());
+		assertTrue(result9.isAffichageVisa());
+		assertFalse(result9.isModifierApprobation());
+		assertFalse(result9.isModifierVisa());
+		assertNull(result9.getValeurApprobation());
+		assertNull(result9.getValeurVisa());
+
+		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
+		assertTrue(result10.isAffichageApprobation());
+		assertFalse(result10.isAffichageBoutonModifier());
+		assertFalse(result10.isAffichageBoutonSupprimer());
+		assertFalse(result10.isAffichageBoutonDupliquer());
+		assertTrue(result10.isAffichageVisa());
+		assertFalse(result10.isModifierApprobation());
+		assertFalse(result10.isModifierVisa());
+		assertNull(result10.getValeurApprobation());
+		assertNull(result10.getValeurVisa());
+
+		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
+		assertTrue(result11.isAffichageApprobation());
+		assertFalse(result11.isAffichageBoutonModifier());
+		assertFalse(result11.isAffichageBoutonSupprimer());
+		assertFalse(result11.isAffichageBoutonDupliquer());
+		assertTrue(result11.isAffichageVisa());
+		assertFalse(result11.isModifierApprobation());
+		assertFalse(result11.isModifierVisa());
+		assertNull(result11.getValeurApprobation());
+		assertNull(result11.getValeurVisa());
+
+		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
 		assertTrue(result12.isAffichageApprobation());
 		assertFalse(result12.isAffichageBoutonModifier());
 		assertFalse(result12.isAffichageBoutonSupprimer());

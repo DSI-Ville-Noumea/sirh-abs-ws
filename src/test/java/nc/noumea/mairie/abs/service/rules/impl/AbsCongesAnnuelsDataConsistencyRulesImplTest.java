@@ -178,6 +178,39 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 	}
 
 	@Test
+	public void filtreDroitOfListeDemandesByDemande_Operateur_ET_ApprobateurSameGroup() {
+
+		super.impl = new AbsCongesAnnuelsDataConsistencyRulesImpl();
+		super.filtreDroitOfListeDemandesByDemande_Operateur_ET_ApprobateurSameGroup();
+
+		// Then
+		// PROVISOIRE
+		assertFalse(result1.isAffichageBoutonAnnuler());
+		// SAISIE
+		assertFalse(result2.isAffichageBoutonAnnuler());
+		// APPROUVEE
+		assertTrue(result3.isAffichageBoutonAnnuler());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonAnnuler());
+		// VISEE_FAVORABLE
+		assertTrue(result5.isAffichageBoutonAnnuler());
+		// VISEE_DEFAVORABLE
+		assertTrue(result6.isAffichageBoutonAnnuler());
+		// PRISE
+		assertTrue(result7.isAffichageBoutonAnnuler());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonAnnuler());
+		// VALIDEE
+		assertTrue(result9.isAffichageBoutonAnnuler());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonAnnuler());
+		// EN ATTENTE
+		assertTrue(result11.isAffichageBoutonAnnuler());
+		// A VALIDER
+		assertTrue(result12.isAffichageBoutonAnnuler());
+	}
+
+	@Test
 	public void checkSaisiNewTypeAbsence() {
 		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
 

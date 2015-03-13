@@ -78,6 +78,16 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 	}
 
 	@Test
+	public void filtreDroitOfListeDemandesByDemande_Operateur_ET_ApprobateurSameGroup() {
+
+		super.impl = new AbsReposCompensateurDataConsistencyRulesImpl();
+		super.filtreDroitOfListeDemandesByDemande_Operateur_ET_ApprobateurSameGroup();
+
+		// Then
+		super.checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_Approbateur();
+	}
+
+	@Test
 	public void filtreDroitOfDemandeSIRH() {
 
 		super.impl = new AbsReposCompensateurDataConsistencyRulesImpl();
@@ -86,22 +96,27 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		// APPROUVEE
 		assertFalse(result3.isAffichageValidation());
 		assertFalse(result3.isModifierValidation());
+		assertFalse(result3.isAffichageEnAttente());
 
 		// PRISE
 		assertFalse(result7.isAffichageBoutonAnnuler());
 		assertFalse(result7.isAffichageValidation());
+		assertFalse(result7.isAffichageEnAttente());
 
 		// VALIDEE
 		assertFalse(result9.isAffichageBoutonAnnuler());
 		assertFalse(result9.isAffichageValidation());
+		assertFalse(result9.isAffichageEnAttente());
 
 		// REJETEE
 		assertFalse(result10.isAffichageValidation());
+		assertFalse(result10.isAffichageEnAttente());
 
 		// EN ATTENTE
 		assertFalse(result11.isAffichageBoutonAnnuler());
 		assertFalse(result11.isAffichageValidation());
 		assertFalse(result11.isModifierValidation());
+		assertFalse(result11.isAffichageEnAttente());
 	}
 
 	@Test

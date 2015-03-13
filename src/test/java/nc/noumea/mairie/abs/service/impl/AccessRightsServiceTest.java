@@ -485,14 +485,18 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(new ArrayList<Droit>());
 		Mockito.when(arRepo.isUserOperateur(9005138)).thenReturn(true);
 
+		HelperService helpServ = Mockito.mock(HelperService.class);
+		Mockito.when(helpServ.getCurrentDate()).thenReturn(new Date());
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
 		service.setApprobateurs(Arrays.asList(agentDto));
 
 		// Then
-		Mockito.verify(arRepo, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
+		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
 	}
 
 	@Test
@@ -907,7 +911,7 @@ public class AccessRightsServiceTest {
 	}
 
 	@Test
-	public void setInputter_delegataireOperateurCanNotBe() {
+	public void setInputter_delegataireOperateurCanBe() {
 		// Given
 		Integer idAgent = 9005138;
 
@@ -946,22 +950,19 @@ public class AccessRightsServiceTest {
 		Mockito.when(sirhWSConsumer.getAgent(operateur2.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 		Mockito.when(sirhWSConsumer.getAgent(operateur3.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
+		HelperService helpServ = Mockito.mock(HelperService.class);
+		Mockito.when(helpServ.getCurrentDate()).thenReturn(new Date());
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
 		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
 
 		// Then
-		assertEquals(4, msgDto.getErrors().size());
-		assertTrue(msgDto.getErrors().get(0)
-				.contains("ne peut pas être délégataire car il ou elle est déjà opérateur."));
-		assertTrue(msgDto.getErrors().get(1)
-				.contains("ne peut pas être opérateur car il ou elle est déjà approbateur."));
-		assertTrue(msgDto.getErrors().get(2).contains("ne peut pas être opérateur car il ou elle est déjà viseur."));
-		assertTrue(msgDto.getErrors().get(3)
-				.contains("ne peut pas être opérateur car il ou elle est déjà délégataire."));
+		assertEquals(0, msgDto.getErrors().size());
 	}
 
 	@Test
@@ -2478,7 +2479,7 @@ public class AccessRightsServiceTest {
 	}
 
 	@Test
-	public void setViseurs_ViseurCanNotBe() {
+	public void setViseurs_ViseurisOperateurAndApprobateur_CanBe() {
 		// Given
 		Integer idAgent = 9005138;
 
@@ -2507,17 +2508,19 @@ public class AccessRightsServiceTest {
 		Mockito.when(sirhWSConsumer.getAgent(viseur.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 		Mockito.when(sirhWSConsumer.getAgent(viseur2.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
+		HelperService helpServ = Mockito.mock(HelperService.class);
+		Mockito.when(helpServ.getCurrentDate()).thenReturn(new Date());
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
 		ReturnMessageDto msgDto = service.setViseurs(9005138, dto);
 
 		// Then
-		assertEquals(2, msgDto.getErrors().size());
-		assertTrue(msgDto.getErrors().get(0).contains("ne peut pas être viseur car il ou elle est déjà approbateur."));
-		assertTrue(msgDto.getErrors().get(1).contains("ne peut pas être viseur car il ou elle est déjà opérateur."));
+		assertEquals(0, msgDto.getErrors().size());
 	}
 
 	@Test
@@ -3147,7 +3150,7 @@ public class AccessRightsServiceTest {
 
 		// Then
 		assertEquals(1, returnDto.getErrors().size());
-		assertEquals("Vous n'êtes ni opérateur,ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes.",
+		assertEquals("Vous n'êtes ni opérateur, ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes.",
 				returnDto.getErrors().get(0));
 	}
 
@@ -3198,7 +3201,7 @@ public class AccessRightsServiceTest {
 		// Then
 		assertEquals(1, returnDto.getErrors().size());
 		assertEquals(
-				"Vous n'êtes ni opérateur,ni approbateur, ni viseur de l'agent 9005138. Vous ne pouvez pas saisir de demandes.",
+				"Vous n'êtes ni opérateur, ni approbateur, ni viseur de l'agent 9005138. Vous ne pouvez pas saisir de demandes.",
 				returnDto.getErrors().get(0));
 	}
 
@@ -3384,17 +3387,19 @@ public class AccessRightsServiceTest {
 		Mockito.when(sirhWSConsumer.getAgent(operateur2.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 		Mockito.when(sirhWSConsumer.getAgent(operateur3.getIdAgent())).thenReturn(new AgentGeneriqueDto());
 
+		HelperService helpServ = Mockito.mock(HelperService.class);
+		Mockito.when(helpServ.getCurrentDate()).thenReturn(new Date());
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
 		msgDto = service.setDelegataire(9005138, dto, msgDto);
 
 		// Then
-		assertEquals(1, msgDto.getErrors().size());
-		assertTrue(msgDto.getErrors().get(0)
-				.contains("ne peut pas être délégataire car il ou elle est déjà opérateur."));
+		assertEquals(0, msgDto.getErrors().size());
 	}
 
 	@Test

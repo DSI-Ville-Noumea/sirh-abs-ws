@@ -173,6 +173,39 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		// A VALIDER
 		assertFalse(result12.isAffichageBoutonAnnuler());
 	}
+	
+	@Test
+	public void filtreDroitOfListeDemandesByDemande_Operateur_ET_ApprobateurSameGroup() {
+
+		super.impl = new AbsCongesExcepDataConsistencyRulesImpl();
+		super.filtreDroitOfListeDemandesByDemande_Operateur_ET_ApprobateurSameGroup();
+
+		// Then
+		// PROVISOIRE
+		assertFalse(result1.isAffichageBoutonAnnuler());
+		// SAISIE
+		assertFalse(result2.isAffichageBoutonAnnuler());
+		// APPROUVEE
+		assertTrue(result3.isAffichageBoutonAnnuler());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonAnnuler());
+		// VISEE_FAVORABLE
+		assertTrue(result5.isAffichageBoutonAnnuler());
+		// VISEE_DEFAVORABLE
+		assertTrue(result6.isAffichageBoutonAnnuler());
+		// PRISE
+		assertTrue(result7.isAffichageBoutonAnnuler());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonAnnuler());
+		// VALIDEE
+		assertTrue(result9.isAffichageBoutonAnnuler());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonAnnuler());
+		// EN ATTENTE
+		assertTrue(result11.isAffichageBoutonAnnuler());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonAnnuler());
+	}
 
 	@Test
 	public void checkChampMotifDemandeSaisi_ok_motifNonObligatoire() {
@@ -478,22 +511,27 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		// APPROUVEE
 		assertTrue(result3.isAffichageValidation());
 		assertTrue(result3.isModifierValidation());
+		assertTrue(result3.isAffichageEnAttente());
 
 		// PRISE
 		assertTrue(result7.isAffichageBoutonAnnuler());
 		assertTrue(result7.isAffichageValidation());
+		assertFalse(result7.isAffichageEnAttente());
 
 		// VALIDEE
 		assertTrue(result9.isAffichageBoutonAnnuler());
 		assertTrue(result9.isAffichageValidation());
+		assertFalse(result9.isAffichageEnAttente());
 
 		// REJETEE
 		assertTrue(result10.isAffichageValidation());
+		assertFalse(result10.isAffichageEnAttente());
 
 		// EN ATTENTE
 		assertTrue(result11.isAffichageBoutonAnnuler());
 		assertTrue(result11.isAffichageValidation());
 		assertTrue(result11.isModifierValidation());
+		assertFalse(result11.isAffichageEnAttente());
 	}
 
 	@Test
