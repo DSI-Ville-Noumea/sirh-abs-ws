@@ -270,7 +270,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			if (demandeDto.getAgentWithServiceDto().getIdAgent().equals(droitsAgent.getIdAgent())) {
 
 				for (DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
-					
+
+					// #14306
 					Profil currentProfil = dda.getDroitProfil().getProfil();
 					
 					demandeDto.setAffichageBoutonModifier(

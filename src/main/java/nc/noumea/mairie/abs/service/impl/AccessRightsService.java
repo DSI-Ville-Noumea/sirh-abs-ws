@@ -151,6 +151,7 @@ public class AccessRightsService implements IAccessRightsService {
 		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);
 
 		for (AgentWithServiceDto agentDto : listeDto) {
+//			#14306
 //			if (accessRightsRepository.isUserOperateur(agentDto.getIdAgent())
 //					|| accessRightsRepository.isUserViseur(agentDto.getIdAgent())) {
 //				listeAgentErreur.add(agentDto);
@@ -367,6 +368,7 @@ public class AccessRightsService implements IAccessRightsService {
 				continue;
 			}
 			// Check that the new viseur is not already approbateur or viseur
+//			#14306
 //			if (accessRightsRepository.isUserApprobateur(viseurDto.getIdAgent())) {
 //				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
 //						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
@@ -451,6 +453,7 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			// Check that the new operateur is not already delegataire or
 			// approbateur or viseur
+//			#14306
 //			if (accessRightsRepository.isUserApprobateur(operateurDto.getIdAgent())) {
 //				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
 //						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
@@ -542,6 +545,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		// Check that the new delegataire is not an operator
+//		#14306
 //		if (accessRightsRepository.isUserOperateur(dto.getDelegataire().getIdAgent())) {
 //			logger.warn("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
 //					ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
