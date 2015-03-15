@@ -143,35 +143,12 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> listeDto) {
+	public ReturnMessageDto setApprobateur(AgentWithServiceDto dto) {
+		ReturnMessageDto res = new ReturnMessageDto();
 
-		List<AgentWithServiceDto> listeAgentErreur = new ArrayList<AgentWithServiceDto>();
-		List<Droit> listeAgentAppro = accessRightsRepository.getAgentsApprobateurs();
+		Droit d = accessRightsRepository.getDroitByProfilAndAgent(ProfilEnum.APPROBATEUR.toString(), dto.getIdAgent());
 
-		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);
-
-		for (AgentWithServiceDto agentDto : listeDto) {
-//			#14306
-//			if (accessRightsRepository.isUserOperateur(agentDto.getIdAgent())
-//					|| accessRightsRepository.isUserViseur(agentDto.getIdAgent())) {
-//				listeAgentErreur.add(agentDto);
-//				continue;
-//			}
-
-			Droit d = null;
-
-			for (Droit existingDroit : listeAgentAppro) {
-				if (existingDroit.getIdAgent().equals(agentDto.getIdAgent())) {
-					d = existingDroit;
-					break;
-				}
-			}
-
-			if (d != null) {
-				droitsToDelete.remove(d);
-				continue;
-			}
-
+		if (d == null) {
 			d = new Droit();
 			DroitProfil dp = new DroitProfil();
 			dp.setDroit(d);
@@ -179,30 +156,40 @@ public class AccessRightsService implements IAccessRightsService {
 			dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.APPROBATEUR.toString()));
 			d.getDroitProfils().add(dp);
 			d.setDateModification(helperService.getCurrentDate());
-			d.setIdAgent(agentDto.getIdAgent());
+			d.setIdAgent(dto.getIdAgent());
 			accessRightsRepository.persisEntity(d);
 		}
 
-		for (Droit droitToDelete : droitsToDelete) {
-			// on supprime tous les inputters (et sous agents) de l'approbateur
-			setInputter(droitToDelete.getIdAgent(), new InputterDto());
+		return res;
 
-			setViseurs(droitToDelete.getIdAgent(), new ViseursDto());
+	}
+
+	@Override
+	public ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto) {
+		ReturnMessageDto res = new ReturnMessageDto();
+		Droit d = accessRightsRepository.getDroitByProfilAndAgent(ProfilEnum.APPROBATEUR.toString(), dto.getIdAgent());
+
+		if (d != null) {
+			// on supprime tous les inputters (et sous agents) de l'approbateur
+			setInputter(d.getIdAgent(), new InputterDto());
+
+			setViseurs(d.getIdAgent(), new ViseursDto());
 			// enfin on supprime l'approbateur
 			// First, we remove all the agents this approbateur was approving
 			// this will also delete all the agents its operateurs were filling
 			// in for
-			for (DroitDroitsAgent agentSaisiToDelete : droitToDelete.getDroitDroitsAgent()) {
+			for (DroitDroitsAgent agentSaisiToDelete : d.getDroitDroitsAgent()) {
 				// accessRightsRepository.clear();
 				accessRightsRepository.removeEntity(agentSaisiToDelete);
 			}
-			for (DroitProfil dp : droitToDelete.getDroitProfils()) {
+			for (DroitProfil dp : d.getDroitProfils()) {
 				deleteDroitProfil(dp);
 			}
+		} else {
+			res.getErrors().add("L'agent " + dto.getIdAgent() + " n'est pas approbateur.");
 		}
 
-		return listeAgentErreur;
-
+		return res;
 	}
 
 	private DroitProfil getDelegataireApprobateur(Integer idAgentApprobateur, List<Droit> droitSousAgentsByApprobateur) {

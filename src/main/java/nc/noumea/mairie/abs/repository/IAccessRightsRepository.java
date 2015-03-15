@@ -10,10 +10,12 @@ import nc.noumea.mairie.abs.domain.Profil;
 public interface IAccessRightsRepository {
 
 	void clear();
-	
+
 	Droit getAgentAccessRights(Integer idAgent);
 
 	List<Droit> getAgentsApprobateurs();
+
+	Droit getDroitByProfilAndAgent(String profil, Integer idAgent);
 
 	boolean isUserApprobateur(Integer idAgent);
 
@@ -30,7 +32,7 @@ public interface IAccessRightsRepository {
 	List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur);
 
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService, Integer idDroitProfil);
-	
+
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
 
 	void removeEntity(Object obj);
@@ -40,9 +42,9 @@ public interface IAccessRightsRepository {
 	boolean isUserOperateurOfApprobateur(Integer idAgentApprobateur, Integer idAgent);
 
 	boolean isUserViseurOfApprobateur(Integer idAgentApprobateur, Integer idAgent);
-	
+
 	Droit getAgentDroitFetchAgents(Integer idAgent);
-	
+
 	DroitProfil getDroitProfilByAgent(Integer idAgentApprobateur, Integer idAgent);
 
 	DroitsAgent getDroitsAgent(Integer idAgent);
@@ -50,12 +52,12 @@ public interface IAccessRightsRepository {
 	DroitProfil getDroitProfilApprobateur(Integer idAgentApprobateur);
 
 	Droit getApprobateurOfAgent(DroitsAgent droitAgent);
-	
+
 	boolean isViseurOfAgent(Integer idAgentViseur, Integer IdAgent);
-	
+
 	boolean isApprobateurOrDelegataireOfAgent(Integer idAgentApprobateurOrDelegataire, Integer IdAgent);
-	
+
 	boolean isOperateurOfAgent(Integer idAgentViseur, Integer IdAgent);
-	
+
 	DroitProfil getDroitProfilByAgentAndLibelle(Integer idAgent, String libelleProfil);
 }

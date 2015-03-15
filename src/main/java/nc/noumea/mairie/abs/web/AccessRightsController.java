@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.web;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -78,12 +77,31 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public List<AgentWithServiceDto> setApprobateur(@RequestBody List<AgentWithServiceDto> agDtos) {
+	public ReturnMessageDto setApprobateur(@RequestBody AgentWithServiceDto agDtos) {
 		logger.debug("entered POST [droits/approbateurs] => setApprobateur --> for SIRH ");
 
-		List<AgentWithServiceDto> agentErreur = new ArrayList<AgentWithServiceDto>();
+		ReturnMessageDto agentErreur = new ReturnMessageDto();
 		try {
-			agentErreur = accessRightService.setApprobateurs(agDtos);
+			agentErreur = accessRightService.setApprobateur(agDtos);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			throw new ConflictException(e.getMessage());
+		}
+
+		return agentErreur;
+	}
+
+	/**
+	 * Supprime les approbateurs
+	 */
+	@ResponseBody
+	@RequestMapping(value = "deleteApprobateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto deleteApprobateur(@RequestBody AgentWithServiceDto agDtos) {
+		logger.debug("entered POST [droits/deleteApprobateurs] => deleteApprobateur --> for SIRH ");
+
+		ReturnMessageDto agentErreur = new ReturnMessageDto();
+		try {
+			agentErreur = accessRightService.deleteApprobateur(agDtos);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			throw new ConflictException(e.getMessage());

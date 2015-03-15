@@ -26,7 +26,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public void clear() {
 		absEntityManager.clear();
 	}
-	
+
 	@Override
 	public Droit getAgentAccessRights(Integer idAgent) throws NoResultException {
 
@@ -43,6 +43,22 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getAgentsApprobateurs", Droit.class);
 
 		return q.getResultList();
+	}
+
+	@Override
+	public Droit getDroitByProfilAndAgent(String profil, Integer idAgent) {
+
+		TypedQuery<Droit> q = absEntityManager.createNamedQuery("getDroitByProfilAndAgent", Droit.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("libelle", profil);
+		List<Droit> list = q.getResultList();
+		if (null == list || list.size() == 0) {
+			return null;
+		} else {
+			return list.get(0);
+		}
+
 	}
 
 	@Override
@@ -147,8 +163,8 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService) {
 
 		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
-				codeService == null || "".equals(codeService) ? "getListOfAgentsToInputOrApproveWithoutProfil" : "getListOfAgentsToInputOrApproveByServiceWithoutProfil",
-				DroitsAgent.class);
+				codeService == null || "".equals(codeService) ? "getListOfAgentsToInputOrApproveWithoutProfil"
+						: "getListOfAgentsToInputOrApproveByServiceWithoutProfil", DroitsAgent.class);
 
 		q.setParameter("idAgent", idAgent);
 
@@ -157,7 +173,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 		return q.getResultList();
 	}
-	
+
 	@Override
 	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService, Integer idDroitProfil) {
 
@@ -303,7 +319,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 		return listeFinale.size() == 0 ? null : listeFinale.get(0);
 	}
-	
+
 	@Override
 	public boolean isViseurOfAgent(Integer idAgentViseur, Integer IdAgent) {
 		StringBuilder sb = new StringBuilder();
@@ -328,7 +344,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean isOperateurOfAgent(Integer idAgentOperateur, Integer IdAgent) {
 		StringBuilder sb = new StringBuilder();
@@ -353,11 +369,11 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean isApprobateurOrDelegataireOfAgent(Integer idAgentApprobateurOrDelegataire, Integer IdAgent) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append("select d.* from abs_droits_agent da  ");
 		sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent   ");
 		sb.append("inner join abs_droit_profil dp on dda.id_droit_profil = dp.id_droit_profil   ");
@@ -367,18 +383,18 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		sb.append("and p.libelle = :approbateur ");
 		sb.append("and ( d.id_agent = :idAgentApprobateurOrDelegataire  ");
 		sb.append("or d.id_droit in ( ");
-				sb.append("select dp2.id_droit_approbateur from abs_droit d2  ");
-				sb.append("inner join abs_droit_profil dp2 on d2.id_droit = dp2.id_droit  ");
-				sb.append("inner join abs_profil p2 on dp2.id_profil = p2.id_profil  ");
-				sb.append("where d2.id_agent = :idAgentApprobateurOrDelegataire ");
-				sb.append("and p2.libelle = :delegataire ) )  ");
-		
+		sb.append("select dp2.id_droit_approbateur from abs_droit d2  ");
+		sb.append("inner join abs_droit_profil dp2 on d2.id_droit = dp2.id_droit  ");
+		sb.append("inner join abs_profil p2 on dp2.id_profil = p2.id_profil  ");
+		sb.append("where d2.id_agent = :idAgentApprobateurOrDelegataire ");
+		sb.append("and p2.libelle = :delegataire ) )  ");
+
 		Query q = absEntityManager.createNativeQuery(sb.toString(), Droit.class);
 		q.setParameter("idAgent", IdAgent);
 		q.setParameter("idAgentApprobateurOrDelegataire", idAgentApprobateurOrDelegataire);
 		q.setParameter("approbateur", ProfilEnum.APPROBATEUR.toString());
 		q.setParameter("delegataire", ProfilEnum.DELEGATAIRE.toString());
-		
+
 		try {
 			q.getSingleResult();
 			return true;
@@ -386,7 +402,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public DroitProfil getDroitProfilByAgentAndLibelle(Integer idAgent, String libelleProfil) {
 
