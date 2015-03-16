@@ -194,6 +194,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto) {
 		ReturnMessageDto res = new ReturnMessageDto();
 		Droit d = accessRightsRepository.getDroitByProfilAndAgent(ProfilEnum.APPROBATEUR.toString(), dto.getIdAgent());
