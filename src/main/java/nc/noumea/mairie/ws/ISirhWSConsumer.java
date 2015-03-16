@@ -9,6 +9,7 @@ import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 
 public interface ISirhWSConsumer {
@@ -23,12 +24,13 @@ public interface ISirhWSConsumer {
 
 	RefTypeSaisiCongeAnnuelDto getBaseHoraireAbsence(Integer idAgent, Date date);
 
-	List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(
-			Integer idAgent, Date dateDebut, Date dateFin);
+	List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(Integer idAgent, Date dateDebut, Date dateFin);
 
 	List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin);
 
 	SirhWsServiceDto getAgentDirection(Integer idAgent, Date date);
 
 	ReturnMessageDto isPaieEnCours();
+
+	List<ServiceDto> getSubServiceOfService(String codeService);
 }

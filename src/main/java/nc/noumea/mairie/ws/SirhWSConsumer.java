@@ -12,6 +12,7 @@ import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
 	private static final String sirhAgentDirectionUrl = "agents/direction";
 	private static final String isPaieEnCoursUrl = "utils/isPaieEnCours";
+	private static final String sirhSubServiceOfServiceUrl = "services/sousServices";
+	
+	
 
 	@Override
 	public AgentWithServiceDto getAgentService(Integer idAgent, Date date) {
@@ -179,5 +183,16 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(ReturnMessageDto.class, res, url);
+	}
+
+	@Override
+	public List<ServiceDto> getSubServiceOfService(String codeService) {
+		String url = String.format(sirhWsBaseUrl + sirhSubServiceOfServiceUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("codeService", codeService);
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+		return readResponseAsList(ServiceDto.class, res, url);
 	}
 }
