@@ -17,7 +17,7 @@ public interface IAccessRightsService {
 
 	boolean canUserAccessAccessRights(Integer idAgent);
 
-	List<ApprobateurDto> getApprobateurs();
+	List<ApprobateurDto> getApprobateurs(Integer idAgent,String codeService);
 
 	ReturnMessageDto setApprobateur(AgentWithServiceDto dto);
 

@@ -110,31 +110,51 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ApprobateurDto> getApprobateurs() {
+	public List<ApprobateurDto> getApprobateurs(Integer idAgent, String codeService) {
 		List<ApprobateurDto> agentDtos = new ArrayList<ApprobateurDto>();
-		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
+		List<Droit> listeDroit = new ArrayList<Droit>();
+		if (idAgent != null) {
+			Droit d = accessRightsRepository.getDroitByProfilAndAgent(ProfilEnum.APPROBATEUR.toString(), idAgent);
+			if (d != null) {
+				listeDroit.add(d);
+			}
+		} else {
+			listeDroit = accessRightsRepository.getAgentsApprobateurs();
+		}
+
+		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			if (null == agentServiceDto) {
-				// c'est que l'agent n'a pas d'affectation en cours alors on
-				// cherche l'agent sans son service
-				AgentGeneriqueDto agGenerique = sirhWSConsumer.getAgent(da.getIdAgent());
-				if (null == agGenerique) {
-					logger.debug("Aucun agent actif trouvé dans SIRH {}" + da.getIdAgent());
-				} else {
-					AgentWithServiceDto ag = new AgentWithServiceDto(agGenerique);
+			if (codeService != null) {
+				if (agentServiceDto != null && agentServiceDto.getCodeService().equals(codeService)) {
 					ApprobateurDto agentDto = new ApprobateurDto();
-					agentDto.setApprobateur(ag);
+					agentDto.setApprobateur(agentServiceDto);
 					InputterDto deleg = getDelegator(da.getIdAgent());
 					agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
 					agentDtos.add(agentDto);
 				}
 			} else {
-				ApprobateurDto agentDto = new ApprobateurDto();
-				agentDto.setApprobateur(agentServiceDto);
-				InputterDto deleg = getDelegator(da.getIdAgent());
-				agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
-				agentDtos.add(agentDto);
+				if (null == agentServiceDto) {
+					// c'est que l'agent n'a pas d'affectation en cours alors on
+					// cherche l'agent sans son service
+					AgentGeneriqueDto agGenerique = sirhWSConsumer.getAgent(da.getIdAgent());
+					if (null == agGenerique) {
+						logger.debug("Aucun agent actif trouvé dans SIRH {}" + da.getIdAgent());
+					} else {
+						AgentWithServiceDto ag = new AgentWithServiceDto(agGenerique);
+						ApprobateurDto agentDto = new ApprobateurDto();
+						agentDto.setApprobateur(ag);
+						InputterDto deleg = getDelegator(da.getIdAgent());
+						agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
+						agentDtos.add(agentDto);
+					}
+				} else {
+					ApprobateurDto agentDto = new ApprobateurDto();
+					agentDto.setApprobateur(agentServiceDto);
+					InputterDto deleg = getDelegator(da.getIdAgent());
+					agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
+					agentDtos.add(agentDto);
+				}
 			}
 		}
 		Collections.sort(agentDtos, new ApprobateurDtoComparator());
@@ -355,24 +375,28 @@ public class AccessRightsService implements IAccessRightsService {
 				continue;
 			}
 			// Check that the new viseur is not already approbateur or viseur
-//			#14306
-//			if (accessRightsRepository.isUserApprobateur(viseurDto.getIdAgent())) {
-//				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
-//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-//				result.getErrors().add(
-//						String.format(
-//								"L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
-//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-//				continue;
-//			}
-//			if (accessRightsRepository.isUserOperateur(viseurDto.getIdAgent())) {
-//				logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
-//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-//				result.getErrors().add(
-//						String.format("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
-//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-//				continue;
-//			}
+			// #14306
+			// if
+			// (accessRightsRepository.isUserApprobateur(viseurDto.getIdAgent()))
+			// {
+			// logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+			// result.getErrors().add(
+			// String.format(
+			// "L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà approbateur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+			// continue;
+			// }
+			// if
+			// (accessRightsRepository.isUserOperateur(viseurDto.getIdAgent()))
+			// {
+			// logger.warn("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+			// result.getErrors().add(
+			// String.format("L'agent %s %s [%d] ne peut pas être viseur car il ou elle est déjà opérateur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+			// continue;
+			// }
 
 			// on regarde si le droit existe deja pour cette personne
 			newViseur = accessRightsRepository.getAgentAccessRights(viseurDto.getIdAgent());
@@ -440,33 +464,39 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			// Check that the new operateur is not already delegataire or
 			// approbateur or viseur
-//			#14306
-//			if (accessRightsRepository.isUserApprobateur(operateurDto.getIdAgent())) {
-//				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
-//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-//				result.getErrors().add(
-//						String.format(
-//								"L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
-//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-//				continue;
-//			}
-//			if (accessRightsRepository.isUserViseur(operateurDto.getIdAgent())) {
-//				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
-//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-//				result.getErrors().add(
-//						String.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
-//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-//				continue;
-//			}
-//			if (accessRightsRepository.isUserDelegataire(operateurDto.getIdAgent())) {
-//				logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
-//						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-//				result.getErrors().add(
-//						String.format(
-//								"L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
-//								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-//				continue;
-//			}
+			// #14306
+			// if
+			// (accessRightsRepository.isUserApprobateur(operateurDto.getIdAgent()))
+			// {
+			// logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+			// result.getErrors().add(
+			// String.format(
+			// "L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+			// continue;
+			// }
+			// if
+			// (accessRightsRepository.isUserViseur(operateurDto.getIdAgent()))
+			// {
+			// logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+			// result.getErrors().add(
+			// String.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà viseur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+			// continue;
+			// }
+			// if
+			// (accessRightsRepository.isUserDelegataire(operateurDto.getIdAgent()))
+			// {
+			// logger.warn("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+			// result.getErrors().add(
+			// String.format(
+			// "L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà délégataire.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+			// continue;
+			// }
 
 			// on regarde si le droit existe deja pour cette personne
 			newOperateur = accessRightsRepository.getAgentAccessRights(operateurDto.getIdAgent());
@@ -532,16 +562,18 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		// Check that the new delegataire is not an operator
-//		#14306
-//		if (accessRightsRepository.isUserOperateur(dto.getDelegataire().getIdAgent())) {
-//			logger.warn("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-//					ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
-//			result.getErrors().add(
-//					String.format("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-//							ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-//			return;
-//
-//		}
+		// #14306
+		// if
+		// (accessRightsRepository.isUserOperateur(dto.getDelegataire().getIdAgent()))
+		// {
+		// logger.warn("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+		// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent());
+		// result.getErrors().add(
+		// String.format("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+		// ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+		// return;
+		//
+		// }
 
 		// on supprime d abord le delegataire precedent
 		if (delegataire != null) {

@@ -587,7 +587,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		List<ApprobateurDto> result = service.getApprobateurs();
+		List<ApprobateurDto> result = service.getApprobateurs(null, null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -631,7 +631,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		List<ApprobateurDto> dto = service.getApprobateurs();
+		List<ApprobateurDto> dto = service.getApprobateurs(null, null);
 
 		// Then
 		assertEquals(1, dto.size());
@@ -684,7 +684,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		List<ApprobateurDto> dto = service.getApprobateurs();
+		List<ApprobateurDto> dto = service.getApprobateurs(null, null);
 
 		// Then
 		assertEquals(2, dto.size());
