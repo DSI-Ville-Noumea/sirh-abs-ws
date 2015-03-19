@@ -385,12 +385,15 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d, getAgentOptimise(listAgentsExistants, d.getIdAgent()));
-				dto.updateEtat(
-						d.getLatestEtatDemande(),
-						new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
-								.getIdAgent())), d.getType().getGroupe());
-				listeDemandeDto.add(dto);
+				AgentGeneriqueDto agentOptimise = getAgentOptimise(listAgentsExistants, d.getIdAgent());
+				if (agentOptimise != null) {
+					DemandeDto dto = new DemandeDto(d, agentOptimise);
+					dto.updateEtat(
+							d.getLatestEtatDemande(),
+							new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
+									.getIdAgent())), d.getType().getGroupe());
+					listeDemandeDto.add(dto);
+				}
 			}
 			return listeDemandeDto;
 		}
@@ -403,12 +406,15 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
-					DemandeDto dto = new DemandeDto(d, getAgentOptimise(listAgentsExistants, d.getIdAgent()));
-					dto.updateEtat(
-							d.getLatestEtatDemande(),
-							new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
-									.getIdAgent())), d.getType().getGroupe());
-					listeDemandeDto.add(dto);
+					AgentGeneriqueDto agentOptimise = getAgentOptimise(listAgentsExistants, d.getIdAgent());
+					if (agentOptimise != null) {
+						DemandeDto dto = new DemandeDto(d, agentOptimise);
+						dto.updateEtat(
+								d.getLatestEtatDemande(),
+								new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
+										.getIdAgent())), d.getType().getGroupe());
+						listeDemandeDto.add(dto);
+					}
 				}
 				isfiltreDateDemande = true;
 			}
@@ -417,18 +423,21 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansFiltre) {
-				DemandeDto dto = new DemandeDto(d, getAgentOptimise(listAgentsExistants, d.getIdAgent()));
-				dto.updateEtat(
-						d.getLatestEtatDemande(),
-						new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
-								.getIdAgent())), d.getType().getGroupe());
-				if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
-						.getCodeEtat()))) {
-					if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)
-						listeDemandeDto.add(dto);
-				} else {
-					if (listeDemandeDto.contains(dto))
-						listeDemandeDto.remove(dto);
+				AgentGeneriqueDto agentOptimise = getAgentOptimise(listAgentsExistants, d.getIdAgent());
+				if (agentOptimise != null) {
+					DemandeDto dto = new DemandeDto(d, agentOptimise);
+					dto.updateEtat(
+							d.getLatestEtatDemande(),
+							new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
+									.getIdAgent())), d.getType().getGroupe());
+					if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
+							.getCodeEtat()))) {
+						if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)
+							listeDemandeDto.add(dto);
+					} else {
+						if (listeDemandeDto.contains(dto))
+							listeDemandeDto.remove(dto);
+					}
 				}
 			}
 		}
