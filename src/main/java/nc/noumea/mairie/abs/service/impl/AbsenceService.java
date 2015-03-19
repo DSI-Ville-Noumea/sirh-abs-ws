@@ -1496,6 +1496,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesSIRHAValider() {
 		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRHAValider();
 
