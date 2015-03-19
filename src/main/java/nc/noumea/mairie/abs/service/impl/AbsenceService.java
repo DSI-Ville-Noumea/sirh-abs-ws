@@ -1514,6 +1514,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReturnMessageDto checkRecuperations(Integer convertedIdAgent, Date fromDate, Date toDate) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de recup de l'agent entre les dates
@@ -1538,6 +1539,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReturnMessageDto checkReposCompensateurs(Integer convertedIdAgent, Date fromDate, Date toDate) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de repos comp de l'agent entre les
@@ -1564,6 +1566,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReturnMessageDto checkAbsencesSyndicales(Integer convertedIdAgent, Date fromDate, Date toDate) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes d'ASA de l'agent entre les dates
@@ -1588,6 +1591,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReturnMessageDto checkCongesExceptionnels(Integer convertedIdAgent, Date fromDate, Date toDate) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de congés exceptionnels de l'agent
@@ -1613,6 +1617,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ReturnMessageDto checkCongesAnnuels(Integer convertedIdAgent, Date fromDate, Date toDate) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de congés annuels de l'agent
