@@ -478,4 +478,19 @@ public class DemandeController {
 
 		return result;
 	}
+	
+	/**
+	 * Retourne le nombre de demandes a approuver pour l accueil du kiosque <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/countDemandesAApprouver", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public Integer countDemandesAApprouver(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered GET [demandes/countDemandesAApprouver] => countDemandesAApprouver with parameter idAgent = {}",
+				idAgent);
+
+		return absenceService.countDemandesAApprouver(idAgent);
+	}
+
 }

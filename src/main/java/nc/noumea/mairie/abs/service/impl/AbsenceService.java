@@ -1831,4 +1831,20 @@ public class AbsenceService implements IAbsenceService {
 		}
 		return result;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Integer countDemandesAApprouver(Integer idAgent) {
+		
+		Integer demandesApprobateur = demandeRepository.countDemandesAApprouver(idAgent, helperService.getCurrentDateMoinsUnAn());
+		Integer demandesDelegataire = 0;
+		
+		Integer idApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgent,
+				null);
+		if (idApprobateurOfDelegataire != null) {
+			demandesDelegataire = demandeRepository.countDemandesAApprouver(idAgent, helperService.getCurrentDateMoinsUnAn());
+		}
+		
+		return demandesApprobateur + demandesDelegataire;
+	}
 }
