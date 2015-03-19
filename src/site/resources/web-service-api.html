@@ -58,8 +58,14 @@
                 <div class="resource-summary">
                     <span class="resource-summary-path">/droits/approbateurs</span>
                     <div>
-                            <a href="#/droits/approbateurs_GET">GET</a>
+                            <a href="#/droits/approbateurs_GET_idAgent_codeService">GET</a>
                             <a href="#/droits/approbateurs_POST">POST</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/droits/deleteApprobateurs</span>
+                    <div>
+                            <a href="#/droits/deleteApprobateurs_POST">POST</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -633,11 +639,11 @@
 </div>
                             </div>
                     </div>
-                    <a id="/droits/approbateurs_GET"/>
+                    <a id="/droits/approbateurs_GET_idAgent_codeService"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">GET</span>
-<span class="path">/droits/approbateurs</span>                        </div>
+<span class="path">/droits/approbateurs</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">codeService</span>=<span class="url-param-expected-type"><span class="json-primitive-type">string</span></span>                        </div>
 
                             <div class="resource-docs">
                                  Retourne la liste des approbateurs
@@ -650,6 +656,25 @@
                             <div class="response-body">
                                 <div class="body-title">Response Body</div>
                                 <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">delegataire</span>
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">approbateur</span>
     <span class="json-object">{
     <div class="json-fields">
             <div class="json-field">
@@ -673,6 +698,8 @@
             <div class="json-field">
                 <span class="json-field-name">direction</span>
 <span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+            </div>
 </div></span>    }
     ]</span>
 </div>
@@ -693,8 +720,7 @@
 
                             <div class="request-body">
                                 <div class="body-title">Request Body</div>
-                                <div class="body-contents">    <span class="json-array">[
-    <span class="json-object">{
+                                <div class="body-contents">    <span class="json-object">{
     <div class="json-fields">
             <div class="json-field">
                 <span class="json-field-name">nom</span>
@@ -718,14 +744,43 @@
                 <span class="json-field-name">direction</span>
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
-    ]</span>
 </div>
                             </div>
 
                             <div class="response-body">
                                 <div class="body-title">Response Body</div>
-                                <div class="body-contents">    <span class="json-array">[
-    <span class="json-object">{
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/droits/deleteApprobateurs_POST"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">POST</span>
+<span class="path">/droits/deleteApprobateurs</span>                        </div>
+
+                            <div class="resource-docs">
+                                 Supprime les approbateurs
+
+                            </div>
+
+
+
+                            <div class="request-body">
+                                <div class="body-title">Request Body</div>
+                                <div class="body-contents">    <span class="json-object">{
     <div class="json-fields">
             <div class="json-field">
                 <span class="json-field-name">nom</span>
@@ -749,7 +804,24 @@
                 <span class="json-field-name">direction</span>
 <span class="json-primitive-type">string</span>            </div>
 </div></span>    }
-    ]</span>
+</div>
+                            </div>
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
 </div>
                             </div>
                     </div>
