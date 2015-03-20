@@ -106,10 +106,12 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			boolean isProvenanceSIRH) {
 		checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 		checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
-		checkDemandeDejaSaisieSurMemePeriode(srm, demande);
+		if (srm.getErrors().size() == 0)
+			checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 		checkAgentInactivity(srm, demande.getIdAgent(), dateLundi);
 		checkStatutAgent(srm, demande);
 		checkNoPointages(srm, demande);
+
 	}
 
 	private void checkNoPointages(ReturnMessageDto srm, Demande demande) {
