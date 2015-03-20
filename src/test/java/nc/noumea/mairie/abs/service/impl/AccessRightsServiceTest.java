@@ -1164,11 +1164,18 @@ public class AccessRightsServiceTest {
 		dto.setDelegataire(null);
 		dto.setOperateurs(new ArrayList<AgentDto>());
 
+		Profil profilOperateur = new Profil();
+		profilOperateur.setLibelle(ProfilEnum.OPERATEUR.toString());
+
+		Profil profilDelegataire = new Profil();
+		profilDelegataire.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+
 		List<Droit> listDroitSousAgentsByApprobateur = new ArrayList<Droit>();
 
 		// operateur existant a supprimer
 		DroitProfil droitProfilOperateurExistant = new DroitProfil();
 		droitProfilOperateurExistant.setDroitApprobateur(droitApprobateur);
+		droitProfilOperateurExistant.setProfil(profilOperateur);
 		Set<DroitProfil> droitProfilOperateurExistants = new HashSet<DroitProfil>();
 		droitProfilOperateurExistants.add(droitProfilOperateurExistant);
 
@@ -1180,6 +1187,7 @@ public class AccessRightsServiceTest {
 		// delegataire a supprimer
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		droitProfilDelegataireExistant.setProfil(profilDelegataire);
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -1266,11 +1274,18 @@ public class AccessRightsServiceTest {
 
 		// /////////////// OPERATEUR DELEGATAIRE DEJA EXISTANTS
 		// /////////////////////
+		Profil profilOperateur = new Profil();
+		profilOperateur.setLibelle(ProfilEnum.OPERATEUR.toString());
+
+		Profil profilDelegataire = new Profil();
+		profilDelegataire.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		
 		List<Droit> listDroitSousAgentsByApprobateur = new ArrayList<Droit>();
 
 		// operateur deja existant
 		DroitProfil droitProfilOperateurExistant = new DroitProfil();
 		droitProfilOperateurExistant.setDroitApprobateur(droitApprobateur);
+		droitProfilOperateurExistant.setProfil(profilOperateur);
 		Set<DroitProfil> droitProfilOperateurExistants = new HashSet<DroitProfil>();
 		droitProfilOperateurExistants.add(droitProfilOperateurExistant);
 
@@ -1282,6 +1297,7 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		droitProfilDelegataireExistant.setProfil(profilDelegataire);
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -1298,6 +1314,7 @@ public class AccessRightsServiceTest {
 		// operateur existant a supprimer
 		DroitProfil droitProfilOperateurASupprimer = new DroitProfil();
 		droitProfilOperateurASupprimer.setDroitApprobateur(droitApprobateur);
+		droitProfilOperateurASupprimer.setProfil(profilOperateur);
 		Set<DroitProfil> droitProfilOperateursASupprimer = new HashSet<DroitProfil>();
 		droitProfilOperateursASupprimer.add(droitProfilOperateurASupprimer);
 
@@ -1551,14 +1568,19 @@ public class AccessRightsServiceTest {
 		dto.setDelegataire(null);
 		dto.setOperateurs(new ArrayList<AgentDto>());
 
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.OPERATEUR.toString());
+		
 		List<Droit> listDroitSousAgentsByApprobateur = new ArrayList<Droit>();
 
 		// operateur existant a supprimer avec 2 DroitProfil de 2 approbateurs
 		DroitProfil droitProfiltOperateurExistant = new DroitProfil();
 		droitProfiltOperateurExistant.setDroitApprobateur(droitApprobateur);
+		droitProfiltOperateurExistant.setProfil(profil);
 
 		DroitProfil droitProfiltOperateurExistant2 = new DroitProfil();
 		droitProfiltOperateurExistant2.setDroitApprobateur(droitApprobateur2);
+		droitProfiltOperateurExistant2.setProfil(profil);
 
 		Set<DroitProfil> droitProfiltOperateurExistants = new HashSet<DroitProfil>();
 		droitProfiltOperateurExistants.add(droitProfiltOperateurExistant);
