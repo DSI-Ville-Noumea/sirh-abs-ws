@@ -532,7 +532,8 @@ public class AccessRightsService implements IAccessRightsService {
 		Droit droitAppro = accessRightsRepository.getAgentAccessRights(idAgentAppro);
 		for (Droit droitOperateurToDelete : originalOperateurs) {
 			for (DroitProfil droitProfilOperateur : droitOperateurToDelete.getDroitProfils()) {
-				if (droitProfilOperateur.getDroitApprobateur().getIdDroit().equals(droitAppro.getIdDroit())) {
+				if (droitProfilOperateur.getDroitApprobateur().getIdDroit().equals(droitAppro.getIdDroit())
+						&& droitProfilOperateur.getProfil().getLibelle().equals(ProfilEnum.OPERATEUR.toString())) {
 					if (!dpASupp.contains(droitProfilOperateur)) {
 						dpASupp.add(droitProfilOperateur);
 					}
@@ -972,19 +973,7 @@ public class AccessRightsService implements IAccessRightsService {
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
-			AgentDto agDto = new AgentDto();
-			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-			agDto.setIdAgent(da.getIdAgent());
-			agDto.setNom(ag.getDisplayNom());
-			agDto.setPrenom(ag.getDisplayPrenom());
-			result.add(agDto);
-		}
-
-		// redmine #14201 : on cherche si l'agent est délégataire
-		Integer idApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
-		if (idApprobateurOfDelegataire != null) {
-			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
-					codeService)) {
+			if(isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();
 				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
 				agDto.setIdAgent(da.getIdAgent());
@@ -994,8 +983,45 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 		}
 
-		return result;
+		// redmine #14201 : on cherche si l'agent est délégataire
+		Integer idApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
+		if (idApprobateurOfDelegataire != null) {
+			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
+					codeService)) {
+				if(isContainAgentInList(result, da)) {
+					AgentDto agDto = new AgentDto();
+					AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+					agDto.setIdAgent(da.getIdAgent());
+					agDto.setNom(ag.getDisplayNom());
+					agDto.setPrenom(ag.getDisplayPrenom());
+					if(!result.contains(agDto)) {
+						result.add(agDto);
+					}
+				}
+			}
+		}
 
+		return result;
+	}
+	
+	private boolean isContainAgentInList(List<AgentDto> listAgents, DroitsAgent ag) {
+		
+		if(null == ag) {
+			return false;
+		}
+		
+		if(null != listAgents) {
+			for(AgentDto agent : listAgents) {
+				if(null != agent
+						&& null != agent.getIdAgent()
+						&& null != ag.getIdAgent()
+						&& agent.getIdAgent().equals(ag.getIdAgent())) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 
 	@Override
