@@ -51,7 +51,7 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto);
 
-	Integer getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne);
+	List<Integer> getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne);
 
 	ReturnMessageDto setDelegataire(Integer idAgentAppro, InputterDto inputterDto, ReturnMessageDto returnDto);
 }

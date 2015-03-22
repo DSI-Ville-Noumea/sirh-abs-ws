@@ -1571,11 +1571,11 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dp);
 
-		DroitProfil result = repository.getDroitProfilByAgentAndLibelle(9005138, ProfilEnum.DELEGATAIRE.toString());
+		List<DroitProfil> result = repository.getDroitProfilByAgentAndLibelle(9005138, ProfilEnum.DELEGATAIRE.toString());
 
 		assertNotNull(result);
-		assertEquals(9005138, result.getDroit().getIdAgent().intValue());
-		assertEquals(ProfilEnum.DELEGATAIRE.toString(), result.getProfil().getLibelle());
+		assertEquals(9005138, result.get(0).getDroit().getIdAgent().intValue());
+		assertEquals(ProfilEnum.DELEGATAIRE.toString(), result.get(0).getProfil().getLibelle());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -1597,9 +1597,9 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dp);
 
-		DroitProfil result = repository.getDroitProfilByAgentAndLibelle(9005138, ProfilEnum.OPERATEUR.toString());
+		List<DroitProfil> result = repository.getDroitProfilByAgentAndLibelle(9005138, ProfilEnum.OPERATEUR.toString());
 
-		assertNull(result);
+		assertEquals(0, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

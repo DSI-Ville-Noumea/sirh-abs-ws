@@ -327,14 +327,19 @@ public class AbsenceService implements IAbsenceService {
 		// donc inutile de recuperer les droits en bdd
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 		if (null != idAgentConnecte && !idAgentConnecte.equals(idAgentConcerne)) {
-			listDroitAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null);
 
 			// redmine #14201 : on cherche si l'agent est délégataire
-			Integer idApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte,
+			List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte,
 					null);
-			if (idApprobateurOfDelegataire != null) {
-				listDroitAgent.addAll(accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire, null));
+			
+			List<Integer> idsUserForAllDroits = new ArrayList<Integer>();
+			idsUserForAllDroits.add(idAgentConnecte);
+			
+			if (idsApprobateurOfDelegataire != null) {
+				idsUserForAllDroits.addAll(idsApprobateurOfDelegataire);
 			}
+			
+			listDroitAgent.addAll(accessRightsRepository.getListOfAgentsForListDemandes(idsUserForAllDroits, null));
 		}
 
 		for (DemandeDto demandeDto : listeDto) {
@@ -356,14 +361,16 @@ public class AbsenceService implements IAbsenceService {
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
 
-		Integer idApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte,
+		List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte,
 				idAgentConcerne);
 
 		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate,
 				idRefType, idRefGroupeAbsence);
-		if (null != idApprobateurOfDelegataire) {
-			listeSansFiltredelegataire = demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
+		if (null != idsApprobateurOfDelegataire) {
+			for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+				listeSansFiltredelegataire = demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
 					idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence);
+			}
 		}
 
 		for (Demande demandeDeleg : listeSansFiltredelegataire) {
@@ -1845,10 +1852,13 @@ public class AbsenceService implements IAbsenceService {
 		Integer demandesApprobateur = demandeRepository.countDemandesAApprouver(idAgent, helperService.getCurrentDateMoinsUnAn());
 		Integer demandesDelegataire = 0;
 		
-		Integer idApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgent,
+		List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgent,
 				null);
-		if (idApprobateurOfDelegataire != null) {
-			demandesDelegataire = demandeRepository.countDemandesAApprouver(idAgent, helperService.getCurrentDateMoinsUnAn());
+		
+		if (idsApprobateurOfDelegataire != null) {
+			for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+				demandesDelegataire += demandeRepository.countDemandesAApprouver(idApprobateurOfDelegataire, helperService.getCurrentDateMoinsUnAn());
+			}
 		}
 		
 		return demandesApprobateur + demandesDelegataire;

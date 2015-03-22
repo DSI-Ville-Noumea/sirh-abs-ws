@@ -943,19 +943,23 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		// redmine #14201 : on cherche si l'agent est délégataire
-		Integer idApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
-		if (idApprobateurOfDelegataire != null) {
-			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
-					null)) {
-
-				if (codeServices.contains(da.getCodeService()))
-					continue;
-
-				codeServices.add(da.getCodeService());
-				ServiceDto svDto = new ServiceDto();
-				svDto.setCodeService(da.getCodeService());
-				svDto.setService(da.getLibelleService());
-				result.add(svDto);
+		List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
+		if (idsApprobateurOfDelegataire != null) {
+			for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+				if (idApprobateurOfDelegataire != null) {
+					for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
+							null)) {
+		
+						if (codeServices.contains(da.getCodeService()))
+							continue;
+		
+						codeServices.add(da.getCodeService());
+						ServiceDto svDto = new ServiceDto();
+						svDto.setCodeService(da.getCodeService());
+						svDto.setService(da.getLibelleService());
+						result.add(svDto);
+					}
+				}
 			}
 		}
 
@@ -983,19 +987,21 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 		}
 
-		// redmine #14201 : on cherche si l'agent est délégataire
-		Integer idApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
-		if (idApprobateurOfDelegataire != null) {
-			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
-					codeService)) {
-				if(isContainAgentInList(result, da)) {
-					AgentDto agDto = new AgentDto();
-					AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-					agDto.setIdAgent(da.getIdAgent());
-					agDto.setNom(ag.getDisplayNom());
-					agDto.setPrenom(ag.getDisplayPrenom());
-					if(!result.contains(agDto)) {
-						result.add(agDto);
+		// redmine #14201 : on cherche si l'agent est délégataire(s)
+		List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
+		if (idsApprobateurOfDelegataire != null) {
+			for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+				for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
+						codeService)) {
+					if(isContainAgentInList(result, da)) {
+						AgentDto agDto = new AgentDto();
+						AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+						agDto.setIdAgent(da.getIdAgent());
+						agDto.setNom(ag.getDisplayNom());
+						agDto.setPrenom(ag.getDisplayPrenom());
+						if(!result.contains(agDto)) {
+							result.add(agDto);
+						}
 					}
 				}
 			}
@@ -1065,21 +1071,25 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public Integer getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne) {
+	public List<Integer> getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne) {
 
-		Integer idApprobateurOfDelegataire = null;
+		List<Integer> idsApprobateurOfDelegataire = new ArrayList<Integer>();
 		// on recupere les profils de l agent connectee
 		// si idAgentConcerne renseigne, inutile de recuperer les profils pour l
 		// execution de la requete ensuite
 		if (null == idAgentConcerne) {
 			// on verifie si l agent est delegataire ou non
 			if (accessRightsRepository.isUserDelegataire(idAgentConnecte)) {
-				DroitProfil droitProfil = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte,
+				List<DroitProfil> droitsProfils = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte,
 						ProfilEnum.DELEGATAIRE.toString());
-				idApprobateurOfDelegataire = droitProfil.getDroitApprobateur().getIdAgent();
+				if(null != droitsProfils) {
+					for(DroitProfil droitProfil : droitsProfils) {
+						idsApprobateurOfDelegataire.add(droitProfil.getDroitApprobateur().getIdAgent());
+					}
+				}
 			}
 		}
-		return idApprobateurOfDelegataire;
+		return idsApprobateurOfDelegataire;
 	}
 
 	@Override

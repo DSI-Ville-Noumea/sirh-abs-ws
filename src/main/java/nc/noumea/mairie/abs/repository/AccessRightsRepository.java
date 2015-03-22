@@ -175,6 +175,22 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
+	public List<DroitsAgent> getListOfAgentsForListDemandes(List<Integer> idAgent, String codeService) {
+
+		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
+				codeService == null || "".equals(codeService) ? "getListOfAgentsToInputOrApproveWithProfil"
+						: "getListOfAgentsToInputOrApproveByServiceWithProfil", DroitsAgent.class);
+
+		q.setParameter("idAgent", idAgent);
+
+		if (codeService != null && !"".equals(codeService))
+			q.setParameter("codeService", codeService);
+
+		return q.getResultList();
+	}
+
+
+	@Override
 	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService, Integer idDroitProfil) {
 
 		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
@@ -404,7 +420,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public DroitProfil getDroitProfilByAgentAndLibelle(Integer idAgent, String libelleProfil) {
+	public List<DroitProfil> getDroitProfilByAgentAndLibelle(Integer idAgent, String libelleProfil) {
 
 		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getDroitProfilByLibelleProfil",
 				DroitProfil.class);
@@ -413,7 +429,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		q.setParameter("libelle", libelleProfil);
 
 		try {
-			return q.getSingleResult();
+			return q.getResultList();
 		} catch (Exception e) {
 			return null;
 		}

@@ -11,6 +11,7 @@ import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
+import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.RefEtat;
@@ -275,7 +276,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				for (DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
 
 					// #14306
-					Profil currentProfil = dda.getDroitProfil().getProfil();
+					DroitProfil droitProfil = dda.getDroitProfil();
+					Profil currentProfil = droitProfil.getProfil();
 
 					demandeDto.setAffichageBoutonModifier(demandeDto.isAffichageBoutonModifier()
 							|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto
@@ -316,8 +318,6 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 											.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) && currentProfil
 												.isApprouverModif()));
 				}
-
-				break;
 			}
 		}
 

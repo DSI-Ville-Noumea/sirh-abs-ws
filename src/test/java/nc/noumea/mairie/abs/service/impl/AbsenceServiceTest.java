@@ -120,6 +120,8 @@ public class AbsenceServiceTest {
 
 		Integer idAgentConnecte = 9005138;
 		Integer idApprobateurOfDelegataire = 9005140;
+		List<Integer> idsApprobateurOfDelegataire = new ArrayList<Integer>();
+		idsApprobateurOfDelegataire.add(idApprobateurOfDelegataire);
 
 		Demande demande1 = new Demande();
 		demande1.setIdDemande(1);
@@ -135,17 +137,19 @@ public class AbsenceServiceTest {
 
 		Droit droitApprobateur = new Droit();
 		droitApprobateur.setIdAgent(idApprobateurOfDelegataire);
+		
+		List<DroitProfil> droitsProfils = new ArrayList<DroitProfil>();
 		DroitProfil dp = new DroitProfil();
 		dp.setDroitApprobateur(droitApprobateur);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.isUserDelegataire(idAgentConnecte)).thenReturn(true);
 		Mockito.when(arRepo.getDroitProfilByAgentAndLibelle(idAgentConnecte, ProfilEnum.DELEGATAIRE.toString()))
-				.thenReturn(dp);
+				.thenReturn(droitsProfils);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
-				idApprobateurOfDelegataire);
+				idsApprobateurOfDelegataire);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(
@@ -8595,7 +8599,7 @@ public class AbsenceServiceTest {
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
-				9005138);
+				Arrays.asList(9005138));
 
 		IFiltreService filtresService = Mockito.mock(IFiltreService.class);
 		Mockito.when(filtresService.getListeEtatsByOnglet("TOUTES", null)).thenReturn(listEtat);
@@ -8649,7 +8653,7 @@ public class AbsenceServiceTest {
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
-				9005138);
+				Arrays.asList(9005138));
 
 		IFiltreService filtresService = Mockito.mock(IFiltreService.class);
 		Mockito.when(filtresService.getListeEtatsByOnglet("TOUTES", null)).thenReturn(listEtat);
@@ -10192,7 +10196,7 @@ public class AbsenceServiceTest {
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getIdApprobateurOfDelegataire(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
-				9005138);
+				Arrays.asList(9005138));
 
 		IFiltreService filtresService = Mockito.mock(IFiltreService.class);
 		Mockito.when(filtresService.getListeEtatsByOnglet("TOUTES", null)).thenReturn(listEtat);

@@ -29,7 +29,9 @@ import javax.validation.constraints.NotNull;
 	@NamedQuery(name = "getDroitsAgent", query = "from DroitsAgent da where da.idAgent = :idAgent"),
 	@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d INNER JOIN FETCH dda.droitProfil dp where (d.idAgent = :idAgent) and da.codeService = :codeService and dp.idDroitProfil = :idDroitProfil "),
 	@NamedQuery(name = "getListOfAgentsToInputOrApproveWithoutProfil", query = "from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d where d.idAgent = :idAgent "),
-	@NamedQuery(name = "getListOfAgentsToInputOrApproveByServiceWithoutProfil", query = "from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d where (d.idAgent = :idAgent) and da.codeService = :codeService ")
+	@NamedQuery(name = "getListOfAgentsToInputOrApproveByServiceWithoutProfil", query = "from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d where (d.idAgent = :idAgent) and da.codeService = :codeService "),
+	@NamedQuery(name = "getListOfAgentsToInputOrApproveWithProfil", query = "from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droitProfil dp INNER JOIN FETCH dp.droit d where d.idAgent in :idAgent "),
+	@NamedQuery(name = "getListOfAgentsToInputOrApproveByServiceWithProfil", query = "from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droitProfil dp INNER JOIN FETCH dp.droit d where (d.idAgent in :idAgent) and da.codeService = :codeService ")
 })
 public class DroitsAgent {
 

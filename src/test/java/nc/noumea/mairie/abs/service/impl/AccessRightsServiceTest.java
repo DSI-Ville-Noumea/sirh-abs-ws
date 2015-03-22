@@ -3281,9 +3281,9 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 
-		Integer result = service.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
+		List<Integer> result = service.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
 
-		assertNull(result);
+		assertEquals(0, result.size());
 	}
 
 	@Test
@@ -3298,9 +3298,9 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		Integer result = service.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
+		List<Integer> result = service.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
 
-		assertNull(result);
+		assertEquals(0, result.size());
 	}
 
 	@Test
@@ -3312,21 +3312,23 @@ public class AccessRightsServiceTest {
 		Droit droitApprobateur = new Droit();
 		droitApprobateur.setIdAgent(9001234);
 
+		List<DroitProfil> droitsProfils = new ArrayList<DroitProfil>();
 		DroitProfil droitProfil = new DroitProfil();
 		droitProfil.setDroitApprobateur(droitApprobateur);
+		droitsProfils.add(droitProfil);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isUserDelegataire(idAgentConnecte)).thenReturn(true);
 		Mockito.when(
 				accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte,
-						ProfilEnum.DELEGATAIRE.toString())).thenReturn(droitProfil);
+						ProfilEnum.DELEGATAIRE.toString())).thenReturn(droitsProfils);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		Integer result = service.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
+		List<Integer> result = service.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentConcerne);
 
-		assertEquals(9001234, result.intValue());
+		assertEquals(9001234, result.get(0).intValue());
 	}
 
 	@Test
