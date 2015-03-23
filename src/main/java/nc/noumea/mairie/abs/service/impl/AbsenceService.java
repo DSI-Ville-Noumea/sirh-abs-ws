@@ -368,8 +368,8 @@ public class AbsenceService implements IAbsenceService {
 				idRefType, idRefGroupeAbsence);
 		if (null != idsApprobateurOfDelegataire) {
 			for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-				listeSansFiltredelegataire = demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
-					idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence);
+				listeSansFiltredelegataire.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
+					idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence));
 			}
 		}
 

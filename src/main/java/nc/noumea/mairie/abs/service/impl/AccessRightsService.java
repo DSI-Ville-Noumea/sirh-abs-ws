@@ -1037,7 +1037,9 @@ public class AccessRightsService implements IAccessRightsService {
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits
 		// sur l'agent pour qui il effectue la demande
 		if (!idAgent.equals(idAgentOfDemande)) {
-			if (accessRightsRepository.isUserOperateur(idAgent) || accessRightsRepository.isUserApprobateur(idAgent)
+			if (accessRightsRepository.isUserOperateur(idAgent) 
+					|| accessRightsRepository.isUserApprobateur(idAgent)
+					|| accessRightsRepository.isUserDelegataire(idAgent)
 					|| accessRightsRepository.isUserViseur(idAgent)) {
 
 				// on recherche tous les sous agents de la personne
@@ -1049,6 +1051,27 @@ public class AccessRightsService implements IAccessRightsService {
 						break;
 					}
 				}
+				
+				if(accessRightsRepository.isUserDelegataire(idAgent)
+						&& !trouve) {
+					// redmine #14201 : on cherche si l'agent est délégataire
+					List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent,
+							null);
+					
+					for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+						Droit droitApprobateurOfDelegataire = accessRightsRepository.getAgentDroitFetchAgents(idApprobateurOfDelegataire);
+						for (DroitDroitsAgent dda : droitApprobateurOfDelegataire.getDroitDroitsAgent()) {
+							if (dda.getDroitsAgent().getIdAgent().equals(idAgentOfDemande)) {
+								trouve = true;
+								break;
+							}
+						}
+						if(trouve) {
+							break;
+						}
+					}
+				}
+				
 				if (!trouve) {
 					logger.warn(
 							"Vous n'êtes ni opérateur, ni approbateur, ni viseur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
