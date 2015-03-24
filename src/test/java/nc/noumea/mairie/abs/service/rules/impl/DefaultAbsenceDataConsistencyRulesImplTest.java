@@ -15,11 +15,13 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitProfil;
 import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.EtatDemandeRecup;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
@@ -1200,6 +1202,100 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// Then
 		assertEquals(4, result.size());
 		assertEquals("30.0", result.get(0).getDuree().toString());
+		assertFalse(result.get(0).isAffichageBoutonImprimer());
+		assertFalse(result.get(0).isAffichageBoutonModifier());
+		assertFalse(result.get(0).isAffichageBoutonSupprimer());
+		assertEquals("motif", result.get(0).getMotif());
+	}
+
+	// TU pour bug #14547
+	@Test
+	public void filtreDateAndEtatDemandeFromList_DemandesEnCours_1result() {
+
+		// Given
+		Integer idAgent = 9005138;
+		Date dateEtat = new Date();
+
+		RefEtat etatRefusee = new RefEtat();
+		etatRefusee.setIdRefEtat(5);
+		etatRefusee.setLabel("REFUSEE");
+
+		List<RefEtat> refEtatEnCours = new ArrayList<RefEtat>();
+		refEtatEnCours.add(etatRefusee);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence refType = new RefTypeAbsence();
+		refType.setIdRefTypeAbsence(3);
+		refType.setLabel("CA");
+		refType.setGroupe(groupe);
+
+		EtatDemandeCongesAnnuels etat1 = new EtatDemandeCongesAnnuels();
+		etat1.setDate(dateEtat);
+		etat1.setEtat(RefEtatEnum.REFUSEE);
+		etat1.setIdAgent(idAgent);
+		etat1.setIdEtatDemande(1);
+		etat1.setMotif("motif");
+		etat1.setNbSamediOffert(0.0);
+		etat1.setNbSamediDecompte(0.0);
+		
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		etat1.setDemande(d);
+		d.setIdDemande(1);
+		d.setIdAgent(idAgent);
+		d.setType(refType);
+		d.setEtatsDemande(Arrays.asList((EtatDemande) etat1));
+		d.setDateDebut(new Date());
+		d.setNbSamediOffert(0.0);
+		d.setNbSamediDecompte(0.0);
+		
+		EtatDemandeCongesAnnuels etat2 = new EtatDemandeCongesAnnuels();
+		etat2.setDate(dateEtat);
+		etat2.setEtat(RefEtatEnum.REFUSEE);
+		etat2.setIdAgent(idAgent);
+		etat2.setIdEtatDemande(1);
+		etat2.setMotif("motif");
+		etat2.setNbSamediOffert(0.0);
+		etat2.setNbSamediDecompte(0.0);
+		
+		DemandeCongesAnnuels d2 = new DemandeCongesAnnuels();
+		etat2.setDemande(d2);
+		d2.setIdDemande(1);
+		d2.setIdAgent(idAgent);
+		d2.setType(refType);
+		d2.setEtatsDemande(Arrays.asList((EtatDemande) etat2));
+		d2.setDateDebut(new Date());
+		d2.setNbSamediOffert(0.0);
+		d2.setNbSamediDecompte(0.0);
+		
+		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
+		listeDemande.add(d);
+		listeDemande.add(d2);
+
+		EntityManager emMock = Mockito.mock(EntityManager.class);
+		Mockito.when(emMock.find(RefEtat.class, RefEtatEnum.REFUSEE.getCodeEtat())).thenReturn(etatRefusee);
+
+		Date date = new Date();
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setIdAgent(9005138);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(9005138)).thenReturn(ag);
+
+		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
+		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+
+		// When
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande,
+				Arrays.asList(etatRefusee), dateEtat);
+
+		// Then
+		assertEquals(1, result.size());
 		assertFalse(result.get(0).isAffichageBoutonImprimer());
 		assertFalse(result.get(0).isAffichageBoutonModifier());
 		assertFalse(result.get(0).isAffichageBoutonSupprimer());

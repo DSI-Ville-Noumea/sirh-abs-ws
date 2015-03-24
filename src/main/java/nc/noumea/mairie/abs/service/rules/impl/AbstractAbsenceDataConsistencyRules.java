@@ -394,7 +394,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 							d.getLatestEtatDemande(),
 							new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
 									.getIdAgent())), d.getType().getGroupe());
-					listeDemandeDto.add(dto);
+					if (!listeDemandeDto.contains(dto)) {
+						listeDemandeDto.add(dto);
+					}
 				}
 			}
 			return listeDemandeDto;
@@ -415,7 +417,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 								d.getLatestEtatDemande(),
 								new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
 										.getIdAgent())), d.getType().getGroupe());
-						listeDemandeDto.add(dto);
+						if (!listeDemandeDto.contains(dto)) {
+							listeDemandeDto.add(dto);
+						}
 					}
 				}
 				isfiltreDateDemande = true;
