@@ -480,8 +480,7 @@ public class DemandeController {
 	}
 	
 	/**
-	 * Retourne le nombre de demandes a approuver pour l accueil du kiosque <br />
-	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 * Retourne le nombre de demandes a approuver pour l accueil du kiosque 
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/countDemandesAApprouver", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -491,6 +490,19 @@ public class DemandeController {
 				idAgent);
 
 		return absenceService.countDemandesAApprouver(idAgent);
+	}
+	
+	/**
+	 * Retourne le nombre de demandes a viser pour l accueil du kiosque 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/countDemandesAViser", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public Integer countDemandesAViser(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered GET [demandes/countDemandesAViser] => countDemandesAViser with parameter idAgent = {}",
+				idAgent);
+
+		return absenceService.countDemandesAViser(idAgent);
 	}
 
 }

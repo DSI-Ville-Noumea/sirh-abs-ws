@@ -1863,4 +1863,11 @@ public class AbsenceService implements IAbsenceService {
 		
 		return demandesApprobateur + demandesDelegataire;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Integer countDemandesAViser(Integer idAgent) {
+		
+		return demandeRepository.countDemandesAViser(idAgent, helperService.getCurrentDateMoinsUnAn());
+	}
 }

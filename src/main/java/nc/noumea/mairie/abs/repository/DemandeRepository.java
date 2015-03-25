@@ -337,4 +337,24 @@ public class DemandeRepository implements IDemandeRepository {
 		
 		return result.size()>0 ? result.get(0).intValue() : 0;
 	}
+
+	@Override
+	public Integer countDemandesAViser(Integer idAgent, Date dateDebut) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select count(d.idDemande) from Demande d inner join d.etatsDemande ed ");
+		sb.append("where d.idAgent in ( select da.idAgent from DroitsAgent da inner join da.droitDroitsAgent dda inner join dda.droitProfil dp inner join dp.profil profil inner join dda.droit dr where dr.idAgent = :idAgentConnecte and profil.libelle = 'VISEUR' ) ");
+		sb.append("and d.dateDebut >= :fromDate ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
+		sb.append("and ed.etat in ( :SAISIE ) ");
+		
+		@SuppressWarnings("unchecked")
+		List<Long> result = absEntityManager.createQuery(sb.toString())
+				.setParameter("idAgentConnecte", idAgent)
+				.setParameter("fromDate", dateDebut)
+				.setParameter("SAISIE", RefEtatEnum.SAISIE)
+				.getResultList();
+		
+		return result.size()>0 ? result.get(0).intValue() : 0;
+	}
 }

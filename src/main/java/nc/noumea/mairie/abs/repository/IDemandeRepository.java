@@ -39,4 +39,6 @@ public interface IDemandeRepository {
 			Integer idRefGroupeAbsence);
 
 	Integer countDemandesAApprouver(Integer idAgent, Date dateDebut);
+
+	Integer countDemandesAViser(Integer idAgent, Date dateDebut);
 }

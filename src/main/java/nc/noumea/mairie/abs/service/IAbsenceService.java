@@ -60,4 +60,6 @@ public interface IAbsenceService {
 	ReturnMessageDto miseAJourSpsorc(Integer idAgent);
 
 	Integer countDemandesAApprouver(Integer idAgent);
+
+	Integer countDemandesAViser(Integer idAgent);
 }
