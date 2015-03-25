@@ -2256,4 +2256,179 @@ public class DemandeRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void countDemandesAViser_1Results() {
+
+		// Recup
+		Droit droitApprobateur = new Droit();
+		droitApprobateur.setIdAgent(9000002);
+		absEntityManager.persist(droitApprobateur);
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.VISEUR.toString());
+		absEntityManager.persist(profil);
+		DroitProfil droitProfil = new DroitProfil();
+		droitProfil.setProfil(profil);
+		droitProfil.setDroit(droitApprobateur);
+		absEntityManager.persist(droitProfil);
+
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(9000011);
+		absEntityManager.persist(droitsAgent);
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(droitApprobateur);
+		dda.setDroitProfil(droitProfil);
+		dda.setDroitsAgent(droitsAgent);
+		absEntityManager.persist(dda);
+
+		RefTypeAbsence rta = new RefTypeAbsence();
+		rta.setLabel("Maladies");
+		absEntityManager.persist(rta);
+		
+		Demande demande = new Demande();
+		demande.setIdAgent(9000011);
+		demande.setType(rta);
+		demande.setDateDebut(new DateTime().toDate());
+		absEntityManager.persist(demande);
+		EtatDemande etatDemande = new EtatDemande();
+		etatDemande.setDemande(demande);
+		etatDemande.setIdAgent(9000001);
+		etatDemande.setEtat(RefEtatEnum.SAISIE);
+		absEntityManager.persist(etatDemande);
+
+		// Repos Comp
+		Droit droitAppro2 = new Droit();
+		droitAppro2.setIdAgent(9000002);
+		absEntityManager.persist(droitAppro2);
+		Profil profil2 = new Profil();
+		profil2.setLibelle(ProfilEnum.VISEUR.toString());
+		absEntityManager.persist(profil2);
+		DroitProfil droitProfil2 = new DroitProfil();
+		droitProfil2.setProfil(profil2);
+		droitProfil2.setDroit(droitAppro2);
+		absEntityManager.persist(droitProfil2);
+
+		DroitsAgent droitsAgent2 = new DroitsAgent();
+		droitsAgent2.setIdAgent(9000012);
+		absEntityManager.persist(droitsAgent2);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(droitAppro2);
+		dda2.setDroitProfil(droitProfil2);
+		dda2.setDroitsAgent(droitsAgent2);
+		absEntityManager.persist(dda2);
+		
+		Demande demande2 = new Demande();
+		demande2.setIdAgent(9000012);
+		demande2.setType(rta);
+		demande2.setDateDebut(new DateTime().toDate());
+		absEntityManager.persist(demande2);
+		EtatDemande etatDemande2 = new EtatDemande();
+		etatDemande2.setDemande(demande2);
+		etatDemande2.setIdAgent(9000001);
+		etatDemande2.setEtat(RefEtatEnum.VISEE_FAVORABLE);
+		absEntityManager.persist(etatDemande2);
+
+		// ASA A48
+		Droit droitAppro3 = new Droit();
+		droitAppro3.setIdAgent(9000002);
+		absEntityManager.persist(droitAppro3);
+		DroitProfil droitProfil3 = new DroitProfil();
+		droitProfil3.setProfil(profil2);
+		droitProfil3.setDroit(droitAppro3);
+		absEntityManager.persist(droitProfil3);
+
+		DroitsAgent droitsAgent3 = new DroitsAgent();
+		droitsAgent3.setIdAgent(9000012);
+		absEntityManager.persist(droitsAgent3);
+		DroitDroitsAgent dda3 = new DroitDroitsAgent();
+		dda3.setDroit(droitAppro3);
+		dda3.setDroitProfil(droitProfil3);
+		dda3.setDroitsAgent(droitsAgent3);
+		absEntityManager.persist(dda3);
+		
+		Demande demande3 = new Demande();
+		demande3.setIdAgent(9000012);
+		demande3.setType(rta);
+		demande3.setDateDebut(new DateTime().toDate());
+		absEntityManager.persist(demande3);
+		EtatDemande etatDemande3 = new EtatDemande();
+		etatDemande3.setDemande(demande3);
+		etatDemande3.setIdAgent(9000001);
+		etatDemande3.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		absEntityManager.persist(etatDemande3);
+
+		// ASA A54
+		Droit droitAppro4 = new Droit();
+		droitAppro4.setIdAgent(9000002);
+		absEntityManager.persist(droitAppro4);
+		DroitProfil droitProfil4 = new DroitProfil();
+		droitProfil4.setProfil(profil2);
+		droitProfil4.setDroit(droitAppro4);
+		absEntityManager.persist(droitProfil4);
+
+		DroitsAgent droitsAgent4 = new DroitsAgent();
+		droitsAgent4.setIdAgent(9000012);
+		absEntityManager.persist(droitsAgent4);
+		DroitDroitsAgent dda4 = new DroitDroitsAgent();
+		dda4.setDroit(droitAppro4);
+		dda4.setDroitProfil(droitProfil4);
+		dda4.setDroitsAgent(droitsAgent4);
+		absEntityManager.persist(dda4);
+
+		Demande demande4 = new Demande();
+		demande4.setIdAgent(9000012);
+		demande4.setType(rta);
+		demande4.setDateDebut(new DateTime().toDate());
+		absEntityManager.persist(demande4);
+		EtatDemande etatDemande4 = new EtatDemande();
+		etatDemande4.setDemande(demande4);
+		etatDemande4.setIdAgent(9000001);
+		etatDemande4.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		absEntityManager.persist(etatDemande4);
+
+		// ASA A55
+		Droit droitAppro5 = new Droit();
+		droitAppro4.setIdAgent(9000002);
+		absEntityManager.persist(droitAppro5);
+		DroitProfil droitProfil5 = new DroitProfil();
+		droitProfil5.setProfil(profil2);
+		droitProfil5.setDroit(droitAppro5);
+		absEntityManager.persist(droitProfil5);
+
+		DroitsAgent droitsAgent5 = new DroitsAgent();
+		droitsAgent5.setIdAgent(9000012);
+		absEntityManager.persist(droitsAgent5);
+		DroitDroitsAgent dda5 = new DroitDroitsAgent();
+		dda5.setDroit(droitAppro5);
+		dda5.setDroitProfil(droitProfil5);
+		dda5.setDroitsAgent(droitsAgent5);
+		absEntityManager.persist(dda5);
+
+		Demande demande5 = new Demande();
+		demande5.setIdAgent(9000012);
+		demande5.setType(rta);
+		demande5.setDateDebut(new DateTime().toDate());
+		absEntityManager.persist(demande5);
+		EtatDemande etatDemande5 = new EtatDemande();
+		etatDemande5.setDemande(demande5);
+		etatDemande5.setIdAgent(9000001);
+		etatDemande5.setEtat(RefEtatEnum.VISEE_DEFAVORABLE);
+		absEntityManager.persist(etatDemande5);
+
+		List<Integer> listeTypes = new ArrayList<Integer>();
+		listeTypes.add(RefTypeAbsenceEnum.RECUP.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.ASA_A48.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.ASA_A54.getValue());
+		listeTypes.add(RefTypeAbsenceEnum.ASA_A55.getValue());
+
+		// When
+		Integer result = repository.countDemandesAViser(9000002, new DateTime().minusYears(1).toDate());
+
+		assertEquals(1, result.intValue());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 }
