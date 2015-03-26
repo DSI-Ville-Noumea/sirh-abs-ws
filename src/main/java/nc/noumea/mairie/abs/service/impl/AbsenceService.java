@@ -1307,7 +1307,11 @@ public class AbsenceService implements IAbsenceService {
 			listeEtats.add(RefEtatEnum.A_VALIDER);
 
 		} else {
+			 // #14697 ajout de l etat A VALIDER 
+			// car erreur lors de la reprise de donnees des conges exceptionnels 
+			// mis l etat A VALIDER au lieu de SAISI ou APPROUVE
 			listeEtats.add(RefEtatEnum.APPROUVEE);
+			listeEtats.add(RefEtatEnum.A_VALIDER);
 		}
 
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, listeEtats);
