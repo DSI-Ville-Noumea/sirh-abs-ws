@@ -27,15 +27,17 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 		return absEntityManager.find(Tclass, Id);
 	}
 
+	// #14737 tri par ordre alpha
 	@Override
 	public List<OrganisationSyndicale> findAllOrganisation() {
-		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o", OrganisationSyndicale.class)
+		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o order by o.sigle", OrganisationSyndicale.class)
 				.getResultList();
 	}
 
+	// #14737 tri par ordre alpha
 	@Override
 	public List<OrganisationSyndicale> findAllOrganisationActives() {
-		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o where o.actif = true",
+		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o where o.actif = true order by o.sigle",
 				OrganisationSyndicale.class).getResultList();
 	}
 

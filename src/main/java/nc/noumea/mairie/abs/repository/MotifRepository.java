@@ -49,7 +49,9 @@ public class MotifRepository implements IMotifRepository {
 		if (idType != null) {
 			sb.append("where m.refTypeAbsence.idRefTypeAbsence =:idType ");
 		}
-
+		// #14737 tri par ordre alpha
+		sb.append(" order by m.libelle ");
+		
 		TypedQuery<MotifCompteur> query = absEntityManager.createQuery(sb.toString(), MotifCompteur.class);
 		if (idType != null) {
 			query.setParameter("idType", idType);
