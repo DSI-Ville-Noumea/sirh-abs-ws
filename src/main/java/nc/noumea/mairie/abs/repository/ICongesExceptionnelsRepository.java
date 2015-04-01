@@ -5,5 +5,5 @@ import java.util.Date;
 public interface ICongesExceptionnelsRepository {
 
 	Double countDureeByPeriodeAndTypeDemande(Integer idAgentConcerne,
-			Date fromDate, Date toDate, Integer idRefType);
+			Date fromDate, Date toDate, Integer idRefType, Integer idDemande);
 }

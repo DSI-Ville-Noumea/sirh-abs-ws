@@ -589,7 +589,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 				.mock(ICongesExceptionnelsRepository.class);
 		Mockito.when(
 				congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(demandeDto.getAgentWithServiceDto()
-						.getIdAgent(), fromDate, demandeDto.getDateDebut(), demandeDto.getIdTypeDemande())).thenReturn(
+						.getIdAgent(), fromDate, demandeDto.getDateDebut(), demandeDto.getIdTypeDemande(), demandeDto.getIdDemande())).thenReturn(
 				0.0);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
@@ -632,7 +632,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 				.mock(ICongesExceptionnelsRepository.class);
 		Mockito.when(
 				congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(demandeDto.getAgentWithServiceDto()
-						.getIdAgent(), fromDate, demandeDto.getDateDebut(), demandeDto.getIdTypeDemande())).thenReturn(
+						.getIdAgent(), fromDate, demandeDto.getDateDebut(), demandeDto.getIdTypeDemande(), demandeDto.getIdDemande())).thenReturn(
 				1.0);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
@@ -645,6 +645,8 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 	@Test
 	public void checkEtatDemandePourDepassementCompteurAgent() {
 		
+		DemandeDto demandeDtoPROVISOIRE = new DemandeDto();
+			demandeDtoPROVISOIRE.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
 		DemandeDto demandeDtoVALIDEE = new DemandeDto();
 			demandeDtoVALIDEE.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		DemandeDto demandeDtoREJETE = new DemandeDto();
@@ -657,7 +659,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 			demandeDtoREFUSEE.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
 		
 		List<DemandeDto> listDto = new ArrayList<DemandeDto>();
-		listDto.addAll(Arrays.asList(demandeDtoVALIDEE, demandeDtoREJETE, demandeDtoANNULEE, demandeDtoPRISE, demandeDtoREFUSEE));
+		listDto.addAll(Arrays.asList(demandeDtoPROVISOIRE, demandeDtoVALIDEE, demandeDtoREJETE, demandeDtoANNULEE, demandeDtoPRISE, demandeDtoREFUSEE));
 			
 		for(DemandeDto demandeDto : listDto) {
 			if(impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
@@ -665,8 +667,6 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 			}
 		}
 		
-		DemandeDto demandeDtoPROVISOIRE = new DemandeDto();
-			demandeDtoPROVISOIRE.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
 		DemandeDto demandeDtoSAISIE = new DemandeDto();
 			demandeDtoSAISIE.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 		DemandeDto demandeDtoVISEE_FAVORABLE = new DemandeDto();
@@ -679,7 +679,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 			demandeDtoEN_ATTENTE.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		
 		listDto = new ArrayList<DemandeDto>();
-		listDto.addAll(Arrays.asList(demandeDtoPROVISOIRE, demandeDtoSAISIE, demandeDtoVISEE_FAVORABLE, demandeDtoVISEE_DEFAVORABLE,
+		listDto.addAll(Arrays.asList(demandeDtoSAISIE, demandeDtoVISEE_FAVORABLE, demandeDtoVISEE_DEFAVORABLE,
 				demandeDtoAPPROUVEE, demandeDtoEN_ATTENTE));
 			
 		for(DemandeDto demandeDto : listDto) {
@@ -725,7 +725,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 				.mock(ICongesExceptionnelsRepository.class);
 		Mockito.when(
 				congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(demande.getIdAgent(), fromDate,
-						demande.getDateDebut(), demande.getType().getIdRefTypeAbsence())).thenReturn(0.0);
+						demande.getDateDebut(), demande.getType().getIdRefTypeAbsence(), demande.getIdDemande())).thenReturn(0.0);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
@@ -773,7 +773,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 				.mock(ICongesExceptionnelsRepository.class);
 		Mockito.when(
 				congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(demande.getIdAgent(), fromDate,
-						demande.getDateDebut(), demande.getType().getIdRefTypeAbsence())).thenReturn(0.0);
+						demande.getDateDebut(), demande.getType().getIdRefTypeAbsence(), demande.getIdDemande())).thenReturn(0.0);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);

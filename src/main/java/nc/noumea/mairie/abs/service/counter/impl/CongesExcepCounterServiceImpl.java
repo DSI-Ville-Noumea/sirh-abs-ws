@@ -34,7 +34,7 @@ public class CongesExcepCounterServiceImpl extends AbstractCounterService {
 			for(RefTypeAbsence typeAbsence : groupeAbsence.getListeTypeAbsence()) {
 				
 				Double dureeDejaPris = congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(
-						idAgent, dateDebut, dateFin, typeAbsence.getIdRefTypeAbsence());
+						idAgent, dateDebut, dateFin, typeAbsence.getIdRefTypeAbsence(), null);
 				
 				if(0.0 != dureeDejaPris) {
 					SoldeSpecifiqueDto dto = new SoldeSpecifiqueDto();

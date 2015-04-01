@@ -50,7 +50,7 @@ public class FiltreRepository implements IFiltreRepository {
 
 	@Override
 	public List<RefTypeAbsence> findAllRefTypeAbsences() {
-		return absEntityManager.createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).getResultList();
+		return absEntityManager.createQuery("SELECT o FROM RefTypeAbsence o order by o.label ", RefTypeAbsence.class).getResultList();
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class FiltreRepository implements IFiltreRepository {
 
 	@Override
 	public List<RefTypeAbsence> findAllRefTypeAbsencesWithGroup(Integer idRefGroupeAbsence) {
-		String sql = "SELECT o FROM RefTypeAbsence o where o.groupe.idRefGroupeAbsence =:idRefGroupeAbsence";
+		String sql = "SELECT o FROM RefTypeAbsence o where o.groupe.idRefGroupeAbsence =:idRefGroupeAbsence order by o.label ";
 
 		TypedQuery<RefTypeAbsence> query = absEntityManager.createQuery(sql, RefTypeAbsence.class);
 		query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);

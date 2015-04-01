@@ -93,12 +93,13 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 			return false;
 				
 		return checkDepassementCompteurAgent(demandeDto.getIdTypeDemande(), demandeDto.getDateDebut(), demandeDto
-				.getAgentWithServiceDto().getIdAgent(), demandeDto.getDuree());
+				.getAgentWithServiceDto().getIdAgent(), demandeDto.getDuree(), demandeDto.getIdDemande());
 	}
 	
 	protected boolean checkEtatDemandePourDepassementCompteurAgent(DemandeDto demandeDto) {
 
-		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())
@@ -110,7 +111,7 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 	}
 
 	private boolean checkDepassementCompteurAgent(Integer idTypeDemande, Date dateDebutDemande, Integer idAgent,
-			Double duree) {
+			Double duree, Integer idDemande) {
 
 		RefTypeSaisi typeSaisi = demandeRepository.getEntity(RefTypeSaisi.class, idTypeDemande);
 
@@ -122,8 +123,10 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 		Date dateDebut = helperService.getDateDebutByUnitePeriodeQuotaAndDebutDemande(
 				typeSaisi.getRefUnitePeriodeQuota(), dateDebutDemande);
 
+		// #14812 SIRH - PARAMETRES - CONGES EXCEPTIONNELS
+		// on exclut la demande en cours 
 		Double dureeDejaPris = congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(idAgent, dateDebut,
-				dateDebutDemande, idTypeDemande);
+				dateDebutDemande, idTypeDemande, idDemande);
 
 		if (dureeDejaPris + duree > typeSaisi.getQuotaMax()) {
 			return true;
@@ -138,7 +141,7 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 		// si la colonne alerte dans la table de parametre est a vrai
 		if (demande.getType().getTypeSaisi().isAlerte()
 				&& checkDepassementCompteurAgent(demande.getType().getIdRefTypeAbsence(), demande.getDateDebut(),
-						demande.getIdAgent(), demande.getDuree())) {
+						demande.getIdAgent(), demande.getDuree(), demande.getIdDemande())) {
 
 			logger.warn(String.format(demande.getType().getTypeSaisi().getMessageAlerte(), demande.getIdAgent()));
 			srm.getInfos()

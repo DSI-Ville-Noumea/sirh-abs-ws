@@ -55,9 +55,9 @@ public class CongesExcepCounterServiceImplTest extends AbstractCounterServiceTes
 		Mockito.when(demandeRepository.getEntity(RefGroupeAbsence.class, RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue())).thenReturn(groupe);
 
 		ICongesExceptionnelsRepository congesExceptionnelsRepository = Mockito.mock(ICongesExceptionnelsRepository.class);
-		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(idAgent, dateDebut, dateFin, typeAbs1.getIdRefTypeAbsence())).thenReturn(10.0);
-		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(idAgent, dateDebut, dateFin, typeAbs2.getIdRefTypeAbsence())).thenReturn(20.0);
-		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(idAgent, dateDebut, dateFin, typeAbsNoCounter.getIdRefTypeAbsence())).thenReturn(0.0);
+		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(idAgent, dateDebut, dateFin, typeAbs1.getIdRefTypeAbsence(), null)).thenReturn(10.0);
+		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(idAgent, dateDebut, dateFin, typeAbs2.getIdRefTypeAbsence(), null)).thenReturn(20.0);
+		Mockito.when(congesExceptionnelsRepository.countDureeByPeriodeAndTypeDemande(idAgent, dateDebut, dateFin, typeAbsNoCounter.getIdRefTypeAbsence(), null)).thenReturn(0.0);
 		
 		CongesExcepCounterServiceImpl impl = new CongesExcepCounterServiceImpl();
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
