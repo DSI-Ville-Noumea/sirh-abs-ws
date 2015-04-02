@@ -181,8 +181,8 @@ public class HelperService {
 				String durDecimal = duree.toString().substring(duree.toString().indexOf(".") + 1,
 						duree.toString().length());
 				Double heure = new Double(durEntier) * 60;
-				Double minute = durDecimal.substring(0, 1).equals("0") ? new Double(durDecimal) : 10.0 * new Double(
-						durDecimal);
+				Double minute = durDecimal.length() == 1 ? new Double(durDecimal)*10 : new Double(durDecimal);
+				
 				Double dur = heure + minute;
 				return dur;
 

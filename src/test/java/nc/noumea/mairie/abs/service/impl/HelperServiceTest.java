@@ -455,6 +455,66 @@ public class HelperServiceTest {
 	}
 
 	@Test
+	public void getDuree_returnDureeWithMinutes_1Heure8minutes() {
+
+		Double duree = 1.08;
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		typeSaisi.setDuree(true);
+		typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+
+		HelperService service = new HelperService();
+		Double result = service.getDuree(typeSaisi, new Date(), new Date(), duree);
+
+		assertEquals(68, result.intValue());
+	}
+
+	@Test
+	public void getDuree_returnDureeWithMinutes_1Heure15minutes() {
+
+		Double duree = 1.15;
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		typeSaisi.setDuree(true);
+		typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+
+		HelperService service = new HelperService();
+		Double result = service.getDuree(typeSaisi, new Date(), new Date(), duree);
+
+		assertEquals(75, result.intValue());
+	}
+
+	@Test
+	public void getDuree_returnDureeWithMinutes_1Heure30minutes() {
+
+		Double duree = 1.30;
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		typeSaisi.setDuree(true);
+		typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+
+		HelperService service = new HelperService();
+		Double result = service.getDuree(typeSaisi, new Date(), new Date(), duree);
+
+		assertEquals(90, result.intValue());
+	}
+
+	@Test
+	public void getDuree_returnDureeWithMinutes_30minutes() {
+
+		Double duree = 0.30;
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		typeSaisi.setDuree(true);
+		typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_MINUTES);
+
+		HelperService service = new HelperService();
+		Double result = service.getDuree(typeSaisi, new Date(), new Date(), duree);
+
+		assertEquals(30, result.intValue());
+	}
+
+	@Test
 	public void getDuree_returnMinutes() {
 
 		Double duree = 1.0;
