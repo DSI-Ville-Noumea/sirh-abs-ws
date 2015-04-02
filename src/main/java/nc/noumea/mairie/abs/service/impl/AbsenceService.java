@@ -36,6 +36,7 @@ import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
@@ -56,6 +57,7 @@ import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
@@ -141,6 +143,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ICounterRepository counterRepository;
+	
+	@Autowired
+	private IAgentService agentService;
 
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
@@ -1173,14 +1178,15 @@ public class AbsenceService implements IAbsenceService {
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 		Demande dem = demandeRepository.getEntity(Demande.class, idDemande);
 
+		List<AgentWithServiceDto> listAgentsExistants= new ArrayList<AgentWithServiceDto>();
 		for (EtatDemande etat : dem.getEtatsDemande()) {
-			DemandeDto dto = new DemandeDto(dem, sirhWSConsumer.getAgentService(etat.getIdAgent(),
+			DemandeDto dto = new DemandeDto(dem, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(),
 					helperService.getCurrentDate()));
-			dto.updateEtat(etat, sirhWSConsumer.getAgentService(etat.getIdAgent(), helperService.getCurrentDate()), dem
+			dto.updateEtat(etat, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(), helperService.getCurrentDate()), dem
 					.getType().getGroupe());
 			result.add(dto);
 		}
-
+		
 		return result;
 	}
 

@@ -62,6 +62,7 @@ import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
@@ -4861,6 +4862,7 @@ public class AbsenceServiceTest {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getDemandesArchives_return1Liste() {
 
@@ -4917,13 +4919,13 @@ public class AbsenceServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(date);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgentService(dr.getIdAgent(), date)).thenReturn(new AgentWithServiceDto());
-
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(Mockito.anyList(), Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(new AgentWithServiceDto());
+		
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "agentService", agentService);
 
 		List<DemandeDto> listResult = service.getDemandesArchives(idDemande);
 
