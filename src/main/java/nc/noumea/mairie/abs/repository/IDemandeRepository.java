@@ -31,7 +31,7 @@ public interface IDemandeRepository {
 	List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence);
 
-	List<Demande> listeDemandesSIRHAValider();
+	List<Demande> listeDemandesSIRHAValider(List<Integer> listIdAgentRecherche);
 
 	Integer getNombreSamediOffertSurAnnee(Integer idAgent, Integer year, Integer idDemande);
 

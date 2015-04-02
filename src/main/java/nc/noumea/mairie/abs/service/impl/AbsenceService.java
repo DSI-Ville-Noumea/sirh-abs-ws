@@ -1508,8 +1508,8 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DemandeDto> getListeDemandesSIRHAValider() {
-		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRHAValider();
+	public List<DemandeDto> getListeDemandesSIRHAValider(List<Integer> agentIds) {
+		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRHAValider(agentIds);
 
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				filtreRepository.findRefEtatAValider(), null);

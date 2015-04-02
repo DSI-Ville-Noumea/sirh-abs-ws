@@ -233,7 +233,7 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public List<Demande> listeDemandesSIRHAValider() {
+	public List<Demande> listeDemandesSIRHAValider(List<Integer> listIdAgentRecherche) {
 		// pour le moment la DRH ne doit valider que les congés excep, congé
 		// annuel et les ASA
 		StringBuilder sb = new StringBuilder();
@@ -241,6 +241,11 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("where d.type.groupe.idRefGroupeAbsence in( :AS , :CONGE_EXCEP, :CONGE_ANNUEL ) ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :APPROUVEE, :EN_ATTENTE, :A_VALIDER ) ");
+
+		// agent
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
+			sb.append("and d.idAgent in :idAgentRecherche ");
+		}
 		sb.append("order by d.dateDebut desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
@@ -250,6 +255,10 @@ public class DemandeRepository implements IDemandeRepository {
 		query.setParameter("APPROUVEE", RefEtatEnum.APPROUVEE);
 		query.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
 		query.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER);
+		// agent
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
+			query.setParameter("idAgentRecherche", listIdAgentRecherche);
+		}
 		
 		return query.getResultList();
 	}

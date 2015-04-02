@@ -33,7 +33,7 @@ public interface IAbsenceService {
 
 	ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, List<DemandeEtatChangeDto> dto);
 
-	List<DemandeDto> getListeDemandesSIRHAValider();
+	List<DemandeDto> getListeDemandesSIRHAValider(List<Integer> agentIds);
 
 	ReturnMessageDto checkRecuperations(Integer convertedIdAgent, Date fromDate, Date toDate);
 

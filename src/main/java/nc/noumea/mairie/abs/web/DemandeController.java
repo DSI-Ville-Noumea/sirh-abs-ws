@@ -426,7 +426,7 @@ public class DemandeController {
 
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 		if (aValider) {
-			result = absenceService.getListeDemandesSIRHAValider();
+			result = absenceService.getListeDemandesSIRHAValider(agentIds);
 		} else {
 			result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType, idAgentRecherche,
 					idRefGroupeAbsence, agentIds);

@@ -9222,7 +9222,7 @@ public class AbsenceServiceTest {
 		listEtat.add(refAppro);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesSIRHAValider()).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesSIRHAValider(null)).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null)).thenReturn(
@@ -9243,7 +9243,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRHAValider();
+		List<DemandeDto> listResult = service.getListeDemandesSIRHAValider(null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
@@ -10562,7 +10562,7 @@ public class AbsenceServiceTest {
 		listEtat.add(refAppro);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesSIRHAValider()).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesSIRHAValider(null)).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null)).thenReturn(
@@ -10583,7 +10583,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRHAValider();
+		List<DemandeDto> listResult = service.getListeDemandesSIRHAValider(null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
