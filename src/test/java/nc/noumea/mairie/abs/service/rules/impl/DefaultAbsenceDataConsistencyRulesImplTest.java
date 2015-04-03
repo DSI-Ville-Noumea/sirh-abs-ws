@@ -40,6 +40,7 @@ import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
@@ -574,6 +575,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertEquals(0, result.size());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void filtreDateAndEtatDemandeFromList_EtatAndDateDemandeFilter_NoResult_BadEtat() {
 
@@ -643,11 +645,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(9005138)).thenReturn(ag);
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(Mockito.anyList(), Mockito.anyInt())).thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(impl, "agentService", agentService);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
@@ -721,13 +723,13 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ag.setIdAgent(1);
 		AgentGeneriqueDto ag2 = new AgentGeneriqueDto();
 		ag2.setIdAgent(2);
-		
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(d.getIdAgent())).thenReturn(ag);
-		Mockito.when(sirhWSConsumer.getAgent(d2.getIdAgent())).thenReturn(ag2);
+
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d.getIdAgent())).thenReturn(ag);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d2.getIdAgent())).thenReturn(ag2);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(impl, "agentService", agentService);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
@@ -807,11 +809,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(9005138)).thenReturn(ag);
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d.getIdAgent())).thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(impl, "agentService", agentService);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
@@ -892,11 +894,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(9005138)).thenReturn(ag);
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d.getIdAgent())).thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(impl, "agentService", agentService);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
@@ -978,12 +980,12 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(d.getIdAgent())).thenReturn(ag);
-		Mockito.when(sirhWSConsumer.getAgent(d2.getIdAgent())).thenReturn(ag);
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d.getIdAgent())).thenReturn(ag);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d2.getIdAgent())).thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(impl, "agentService", agentService);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
@@ -1188,11 +1190,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(9005138)).thenReturn(ag);
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d.getIdAgent())).thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(impl, "agentService", agentService);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
@@ -1283,11 +1285,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(9005138)).thenReturn(ag);
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d.getIdAgent())).thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(impl, "agentService", agentService);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
@@ -1369,12 +1371,12 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
 
-		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(d.getIdAgent())).thenReturn(ag);
-		Mockito.when(sirhWSConsumer.getAgent(d2.getIdAgent())).thenReturn(ag);
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d.getIdAgent())).thenReturn(ag);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), d2.getIdAgent())).thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
-		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(impl, "agentService", agentService);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When

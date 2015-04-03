@@ -20,4 +20,9 @@ public class ApprobateurDto {
 	public void setApprobateur(AgentWithServiceDto approbateur) {
 		this.approbateur = approbateur;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return approbateur.getIdAgent().equals(((ApprobateurDto) obj).getApprobateur().getIdAgent());
+	}
 }

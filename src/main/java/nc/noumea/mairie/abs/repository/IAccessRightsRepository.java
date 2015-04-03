@@ -63,4 +63,6 @@ public interface IAccessRightsRepository {
 
 	List<DroitsAgent> getListOfAgentsForListDemandes(List<Integer> idAgent,
 			String codeService);
+
+	List<DroitsAgent> getListeActeursOfAgent(Integer idAgent);
 }

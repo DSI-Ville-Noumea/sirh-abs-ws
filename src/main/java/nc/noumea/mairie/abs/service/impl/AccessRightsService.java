@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
+import nc.noumea.mairie.abs.dto.ActeursDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
@@ -27,6 +28,7 @@ import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
+import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -52,6 +54,9 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private ISirhRepository sirhRepository;
+
+	@Autowired
+	private IAgentService agentService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -1130,6 +1135,67 @@ public class AccessRightsService implements IAccessRightsService {
 		// on traite le delegataire
 		traiteDelegataire(inputterDto, delegataire, droitApprobateur, result);
 		// //////////////////// FIN DELEGATAIRE ///////////////////////////////
+		return result;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ActeursDto getListeActeurs(Integer idAgent) {
+		
+		ActeursDto result = new ActeursDto();
+		
+		// en QUALIF, un agent peut avoir plusieurs lignes dans la table DROITS_AGENT
+		// ce n est pas normal mais je pense que cela provient de la reprise de donnees des droits
+		List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListeActeursOfAgent(idAgent);
+		
+		if(null != listDroitsAgent) {
+			List<AgentGeneriqueDto> listAgentsExistants = new ArrayList<AgentGeneriqueDto>();
+			for(DroitsAgent droitsAgent : listDroitsAgent) {
+				
+				if(null != droitsAgent.getDroitDroitsAgent()) {
+					for(DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
+						if(ProfilEnum.OPERATEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())){
+							AgentDto operateur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
+							
+							if(!result.getListOperateurs().contains(operateur))
+								result.getListOperateurs().add(operateur);
+							
+							continue;
+						}
+						if(ProfilEnum.VISEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())){
+							AgentDto viseur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
+							
+							if(!result.getListViseurs().contains(viseur))
+								result.getListViseurs().add(viseur);
+							
+							continue;
+						}
+						if(ProfilEnum.APPROBATEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())){
+							AgentWithServiceDto approbateur = new AgentWithServiceDto(agentService.getAgentOptimise(listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
+							
+							ApprobateurDto approbateurWithDelegataire = new ApprobateurDto();
+							approbateurWithDelegataire.setApprobateur(approbateur);
+							
+							if(!result.getListApprobateurs().contains(approbateurWithDelegataire)) {
+								DroitProfil profilDelegataire = getDelegataireApprobateur(approbateur.getIdAgent(), 
+										accessRightsRepository.getDroitSousApprobateur(approbateur.getIdAgent()));
+								
+								if(null != profilDelegataire) {
+									AgentDto delegataire = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, profilDelegataire.getDroit().getIdAgent()));
+									delegataire.setIdAgent(profilDelegataire.getDroit().getIdAgent());
+									approbateurWithDelegataire.setDelegataire(delegataire);
+								}
+								
+								result.getListApprobateurs().add(approbateurWithDelegataire);
+							}
+							
+							continue;
+						}
+					}
+				}
+			}
+		}
+		
 		return result;
 	}
 }

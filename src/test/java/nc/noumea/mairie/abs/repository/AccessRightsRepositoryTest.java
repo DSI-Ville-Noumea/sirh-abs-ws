@@ -1604,5 +1604,253 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeActeursOfAgent_1Viseur1Operateur1Approbateur() {
+		
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005131);
+		da.setCodeService("DCCB");
+		da.setDateModification(new Date());
+		da.setLibelleService("SED");
+
+		Profil pAppro = new Profil();
+		pAppro.setLibelle("APPROBATEUR");
+		
+		Profil pViseur = new Profil();
+		pAppro.setLibelle("VISEUR");
+		
+		Profil pOperateur = new Profil();
+		pAppro.setLibelle("OPERATEUR");
+
+		Droit droitAppro = new Droit();
+		droitAppro.setDateModification(new Date());
+		droitAppro.setIdAgent(9005138);
+
+		Droit droitViseur = new Droit();
+		droitViseur.setDateModification(new Date());
+		droitViseur.setIdAgent(9005140);
+
+		Droit droitOperateur = new Droit();
+		droitOperateur.setDateModification(new Date());
+		droitOperateur.setIdAgent(9005142);
+
+		DroitProfil dpAppr = new DroitProfil();
+		dpAppr.setDroit(droitAppro);
+		dpAppr.setDroitApprobateur(droitAppro);
+		dpAppr.setProfil(pAppro);
+
+		DroitProfil dpViseur = new DroitProfil();
+		dpViseur.setDroit(droitViseur);
+		dpViseur.setDroitApprobateur(droitAppro);
+		dpViseur.setProfil(pViseur);
+
+		DroitProfil dpOperateur = new DroitProfil();
+		dpOperateur.setDroit(droitOperateur);
+		dpOperateur.setDroitApprobateur(droitAppro);
+		dpOperateur.setProfil(pOperateur);
+
+		DroitDroitsAgent ddaAppro = new DroitDroitsAgent();
+		ddaAppro.setDroit(droitAppro);
+		ddaAppro.setDroitProfil(dpAppr);
+		ddaAppro.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaViseur = new DroitDroitsAgent();
+		ddaViseur.setDroit(droitViseur);
+		ddaViseur.setDroitProfil(dpViseur);
+		ddaViseur.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaOperateur = new DroitDroitsAgent();
+		ddaOperateur.setDroit(droitOperateur);
+		ddaOperateur.setDroitProfil(dpOperateur);
+		ddaOperateur.setDroitsAgent(da);
+
+		da.getDroitDroitsAgent().add(ddaAppro);
+		dpAppr.getDroitDroitsAgent().add(ddaAppro);
+		droitAppro.getDroitDroitsAgent().add(ddaAppro);
+		droitAppro.getDroitProfils().add(dpAppr);
+
+		da.getDroitDroitsAgent().add(ddaViseur);
+		dpViseur.getDroitDroitsAgent().add(ddaViseur);
+		droitViseur.getDroitDroitsAgent().add(ddaViseur);
+		droitViseur.getDroitProfils().add(dpViseur);
+
+		da.getDroitDroitsAgent().add(ddaOperateur);
+		dpOperateur.getDroitDroitsAgent().add(ddaOperateur);
+		droitOperateur.getDroitDroitsAgent().add(ddaOperateur);
+		droitOperateur.getDroitProfils().add(dpOperateur);
+
+		absEntityManager.persist(da);
+		absEntityManager.persist(pAppro);
+		absEntityManager.persist(droitAppro);
+		absEntityManager.persist(dpAppr);
+		absEntityManager.persist(ddaAppro);
+
+		absEntityManager.persist(pViseur);
+		absEntityManager.persist(droitViseur);
+		absEntityManager.persist(dpViseur);
+		absEntityManager.persist(ddaViseur);
+
+		absEntityManager.persist(pOperateur);
+		absEntityManager.persist(droitOperateur);
+		absEntityManager.persist(dpOperateur);
+		absEntityManager.persist(ddaOperateur);
+		
+		List<DroitsAgent> result = repository.getListeActeursOfAgent(9005131);
+
+		assertEquals(3, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeActeursOfAgent_1Viseur2Operateur2Approbateur() {
+		
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005131);
+		da.setCodeService("DCCB");
+		da.setDateModification(new Date());
+		da.setLibelleService("SED");
+
+		Profil pAppro = new Profil();
+		pAppro.setLibelle("APPROBATEUR");
+		
+		Profil pViseur = new Profil();
+		pAppro.setLibelle("VISEUR");
+		
+		Profil pOperateur = new Profil();
+		pAppro.setLibelle("OPERATEUR");
+
+		Droit droitAppro = new Droit();
+		droitAppro.setDateModification(new Date());
+		droitAppro.setIdAgent(9005138);
+
+		Droit droitAppro2 = new Droit();
+		droitAppro2.setDateModification(new Date());
+		droitAppro2.setIdAgent(9005148);
+
+		Droit droitViseur = new Droit();
+		droitViseur.setDateModification(new Date());
+		droitViseur.setIdAgent(9005140);
+
+		Droit droitOperateur = new Droit();
+		droitOperateur.setDateModification(new Date());
+		droitOperateur.setIdAgent(9005142);
+
+		Droit droitOperateur2 = new Droit();
+		droitOperateur2.setDateModification(new Date());
+		droitOperateur2.setIdAgent(9005152);
+
+		DroitProfil dpAppr = new DroitProfil();
+		dpAppr.setDroit(droitAppro);
+		dpAppr.setDroitApprobateur(droitAppro);
+		dpAppr.setProfil(pAppro);
+
+		DroitProfil dpAppr2 = new DroitProfil();
+		dpAppr2.setDroit(droitAppro2);
+		dpAppr2.setDroitApprobateur(droitAppro2);
+		dpAppr2.setProfil(pAppro);
+
+		DroitProfil dpViseur = new DroitProfil();
+		dpViseur.setDroit(droitViseur);
+		dpViseur.setDroitApprobateur(droitAppro);
+		dpViseur.setProfil(pViseur);
+
+		DroitProfil dpOperateur = new DroitProfil();
+		dpOperateur.setDroit(droitOperateur);
+		dpOperateur.setDroitApprobateur(droitAppro);
+		dpOperateur.setProfil(pOperateur);
+
+		DroitProfil dpOperateur2 = new DroitProfil();
+		dpOperateur2.setDroit(droitOperateur2);
+		dpOperateur2.setDroitApprobateur(droitAppro2);
+		dpOperateur2.setProfil(pOperateur);
+
+		DroitDroitsAgent ddaAppro = new DroitDroitsAgent();
+		ddaAppro.setDroit(droitAppro);
+		ddaAppro.setDroitProfil(dpAppr);
+		ddaAppro.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaAppro2 = new DroitDroitsAgent();
+		ddaAppro2.setDroit(droitAppro2);
+		ddaAppro2.setDroitProfil(dpAppr2);
+		ddaAppro2.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaViseur = new DroitDroitsAgent();
+		ddaViseur.setDroit(droitViseur);
+		ddaViseur.setDroitProfil(dpViseur);
+		ddaViseur.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaOperateur = new DroitDroitsAgent();
+		ddaOperateur.setDroit(droitOperateur);
+		ddaOperateur.setDroitProfil(dpOperateur);
+		ddaOperateur.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaOperateur2 = new DroitDroitsAgent();
+		ddaOperateur2.setDroit(droitOperateur2);
+		ddaOperateur2.setDroitProfil(dpOperateur2);
+		ddaOperateur2.setDroitsAgent(da);
+
+		da.getDroitDroitsAgent().add(ddaAppro);
+		dpAppr.getDroitDroitsAgent().add(ddaAppro);
+		droitAppro.getDroitDroitsAgent().add(ddaAppro);
+		droitAppro.getDroitProfils().add(dpAppr);
+
+		da.getDroitDroitsAgent().add(ddaAppro2);
+		dpAppr2.getDroitDroitsAgent().add(ddaAppro2);
+		droitAppro2.getDroitDroitsAgent().add(ddaAppro2);
+		droitAppro2.getDroitProfils().add(dpAppr2);
+
+		da.getDroitDroitsAgent().add(ddaViseur);
+		dpViseur.getDroitDroitsAgent().add(ddaViseur);
+		droitViseur.getDroitDroitsAgent().add(ddaViseur);
+		droitViseur.getDroitProfils().add(dpViseur);
+
+		da.getDroitDroitsAgent().add(ddaOperateur);
+		dpOperateur.getDroitDroitsAgent().add(ddaOperateur);
+		droitOperateur.getDroitDroitsAgent().add(ddaOperateur);
+		droitOperateur.getDroitProfils().add(dpOperateur);
+
+		da.getDroitDroitsAgent().add(ddaOperateur2);
+		dpOperateur2.getDroitDroitsAgent().add(ddaOperateur2);
+		droitOperateur2.getDroitDroitsAgent().add(ddaOperateur2);
+		droitOperateur2.getDroitProfils().add(dpOperateur2);
+
+		absEntityManager.persist(da);
+		absEntityManager.persist(pAppro);
+		
+		absEntityManager.persist(droitAppro);
+		absEntityManager.persist(dpAppr);
+		absEntityManager.persist(ddaAppro);
+		
+		absEntityManager.persist(droitAppro2);
+		absEntityManager.persist(dpAppr2);
+		absEntityManager.persist(ddaAppro2);
+
+		absEntityManager.persist(pViseur);
+		absEntityManager.persist(droitViseur);
+		absEntityManager.persist(dpViseur);
+		absEntityManager.persist(ddaViseur);
+
+		absEntityManager.persist(pOperateur);
+		
+		absEntityManager.persist(droitOperateur);
+		absEntityManager.persist(dpOperateur);
+		absEntityManager.persist(ddaOperateur);
+		
+		absEntityManager.persist(droitOperateur2);
+		absEntityManager.persist(dpOperateur2);
+		absEntityManager.persist(ddaOperateur2);
+		
+		List<DroitsAgent> result = repository.getListeActeursOfAgent(9005131);
+
+		assertEquals(5, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 
 }

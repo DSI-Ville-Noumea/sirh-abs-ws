@@ -31,6 +31,7 @@ import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
@@ -69,6 +70,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Autowired
 	protected IPtgWsConsumer ptgWSConsumer;
+
+	@Autowired
+	protected IAgentService agentService;
 
 	@Autowired
 	protected IAgentMatriculeConverterService agentMatriculeService;
@@ -387,12 +391,12 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
-				AgentGeneriqueDto agentOptimise = getAgentOptimise(listAgentsExistants, d.getIdAgent());
+				AgentGeneriqueDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, d.getIdAgent());
 				if (agentOptimise != null) {
 					DemandeDto dto = new DemandeDto(d, agentOptimise);
 					dto.updateEtat(
 							d.getLatestEtatDemande(),
-							new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
+							new AgentWithServiceDto(agentService.getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
 									.getIdAgent())), d.getType().getGroupe());
 					if (!listeDemandeDto.contains(dto)) {
 						listeDemandeDto.add(dto);
@@ -410,12 +414,12 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
-					AgentGeneriqueDto agentOptimise = getAgentOptimise(listAgentsExistants, d.getIdAgent());
+					AgentGeneriqueDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, d.getIdAgent());
 					if (agentOptimise != null) {
 						DemandeDto dto = new DemandeDto(d, agentOptimise);
 						dto.updateEtat(
 								d.getLatestEtatDemande(),
-								new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
+								new AgentWithServiceDto(agentService.getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
 										.getIdAgent())), d.getType().getGroupe());
 						if (!listeDemandeDto.contains(dto)) {
 							listeDemandeDto.add(dto);
@@ -429,12 +433,12 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansFiltre) {
-				AgentGeneriqueDto agentOptimise = getAgentOptimise(listAgentsExistants, d.getIdAgent());
+				AgentGeneriqueDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, d.getIdAgent());
 				if (agentOptimise != null) {
 					DemandeDto dto = new DemandeDto(d, agentOptimise);
 					dto.updateEtat(
 							d.getLatestEtatDemande(),
-							new AgentWithServiceDto(getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
+							new AgentWithServiceDto(agentService.getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
 									.getIdAgent())), d.getType().getGroupe());
 					if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 							.getCodeEtat()))) {
@@ -449,27 +453,6 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		}
 
 		return listeDemandeDto;
-	}
-
-	private AgentGeneriqueDto getAgentOptimise(List<AgentGeneriqueDto> listAgentsExistants, Integer idAgent) {
-
-		if (null == idAgent) {
-			return null;
-		}
-
-		// on regarde dans les agents deja retournes par sirh-ws
-		for (AgentGeneriqueDto agentExistant : listAgentsExistants) {
-			if (agentExistant.getIdAgent().equals(idAgent)) {
-				return agentExistant;
-			}
-		}
-
-		AgentGeneriqueDto result = sirhWSConsumer.getAgent(idAgent);
-		if (result != null && result.getIdAgent() != null) {
-			listAgentsExistants.add(result);
-		}
-
-		return result;
 	}
 
 	@Override

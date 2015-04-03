@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
+import nc.noumea.mairie.abs.dto.ActeursDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
@@ -318,5 +319,19 @@ public class AccessRightsController {
 		result = accessRightService.setDelegataire(convertedIdAgent, inputterDto, result);
 
 		return result;
+	}
+
+	/**
+	 * Liste des acteurs (opérateur(s), viseur(s), approbateur(s) (+ delegataire) d un agent
+	 */
+	@ResponseBody
+	@RequestMapping(value = "listeActeurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public ActeursDto getListeActeurs(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered POST [droits/listeActeurs] => getListeActeurs with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		return accessRightService.getListeActeurs(convertedIdAgent);
 	}
 }

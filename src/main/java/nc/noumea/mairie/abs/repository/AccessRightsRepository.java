@@ -434,4 +434,18 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			return null;
 		}
 	}
+	
+	@Override
+	public List<DroitsAgent> getListeActeursOfAgent(Integer idAgent) {
+		
+		TypedQuery<DroitsAgent> q = absEntityManager.createQuery(
+				"from DroitsAgent da LEFT JOIN FETCH da.droitDroitsAgent dda "
+				+ "LEFT JOIN FETCH dda.droitProfil dp "
+				+ "LEFT JOIN FETCH dp.profil p "
+				+ "LEFT JOIN FETCH dp.droit d "
+				+ "where da.idAgent = :idAgent ", DroitsAgent.class);
+		q.setParameter("idAgent", idAgent);
+
+		return q.getResultList();
+	}
 }

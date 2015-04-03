@@ -22,6 +22,7 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
+import nc.noumea.mairie.abs.dto.ActeursDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
@@ -34,6 +35,7 @@ import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.AccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
+import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -3940,5 +3942,308 @@ public class AccessRightsServiceTest {
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
 		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(Droit.class));
 		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(DroitProfil.class));
+	}
+	
+	@Test
+	public void getListeActeurs_2Approbateurs1Viseurs2Operateurs() {
+		
+		Integer idAgent = 9005131;
+		
+		// l agent
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(idAgent);
+		da.setCodeService("DCCB");
+		da.setDateModification(new Date());
+		da.setLibelleService("SED");
+
+		Profil pAppro = new Profil();
+		pAppro.setLibelle("APPROBATEUR");
+		
+		Profil pViseur = new Profil();
+		pViseur.setLibelle("VISEUR");
+		
+		Profil pOperateur = new Profil();
+		pOperateur.setLibelle("OPERATEUR");
+		// 1er approbateur
+		Droit droitAppro = new Droit();
+		droitAppro.setDateModification(new Date());
+		droitAppro.setIdAgent(9005138);
+		// 2e approbateur
+		Droit droitAppro2 = new Droit();
+		droitAppro2.setDateModification(new Date());
+		droitAppro2.setIdAgent(9005148);
+		// viseur
+		Droit droitViseur = new Droit();
+		droitViseur.setDateModification(new Date());
+		droitViseur.setIdAgent(9005140);
+		// 1er operateur
+		Droit droitOperateur = new Droit();
+		droitOperateur.setDateModification(new Date());
+		droitOperateur.setIdAgent(9005142);
+		// 2e operateur
+		Droit droitOperateur2 = new Droit();
+		droitOperateur2.setDateModification(new Date());
+		droitOperateur2.setIdAgent(9005152);
+
+		DroitProfil dpAppr = new DroitProfil();
+		dpAppr.setDroit(droitAppro);
+		dpAppr.setDroitApprobateur(droitAppro);
+		dpAppr.setProfil(pAppro);
+
+		DroitProfil dpAppr2 = new DroitProfil();
+		dpAppr2.setDroit(droitAppro2);
+		dpAppr2.setDroitApprobateur(droitAppro2);
+		dpAppr2.setProfil(pAppro);
+
+		DroitProfil dpViseur = new DroitProfil();
+		dpViseur.setDroit(droitViseur);
+		dpViseur.setDroitApprobateur(droitAppro);
+		dpViseur.setProfil(pViseur);
+
+		DroitProfil dpOperateur = new DroitProfil();
+		dpOperateur.setDroit(droitOperateur);
+		dpOperateur.setDroitApprobateur(droitAppro);
+		dpOperateur.setProfil(pOperateur);
+
+		DroitProfil dpOperateur2 = new DroitProfil();
+		dpOperateur2.setDroit(droitOperateur2);
+		dpOperateur2.setDroitApprobateur(droitAppro2);
+		dpOperateur2.setProfil(pOperateur);
+
+		DroitDroitsAgent ddaAppro = new DroitDroitsAgent();
+		ddaAppro.setDroit(droitAppro);
+		ddaAppro.setDroitProfil(dpAppr);
+		ddaAppro.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaAppro2 = new DroitDroitsAgent();
+		ddaAppro2.setDroit(droitAppro2);
+		ddaAppro2.setDroitProfil(dpAppr2);
+		ddaAppro2.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaViseur = new DroitDroitsAgent();
+		ddaViseur.setDroit(droitViseur);
+		ddaViseur.setDroitProfil(dpViseur);
+		ddaViseur.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaOperateur = new DroitDroitsAgent();
+		ddaOperateur.setDroit(droitOperateur);
+		ddaOperateur.setDroitProfil(dpOperateur);
+		ddaOperateur.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaOperateur2 = new DroitDroitsAgent();
+		ddaOperateur2.setDroit(droitOperateur2);
+		ddaOperateur2.setDroitProfil(dpOperateur2);
+		ddaOperateur2.setDroitsAgent(da);
+
+		da.getDroitDroitsAgent().add(ddaAppro);
+		dpAppr.getDroitDroitsAgent().add(ddaAppro);
+		droitAppro.getDroitDroitsAgent().add(ddaAppro);
+		droitAppro.getDroitProfils().add(dpAppr);
+
+		da.getDroitDroitsAgent().add(ddaAppro2);
+		dpAppr2.getDroitDroitsAgent().add(ddaAppro2);
+		droitAppro2.getDroitDroitsAgent().add(ddaAppro2);
+		droitAppro2.getDroitProfils().add(dpAppr2);
+
+		da.getDroitDroitsAgent().add(ddaViseur);
+		dpViseur.getDroitDroitsAgent().add(ddaViseur);
+		droitViseur.getDroitDroitsAgent().add(ddaViseur);
+		droitViseur.getDroitProfils().add(dpViseur);
+
+		da.getDroitDroitsAgent().add(ddaOperateur);
+		dpOperateur.getDroitDroitsAgent().add(ddaOperateur);
+		droitOperateur.getDroitDroitsAgent().add(ddaOperateur);
+		droitOperateur.getDroitProfils().add(dpOperateur);
+
+		da.getDroitDroitsAgent().add(ddaOperateur2);
+		dpOperateur2.getDroitDroitsAgent().add(ddaOperateur2);
+		droitOperateur2.getDroitDroitsAgent().add(ddaOperateur2);
+		droitOperateur2.getDroitProfils().add(dpOperateur2);
+		
+		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
+		listDroitsAgent.add(da);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListeActeursOfAgent(idAgent)).thenReturn(listDroitsAgent);
+		
+		AgentGeneriqueDto approDto = new AgentGeneriqueDto();
+		approDto.setIdAgent(droitAppro.getIdAgent());
+		AgentGeneriqueDto approDto2 = new AgentGeneriqueDto();
+		approDto2.setIdAgent(droitAppro2.getIdAgent());
+		AgentGeneriqueDto viseurDto = new AgentGeneriqueDto();
+		viseurDto.setIdAgent(droitViseur.getIdAgent());
+		AgentGeneriqueDto operateurDto = new AgentGeneriqueDto();
+		operateurDto.setIdAgent(droitOperateur.getIdAgent());
+		AgentGeneriqueDto operateurDto2 = new AgentGeneriqueDto();
+		operateurDto2.setIdAgent(droitOperateur2.getIdAgent());
+		
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitAppro.getIdAgent())).thenReturn(approDto);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitAppro2.getIdAgent())).thenReturn(approDto2);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitViseur.getIdAgent())).thenReturn(viseurDto);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitOperateur.getIdAgent())).thenReturn(operateurDto);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitOperateur2.getIdAgent())).thenReturn(operateurDto2);
+				
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "agentService", agentService);
+		
+		ActeursDto dto = service.getListeActeurs(idAgent);
+		
+		assertEquals(2, dto.getListApprobateurs().size());
+		assertEquals(1, dto.getListViseurs().size());
+		assertEquals(2, dto.getListOperateurs().size());
+	}
+	
+	@Test
+	public void getListeActeurs_2Approbateurs1Viseurs2Operateurs_enDouble() {
+		
+		Integer idAgent = 9005131;
+		
+		// l agent
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(idAgent);
+		da.setCodeService("DCCB");
+		da.setDateModification(new Date());
+		da.setLibelleService("SED");
+
+		Profil pAppro = new Profil();
+		pAppro.setLibelle("APPROBATEUR");
+		
+		Profil pViseur = new Profil();
+		pViseur.setLibelle("VISEUR");
+		
+		Profil pOperateur = new Profil();
+		pOperateur.setLibelle("OPERATEUR");
+		// 1er approbateur
+		Droit droitAppro = new Droit();
+		droitAppro.setDateModification(new Date());
+		droitAppro.setIdAgent(9005138);
+		// 2e approbateur
+		Droit droitAppro2 = new Droit();
+		droitAppro2.setDateModification(new Date());
+		droitAppro2.setIdAgent(9005148);
+		// viseur
+		Droit droitViseur = new Droit();
+		droitViseur.setDateModification(new Date());
+		droitViseur.setIdAgent(9005140);
+		// 1er operateur
+		Droit droitOperateur = new Droit();
+		droitOperateur.setDateModification(new Date());
+		droitOperateur.setIdAgent(9005142);
+		// 2e operateur
+		Droit droitOperateur2 = new Droit();
+		droitOperateur2.setDateModification(new Date());
+		droitOperateur2.setIdAgent(9005152);
+
+		DroitProfil dpAppr = new DroitProfil();
+		dpAppr.setDroit(droitAppro);
+		dpAppr.setDroitApprobateur(droitAppro);
+		dpAppr.setProfil(pAppro);
+
+		DroitProfil dpAppr2 = new DroitProfil();
+		dpAppr2.setDroit(droitAppro2);
+		dpAppr2.setDroitApprobateur(droitAppro2);
+		dpAppr2.setProfil(pAppro);
+
+		DroitProfil dpViseur = new DroitProfil();
+		dpViseur.setDroit(droitViseur);
+		dpViseur.setDroitApprobateur(droitAppro);
+		dpViseur.setProfil(pViseur);
+
+		DroitProfil dpOperateur = new DroitProfil();
+		dpOperateur.setDroit(droitOperateur);
+		dpOperateur.setDroitApprobateur(droitAppro);
+		dpOperateur.setProfil(pOperateur);
+
+		DroitProfil dpOperateur2 = new DroitProfil();
+		dpOperateur2.setDroit(droitOperateur2);
+		dpOperateur2.setDroitApprobateur(droitAppro2);
+		dpOperateur2.setProfil(pOperateur);
+
+		DroitDroitsAgent ddaAppro = new DroitDroitsAgent();
+		ddaAppro.setDroit(droitAppro);
+		ddaAppro.setDroitProfil(dpAppr);
+		ddaAppro.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaAppro2 = new DroitDroitsAgent();
+		ddaAppro2.setDroit(droitAppro2);
+		ddaAppro2.setDroitProfil(dpAppr2);
+		ddaAppro2.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaViseur = new DroitDroitsAgent();
+		ddaViseur.setDroit(droitViseur);
+		ddaViseur.setDroitProfil(dpViseur);
+		ddaViseur.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaOperateur = new DroitDroitsAgent();
+		ddaOperateur.setDroit(droitOperateur);
+		ddaOperateur.setDroitProfil(dpOperateur);
+		ddaOperateur.setDroitsAgent(da);
+
+		DroitDroitsAgent ddaOperateur2 = new DroitDroitsAgent();
+		ddaOperateur2.setDroit(droitOperateur2);
+		ddaOperateur2.setDroitProfil(dpOperateur2);
+		ddaOperateur2.setDroitsAgent(da);
+
+		da.getDroitDroitsAgent().add(ddaAppro);
+		dpAppr.getDroitDroitsAgent().add(ddaAppro);
+		droitAppro.getDroitDroitsAgent().add(ddaAppro);
+		droitAppro.getDroitProfils().add(dpAppr);
+
+		da.getDroitDroitsAgent().add(ddaAppro2);
+		dpAppr2.getDroitDroitsAgent().add(ddaAppro2);
+		droitAppro2.getDroitDroitsAgent().add(ddaAppro2);
+		droitAppro2.getDroitProfils().add(dpAppr2);
+
+		da.getDroitDroitsAgent().add(ddaViseur);
+		dpViseur.getDroitDroitsAgent().add(ddaViseur);
+		droitViseur.getDroitDroitsAgent().add(ddaViseur);
+		droitViseur.getDroitProfils().add(dpViseur);
+
+		da.getDroitDroitsAgent().add(ddaOperateur);
+		dpOperateur.getDroitDroitsAgent().add(ddaOperateur);
+		droitOperateur.getDroitDroitsAgent().add(ddaOperateur);
+		droitOperateur.getDroitProfils().add(dpOperateur);
+
+		da.getDroitDroitsAgent().add(ddaOperateur2);
+		dpOperateur2.getDroitDroitsAgent().add(ddaOperateur2);
+		droitOperateur2.getDroitDroitsAgent().add(ddaOperateur2);
+		droitOperateur2.getDroitProfils().add(dpOperateur2);
+		
+		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
+		listDroitsAgent.add(da);
+		listDroitsAgent.add(da);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListeActeursOfAgent(idAgent)).thenReturn(listDroitsAgent);
+		
+		AgentGeneriqueDto approDto = new AgentGeneriqueDto();
+		approDto.setIdAgent(droitAppro.getIdAgent());
+		AgentGeneriqueDto approDto2 = new AgentGeneriqueDto();
+		approDto2.setIdAgent(droitAppro2.getIdAgent());
+		AgentGeneriqueDto viseurDto = new AgentGeneriqueDto();
+		viseurDto.setIdAgent(droitViseur.getIdAgent());
+		AgentGeneriqueDto operateurDto = new AgentGeneriqueDto();
+		operateurDto.setIdAgent(droitOperateur.getIdAgent());
+		AgentGeneriqueDto operateurDto2 = new AgentGeneriqueDto();
+		operateurDto2.setIdAgent(droitOperateur2.getIdAgent());
+		
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitAppro.getIdAgent())).thenReturn(approDto);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitAppro2.getIdAgent())).thenReturn(approDto2);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitViseur.getIdAgent())).thenReturn(viseurDto);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitOperateur.getIdAgent())).thenReturn(operateurDto);
+		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentGeneriqueDto>(), droitOperateur2.getIdAgent())).thenReturn(operateurDto2);
+				
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "agentService", agentService);
+		
+		ActeursDto dto = service.getListeActeurs(idAgent);
+		
+		assertEquals(2, dto.getListApprobateurs().size());
+		assertEquals(1, dto.getListViseurs().size());
+		assertEquals(2, dto.getListOperateurs().size());
 	}
 }
