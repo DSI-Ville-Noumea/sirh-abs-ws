@@ -168,7 +168,11 @@ public class HelperService {
 
 		if (typeSaisi.isCalendarDateFin()) {
 			if (UNITE_DECOMPTE_JOURS.equals(typeSaisi.getUniteDecompte())) {
-				return calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
+				Double dureeCalculee = calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
+				List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin);
+				dureeCalculee -= calculJoursNonComptesDimancheFerieChome(dateDebut, dateFin,
+						listJoursFeries);
+				return dureeCalculee;
 			}
 			if (UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
 				return new Double(calculNombreMinutes(dateDebut, dateFin));

@@ -552,11 +552,44 @@ public class HelperServiceTest {
 		GregorianCalendar calFin = new GregorianCalendar();
 		calFin.setTime(dateJ);
 		calFin.add(Calendar.HOUR, 12);
-
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getListeJoursFeries(calDebut.getTime(), calFin.getTime())).thenReturn(null);
+		
 		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
 		Double result = service.getDuree(typeSaisi, calDebut.getTime(), calFin.getTime(), duree);
 
 		assertEquals(result, 0, 5);
+	}
+
+	@Test
+	public void getDuree_returnJours_1Dimanche_1JourFerie() {
+		Double duree = 1.0;
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		typeSaisi.setCalendarDateFin(true);
+		typeSaisi.setUniteDecompte(HelperService.UNITE_DECOMPTE_JOURS);
+
+		Date dateDebut = new DateTime(2015,4,28,0,0,0).toDate();
+		Date dateFin = new DateTime(2015,5,6,0,0,0).toDate();
+		
+		JourDto jourFerie = new JourDto();
+		jourFerie.setJour(new DateTime(2015,5,1,0,0,0).toDate());
+		jourFerie.setFerie(true);
+		List<JourDto> joursFeries = new ArrayList<JourDto>();
+		joursFeries.add(jourFerie);
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(joursFeries);
+		
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		Double result = service.getDuree(typeSaisi, dateDebut, dateFin, duree);
+
+		assertEquals(result, 0, 7);
 	}
 
 	@Test

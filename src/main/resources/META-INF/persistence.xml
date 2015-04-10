@@ -3,6 +3,7 @@
 
 	<persistence-unit name="absPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+      	<class>nc.noumea.mairie.abs.domain.BaseAgentWeekHisto</class>
       	<class>nc.noumea.mairie.abs.domain.AgentRecupCount</class>
       	<class>nc.noumea.mairie.abs.domain.AgentWeekRecup</class>
       	<class>nc.noumea.mairie.abs.domain.Demande</class>
@@ -25,6 +26,7 @@
       	<class>nc.noumea.mairie.abs.domain.OrganisationSyndicale</class>
       	<class>nc.noumea.mairie.abs.domain.RefTypeSaisi</class>
       	<class>nc.noumea.mairie.abs.domain.DemandeAsa</class>
+      	<class>nc.noumea.mairie.abs.domain.AgentCount</class>
       	<class>nc.noumea.mairie.abs.domain.AgentAsaA54Count</class>
       	<class>nc.noumea.mairie.abs.domain.AgentAsaA55Count</class>
       	<class>nc.noumea.mairie.abs.domain.AgentAsaA53Count</class>
@@ -35,6 +37,7 @@
       	<class>nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel</class>
       	<class>nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount</class>
       	<class>nc.noumea.mairie.abs.domain.DemandeCongesAnnuels</class>
+      	<class>nc.noumea.mairie.abs.domain.RefAlimCongeAnnuelId</class>
       	<class>nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel</class>
       	<class>nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale</class>
       	<class>nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel</class>

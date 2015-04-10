@@ -1515,8 +1515,9 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandesSIRHAValider(List<Integer> agentIds) {
-		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRHAValider(agentIds);
-
+		List<Demande> listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(agentIds);
+		listeSansFiltre.addAll(demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(agentIds));
+		
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				filtreRepository.findRefEtatAValider(), null);
 		for (DemandeDto dto : listeDto) {

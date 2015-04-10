@@ -1644,7 +1644,7 @@ public class DemandeRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void listeDemandesSIRHAValider_Return0Demande() throws ParseException {
+	public void listeDemandesASAAndCongesExcepSIRHAValider_Return0Demande() throws ParseException {
 		// Given
 
 		RefTypeAbsence typeMaladie = new RefTypeAbsence();
@@ -1686,7 +1686,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRHAValider(null);
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -1697,7 +1697,60 @@ public class DemandeRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void listeDemandesSIRHAValider_Return2Demandes() throws ParseException {
+	public void listeDemandesCongesAnnuelsSIRHAValider_Return0Demande() throws ParseException {
+		// Given
+
+		RefTypeAbsence typeMaladie = new RefTypeAbsence();
+		typeMaladie.setLabel("Maladies");
+		absEntityManager.persist(typeMaladie);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.setType(typeMaladie);
+		absEntityManager.persist(d);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/06/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.setType(typeMaladie);
+		absEntityManager.persist(d2);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("15/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.setType(typeMaladie);
+		absEntityManager.persist(drp);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.setType(typeMaladie);
+		absEntityManager.persist(drp2);
+
+		// When
+		List<Demande> result = repository.listeDemandesCongesAnnuelsSIRHAValider(null);
+
+		// Then
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesASAAndCongesExcepSIRHAValider_Return1Demandes() throws ParseException {
 		// Given
 		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
 		groupeRecup.setIdRefGroupeAbsence(1);
@@ -1779,12 +1832,11 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(etatDemandeAttente);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRHAValider(null);
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null);
 
 		// Then
-		assertEquals(2, result.size());
+		assertEquals(1, result.size());
 		assertEquals("9005138", ((DemandeAsa) result.get(0)).getIdAgent().toString());
-		assertEquals("9005131", ((DemandeCongesAnnuels) result.get(1)).getIdAgent().toString());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -1792,7 +1844,101 @@ public class DemandeRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void listeDemandesSIRHAValider_withListIdsAgent() throws ParseException {
+	public void listeDemandesCongesAnnuelsSIRHAValider_Return1Demandes() throws ParseException {
+		// Given
+		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
+		groupeRecup.setIdRefGroupeAbsence(1);
+		absEntityManager.persist(groupeRecup);
+
+		RefGroupeAbsence groupeCongeAnnuel = new RefGroupeAbsence();
+		groupeCongeAnnuel.setIdRefGroupeAbsence(5);
+		absEntityManager.persist(groupeCongeAnnuel);
+
+		RefGroupeAbsence groupeAsa = new RefGroupeAbsence();
+		groupeAsa.setIdRefGroupeAbsence(3);
+		absEntityManager.persist(groupeAsa);
+
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setGroupe(groupeRecup);
+		typeRecup.setLabel("RECUP");
+		absEntityManager.persist(typeRecup);
+
+		RefTypeAbsence typeCongeAnnuel = new RefTypeAbsence();
+		typeCongeAnnuel.setGroupe(groupeCongeAnnuel);
+		typeCongeAnnuel.setLabel("CONGES");
+		absEntityManager.persist(typeCongeAnnuel);
+
+		RefTypeAbsence typeAsa = new RefTypeAbsence();
+		typeAsa.setGroupe(groupeAsa);
+		typeAsa.setLabel("AS");
+		absEntityManager.persist(typeAsa);
+
+		DemandeCongesAnnuels dConge = new DemandeCongesAnnuels();
+		dConge.setIdAgent(9005131);
+		dConge.setDateDebut(sdf.parse("15/05/2013"));
+		dConge.setDateFin(null);
+		dConge.setType(typeCongeAnnuel);
+		absEntityManager.persist(dConge);
+
+		EtatDemande etatCongeDemandeAppr = new EtatDemande();
+		etatCongeDemandeAppr.setDemande(dConge);
+		etatCongeDemandeAppr.setIdAgent(9005138);
+		etatCongeDemandeAppr.setEtat(RefEtatEnum.A_VALIDER);
+		absEntityManager.persist(etatCongeDemandeAppr);
+
+		DemandeAsa d = new DemandeAsa();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("16/05/2013"));
+		d.setDateFin(null);
+		d.setType(typeAsa);
+		absEntityManager.persist(d);
+
+		EtatDemande etatDemandeAppr = new EtatDemande();
+		etatDemandeAppr.setDemande(d);
+		etatDemandeAppr.setIdAgent(9005138);
+		etatDemandeAppr.setEtat(RefEtatEnum.APPROUVEE);
+		absEntityManager.persist(etatDemandeAppr);
+
+		DemandeAsa dR2 = new DemandeAsa();
+		dR2.setIdAgent(9005139);
+		dR2.setDateDebut(sdf.parse("17/06/2013"));
+		dR2.setDateFin(null);
+		dR2.setType(typeAsa);
+		absEntityManager.persist(dR2);
+
+		EtatDemande etatDemandeSaisie = new EtatDemande();
+		etatDemandeSaisie.setDemande(dR2);
+		etatDemandeSaisie.setIdAgent(9005138);
+		etatDemandeSaisie.setEtat(RefEtatEnum.SAISIE);
+		absEntityManager.persist(etatDemandeSaisie);
+
+		DemandeRecup drp = new DemandeRecup();
+		drp.setIdAgent(9005139);
+		drp.setDateDebut(sdf.parse("18/05/2013"));
+		drp.setDateFin(null);
+		drp.setType(typeRecup);
+		absEntityManager.persist(drp);
+
+		EtatDemande etatDemandeAttente = new EtatDemande();
+		etatDemandeAttente.setDemande(drp);
+		etatDemandeAttente.setIdAgent(9005138);
+		etatDemandeAttente.setEtat(RefEtatEnum.EN_ATTENTE);
+		absEntityManager.persist(etatDemandeAttente);
+
+		// When
+		List<Demande> result = repository.listeDemandesCongesAnnuelsSIRHAValider(null);
+
+		// Then
+		assertEquals(1, result.size());
+		assertEquals("9005131", ((DemandeCongesAnnuels) result.get(0)).getIdAgent().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesASAAndCongesExcepSIRHAValider_withListIdsAgent() throws ParseException {
 		// Given
 		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
 		groupeRecup.setIdRefGroupeAbsence(1);
@@ -1875,31 +2021,135 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(etatDemandedR2);
 
 		// When
-		List<Demande> result = repository.listeDemandesSIRHAValider(Arrays.asList(9005138, 9005139, 9005131));
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(Arrays.asList(9005138, 9005139, 9005131));
 
 		// Then
-		assertEquals(4, result.size());
+		assertEquals(2, result.size());
 		assertEquals("9005139", ((DemandeAsa) result.get(0)).getIdAgent().toString());
 		assertEquals("9005138", ((DemandeAsa) result.get(1)).getIdAgent().toString());
-		assertEquals("9005131", ((DemandeCongesAnnuels) result.get(2)).getIdAgent().toString());
-		assertEquals("9005131", ((DemandeCongesAnnuels) result.get(3)).getIdAgent().toString());
 		
 		// When
-		List<Demande> result2 = repository.listeDemandesSIRHAValider(Arrays.asList(9005139, 9005131));
+		List<Demande> result2 = repository.listeDemandesASAAndCongesExcepSIRHAValider(Arrays.asList(9005139, 9005131));
 
 		// Then
-		assertEquals(3, result2.size());
+		assertEquals(1, result2.size());
 		assertEquals("9005139", ((DemandeAsa) result2.get(0)).getIdAgent().toString());
-		assertEquals("9005131", ((DemandeCongesAnnuels) result2.get(1)).getIdAgent().toString());
-		assertEquals("9005131", ((DemandeCongesAnnuels) result2.get(2)).getIdAgent().toString());
 		
 		// When
-		List<Demande> result3 = repository.listeDemandesSIRHAValider(Arrays.asList(9005138, 9005139));
+		List<Demande> result3 = repository.listeDemandesASAAndCongesExcepSIRHAValider(Arrays.asList(9005138, 9005139));
 
 		// Then
 		assertEquals(2, result3.size());
 		assertEquals("9005139", ((DemandeAsa) result3.get(0)).getIdAgent().toString());
 		assertEquals("9005138", ((DemandeAsa) result3.get(1)).getIdAgent().toString());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesCongesAnnuelsSIRHAValider_withListIdsAgent() throws ParseException {
+		// Given
+		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
+		groupeRecup.setIdRefGroupeAbsence(1);
+		absEntityManager.persist(groupeRecup);
+
+		RefGroupeAbsence groupeCongeAnnuel = new RefGroupeAbsence();
+		groupeCongeAnnuel.setIdRefGroupeAbsence(5);
+		absEntityManager.persist(groupeCongeAnnuel);
+
+		RefGroupeAbsence groupeAsa = new RefGroupeAbsence();
+		groupeAsa.setIdRefGroupeAbsence(3);
+		absEntityManager.persist(groupeAsa);
+
+		RefTypeAbsence typeRecup = new RefTypeAbsence();
+		typeRecup.setGroupe(groupeRecup);
+		typeRecup.setLabel("RECUP");
+		absEntityManager.persist(typeRecup);
+
+		RefTypeAbsence typeCongeAnnuel = new RefTypeAbsence();
+		typeCongeAnnuel.setGroupe(groupeCongeAnnuel);
+		typeCongeAnnuel.setLabel("CONGES");
+		absEntityManager.persist(typeCongeAnnuel);
+
+		RefTypeAbsence typeAsa = new RefTypeAbsence();
+		typeAsa.setGroupe(groupeAsa);
+		typeAsa.setLabel("AS");
+		absEntityManager.persist(typeAsa);
+
+		// 1er agent
+		DemandeCongesAnnuels dConge = new DemandeCongesAnnuels();
+		dConge.setIdAgent(9005131);
+		dConge.setDateDebut(sdf.parse("15/05/2013"));
+		dConge.setDateFin(null);
+		dConge.setType(typeCongeAnnuel);
+		absEntityManager.persist(dConge);
+
+		EtatDemande etatCongeDemandeAppr = new EtatDemande();
+		etatCongeDemandeAppr.setDemande(dConge);
+		etatCongeDemandeAppr.setIdAgent(9005138);
+		etatCongeDemandeAppr.setEtat(RefEtatEnum.APPROUVEE); // ne sera pas retourne
+		absEntityManager.persist(etatCongeDemandeAppr);
+		
+		DemandeCongesAnnuels dConge2 = new DemandeCongesAnnuels();
+		dConge2.setIdAgent(9005131);
+		dConge2.setDateDebut(sdf.parse("15/05/2013"));
+		dConge2.setDateFin(null);
+		dConge2.setType(typeCongeAnnuel);
+		absEntityManager.persist(dConge2);
+
+		EtatDemande etatCongeDemandeAppr2 = new EtatDemande();
+		etatCongeDemandeAppr2.setDemande(dConge2);
+		etatCongeDemandeAppr2.setIdAgent(9005138);
+		etatCongeDemandeAppr2.setEtat(RefEtatEnum.A_VALIDER);
+		absEntityManager.persist(etatCongeDemandeAppr2);
+
+		DemandeAsa d = new DemandeAsa();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("16/05/2013"));
+		d.setDateFin(null);
+		d.setType(typeAsa);
+		absEntityManager.persist(d);
+
+		EtatDemande etatDemandeAppr = new EtatDemande();
+		etatDemandeAppr.setDemande(d);
+		etatDemandeAppr.setIdAgent(9005138);
+		etatDemandeAppr.setEtat(RefEtatEnum.APPROUVEE);
+		absEntityManager.persist(etatDemandeAppr);
+
+		DemandeAsa dR2 = new DemandeAsa();
+		dR2.setIdAgent(9005139);
+		dR2.setDateDebut(sdf.parse("17/06/2013"));
+		dR2.setDateFin(null);
+		dR2.setType(typeAsa);
+		absEntityManager.persist(dR2);
+
+		EtatDemande etatDemandedR2 = new EtatDemande();
+		etatDemandedR2.setDemande(dR2);
+		etatDemandedR2.setIdAgent(9005138);
+		etatDemandedR2.setEtat(RefEtatEnum.APPROUVEE);
+		absEntityManager.persist(etatDemandedR2);
+
+		// When
+		List<Demande> result = repository.listeDemandesCongesAnnuelsSIRHAValider(Arrays.asList(9005138, 9005139, 9005131));
+
+		// Then
+		assertEquals(1, result.size());
+		assertEquals("9005131", ((DemandeCongesAnnuels) result.get(0)).getIdAgent().toString());
+		
+		// When
+		List<Demande> result2 = repository.listeDemandesCongesAnnuelsSIRHAValider(Arrays.asList(9005139, 9005131));
+
+		// Then
+		assertEquals(1, result2.size());
+		assertEquals("9005131", ((DemandeCongesAnnuels) result2.get(0)).getIdAgent().toString());
+		
+		// When
+		List<Demande> result3 = repository.listeDemandesCongesAnnuelsSIRHAValider(Arrays.asList(9005138, 9005139));
+
+		// Then
+		assertEquals(0, result3.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
