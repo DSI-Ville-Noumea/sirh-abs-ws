@@ -791,8 +791,8 @@ public class HelperServiceTest {
 		typeSaisi.setDecompteSamedi(true);
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
-		demande.setDateDebut(new Date());
-		demande.setDateFin(new Date());
+		demande.setDateDebut(new DateTime(2015,4,9,0,0,0).toDate());
+		demande.setDateFin(new DateTime(2015,4,9,0,0,0).toDate());
 		demande.setTypeSaisiCongeAnnuel(typeSaisi);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);

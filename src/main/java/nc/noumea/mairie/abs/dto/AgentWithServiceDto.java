@@ -6,6 +6,7 @@ public class AgentWithServiceDto extends AgentDto {
 	private String codeService;
 	private String statut;
 	private String direction;
+	private String sigleService;
 
 	public AgentWithServiceDto() {
 
@@ -46,4 +47,13 @@ public class AgentWithServiceDto extends AgentDto {
 	public void setDirection(String direction) {
 		this.direction = direction;
 	}
+
+	public String getSigleService() {
+		return sigleService;
+	}
+
+	public void setSigleService(String sigleService) {
+		this.sigleService = sigleService;
+	}
+	
 }
