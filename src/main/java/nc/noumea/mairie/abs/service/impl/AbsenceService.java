@@ -143,7 +143,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ICounterRepository counterRepository;
-	
+
 	@Autowired
 	private IAgentService agentService;
 
@@ -309,7 +309,7 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
-			Date fromDate, Date toDate, Date dateDemande, Integer idRefEtat, Integer idRefType,
+			Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat, Integer idRefType,
 			Integer idRefGroupeAbsence) {
 
 		// si date de debut et de fin nulles, alors on filtre sur 12 mois
@@ -322,7 +322,14 @@ public class AbsenceService implements IAbsenceService {
 		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
 				idRefType, idRefGroupeAbsence);
 
-		List<RefEtat> listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, idRefEtat);
+		List<Integer> etatIds = new ArrayList<Integer>();
+		if (listIdRefEtat != null) {
+			for (String id : listIdRefEtat.split(",")) {
+				etatIds.add(Integer.valueOf(id));
+			}
+		}
+
+		List<RefEtat> listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, etatIds);
 
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				listEtats, dateDemande);
@@ -334,16 +341,16 @@ public class AbsenceService implements IAbsenceService {
 		if (null != idAgentConnecte && !idAgentConnecte.equals(idAgentConcerne)) {
 
 			// redmine #14201 : on cherche si l'agent est délégataire
-			List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte,
-					null);
-			
+			List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(
+					idAgentConnecte, null);
+
 			List<Integer> idsUserForAllDroits = new ArrayList<Integer>();
 			idsUserForAllDroits.add(idAgentConnecte);
-			
+
 			if (idsApprobateurOfDelegataire != null) {
 				idsUserForAllDroits.addAll(idsApprobateurOfDelegataire);
 			}
-			
+
 			listDroitAgent.addAll(accessRightsRepository.getListOfAgentsForListDemandes(idsUserForAllDroits, null));
 		}
 
@@ -372,9 +379,9 @@ public class AbsenceService implements IAbsenceService {
 		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate,
 				idRefType, idRefGroupeAbsence);
 		if (null != idsApprobateurOfDelegataire) {
-			for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
 				listeSansFiltredelegataire.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
-					idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence));
+						idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence));
 			}
 		}
 
@@ -1178,15 +1185,17 @@ public class AbsenceService implements IAbsenceService {
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 		Demande dem = demandeRepository.getEntity(Demande.class, idDemande);
 
-		List<AgentWithServiceDto> listAgentsExistants= new ArrayList<AgentWithServiceDto>();
+		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		for (EtatDemande etat : dem.getEtatsDemande()) {
 			DemandeDto dto = new DemandeDto(dem, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(),
 					helperService.getCurrentDate()));
-			dto.updateEtat(etat, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(), helperService.getCurrentDate()), dem
-					.getType().getGroupe());
+			dto.updateEtat(
+					etat,
+					agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(),
+							helperService.getCurrentDate()), dem.getType().getGroupe());
 			result.add(dto);
 		}
-		
+
 		return result;
 	}
 
@@ -1313,8 +1322,8 @@ public class AbsenceService implements IAbsenceService {
 			listeEtats.add(RefEtatEnum.A_VALIDER);
 
 		} else {
-			 // #14697 ajout de l etat A VALIDER 
-			// car erreur lors de la reprise de donnees des conges exceptionnels 
+			// #14697 ajout de l etat A VALIDER
+			// car erreur lors de la reprise de donnees des conges exceptionnels
 			// mis l etat A VALIDER au lieu de SAISI ou APPROUVE
 			listeEtats.add(RefEtatEnum.APPROUVEE);
 			listeEtats.add(RefEtatEnum.A_VALIDER);
@@ -1517,7 +1526,7 @@ public class AbsenceService implements IAbsenceService {
 	public List<DemandeDto> getListeDemandesSIRHAValider(List<Integer> agentIds) {
 		List<Demande> listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(agentIds);
 		listeSansFiltre.addAll(demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(agentIds));
-		
+
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				filtreRepository.findRefEtatAValider(), null);
 		for (DemandeDto dto : listeDto) {
@@ -1855,30 +1864,31 @@ public class AbsenceService implements IAbsenceService {
 		}
 		return result;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public Integer countDemandesAApprouver(Integer idAgent) {
-		
-		Integer demandesApprobateur = demandeRepository.countDemandesAApprouver(idAgent, helperService.getCurrentDateMoinsUnAn());
+
+		Integer demandesApprobateur = demandeRepository.countDemandesAApprouver(idAgent,
+				helperService.getCurrentDateMoinsUnAn());
 		Integer demandesDelegataire = 0;
-		
-		List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgent,
-				null);
-		
+
+		List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgent, null);
+
 		if (idsApprobateurOfDelegataire != null) {
-			for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-				demandesDelegataire += demandeRepository.countDemandesAApprouver(idApprobateurOfDelegataire, helperService.getCurrentDateMoinsUnAn());
+			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+				demandesDelegataire += demandeRepository.countDemandesAApprouver(idApprobateurOfDelegataire,
+						helperService.getCurrentDateMoinsUnAn());
 			}
 		}
-		
+
 		return demandesApprobateur + demandesDelegataire;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public Integer countDemandesAViser(Integer idAgent) {
-		
+
 		return demandeRepository.countDemandesAViser(idAgent, helperService.getCurrentDateMoinsUnAn());
 	}
 }

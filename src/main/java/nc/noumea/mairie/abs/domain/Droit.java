@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "ABS_DROIT")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-		@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent"),
+		@NamedQuery(name = "getAgentAccessRights", query = "select d from Droit d where d.idAgent = :idAgent"),
 		@NamedQuery(name = "getAgentsApprobateurs", query = "select d from Droit d inner join d.droitProfils dp inner join dp.profil p where p.libelle = 'APPROBATEUR'"),
 		@NamedQuery(name = "getDroitByProfilAndAgent", query = "select d from Droit d inner join d.droitProfils dp inner join dp.profil p where p.libelle = :libelle and d.idAgent= :idAgent") })
 public class Droit {

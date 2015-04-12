@@ -18,8 +18,8 @@ import javax.persistence.Table;
 @Table(name = "ABS_REF_GROUPE_ABSENCE")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-	@NamedQuery(name = "getRefGroupeAbsenceById", query = "from RefGroupeAbsence d where d.idRefGroupeAbsence = :idRefGroupeAbsence"),
-	@NamedQuery(name = "getAllRefGroupeAbsence", query = "from RefGroupeAbsence d order by d.code ")
+	@NamedQuery(name = "getRefGroupeAbsenceById", query = "select d from RefGroupeAbsence d where d.idRefGroupeAbsence = :idRefGroupeAbsence"),
+	@NamedQuery(name = "getAllRefGroupeAbsence", query = "select d from RefGroupeAbsence d order by d.code ")
 })
 public class RefGroupeAbsence {
 

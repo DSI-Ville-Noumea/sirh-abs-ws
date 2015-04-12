@@ -188,13 +188,13 @@ public class DemandeController {
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
 			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDemande,
-			@RequestParam(value = "etat", required = false) Integer idRefEtat,
+			@RequestParam(value = "etat", required = false) String listIdRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType,
 			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence) {
 
 		logger.debug(
 				"entered GET [demandes/listeDemandesAgent] => getListeDemandesAbsenceAgent with parameters idAgent = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, groupe = {} and type = {}",
-				idAgent, ongletDemande, fromDate, toDate, dateDemande, idRefEtat, idRefGroupeAbsence, idRefType);
+				idAgent, ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefGroupeAbsence, idRefType);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -203,7 +203,7 @@ public class DemandeController {
 			throw new NotFoundException();
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande,
-				fromDate, toDate, dateDemande, idRefEtat, idRefType, idRefGroupeAbsence);
+				fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -251,14 +251,14 @@ public class DemandeController {
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
 			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDemande,
-			@RequestParam(value = "etat", required = false) Integer idRefEtat,
+			@RequestParam(value = "etat", required = false) String listIdRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType,
 			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence,
 			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche) {
 
 		logger.debug(
 				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters idInputter = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, type = {}, groupe = {} and idAgentConcerne= {}",
-				idAgent, ongletDemande, fromDate, toDate, dateDemande, idRefEtat, idRefType, idRefGroupeAbsence,
+				idAgent, ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence,
 				idAgentRecherche);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
@@ -278,7 +278,7 @@ public class DemandeController {
 		}
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, idAgentRecherche, ongletDemande,
-				fromDate, toDate, dateDemande, idRefEtat, idRefType, idRefGroupeAbsence);
+				fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -478,22 +478,23 @@ public class DemandeController {
 
 		return result;
 	}
-	
+
 	/**
-	 * Retourne le nombre de demandes a approuver pour l accueil du kiosque 
+	 * Retourne le nombre de demandes a approuver pour l accueil du kiosque
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/countDemandesAApprouver", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public Integer countDemandesAApprouver(@RequestParam("idAgent") Integer idAgent) {
 
-		logger.debug("entered GET [demandes/countDemandesAApprouver] => countDemandesAApprouver with parameter idAgent = {}",
+		logger.debug(
+				"entered GET [demandes/countDemandesAApprouver] => countDemandesAApprouver with parameter idAgent = {}",
 				idAgent);
 
 		return absenceService.countDemandesAApprouver(idAgent);
 	}
-	
+
 	/**
-	 * Retourne le nombre de demandes a viser pour l accueil du kiosque 
+	 * Retourne le nombre de demandes a viser pour l accueil du kiosque
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/countDemandesAViser", produces = "application/json;charset=utf-8", method = RequestMethod.GET)

@@ -15,7 +15,7 @@ import org.hibernate.annotations.Type;
 @Table(name = "ABS_REF_UNITE_PERIODE_QUOTA")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-	@NamedQuery(name = "findAllRefUnitePeriodeQuota", query = "from RefUnitePeriodeQuota d ")
+	@NamedQuery(name = "findAllRefUnitePeriodeQuota", query = "select d from RefUnitePeriodeQuota d ")
 })
 public class RefUnitePeriodeQuota {
 	

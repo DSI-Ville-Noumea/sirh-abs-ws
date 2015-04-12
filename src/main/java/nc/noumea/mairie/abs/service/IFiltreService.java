@@ -17,7 +17,7 @@ public interface IFiltreService {
 
 	List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idRefGroupeAbsence, Integer idAgent);
 
-	List<RefEtat> getListeEtatsByOnglet(String ongletDemande, Integer idRefEtat);
+	List<RefEtat> getListeEtatsByOnglet(String ongletDemande, List<Integer> idRefEtat);
 
 	List<RefTypeSaisiDto> getRefTypeSaisi(Integer idRefTypeAbsence);
 

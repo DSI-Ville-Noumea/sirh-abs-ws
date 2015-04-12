@@ -22,8 +22,8 @@ import org.hibernate.annotations.Type;
 @Table(name = "ABS_REF_TYPE_SAISI")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-	@NamedQuery(name = "getRefTypeSaisiByIdTypeDemande", query = "from RefTypeSaisi d where d.idRefTypeAbsence = :idRefTypeAbsence"),
-	@NamedQuery(name = "getAllRefTypeSaisi", query = "from RefTypeSaisi d order by d.idRefTypeAbsence ")
+	@NamedQuery(name = "getRefTypeSaisiByIdTypeDemande", query = "select d from RefTypeSaisi d where d.idRefTypeAbsence = :idRefTypeAbsence"),
+	@NamedQuery(name = "getAllRefTypeSaisi", query = "select d from RefTypeSaisi d order by d.idRefTypeAbsence ")
 })
 public class RefTypeSaisi {
 

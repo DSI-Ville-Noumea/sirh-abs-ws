@@ -102,7 +102,7 @@ public class FiltreService implements IFiltreService {
 	}
 
 	@Override
-	public List<RefEtat> getListeEtatsByOnglet(String ongletDemande, Integer idRefEtat) {
+	public List<RefEtat> getListeEtatsByOnglet(String ongletDemande, List<Integer> lisIdRefEtat) {
 
 		List<RefEtat> etats = new ArrayList<RefEtat>();
 
@@ -113,22 +113,28 @@ public class FiltreService implements IFiltreService {
 
 		switch (ongletDemande) {
 			case ONGLET_NON_PRISES:
-				if (idRefEtat != null) {
-					etats.add(filtreRepository.getEntity(RefEtat.class, idRefEtat));
+				if (lisIdRefEtat != null && lisIdRefEtat.size() != 0) {
+					for (Integer idEtat : lisIdRefEtat) {
+						etats.add(filtreRepository.getEntity(RefEtat.class, idEtat));
+					}
 				} else {
 					etats = filtreRepository.findRefEtatNonPris();
 				}
 				break;
 			case ONGLET_EN_COURS:
-				if (idRefEtat != null) {
-					etats.add(filtreRepository.getEntity(RefEtat.class, idRefEtat));
+				if (lisIdRefEtat != null && lisIdRefEtat.size() != 0) {
+					for (Integer idEtat : lisIdRefEtat) {
+						etats.add(filtreRepository.getEntity(RefEtat.class, idEtat));
+					}
 				} else {
 					etats = filtreRepository.findRefEtatEnCours();
 				}
 				break;
 			case ONGLET_TOUTES:
-				if (idRefEtat != null) {
-					etats.add(filtreRepository.getEntity(RefEtat.class, idRefEtat));
+				if (lisIdRefEtat != null && lisIdRefEtat.size() != 0) {
+					for (Integer idEtat : lisIdRefEtat) {
+						etats.add(filtreRepository.getEntity(RefEtat.class, idEtat));
+					}
 				} else {
 					etats = filtreRepository.findAllRefEtats();
 				}
@@ -213,18 +219,18 @@ public class FiltreService implements IFiltreService {
 		}
 
 		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
-		for(RefTypeAbsence typeAbs : refTypeAbsTemp){
+		for (RefTypeAbsence typeAbs : refTypeAbsTemp) {
 			if (typeAbs.getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
-				//si conge annuel on ajoute tout
-				refTypeAbs.add(typeAbs);				
-			}else{
-				//sinon on regarde que la saisie kiosque est autorisée
-				if(typeAbs.getTypeSaisi()!=null && typeAbs.getTypeSaisi().isSaisieKiosque()){
-					refTypeAbs.add(typeAbs);	
-				}				
+				// si conge annuel on ajoute tout
+				refTypeAbs.add(typeAbs);
+			} else {
+				// sinon on regarde que la saisie kiosque est autorisée
+				if (typeAbs.getTypeSaisi() != null && typeAbs.getTypeSaisi().isSaisieKiosque()) {
+					refTypeAbs.add(typeAbs);
+				}
 			}
 		}
-		
+
 		RefTypeSaisiCongeAnnuel typeSaisieCongeAnnuel = null;
 		for (RefTypeAbsence type : refTypeAbs) {
 			if (idAgent != null

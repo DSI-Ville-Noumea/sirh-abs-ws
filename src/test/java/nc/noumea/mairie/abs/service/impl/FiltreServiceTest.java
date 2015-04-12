@@ -323,7 +323,7 @@ public class FiltreServiceTest {
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
-		List<RefEtat> result = service.getListeEtatsByOnglet("NON_PRISES", idRefEtat);
+		List<RefEtat> result = service.getListeEtatsByOnglet("NON_PRISES", Arrays.asList(idRefEtat));
 
 		assertEquals(1, result.size());
 		assertEquals(0, result.get(0).getIdRefEtat().intValue());
@@ -387,7 +387,7 @@ public class FiltreServiceTest {
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
-		List<RefEtat> result = service.getListeEtatsByOnglet("EN_COURS", idRefEtat);
+		List<RefEtat> result = service.getListeEtatsByOnglet("EN_COURS", Arrays.asList(idRefEtat));
 
 		assertEquals(1, result.size());
 		assertEquals(0, result.get(0).getIdRefEtat().intValue());
@@ -421,7 +421,7 @@ public class FiltreServiceTest {
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
-		List<RefEtat> result = service.getListeEtatsByOnglet("TOUTES", idRefEtat);
+		List<RefEtat> result = service.getListeEtatsByOnglet("TOUTES", Arrays.asList(idRefEtat));
 
 		assertEquals(1, result.size());
 		assertEquals(0, result.get(0).getIdRefEtat().intValue());
@@ -429,8 +429,6 @@ public class FiltreServiceTest {
 
 	@Test
 	public void getListeEtatsByOnglet_TOUTES_withoutIdRefEtat() {
-
-		Integer idRefEtat = null;
 
 		RefEtat etatProvisoire = new RefEtat();
 		etatProvisoire.setIdRefEtat(0);
@@ -451,7 +449,7 @@ public class FiltreServiceTest {
 		FiltreService service = new FiltreService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 
-		List<RefEtat> result = service.getListeEtatsByOnglet("TOUTES", idRefEtat);
+		List<RefEtat> result = service.getListeEtatsByOnglet("TOUTES", null);
 
 		assertEquals(3, result.size());
 		assertEquals(0, result.get(0).getIdRefEtat().intValue());
@@ -782,7 +780,7 @@ public class FiltreServiceTest {
 
 	@Test
 	public void getRefTypesAbsenceSaisieKiosque_Fonctionnaire() {
-		
+
 		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
 		groupeRecup.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
@@ -871,7 +869,7 @@ public class FiltreServiceTest {
 		typeSaisiFonctionnaire.setContractuel(false);
 		typeSaisiFonctionnaire.setConventionCollective(false);
 		typeSaisiFonctionnaire.setSaisieKiosque(true);
-		
+
 		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
 		groupeRecup.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
@@ -937,7 +935,7 @@ public class FiltreServiceTest {
 
 	@Test
 	public void getRefTypesAbsenceSaisieKiosque_Contractuels() {
-		
+
 		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
 		groupeRecup.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
