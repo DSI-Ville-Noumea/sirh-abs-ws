@@ -303,7 +303,7 @@ public class DemandeRepository implements IDemandeRepository {
 			sb.append("and d.idDemande <> :idDemande ");
 		}
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgent group by ed2.demande ) ");
-		sb.append("and ed.etat not in ( :REJETE, :REFUSEE ) ");
+		sb.append("and ed.etat not in ( :REJETE, :REFUSEE, :ANNULEE ) ");
 
 		TypedQuery<DemandeCongesAnnuels> query = absEntityManager
 				.createQuery(sb.toString(), DemandeCongesAnnuels.class);
@@ -317,6 +317,7 @@ public class DemandeRepository implements IDemandeRepository {
 		}
 		query.setParameter("REJETE", RefEtatEnum.REJETE);
 		query.setParameter("REFUSEE", RefEtatEnum.REFUSEE);
+		query.setParameter("ANNULEE", RefEtatEnum.ANNULEE);
 		
 		List<DemandeCongesAnnuels> res = query.getResultList();
 		return res.size();

@@ -90,6 +90,7 @@ public class DemandeController {
 				demandeDto.getDateReprise()));
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setIdDemande(demandeDto.getIdDemande());
 		demande.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
 		demande.setDateDebut(demandeDto.getDateDebut());
 		demande.setDateFin(demandeDto.getDateFin());

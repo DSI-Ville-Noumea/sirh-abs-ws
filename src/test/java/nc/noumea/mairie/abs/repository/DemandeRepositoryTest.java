@@ -2222,6 +2222,41 @@ public class DemandeRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
+	public void getNombreSamediOffertSurAnnee_Return0BecauseEtatDemandeAnnulee() throws ParseException {
+		// Given
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		absEntityManager.persist(groupe);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		absEntityManager.persist(type);
+
+		EtatDemandeCongesAnnuels etatDemande = new EtatDemandeCongesAnnuels();
+		etatDemande.setEtat(RefEtatEnum.ANNULEE);
+
+		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
+		d.setIdAgent(9005138);
+		d.setType(type);
+		d.setDateDebut(sdf.parse("15/05/2013"));
+		d.setDateFin(sdf.parse("16/05/2013"));
+		d.setNbSamediOffert(1.0);
+		d.addEtatDemande(etatDemande);
+		absEntityManager.persist(d);
+		absEntityManager.persist(etatDemande);
+
+		// When
+		Integer result = repository.getNombreSamediOffertSurAnnee(d.getIdAgent(), 2013, d.getIdDemande() + 1);
+
+		// Then
+		assertEquals(0, (int) result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
 	public void getNombreSamediOffertSurAnnee_Return0BecauseEtatDemandeRejetee() throws ParseException {
 		// Given
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
