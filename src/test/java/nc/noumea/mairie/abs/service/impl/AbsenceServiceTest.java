@@ -73,6 +73,7 @@ import nc.noumea.mairie.domain.SpSorc;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.SpcarrId;
 import nc.noumea.mairie.domain.Spcc;
+import nc.noumea.mairie.domain.SpccId;
 import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -11231,6 +11232,118 @@ public class AbsenceServiceTest {
 		assertEquals(0, result.getInfos().size());
 		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spcc.class));
 		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spmatr.class));
+	}
+
+	@Test
+	public void traiteIncidencePaie_Contractuel_SpccDejaExistant_Journee_majCode() {
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+
+		Demande demande = new Demande();
+		demande.setDateDebut(new DateTime(2014, 2, 2, 0, 0, 0).toDate());
+		demande.setDateFin(new DateTime(2014, 2, 2, 23, 59, 59).toDate());
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		SpcarrId id = new SpcarrId(5138, 20140101);
+		Spcarr carr = new Spcarr();
+		carr.setId(id);
+		carr.setDateFin(0);
+		carr.setCdcate(4);
+		
+		SpccId spccId = new SpccId();
+		spccId.setDatjou(20140202);
+		spccId.setNomatr(5138);
+		Spcc spcc = Mockito.spy(new Spcc());
+		spcc.setCode(1);
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(carr);
+		Mockito.when(sirhRepository.getSpcc(5138, demande.getDateDebut())).thenReturn(spcc);
+
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent())).thenReturn(5138);
+
+		HelperService helper = Mockito.mock(HelperService.class);
+		Mockito.when(helper.isContractuel(carr)).thenReturn(true);
+		Mockito.when(helper.isConventionCollective(carr)).thenReturn(false);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helper);
+
+		// When
+		result = service.traiteIncidencePaie(demande, result);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spmatr.class));
+		assertEquals(1, spcc.getCode().intValue());
+	}
+
+	@Test
+	public void traiteIncidencePaie_Contractuel_SpccDejaExistant_demiJournee() {
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+
+		Demande demande = new Demande();
+		demande.setDateDebut(new DateTime(2014, 2, 2, 0, 0, 0).toDate());
+		demande.setDateFin(new DateTime(2014, 2, 2, 11, 59, 59).toDate());
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		SpcarrId id = new SpcarrId(5138, 20140101);
+		Spcarr carr = new Spcarr();
+		carr.setId(id);
+		carr.setDateFin(0);
+		carr.setCdcate(4);
+		
+		SpccId spccId = new SpccId();
+		spccId.setDatjou(20140202);
+		spccId.setNomatr(5138);
+		Spcc spcc = Mockito.spy(new Spcc());
+		spcc.setCode(1);
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(carr);
+		Mockito.when(sirhRepository.getSpcc(5138, demande.getDateDebut())).thenReturn(spcc);
+
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent())).thenReturn(5138);
+
+		HelperService helper = Mockito.mock(HelperService.class);
+		Mockito.when(helper.isContractuel(carr)).thenReturn(true);
+		Mockito.when(helper.isConventionCollective(carr)).thenReturn(false);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helper);
+
+		// When
+		result = service.traiteIncidencePaie(demande, result);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spmatr.class));
+		assertEquals(2, spcc.getCode().intValue());
 	}
 
 	@Test

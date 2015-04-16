@@ -81,6 +81,22 @@ public class SirhRepository implements ISirhRepository {
 	}
 
 	@Override
+	public Spcc getSpcc(Integer nomatr, Date asOfDate) {
+		TypedQuery<Spcc> query = sirhEntityManager.createNamedQuery("getSpccByNomatrAndDate", Spcc.class);
+		query.setParameter("nomatr", nomatr);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		int dateFormatMairie = Integer.valueOf(sdf.format(asOfDate));
+		query.setParameter("dateFormatMairie", dateFormatMairie);
+
+		if (0 == query.getResultList().size()) {
+			return null;
+		}
+
+		return query.getSingleResult();
+	}
+
+	@Override
 	public Spcc getSpcc(Integer nomatr, Date asOfDate, Integer code) {
 		TypedQuery<Spcc> query = sirhEntityManager.createNamedQuery("getSpccByNomatrAndDateAndCode", Spcc.class);
 		query.setParameter("nomatr", nomatr);

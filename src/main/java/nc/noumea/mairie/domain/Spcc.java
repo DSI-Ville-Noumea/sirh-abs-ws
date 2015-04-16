@@ -10,7 +10,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "SPCC")
-@NamedQueries({ @NamedQuery(name = "getSpccByNomatrAndDateAndCode", query = "select spcc from Spcc spcc where spcc.id.nomatr = :nomatr and spcc.id.datjou = :dateFormatMairie and spcc.code = :code)") })
+@NamedQueries({ @NamedQuery(name = "getSpccByNomatrAndDateAndCode", query = "select spcc from Spcc spcc where spcc.id.nomatr = :nomatr and spcc.id.datjou = :dateFormatMairie and spcc.code = :code)"),
+	@NamedQuery(name = "getSpccByNomatrAndDate", query = "select spcc from Spcc spcc where spcc.id.nomatr = :nomatr and spcc.id.datjou = :dateFormatMairie )")})
 public class Spcc {
 
 	@EmbeddedId

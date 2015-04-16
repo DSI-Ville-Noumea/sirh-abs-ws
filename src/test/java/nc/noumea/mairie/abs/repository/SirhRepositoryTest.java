@@ -11,7 +11,10 @@ import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.SpadmnId;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.SpcarrId;
+import nc.noumea.mairie.domain.Spcc;
+import nc.noumea.mairie.domain.SpccId;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -129,6 +132,195 @@ public class SirhRepositoryTest {
 		Spcarr result = repository.getAgentCurrentCarriere(agent.getIdAgent(), new LocalDate(2013, 10, 22).toDate());
 
 		assertNull(result);
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getSpcc_returnNoResult_badNoMatr() {
+
+		SpccId id = new SpccId();
+		id.setDatjou(20130901);
+		id.setNomatr(5138);
+		Spcc spcc = new Spcc();
+		spcc.setId(id);
+		spcc.setCode(1);
+		sirhEntityManager.persist(spcc);
+
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
+
+		Spcc result = repository.getSpcc(5199, new DateTime(2013,9,1,0,0,0).toDate(), 1);
+
+		assertNull(result);
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getSpcc_returnNoResult_badDateJour() {
+
+		SpccId id = new SpccId();
+		id.setDatjou(20130901);
+		id.setNomatr(5138);
+		Spcc spcc = new Spcc();
+		spcc.setId(id);
+		spcc.setCode(1);
+		sirhEntityManager.persist(spcc);
+
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
+
+		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,11,0,0,0).toDate(), 1);
+
+		assertNull(result);
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getSpcc_returnNoResult_badCode() {
+
+		SpccId id = new SpccId();
+		id.setDatjou(20130901);
+		id.setNomatr(5138);
+		Spcc spcc = new Spcc();
+		spcc.setId(id);
+		spcc.setCode(1);
+		sirhEntityManager.persist(spcc);
+
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
+
+		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,1,0,0,0).toDate(), 2);
+
+		assertNull(result);
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getSpcc_returnResult_ok() {
+
+		SpccId id = new SpccId();
+		id.setDatjou(20130901);
+		id.setNomatr(5138);
+		Spcc spcc = new Spcc();
+		spcc.setId(id);
+		spcc.setCode(1);
+		sirhEntityManager.persist(spcc);
+
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
+
+		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,1,0,0,0).toDate(), 1);
+
+		assertNotNull(result);
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getSpccWithDatJouAndNoMatr_returnNoResult_badNoMatr() {
+
+		SpccId id = new SpccId();
+		id.setDatjou(20130901);
+		id.setNomatr(5138);
+		Spcc spcc = new Spcc();
+		spcc.setId(id);
+		spcc.setCode(1);
+		sirhEntityManager.persist(spcc);
+
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
+
+		Spcc result = repository.getSpcc(5199, new DateTime(2013,9,1,0,0,0).toDate());
+
+		assertNull(result);
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getSpccWithDatJouAndNoMatr_returnNoResult_badDateJour() {
+
+		SpccId id = new SpccId();
+		id.setDatjou(20130901);
+		id.setNomatr(5138);
+		Spcc spcc = new Spcc();
+		spcc.setId(id);
+		spcc.setCode(1);
+		sirhEntityManager.persist(spcc);
+
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
+
+		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,11,0,0,0).toDate());
+
+		assertNull(result);
+
+		sirhEntityManager.flush();
+		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getSpccWithDatJouAndNoMatr_returnResult_ok() {
+
+		SpccId id = new SpccId();
+		id.setDatjou(20130901);
+		id.setNomatr(5138);
+		Spcc spcc = new Spcc();
+		spcc.setId(id);
+		spcc.setCode(1);
+		sirhEntityManager.persist(spcc);
+
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setIdAgent(9005138);
+		agent.setNomatr(5138);
+		agent.setNomPatronymique("patro");
+		agent.setPrenom("prenom");
+		agent.setPrenomUsage("prenom");
+
+		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,1,0,0,0).toDate());
+
+		assertNotNull(result);
 
 		sirhEntityManager.flush();
 		sirhEntityManager.clear();

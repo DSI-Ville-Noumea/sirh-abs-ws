@@ -26,4 +26,6 @@ public interface ISirhRepository {
 	Spcc getSpcc(Integer nomatr, Date asOfDate, Integer code);
 
 	SpSorc getSpsorc(Integer idAgent);
+
+	Spcc getSpcc(Integer nomatr, Date asOfDate);
 }
