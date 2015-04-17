@@ -12051,8 +12051,9 @@ public class AbsenceServiceTest {
 
 		ReturnMessageDto result = service.miseAJourSpsold(9005138);
 
-		assertEquals(1, result.getErrors().size());
-		assertEquals("Le compteur de congé annuel n'existe pas.", result.getErrors().get(0));
+		assertEquals(1, result.getInfos().size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals("Le compteur de congé annuel n'existe pas.", result.getInfos().get(0));
 	}
 
 	@Test
@@ -12140,8 +12141,9 @@ public class AbsenceServiceTest {
 
 		ReturnMessageDto result = service.miseAJourSpsorc(9005138);
 
-		assertEquals(1, result.getErrors().size());
-		assertEquals("Le compteur de repos compensateur n'existe pas.", result.getErrors().get(0));
+		assertEquals(1, result.getInfos().size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals("Le compteur de repos compensateur n'existe pas.", result.getInfos().get(0));
 		Mockito.verify(sirhRepository, Mockito.times(0)).persistEntity(Mockito.isA(SpSorc.class));
 	}
 
