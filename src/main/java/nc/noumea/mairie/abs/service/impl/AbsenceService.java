@@ -1809,7 +1809,7 @@ public class AbsenceService implements IAbsenceService {
 					idAgent);
 			if (soldeCongeAgent == null) {
 				logger.warn(COMPTEUR_INEXISTANT_SPSOLD);
-				result.getErrors().add(String.format(COMPTEUR_INEXISTANT_SPSOLD));
+				result.getInfos().add(String.format(COMPTEUR_INEXISTANT_SPSOLD));
 				return result;
 			}
 
@@ -1849,7 +1849,7 @@ public class AbsenceService implements IAbsenceService {
 					idAgent);
 			if (soldeReposCompAgent == null) {
 				logger.warn(COMPTEUR_INEXISTANT_SPSORC);
-				result.getErrors().add(String.format(COMPTEUR_INEXISTANT_SPSORC));
+				result.getInfos().add(String.format(COMPTEUR_INEXISTANT_SPSORC));
 				return result;
 			}
 
