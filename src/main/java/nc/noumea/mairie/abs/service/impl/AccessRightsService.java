@@ -183,7 +183,10 @@ public class AccessRightsService implements IAccessRightsService {
 		Droit d = accessRightsRepository.getDroitByProfilAndAgent(ProfilEnum.APPROBATEUR.toString(), dto.getIdAgent());
 
 		if (d == null) {
-			d = new Droit();
+			// on cherche si il a deja un droit
+			d = accessRightsRepository.getAgentAccessRights(dto.getIdAgent());
+			if (d == null)
+				d = new Droit();
 			DroitProfil dp = new DroitProfil();
 			dp.setDroit(d);
 			dp.setDroitApprobateur(d);
@@ -218,7 +221,10 @@ public class AccessRightsService implements IAccessRightsService {
 				accessRightsRepository.removeEntity(agentSaisiToDelete);
 			}
 			for (DroitProfil dp : d.getDroitProfils()) {
-				deleteDroitProfil(dp);
+				if (dp.getProfil().getLibelle().equals(ProfilEnum.APPROBATEUR.toString())) {
+					deleteDroitProfil(dp);
+					break;
+				}
 			}
 		} else {
 			res.getErrors().add("L'agent " + dto.getIdAgent() + " n'est pas approbateur.");
@@ -950,14 +956,14 @@ public class AccessRightsService implements IAccessRightsService {
 		// redmine #14201 : on cherche si l'agent est délégataire
 		List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
 		if (idsApprobateurOfDelegataire != null) {
-			for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
 				if (idApprobateurOfDelegataire != null) {
-					for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
-							null)) {
-		
+					for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(
+							idApprobateurOfDelegataire, null)) {
+
 						if (codeServices.contains(da.getCodeService()))
 							continue;
-		
+
 						codeServices.add(da.getCodeService());
 						ServiceDto svDto = new ServiceDto();
 						svDto.setCodeService(da.getCodeService());
@@ -982,7 +988,7 @@ public class AccessRightsService implements IAccessRightsService {
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
-			if(isContainAgentInList(result, da)) {
+			if (isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();
 				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
 				agDto.setIdAgent(da.getIdAgent());
@@ -995,16 +1001,16 @@ public class AccessRightsService implements IAccessRightsService {
 		// redmine #14201 : on cherche si l'agent est délégataire(s)
 		List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
 		if (idsApprobateurOfDelegataire != null) {
-			for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-				for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire,
-						codeService)) {
-					if(isContainAgentInList(result, da)) {
+			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+				for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(
+						idApprobateurOfDelegataire, codeService)) {
+					if (isContainAgentInList(result, da)) {
 						AgentDto agDto = new AgentDto();
 						AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
 						agDto.setIdAgent(da.getIdAgent());
 						agDto.setNom(ag.getDisplayNom());
 						agDto.setPrenom(ag.getDisplayPrenom());
-						if(!result.contains(agDto)) {
+						if (!result.contains(agDto)) {
 							result.add(agDto);
 						}
 					}
@@ -1014,24 +1020,22 @@ public class AccessRightsService implements IAccessRightsService {
 
 		return result;
 	}
-	
+
 	private boolean isContainAgentInList(List<AgentDto> listAgents, DroitsAgent ag) {
-		
-		if(null == ag) {
+
+		if (null == ag) {
 			return false;
 		}
-		
-		if(null != listAgents) {
-			for(AgentDto agent : listAgents) {
-				if(null != agent
-						&& null != agent.getIdAgent()
-						&& null != ag.getIdAgent()
+
+		if (null != listAgents) {
+			for (AgentDto agent : listAgents) {
+				if (null != agent && null != agent.getIdAgent() && null != ag.getIdAgent()
 						&& agent.getIdAgent().equals(ag.getIdAgent())) {
 					return false;
 				}
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -1042,8 +1046,7 @@ public class AccessRightsService implements IAccessRightsService {
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits
 		// sur l'agent pour qui il effectue la demande
 		if (!idAgent.equals(idAgentOfDemande)) {
-			if (accessRightsRepository.isUserOperateur(idAgent) 
-					|| accessRightsRepository.isUserApprobateur(idAgent)
+			if (accessRightsRepository.isUserOperateur(idAgent) || accessRightsRepository.isUserApprobateur(idAgent)
 					|| accessRightsRepository.isUserDelegataire(idAgent)
 					|| accessRightsRepository.isUserViseur(idAgent)) {
 
@@ -1056,27 +1059,26 @@ public class AccessRightsService implements IAccessRightsService {
 						break;
 					}
 				}
-				
-				if(accessRightsRepository.isUserDelegataire(idAgent)
-						&& !trouve) {
+
+				if (accessRightsRepository.isUserDelegataire(idAgent) && !trouve) {
 					// redmine #14201 : on cherche si l'agent est délégataire
-					List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent,
-							null);
-					
-					for(Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-						Droit droitApprobateurOfDelegataire = accessRightsRepository.getAgentDroitFetchAgents(idApprobateurOfDelegataire);
+					List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
+
+					for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+						Droit droitApprobateurOfDelegataire = accessRightsRepository
+								.getAgentDroitFetchAgents(idApprobateurOfDelegataire);
 						for (DroitDroitsAgent dda : droitApprobateurOfDelegataire.getDroitDroitsAgent()) {
 							if (dda.getDroitsAgent().getIdAgent().equals(idAgentOfDemande)) {
 								trouve = true;
 								break;
 							}
 						}
-						if(trouve) {
+						if (trouve) {
 							break;
 						}
 					}
 				}
-				
+
 				if (!trouve) {
 					logger.warn(
 							"Vous n'êtes ni opérateur, ni approbateur, ni viseur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
@@ -1108,10 +1110,10 @@ public class AccessRightsService implements IAccessRightsService {
 		if (null == idAgentConcerne) {
 			// on verifie si l agent est delegataire ou non
 			if (accessRightsRepository.isUserDelegataire(idAgentConnecte)) {
-				List<DroitProfil> droitsProfils = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte,
-						ProfilEnum.DELEGATAIRE.toString());
-				if(null != droitsProfils) {
-					for(DroitProfil droitProfil : droitsProfils) {
+				List<DroitProfil> droitsProfils = accessRightsRepository.getDroitProfilByAgentAndLibelle(
+						idAgentConnecte, ProfilEnum.DELEGATAIRE.toString());
+				if (null != droitsProfils) {
+					for (DroitProfil droitProfil : droitsProfils) {
 						idsApprobateurOfDelegataire.add(droitProfil.getDroitApprobateur().getIdAgent());
 					}
 				}
@@ -1137,65 +1139,71 @@ public class AccessRightsService implements IAccessRightsService {
 		// //////////////////// FIN DELEGATAIRE ///////////////////////////////
 		return result;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public ActeursDto getListeActeurs(Integer idAgent) {
-		
+
 		ActeursDto result = new ActeursDto();
-		
-		// en QUALIF, un agent peut avoir plusieurs lignes dans la table DROITS_AGENT
-		// ce n est pas normal mais je pense que cela provient de la reprise de donnees des droits
+
+		// en QUALIF, un agent peut avoir plusieurs lignes dans la table
+		// DROITS_AGENT
+		// ce n est pas normal mais je pense que cela provient de la reprise de
+		// donnees des droits
 		List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListeActeursOfAgent(idAgent);
-		
-		if(null != listDroitsAgent) {
+
+		if (null != listDroitsAgent) {
 			List<AgentGeneriqueDto> listAgentsExistants = new ArrayList<AgentGeneriqueDto>();
-			for(DroitsAgent droitsAgent : listDroitsAgent) {
-				
-				if(null != droitsAgent.getDroitDroitsAgent()) {
-					for(DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
-						if(ProfilEnum.OPERATEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())){
-							AgentDto operateur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
-							
-							if(!result.getListOperateurs().contains(operateur))
+			for (DroitsAgent droitsAgent : listDroitsAgent) {
+
+				if (null != droitsAgent.getDroitDroitsAgent()) {
+					for (DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
+						if (ProfilEnum.OPERATEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())) {
+							AgentDto operateur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda
+									.getDroitProfil().getDroit().getIdAgent()));
+
+							if (!result.getListOperateurs().contains(operateur))
 								result.getListOperateurs().add(operateur);
-							
+
 							continue;
 						}
-						if(ProfilEnum.VISEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())){
-							AgentDto viseur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
-							
-							if(!result.getListViseurs().contains(viseur))
+						if (ProfilEnum.VISEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())) {
+							AgentDto viseur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda
+									.getDroitProfil().getDroit().getIdAgent()));
+
+							if (!result.getListViseurs().contains(viseur))
 								result.getListViseurs().add(viseur);
-							
+
 							continue;
 						}
-						if(ProfilEnum.APPROBATEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())){
-							AgentWithServiceDto approbateur = new AgentWithServiceDto(agentService.getAgentOptimise(listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
-							
+						if (ProfilEnum.APPROBATEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())) {
+							AgentWithServiceDto approbateur = new AgentWithServiceDto(agentService.getAgentOptimise(
+									listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
+
 							ApprobateurDto approbateurWithDelegataire = new ApprobateurDto();
 							approbateurWithDelegataire.setApprobateur(approbateur);
-							
-							if(!result.getListApprobateurs().contains(approbateurWithDelegataire)) {
-								DroitProfil profilDelegataire = getDelegataireApprobateur(approbateur.getIdAgent(), 
+
+							if (!result.getListApprobateurs().contains(approbateurWithDelegataire)) {
+								DroitProfil profilDelegataire = getDelegataireApprobateur(approbateur.getIdAgent(),
 										accessRightsRepository.getDroitSousApprobateur(approbateur.getIdAgent()));
-								
-								if(null != profilDelegataire) {
-									AgentDto delegataire = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, profilDelegataire.getDroit().getIdAgent()));
+
+								if (null != profilDelegataire) {
+									AgentDto delegataire = new AgentDto(agentService.getAgentOptimise(
+											listAgentsExistants, profilDelegataire.getDroit().getIdAgent()));
 									delegataire.setIdAgent(profilDelegataire.getDroit().getIdAgent());
 									approbateurWithDelegataire.setDelegataire(delegataire);
 								}
-								
+
 								result.getListApprobateurs().add(approbateurWithDelegataire);
 							}
-							
+
 							continue;
 						}
 					}
 				}
 			}
 		}
-		
+
 		return result;
 	}
 }
