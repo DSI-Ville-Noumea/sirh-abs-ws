@@ -10620,14 +10620,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.RECUP.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkRecuperations(idAgent, dateDebut, dateFin);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("01/01/2014 00:00 : L'agent est en récupération sur cette période.", result.getErrors().get(0));
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en récupération sur cette période.", result.getErrors().get(0));
 
 	}
 
@@ -10658,14 +10665,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.RECUP.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkRecuperations(idAgent, dateDebut, dateFin);
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("01/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération'.", result
+		assertEquals("01/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération' pour l'agent nomUsage prenomUsage.", result
 				.getInfos().get(0));
 
 	}
@@ -10697,14 +10711,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkReposCompensateurs(idAgent, dateDebut, dateFin);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("01/01/2014 00:00 : L'agent est en repos compensateur sur cette période.",
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en repos compensateur sur cette période.",
 				result.getErrors().get(0));
 
 	}
@@ -10736,14 +10757,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkReposCompensateurs(idAgent, dateDebut, dateFin);
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("05/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur'.",
+		assertEquals("05/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
 	}
@@ -10774,14 +10802,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.AS.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkAbsencesSyndicales(idAgent, dateDebut, dateFin);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("01/01/2014 00:00 : L'agent est en absence syndicale sur cette période.", result.getErrors()
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en absence syndicale sur cette période.", result.getErrors()
 				.get(0));
 
 	}
@@ -10813,14 +10848,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.AS.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkAbsencesSyndicales(idAgent, dateDebut, dateFin);
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("02/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale'.",
+		assertEquals("02/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
 	}
@@ -10851,14 +10893,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesExceptionnels.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+		
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkCongesExceptionnels(idAgent, dateDebut, dateFin);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("01/01/2014 00:00 : L'agent est en congé exceptionnel sur cette période.",
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en congé exceptionnel sur cette période.",
 				result.getErrors().get(0));
 
 	}
@@ -10890,14 +10939,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesExceptionnels.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkCongesExceptionnels(idAgent, dateDebut, dateFin);
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("04/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel'.",
+		assertEquals("04/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
 	}
@@ -10928,14 +10984,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesAnnuels.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkCongesAnnuels(idAgent, dateDebut, dateFin);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("01/01/2014 00:00 : L'agent est en congé annuel sur cette période.", result.getErrors().get(0));
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en congé annuel sur cette période.", result.getErrors().get(0));
 
 	}
 
@@ -10966,14 +11029,21 @@ public class AbsenceServiceTest {
 						RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesAnnuels.class, d.getIdDemande())).thenReturn(d);
 
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setPrenomUsage("prenomUsage");
+		agent.setNomUsage("nomUsage");
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		ReturnMessageDto result = service.checkCongesAnnuels(idAgent, dateDebut, dateFin);
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("03/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel'.", result
+		assertEquals("03/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel' pour l'agent nomUsage prenomUsage.", result
 				.getInfos().get(0));
 
 	}

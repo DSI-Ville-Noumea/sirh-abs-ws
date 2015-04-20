@@ -158,12 +158,12 @@ public class AbsenceService implements IAbsenceService {
 	public static final String STATUT_AGENT = "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
 
 	// POUR LES MESSAGE A ENVOYE AU PROJET SIRH-PTG-WS
-	public static final String AVERT_MESSAGE_ABS = "%s : Soyez vigilant, vous avez pointé sur une absence de type '%s'.";
-	public static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
-	public static final String REPOS_COMP_MSG = "%s : L'agent est en repos compensateur sur cette période.";
-	public static final String ASA_MSG = "%s : L'agent est en absence syndicale sur cette période.";
-	public static final String CONGE_EXCEP_MSG = "%s : L'agent est en congé exceptionnel sur cette période.";
-	public static final String CONGE_ANNUEL_MSG = "%s : L'agent est en congé annuel sur cette période.";
+	public static final String AVERT_MESSAGE_ABS = "%s : Soyez vigilant, vous avez pointé sur une absence de type '%s' pour l'agent %s.";
+	public static final String RECUP_MSG = "%s : L'agent %s est en récupération sur cette période.";
+	public static final String REPOS_COMP_MSG = "%s : L'agent %s est en repos compensateur sur cette période.";
+	public static final String ASA_MSG = "%s : L'agent %s est en absence syndicale sur cette période.";
+	public static final String CONGE_EXCEP_MSG = "%s : L'agent %s est en congé exceptionnel sur cette période.";
+	public static final String CONGE_ANNUEL_MSG = "%s : L'agent %s est en congé annuel sur cette période.";
 
 	@Override
 	@Transactional(value = "absTransactionManager")
@@ -1553,17 +1553,21 @@ public class AbsenceService implements IAbsenceService {
 
 		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
 				toDate, RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 		for (Demande d : listeDemande) {
 			DemandeRecup demandeRecup = demandeRepository.getEntity(DemandeRecup.class, d.getIdDemande());
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.APPROUVEE.equals(demandeRecup.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.PRISE.equals(demandeRecup.getLatestEtatDemande().getEtat())) {
-				String msg = String.format(RECUP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				String msg = String.format(RECUP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
 				result.getInfos().add(
 						String.format(AVERT_MESSAGE_ABS,
-								new DateTime(demandeRecup.getDateDebut()).toString("dd/MM/yyyy"), "récupération"));
+								new DateTime(demandeRecup.getDateDebut()).toString("dd/MM/yyyy"), "récupération",
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -1581,16 +1585,20 @@ public class AbsenceService implements IAbsenceService {
 				toDate, RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
 		for (Demande d : listeDemande) {
 			DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande());
+			
+			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.APPROUVEE.equals(demandeReposComp.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.PRISE.equals(demandeReposComp.getLatestEtatDemande().getEtat())) {
-				String msg = String.format(REPOS_COMP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				String msg = String.format(REPOS_COMP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
 				result.getInfos().add(
 						String.format(AVERT_MESSAGE_ABS,
 								new DateTime(demandeReposComp.getDateDebut()).toString("dd/MM/yyyy"),
-								"repos compensateur"));
+								"repos compensateur",
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -1607,15 +1615,19 @@ public class AbsenceService implements IAbsenceService {
 				toDate, RefTypeGroupeAbsenceEnum.AS.getValue());
 		for (Demande d : listeDemande) {
 			DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, d.getIdDemande());
+			
+			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.VALIDEE.equals(demandeAsa.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.PRISE.equals(demandeAsa.getLatestEtatDemande().getEtat())) {
-				String msg = String.format(ASA_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				String msg = String.format(ASA_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
 				result.getInfos().add(
 						String.format(AVERT_MESSAGE_ABS,
-								new DateTime(demandeAsa.getDateDebut()).toString("dd/MM/yyyy"), "absence syndicale"));
+								new DateTime(demandeAsa.getDateDebut()).toString("dd/MM/yyyy"), "absence syndicale",
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -1633,15 +1645,20 @@ public class AbsenceService implements IAbsenceService {
 		for (Demande d : listeDemande) {
 			DemandeCongesExceptionnels demandeExcep = demandeRepository.getEntity(DemandeCongesExceptionnels.class,
 					d.getIdDemande());
+			
+			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.VALIDEE.equals(demandeExcep.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.PRISE.equals(demandeExcep.getLatestEtatDemande().getEtat())) {
-				String msg = String.format(CONGE_EXCEP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				String msg = String.format(CONGE_EXCEP_MSG, 
+						new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
 				result.getInfos()
 						.add(String.format(AVERT_MESSAGE_ABS,
-								new DateTime(demandeExcep.getDateDebut()).toString("dd/MM/yyyy"), "congé exceptionnel"));
+								new DateTime(demandeExcep.getDateDebut()).toString("dd/MM/yyyy"), "congé exceptionnel", 
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -1659,16 +1676,20 @@ public class AbsenceService implements IAbsenceService {
 		for (Demande d : listeDemande) {
 			DemandeCongesAnnuels demandeCongeAnnuel = demandeRepository.getEntity(DemandeCongesAnnuels.class,
 					d.getIdDemande());
+			
+			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.APPROUVEE.equals(demandeCongeAnnuel.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.VALIDEE.equals(demandeCongeAnnuel.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.PRISE.equals(demandeCongeAnnuel.getLatestEtatDemande().getEtat())) {
-				String msg = String.format(CONGE_ANNUEL_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+				String msg = String.format(CONGE_ANNUEL_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
 				result.getInfos()
 						.add(String.format(AVERT_MESSAGE_ABS,
-								new DateTime(demandeCongeAnnuel.getDateDebut()).toString("dd/MM/yyyy"), "congé annuel"));
+								new DateTime(demandeCongeAnnuel.getDateDebut()).toString("dd/MM/yyyy"), "congé annuel",
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
