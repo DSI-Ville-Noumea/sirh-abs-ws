@@ -30,7 +30,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 	protected ICongesAnnuelsRepository congesAnnuelsRepository;
 
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, 
 			boolean isProvenanceSIRH) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkBaseHoraireAbsenceAgent(srm, demande.getIdAgent(), demande.getDateDebut());
@@ -38,7 +38,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		checkChampMotifDemandeSaisi(srm, (DemandeCongesAnnuels) demande);
 		checkMultipleCycle(srm, (DemandeCongesAnnuels) demande, idAgent);
 
-		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
+		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 	}
 
 	protected ReturnMessageDto checkMultipleCycle(ReturnMessageDto srm, DemandeCongesAnnuels demande, Integer idAgent) {

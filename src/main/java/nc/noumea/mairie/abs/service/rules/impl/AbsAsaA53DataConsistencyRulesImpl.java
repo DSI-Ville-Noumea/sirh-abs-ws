@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
@@ -16,9 +15,9 @@ import org.springframework.stereotype.Service;
 public class AbsAsaA53DataConsistencyRulesImpl extends AbsAsaDataConsistencyRulesImpl {
 
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,  boolean isProvenanceSIRH) {
 
-		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
+		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		super.checkOrganisationSyndicale(srm, (DemandeAsa) demande);
 		if (!srm.getErrors().isEmpty())
 			return;

@@ -2,7 +2,6 @@ package nc.noumea.mairie.abs.service.rules.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
@@ -27,10 +26,10 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 	protected IAsaRepository asaRepository;
 
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, 
 			boolean isProvenanceSIRH) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
+		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 	}
 
 	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {

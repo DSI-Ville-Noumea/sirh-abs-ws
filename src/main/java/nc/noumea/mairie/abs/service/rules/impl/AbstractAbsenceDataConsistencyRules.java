@@ -107,13 +107,13 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, 
 			boolean isProvenanceSIRH) {
 		checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 		checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
 		if (srm.getErrors().size() == 0)
 			checkDemandeDejaSaisieSurMemePeriode(srm, demande);
-		checkAgentInactivity(srm, demande.getIdAgent(), dateLundi);
+		checkAgentInactivity(srm, demande.getIdAgent(), demande.getDateDebut());
 		checkStatutAgent(srm, demande);
 		checkNoPointages(srm, demande);
 

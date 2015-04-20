@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
@@ -16,9 +15,10 @@ import org.springframework.stereotype.Service;
 public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRulesImpl {
 
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi, boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
+			boolean isProvenanceSIRH) {
 
-		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
+		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		checkDroitCompteurAsaA48(srm, demande);
 	}
 
@@ -47,7 +47,8 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 	private double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent) {
 
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande, RefTypeAbsenceEnum.ASA_A48.getValue());
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande,
+				RefTypeAbsenceEnum.ASA_A48.getValue());
 
 		double somme = 0.0;
 
@@ -63,10 +64,11 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
 
 		// on verifie d abord l etat de la demande
-		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur 
-		if(!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
+		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de
+		// depassement de compteur
+		if (!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
-		
+
 		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, demandeDto
 				.getAgentWithServiceDto().getIdAgent(), demandeDto.getDateDebut());
 

@@ -15,8 +15,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface IAbsenceDataConsistencyRules {
 
-	void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
-			boolean isProvenanceSIRH);
+	void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, boolean isProvenanceSIRH);
 
 	ReturnMessageDto checkDateDebutInferieurDateFin(ReturnMessageDto srm, Date dateDebut, Date dateFin);
 
@@ -51,6 +50,5 @@ public interface IAbsenceDataConsistencyRules {
 
 	ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande);
 
-	void checkSamediOffertToujoursOk(DemandeEtatChangeDto demandeEtatChangeDto,
-			Demande demande);
+	void checkSamediOffertToujoursOk(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande);
 }

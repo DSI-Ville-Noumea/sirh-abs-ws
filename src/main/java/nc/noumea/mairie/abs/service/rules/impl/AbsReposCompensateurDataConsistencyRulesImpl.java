@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
 import java.util.Arrays;
-import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -26,13 +25,13 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, Date dateLundi,
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
 			boolean isProvenanceSIRH) {
 		checkStatutAgent(srm, demande.getIdAgent(), isProvenanceSIRH);
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkDepassementDroitsAcquis(srm, demande);
 
-		super.processDataConsistencyDemande(srm, idAgent, demande, dateLundi, isProvenanceSIRH);
+		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 	}
 
 	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Integer idAgent, boolean isProvenanceSIRH) {

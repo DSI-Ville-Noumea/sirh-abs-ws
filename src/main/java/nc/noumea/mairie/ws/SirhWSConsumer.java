@@ -34,13 +34,12 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
 	private static final String isJourHolidayUrl = "utils/isHoliday";
 	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
+	private static final String sirhOldBaseCongeUrl = "absences/oldBaseHoraire";
 	private static final String sirhListPAPourAlimAutoCongesAnnuelsUrl = "absences/listPAPourAlimAutoCongesAnnuels";
 	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
 	private static final String sirhAgentDirectionUrl = "agents/direction";
 	private static final String isPaieEnCoursUrl = "utils/isPaieEnCours";
 	private static final String sirhSubServiceOfServiceUrl = "services/sousServices";
-	
-	
 
 	@Override
 	public AgentWithServiceDto getAgentService(Integer idAgent, Date date) {
@@ -194,5 +193,17 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 		return readResponseAsList(ServiceDto.class, res, url);
+	}
+
+	@Override
+	public RefTypeSaisiCongeAnnuelDto getOldBaseHoraireAbsence(Integer idAgent) {
+		String url = String.format(sirhWsBaseUrl + sirhOldBaseCongeUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(RefTypeSaisiCongeAnnuelDto.class, res, url);
 	}
 }

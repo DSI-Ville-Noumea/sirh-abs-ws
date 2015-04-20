@@ -33,4 +33,6 @@ public interface ISirhWSConsumer {
 	ReturnMessageDto isPaieEnCours();
 
 	List<ServiceDto> getSubServiceOfService(String codeService);
+
+	RefTypeSaisiCongeAnnuelDto getOldBaseHoraireAbsence(Integer idAgent);
 }

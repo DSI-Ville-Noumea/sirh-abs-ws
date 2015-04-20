@@ -191,7 +191,7 @@ public class AbsenceService implements IAbsenceService {
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour, false);
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, false);
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
@@ -518,7 +518,7 @@ public class AbsenceService implements IAbsenceService {
 
 		// #12664
 		if (!demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()))
-			absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, new Date(), false);
+			absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, false);
 
 		if (result.getErrors().size() != 0) {
 			return result;
@@ -928,16 +928,17 @@ public class AbsenceService implements IAbsenceService {
 
 			SimpleDateFormat sdfMairie = new SimpleDateFormat("yyyyMMdd");
 
-			Spcc spcc = sirhRepository.getSpcc(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou);
-			
-			if(null == spcc) {
+			Spcc spcc = sirhRepository.getSpcc(
+					agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou);
+
+			if (null == spcc) {
 				SpccId spccId = new SpccId();
 				spccId.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()));
 				spccId.setDatjou(new Integer(sdfMairie.format(datjou)));
 				spcc = new Spcc();
 				spcc.setId(spccId);
 			}
-			
+
 			// journee entiere, code = 1
 			// demi journee, code = 2
 			spcc.setCode(isDemijournee ? 2 : 1);
@@ -1129,7 +1130,7 @@ public class AbsenceService implements IAbsenceService {
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, dateJour, true);
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, true);
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
@@ -1278,7 +1279,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// #12664
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, new Date(), false);
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, false);
 
 		if (0 < result.getErrors().size()) {
 			return;
