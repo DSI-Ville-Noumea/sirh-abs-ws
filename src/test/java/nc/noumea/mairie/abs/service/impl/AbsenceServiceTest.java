@@ -16,6 +16,7 @@ import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
+import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
@@ -4483,7 +4484,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class),  Mockito.anyBoolean());
+						Mockito.isA(DemandeAsa.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -7160,7 +7161,7 @@ public class AbsenceServiceTest {
 		})
 				.when(absDataConsistencyRules)
 				.processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(DemandeAsa.class),  Mockito.anyBoolean());
+						Mockito.isA(DemandeAsa.class), Mockito.anyBoolean());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -8595,7 +8596,7 @@ public class AbsenceServiceTest {
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				absDataConsistencyRules);
-		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent,false)).thenReturn(dto);
+		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent, false)).thenReturn(dto);
 		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -8621,7 +8622,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
 		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
-				null, null,false);
+				null, null, false);
 
 		assertEquals(1, listResult.size());
 		assertFalse(listResult.get(0).isDepassementCompteur());
@@ -8674,7 +8675,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
 		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
-				null, null,false);
+				null, null, false);
 
 		assertEquals(0, listResult.size());
 	}
@@ -10191,7 +10192,7 @@ public class AbsenceServiceTest {
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				absDataConsistencyRules);
-		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent,false)).thenReturn(dto);
+		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent, false)).thenReturn(dto);
 		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(false);
 		Mockito.when(absDataConsistencyRules.checkDepassementMultipleAgent(dto)).thenReturn(true);
 
@@ -10218,7 +10219,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
 		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
-				null, null,false);
+				null, null, false);
 
 		assertEquals(1, listResult.size());
 		assertFalse(listResult.get(0).isDepassementCompteur());
@@ -10635,7 +10636,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en récupération sur cette période.", result.getErrors().get(0));
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en récupération sur cette période.", result
+				.getErrors().get(0));
 
 	}
 
@@ -10680,8 +10682,9 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("01/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération' pour l'agent nomUsage prenomUsage.", result
-				.getInfos().get(0));
+		assertEquals(
+				"01/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération' pour l'agent nomUsage prenomUsage.",
+				result.getInfos().get(0));
 
 	}
 
@@ -10772,7 +10775,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("05/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur' pour l'agent nomUsage prenomUsage.",
+		assertEquals(
+				"05/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
 	}
@@ -10817,8 +10821,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en absence syndicale sur cette période.", result.getErrors()
-				.get(0));
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en absence syndicale sur cette période.",
+				result.getErrors().get(0));
 
 	}
 
@@ -10863,7 +10867,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("02/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale' pour l'agent nomUsage prenomUsage.",
+		assertEquals(
+				"02/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
 	}
@@ -10899,7 +10904,7 @@ public class AbsenceServiceTest {
 		agent.setNomUsage("nomUsage");
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agent);
-		
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -10954,7 +10959,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("04/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel' pour l'agent nomUsage prenomUsage.",
+		assertEquals(
+				"04/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
 	}
@@ -10999,7 +11005,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en congé annuel sur cette période.", result.getErrors().get(0));
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en congé annuel sur cette période.", result
+				.getErrors().get(0));
 
 	}
 
@@ -11044,8 +11051,9 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("03/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel' pour l'agent nomUsage prenomUsage.", result
-				.getInfos().get(0));
+		assertEquals(
+				"03/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel' pour l'agent nomUsage prenomUsage.",
+				result.getInfos().get(0));
 
 	}
 
@@ -12301,6 +12309,65 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(SpSorc.class));
+	}
+
+	@Test
+	public void getHistoAlimAutoCongeAnnuel_ZeroMois() {
+		Integer idAgent = 9005138;
+
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListeAlimAutoCongeAnnuelByAgent(idAgent)).thenReturn(
+				new ArrayList<CongeAnnuelAlimAutoHisto>());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getHistoAlimAutoCongeAnnuel(idAgent);
+
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getHistoAlimAutoCongeAnnuel_PlusieursMois() {
+		List<CongeAnnuelAlimAutoHisto> list = new ArrayList<CongeAnnuelAlimAutoHisto>();
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+		DateTime dateMonth2 = new DateTime(2014, 11, 1, 0, 0, 0);
+		Integer idAgent = 9005138;
+
+		CongeAnnuelAlimAutoHisto c2 = new CongeAnnuelAlimAutoHisto();
+		c2.setIdAgent(idAgent);
+		c2.setDateMonth(dateMonth.toDate());
+		CongeAnnuelAlimAutoHisto c = new CongeAnnuelAlimAutoHisto();
+		c.setIdAgent(idAgent);
+		c.setDateMonth(dateMonth2.toDate());
+		list.add(c2);
+		list.add(c);
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setIdAgent(c.getIdAgent());
+
+		AgentWeekCongeAnnuel w1 = new AgentWeekCongeAnnuel();
+		w1.setJours(2.5);
+
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListeAlimAutoCongeAnnuelByAgent(idAgent)).thenReturn(list);
+		Mockito.when(congeAnnuelRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth.toDate())).thenReturn(w1);
+		Mockito.when(congeAnnuelRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth2.toDate())).thenReturn(null);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(9005138)).thenReturn(ag);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getHistoAlimAutoCongeAnnuel(idAgent);
+
+		assertEquals(2, result.size());
+		assertEquals(dateMonth.toDate(), result.get(0).getDateMois());
+		assertEquals(new Double(2.5), result.get(0).getNbJours());
+		assertEquals(dateMonth2.toDate(), result.get(1).getDateMois());
+		assertEquals(new Double(0.0), result.get(1).getNbJours());
 	}
 
 }
