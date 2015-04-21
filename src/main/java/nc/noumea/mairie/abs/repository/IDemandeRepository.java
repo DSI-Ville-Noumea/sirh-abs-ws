@@ -31,8 +31,6 @@ public interface IDemandeRepository {
 	List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence);
 
-	List<Demande> listeDemandesCongesAnnuelsSIRHAValider(List<Integer> listIdAgentRecherche);
-
 	Integer getNombreSamediOffertSurAnnee(Integer idAgent, Integer year, Integer idDemande);
 
 	List<Demande> listeDemandesAgentVerification(Integer idAgentConcerne, Date fromDate, Date toDate,
@@ -42,6 +40,8 @@ public interface IDemandeRepository {
 
 	Integer countDemandesAViser(Integer idAgent, Date dateDebut);
 
-	List<Demande> listeDemandesASAAndCongesExcepSIRHAValider(
+	List<Demande> listeDemandesASAAndCongesExcepSIRHAValider(Date fromDate, Date toDate,
 			List<Integer> listIdAgentRecherche);
+
+	List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche);
 }

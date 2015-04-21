@@ -1530,12 +1530,39 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DemandeDto> getListeDemandesSIRHAValider(List<Integer> agentIds) {
-		List<Demande> listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(agentIds);
-		listeSansFiltre.addAll(demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(agentIds));
+	public List<DemandeDto> getListeDemandesSIRHAValider(Date fromDate, Date toDate, Integer idRefEtat,
+			Integer idRefType, Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds) {
+
+		if (null != idAgentRecherche && 0 != idAgentRecherche) {
+			agentIds = new ArrayList<Integer>();
+			agentIds.add(idAgentRecherche);
+		}
+
+		// TODO traiter le type
+		// TODO traiter la famille
+
+		List<Demande> listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate,
+				agentIds);
+		listeSansFiltre
+				.addAll(demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(fromDate, toDate, agentIds));
+
+		List<RefEtat> listEtats = null;
+		if (idRefEtat != null) {
+			if (idRefEtat == RefEtatEnum.APPROUVEE.getCodeEtat() || idRefEtat == RefEtatEnum.EN_ATTENTE.getCodeEtat()
+					|| idRefEtat == RefEtatEnum.A_VALIDER.getCodeEtat()) {
+				RefEtat etat = demandeRepository.getEntity(RefEtat.class, idRefEtat);
+				listEtats = new ArrayList<RefEtat>();
+				listEtats.add(etat);
+			} else {
+				return new ArrayList<DemandeDto>();
+			}
+		} else {
+			listEtats = new ArrayList<RefEtat>();
+			listEtats = filtreRepository.findRefEtatAValider();
+		}
 
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
-				filtreRepository.findRefEtatAValider(), null);
+				listEtats, null);
 		for (DemandeDto dto : listeDto) {
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(dto
 					.getGroupeAbsence().getIdRefGroupeAbsence(), dto.getIdTypeDemande());

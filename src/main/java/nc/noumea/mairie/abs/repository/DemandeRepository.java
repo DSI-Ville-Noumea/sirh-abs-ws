@@ -177,7 +177,7 @@ public class DemandeRepository implements IDemandeRepository {
 	@Override
 	public List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence) {
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
 		sb.append("where 1=1 ");
@@ -227,13 +227,14 @@ public class DemandeRepository implements IDemandeRepository {
 		if (idRefGroupeAbsence != null) {
 			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
 		}
-		
+
 		query.setMaxResults(300);
 		return query.getResultList();
 	}
 
 	@Override
-	public List<Demande> listeDemandesASAAndCongesExcepSIRHAValider(List<Integer> listIdAgentRecherche) {
+	public List<Demande> listeDemandesASAAndCongesExcepSIRHAValider(Date fromDate, Date toDate,
+			List<Integer> listIdAgentRecherche) {
 		// pour le moment la DRH ne doit valider que les congés excep, congé
 		// annuel et les ASA
 		StringBuilder sb = new StringBuilder();
@@ -241,6 +242,15 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("where d.type.groupe.idRefGroupeAbsence in( :AS , :CONGE_EXCEP ) ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :APPROUVEE, :EN_ATTENTE, :A_VALIDER ) ");
+
+		// date
+		if (fromDate != null && toDate == null) {
+			sb.append("and d.dateDebut >= :fromDate ");
+		} else if (fromDate == null && toDate != null) {
+			sb.append("and d.dateDebut <= :toDate ");
+		} else if (fromDate != null && toDate != null) {
+			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
+		}
 
 		// agent
 		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
@@ -254,16 +264,27 @@ public class DemandeRepository implements IDemandeRepository {
 		query.setParameter("APPROUVEE", RefEtatEnum.APPROUVEE);
 		query.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
 		query.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER);
+
+		// date
+		if (fromDate != null && toDate == null) {
+			query.setParameter("fromDate", fromDate);
+		} else if (fromDate == null && toDate != null) {
+			query.setParameter("toDate", toDate);
+		} else if (fromDate != null && toDate != null) {
+			query.setParameter("fromDate", fromDate);
+			query.setParameter("toDate", toDate);
+		}
 		// agent
 		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
 			query.setParameter("idAgentRecherche", listIdAgentRecherche);
 		}
-		
+
 		return query.getResultList();
 	}
 
 	@Override
-	public List<Demande> listeDemandesCongesAnnuelsSIRHAValider(List<Integer> listIdAgentRecherche) {
+	public List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate,
+			List<Integer> listIdAgentRecherche) {
 		// pour le moment la DRH ne doit valider que les congés excep, congé
 		// annuel et les ASA
 		StringBuilder sb = new StringBuilder();
@@ -271,6 +292,15 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("where d.type.groupe.idRefGroupeAbsence in( :CONGE_ANNUEL ) ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :EN_ATTENTE, :A_VALIDER ) ");
+
+		// date
+		if (fromDate != null && toDate == null) {
+			sb.append("and d.dateDebut >= :fromDate ");
+		} else if (fromDate == null && toDate != null) {
+			sb.append("and d.dateDebut <= :toDate ");
+		} else if (fromDate != null && toDate != null) {
+			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
+		}
 
 		// agent
 		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
@@ -282,24 +312,34 @@ public class DemandeRepository implements IDemandeRepository {
 		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 		query.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
 		query.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER);
+
+		// date
+		if (fromDate != null && toDate == null) {
+			query.setParameter("fromDate", fromDate);
+		} else if (fromDate == null && toDate != null) {
+			query.setParameter("toDate", toDate);
+		} else if (fromDate != null && toDate != null) {
+			query.setParameter("fromDate", fromDate);
+			query.setParameter("toDate", toDate);
+		}
 		// agent
 		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
 			query.setParameter("idAgentRecherche", listIdAgentRecherche);
 		}
-		
+
 		return query.getResultList();
 	}
 
 	@Override
 	public Integer getNombreSamediOffertSurAnnee(Integer idAgent, Integer year, Integer idDemande) {
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from DemandeCongesAnnuels d inner join d.etatsDemande ed ");
 		sb.append("where d.idAgent = :idAgent ");
 		sb.append("and d.type.groupe.idRefGroupeAbsence in(:CONGE_ANNUEL ) ");
 		sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
 		sb.append("and d.nbSamediOffert > 0 ");
-		if(null != idDemande) {
+		if (null != idDemande) {
 			sb.append("and d.idDemande <> :idDemande ");
 		}
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgent group by ed2.demande ) ");
@@ -312,13 +352,13 @@ public class DemandeRepository implements IDemandeRepository {
 		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 		query.setParameter("fromDate", new DateTime(year, 1, 1, 0, 0, 0).toDate());
 		query.setParameter("toDate", new DateTime(year, 12, 31, 23, 59, 0).toDate());
-		if(null != idDemande) {
+		if (null != idDemande) {
 			query.setParameter("idDemande", idDemande);
 		}
 		query.setParameter("REJETE", RefEtatEnum.REJETE);
 		query.setParameter("REFUSEE", RefEtatEnum.REFUSEE);
 		query.setParameter("ANNULEE", RefEtatEnum.ANNULEE);
-		
+
 		List<DemandeCongesAnnuels> res = query.getResultList();
 		return res.size();
 	}
@@ -362,17 +402,14 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("and d.dateDebut >= :fromDate ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :SAISIE, :VISEE_F, :VISEE_D ) ");
-		
+
 		@SuppressWarnings("unchecked")
-		List<Long> result = absEntityManager.createQuery(sb.toString())
-				.setParameter("idAgentConnecte", idAgent)
-				.setParameter("fromDate", dateDebut)
-				.setParameter("SAISIE", RefEtatEnum.SAISIE)
+		List<Long> result = absEntityManager.createQuery(sb.toString()).setParameter("idAgentConnecte", idAgent)
+				.setParameter("fromDate", dateDebut).setParameter("SAISIE", RefEtatEnum.SAISIE)
 				.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE)
-				.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE)
-				.getResultList();
-		
-		return result.size()>0 ? result.get(0).intValue() : 0;
+				.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE).getResultList();
+
+		return result.size() > 0 ? result.get(0).intValue() : 0;
 	}
 
 	@Override
@@ -384,14 +421,11 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("and d.dateDebut >= :fromDate ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :SAISIE ) ");
-		
+
 		@SuppressWarnings("unchecked")
-		List<Long> result = absEntityManager.createQuery(sb.toString())
-				.setParameter("idAgentConnecte", idAgent)
-				.setParameter("fromDate", dateDebut)
-				.setParameter("SAISIE", RefEtatEnum.SAISIE)
-				.getResultList();
-		
-		return result.size()>0 ? result.get(0).intValue() : 0;
+		List<Long> result = absEntityManager.createQuery(sb.toString()).setParameter("idAgentConnecte", idAgent)
+				.setParameter("fromDate", dateDebut).setParameter("SAISIE", RefEtatEnum.SAISIE).getResultList();
+
+		return result.size() > 0 ? result.get(0).intValue() : 0;
 	}
 }

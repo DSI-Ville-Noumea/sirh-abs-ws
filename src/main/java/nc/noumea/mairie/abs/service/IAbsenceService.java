@@ -18,7 +18,7 @@ public interface IAbsenceService {
 
 	List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
 			Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat, Integer idRefType,
-			Integer idRefGroupeAbsence,boolean isAgent);
+			Integer idRefGroupeAbsence, boolean isAgent);
 
 	ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);
 
@@ -29,11 +29,12 @@ public interface IAbsenceService {
 	List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds);
 
+	List<DemandeDto> getListeDemandesSIRHAValider(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
+			Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds);
+
 	List<DemandeDto> getDemandesArchives(Integer idDemande);
 
 	ReturnMessageDto setDemandeEtatSIRH(Integer idAgent, List<DemandeEtatChangeDto> dto);
-
-	List<DemandeDto> getListeDemandesSIRHAValider(List<Integer> agentIds);
 
 	ReturnMessageDto checkRecuperations(Integer convertedIdAgent, Date fromDate, Date toDate);
 
