@@ -18,7 +18,7 @@ public interface IAbsenceService {
 
 	List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
 			Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat, Integer idRefType,
-			Integer idRefGroupeAbsence);
+			Integer idRefGroupeAbsence,boolean isAgent);
 
 	ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);
 

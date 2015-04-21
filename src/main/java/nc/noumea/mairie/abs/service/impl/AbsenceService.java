@@ -310,7 +310,7 @@ public class AbsenceService implements IAbsenceService {
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
 			Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat, Integer idRefType,
-			Integer idRefGroupeAbsence) {
+			Integer idRefGroupeAbsence,boolean isAgent) {
 
 		// si date de debut et de fin nulles, alors on filtre sur 12 mois
 		// glissants
@@ -358,7 +358,7 @@ public class AbsenceService implements IAbsenceService {
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 					demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto,
-					listDroitAgent);
+					listDroitAgent,isAgent);
 			demandeDto
 					.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
 			demandeDto

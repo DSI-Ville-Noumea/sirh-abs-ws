@@ -204,7 +204,7 @@ public class DemandeController {
 			throw new NotFoundException();
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande,
-				fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence);
+				fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence, true);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -279,7 +279,7 @@ public class DemandeController {
 		}
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, idAgentRecherche, ongletDemande,
-				fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence);
+				fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence, false);
 
 		if (result.size() == 0)
 			throw new NoContentException();

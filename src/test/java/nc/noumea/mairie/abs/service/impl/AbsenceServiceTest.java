@@ -8595,7 +8595,7 @@ public class AbsenceServiceTest {
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				absDataConsistencyRules);
-		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent)).thenReturn(dto);
+		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent,false)).thenReturn(dto);
 		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -8621,7 +8621,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
 		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
-				null, null);
+				null, null,false);
 
 		assertEquals(1, listResult.size());
 		assertFalse(listResult.get(0).isDepassementCompteur());
@@ -8674,7 +8674,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
 		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
-				null, null);
+				null, null,false);
 
 		assertEquals(0, listResult.size());
 	}
@@ -10191,7 +10191,7 @@ public class AbsenceServiceTest {
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				absDataConsistencyRules);
-		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent)).thenReturn(dto);
+		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent,false)).thenReturn(dto);
 		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(false);
 		Mockito.when(absDataConsistencyRules.checkDepassementMultipleAgent(dto)).thenReturn(true);
 
@@ -10218,7 +10218,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
 		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
-				null, null);
+				null, null,false);
 
 		assertEquals(1, listResult.size());
 		assertFalse(listResult.get(0).isDepassementCompteur());

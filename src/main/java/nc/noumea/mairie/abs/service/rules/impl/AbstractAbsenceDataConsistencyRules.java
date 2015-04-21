@@ -107,7 +107,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, 
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
 			boolean isProvenanceSIRH) {
 		checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 		checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
@@ -257,10 +257,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Override
 	public DemandeDto filtreDroitOfDemande(Integer idAgentConnecte, DemandeDto demandeDto,
-			List<DroitsAgent> listDroitAgent) {
+			List<DroitsAgent> listDroitAgent, boolean isAgent) {
 
 		// test 1
-		if (demandeDto.getAgentWithServiceDto().getIdAgent().equals(idAgentConnecte)) {
+		if (isAgent && demandeDto.getAgentWithServiceDto().getIdAgent().equals(idAgentConnecte)) {
 			demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat()
 					.equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
 					|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
@@ -391,14 +391,13 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
-				AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(
-						listAgentsExistants, d.getIdAgent(), d.getDateDebut());
+				AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, d.getIdAgent(),
+						d.getDateDebut());
 				if (agentOptimise != null) {
 					DemandeDto dto = new DemandeDto(d, agentOptimise);
-					dto.updateEtat(
-							d.getLatestEtatDemande(),
-							agentService.getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
-									.getIdAgent(), d.getLatestEtatDemande().getDate()), d.getType().getGroupe());
+					dto.updateEtat(d.getLatestEtatDemande(), agentService.getAgentOptimise(listAgentsExistants, d
+							.getLatestEtatDemande().getIdAgent(), d.getLatestEtatDemande().getDate()), d.getType()
+							.getGroupe());
 					if (!listeDemandeDto.contains(dto)) {
 						listeDemandeDto.add(dto);
 					}
@@ -415,14 +414,13 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
-					AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(
-							listAgentsExistants, d.getIdAgent(), d.getDateDebut());
+					AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants,
+							d.getIdAgent(), d.getDateDebut());
 					if (agentOptimise != null) {
 						DemandeDto dto = new DemandeDto(d, agentOptimise);
-						dto.updateEtat(
-								d.getLatestEtatDemande(),
-								agentService.getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
-										.getIdAgent(), d.getLatestEtatDemande().getDate()), d.getType().getGroupe());
+						dto.updateEtat(d.getLatestEtatDemande(), agentService.getAgentOptimise(listAgentsExistants, d
+								.getLatestEtatDemande().getIdAgent(), d.getLatestEtatDemande().getDate()), d.getType()
+								.getGroupe());
 						if (!listeDemandeDto.contains(dto)) {
 							listeDemandeDto.add(dto);
 						}
@@ -435,14 +433,13 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansFiltre) {
-				AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(
-						listAgentsExistants, d.getIdAgent(), d.getDateDebut());
+				AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, d.getIdAgent(),
+						d.getDateDebut());
 				if (agentOptimise != null) {
 					DemandeDto dto = new DemandeDto(d, agentOptimise);
-					dto.updateEtat(
-							d.getLatestEtatDemande(),
-							agentService.getAgentOptimise(listAgentsExistants, d.getLatestEtatDemande()
-									.getIdAgent(), d.getLatestEtatDemande().getDate()), d.getType().getGroupe());
+					dto.updateEtat(d.getLatestEtatDemande(), agentService.getAgentOptimise(listAgentsExistants, d
+							.getLatestEtatDemande().getIdAgent(), d.getLatestEtatDemande().getDate()), d.getType()
+							.getGroupe());
 					if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 							.getCodeEtat()))) {
 						if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)

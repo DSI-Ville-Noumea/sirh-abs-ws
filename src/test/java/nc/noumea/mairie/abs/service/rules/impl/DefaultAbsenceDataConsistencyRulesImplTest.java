@@ -580,7 +580,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void filtreDateAndEtatDemandeFromList_EtatAndDateDemandeFilter_NoResult_BadEtat() {
 
 		Integer idAgent = 9005138;
-		
+
 		RefEtat etatProvisoire = new RefEtat();
 		etatProvisoire.setIdRefEtat(0);
 		etatProvisoire.setLabel("PROVISOIRE");
@@ -725,8 +725,12 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ag2.setIdAgent(2);
 
 		IAgentService agentService = Mockito.mock(IAgentService.class);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut())).thenReturn(ag);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d2.getIdAgent(), d2.getDateDebut())).thenReturn(ag2);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut()))
+				.thenReturn(ag);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d2.getIdAgent(), d2.getDateDebut()))
+				.thenReturn(ag2);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "agentService", agentService);
@@ -810,7 +814,9 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ag.setIdAgent(9005138);
 
 		IAgentService agentService = Mockito.mock(IAgentService.class);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut())).thenReturn(ag);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut()))
+				.thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "agentService", agentService);
@@ -895,7 +901,9 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ag.setIdAgent(9005138);
 
 		IAgentService agentService = Mockito.mock(IAgentService.class);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut())).thenReturn(ag);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut()))
+				.thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "agentService", agentService);
@@ -981,8 +989,12 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ag.setIdAgent(9005138);
 
 		IAgentService agentService = Mockito.mock(IAgentService.class);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut())).thenReturn(ag);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d2.getIdAgent(), d2.getDateDebut())).thenReturn(ag);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut()))
+				.thenReturn(ag);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d2.getIdAgent(), d2.getDateDebut()))
+				.thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "agentService", agentService);
@@ -1191,7 +1203,9 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ag.setIdAgent(9005138);
 
 		IAgentService agentService = Mockito.mock(IAgentService.class);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut())).thenReturn(ag);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut()))
+				.thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "agentService", agentService);
@@ -1241,7 +1255,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		etat1.setMotif("motif");
 		etat1.setNbSamediOffert(0.0);
 		etat1.setNbSamediDecompte(0.0);
-		
+
 		DemandeCongesAnnuels d = new DemandeCongesAnnuels();
 		etat1.setDemande(d);
 		d.setIdDemande(1);
@@ -1251,7 +1265,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		d.setDateDebut(new Date());
 		d.setNbSamediOffert(0.0);
 		d.setNbSamediDecompte(0.0);
-		
+
 		EtatDemandeCongesAnnuels etat2 = new EtatDemandeCongesAnnuels();
 		etat2.setDate(dateEtat);
 		etat2.setEtat(RefEtatEnum.REFUSEE);
@@ -1260,7 +1274,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		etat2.setMotif("motif");
 		etat2.setNbSamediOffert(0.0);
 		etat2.setNbSamediDecompte(0.0);
-		
+
 		DemandeCongesAnnuels d2 = new DemandeCongesAnnuels();
 		etat2.setDemande(d2);
 		d2.setIdDemande(1);
@@ -1270,7 +1284,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		d2.setDateDebut(new Date());
 		d2.setNbSamediOffert(0.0);
 		d2.setNbSamediDecompte(0.0);
-		
+
 		ArrayList<Demande> listeDemande = new ArrayList<Demande>();
 		listeDemande.add(d);
 		listeDemande.add(d2);
@@ -1286,15 +1300,17 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ag.setIdAgent(9005138);
 
 		IAgentService agentService = Mockito.mock(IAgentService.class);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut())).thenReturn(ag);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut()))
+				.thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "agentService", agentService);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande,
-				Arrays.asList(etatRefusee), dateEtat);
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatRefusee),
+				dateEtat);
 
 		// Then
 		assertEquals(1, result.size());
@@ -1372,8 +1388,12 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ag.setIdAgent(9005138);
 
 		IAgentService agentService = Mockito.mock(IAgentService.class);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut())).thenReturn(ag);
-		Mockito.when(agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d2.getIdAgent(), d2.getDateDebut())).thenReturn(ag);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d.getIdAgent(), d.getDateDebut()))
+				.thenReturn(ag);
+		Mockito.when(
+				agentService.getAgentOptimise(new ArrayList<AgentWithServiceDto>(), d2.getIdAgent(), d2.getDateDebut()))
+				.thenReturn(ag);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "agentService", agentService);
@@ -1795,18 +1815,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 
 		// When
-		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent);
-		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent);
-		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent);
-		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent);
-		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent);
-		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent);
-		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent);
-		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent);
-		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent);
-		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent);
-		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent);
-		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent);
+		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent, true);
+		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent, true);
+		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent, true);
+		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent, true);
+		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent, true);
+		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent, true);
+		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent, true);
+		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent, true);
+		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent, true);
+		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent, true);
+		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent, true);
+		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent, true);
 
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
@@ -2083,18 +2103,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
 		// When
-		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent);
-		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent);
-		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent);
-		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent);
-		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent);
-		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent);
-		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent);
-		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent);
-		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent);
-		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent);
-		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent);
-		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent);
+		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent, false);
+		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent, false);
+		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent, false);
+		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent, false);
+		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent, false);
+		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent, false);
+		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent, false);
+		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent, false);
+		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent, false);
+		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent, false);
+		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent, false);
+		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent, false);
 
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
@@ -2379,18 +2399,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
 		// When
-		DemandeDto result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent);
-		DemandeDto result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent);
-		DemandeDto result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent);
-		DemandeDto result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent);
-		DemandeDto result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent);
-		DemandeDto result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent);
-		DemandeDto result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent);
-		DemandeDto result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent);
-		DemandeDto result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent);
-		DemandeDto result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent);
-		DemandeDto result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent);
-		DemandeDto result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent);
+		DemandeDto result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent, false);
+		DemandeDto result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent, false);
+		DemandeDto result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent, false);
+		DemandeDto result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent, false);
+		DemandeDto result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent, false);
+		DemandeDto result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent, false);
+		DemandeDto result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent, false);
+		DemandeDto result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent, false);
+		DemandeDto result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent, false);
+		DemandeDto result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent, false);
+		DemandeDto result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent, false);
+		DemandeDto result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent, false);
 
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
@@ -2701,18 +2721,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
 		// When
-		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent);
-		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent);
-		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent);
-		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent);
-		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent);
-		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent);
-		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent);
-		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent);
-		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent);
-		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent);
-		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent);
-		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent);
+		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent, false);
+		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent, false);
+		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent, false);
+		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent, false);
+		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent, false);
+		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent, false);
+		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent, false);
+		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent, false);
+		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent, false);
+		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent, false);
+		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent, false);
+		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent, false);
 
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
@@ -3001,18 +3021,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
 		// When
-		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent);
-		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent);
-		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent);
-		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent);
-		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent);
-		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent);
-		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent);
-		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent);
-		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent);
-		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent);
-		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent);
-		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent);
+		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent, false);
+		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent, false);
+		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent, false);
+		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent, false);
+		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent, false);
+		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent, false);
+		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent, false);
+		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent, false);
+		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent, false);
+		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent, false);
+		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent, false);
+		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent, false);
 
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
@@ -3228,8 +3248,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		DemandeDto demandeDtoAValider = new DemandeDto();
 		demandeDtoAValider.setIdRefEtat(RefEtatEnum.A_VALIDER.getCodeEtat());
 		demandeDtoAValider.setAgentWithServiceDto(agDto12);
-		
-		//////// 1er groupe de l operateur //////////
+
+		// ////// 1er groupe de l operateur //////////
 		// les droits
 		Profil profilOperateur = new Profil();
 		profilOperateur.setLibelle(ProfilEnum.OPERATEUR.toString());
@@ -3252,7 +3272,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		DroitDroitsAgent ddaOperateur = new DroitDroitsAgent();
 		ddaOperateur.setDroitProfil(droitProfilOperateur);
 
-		//////// 2e groupe de l approbateur //////////
+		// ////// 2e groupe de l approbateur //////////
 		// les droits
 		Profil profilApprobateur = new Profil();
 		profilApprobateur.setLibelle(ProfilEnum.APPROBATEUR.toString());
@@ -3318,7 +3338,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
-		
+
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
 				listDroitAgent);
@@ -3326,18 +3346,18 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
 		// When
-		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent);
-		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent);
-		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent);
-		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent);
-		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent);
-		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent);
-		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent);
-		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent);
-		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent);
-		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent);
-		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent);
-		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent);
+		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent, false);
+		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent, false);
+		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent, false);
+		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent, false);
+		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent, false);
+		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent, false);
+		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent, false);
+		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent, false);
+		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent, false);
+		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent, false);
+		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent, false);
+		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent, false);
 
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
