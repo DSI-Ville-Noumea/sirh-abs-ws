@@ -19,6 +19,16 @@ public class MoisAlimAutoCongesAnnuelsDto {
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateModification;
 	private String status;
+	private String infos;
+	private Double nbJours;
+
+	public String getInfos() {
+		return infos;
+	}
+
+	public void setInfos(String infos) {
+		this.infos = infos;
+	}
 
 	public Date getDateMois() {
 		return dateMois;
@@ -56,6 +66,14 @@ public class MoisAlimAutoCongesAnnuelsDto {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Double getNbJours() {
+		return nbJours;
+	}
+
+	public void setNbJours(Double nbJours) {
+		this.nbJours = nbJours;
 	}
 
 }

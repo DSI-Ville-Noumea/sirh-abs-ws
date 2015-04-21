@@ -25,6 +25,8 @@ public interface ICongesAnnuelsRepository {
 
 	List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuelByMois(Date dateMois);
 
+	List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuelByAgent(Integer idAgent);
+
 	List<Integer> getListeDemandesCongesAnnuelsPrisesForDate(Date dateRestitution);
 
 	List<RefAlimCongeAnnuel> getListeRefAlimCongeAnnuelByBaseConge(Integer idRefTypeSaisiCongeAnnuel);
@@ -33,9 +35,9 @@ public interface ICongesAnnuelsRepository {
 
 	List<CongeAnnuelRestitutionMassive> getHistoRestitutionMassiveOrderByDate();
 
-	CongeAnnuelRestitutionMassive getCongeAnnuelRestitutionMassiveByDate(
-			RestitutionMassiveDto dto);
+	CongeAnnuelRestitutionMassive getCongeAnnuelRestitutionMassiveByDate(RestitutionMassiveDto dto);
 
-	List<CongeAnnuelRestitutionMassive> getListCongeAnnuelRestitutionMassiveByDate(
-			RestitutionMassiveDto dto);
+	List<CongeAnnuelRestitutionMassive> getListCongeAnnuelRestitutionMassiveByDate(RestitutionMassiveDto dto);
+
+
 }

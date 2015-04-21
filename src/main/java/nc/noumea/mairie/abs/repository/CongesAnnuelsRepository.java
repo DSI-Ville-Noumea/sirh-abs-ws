@@ -125,10 +125,10 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		return query.getResultList();
 	}
-	
+
 	@Override
 	public CongeAnnuelRestitutionMassive getCongeAnnuelRestitutionMassiveByDate(RestitutionMassiveDto dto) {
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from CongeAnnuelRestitutionMassive d ");
 		sb.append("where d.dateRestitution = :dateRestitution ");
@@ -146,10 +146,10 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		return (query.getResultList().size() > 0 ? query.getResultList().get(0) : null);
 	}
-	
+
 	@Override
 	public List<CongeAnnuelRestitutionMassive> getListCongeAnnuelRestitutionMassiveByDate(RestitutionMassiveDto dto) {
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from CongeAnnuelRestitutionMassive d ");
 		sb.append("where d.dateRestitution = :dateRestitution ");
@@ -194,7 +194,7 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		return query.getResultList();
 	}
-	
+
 	@Override
 	public List<CongeAnnuelRestitutionMassive> getHistoRestitutionMassiveOrderByDate() {
 
@@ -224,6 +224,20 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuelByAgent(Integer idAgent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select c from CongeAnnuelAlimAutoHisto c ");
+		sb.append("where c.idAgent = :idAgent ");
+		sb.append("order by c.dateMonth desc ");
+
+		TypedQuery<CongeAnnuelAlimAutoHisto> query = absEntityManager.createQuery(sb.toString(),
+				CongeAnnuelAlimAutoHisto.class);
+		query.setParameter("idAgent", idAgent);
+
+		return query.getResultList();
 	}
 
 }

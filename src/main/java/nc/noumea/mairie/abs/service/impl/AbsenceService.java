@@ -10,6 +10,7 @@ import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
+import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
@@ -310,7 +311,7 @@ public class AbsenceService implements IAbsenceService {
 	@Transactional(readOnly = true)
 	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
 			Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat, Integer idRefType,
-			Integer idRefGroupeAbsence,boolean isAgent) {
+			Integer idRefGroupeAbsence, boolean isAgent) {
 
 		// si date de debut et de fin nulles, alors on filtre sur 12 mois
 		// glissants
@@ -358,7 +359,7 @@ public class AbsenceService implements IAbsenceService {
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
 					demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto,
-					listDroitAgent,isAgent);
+					listDroitAgent, isAgent);
 			demandeDto
 					.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto));
 			demandeDto
@@ -1554,7 +1555,7 @@ public class AbsenceService implements IAbsenceService {
 
 		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
 				toDate, RefTypeGroupeAbsenceEnum.RECUP.getValue());
-		
+
 		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 		for (Demande d : listeDemande) {
 			DemandeRecup demandeRecup = demandeRepository.getEntity(DemandeRecup.class, d.getIdDemande());
@@ -1586,7 +1587,7 @@ public class AbsenceService implements IAbsenceService {
 				toDate, RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
 		for (Demande d : listeDemande) {
 			DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande());
-			
+
 			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.APPROUVEE.equals(demandeReposComp.getLatestEtatDemande().getEtat())
@@ -1598,8 +1599,7 @@ public class AbsenceService implements IAbsenceService {
 				result.getInfos().add(
 						String.format(AVERT_MESSAGE_ABS,
 								new DateTime(demandeReposComp.getDateDebut()).toString("dd/MM/yyyy"),
-								"repos compensateur",
-								agent.getNomUsage() + " " + agent.getPrenomUsage()));
+								"repos compensateur", agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -1616,7 +1616,7 @@ public class AbsenceService implements IAbsenceService {
 				toDate, RefTypeGroupeAbsenceEnum.AS.getValue());
 		for (Demande d : listeDemande) {
 			DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, d.getIdDemande());
-			
+
 			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.VALIDEE.equals(demandeAsa.getLatestEtatDemande().getEtat())
@@ -1646,19 +1646,18 @@ public class AbsenceService implements IAbsenceService {
 		for (Demande d : listeDemande) {
 			DemandeCongesExceptionnels demandeExcep = demandeRepository.getEntity(DemandeCongesExceptionnels.class,
 					d.getIdDemande());
-			
+
 			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.VALIDEE.equals(demandeExcep.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.PRISE.equals(demandeExcep.getLatestEtatDemande().getEtat())) {
-				String msg = String.format(CONGE_EXCEP_MSG, 
-						new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+				String msg = String.format(CONGE_EXCEP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
 						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
-				result.getInfos()
-						.add(String.format(AVERT_MESSAGE_ABS,
-								new DateTime(demandeExcep.getDateDebut()).toString("dd/MM/yyyy"), "congé exceptionnel", 
+				result.getInfos().add(
+						String.format(AVERT_MESSAGE_ABS,
+								new DateTime(demandeExcep.getDateDebut()).toString("dd/MM/yyyy"), "congé exceptionnel",
 								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
@@ -1677,7 +1676,7 @@ public class AbsenceService implements IAbsenceService {
 		for (Demande d : listeDemande) {
 			DemandeCongesAnnuels demandeCongeAnnuel = demandeRepository.getEntity(DemandeCongesAnnuels.class,
 					d.getIdDemande());
-			
+
 			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.APPROUVEE.equals(demandeCongeAnnuel.getLatestEtatDemande().getEtat())
@@ -1687,8 +1686,8 @@ public class AbsenceService implements IAbsenceService {
 						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
-				result.getInfos()
-						.add(String.format(AVERT_MESSAGE_ABS,
+				result.getInfos().add(
+						String.format(AVERT_MESSAGE_ABS,
 								new DateTime(demandeCongeAnnuel.getDateDebut()).toString("dd/MM/yyyy"), "congé annuel",
 								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
@@ -1722,7 +1721,32 @@ public class AbsenceService implements IAbsenceService {
 			mois.setAgent(agDto);
 			mois.setDateModification(histo.getDateModification());
 			mois.setStatus(histo.getStatus());
+			mois.setInfos(histo.getMessageInfos());
 			mois.setDateMois(histo.getDateMonth());
+			result.add(mois);
+		}
+
+		return result;
+	}
+
+	@Override
+	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoCongeAnnuel(Integer idAgent) {
+		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
+		for (CongeAnnuelAlimAutoHisto histo : congeAnnuelRepository.getListeAlimAutoCongeAnnuelByAgent(idAgent)) {
+			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
+			AgentDto agDto = new AgentDto();
+			if (ag != null && ag.getIdAgent() != null) {
+				agDto = new AgentDto(ag);
+			}
+			mois.setAgent(agDto);
+			mois.setDateModification(histo.getDateModification());
+			mois.setStatus(histo.getStatus());
+			mois.setInfos(histo.getMessageInfos());
+			mois.setDateMois(histo.getDateMonth());
+			AgentWeekCongeAnnuel weekConge = congeAnnuelRepository.getWeekHistoForAgentAndDate(idAgent,
+					mois.getDateMois());
+			mois.setNbJours(weekConge == null ? 0 : weekConge.getJours());
 			result.add(mois);
 		}
 

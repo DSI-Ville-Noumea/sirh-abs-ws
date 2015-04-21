@@ -281,6 +281,25 @@ public class CongeAnnuelController {
 	}
 
 	/**
+	 * Retourne l'historique des alimentations auto de conge annuel <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getHistoAlimAutoCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoCongeAnnuel(@RequestParam("idAgent") int idAgent,
+			HttpServletResponse response) {
+
+		logger.debug(
+				"entered GET [congeannuel/getHistoAlimAutoCongeAnnuel] => getHistoAlimAutoCongeAnnuel with parameters idAgent = {}",
+				idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		return absenceService.getHistoAlimAutoCongeAnnuel(convertedIdAgent);
+	}
+	
+
+	/**
 	 * Liste de toutes les alimentations mensuelles par Base Congé
 	 */
 	@ResponseBody
