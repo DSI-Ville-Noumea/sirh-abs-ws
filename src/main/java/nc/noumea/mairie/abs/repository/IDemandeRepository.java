@@ -40,7 +40,7 @@ public interface IDemandeRepository {
 
 	Integer countDemandesAViser(Integer idAgent, Date dateDebut);
 
-	List<Demande> listeDemandesASAAndCongesExcepSIRHAValider(Date fromDate, Date toDate,
+	List<Demande> listeDemandesASAAndCongesExcepSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdRefGroupe,Integer idRefTypeFamille,
 			List<Integer> listIdAgentRecherche);
 
 	List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche);

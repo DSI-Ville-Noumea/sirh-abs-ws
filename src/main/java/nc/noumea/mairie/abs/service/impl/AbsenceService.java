@@ -1538,13 +1538,28 @@ public class AbsenceService implements IAbsenceService {
 			agentIds.add(idAgentRecherche);
 		}
 
-		// TODO traiter le type
-		// TODO traiter la famille
-
-		List<Demande> listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate,
-				agentIds);
-		listeSansFiltre
-				.addAll(demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(fromDate, toDate, agentIds));
+		List<Demande> listeSansFiltre = new ArrayList<Demande>();
+		List<Integer> listGroupe = new ArrayList<Integer>();
+		listGroupe.add(RefTypeGroupeAbsenceEnum.AS.getValue());
+		listGroupe.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+		if (idRefGroupeAbsence != null) {
+			if (idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.AS.getValue()
+					|| idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue()) {				
+					listGroupe = new ArrayList<Integer>();
+					listGroupe.add(idRefGroupeAbsence);
+					listeSansFiltre = demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(fromDate, toDate,
+							listGroupe, idRefType,agentIds);
+				
+			} else if (idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
+				listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds);
+			} else {
+				return new ArrayList<DemandeDto>();
+			}
+		} else {
+			listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds);
+			listeSansFiltre.addAll(demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(fromDate, toDate,
+					listGroupe,idRefType, agentIds));
+		}
 
 		List<RefEtat> listEtats = null;
 		if (idRefEtat != null) {

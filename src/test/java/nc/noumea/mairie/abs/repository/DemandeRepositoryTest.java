@@ -1686,7 +1686,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, null);
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, null, null, null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -1831,8 +1831,12 @@ public class DemandeRepositoryTest {
 		etatDemandeAttente.setEtat(RefEtatEnum.EN_ATTENTE);
 		absEntityManager.persist(etatDemandeAttente);
 
+		List<Integer> listGroupe = new ArrayList<Integer>();
+		listGroupe.add(RefTypeGroupeAbsenceEnum.AS.getValue());
+		listGroupe.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+
 		// When
-		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, null);
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, listGroupe, null, null);
 
 		// Then
 		assertEquals(1, result.size());
@@ -2020,8 +2024,12 @@ public class DemandeRepositoryTest {
 		etatDemandedR2.setEtat(RefEtatEnum.APPROUVEE);
 		absEntityManager.persist(etatDemandedR2);
 
+		List<Integer> listGroupe = new ArrayList<Integer>();
+		listGroupe.add(RefTypeGroupeAbsenceEnum.AS.getValue());
+		listGroupe.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+
 		// When
-		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null,
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, listGroupe, null,
 				Arrays.asList(9005138, 9005139, 9005131));
 
 		// Then
@@ -2030,7 +2038,7 @@ public class DemandeRepositoryTest {
 		assertEquals("9005138", ((DemandeAsa) result.get(1)).getIdAgent().toString());
 
 		// When
-		List<Demande> result2 = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null,
+		List<Demande> result2 = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, listGroupe, null,
 				Arrays.asList(9005139, 9005131));
 
 		// Then
@@ -2038,7 +2046,7 @@ public class DemandeRepositoryTest {
 		assertEquals("9005139", ((DemandeAsa) result2.get(0)).getIdAgent().toString());
 
 		// When
-		List<Demande> result3 = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null,
+		List<Demande> result3 = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, listGroupe, null,
 				Arrays.asList(9005138, 9005139));
 
 		// Then
