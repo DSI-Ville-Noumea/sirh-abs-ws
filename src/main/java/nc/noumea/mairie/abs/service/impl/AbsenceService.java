@@ -1272,8 +1272,18 @@ public class AbsenceService implements IAbsenceService {
 	protected void setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
 			ReturnMessageDto result) {
 
-		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
-				Arrays.asList(RefEtatEnum.APPROUVEE, RefEtatEnum.EN_ATTENTE, RefEtatEnum.A_VALIDER));
+		// #15224 : on ajoute de nouveaux états pour les congés annuels
+		List<RefEtatEnum> listEtat = new ArrayList<RefEtatEnum>();
+		listEtat.add(RefEtatEnum.APPROUVEE);
+		listEtat.add(RefEtatEnum.EN_ATTENTE);
+		listEtat.add(RefEtatEnum.A_VALIDER);
+		if (demande.getType().getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
+			listEtat.add(RefEtatEnum.SAISIE);
+			listEtat.add(RefEtatEnum.VISEE_FAVORABLE);
+			listEtat.add(RefEtatEnum.VISEE_DEFAVORABLE);
+			listEtat.add(RefEtatEnum.REFUSEE);
+		}
+		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, listEtat);
 
 		if (0 < result.getErrors().size()) {
 			return;
@@ -1544,12 +1554,12 @@ public class AbsenceService implements IAbsenceService {
 		listGroupe.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 		if (idRefGroupeAbsence != null) {
 			if (idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.AS.getValue()
-					|| idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue()) {				
-					listGroupe = new ArrayList<Integer>();
-					listGroupe.add(idRefGroupeAbsence);
-					listeSansFiltre = demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(fromDate, toDate,
-							listGroupe, idRefType,agentIds);
-				
+					|| idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue()) {
+				listGroupe = new ArrayList<Integer>();
+				listGroupe.add(idRefGroupeAbsence);
+				listeSansFiltre = demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(fromDate, toDate,
+						listGroupe, idRefType, agentIds);
+
 			} else if (idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
 				listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds);
 			} else {
@@ -1558,7 +1568,7 @@ public class AbsenceService implements IAbsenceService {
 		} else {
 			listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds);
 			listeSansFiltre.addAll(demandeRepository.listeDemandesASAAndCongesExcepSIRHAValider(fromDate, toDate,
-					listGroupe,idRefType, agentIds));
+					listGroupe, idRefType, agentIds));
 		}
 
 		List<RefEtat> listEtats = null;
