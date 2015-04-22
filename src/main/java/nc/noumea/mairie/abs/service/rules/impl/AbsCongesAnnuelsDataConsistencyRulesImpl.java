@@ -291,7 +291,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
 			return false;
 		}
 

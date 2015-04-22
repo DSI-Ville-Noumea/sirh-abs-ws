@@ -82,7 +82,7 @@ public class OrganisationSyndicaleService implements IOrganisationSyndicaleServi
 	@Transactional(readOnly = true)
 	public List<OrganisationSyndicaleDto> getListOrganisationSyndicaleActives(Integer idAgent, Integer idRefTypeAbsence) {
 		if (idRefTypeAbsence == RefTypeAbsenceEnum.ASA_A52.getValue()) {
-			// si decharge de service alors chercher la bonne oraganisation
+			// si decharge de service alors chercher la bonne organisation
 			// syndicale de l'agent
 			List<OrganisationSyndicaleDto> res = new ArrayList<OrganisationSyndicaleDto>();
 			List<AgentOrganisationSyndicale> listAgentOrganisation = organisationRepository

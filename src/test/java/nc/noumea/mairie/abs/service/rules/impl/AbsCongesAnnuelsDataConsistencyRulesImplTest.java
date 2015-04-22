@@ -490,7 +490,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 	}
 
 	@Test
-	public void checkDepassementCompteurAgent_false() {
+	public void checkDepassementCompteurAgent_true() {
 
 		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
 		agentWithServiceDto.setIdAgent(9005138);
@@ -500,7 +500,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demande.setDateDebut(new Date());
 		demande.setAgentWithServiceDto(agentWithServiceDto);
 		demande.setDuree(10.0);
-		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demande.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 
 		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
 		soldeCongeAnnuel.setTotalJours(2.0);
@@ -525,7 +525,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 	}
 
 	@Test
-	public void checkDepassementCompteurAgent_true() {
+	public void checkDepassementCompteurAgent_false() {
 
 		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
 		agentWithServiceDto.setIdAgent(9005138);
@@ -535,7 +535,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demande.setDateDebut(new Date());
 		demande.setAgentWithServiceDto(agentWithServiceDto);
 		demande.setDuree(10.0);
-		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		demande.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
 
 		AgentCongeAnnuelCount soldeCongeAnnuel = new AgentCongeAnnuelCount();
 		soldeCongeAnnuel.setTotalJours(20.0);
@@ -1241,10 +1241,12 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demandeDtoPRISE.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		DemandeDto demandeDtoREFUSEE = new DemandeDto();
 		demandeDtoREFUSEE.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
+		DemandeDto demandeDtoAPPROUVEE = new DemandeDto();
+		demandeDtoAPPROUVEE.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
 		List<DemandeDto> listDto = new ArrayList<DemandeDto>();
 		listDto.addAll(Arrays.asList(demandeDtoVALIDEE, demandeDtoREJETE, demandeDtoANNULEE, demandeDtoPRISE,
-				demandeDtoREFUSEE));
+				demandeDtoAPPROUVEE, demandeDtoREFUSEE));
 
 		for (DemandeDto demandeDto : listDto) {
 			if (impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
@@ -1260,14 +1262,12 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demandeDtoVISEE_FAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 		DemandeDto demandeDtoVISEE_DEFAVORABLE = new DemandeDto();
 		demandeDtoVISEE_DEFAVORABLE.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		DemandeDto demandeDtoAPPROUVEE = new DemandeDto();
-		demandeDtoAPPROUVEE.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		DemandeDto demandeDtoEN_ATTENTE = new DemandeDto();
 		demandeDtoEN_ATTENTE.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 
 		listDto = new ArrayList<DemandeDto>();
 		listDto.addAll(Arrays.asList(demandeDtoPROVISOIRE, demandeDtoSAISIE, demandeDtoVISEE_FAVORABLE,
-				demandeDtoVISEE_DEFAVORABLE, demandeDtoAPPROUVEE, demandeDtoEN_ATTENTE));
+				demandeDtoVISEE_DEFAVORABLE, demandeDtoEN_ATTENTE));
 
 		for (DemandeDto demandeDto : listDto) {
 			if (!impl.checkEtatDemandePourDepassementCompteurAgent(demandeDto)) {
