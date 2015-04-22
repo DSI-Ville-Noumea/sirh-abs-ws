@@ -5061,8 +5061,14 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		dto.setIdDemande(1);
-
-		Demande demande = Mockito.spy(new Demande());
+		
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+		Demande d = new Demande();
+		d.setType(type);
+		Demande demande = Mockito.spy(d);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getEntity(Demande.class, dto.getIdDemande())).thenReturn(demande);
