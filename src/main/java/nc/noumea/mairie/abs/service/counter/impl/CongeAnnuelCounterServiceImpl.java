@@ -64,6 +64,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 	protected static final String BASE_CONGES_ALIM_AUTO_INEXISTANT = "La base congé [%d] n'existe pas dans ABS_REF_ALIM_CONGE_ANNUEL.";
 	protected static final String PA_INEXISTANT = "Pas de PA active pour l'agent : [%d].";
+	protected static final String AGENT_CONGE_UNIQUE = "L'agent [%d] est en congé unique pour l'année [%d].";
 	protected static final String COMPTEUR_DEJA_A_JOUR = "Compteur de congés annuels déjà mis à jour ce mois-ci pour l'agent : [%d].";
 	protected static final String AGENT_AUCUN_CA = "L'agent [%d] n'était pas en congé à cette date.";
 	protected static final String MOTIF_OBLIGATOIRE = "Le motif est obligatoire.";
@@ -458,6 +459,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		}
 
 		Double joursAAjouter = 0.0;
+		Double quotaMax = 0.0;
 		// on calcule le nombre de jours conges à ajouter sur le mois
 		for (InfosAlimAutoCongesAnnuelsDto PA : listPA) {
 			if (PA.isDroitConges()) {
@@ -476,10 +478,25 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 					return srm;
 				}
 
+				// cas du congé unique
+				Calendar calendarYear = GregorianCalendar.getInstance();
+				calendarYear.setTime(dateDebut);
+				Integer annee = calendarYear.get(Calendar.YEAR);
+				List<Demande> listeCongeUnique = demandeRepository.listerDemandeCongeUnique(idAgent, annee);
+				if (listeCongeUnique.size()>0) {
+					logger.error(AGENT_CONGE_UNIQUE, idAgent,annee);
+					srm.getErrors().add(String.format(AGENT_CONGE_UNIQUE, idAgent,annee));
+					return srm;
+				}
+				
+
 				RefAlimCongeAnnuel refAlim = congesAnnuelsRepository.getRefAlimCongeAnnuel(
 						typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), new DateTime(dateDebut).getYear());
 
 				Double quotaMois = getQuotaCongesByMois(refAlim, new DateTime(dateDebut).getMonthOfYear());
+				if (quotaMois > quotaMax) {
+					quotaMax = quotaMois;
+				}
 
 				Double nombreJoursPA = helperService.calculNombreJours(PA.getDateDebut(), PA.getDateFin());
 
@@ -498,11 +515,15 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 				}
 			}
 		}
+		// a cause des arrondis on verifie le quota max
+		if (joursAAjouter > quotaMax) {
+			joursAAjouter = quotaMax;
+		}
 
 		Date dernierModif = new Date();
 		// on enregistre
 
-		awca = new AgentWeekCongeAnnuel();
+		 awca = new AgentWeekCongeAnnuel();
 		awca.setIdAgent(idAgent);
 		awca.setDateMonth(dateDebut);
 

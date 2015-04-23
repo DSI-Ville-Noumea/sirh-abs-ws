@@ -16,6 +16,7 @@ import nc.noumea.mairie.abs.domain.AgentJoursFeriesRepos;
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
+import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
@@ -31,6 +32,7 @@ import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.CongesAnnuelsRepository;
+import nc.noumea.mairie.abs.repository.DemandeRepository;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IAgentJoursFeriesReposRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
@@ -1018,11 +1020,16 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, pa.getIdBaseCongeAbsence()))
 				.thenReturn(typeCongeAnnuel);
 
+		DemandeRepository demandeRepository = Mockito.mock(DemandeRepository.class);
+		Mockito.when(demandeRepository.listerDemandeCongeUnique(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				new ArrayList<Demande>());
+
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		ReturnMessageDto result = service.alimentationAutoCompteur(idAgent, dateDebut, dateFin);
 
@@ -1086,12 +1093,18 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 						.getAgentJoursFeriesReposByIdAgentAndPeriode(idAgent, dateDebut, dateFin)).thenReturn(
 				new ArrayList<AgentJoursFeriesRepos>());
 
+
+		DemandeRepository demandeRepository = Mockito.mock(DemandeRepository.class);
+		Mockito.when(demandeRepository.listerDemandeCongeUnique(Mockito.anyInt(),Mockito.anyInt()))
+				.thenReturn(new ArrayList<Demande>());
+
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesReposRepository", agentJoursFeriesReposRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		ReturnMessageDto result = service.alimentationAutoCompteur(idAgent, dateDebut, dateFin);
 
@@ -1159,12 +1172,18 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 						.getAgentJoursFeriesReposByIdAgentAndPeriode(idAgent, dateDebut, dateFin))
 				.thenReturn(listRepos);
 
+
+		DemandeRepository demandeRepository = Mockito.mock(DemandeRepository.class);
+		Mockito.when(demandeRepository.listerDemandeCongeUnique(Mockito.anyInt(),Mockito.anyInt()))
+				.thenReturn(new ArrayList<Demande>());
+
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesReposRepository", agentJoursFeriesReposRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		ReturnMessageDto result = service.alimentationAutoCompteur(idAgent, dateDebut, dateFin);
 

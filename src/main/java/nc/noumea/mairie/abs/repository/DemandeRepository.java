@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -436,5 +437,27 @@ public class DemandeRepository implements IDemandeRepository {
 				.setParameter("fromDate", dateDebut).setParameter("SAISIE", RefEtatEnum.SAISIE).getResultList();
 
 		return result.size() > 0 ? result.get(0).intValue() : 0;
+	}
+
+	@Override
+	public List<Demande> listerDemandeCongeUnique(Integer idAgent, Integer annee) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
+		sb.append("where d.idAgent = :idAgentConcerne ");
+		sb.append("and d.type.idRefTypeAbsence in (:listIdRefTypeAbsence) ");
+		sb.append("and year(d.dateDebut) = :year ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
+		sb.append("and ed.etat in ( :VALIDEE, :PRISE ) ");
+
+		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
+		query.setParameter("idAgentConcerne", idAgent);
+		query.setParameter("year", annee);
+		// ID des CONGES UNIQUE
+		query.setParameter("listIdRefTypeAbsence", Arrays.asList(44, 45));
+		query.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
+		query.setParameter("PRISE", RefEtatEnum.PRISE);
+
+		return query.getResultList();
 	}
 }

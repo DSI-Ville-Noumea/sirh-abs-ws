@@ -44,4 +44,6 @@ public interface IDemandeRepository {
 			List<Integer> listIdAgentRecherche);
 
 	List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche);
+
+	List<Demande> listerDemandeCongeUnique(Integer idAgent, Integer annee);
 }
