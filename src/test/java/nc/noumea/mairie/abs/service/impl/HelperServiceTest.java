@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1367,6 +1368,52 @@ public class HelperServiceTest {
 
 		HelperService service = new HelperService();
 		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+
+		assertEquals(duree, result);
+	}
+
+	// #15248 cas de test concret en recette
+	// avec des samedis chomes
+	@Test
+	public void getDureeCongeAnnuel_Base_A_withSamediChomes() {
+		
+		Double duree = 10.0;
+
+		Date dateDebut = new DateTime(2015, 5, 4, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 5, 20, 23, 59, 0).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
+		typeSaisi.setCodeBaseHoraireAbsence("A");
+		typeSaisi.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+		demande.setTypeSaisiCongeAnnuel(typeSaisi);
+
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		JourDto mai8 = new JourDto();
+		mai8.setJour(new DateTime(2015, 5, 8, 0, 0, 0).toDate());
+		JourDto mai9 = new JourDto();
+		mai9.setJour(new DateTime(2015, 5, 9, 0, 0, 0).toDate());
+		JourDto mai14 = new JourDto();
+		mai14.setJour(new DateTime(2015, 5, 14, 0, 0, 0).toDate());
+		JourDto mai15 = new JourDto();
+		mai15.setJour(new DateTime(2015, 5, 15, 0, 0, 0).toDate());
+		JourDto mai16 = new JourDto();
+		mai16.setJour(new DateTime(2015, 5, 16, 0, 0, 0).toDate());
+		listJoursFeries.addAll(Arrays.asList(mai8, mai9, mai14, mai15, mai16));
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursFeries);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2015, demande.getIdDemande())).thenReturn(1);
+
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		Double result = service.getDureeCongeAnnuel(demande, null);
 
 		assertEquals(duree, result);
 	}

@@ -440,7 +440,7 @@ public class HelperService {
 				duree = calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())
 						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin(),
 								listJoursFeries)
-						- getNombreJourSemaine(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY) // on
+						- getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY, listJoursFeries) // on
 																															// retire
 																															// le
 																															// nombre
@@ -551,7 +551,7 @@ public class HelperService {
 		return (double) compteur;
 	}
 
-	protected Double getNombreJourSemaine(Date dateDebut, Date dateFin, int jourDonne) {
+	protected Double getNombreJourSemaineWithoutFerie(Date dateDebut, Date dateFin, int jourDonne, List<JourDto> listJoursFeries) {
 
 		int compteur = 0;
 		// on calcule le nombre de vendredi
@@ -581,8 +581,10 @@ public class HelperService {
 			startDate = thisDay; // start on this SUNDAY
 		}
 		while (startDate.isBefore(endDate)) {
+			if(!isJourHoliday(listJoursFeries, startDate.toDate())) {
+				compteur++;
+			}
 			startDate = startDate.plusWeeks(1);
-			compteur++;
 		}
 		return (double) compteur;
 	}
