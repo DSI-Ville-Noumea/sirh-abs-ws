@@ -1971,27 +1971,31 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	@Transactional(readOnly = true)
 	public Integer countDemandesAApprouver(Integer idAgent) {
+		List<Integer> listeDemande = new ArrayList<Integer>();
 
-		Integer demandesApprobateur = demandeRepository.countDemandesAApprouver(idAgent,
+		List<Integer> demandesApprobateur = demandeRepository.countDemandesAApprouver(idAgent,
 				helperService.getCurrentDateMoinsUnAn());
-		Integer demandesDelegataire = 0;
+		listeDemande.addAll(demandesApprobateur);
 
 		List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgent, null);
 
 		if (idsApprobateurOfDelegataire != null) {
 			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-				demandesDelegataire += demandeRepository.countDemandesAApprouver(idApprobateurOfDelegataire,
-						helperService.getCurrentDateMoinsUnAn());
+				for (Integer idDem : demandeRepository.countDemandesAApprouver(idApprobateurOfDelegataire,
+						helperService.getCurrentDateMoinsUnAn())) {
+					if (!listeDemande.contains(idDem))
+						listeDemande.add(idDem);
+				}
 			}
 		}
 
-		return demandesApprobateur + demandesDelegataire;
+		return listeDemande.size();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public Integer countDemandesAViser(Integer idAgent) {
 
-		return demandeRepository.countDemandesAViser(idAgent, helperService.getCurrentDateMoinsUnAn());
+		return demandeRepository.countDemandesAViser(idAgent, helperService.getCurrentDateMoinsUnAn()).size();
 	}
 }

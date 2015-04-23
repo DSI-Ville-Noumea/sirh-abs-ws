@@ -2664,9 +2664,9 @@ public class DemandeRepositoryTest {
 		listeTypes.add(RefTypeAbsenceEnum.ASA_A55.getValue());
 
 		// When
-		Integer result = repository.countDemandesAApprouver(9000002, new DateTime().minusYears(1).toDate());
+		List<Integer> result = repository.countDemandesAApprouver(9000002, new DateTime().minusYears(1).toDate());
 
-		assertEquals(4, result.intValue());
+		assertEquals(4, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -2839,9 +2839,9 @@ public class DemandeRepositoryTest {
 		listeTypes.add(RefTypeAbsenceEnum.ASA_A55.getValue());
 
 		// When
-		Integer result = repository.countDemandesAViser(9000002, new DateTime().minusYears(1).toDate());
+		List<Integer> result = repository.countDemandesAViser(9000002, new DateTime().minusYears(1).toDate());
 
-		assertEquals(1, result.intValue());
+		assertEquals(1, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
