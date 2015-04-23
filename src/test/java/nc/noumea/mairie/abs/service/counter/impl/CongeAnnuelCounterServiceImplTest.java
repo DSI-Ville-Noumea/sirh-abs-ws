@@ -37,13 +37,19 @@ import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IAgentJoursFeriesReposRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
+import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.repository.TypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.abs.web.AccessForbiddenException;
 import nc.noumea.mairie.abs.web.NotFoundException;
+import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spcc;
+import nc.noumea.mairie.domain.Spmatr;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -1735,12 +1741,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -1814,12 +1827,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -1893,12 +1913,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -1974,12 +2001,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -2057,12 +2091,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -2140,12 +2181,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -2224,12 +2272,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -2308,12 +2363,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
 
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -2388,12 +2450,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -2470,12 +2539,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -2553,12 +2629,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -2638,12 +2721,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -2724,12 +2814,19 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congesAnnuelsRepository.getListeDemandesCongesAnnuelsPrisesByAgent(idAgent, fromDate, fromDate))
 				.thenReturn(listCongesAgentpris);
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
 		ReturnMessageDto result = service.restitutionMassiveCA(idAgent, dto, Arrays.asList(idAgent));
 
@@ -3150,5 +3247,152 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		assertEquals(dto.getListHistoAgents().get(1).getIdAgent(), histo2.getIdAgent());
 		assertEquals(dto.getListHistoAgents().get(1).getJours(), histo2.getJours());
 		assertEquals(dto.getListHistoAgents().get(1).getStatus(), histo2.getStatus());
+	}
+	
+	@Test
+	public void deleteOrUpdateSpcc_pasSpcc() {
+		
+		Integer idAgent = 9005138;
+		Date dateJour = new Date();
+		boolean isDemiJournee = false;
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		
+		service.deleteOrUpdateSpcc(idAgent, dateJour, isDemiJournee);
+		
+		Mockito.verify(sirhRepository, Mockito.never()).persistEntity(Mockito.isA(Spmatr.class));
+		Mockito.verify(sirhRepository, Mockito.never()).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.never()).removeEntity(Mockito.isA(Spcc.class));
+	}
+	
+	@Test
+	public void deleteOrUpdateSpcc_pasDeSpcarr() {
+		
+		Integer idAgent = 9005138;
+		Date dateJour = new Date();
+		boolean isDemiJournee = false;
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		Spcc spcc = new Spcc();
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getSpcc(5138, dateJour)).thenReturn(spcc);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, dateJour)).thenReturn(null);
+		
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		
+		service.deleteOrUpdateSpcc(idAgent, dateJour, isDemiJournee);
+		
+		Mockito.verify(sirhRepository, Mockito.never()).persistEntity(Mockito.isA(Spmatr.class));
+		Mockito.verify(sirhRepository, Mockito.never()).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.never()).removeEntity(Mockito.isA(Spcc.class));
+	}
+	
+	@Test
+	public void deleteOrUpdateSpcc_removeSpcc_JourneePleine() {
+		
+		Integer idAgent = 9005138;
+		Date dateJour = new Date();
+		boolean isDemiJournee = false;
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		Spcc spcc = new Spcc();
+		
+		Spcarr spcarr = new Spcarr();
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getSpcc(5138, dateJour)).thenReturn(spcc);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, dateJour)).thenReturn(spcarr);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getTypeChainePaieFromStatut(spcarr)).thenReturn(TypeChainePaieEnum.SCV);
+		
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		service.deleteOrUpdateSpcc(idAgent, dateJour, isDemiJournee);
+		
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spmatr.class));
+		Mockito.verify(sirhRepository, Mockito.never()).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(1)).removeEntity(Mockito.isA(Spcc.class));
+	}
+	
+	@Test
+	public void deleteOrUpdateSpcc_removeSpcc_demiJournee() {
+		
+		Integer idAgent = 9005138;
+		Date dateJour = new Date();
+		boolean isDemiJournee = true;
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		Spcc spcc = new Spcc();
+		spcc.setCode(2);
+		
+		Spcarr spcarr = new Spcarr();
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getSpcc(5138, dateJour)).thenReturn(spcc);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, dateJour)).thenReturn(spcarr);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getTypeChainePaieFromStatut(spcarr)).thenReturn(TypeChainePaieEnum.SCV);
+		
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		service.deleteOrUpdateSpcc(idAgent, dateJour, isDemiJournee);
+		
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spmatr.class));
+		Mockito.verify(sirhRepository, Mockito.never()).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(1)).removeEntity(Mockito.isA(Spcc.class));
+	}
+	
+	@Test
+	public void deleteOrUpdateSpcc_updateSpcc_demiJournee() {
+		
+		Integer idAgent = 9005138;
+		Date dateJour = new Date();
+		boolean isDemiJournee = true;
+		
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(5138);
+
+		Spcc spcc = Mockito.spy(new Spcc());
+		spcc.setCode(1);
+		
+		Spcarr spcarr = new Spcarr();
+		
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getSpcc(5138, dateJour)).thenReturn(spcc);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(5138, dateJour)).thenReturn(spcarr);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getTypeChainePaieFromStatut(spcarr)).thenReturn(TypeChainePaieEnum.SCV);
+		
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		service.deleteOrUpdateSpcc(idAgent, dateJour, isDemiJournee);
+		
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spmatr.class));
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.never()).removeEntity(Mockito.isA(Spcc.class));
+		assertEquals(2, spcc.getCode().intValue());
 	}
 }

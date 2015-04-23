@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,8 +34,13 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.web.AccessForbiddenException;
 import nc.noumea.mairie.abs.web.NotFoundException;
+import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spcc;
+import nc.noumea.mairie.domain.Spmatr;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -61,6 +67,9 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	@Autowired
 	@Qualifier("AbsCongesAnnuelsDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl;
+
+	@Autowired
+	private IAgentMatriculeConverterService agentMatriculeService;
 
 	protected static final String BASE_CONGES_ALIM_AUTO_INEXISTANT = "La base congé [%d] n'existe pas dans ABS_REF_ALIM_CONGE_ANNUEL.";
 	protected static final String PA_INEXISTANT = "Pas de PA active pour l'agent : [%d].";
@@ -565,7 +574,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	 * concernant la restitution du samedi offert ou decompte
 	 */
 	@Override
-	@Transactional(value = "absTransactionManager")
+	@Transactional(value = "chainedTransactionManager")
 	public ReturnMessageDto restitutionMassiveCA(Integer idAgentConnecte, RestitutionMassiveDto dto,
 			List<Integer> listIdAgent) {
 
@@ -714,6 +723,9 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 				counterRepository.persistEntity(etatDemande);
 			}
+			
+			// #15147 maj de SPCC : on modifie/supprime la ligne SPCC si besoin
+			deleteOrUpdateSpcc(idAgentList, dto.getDateRestitution(), !dto.isJournee());
 
 			// on enregistre une ligne historique du compteur
 			AgentWeekCongeAnnuel weekCA = new AgentWeekCongeAnnuel();
@@ -746,6 +758,74 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		counterRepository.persistEntity(restitutionMassive);
 
 		return srm;
+	}
+	
+	protected void deleteOrUpdateSpcc(Integer idAgent, Date dateJour, boolean isDemiJournee) {
+
+		Spcc spcc = sirhRepository.getSpcc(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), dateJour);
+
+		// si pas de spcc trouve, on ne fait rien
+		if (null == spcc) {
+			return;
+		}
+		
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), dateJour);
+
+		if (carr == null) {
+			return;
+		}
+
+		// si on restitue une journee entiere, on supprime dans tous les cas SPCC
+		if(!isDemiJournee) {
+			sirhRepository.removeEntity(spcc);
+		// si on restitue une demi journee, et que la ligne SPCC correspond a une journee complete
+		// on modifie le code de SPCC
+		// pour rappel : journee entiere, code = 1 et demi journee, code = 2
+		} else if(isDemiJournee && 1 == spcc.getCode()) {
+			spcc.setCode(2);
+			sirhRepository.persistEntity(spcc);
+		// sinon on supprime
+		} else if(isDemiJournee && 2 == spcc.getCode()) { 
+			sirhRepository.removeEntity(spcc);
+		}
+		
+		// on met à jour SPMATR
+		SimpleDateFormat sdfMairiePerrap = new SimpleDateFormat("yyyyMM");
+		Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent),
+				new Integer(sdfMairiePerrap.format(dateJour)), carr);
+		sirhRepository.persistEntity(matr);
+	}
+
+	/**
+	 * Met a jour SPMATR
+	 * 
+	 * @param nomatr
+	 *            Integer
+	 * @param perrap
+	 *            Integer
+	 * @param carr
+	 *            Spcarr
+	 * @return Spmatr
+	 */
+	private Spmatr miseAjourSpmatr(Integer nomatr, Integer perrap, Spcarr carr) {
+
+		Spmatr matr = sirhRepository.findSpmatrForAgent(nomatr);
+
+		if (matr == null) {
+			TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(carr);
+			matr = new Spmatr();
+			matr.setNomatr(nomatr);
+			matr.setPerrap(perrap);
+			matr.setTypeChainePaie(chainePaie);
+			return matr;
+		}
+
+		if (matr.getPerrap() > perrap) {
+			matr.setPerrap(perrap);
+		}
+		return matr;
 	}
 
 	protected ReturnMessageDto checkAutreRestitutionMemeJour(RestitutionMassiveDto dto, ReturnMessageDto srm) {
