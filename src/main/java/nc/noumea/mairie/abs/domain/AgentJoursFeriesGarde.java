@@ -15,19 +15,19 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "ABS_AGENT_JOURS_FERIES_REPOS")
+@Table(name = "ABS_AGENT_JOURS_FERIES_GARDE")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-	@NamedQuery(name = "findAgentJoursFeriesReposByIdAgentAndJourFerie", query = "select a from AgentJoursFeriesRepos a where a.idAgent = :idAgent and a.jourFerieChome = :jourFerieChome"),
-	@NamedQuery(name = "findAgentJoursFeriesReposByIdAgentAndPeriode", query = "select a from AgentJoursFeriesRepos a where a.idAgent = :idAgent and a.jourFerieChome between :dateDebut and :dateFin"),
-	@NamedQuery(name = "findAllAgentsJoursFeriesReposByPeriode", query = "select a from AgentJoursFeriesRepos a where a.jourFerieChome between :dateDebut and :dateFin")
+	@NamedQuery(name = "findAgentJoursFeriesGardeByIdAgentAndJourFerie", query = "select a from AgentJoursFeriesGarde a where a.idAgent = :idAgent and a.jourFerieChome = :jourFerieChome"),
+	@NamedQuery(name = "findAgentJoursFeriesGardeByIdAgentAndPeriode", query = "select a from AgentJoursFeriesGarde a where a.idAgent = :idAgent and a.jourFerieChome between :dateDebut and :dateFin"),
+	@NamedQuery(name = "findAllAgentsJoursFeriesGardeByPeriode", query = "select a from AgentJoursFeriesGarde a where a.jourFerieChome between :dateDebut and :dateFin")
 })
-public class AgentJoursFeriesRepos {
+public class AgentJoursFeriesGarde {
 	
 	@Id
-	@Column(name = "ID_AGENT_JOURS_FERIES_REPOS")
+	@Column(name = "ID_AGENT_JOURS_FERIES_GARDE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idAgentJoursFeriesRepos;
+	private Integer idAgentJoursFeriesGarde;
 
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
@@ -40,12 +40,12 @@ public class AgentJoursFeriesRepos {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
 
-	public Integer getIdAgentJoursFeriesRepos() {
-		return idAgentJoursFeriesRepos;
+	public Integer getIdAgentJoursFeriesGarde() {
+		return idAgentJoursFeriesGarde;
 	}
 
-	public void setIdAgentJoursFeriesRepos(Integer idAgentJoursFeriesRepos) {
-		this.idAgentJoursFeriesRepos = idAgentJoursFeriesRepos;
+	public void setIdAgentJoursFeriesGarde(Integer idAgentJoursFeriesGarde) {
+		this.idAgentJoursFeriesGarde = idAgentJoursFeriesGarde;
 	}
 
 	public Integer getIdAgent() {

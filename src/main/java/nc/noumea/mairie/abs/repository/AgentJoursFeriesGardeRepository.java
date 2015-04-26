@@ -7,17 +7,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import nc.noumea.mairie.abs.domain.AgentJoursFeriesRepos;
+import nc.noumea.mairie.abs.domain.AgentJoursFeriesGarde;
 
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class AgentJoursFeriesReposRepository implements
-		IAgentJoursFeriesReposRepository {
+public class AgentJoursFeriesGardeRepository implements IAgentJoursFeriesGardeRepository {
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
-	
+
 	@Override
 	public void persistEntity(Object obj) {
 		absEntityManager.persist(obj);
@@ -27,30 +26,31 @@ public class AgentJoursFeriesReposRepository implements
 	public void removeEntity(Object obj) {
 		absEntityManager.remove(obj);
 	}
-	
-	@Override
-	public AgentJoursFeriesRepos getAgentJoursFeriesReposByIdAgentAndJourFerie(
-			Integer idAgent, Date jourFerieChome) {
 
-		TypedQuery<AgentJoursFeriesRepos> query = null;
-		query = absEntityManager.createNamedQuery("findAgentJoursFeriesReposByIdAgentAndJourFerie", AgentJoursFeriesRepos.class);
+	@Override
+	public AgentJoursFeriesGarde getAgentJoursFeriesGardeByIdAgentAndJourFerie(Integer idAgent, Date jourFerieChome) {
+
+		TypedQuery<AgentJoursFeriesGarde> query = null;
+		query = absEntityManager.createNamedQuery("findAgentJoursFeriesGardeByIdAgentAndJourFerie",
+				AgentJoursFeriesGarde.class);
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("jourFerieChome", jourFerieChome);
 		query.setMaxResults(1);
 
-		if(0 < query.getResultList().size()) {
+		if (0 < query.getResultList().size()) {
 			return query.getSingleResult();
 		}
-		
+
 		return null;
 	}
 
 	@Override
-	public List<AgentJoursFeriesRepos> getAgentJoursFeriesReposByIdAgentAndPeriode(
-			Integer idAgent, Date dateDebut, Date dateFin) {
-		
-		TypedQuery<AgentJoursFeriesRepos> query = null;
-		query = absEntityManager.createNamedQuery("findAgentJoursFeriesReposByIdAgentAndPeriode", AgentJoursFeriesRepos.class);
+	public List<AgentJoursFeriesGarde> getAgentJoursFeriesGardeByIdAgentAndPeriode(Integer idAgent, Date dateDebut,
+			Date dateFin) {
+
+		TypedQuery<AgentJoursFeriesGarde> query = null;
+		query = absEntityManager.createNamedQuery("findAgentJoursFeriesGardeByIdAgentAndPeriode",
+				AgentJoursFeriesGarde.class);
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("dateDebut", dateDebut);
 		query.setParameter("dateFin", dateFin);
@@ -59,11 +59,11 @@ public class AgentJoursFeriesReposRepository implements
 	}
 
 	@Override
-	public List<AgentJoursFeriesRepos> getAgentJoursFeriesReposByPeriode(
-			Date dateDebut, Date dateFin) {
-		
-		TypedQuery<AgentJoursFeriesRepos> query = null;
-		query = absEntityManager.createNamedQuery("findAllAgentsJoursFeriesReposByPeriode", AgentJoursFeriesRepos.class);
+	public List<AgentJoursFeriesGarde> getAgentJoursFeriesGardeByPeriode(Date dateDebut, Date dateFin) {
+
+		TypedQuery<AgentJoursFeriesGarde> query = null;
+		query = absEntityManager
+				.createNamedQuery("findAllAgentsJoursFeriesGardeByPeriode", AgentJoursFeriesGarde.class);
 		query.setParameter("dateDebut", dateDebut);
 		query.setParameter("dateFin", dateFin);
 

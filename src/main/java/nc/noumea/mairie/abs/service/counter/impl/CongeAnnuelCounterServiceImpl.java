@@ -9,7 +9,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
-import nc.noumea.mairie.abs.domain.AgentJoursFeriesRepos;
+import nc.noumea.mairie.abs.domain.AgentJoursFeriesGarde;
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
@@ -28,7 +28,7 @@ import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveHistoDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.repository.IAgentJoursFeriesReposRepository;
+import nc.noumea.mairie.abs.repository.IAgentJoursFeriesGardeRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
@@ -59,7 +59,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	private ICongesAnnuelsRepository congesAnnuelsRepository;
 
 	@Autowired
-	private IAgentJoursFeriesReposRepository agentJoursFeriesReposRepository;
+	private IAgentJoursFeriesGardeRepository agentJoursFeriesGardeRepository;
 
 	@Autowired
 	private IDemandeRepository demandeRepository;
@@ -492,12 +492,11 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 				calendarYear.setTime(dateDebut);
 				Integer annee = calendarYear.get(Calendar.YEAR);
 				List<Demande> listeCongeUnique = demandeRepository.listerDemandeCongeUnique(idAgent, annee);
-				if (listeCongeUnique.size()>0) {
-					logger.error(AGENT_CONGE_UNIQUE, idAgent,annee);
-					srm.getErrors().add(String.format(AGENT_CONGE_UNIQUE, idAgent,annee));
+				if (listeCongeUnique.size() > 0) {
+					logger.error(AGENT_CONGE_UNIQUE, idAgent, annee);
+					srm.getErrors().add(String.format(AGENT_CONGE_UNIQUE, idAgent, annee));
 					return srm;
 				}
-				
 
 				RefAlimCongeAnnuel refAlim = congesAnnuelsRepository.getRefAlimCongeAnnuel(
 						typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), new DateTime(dateDebut).getYear());
@@ -515,12 +514,13 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 				joursAAjouter += getNombreJoursDonnantDroitsAConges(dernierJourMois, quotaMois, nombreJoursPA);
 
+				// #15283
 				// cas partiuclier de la base C :
-				// pour la base C, on rajoute le quota mensuel – le nombre de
-				// jours fériés/chômés cochés (= en repos) sur le mois
+				// pour la base C, on rajoute le quota mensuel + le nombre de
+				// jours fériés/chômés cochés (= au travail) sur le mois
 				if (null != typeCongeAnnuel.getCodeBaseHoraireAbsence()
 						&& "C".equals(typeCongeAnnuel.getCodeBaseHoraireAbsence().trim())) {
-					joursAAjouter -= getJoursReposFeriesbyAgent(idAgent, dateDebut, dateFin);
+					joursAAjouter += getJoursEnGardeFeriesbyAgent(idAgent, dateDebut, dateFin);
 				}
 			}
 		}
@@ -532,7 +532,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		Date dernierModif = new Date();
 		// on enregistre
 
-		 awca = new AgentWeekCongeAnnuel();
+		awca = new AgentWeekCongeAnnuel();
 		awca.setIdAgent(idAgent);
 		awca.setDateMonth(dateDebut);
 
@@ -549,14 +549,14 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		return srm;
 	}
 
-	protected Integer getJoursReposFeriesbyAgent(Integer idAgent, Date dateDebut, Date dateFin) {
+	protected Integer getJoursEnGardeFeriesbyAgent(Integer idAgent, Date dateDebut, Date dateFin) {
 
-		List<AgentJoursFeriesRepos> listJoursReposAgent = agentJoursFeriesReposRepository
-				.getAgentJoursFeriesReposByIdAgentAndPeriode(idAgent, dateDebut, dateFin);
+		List<AgentJoursFeriesGarde> listJoursGardeAgent = agentJoursFeriesGardeRepository
+				.getAgentJoursFeriesGardeByIdAgentAndPeriode(idAgent, dateDebut, dateFin);
 
 		Integer nombreJoursRepos = 0;
-		if (null != listJoursReposAgent && 0 < listJoursReposAgent.size()) {
-			nombreJoursRepos = listJoursReposAgent.size();
+		if (null != listJoursGardeAgent && 0 < listJoursGardeAgent.size()) {
+			nombreJoursRepos = listJoursGardeAgent.size();
 		}
 		return nombreJoursRepos;
 	}
@@ -723,7 +723,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 				counterRepository.persistEntity(etatDemande);
 			}
-			
+
 			// #15147 maj de SPCC : on modifie/supprime la ligne SPCC si besoin
 			deleteOrUpdateSpcc(idAgentList, dto.getDateRestitution(), !dto.isJournee());
 
@@ -759,17 +759,16 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 		return srm;
 	}
-	
+
 	protected void deleteOrUpdateSpcc(Integer idAgent, Date dateJour, boolean isDemiJournee) {
 
-		Spcc spcc = sirhRepository.getSpcc(
-				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), dateJour);
+		Spcc spcc = sirhRepository.getSpcc(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), dateJour);
 
 		// si pas de spcc trouve, on ne fait rien
 		if (null == spcc) {
 			return;
 		}
-		
+
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
 				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), dateJour);
 
@@ -777,24 +776,26 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			return;
 		}
 
-		// si on restitue une journee entiere, on supprime dans tous les cas SPCC
-		if(!isDemiJournee) {
+		// si on restitue une journee entiere, on supprime dans tous les cas
+		// SPCC
+		if (!isDemiJournee) {
 			sirhRepository.removeEntity(spcc);
-		// si on restitue une demi journee, et que la ligne SPCC correspond a une journee complete
-		// on modifie le code de SPCC
-		// pour rappel : journee entiere, code = 1 et demi journee, code = 2
-		} else if(isDemiJournee && 1 == spcc.getCode()) {
+			// si on restitue une demi journee, et que la ligne SPCC correspond
+			// a une journee complete
+			// on modifie le code de SPCC
+			// pour rappel : journee entiere, code = 1 et demi journee, code = 2
+		} else if (isDemiJournee && 1 == spcc.getCode()) {
 			spcc.setCode(2);
 			sirhRepository.persistEntity(spcc);
-		// sinon on supprime
-		} else if(isDemiJournee && 2 == spcc.getCode()) { 
+			// sinon on supprime
+		} else if (isDemiJournee && 2 == spcc.getCode()) {
 			sirhRepository.removeEntity(spcc);
 		}
-		
+
 		// on met à jour SPMATR
 		SimpleDateFormat sdfMairiePerrap = new SimpleDateFormat("yyyyMM");
-		Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent),
-				new Integer(sdfMairiePerrap.format(dateJour)), carr);
+		Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), new Integer(
+				sdfMairiePerrap.format(dateJour)), carr);
 		sirhRepository.persistEntity(matr);
 	}
 
