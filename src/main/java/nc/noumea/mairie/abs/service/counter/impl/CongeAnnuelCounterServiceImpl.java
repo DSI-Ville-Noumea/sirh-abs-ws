@@ -521,6 +521,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 				if (null != typeCongeAnnuel.getCodeBaseHoraireAbsence()
 						&& "C".equals(typeCongeAnnuel.getCodeBaseHoraireAbsence().trim())) {
 					joursAAjouter += getJoursEnGardeFeriesbyAgent(idAgent, dateDebut, dateFin);
+					quotaMax += getJoursEnGardeFeriesbyAgent(idAgent, dateDebut, dateFin);
 				}
 			}
 		}
