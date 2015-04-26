@@ -91,7 +91,7 @@ public class AccessRightsServiceTest {
 		assertFalse(result.isVisuSolde());
 		assertFalse(result.isMajSolde());
 		assertFalse(result.isDroitAcces());
-		assertFalse(result.isSaisieRepos());
+		assertFalse(result.isSaisieGarde());
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class AccessRightsServiceTest {
 		assertTrue(result.isVisuSolde());
 		assertTrue(result.isMajSolde());
 		assertFalse(result.isDroitAcces());
-		assertFalse(result.isSaisieRepos());
+		assertFalse(result.isSaisieGarde());
 	}
 
 	@Test
@@ -223,7 +223,7 @@ public class AccessRightsServiceTest {
 		assertTrue(result.isVisuSolde());
 		assertTrue(result.isMajSolde());
 		assertFalse(result.isDroitAcces());
-		assertFalse(result.isSaisieRepos());
+		assertFalse(result.isSaisieGarde());
 	}
 
 	@Test
@@ -291,7 +291,7 @@ public class AccessRightsServiceTest {
 		assertTrue(result.isVisuSolde());
 		assertTrue(result.isMajSolde());
 		assertFalse(result.isDroitAcces());
-		assertTrue(result.isSaisieRepos());
+		assertTrue(result.isSaisieGarde());
 	}
 
 	@Test
@@ -351,7 +351,7 @@ public class AccessRightsServiceTest {
 		assertTrue(result.isVisuSolde());
 		assertFalse(result.isMajSolde());
 		assertFalse(result.isDroitAcces());
-		assertFalse(result.isSaisieRepos());
+		assertFalse(result.isSaisieGarde());
 	}
 
 	@Test

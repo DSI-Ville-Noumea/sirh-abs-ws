@@ -101,9 +101,9 @@ public class AccessRightsService implements IAccessRightsService {
 					}
 				}
 
-				result.setSaisieRepos(contientAgentDPM);
+				result.setSaisieGarde(contientAgentDPM);
 			} else {
-				result.setSaisieRepos(false);
+				result.setSaisieGarde(false);
 			}
 		} catch (NoResultException e) {
 			logger.debug("Aucun droit trouvé pour l'agent {}" + idAgent);
