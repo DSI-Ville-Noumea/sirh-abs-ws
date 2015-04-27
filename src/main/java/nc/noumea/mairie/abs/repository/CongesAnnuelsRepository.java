@@ -240,4 +240,17 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<RefAlimCongeAnnuel> getListeRefAlimCongeAnnuelByYear(Integer year) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select r from RefAlimCongeAnnuel r ");
+		sb.append("where r.id.annee = :annee ");
+
+		TypedQuery<RefAlimCongeAnnuel> query = absEntityManager.createQuery(sb.toString(), RefAlimCongeAnnuel.class);
+
+		query.setParameter("annee", year);
+
+		return query.getResultList();
+	}
+
 }

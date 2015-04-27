@@ -1995,7 +1995,36 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	@Transactional(readOnly = true)
 	public Integer countDemandesAViser(Integer idAgent) {
-
 		return demandeRepository.countDemandesAViser(idAgent, helperService.getCurrentDateMoinsUnAn()).size();
+	}
+
+	@Override
+	public ReturnMessageDto createRefAlimCongeAnnuelAnnee(Integer anneeCreation) {
+		// cf #15284
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		List<RefAlimCongeAnnuel> listRefAlimAnneePrecedente = congeAnnuelRepository
+				.getListeRefAlimCongeAnnuelByYear(anneeCreation - 1);
+
+		if (null == listRefAlimAnneePrecedente
+				|| listRefAlimAnneePrecedente.size() == 0
+				|| listRefAlimAnneePrecedente.size() != typeAbsenceRepository.getListeTypAbsence(
+						RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()).size()) {
+			result.getErrors().add(
+					"Aucun paramétrage trouvé pour l'année précédente. Merci de contacter le responsable du projet.");
+			return result;
+		}
+		for (RefAlimCongeAnnuel oldRefAlim : listRefAlimAnneePrecedente) {
+			RefAlimCongeAnnuel newRefAlim = oldRefAlim;
+			RefAlimCongeAnnuelId newId = new RefAlimCongeAnnuelId();
+			newId.setAnnee(anneeCreation);
+			newRefAlim.setId(newId);
+			demandeRepository.persistEntity(newRefAlim);
+		}
+
+		logger.debug("Alimentation des congés annuels sauvegardée.");
+		result.getInfos().add("Alimentation des congés annuels sauvegardée.");
+
+		return result;
 	}
 }

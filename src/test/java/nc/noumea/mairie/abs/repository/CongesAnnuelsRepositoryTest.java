@@ -731,132 +731,132 @@ public class CongesAnnuelsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getCongeAnnuelRestitutionMassiveByDate_ok() {
-		
+
 		CongeAnnuelRestitutionMassive restitutioon = new CongeAnnuelRestitutionMassive();
 		restitutioon.setApresMidi(true);
 		restitutioon.setJournee(false);
 		restitutioon.setMatin(false);
 		restitutioon.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		absEntityManager.persist(restitutioon);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
 		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		dto.setApresMidi(true);
 		dto.setJournee(false);
 		dto.setMatin(false);
-		
+
 		CongeAnnuelRestitutionMassive result = repository.getCongeAnnuelRestitutionMassiveByDate(dto);
-		
+
 		assertNotNull(result);
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getCongeAnnuelRestitutionMassiveByDate_ko_badDate() {
-		
+
 		CongeAnnuelRestitutionMassive restitutioon = new CongeAnnuelRestitutionMassive();
 		restitutioon.setApresMidi(true);
 		restitutioon.setJournee(false);
 		restitutioon.setMatin(false);
 		restitutioon.setDateRestitution(new DateTime(2015, 1, 24, 0, 0, 0).toDate());
 		absEntityManager.persist(restitutioon);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
 		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		dto.setApresMidi(true);
 		dto.setJournee(false);
 		dto.setMatin(false);
-		
+
 		CongeAnnuelRestitutionMassive result = repository.getCongeAnnuelRestitutionMassiveByDate(dto);
-		
+
 		assertNull(result);
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getCongeAnnuelRestitutionMassiveByDate_ko_badType() {
-		
+
 		CongeAnnuelRestitutionMassive restitutioon = new CongeAnnuelRestitutionMassive();
 		restitutioon.setApresMidi(true);
 		restitutioon.setJournee(false);
 		restitutioon.setMatin(false);
 		restitutioon.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		absEntityManager.persist(restitutioon);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
 		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		dto.setApresMidi(false);
 		dto.setJournee(true);
 		dto.setMatin(false);
-		
+
 		CongeAnnuelRestitutionMassive result = repository.getCongeAnnuelRestitutionMassiveByDate(dto);
-		
+
 		assertNull(result);
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getCongeAnnuelRestitutionMassiveByDate_ko_badTypeMatin() {
-		
+
 		CongeAnnuelRestitutionMassive restitutioon = new CongeAnnuelRestitutionMassive();
 		restitutioon.setApresMidi(true);
 		restitutioon.setJournee(false);
 		restitutioon.setMatin(false);
 		restitutioon.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		absEntityManager.persist(restitutioon);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
 		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		dto.setApresMidi(false);
 		dto.setJournee(false);
 		dto.setMatin(true);
-		
+
 		CongeAnnuelRestitutionMassive result = repository.getCongeAnnuelRestitutionMassiveByDate(dto);
-		
+
 		assertNull(result);
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getListCongeAnnuelRestitutionMassiveByDate_ok() {
-		
+
 		CongeAnnuelRestitutionMassive restitution = new CongeAnnuelRestitutionMassive();
 		restitution.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		absEntityManager.persist(restitution);
-		
+
 		CongeAnnuelRestitutionMassive restitution2 = new CongeAnnuelRestitutionMassive();
 		restitution2.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		absEntityManager.persist(restitution2);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
 		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
-		
+
 		List<CongeAnnuelRestitutionMassive> result = repository.getListCongeAnnuelRestitutionMassiveByDate(dto);
-		
+
 		assertEquals(2, result.size());
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getListCongeAnnuelRestitutionMassiveByDate_1result_badDate() {
-		
+
 		CongeAnnuelRestitutionMassive restitution = new CongeAnnuelRestitutionMassive();
 		restitution.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		absEntityManager.persist(restitution);
-		
+
 		CongeAnnuelRestitutionMassive restitution2 = new CongeAnnuelRestitutionMassive();
 		restitution2.setDateRestitution(new DateTime(2015, 1, 22, 0, 0, 0).toDate());
 		absEntityManager.persist(restitution2);
-		
+
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
 		dto.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
-		
+
 		List<CongeAnnuelRestitutionMassive> result = repository.getListCongeAnnuelRestitutionMassiveByDate(dto);
-		
+
 		assertEquals(1, result.size());
 	}
 
@@ -871,21 +871,21 @@ public class CongesAnnuelsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getHistoRestitutionMassiveOrderByDate_ok() {
-		
+
 		CongeAnnuelRestitutionMassive restitution = new CongeAnnuelRestitutionMassive();
 		restitution.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		absEntityManager.persist(restitution);
-		
+
 		CongeAnnuelRestitutionMassive restitution2 = new CongeAnnuelRestitutionMassive();
 		restitution2.setDateRestitution(new DateTime(2015, 1, 21, 0, 0, 0).toDate());
 		absEntityManager.persist(restitution2);
-		
+
 		List<CongeAnnuelRestitutionMassive> result = repository.getHistoRestitutionMassiveOrderByDate();
-		
+
 		assertEquals(2, result.size());
 		assertEquals(result.get(0).getDateRestitution(), new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		assertEquals(result.get(1).getDateRestitution(), new DateTime(2015, 1, 21, 0, 0, 0).toDate());
@@ -945,11 +945,10 @@ public class CongesAnnuelsRepositoryTest {
 		absEntityManager.clear();
 	}
 
-
 	@Test
 	@Transactional("absTransactionManager")
 	public void getListeAlimAutoCongeAnnuelByAgent_0Date() {
-		Integer idAgent=9005138;
+		Integer idAgent = 9005138;
 
 		List<CongeAnnuelAlimAutoHisto> result = repository.getListeAlimAutoCongeAnnuelByAgent(idAgent);
 
@@ -962,7 +961,7 @@ public class CongesAnnuelsRepositoryTest {
 	@Test
 	@Transactional("absTransactionManager")
 	public void getListeAlimAutoCongeAnnuelByAgent_OK() {
-		Integer idAgent=9005138;
+		Integer idAgent = 9005138;
 
 		CongeAnnuelAlimAutoHisto d3 = new CongeAnnuelAlimAutoHisto();
 		d3.setIdAgent(idAgent);
@@ -981,6 +980,91 @@ public class CongesAnnuelsRepositoryTest {
 		assertEquals(result.size(), 2);
 		assertEquals(d.getIdAgent(), result.get(0).getIdAgent());
 		assertEquals(d3.getIdAgent(), result.get(1).getIdAgent());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeRefAlimCongeAnnuelByYear_0() {
+		Integer annee = 2014;
+
+		List<RefAlimCongeAnnuel> result = repository.getListeRefAlimCongeAnnuelByYear(annee);
+
+		assertEquals(result.size(), 0);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeRefAlimCongeAnnuelByYear_OK() {
+		Integer annee = 2015;
+
+		RefAlimCongeAnnuelId id1 = new RefAlimCongeAnnuelId();
+		id1.setAnnee(2014);
+		id1.setIdRefTypeSaisiCongeAnnuel(1);
+		RefAlimCongeAnnuel d1 = new RefAlimCongeAnnuel();
+		d1.setId(id1);
+		d1.setJanvier(3.0);
+		d1.setFevrier(0.0);
+		d1.setMars(0.0);
+		d1.setAvril(0.0);
+		d1.setMai(0.0);
+		d1.setJuin(0.0);
+		d1.setJuillet(0.0);
+		d1.setAout(0.0);
+		d1.setSeptembre(0.0);
+		d1.setOctobre(0.0);
+		d1.setNovembre(0.0);
+		d1.setDecembre(0.0);		
+		absEntityManager.persist(d1);
+
+		RefAlimCongeAnnuelId id2 = new RefAlimCongeAnnuelId();
+		id2.setAnnee(annee);
+		id2.setIdRefTypeSaisiCongeAnnuel(2);
+		RefAlimCongeAnnuel d2 = new RefAlimCongeAnnuel();
+		d2.setId(id2);
+		d2.setJanvier(2.0);
+		d2.setFevrier(0.0);
+		d2.setMars(0.0);
+		d2.setAvril(0.0);
+		d2.setMai(0.0);
+		d2.setJuin(0.0);
+		d2.setJuillet(0.0);
+		d2.setAout(0.0);
+		d2.setSeptembre(0.0);
+		d2.setOctobre(0.0);
+		d2.setNovembre(0.0);
+		d2.setDecembre(0.0);
+		absEntityManager.persist(d2);
+
+		RefAlimCongeAnnuelId id3 = new RefAlimCongeAnnuelId();
+		id3.setAnnee(annee);
+		id3.setIdRefTypeSaisiCongeAnnuel(3);
+		RefAlimCongeAnnuel d3 = new RefAlimCongeAnnuel();
+		d3.setId(id3);
+		d3.setJanvier(1.0);
+		d3.setFevrier(0.0);
+		d3.setMars(0.0);
+		d3.setAvril(0.0);
+		d3.setMai(0.0);
+		d3.setJuin(0.0);
+		d3.setJuillet(0.0);
+		d3.setAout(0.0);
+		d3.setSeptembre(0.0);
+		d3.setOctobre(0.0);
+		d3.setNovembre(0.0);
+		d3.setDecembre(0.0);		
+		absEntityManager.persist(d3);
+
+		List<RefAlimCongeAnnuel> result = repository.getListeRefAlimCongeAnnuelByYear(annee);
+
+		assertEquals(result.size(), 2);
+		assertEquals(d2.getJanvier(), result.get(0).getJanvier());
+		assertEquals(d3.getJanvier(), result.get(1).getJanvier());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

@@ -35,6 +35,7 @@ import nc.noumea.mairie.abs.domain.EtatDemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.EtatDemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemandeReposComp;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
@@ -5061,7 +5062,7 @@ public class AbsenceServiceTest {
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		dto.setIdDemande(1);
-		
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 		RefTypeAbsence type = new RefTypeAbsence();
@@ -12376,6 +12377,94 @@ public class AbsenceServiceTest {
 		assertEquals(new Double(2.5), result.get(0).getNbJours());
 		assertEquals(dateMonth2.toDate(), result.get(1).getDateMois());
 		assertEquals(new Double(0.0), result.get(1).getNbJours());
+	}
+
+	@Test
+	public void createRefAlimCongeAnnuelAnnee_Error_NoRefAlim() {
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListeRefAlimCongeAnnuelByYear(2014)).thenReturn(null);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+
+		ReturnMessageDto result = service.createRefAlimCongeAnnuelAnnee(2015);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("Aucun paramétrage trouvé pour l'année précédente. Merci de contacter le responsable du projet.",
+				result.getErrors().get(0));
+	}
+
+	@Test
+	public void createRefAlimCongeAnnuelAnnee_Error_NoSameCount() {
+		RefAlimCongeAnnuel r1 = new RefAlimCongeAnnuel();
+
+		List<RefAlimCongeAnnuel> listeRef = new ArrayList<RefAlimCongeAnnuel>();
+		listeRef.add(r1);
+
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListeRefAlimCongeAnnuelByYear(2014)).thenReturn(listeRef);
+
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getListeTypAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()))
+				.thenReturn(new ArrayList<RefTypeAbsence>());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+
+		ReturnMessageDto result = service.createRefAlimCongeAnnuelAnnee(2015);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("Aucun paramétrage trouvé pour l'année précédente. Merci de contacter le responsable du projet.",
+				result.getErrors().get(0));
+	}
+
+	@Test
+	public void createRefAlimCongeAnnuelAnnee_OK() {
+		RefAlimCongeAnnuel r1 = new RefAlimCongeAnnuel();
+		r1.setJanvier(1.0);
+
+		List<RefAlimCongeAnnuel> listeRef = new ArrayList<RefAlimCongeAnnuel>();
+		listeRef.add(r1);
+
+		RefTypeAbsence t1 = new RefTypeAbsence();
+
+		List<RefTypeAbsence> listeTypeAbs = new ArrayList<RefTypeAbsence>();
+		listeTypeAbs.add(t1);
+
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListeRefAlimCongeAnnuelByYear(2014)).thenReturn(listeRef);
+
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getListeTypAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()))
+				.thenReturn(listeTypeAbs);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				RefAlimCongeAnnuel obj = (RefAlimCongeAnnuel) args[0];
+
+				assertEquals(2015, obj.getId().getAnnee().intValue());
+				assertEquals(new Double(1), obj.getJanvier());
+
+				return true;
+			}
+		}).when(demandeRepository).persistEntity(Mockito.isA(RefAlimCongeAnnuel.class));
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		ReturnMessageDto result = service.createRefAlimCongeAnnuelAnnee(2015);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("Alimentation des congés annuels sauvegardée.", result.getInfos().get(0));
+		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(RefAlimCongeAnnuel.class));
 	}
 
 }

@@ -39,5 +39,7 @@ public interface ICongesAnnuelsRepository {
 
 	List<CongeAnnuelRestitutionMassive> getListCongeAnnuelRestitutionMassiveByDate(RestitutionMassiveDto dto);
 
+	List<RefAlimCongeAnnuel> getListeRefAlimCongeAnnuelByYear(Integer year);
+
 
 }

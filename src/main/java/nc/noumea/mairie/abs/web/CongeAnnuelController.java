@@ -355,4 +355,20 @@ public class CongeAnnuelController {
 
 		return srm;
 	}
+
+	/**
+	 * Création automatique d'une annee dans REF_ALIM_CONGES_ANNUELS avec les valeurs de l'année précédente <br />
+	 * utile a SIRH lors de la creation d'une nouvelle année dans le paramétrage des jours fériés
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/createRefAlimCongeAnnuelAnnee", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public ReturnMessageDto createRefAlimCongeAnnuelAnnee(@RequestParam("annee") Integer anneeCreation) {
+
+		logger.debug("entered GET [congeannuel/createRefAlimCongeAnnuelAnnee] => createRefAlimCongeAnnuelAnnee with parameters annee = {}",
+				anneeCreation);
+
+		ReturnMessageDto srm = absenceService.createRefAlimCongeAnnuelAnnee(anneeCreation);
+
+		return srm;
+	}
 }

@@ -65,4 +65,6 @@ public interface IAbsenceService {
 	Integer countDemandesAApprouver(Integer idAgent);
 
 	Integer countDemandesAViser(Integer idAgent);
+
+	ReturnMessageDto createRefAlimCongeAnnuelAnnee(Integer anneeCreation);
 }
