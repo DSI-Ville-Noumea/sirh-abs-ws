@@ -36,6 +36,7 @@ import nc.noumea.mairie.abs.domain.EtatDemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemandeReposComp;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
+import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuelId;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
@@ -12423,8 +12424,12 @@ public class AbsenceServiceTest {
 
 	@Test
 	public void createRefAlimCongeAnnuelAnnee_OK() {
+		RefAlimCongeAnnuelId id = new RefAlimCongeAnnuelId();
+		id.setIdRefTypeSaisiCongeAnnuel(1);
+		id.setAnnee(2014);
 		RefAlimCongeAnnuel r1 = new RefAlimCongeAnnuel();
 		r1.setJanvier(1.0);
+		r1.setId(id);
 
 		List<RefAlimCongeAnnuel> listeRef = new ArrayList<RefAlimCongeAnnuel>();
 		listeRef.add(r1);
