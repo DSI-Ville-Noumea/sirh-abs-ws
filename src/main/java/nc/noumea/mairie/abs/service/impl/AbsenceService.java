@@ -1999,6 +1999,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto createRefAlimCongeAnnuelAnnee(Integer anneeCreation) {
 		// cf #15284
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -2006,18 +2007,29 @@ public class AbsenceService implements IAbsenceService {
 		List<RefAlimCongeAnnuel> listRefAlimAnneePrecedente = congeAnnuelRepository
 				.getListeRefAlimCongeAnnuelByYear(anneeCreation - 1);
 
-		if (null == listRefAlimAnneePrecedente
-				|| listRefAlimAnneePrecedente.size() == 0
-				|| listRefAlimAnneePrecedente.size() != typeAbsenceRepository.getListeTypAbsence(
-						RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()).size()) {
+		if (null == listRefAlimAnneePrecedente || listRefAlimAnneePrecedente.size() == 0
+				|| listRefAlimAnneePrecedente.size() != typeAbsenceRepository.getListeTypeSaisiCongeAnnuel().size()) {
 			result.getErrors().add(
 					"Aucun paramétrage trouvé pour l'année précédente. Merci de contacter le responsable du projet.");
 			return result;
 		}
 		for (RefAlimCongeAnnuel oldRefAlim : listRefAlimAnneePrecedente) {
-			RefAlimCongeAnnuel newRefAlim = oldRefAlim;
+			RefAlimCongeAnnuel newRefAlim = new RefAlimCongeAnnuel();
+			newRefAlim.setJanvier(oldRefAlim.getJanvier());
+			newRefAlim.setFevrier(oldRefAlim.getFevrier());
+			newRefAlim.setMars(oldRefAlim.getMars());
+			newRefAlim.setAvril(oldRefAlim.getAvril());
+			newRefAlim.setMai(oldRefAlim.getMai());
+			newRefAlim.setJuin(oldRefAlim.getJuin());
+			newRefAlim.setJuillet(oldRefAlim.getJuillet());
+			newRefAlim.setAout(oldRefAlim.getAout());
+			newRefAlim.setSeptembre(oldRefAlim.getSeptembre());
+			newRefAlim.setOctobre(oldRefAlim.getOctobre());
+			newRefAlim.setNovembre(oldRefAlim.getNovembre());
+			newRefAlim.setDecembre(oldRefAlim.getDecembre());
 			RefAlimCongeAnnuelId newId = new RefAlimCongeAnnuelId();
 			newId.setAnnee(anneeCreation);
+			newId.setIdRefTypeSaisiCongeAnnuel(oldRefAlim.getId().getIdRefTypeSaisiCongeAnnuel());
 			newRefAlim.setId(newId);
 			demandeRepository.persistEntity(newRefAlim);
 		}

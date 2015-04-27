@@ -12406,8 +12406,8 @@ public class AbsenceServiceTest {
 		Mockito.when(congeAnnuelRepository.getListeRefAlimCongeAnnuelByYear(2014)).thenReturn(listeRef);
 
 		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
-		Mockito.when(typeAbsenceRepository.getListeTypAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()))
-				.thenReturn(new ArrayList<RefTypeAbsence>());
+		Mockito.when(typeAbsenceRepository.getListeTypeSaisiCongeAnnuel()).thenReturn(
+				new ArrayList<RefTypeSaisiCongeAnnuel>());
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
@@ -12429,17 +12429,16 @@ public class AbsenceServiceTest {
 		List<RefAlimCongeAnnuel> listeRef = new ArrayList<RefAlimCongeAnnuel>();
 		listeRef.add(r1);
 
-		RefTypeAbsence t1 = new RefTypeAbsence();
+		RefTypeSaisiCongeAnnuel t1 = new RefTypeSaisiCongeAnnuel();
 
-		List<RefTypeAbsence> listeTypeAbs = new ArrayList<RefTypeAbsence>();
+		List<RefTypeSaisiCongeAnnuel> listeTypeAbs = new ArrayList<RefTypeSaisiCongeAnnuel>();
 		listeTypeAbs.add(t1);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congeAnnuelRepository.getListeRefAlimCongeAnnuelByYear(2014)).thenReturn(listeRef);
 
 		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
-		Mockito.when(typeAbsenceRepository.getListeTypAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()))
-				.thenReturn(listeTypeAbs);
+		Mockito.when(typeAbsenceRepository.getListeTypeSaisiCongeAnnuel()).thenReturn(listeTypeAbs);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.doAnswer(new Answer<Object>() {
