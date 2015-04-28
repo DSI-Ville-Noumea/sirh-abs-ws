@@ -271,6 +271,12 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/congeannuel/createRefAlimCongeAnnuelAnnee</span>
+                    <div>
+                            <a href="#/congeannuel/createRefAlimCongeAnnuelAnnee_GET_annee">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/congeexceptionnel/checkCongesExceptionnels</span>
                     <div>
                             <a href="#/congeexceptionnel/checkCongesExceptionnels_GET_idAgent_dateDebut_dateFin">GET</a>
@@ -446,15 +452,15 @@
                     </div>
                 </div>
                 <div class="resource-summary">
-                    <span class="resource-summary-path">/joursFeriesRepos/getListAgentsWithJoursFeriesEnRepos</span>
+                    <span class="resource-summary-path">/joursFeriesGarde/getListAgentsWithJoursFeriesEnGarde</span>
                     <div>
-                            <a href="#/joursFeriesRepos/getListAgentsWithJoursFeriesEnRepos_GET_idAgent_codeService_dateDebut_dateFin">GET</a>
+                            <a href="#/joursFeriesGarde/getListAgentsWithJoursFeriesEnGarde_GET_idAgent_codeService_dateDebut_dateFin">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
-                    <span class="resource-summary-path">/joursFeriesRepos/setListAgentsWithJoursFeriesEnRepos</span>
+                    <span class="resource-summary-path">/joursFeriesGarde/setListAgentsWithJoursFeriesEnGarde</span>
                     <div>
-                            <a href="#/joursFeriesRepos/setListAgentsWithJoursFeriesEnRepos_POST_idAgent_dateDebut_dateFin">POST</a>
+                            <a href="#/joursFeriesGarde/setListAgentsWithJoursFeriesEnGarde_POST_idAgent_dateDebut_dateFin">POST</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -657,7 +663,7 @@
                 <span class="json-field-name">droitAcces</span>
 <span class="json-primitive-type">boolean</span>            </div>
             <div class="json-field">
-                <span class="json-field-name">saisieRepos</span>
+                <span class="json-field-name">saisieGarde</span>
 <span class="json-primitive-type">boolean</span>            </div>
 </div></span>    }
 </div>
@@ -3391,6 +3397,39 @@
                             <div class="resource-docs">
                                  Mise à jour de SPSOLD pour les bulletins de salaires <br />
  utile a SIRH-JOBS
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">errors</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+            <div class="json-field">
+                <span class="json-field-name">infos</span>
+    <span class="json-array">[
+<span class="json-primitive-type">string</span>    ]</span>
+            </div>
+</div></span>    }
+</div>
+                            </div>
+                    </div>
+                    <a id="/congeannuel/createRefAlimCongeAnnuelAnnee_GET_annee"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/congeannuel/createRefAlimCongeAnnuelAnnee</span>?<span class="url-param-key">annee</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Création automatique d'une annee dans REF_ALIM_CONGES_ANNUELS avec les valeurs de l'année précédente <br />
+ utile a SIRH lors de la creation d'une nouvelle année dans le paramétrage des jours fériés
 
                             </div>
 
@@ -8641,11 +8680,11 @@
 </div>
                             </div>
                     </div>
-                    <a id="/joursFeriesRepos/getListAgentsWithJoursFeriesEnRepos_GET_idAgent_codeService_dateDebut_dateFin"/>
+                    <a id="/joursFeriesGarde/getListAgentsWithJoursFeriesEnGarde_GET_idAgent_codeService_dateDebut_dateFin"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">GET</span>
-<span class="path">/joursFeriesRepos/getListAgentsWithJoursFeriesEnRepos</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">codeService</span>=<span class="url-param-expected-type"><span class="json-primitive-type">string</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
+<span class="path">/joursFeriesGarde/getListAgentsWithJoursFeriesEnGarde</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">codeService</span>=<span class="url-param-expected-type"><span class="json-primitive-type">string</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
 
 
 
@@ -8656,7 +8695,7 @@
                                 <div class="body-contents">    <span class="json-object">{
     <div class="json-fields">
             <div class="json-field">
-                <span class="json-field-name">listAgentAvecRepos</span>
+                <span class="json-field-name">listAgentAvecGarde</span>
     <span class="json-array">[
     <span class="json-object">{
     <div class="json-fields">
@@ -8676,7 +8715,7 @@
 </div></span>    }
             </div>
             <div class="json-field">
-                <span class="json-field-name">joursFeriesEnRepos</span>
+                <span class="json-field-name">joursFeriesEnGarde</span>
     <span class="json-array">[
     <span class="json-object">{
     <div class="json-fields">
@@ -8713,11 +8752,11 @@
 </div>
                             </div>
                     </div>
-                    <a id="/joursFeriesRepos/setListAgentsWithJoursFeriesEnRepos_POST_idAgent_dateDebut_dateFin"/>
+                    <a id="/joursFeriesGarde/setListAgentsWithJoursFeriesEnGarde_POST_idAgent_dateDebut_dateFin"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">POST</span>
-<span class="path">/joursFeriesRepos/setListAgentsWithJoursFeriesEnRepos</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
+<span class="path">/joursFeriesGarde/setListAgentsWithJoursFeriesEnGarde</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateDebut</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">dateFin</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>                        </div>
 
 
 
@@ -8743,7 +8782,7 @@
 </div></span>    }
             </div>
             <div class="json-field">
-                <span class="json-field-name">joursFeriesEnRepos</span>
+                <span class="json-field-name">joursFeriesEnGarde</span>
     <span class="json-array">[
     <span class="json-object">{
     <div class="json-fields">
