@@ -1761,9 +1761,10 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
-	public List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuelByMois(Date dateMois) {
+	public List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuelByMois(Date dateMois, boolean onlyErreur) {
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
-		for (CongeAnnuelAlimAutoHisto histo : congeAnnuelRepository.getListeAlimAutoCongeAnnuelByMois(dateMois)) {
+		for (CongeAnnuelAlimAutoHisto histo : congeAnnuelRepository.getListeAlimAutoCongeAnnuelByMois(dateMois,
+				onlyErreur)) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
 			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
 			AgentDto agDto = new AgentDto();

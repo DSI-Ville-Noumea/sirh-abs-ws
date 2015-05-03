@@ -268,14 +268,15 @@ public class CongeAnnuelController {
 	@ResponseBody
 	@RequestMapping(value = "/getListeAlimAutoCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuel(
+			@RequestParam("onlyErreur") boolean onlyErreur,
 			@RequestBody(required = true) MoisAlimAutoCongesAnnuelsDto moisAlimAutoDto, HttpServletResponse response) {
 
 		logger.debug(
 				"entered POST [congeannuel/getListeAlimAutoCongeAnnuel] => alimentationAutoCongesAnnuels with parameter moisAlimAutoDto = {}",
 				moisAlimAutoDto.getDtoToString(moisAlimAutoDto));
 
-		List<MoisAlimAutoCongesAnnuelsDto> result = absenceService.getListeAlimAutoCongeAnnuelByMois(moisAlimAutoDto
-				.getDateMois());
+		List<MoisAlimAutoCongesAnnuelsDto> result = absenceService.getListeAlimAutoCongeAnnuelByMois(
+				moisAlimAutoDto.getDateMois(), onlyErreur);
 
 		return result;
 	}
@@ -297,7 +298,6 @@ public class CongeAnnuelController {
 
 		return absenceService.getHistoAlimAutoCongeAnnuel(convertedIdAgent);
 	}
-	
 
 	/**
 	 * Liste de toutes les alimentations mensuelles par Base Congé
@@ -357,14 +357,17 @@ public class CongeAnnuelController {
 	}
 
 	/**
-	 * Création automatique d'une annee dans REF_ALIM_CONGES_ANNUELS avec les valeurs de l'année précédente <br />
-	 * utile a SIRH lors de la creation d'une nouvelle année dans le paramétrage des jours fériés
+	 * Création automatique d'une annee dans REF_ALIM_CONGES_ANNUELS avec les
+	 * valeurs de l'année précédente <br />
+	 * utile a SIRH lors de la creation d'une nouvelle année dans le paramétrage
+	 * des jours fériés
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/createRefAlimCongeAnnuelAnnee", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public ReturnMessageDto createRefAlimCongeAnnuelAnnee(@RequestParam("annee") Integer anneeCreation) {
 
-		logger.debug("entered GET [congeannuel/createRefAlimCongeAnnuelAnnee] => createRefAlimCongeAnnuelAnnee with parameters annee = {}",
+		logger.debug(
+				"entered GET [congeannuel/createRefAlimCongeAnnuelAnnee] => createRefAlimCongeAnnuelAnnee with parameters annee = {}",
 				anneeCreation);
 
 		ReturnMessageDto srm = absenceService.createRefAlimCongeAnnuelAnnee(anneeCreation);

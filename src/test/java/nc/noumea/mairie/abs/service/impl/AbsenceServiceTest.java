@@ -12012,13 +12012,14 @@ public class AbsenceServiceTest {
 		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate())).thenReturn(
+		Mockito.when(congeAnnuelRepository.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate(), false)).thenReturn(
 				new ArrayList<CongeAnnuelAlimAutoHisto>());
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<MoisAlimAutoCongesAnnuelsDto> result = service.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate());
+		List<MoisAlimAutoCongesAnnuelsDto> result = service
+				.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate(), false);
 
 		assertEquals(0, result.size());
 	}
@@ -12043,7 +12044,8 @@ public class AbsenceServiceTest {
 		ag.setIdAgent(c.getIdAgent());
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate())).thenReturn(list);
+		Mockito.when(congeAnnuelRepository.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate(), false)).thenReturn(
+				list);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getAgent(9005138)).thenReturn(ag);
@@ -12053,7 +12055,8 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		List<MoisAlimAutoCongesAnnuelsDto> result = service.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate());
+		List<MoisAlimAutoCongesAnnuelsDto> result = service
+				.getListeAlimAutoCongeAnnuelByMois(dateMonth.toDate(), false);
 
 		assertEquals(2, result.size());
 		assertEquals(dateMonth.toDate(), result.get(0).getDateMois());

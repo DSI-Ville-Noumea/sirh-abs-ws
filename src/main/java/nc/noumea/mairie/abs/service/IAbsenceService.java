@@ -48,7 +48,7 @@ public interface IAbsenceService {
 
 	List<MoisAlimAutoCongesAnnuelsDto> getListeMoisAlimAutoCongeAnnuel();
 
-	List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuelByMois(Date dateMois);
+	List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuelByMois(Date dateMois, boolean onlyErreur);
 
 	List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoCongeAnnuel(Integer idAgent);
 

@@ -89,11 +89,14 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 	}
 
 	@Override
-	public List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuelByMois(Date dateMois) {
+	public List<CongeAnnuelAlimAutoHisto> getListeAlimAutoCongeAnnuelByMois(Date dateMois, boolean onlyErreur) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select c from CongeAnnuelAlimAutoHisto c ");
 		sb.append("where c.dateMonth = :date ");
+		if (onlyErreur) {
+			sb.append("and c.status != 'OK' ");
+		}
 		sb.append("order by c.idAgent ");
 
 		TypedQuery<CongeAnnuelAlimAutoHisto> query = absEntityManager.createQuery(sb.toString(),
