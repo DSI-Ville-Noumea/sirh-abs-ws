@@ -427,8 +427,8 @@ public class DemandeController {
 
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 		if (aValider) {
-			result = absenceService.getListeDemandesSIRHAValider(fromDate, toDate, idRefEtat, idRefType, idAgentRecherche,
-					idRefGroupeAbsence,agentIds);
+			result = absenceService.getListeDemandesSIRHAValider(fromDate, toDate, idRefEtat, idRefType,
+					idAgentRecherche, idRefGroupeAbsence, agentIds);
 		} else {
 			result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType, idAgentRecherche,
 					idRefGroupeAbsence, agentIds);
@@ -479,33 +479,6 @@ public class DemandeController {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 
 		return result;
-	}
-
-	/**
-	 * Retourne le nombre de demandes a approuver pour l accueil du kiosque
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/countDemandesAApprouver", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public Integer countDemandesAApprouver(@RequestParam("idAgent") Integer idAgent) {
-
-		logger.debug(
-				"entered GET [demandes/countDemandesAApprouver] => countDemandesAApprouver with parameter idAgent = {}",
-				idAgent);
-
-		return absenceService.countDemandesAApprouver(idAgent);
-	}
-
-	/**
-	 * Retourne le nombre de demandes a viser pour l accueil du kiosque
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/countDemandesAViser", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public Integer countDemandesAViser(@RequestParam("idAgent") Integer idAgent) {
-
-		logger.debug("entered GET [demandes/countDemandesAViser] => countDemandesAViser with parameter idAgent = {}",
-				idAgent);
-
-		return absenceService.countDemandesAViser(idAgent);
 	}
 
 }
