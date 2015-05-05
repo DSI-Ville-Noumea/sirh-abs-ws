@@ -9,6 +9,8 @@ public class InfosAlimAutoCongesAnnuelsDto {
 	private Integer idBaseCongeAbsence;
 	// SPPOSA.DROITC
 	private boolean droitConges;
+	// SPPOSA.DUREE
+	private Integer dureeDroitConges;
 	
 	private Date dateDebut;
 	private Date dateFin;
@@ -43,6 +45,12 @@ public class InfosAlimAutoCongesAnnuelsDto {
 	}
 	public void setDateFin(Date dateFin) {
 		this.dateFin = dateFin;
+	}
+	public Integer getDureeDroitConges() {
+		return dureeDroitConges;
+	}
+	public void setDureeDroitConges(Integer dureeDroitConges) {
+		this.dureeDroitConges = dureeDroitConges;
 	}
 	
 }

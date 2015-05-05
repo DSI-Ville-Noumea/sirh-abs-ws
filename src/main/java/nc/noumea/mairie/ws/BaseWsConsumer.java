@@ -94,7 +94,7 @@ public abstract class BaseWsConsumer {
 
 		String output = response.getEntity(String.class);
 
-		result = new JSONDeserializer<T>().deserializeInto(output, result);
+		result = new JSONDeserializer<T>().use(Date.class, new MSDateTransformer()).deserializeInto(output, result);
 
 		return result;
 	}
@@ -117,8 +117,7 @@ public abstract class BaseWsConsumer {
 		String output = response.getEntity(String.class);
 
 		result = new JSONDeserializer<List<T>>().use(null, ArrayList.class).use("values", targetClass)
-				.use(Date.class, new MSDateTransformer())
-				.deserialize(output);
+				.use(Date.class, new MSDateTransformer()).deserialize(output);
 
 		return result;
 	}

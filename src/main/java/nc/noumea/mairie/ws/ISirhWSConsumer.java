@@ -35,4 +35,6 @@ public interface ISirhWSConsumer {
 	List<ServiceDto> getSubServiceOfService(String codeService);
 
 	RefTypeSaisiCongeAnnuelDto getOldBaseHoraireAbsence(Integer idAgent);
+
+	List<InfosAlimAutoCongesAnnuelsDto> getListPAByAgent(Integer idAgent);
 }

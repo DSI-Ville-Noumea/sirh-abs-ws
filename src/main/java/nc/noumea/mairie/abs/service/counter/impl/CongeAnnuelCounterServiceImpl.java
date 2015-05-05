@@ -469,59 +469,109 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 		Double joursAAjouter = 0.0;
 		Double quotaMax = 0.0;
-		// on calcule le nombre de jours conges à ajouter sur le mois
-		for (InfosAlimAutoCongesAnnuelsDto PA : listPA) {
-			if (PA.isDroitConges()) {
 
-				if (PA.getIdBaseCongeAbsence() == null) {
-					logger.error(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence());
-					srm.getErrors().add(String.format(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence()));
-					return srm;
+		// #15368 : cas des PA avec durée de droit
+		// on regarde la 1ere PA si elle est sur 12 mois ou non
+		if (listPA.get(0) != null && listPA.get(0).isDroitConges() && listPA.get(0).getDureeDroitConges() == 12) {
+			srm = checkErreurAlimMensuelle(srm, listPA.get(0), dateDebut);
+			if (srm.getErrors().size() > 0) {
+				return srm;
+			}
+			// on cherche ensuite toutes les PA
+			InfosAlimAutoCongesAnnuelsDto paAncienne12Mois = null;
+			List<InfosAlimAutoCongesAnnuelsDto> listPaAgent = sirhWSConsumer.getListPAByAgent(listPA.get(0)
+					.getIdAgent());
+			for (InfosAlimAutoCongesAnnuelsDto dto : listPaAgent) {
+				if (dto.isDroitConges() && dto.getDureeDroitConges() != 0) {
+					paAncienne12Mois = dto;
+				} else {
+					break;
 				}
-				RefTypeSaisiCongeAnnuel typeCongeAnnuel = typeAbsenceRepository.getEntity(
-						RefTypeSaisiCongeAnnuel.class, PA.getIdBaseCongeAbsence());
+			}
+			if (paAncienne12Mois == null) {
+				logger.error(PA_INEXISTANT, arc.getIdAgent());
+				srm.getErrors().add(String.format(PA_INEXISTANT, idAgent));
+				return srm;
+			}
 
-				if (null == typeCongeAnnuel) {
-					logger.error(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence());
-					srm.getErrors().add(String.format(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence()));
-					return srm;
-				}
+			RefTypeSaisiCongeAnnuel typeCongeAnnuel = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+					listPA.get(0).getIdBaseCongeAbsence());
+			RefAlimCongeAnnuel refAlim = congesAnnuelsRepository.getRefAlimCongeAnnuel(
+					typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), new DateTime(dateDebut).getYear());
 
-				// cas du congé unique
-				Calendar calendarYear = GregorianCalendar.getInstance();
-				calendarYear.setTime(dateDebut);
-				Integer annee = calendarYear.get(Calendar.YEAR);
-				List<Demande> listeCongeUnique = demandeRepository.listerDemandeCongeUnique(idAgent, annee);
-				if (listeCongeUnique.size() > 0) {
-					logger.error(AGENT_CONGE_UNIQUE, idAgent, annee);
-					srm.getErrors().add(String.format(AGENT_CONGE_UNIQUE, idAgent, annee));
-					return srm;
-				}
+			Double quotaMois = getQuotaCongesByMois(refAlim, new DateTime(dateDebut).getMonthOfYear());
+			if (quotaMois > quotaMax) {
+				quotaMax = quotaMois;
+			}
 
-				RefAlimCongeAnnuel refAlim = congesAnnuelsRepository.getRefAlimCongeAnnuel(
-						typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), new DateTime(dateDebut).getYear());
+			Calendar dateDebutCalculee = GregorianCalendar.getInstance();
+			dateDebutCalculee.setTime(paAncienne12Mois.getDateDebut());
+			dateDebutCalculee.add(Calendar.MONTH, listPA.get(0).getDureeDroitConges());
 
-				Double quotaMois = getQuotaCongesByMois(refAlim, new DateTime(dateDebut).getMonthOfYear());
-				if (quotaMois > quotaMax) {
-					quotaMax = quotaMois;
-				}
+			Double nombreJoursPA = helperService.calculNombreJours(listPA.get(0).getDateDebut(),
+					dateDebutCalculee.getTime());
 
-				Double nombreJoursPA = helperService.calculNombreJours(PA.getDateDebut(), PA.getDateFin());
+			if (nombreJoursPA < 0) {
+				nombreJoursPA = 0.0;
+			}
 
-				Calendar calendar = GregorianCalendar.getInstance();
-				calendar.setTime(PA.getDateDebut());
-				Integer dernierJourMois = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+			Calendar calendar = GregorianCalendar.getInstance();
+			calendar.setTime(listPA.get(0).getDateDebut());
+			Integer dernierJourMois = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+			calendar.set(Calendar.DAY_OF_MONTH, dernierJourMois);
 
-				joursAAjouter += getNombreJoursDonnantDroitsAConges(dernierJourMois, quotaMois, nombreJoursPA);
+			joursAAjouter += getNombreJoursDonnantDroitsAConges(dernierJourMois, quotaMois, nombreJoursPA);
 
-				// #15283
-				// cas partiuclier de la base C :
-				// pour la base C, on rajoute le quota mensuel + le nombre de
-				// jours fériés/chômés cochés (= au travail) sur le mois
-				if (null != typeCongeAnnuel.getCodeBaseHoraireAbsence()
-						&& "C".equals(typeCongeAnnuel.getCodeBaseHoraireAbsence().trim())) {
-					joursAAjouter += getJoursEnGardeFeriesbyAgent(idAgent, dateDebut, dateFin);
-					quotaMax += getJoursEnGardeFeriesbyAgent(idAgent, dateDebut, dateFin);
+			// #15283
+			// cas partiuclier de la base C :
+			// pour la base C, on rajoute le quota mensuel + le nombre
+			// de
+			// jours fériés/chômés cochés (= au travail) sur le mois
+			if (null != typeCongeAnnuel.getCodeBaseHoraireAbsence()
+					&& "C".equals(typeCongeAnnuel.getCodeBaseHoraireAbsence().trim())) {
+				joursAAjouter += getJoursEnGardeFeriesbyAgent(idAgent, dateDebut, dateFin);
+				quotaMax += getJoursEnGardeFeriesbyAgent(idAgent, dateDebut, dateFin);
+			}
+
+		} else {
+			// on calcule le nombre de jours conges à ajouter sur le mois
+			for (InfosAlimAutoCongesAnnuelsDto PA : listPA) {
+				if (PA.isDroitConges()) {
+
+					srm = checkErreurAlimMensuelle(srm, PA, dateDebut);
+					if (srm.getErrors().size() > 0) {
+						return srm;
+					}
+
+					RefTypeSaisiCongeAnnuel typeCongeAnnuel = typeAbsenceRepository.getEntity(
+							RefTypeSaisiCongeAnnuel.class, PA.getIdBaseCongeAbsence());
+					RefAlimCongeAnnuel refAlim = congesAnnuelsRepository.getRefAlimCongeAnnuel(
+							typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), new DateTime(dateDebut).getYear());
+
+					Double quotaMois = getQuotaCongesByMois(refAlim, new DateTime(dateDebut).getMonthOfYear());
+					if (quotaMois > quotaMax) {
+						quotaMax = quotaMois;
+					}
+
+					Double nombreJoursPA = helperService.calculNombreJours(PA.getDateDebut(), PA.getDateFin());
+
+					Calendar calendar = GregorianCalendar.getInstance();
+					calendar.setTime(PA.getDateDebut());
+					Integer dernierJourMois = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+					calendar.set(Calendar.DAY_OF_MONTH, dernierJourMois);
+
+					joursAAjouter += getNombreJoursDonnantDroitsAConges(dernierJourMois, quotaMois, nombreJoursPA);
+
+					// #15283
+					// cas partiuclier de la base C :
+					// pour la base C, on rajoute le quota mensuel + le nombre
+					// de
+					// jours fériés/chômés cochés (= au travail) sur le mois
+					if (null != typeCongeAnnuel.getCodeBaseHoraireAbsence()
+							&& "C".equals(typeCongeAnnuel.getCodeBaseHoraireAbsence().trim())) {
+						joursAAjouter += getJoursEnGardeFeriesbyAgent(idAgent, dateDebut, dateFin);
+						quotaMax += getJoursEnGardeFeriesbyAgent(idAgent, dateDebut, dateFin);
+					}
 				}
 			}
 		}
@@ -547,6 +597,36 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 		logger.info("Finally Alimentation auto CompteurCongeAnnuel for idAgent {} ...", idAgent);
 
+		return srm;
+	}
+
+	private ReturnMessageDto checkErreurAlimMensuelle(ReturnMessageDto srm, InfosAlimAutoCongesAnnuelsDto PA,
+			Date dateDebut) {
+
+		if (PA.getIdBaseCongeAbsence() == null) {
+			logger.error(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence());
+			srm.getErrors().add(String.format(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence()));
+			return srm;
+		}
+		RefTypeSaisiCongeAnnuel typeCongeAnnuel = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+				PA.getIdBaseCongeAbsence());
+
+		if (null == typeCongeAnnuel) {
+			logger.error(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence());
+			srm.getErrors().add(String.format(BASE_CONGES_ALIM_AUTO_INEXISTANT, PA.getIdBaseCongeAbsence()));
+			return srm;
+		}
+
+		// cas du congé unique
+		Calendar calendarYear = GregorianCalendar.getInstance();
+		calendarYear.setTime(dateDebut);
+		Integer annee = calendarYear.get(Calendar.YEAR);
+		List<Demande> listeCongeUnique = demandeRepository.listerDemandeCongeUnique(PA.getIdAgent(), annee);
+		if (listeCongeUnique.size() > 0) {
+			logger.error(AGENT_CONGE_UNIQUE, PA.getIdAgent(), annee);
+			srm.getErrors().add(String.format(AGENT_CONGE_UNIQUE, PA.getIdAgent(), annee));
+			return srm;
+		}
 		return srm;
 	}
 

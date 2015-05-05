@@ -1923,6 +1923,7 @@ public class AbsenceService implements IAbsenceService {
 			soldeConge.setSoldeAnneePrec(soldeCongeAgent.getTotalJoursAnneeN1());
 
 			sirhRepository.persistEntity(soldeConge);
+			result.getInfos().add("Mise à jour SPSOLD OK");
 		}
 		return result;
 	}
@@ -1965,6 +1966,7 @@ public class AbsenceService implements IAbsenceService {
 			soldeReposComp.setNombrePris(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(idAgent) / 60);
 
 			sirhRepository.persistEntity(soldeReposComp);
+			result.getInfos().add("Mise à jour SPSORC OK");
 		}
 		return result;
 	}
