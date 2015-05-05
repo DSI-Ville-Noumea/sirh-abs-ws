@@ -589,6 +589,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 		awca.setLastModification(dernierModif);
 		awca.setJours(joursAAjouter);
+		awca.setFromRestitutionMassive(false);
 
 		arc.setTotalJours(arc.getTotalJours() + joursAAjouter);
 		arc.setLastModification(dernierModif);
@@ -814,6 +815,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			weekCA.setDateMonth(getDateResitution(dto));
 			weekCA.setLastModification(dernierModif);
 			weekCA.setJours(joursAAjouter + joursAAjouterN1);
+			weekCA.setFromRestitutionMassive(true);
 
 			// on enregistre le compteur
 			arc.setLastModification(dernierModif);

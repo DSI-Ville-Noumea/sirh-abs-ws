@@ -16,11 +16,13 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name = "ABS_AGENT_WEEK_CONGE_ANNUEL")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-	@NamedQuery(name = "findAgentWeekCongeAnnuelByIdAgentAndDateMonth", query = "select awr from AgentWeekCongeAnnuel awr where awr.idAgent = :idAgent and awr.dateMonth = :dateMonth")
+	@NamedQuery(name = "findAgentWeekCongeAnnuelByIdAgentAndDateMonth", query = "select awr from AgentWeekCongeAnnuel awr where awr.idAgent = :idAgent and awr.dateMonth = :dateMonth and awr.fromRestitutionMassive is false ")
 })
 public class AgentWeekCongeAnnuel {
 	
@@ -44,6 +46,11 @@ public class AgentWeekCongeAnnuel {
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastModification;
+
+	@NotNull
+	@Column(name = "FROM_RESTITUTION_MASSIVE", nullable = false)
+	@Type(type = "boolean")
+	private boolean fromRestitutionMassive;
 	
 	@Version
     @Column(name = "version")
@@ -95,6 +102,14 @@ public class AgentWeekCongeAnnuel {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public boolean isFromRestitutionMassive() {
+		return fromRestitutionMassive;
+	}
+
+	public void setFromRestitutionMassive(boolean fromRestitutionMassive) {
+		this.fromRestitutionMassive = fromRestitutionMassive;
 	}
 	
 	
