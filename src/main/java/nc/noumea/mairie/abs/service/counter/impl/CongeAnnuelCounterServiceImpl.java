@@ -472,7 +472,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 		// #15368 : cas des PA avec durée de droit
 		// on regarde la 1ere PA si elle est sur 12 mois ou non
-		if (listPA.get(0) != null && listPA.get(0).isDroitConges() && listPA.get(0).getDureeDroitConges() == 12) {
+		if (listPA.get(0) != null && listPA.get(0).isDroitConges() && listPA.get(0).getDureeDroitConges() != 0) {
 			srm = checkErreurAlimMensuelle(srm, listPA.get(0), dateDebut);
 			if (srm.getErrors().size() > 0) {
 				return srm;
