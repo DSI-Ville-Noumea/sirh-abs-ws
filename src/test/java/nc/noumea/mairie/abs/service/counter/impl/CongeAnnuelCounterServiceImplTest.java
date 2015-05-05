@@ -948,6 +948,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		List<InfosAlimAutoCongesAnnuelsDto> listPA = new ArrayList<InfosAlimAutoCongesAnnuelsDto>();
 		InfosAlimAutoCongesAnnuelsDto pa = new InfosAlimAutoCongesAnnuelsDto();
 		pa.setDroitConges(true);
+		pa.setDureeDroitConges(0);
 		pa.setDateDebut(new DateTime(2014, 2, 5, 0, 0, 0).toDate());
 		pa.setDateFin(new DateTime(2014, 2, 25, 0, 0, 0).toDate());
 		pa.setIdBaseCongeAbsence(1);
@@ -999,6 +1000,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		List<InfosAlimAutoCongesAnnuelsDto> listPA = new ArrayList<InfosAlimAutoCongesAnnuelsDto>();
 		InfosAlimAutoCongesAnnuelsDto pa = new InfosAlimAutoCongesAnnuelsDto();
 		pa.setDroitConges(true);
+		pa.setDureeDroitConges(0);
 		pa.setDateDebut(new DateTime(2014, 2, 5, 0, 0, 0).toDate());
 		pa.setDateFin(new DateTime(2014, 2, 25, 0, 0, 0).toDate());
 		pa.setIdBaseCongeAbsence(1);
@@ -1064,6 +1066,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		List<InfosAlimAutoCongesAnnuelsDto> listPA = new ArrayList<InfosAlimAutoCongesAnnuelsDto>();
 		InfosAlimAutoCongesAnnuelsDto pa = new InfosAlimAutoCongesAnnuelsDto();
 		pa.setDroitConges(true);
+		pa.setDureeDroitConges(0);
 		pa.setDateDebut(new DateTime(2014, 2, 5, 0, 0, 0).toDate());
 		pa.setDateFin(new DateTime(2014, 2, 25, 0, 0, 0).toDate());
 		pa.setIdBaseCongeAbsence(1);
@@ -1138,6 +1141,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		List<InfosAlimAutoCongesAnnuelsDto> listPA = new ArrayList<InfosAlimAutoCongesAnnuelsDto>();
 		InfosAlimAutoCongesAnnuelsDto pa = new InfosAlimAutoCongesAnnuelsDto();
 		pa.setDroitConges(true);
+		pa.setDureeDroitConges(0);
 		pa.setDateDebut(new DateTime(2014, 2, 5, 0, 0, 0).toDate());
 		pa.setDateFin(new DateTime(2014, 2, 25, 0, 0, 0).toDate());
 		pa.setIdBaseCongeAbsence(1);
@@ -1193,6 +1197,168 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		assertEquals(result.getErrors().size(), 0);
 		assertEquals(acac.getTotalJours().doubleValue(), 29, 0);
+		assertEquals(acac.getTotalJoursAnneeN1().doubleValue(), 10, 0);
+	}
+
+	@Test
+	public void alimentationAutoCompteur_ok_DureeDroitConge_DMPEnGarde() {
+
+		Integer idAgent = 10;
+		Date dateDebut = new DateTime(2014, 2, 5, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 2, 25, 0, 0, 0).toDate();
+		Date dateMonth = new Date();
+
+		AgentCongeAnnuelCount acac = Mockito.spy(new AgentCongeAnnuelCount());
+		acac.setIdAgent(9005138);
+		acac.setIdAgentCount(idAgent);
+		acac.setTotalJours(20.0);
+		acac.setTotalJoursAnneeN1(10.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(acac);
+
+		List<InfosAlimAutoCongesAnnuelsDto> listPA = new ArrayList<InfosAlimAutoCongesAnnuelsDto>();
+		InfosAlimAutoCongesAnnuelsDto pa = new InfosAlimAutoCongesAnnuelsDto();
+		pa.setDroitConges(true);
+		pa.setDureeDroitConges(12);
+		pa.setDateDebut(new DateTime(2014, 2, 5, 0, 0, 0).toDate());
+		pa.setDateFin(new DateTime(2014, 2, 25, 0, 0, 0).toDate());
+		pa.setIdBaseCongeAbsence(1);
+		pa.setIdAgent(9005138);
+		listPA.add(pa);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
+		Mockito.when(sirhWSConsumer.getListPAByAgent(9005138)).thenReturn(listPA);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(20.0);
+
+		RefAlimCongeAnnuel refAlimCongeAnnuel = new RefAlimCongeAnnuel();
+		refAlimCongeAnnuel.setFevrier(10.0);
+
+		RefTypeSaisiCongeAnnuel typeCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeCongeAnnuel.setIdRefTypeSaisiCongeAnnuel(2);
+		typeCongeAnnuel.setCodeBaseHoraireAbsence("C");
+
+		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
+		Mockito.when(
+				congesAnnuelsRepository.getRefAlimCongeAnnuel(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), 2014))
+				.thenReturn(refAlimCongeAnnuel);
+
+		TypeAbsenceRepository typeAbsenceRepository = Mockito.mock(TypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, pa.getIdBaseCongeAbsence()))
+				.thenReturn(typeCongeAnnuel);
+
+		List<AgentJoursFeriesGarde> listGarde = new ArrayList<AgentJoursFeriesGarde>();
+		listGarde.add(new AgentJoursFeriesGarde());
+		listGarde.add(new AgentJoursFeriesGarde());
+
+		IAgentJoursFeriesGardeRepository agentJoursFeriesGardeRepository = Mockito
+				.mock(IAgentJoursFeriesGardeRepository.class);
+		Mockito.when(
+				agentJoursFeriesGardeRepository
+						.getAgentJoursFeriesGardeByIdAgentAndPeriode(idAgent, dateDebut, dateFin))
+				.thenReturn(listGarde);
+
+		DemandeRepository demandeRepository = Mockito.mock(DemandeRepository.class);
+		Mockito.when(demandeRepository.listerDemandeCongeUnique(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				new ArrayList<Demande>());
+
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+		ReflectionTestUtils.setField(service, "agentJoursFeriesGardeRepository", agentJoursFeriesGardeRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		ReturnMessageDto result = service.alimentationAutoCompteur(idAgent, dateDebut, dateFin);
+
+		assertEquals(result.getErrors().size(), 0);
+		assertEquals(acac.getTotalJours().doubleValue(), 29, 0);
+		assertEquals(acac.getTotalJoursAnneeN1().doubleValue(), 10, 0);
+	}
+
+	@Test
+	public void alimentationAutoCompteur_ok_DureeDroitConge() {
+
+		Integer idAgent = 10;
+		Date dateDebut = new DateTime(2014, 2, 5, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 2, 25, 0, 0, 0).toDate();
+		Date dateMonth = new Date();
+
+		AgentCongeAnnuelCount acac = Mockito.spy(new AgentCongeAnnuelCount());
+		acac.setIdAgent(9005138);
+		acac.setIdAgentCount(idAgent);
+		acac.setTotalJours(20.0);
+		acac.setTotalJoursAnneeN1(10.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(acac);
+
+		List<InfosAlimAutoCongesAnnuelsDto> listPA = new ArrayList<InfosAlimAutoCongesAnnuelsDto>();
+		InfosAlimAutoCongesAnnuelsDto pa = new InfosAlimAutoCongesAnnuelsDto();
+		pa.setDroitConges(true);
+		pa.setDureeDroitConges(12);
+		pa.setDateDebut(new DateTime(2014, 2, 5, 0, 0, 0).toDate());
+		pa.setDateFin(new DateTime(2014, 2, 25, 0, 0, 0).toDate());
+		pa.setIdBaseCongeAbsence(1);
+		pa.setIdAgent(9005138);
+		listPA.add(pa);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
+		Mockito.when(sirhWSConsumer.getListPAByAgent(9005138)).thenReturn(listPA);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(20.0);
+
+		RefAlimCongeAnnuel refAlimCongeAnnuel = new RefAlimCongeAnnuel();
+		refAlimCongeAnnuel.setFevrier(10.0);
+
+		RefTypeSaisiCongeAnnuel typeCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeCongeAnnuel.setIdRefTypeSaisiCongeAnnuel(2);
+		typeCongeAnnuel.setCodeBaseHoraireAbsence("D");
+
+		CongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(CongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getWeekHistoForAgentAndDate(idAgent, dateMonth)).thenReturn(null);
+		Mockito.when(
+				congesAnnuelsRepository.getRefAlimCongeAnnuel(typeCongeAnnuel.getIdRefTypeSaisiCongeAnnuel(), 2014))
+				.thenReturn(refAlimCongeAnnuel);
+
+		TypeAbsenceRepository typeAbsenceRepository = Mockito.mock(TypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, pa.getIdBaseCongeAbsence()))
+				.thenReturn(typeCongeAnnuel);
+
+		List<AgentJoursFeriesGarde> listGarde = new ArrayList<AgentJoursFeriesGarde>();
+		listGarde.add(new AgentJoursFeriesGarde());
+		listGarde.add(new AgentJoursFeriesGarde());
+
+		IAgentJoursFeriesGardeRepository agentJoursFeriesGardeRepository = Mockito
+				.mock(IAgentJoursFeriesGardeRepository.class);
+		Mockito.when(
+				agentJoursFeriesGardeRepository
+						.getAgentJoursFeriesGardeByIdAgentAndPeriode(idAgent, dateDebut, dateFin))
+				.thenReturn(listGarde);
+
+		DemandeRepository demandeRepository = Mockito.mock(DemandeRepository.class);
+		Mockito.when(demandeRepository.listerDemandeCongeUnique(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				new ArrayList<Demande>());
+
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
+		ReflectionTestUtils.setField(service, "agentJoursFeriesGardeRepository", agentJoursFeriesGardeRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		ReturnMessageDto result = service.alimentationAutoCompteur(idAgent, dateDebut, dateFin);
+
+		assertEquals(result.getErrors().size(), 0);
+		assertEquals(acac.getTotalJours().doubleValue(), 27, 0);
 		assertEquals(acac.getTotalJoursAnneeN1().doubleValue(), 10, 0);
 	}
 
