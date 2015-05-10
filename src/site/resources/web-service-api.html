@@ -243,7 +243,7 @@
                 <div class="resource-summary">
                     <span class="resource-summary-path">/congeannuel/getListeAlimAutoCongeAnnuel</span>
                     <div>
-                            <a href="#/congeannuel/getListeAlimAutoCongeAnnuel_POST">POST</a>
+                            <a href="#/congeannuel/getListeAlimAutoCongeAnnuel_POST_onlyErreur">POST</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -365,18 +365,6 @@
                     <span class="resource-summary-path">/demandes/changerEtatsSIRH</span>
                     <div>
                             <a href="#/demandes/changerEtatsSIRH_POST_idAgent">POST</a>
-                    </div>
-                </div>
-                <div class="resource-summary">
-                    <span class="resource-summary-path">/demandes/countDemandesAApprouver</span>
-                    <div>
-                            <a href="#/demandes/countDemandesAApprouver_GET_idAgent">GET</a>
-                    </div>
-                </div>
-                <div class="resource-summary">
-                    <span class="resource-summary-path">/demandes/countDemandesAViser</span>
-                    <div>
-                            <a href="#/demandes/countDemandesAViser_GET_idAgent">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -3093,11 +3081,11 @@
 </div>
                             </div>
                     </div>
-                    <a id="/congeannuel/getListeAlimAutoCongeAnnuel_POST"/>
+                    <a id="/congeannuel/getListeAlimAutoCongeAnnuel_POST_onlyErreur"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">POST</span>
-<span class="path">/congeannuel/getListeAlimAutoCongeAnnuel</span>                        </div>
+<span class="path">/congeannuel/getListeAlimAutoCongeAnnuel</span>?<span class="url-param-key">onlyErreur</span>=<span class="url-param-expected-type"><span class="json-primitive-type">boolean</span></span>                        </div>
 
                             <div class="resource-docs">
                                  Pour un mois donné, donne toutes les informations d'alimenation auto des
@@ -3428,8 +3416,10 @@
 <span class="path">/congeannuel/createRefAlimCongeAnnuelAnnee</span>?<span class="url-param-key">annee</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Création automatique d'une annee dans REF_ALIM_CONGES_ANNUELS avec les valeurs de l'année précédente <br />
- utile a SIRH lors de la creation d'une nouvelle année dans le paramétrage des jours fériés
+                                 Création automatique d'une annee dans REF_ALIM_CONGES_ANNUELS avec les
+ valeurs de l'année précédente <br />
+ utile a SIRH lors de la creation d'une nouvelle année dans le paramétrage
+ des jours fériés
 
                             </div>
 
@@ -7626,44 +7616,6 @@
             </div>
 </div></span>    }
 </div>
-                            </div>
-                    </div>
-                    <a id="/demandes/countDemandesAApprouver_GET_idAgent"/>
-                    <div class="resource">
-                        <div class="resource-header">
-                                <span class="method">GET</span>
-<span class="path">/demandes/countDemandesAApprouver</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
-
-                            <div class="resource-docs">
-                                 Retourne le nombre de demandes a approuver pour l accueil du kiosque
-
-                            </div>
-
-
-
-
-                            <div class="response-body">
-                                <div class="body-title">Response Body</div>
-                                <div class="body-contents"><span class="json-primitive-type">int</span></div>
-                            </div>
-                    </div>
-                    <a id="/demandes/countDemandesAViser_GET_idAgent"/>
-                    <div class="resource">
-                        <div class="resource-header">
-                                <span class="method">GET</span>
-<span class="path">/demandes/countDemandesAViser</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
-
-                            <div class="resource-docs">
-                                 Retourne le nombre de demandes a viser pour l accueil du kiosque
-
-                            </div>
-
-
-
-
-                            <div class="response-body">
-                                <div class="body-title">Response Body</div>
-                                <div class="body-contents"><span class="json-primitive-type">int</span></div>
                             </div>
                     </div>
                     <a id="/edition/downloadTitreDemande_GET_idAgent_idDemande"/>
