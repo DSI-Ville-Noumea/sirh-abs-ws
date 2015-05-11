@@ -28,7 +28,6 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
-import nc.noumea.mairie.domain.SpSold;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -62,10 +61,6 @@ public class SoldeService implements ISoldeService {
 
 	@Autowired
 	protected ISirhRepository sirhRepository;
-
-	@Autowired
-	@Qualifier("typeEnv")
-	private String typeEnvironnement;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -120,21 +115,13 @@ public class SoldeService implements ISoldeService {
 	}
 
 	private void getSoldeConges(Integer idAgent, SoldeDto dto) {
-		if (typeEnvironnement.equals("PROD")) {
-			SpSold soldeConge = sirhRepository.getSpsold(idAgent);
-			dto.setAfficheSoldeConge(true);
-			dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getSoldeAnneeEnCours());
-			dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getSoldeAnneePrec());
-			dto.setSamediOffert(false);
-		} else if (typeEnvironnement.equals("RECETTE")) {
-			// on traite les congés annuels
-			AgentCongeAnnuelCount soldeConge = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
-			dto.setAfficheSoldeConge(true);
-			dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
-			dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
-			dto.setSamediOffert(demandeRepository.getNombreSamediOffertSurAnnee(idAgent,
-					new DateTime(new Date()).getYear(), null) == 0 ? false : true);
-		}
+		// on traite les congés annuels
+		AgentCongeAnnuelCount soldeConge = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
+		dto.setAfficheSoldeConge(true);
+		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
+		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
+		dto.setSamediOffert(demandeRepository.getNombreSamediOffertSurAnnee(idAgent,
+				new DateTime(new Date()).getYear(), null) == 0 ? false : true);
 	}
 
 	private void getSoldeRecup(Integer idAgent, SoldeDto dto) {

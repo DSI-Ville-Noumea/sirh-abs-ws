@@ -139,10 +139,6 @@ public class AbsenceService implements IAbsenceService {
 	private ITypeAbsenceRepository typeAbsenceRepository;
 
 	@Autowired
-	@Qualifier("typeEnv")
-	private String typeEnvironnement;
-
-	@Autowired
 	private ICounterRepository counterRepository;
 
 	@Autowired
@@ -1902,29 +1898,27 @@ public class AbsenceService implements IAbsenceService {
 	@Transactional(value = "chainedTransactionManager")
 	public ReturnMessageDto miseAJourSpsold(Integer idAgent) {
 		ReturnMessageDto result = new ReturnMessageDto();
-		if (typeEnvironnement.equals("RECETTE")) {
-			// on cherche le solde de l'agent
-			AgentCongeAnnuelCount soldeCongeAgent = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class,
-					idAgent);
-			if (soldeCongeAgent == null) {
-				logger.warn(COMPTEUR_INEXISTANT_SPSOLD);
-				result.getInfos().add(String.format(COMPTEUR_INEXISTANT_SPSOLD));
-				return result;
-			}
-
-			// on cherche Spsold
-			SpSold soldeConge = sirhRepository.getSpsold(idAgent);
-			// si pas de ligne on en crée une
-			if (soldeConge == null) {
-				soldeConge = new SpSold();
-				soldeConge.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent));
-			}
-			soldeConge.setSoldeAnneeEnCours(soldeCongeAgent.getTotalJours());
-			soldeConge.setSoldeAnneePrec(soldeCongeAgent.getTotalJoursAnneeN1());
-
-			sirhRepository.persistEntity(soldeConge);
-			result.getInfos().add("Mise à jour SPSOLD OK");
+		// on cherche le solde de l'agent
+		AgentCongeAnnuelCount soldeCongeAgent = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
+		if (soldeCongeAgent == null) {
+			logger.warn(COMPTEUR_INEXISTANT_SPSOLD);
+			result.getInfos().add(String.format(COMPTEUR_INEXISTANT_SPSOLD));
+			return result;
 		}
+
+		// on cherche Spsold
+		SpSold soldeConge = sirhRepository.getSpsold(idAgent);
+		// si pas de ligne on en crée une
+		if (soldeConge == null) {
+			soldeConge = new SpSold();
+			soldeConge.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent));
+		}
+		soldeConge.setSoldeAnneeEnCours(soldeCongeAgent.getTotalJours());
+		soldeConge.setSoldeAnneePrec(soldeCongeAgent.getTotalJoursAnneeN1());
+
+		sirhRepository.persistEntity(soldeConge);
+		result.getInfos().add("Mise à jour SPSOLD OK");
+
 		return result;
 	}
 
@@ -1943,31 +1937,29 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		if (typeEnvironnement.equals("RECETTE")) {
-			// on cherche le solde de l'agent
-			AgentReposCompCount soldeReposCompAgent = counterRepository.getAgentCounter(AgentReposCompCount.class,
-					idAgent);
-			if (soldeReposCompAgent == null) {
-				logger.warn(COMPTEUR_INEXISTANT_SPSORC);
-				result.getInfos().add(String.format(COMPTEUR_INEXISTANT_SPSORC));
-				return result;
-			}
-
-			// on cherche Spsorc
-			SpSorc soldeReposComp = sirhRepository.getSpsorc(idAgent);
-			// si pas de ligne on en crée une
-			if (soldeReposComp == null) {
-				soldeReposComp = new SpSorc();
-				soldeReposComp.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent));
-			}
-
-			soldeReposComp.setSoldeAnneeEnCours((double) (soldeReposCompAgent.getTotalMinutes() / 60));
-			soldeReposComp.setSoldeAnneePrec((double) (soldeReposCompAgent.getTotalMinutesAnneeN1() / 60));
-			soldeReposComp.setNombrePris(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(idAgent) / 60);
-
-			sirhRepository.persistEntity(soldeReposComp);
-			result.getInfos().add("Mise à jour SPSORC OK");
+		// on cherche le solde de l'agent
+		AgentReposCompCount soldeReposCompAgent = counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent);
+		if (soldeReposCompAgent == null) {
+			logger.warn(COMPTEUR_INEXISTANT_SPSORC);
+			result.getInfos().add(String.format(COMPTEUR_INEXISTANT_SPSORC));
+			return result;
 		}
+
+		// on cherche Spsorc
+		SpSorc soldeReposComp = sirhRepository.getSpsorc(idAgent);
+		// si pas de ligne on en crée une
+		if (soldeReposComp == null) {
+			soldeReposComp = new SpSorc();
+			soldeReposComp.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent));
+		}
+
+		soldeReposComp.setSoldeAnneeEnCours((double) (soldeReposCompAgent.getTotalMinutes() / 60));
+		soldeReposComp.setSoldeAnneePrec((double) (soldeReposCompAgent.getTotalMinutesAnneeN1() / 60));
+		soldeReposComp.setNombrePris(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(idAgent) / 60);
+
+		sirhRepository.persistEntity(soldeReposComp);
+		result.getInfos().add("Mise à jour SPSORC OK");
+
 		return result;
 	}
 

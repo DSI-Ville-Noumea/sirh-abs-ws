@@ -96,13 +96,4 @@
 
 	<bean class="java.lang.String" id="reportServerPath" />
 
-
-
-
-	<!-- -->
-	<!-- PARAMETRE TEMPORAIRE POUR GERER PROD/RECETTE pour le solde des congés 
-		annuels -->
-	<!-- -->
-	<bean class="java.lang.String" id="typeEnv" />
-
 </beans>

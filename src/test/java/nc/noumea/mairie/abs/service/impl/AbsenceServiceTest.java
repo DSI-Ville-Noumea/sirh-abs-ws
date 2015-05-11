@@ -12138,7 +12138,6 @@ public class AbsenceServiceTest {
 		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, 9005138)).thenReturn(null);
 
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
 		ReturnMessageDto result = service.miseAJourSpsold(9005138);
@@ -12166,7 +12165,6 @@ public class AbsenceServiceTest {
 		Mockito.when(sirhRepository.getSpsold(idAgent)).thenReturn(soldeConge);
 
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 
@@ -12226,7 +12224,6 @@ public class AbsenceServiceTest {
 		Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, 9005138)).thenReturn(null);
 
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
@@ -12269,7 +12266,6 @@ public class AbsenceServiceTest {
 		Mockito.when(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(9005138)).thenReturn(45.5);
 
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
@@ -12311,7 +12307,6 @@ public class AbsenceServiceTest {
 		Mockito.when(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(9005138)).thenReturn(45.5);
 
 		AbsenceService service = new AbsenceService();
-		ReflectionTestUtils.setField(service, "typeEnvironnement", "RECETTE");
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
