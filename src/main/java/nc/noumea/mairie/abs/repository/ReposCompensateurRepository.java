@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 
@@ -74,5 +75,16 @@ public class ReposCompensateurRepository implements IReposCompensateurRepository
 			}
 		}
 		return somme;
+	}
+
+	@Override
+	public List<AgentWeekReposComp> getListeAlimAutoReposCompByAgent(Integer convertedIdAgent) {
+
+		TypedQuery<AgentWeekReposComp> query = absEntityManager.createNamedQuery("findAgentWeekReposCompByIdAgent",
+				AgentWeekReposComp.class);
+
+		query.setParameter("idAgent", convertedIdAgent);
+
+		return query.getResultList();
 	}
 }

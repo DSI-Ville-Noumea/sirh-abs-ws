@@ -10,13 +10,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "ABS_AGENT_WEEK_REPOS_COMP")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-	@NamedQuery(name = "findAgentWeekReposCompByIdAgentAndDateMonday", query = "select awr from AgentWeekReposComp awr where awr.idAgent = :idAgent and awr.dateMonday = :dateMonday")
-})
+		@NamedQuery(name = "findAgentWeekReposCompByIdAgentAndDateMonday", query = "select awr from AgentWeekReposComp awr where awr.idAgent = :idAgent and awr.dateMonday = :dateMonday"),
+		@NamedQuery(name = "findAgentWeekReposCompByIdAgent", query = "select awr from AgentWeekReposComp awr where awr.idAgent = :idAgent") })
 public class AgentWeekReposComp extends BaseAgentWeekHisto {
 
 	@Id

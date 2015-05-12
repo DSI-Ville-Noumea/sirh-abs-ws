@@ -11,6 +11,8 @@ import javax.persistence.FlushModeType;
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
+import nc.noumea.mairie.abs.domain.AgentWeekRecup;
+import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
@@ -51,6 +53,7 @@ import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
+import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
@@ -134,6 +137,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private IReposCompensateurRepository reposCompensateurRepository;
+
+	@Autowired
+	private IRecuperationRepository recuperationRepository;
 
 	@Autowired
 	private ITypeAbsenceRepository typeAbsenceRepository;
@@ -2001,6 +2007,46 @@ public class AbsenceService implements IAbsenceService {
 
 		logger.debug("Alimentation des congés annuels sauvegardée.");
 		result.getInfos().add("Alimentation des congés annuels sauvegardée.");
+
+		return result;
+	}
+
+	@Override
+	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoRecup(Integer convertedIdAgent) {
+		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
+		for (AgentWeekRecup histo : recuperationRepository.getListeAlimAutoRecupByAgent(convertedIdAgent)) {
+			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
+			AgentDto agDto = new AgentDto();
+			if (ag != null && ag.getIdAgent() != null) {
+				agDto = new AgentDto(ag);
+			}
+			mois.setAgent(agDto);
+			mois.setDateModification(histo.getLastModification());
+			mois.setDateMois(histo.getDateMonday());
+			mois.setNbJours((double) histo.getMinutes());
+			result.add(mois);
+		}
+
+		return result;
+	}
+
+	@Override
+	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoReposComp(Integer convertedIdAgent) {
+		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
+		for (AgentWeekReposComp histo : reposCompensateurRepository.getListeAlimAutoReposCompByAgent(convertedIdAgent)) {
+			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
+			AgentDto agDto = new AgentDto();
+			if (ag != null && ag.getIdAgent() != null) {
+				agDto = new AgentDto(ag);
+			}
+			mois.setAgent(agDto);
+			mois.setDateModification(histo.getLastModification());
+			mois.setDateMois(histo.getDateMonday());
+			mois.setNbJours((double) histo.getMinutes());
+			result.add(mois);
+		}
 
 		return result;
 	}

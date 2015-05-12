@@ -1,11 +1,13 @@
 package nc.noumea.mairie.abs.web;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -110,5 +112,23 @@ public class RecuperationController {
 		ReturnMessageDto result = absenceService.checkRecuperations(convertedIdAgent, fromDate, toDate);
 
 		return result;
+	}
+
+	/**
+	 * Retourne l'historique des alimentations auto de recupérations <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getHistoAlimAutoRecup", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoRecup(@RequestParam("idAgent") int idAgent,
+			HttpServletResponse response) {
+
+		logger.debug(
+				"entered GET [recuperations/getHistoAlimAutoRecup] => getHistoAlimAutoRecup with parameters idAgent = {}",
+				idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		return absenceService.getHistoAlimAutoRecup(convertedIdAgent);
 	}
 }

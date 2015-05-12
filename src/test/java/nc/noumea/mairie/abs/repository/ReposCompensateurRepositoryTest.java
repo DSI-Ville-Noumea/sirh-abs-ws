@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -612,5 +614,49 @@ public class ReposCompensateurRepositoryTest {
 
 		// Then
 		assertEquals(result.intValue(), 32);
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeAlimAutoReposCompByAgent_OK() {
+
+		Date dateMonth = new Date();
+
+		AgentWeekReposComp d = new AgentWeekReposComp();
+		d.setDateMonday(dateMonth);
+		d.setIdAgent(9005138);
+		d.setMinutes(10);
+		d.setLastModification(new Date());
+		absEntityManager.persist(d);
+
+		List<AgentWeekReposComp> result = repository.getListeAlimAutoReposCompByAgent(9005138);
+
+		assertNotNull(result);
+		assertEquals(1, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListeAlimAutoReposCompByAgent_KO() {
+
+		Date dateMonth = new Date();
+
+		AgentWeekReposComp d = new AgentWeekReposComp();
+		d.setDateMonday(dateMonth);
+		d.setIdAgent(9005138);
+		d.setMinutes(10);
+		d.setLastModification(new Date());
+		absEntityManager.persist(d);
+
+		List<AgentWeekReposComp> result = repository.getListeAlimAutoReposCompByAgent(9009999);
+
+		assertNotNull(result);
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
 	}
 }

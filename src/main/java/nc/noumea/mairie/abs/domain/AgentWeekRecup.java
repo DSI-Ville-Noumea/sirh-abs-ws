@@ -14,8 +14,8 @@ import javax.persistence.Table;
 @Table(name = "ABS_AGENT_WEEK_RECUP")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-	@NamedQuery(name = "findAgentWeekRecupByIdAgentAndDateMonday", query = "select awr from AgentWeekRecup awr where awr.idAgent = :idAgent and awr.dateMonday = :dateMonday")
-})
+		@NamedQuery(name = "findAgentWeekRecupByIdAgentAndDateMonday", query = "select awr from AgentWeekRecup awr where awr.idAgent = :idAgent and awr.dateMonday = :dateMonday"),
+		@NamedQuery(name = "findAgentWeekRecupByIdAgent", query = "select awr from AgentWeekRecup awr where awr.idAgent = :idAgent") })
 public class AgentWeekRecup extends BaseAgentWeekHisto {
 
 	@Id

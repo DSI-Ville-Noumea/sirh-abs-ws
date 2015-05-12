@@ -17,6 +17,8 @@ import javax.persistence.FlushModeType;
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
+import nc.noumea.mairie.abs.domain.AgentWeekRecup;
+import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
@@ -59,6 +61,7 @@ import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
+import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
@@ -12467,6 +12470,96 @@ public class AbsenceServiceTest {
 		assertEquals(1, result.getInfos().size());
 		assertEquals("Alimentation des congés annuels sauvegardée.", result.getInfos().get(0));
 		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(RefAlimCongeAnnuel.class));
+	}
+
+	@Test
+	public void getHistoAlimAutoRecup_ZeroResult() {
+		Integer idAgent = 9005138;
+
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		Mockito.when(recuperationRepository.getListeAlimAutoRecupByAgent(idAgent)).thenReturn(
+				new ArrayList<AgentWeekRecup>());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getHistoAlimAutoRecup(idAgent);
+
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getHistoAlimAutoRecup_PlusieursResult() {
+		Integer idAgent = 9005138;
+
+		List<AgentWeekRecup> list = new ArrayList<AgentWeekRecup>();
+
+		AgentWeekRecup c2 = new AgentWeekRecup();
+		c2.setIdAgent(idAgent);
+		list.add(c2);
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setIdAgent(idAgent);
+
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		Mockito.when(recuperationRepository.getListeAlimAutoRecupByAgent(idAgent)).thenReturn(list);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(ag);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getHistoAlimAutoRecup(idAgent);
+
+		assertEquals(1, result.size());
+		assertEquals(c2.getIdAgent(), result.get(0).getAgent().getIdAgent());
+	}
+
+	@Test
+	public void getHistoAlimAutoReposComp_ZeroResult() {
+		Integer idAgent = 9005138;
+
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		Mockito.when(reposCompensateurRepository.getListeAlimAutoReposCompByAgent(idAgent)).thenReturn(
+				new ArrayList<AgentWeekReposComp>());
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getHistoAlimAutoReposComp(idAgent);
+
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getHistoAlimAutoReposComp_PlusieursResult() {
+		Integer idAgent = 9005138;
+
+		List<AgentWeekReposComp> list = new ArrayList<AgentWeekReposComp>();
+
+		AgentWeekReposComp c2 = new AgentWeekReposComp();
+		c2.setIdAgent(idAgent);
+		list.add(c2);
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setIdAgent(idAgent);
+
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		Mockito.when(reposCompensateurRepository.getListeAlimAutoReposCompByAgent(idAgent)).thenReturn(list);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(ag);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getHistoAlimAutoReposComp(idAgent);
+
+		assertEquals(1, result.size());
+		assertEquals(c2.getIdAgent(), result.get(0).getAgent().getIdAgent());
 	}
 
 }

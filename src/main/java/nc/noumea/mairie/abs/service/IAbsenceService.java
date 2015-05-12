@@ -63,4 +63,8 @@ public interface IAbsenceService {
 	ReturnMessageDto miseAJourSpsorc(Integer idAgent);
 
 	ReturnMessageDto createRefAlimCongeAnnuelAnnee(Integer anneeCreation);
+
+	List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoRecup(Integer convertedIdAgent);
+
+	List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoReposComp(Integer convertedIdAgent);
 }
