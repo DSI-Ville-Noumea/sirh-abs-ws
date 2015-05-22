@@ -3311,6 +3311,62 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		assertEquals(result.get(0).isApresMidi(), restitution.isApresMidi());
 		assertEquals(result.get(0).getListHistoAgents().size(), 0);
 	}
+	
+	@Test
+	public void getHistoRestitutionMassiveCAByAgent_noResult() {
+		
+		CongeAnnuelRestitutionMassive restitution = new CongeAnnuelRestitutionMassive();
+		restitution.setApresMidi(true);
+		restitution.setJournee(false);
+		restitution.setMatin(false);
+		restitution.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+		restitution.setDateModification(new DateTime(2015, 1, 13, 0, 0, 0).toDate());
+		restitution.setMotif("motif");
+		
+		CongeAnnuelRestitutionMassiveHisto histo = new CongeAnnuelRestitutionMassiveHisto();
+		histo.setIdAgent(9005138);
+		histo.setJours(1.0);
+		histo.setRestitutionMassive(restitution);
+		histo.setStatus("OK");
+		
+		CongeAnnuelRestitutionMassive restitution2 = new CongeAnnuelRestitutionMassive();
+		restitution2.setApresMidi(true);
+		restitution2.setJournee(false);
+		restitution2.setMatin(false);
+		restitution2.setDateRestitution(new DateTime(2015, 2, 23, 0, 0, 0).toDate());
+		restitution2.setDateModification(new DateTime(2015, 2, 13, 0, 0, 0).toDate());
+		restitution2.setMotif("motif 2");
+		
+		CongeAnnuelRestitutionMassiveHisto histo3 = new CongeAnnuelRestitutionMassiveHisto();
+		histo3.setIdAgent(9005138);
+		histo3.setJours(0.5);
+		histo3.setRestitutionMassive(restitution2);
+		histo3.setStatus("OK");
+		
+		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionCA = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
+		listRestitutionCA.add(histo);
+		listRestitutionCA.add(histo3);
+
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congesAnnuelsRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(listRestitutionCA);
+		
+		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
+		
+		List<RestitutionMassiveDto> result = service.getHistoRestitutionMassiveCAByAgent(9005138);
+		
+		assertEquals(2, result.size());
+		assertEquals(new DateTime(2015, 1, 13, 0, 0, 0).toDate(), result.get(0).getDateModification());
+		assertEquals(new DateTime(2015, 1, 23, 0, 0, 0).toDate(), result.get(0).getDateRestitution());
+		assertEquals("motif", result.get(0).getMotif());
+		assertEquals(9005138, result.get(0).getListHistoAgents().get(0).getIdAgent().intValue());
+		assertEquals(new Double(1), result.get(0).getListHistoAgents().get(0).getJours());
+
+		assertEquals(new DateTime(2015, 2, 13, 0, 0, 0).toDate(), result.get(1).getDateModification());
+		assertEquals(new DateTime(2015, 2, 23, 0, 0, 0).toDate(), result.get(1).getDateRestitution());
+		assertEquals("motif 2", result.get(1).getMotif());
+		assertEquals(9005138, result.get(1).getListHistoAgents().get(0).getIdAgent().intValue());
+		assertEquals(new Double(0.5), result.get(1).getListHistoAgents().get(0).getJours());
+	}
 
 	@Test
 	public void getDetailsHistoRestitutionMassive_UserNonHabilite() {

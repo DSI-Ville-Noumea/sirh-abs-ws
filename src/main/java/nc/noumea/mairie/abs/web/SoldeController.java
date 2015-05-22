@@ -66,6 +66,7 @@ public class SoldeController {
 	public List<HistoriqueSoldeDto> getHistoriqueSolde(
 			@RequestParam(value = "idAgent", required = true) Integer idAgent,
 			@RequestParam(value = "codeRefTypeAbsence", required = true) Integer codeRefTypeAbsence,
+			@RequestParam(value = "isSIRH", required = true) boolean isSIRH,
 			@RequestBody(required = true) FiltreSoldeDto filtreSoldeDto) {
 
 		logger.debug(
@@ -75,7 +76,7 @@ public class SoldeController {
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		List<HistoriqueSoldeDto> result = soldeService.getHistoriqueSoldeAgent(convertedIdAgent, codeRefTypeAbsence,
-				filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin());
+				filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin(), isSIRH);
 
 		return result;
 	}

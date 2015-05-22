@@ -11,6 +11,6 @@ public interface ISoldeService {
 	SoldeDto getAgentSolde(Integer idAgent, Date dateDeb, Date dateFin, Integer typeDemande);
 
 	List<HistoriqueSoldeDto> getHistoriqueSoldeAgent(Integer idAgent, Integer codeRefTypeAbsence, Date dateDeb,
-			Date dateFin);
+			Date dateFin, boolean isSirh);
 
 }

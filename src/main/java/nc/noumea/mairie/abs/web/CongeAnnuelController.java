@@ -243,6 +243,25 @@ public class CongeAnnuelController {
 	}
 
 	/**
+	 * #15586
+	 * Retourne l'historique des restitutions masives de conge annuel pour un agent <br />
+	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getHistoRestitutionMassiveByIdAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RestitutionMassiveDto> getHistoRestitutionMassiveByIdAgent(@RequestParam("idAgent") int idAgent,
+			HttpServletResponse response) {
+
+		logger.debug(
+				"entered GET [congeannuel/getHistoRestitutionMassiveByIdAgent] => getHistoRestitutionMassiveByIdAgent with parameters idAgent = {}",
+				idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		return counterService.getHistoRestitutionMassiveCAByAgent(convertedIdAgent);
+	}
+
+	/**
 	 * Retourne l'historique des restitutions masives de conge annuel <br />
 	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */

@@ -1,6 +1,8 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
@@ -21,6 +24,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeMonthDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
+import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
@@ -28,6 +32,7 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
+import nc.noumea.mairie.sirh.comparator.HistoriqueSoldeDtoComparator;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -61,6 +66,9 @@ public class SoldeService implements ISoldeService {
 
 	@Autowired
 	protected ISirhRepository sirhRepository;
+	
+	@Autowired
+	private ICongesAnnuelsRepository congeAnnuelRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -222,12 +230,13 @@ public class SoldeService implements ISoldeService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<HistoriqueSoldeDto> getHistoriqueSoldeAgent(Integer idAgent, Integer codeRefTypeAbsence, Date dateDeb,
-			Date dateFin) {
+			Date dateFin, boolean isSirh) {
 		logger.info(
 				"Read getHistoriqueSoldeAgent for Agent {}, and dateDeb {}, and dateFin {}, and typeAbsence {} ...",
 				idAgent, dateDeb, dateFin, RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence));
 
 		List<AgentCount> listAgentCount = new ArrayList<AgentCount>();
+		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassive = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
 		// on recupere le compteur correspondant
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence)) {
 			case CONGE_ANNUEL:
@@ -235,6 +244,10 @@ public class SoldeService implements ISoldeService {
 						idAgent);
 				if (countCongeAnnuel != null)
 					listAgentCount.add(countCongeAnnuel);
+				
+				if(!isSirh)
+					listRestitutionMassive = congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(idAgent), null, null);
+				
 				break;
 			case REPOS_COMP:
 				AgentReposCompCount countReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
@@ -279,6 +292,17 @@ public class SoldeService implements ISoldeService {
 				result.add(dto);
 			}
 		}
+		
+		if(null != listRestitutionMassive
+				&& !listRestitutionMassive.isEmpty()) {
+			for (CongeAnnuelRestitutionMassiveHisto restitution : listRestitutionMassive) {
+				HistoriqueSoldeDto dto = new HistoriqueSoldeDto(restitution);
+				result.add(dto);
+			}
+		}
+		
+		Collections.sort(result, new HistoriqueSoldeDtoComparator());
+		
 		return result;
 	}
 }

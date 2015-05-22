@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1053,6 +1054,31 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		if (null != listRestitutionCA && !listRestitutionCA.isEmpty()) {
 			for (CongeAnnuelRestitutionMassive histo : listRestitutionCA) {
 				RestitutionMassiveDto dto = new RestitutionMassiveDto(histo);
+				result.add(dto);
+			}
+		}
+
+		return result;
+	}
+	
+	/**
+	 * #15586 retroune l'historique des restitutions massives pour un agent
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<RestitutionMassiveDto> getHistoRestitutionMassiveCAByAgent(Integer idAgent) {
+
+
+		List<RestitutionMassiveDto> result = new ArrayList<RestitutionMassiveDto>();
+
+		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionCA = congesAnnuelsRepository
+				.getListRestitutionMassiveByIdAgent(Arrays.asList(idAgent), null, null);
+
+		if (null != listRestitutionCA && !listRestitutionCA.isEmpty()) {
+			for (CongeAnnuelRestitutionMassiveHisto histo : listRestitutionCA) {
+				RestitutionMassiveDto dto = new RestitutionMassiveDto(histo.getRestitutionMassive());
+				RestitutionMassiveHistoDto histoDto = new RestitutionMassiveHistoDto(histo);
+				dto.getListHistoAgents().add(histoDto);
 				result.add(dto);
 			}
 		}

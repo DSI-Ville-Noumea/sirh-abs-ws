@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
@@ -41,5 +42,7 @@ public interface ICongesAnnuelsRepository {
 
 	List<RefAlimCongeAnnuel> getListeRefAlimCongeAnnuelByYear(Integer year);
 
+	List<CongeAnnuelRestitutionMassiveHisto> getListRestitutionMassiveByIdAgent(
+			List<Integer> idAgent, Date fromDate, Date toDate);
 
 }

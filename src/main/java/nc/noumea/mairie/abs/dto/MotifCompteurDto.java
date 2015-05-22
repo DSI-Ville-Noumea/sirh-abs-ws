@@ -17,6 +17,11 @@ public class MotifCompteurDto {
 		this.libelle = motif.getLibelle();
 		this.idRefTypeAbsence = motif.getRefTypeAbsence().getIdRefTypeAbsence();
 	}
+	
+	public MotifCompteurDto(String motif) {
+		super();
+		this.libelle = motif;
+	}
 
 	public String getLibelle() {
 		return libelle;

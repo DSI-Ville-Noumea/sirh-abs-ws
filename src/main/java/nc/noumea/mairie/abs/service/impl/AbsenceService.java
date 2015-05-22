@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.service.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
@@ -73,6 +75,7 @@ import nc.noumea.mairie.domain.Spcc;
 import nc.noumea.mairie.domain.SpccId;
 import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.sirh.comparator.DemandeDtoComparator;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -367,6 +370,22 @@ public class AbsenceService implements IAbsenceService {
 			demandeDto
 					.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(demandeDto));
 		}
+		
+		if(!FiltreService.ONGLET_EN_COURS.equals(ongletDemande)
+				&& !FiltreService.ONGLET_NON_PRISES.equals(ongletDemande)) {
+			// on recupere tous les idAgents
+			List<Integer> listIdAgents = new ArrayList<Integer>();
+			if(!listDroitAgent.isEmpty()) {
+				for(DroitsAgent agent : listDroitAgent) {
+					listIdAgents.add(agent.getIdAgent());
+				}
+			}
+			// #15586
+			listeDto.addAll(getListRestitutionMassiveByIdAgent(listIdAgents.isEmpty() ? Arrays.asList(idAgentConcerne) : listIdAgents, fromDate, toDate, idRefGroupeAbsence));
+		}
+		
+		Collections.sort(listeDto, new DemandeDtoComparator());
+		
 		return listeDto;
 	}
 
@@ -1183,8 +1202,48 @@ public class AbsenceService implements IAbsenceService {
 			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto));
 			dto.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(dto));
 		}
+		
+		// #15586
+		listeDto.addAll(getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate, idRefGroupeAbsence));
 
+		Collections.sort(listeDto, new DemandeDtoComparator());
+		
 		return listeDto;
+	}
+	
+	/**
+	 * #15586
+	 * Retourne la liste des restitutions massives
+	 * 
+	 * @param agentIds liste des agents a rechercher
+	 * @param fromDate date de debut
+	 * @param toDate date de fin
+	 * @return liste de DemandeDto
+	 */
+	private List<DemandeDto> getListRestitutionMassiveByIdAgent(List<Integer> agentIds, Date fromDate, Date toDate, Integer idRefGroupeAbsence) {
+		
+		List<DemandeDto> result = new ArrayList<DemandeDto>();
+		
+		if(null == idRefGroupeAbsence
+				|| RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.equals(RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence))) {
+			
+			List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassiveCA = 
+					congeAnnuelRepository.getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate);
+			
+			if(null != listRestitutionMassiveCA) {
+				List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
+				
+				for(CongeAnnuelRestitutionMassiveHisto restitution : listRestitutionMassiveCA) {
+					AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, restitution.getIdAgent(),
+							restitution.getRestitutionMassive().getDateRestitution());
+					
+					DemandeDto dto = new DemandeDto(restitution, agentOptimise);
+					result.add(dto);
+				}
+			}
+		}
+		
+		return result;
 	}
 
 	@Override

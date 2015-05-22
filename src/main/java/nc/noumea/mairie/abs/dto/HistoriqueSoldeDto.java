@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 
 public class HistoriqueSoldeDto {
 
@@ -23,6 +24,15 @@ public class HistoriqueSoldeDto {
 			this.motif = new MotifCompteurDto(histo.getMotifCompteur());
 		this.idAgentModification = histo.getIdAgent();
 		this.textModification = histo.getText();
+	}
+	
+	public HistoriqueSoldeDto(CongeAnnuelRestitutionMassiveHisto histo){
+		super();
+		this.dateModifcation = histo.getRestitutionMassive().getDateRestitution();
+		if (null != histo.getRestitutionMassive().getMotif())
+			this.motif = new MotifCompteurDto(histo.getRestitutionMassive().getMotif());
+		this.idAgentModification = histo.getIdAgent();
+		this.textModification = "Restitution massive de congés annuels";
 	}
 
 	public Date getDateModifcation() {

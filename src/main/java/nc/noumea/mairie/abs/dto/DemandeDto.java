@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
@@ -96,6 +97,9 @@ public class DemandeDto {
 	private Integer totalMinutesOld;
 	private Integer totalMinutesAnneeN1New;
 	private Integer totalMinutesAnneeN1Old;
+	
+	// #15586 restitution massive
+	private boolean affichageBoutonHistorique = true;
 
 	public DemandeDto() {
 	}
@@ -229,6 +233,40 @@ public class DemandeDto {
 			default:
 				break;
 		}
+	}
+
+	public DemandeDto(CongeAnnuelRestitutionMassiveHisto restitution, AgentWithServiceDto agentDto) {
+		this(restitution);
+		if (agentDto != null) {
+			this.agentWithServiceDto = agentDto;
+		} else {
+			this.agentWithServiceDto = new AgentWithServiceDto();
+			this.agentWithServiceDto.setIdAgent(restitution.getIdAgent());
+		}
+	}
+	
+	public DemandeDto(CongeAnnuelRestitutionMassiveHisto restitution) {
+		
+		AgentWithServiceDto agentDto = new AgentWithServiceDto();
+		agentDto.setIdAgent(restitution.getIdAgent());
+		
+		this.agentWithServiceDto = agentDto;
+		this.libelleTypeDemande = "Restitution massive de congés annuels";
+		this.dateDebut = restitution.getRestitutionMassive().getDateRestitution();
+		this.dateFin = restitution.getRestitutionMassive().getDateRestitution();
+		this.dateDemande = restitution.getRestitutionMassive().getDateModification();
+		this.dateSaisie = restitution.getRestitutionMassive().getDateModification();
+		this.motif = restitution.getRestitutionMassive().getMotif();
+		this.duree = restitution.getJours();
+		this.idTypeDemande = 0;
+
+		this.isDateDebutAM = restitution.getRestitutionMassive().isMatin() || restitution.getRestitutionMassive().isJournee();
+		this.isDateDebutPM = restitution.getRestitutionMassive().isApresMidi();
+		
+		this.isDateFinAM = restitution.getRestitutionMassive().isMatin();
+		this.isDateFinPM = restitution.getRestitutionMassive().isApresMidi() || restitution.getRestitutionMassive().isJournee();
+		
+		this.affichageBoutonHistorique = false;
 	}
 
 	public void updateEtat(EtatDemande etat, AgentWithServiceDto agentDto, RefGroupeAbsence groupe) {
@@ -695,6 +733,14 @@ public class DemandeDto {
 
 	public void setTotalMinutesAnneeN1Old(Integer totalMinutesAnneeN1Old) {
 		this.totalMinutesAnneeN1Old = totalMinutesAnneeN1Old;
+	}
+
+	public boolean isAffichageBoutonHistorique() {
+		return affichageBoutonHistorique;
+	}
+
+	public void setAffichageBoutonHistorique(boolean affichageBoutonHistorique) {
+		this.affichageBoutonHistorique = affichageBoutonHistorique;
 	}
 
 }

@@ -51,4 +51,7 @@ public interface ICounterService {
 
 	RestitutionMassiveDto getDetailsHistoRestitutionMassive(
 			Integer idAgentConnecte, RestitutionMassiveDto dto);
+
+	List<RestitutionMassiveDto> getHistoRestitutionMassiveCAByAgent(
+			Integer idAgent);
 }

@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -207,7 +208,7 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		TypedQuery<CongeAnnuelRestitutionMassive> query = absEntityManager.createQuery(sb.toString(),
 				CongeAnnuelRestitutionMassive.class);
-
+		
 		return query.getResultList();
 	}
 
@@ -252,6 +253,41 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 		TypedQuery<RefAlimCongeAnnuel> query = absEntityManager.createQuery(sb.toString(), RefAlimCongeAnnuel.class);
 
 		query.setParameter("annee", year);
+
+		return query.getResultList();
+	}
+
+	@Override
+	public List<CongeAnnuelRestitutionMassiveHisto> getListRestitutionMassiveByIdAgent(List<Integer> idAgent, Date fromDate,
+			Date toDate) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select histo from CongeAnnuelRestitutionMassiveHisto histo ");
+		sb.append("inner join histo.restitutionMassive d ");
+		sb.append("where histo.idAgent in :idAgent ");
+
+		if (fromDate != null && toDate == null) {
+			sb.append("and d.dateRestitution >= :fromDate ");
+		} else if (fromDate == null && toDate != null) {
+			sb.append("and d.dateRestitution <= :toDate ");
+		} else if (fromDate != null && toDate != null) {
+			sb.append("and d.dateRestitution >= :fromDate and d.dateRestitution <= :toDate ");
+		}
+		sb.append("order by d.dateRestitution desc ");
+		
+		TypedQuery<CongeAnnuelRestitutionMassiveHisto> query = absEntityManager.createQuery(sb.toString(),
+				CongeAnnuelRestitutionMassiveHisto.class);
+
+		query.setParameter("idAgent", idAgent);
+
+		if (fromDate != null && toDate == null) {
+			query.setParameter("fromDate", fromDate);
+		} else if (fromDate == null && toDate != null) {
+			query.setParameter("toDate", toDate);
+		} else if (fromDate != null && toDate != null) {
+			query.setParameter("fromDate", fromDate);
+			query.setParameter("toDate", toDate);
+		}
 
 		return query.getResultList();
 	}

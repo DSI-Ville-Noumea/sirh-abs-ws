@@ -279,4 +279,9 @@ public abstract class AbstractCounterService implements ICounterService {
 			RestitutionMassiveDto dto) {
 		return null;
 	}
+	
+	@Override
+	public List<RestitutionMassiveDto> getHistoRestitutionMassiveCAByAgent(Integer idAgent) {
+		return null;
+	}
 }
