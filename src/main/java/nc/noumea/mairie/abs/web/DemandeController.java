@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.EditionDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
@@ -121,9 +122,14 @@ public class DemandeController {
 				idAgent, demandeDto.getDtoToString(demandeDto));
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		ReturnMessageDto srm = absenceService.saveDemande(convertedIdAgent, demandeDto);
+		ReturnMessageDto srm = null;
+		try {
+			srm = absenceService.saveDemande(convertedIdAgent, demandeDto);
+		} catch (ReturnMessageDtoException e) {
+			srm = e.getErreur();
+		}
 
-		if (!srm.getErrors().isEmpty()) {
+		if (srm != null && !srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 		}
 		return srm;
@@ -388,9 +394,15 @@ public class DemandeController {
 				idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		ReturnMessageDto result = absenceService.saveDemandeSIRH(convertedIdAgent, demandeDto);
 
-		if (result.getErrors().size() != 0)
+		ReturnMessageDto result = null;
+		try {
+			result = absenceService.saveDemandeSIRH(convertedIdAgent, demandeDto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
+
+		if (result != null && result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 
 		return result;

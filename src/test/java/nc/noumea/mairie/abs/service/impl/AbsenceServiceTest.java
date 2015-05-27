@@ -20,7 +20,6 @@ import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
-import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
@@ -57,6 +56,7 @@ import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -643,7 +643,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 
-		result = service.saveDemande(idAgent, dto);
+		try {
+			result = service.saveDemande(idAgent, dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("erreur droit", result.getErrors().get(0).toString());
@@ -2652,7 +2656,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 
-		result = service.saveDemande(idAgent, dto);
+		try {
+			result = service.saveDemande(idAgent, dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("erreur droit", result.getErrors().get(0).toString());
@@ -2975,7 +2983,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 
-		result = service.saveDemande(idAgent, dto);
+		try {
+			result = service.saveDemande(idAgent, dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("erreur droit", result.getErrors().get(0).toString());
@@ -3303,7 +3315,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 
-		result = service.saveDemande(idAgent, dto);
+		try {
+			result = service.saveDemande(idAgent, dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("erreur droit", result.getErrors().get(0).toString());
@@ -4171,8 +4187,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-
-		result = service.saveDemandeSIRH(idAgent, dto);
+		try {
+			result = service.saveDemandeSIRH(idAgent, dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent n'est pas habilité à saisir une demande.", result.getErrors().get(0).toString());
@@ -4512,7 +4531,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 
-		result = service.saveDemandeSIRH(idAgent, dto);
+		try {
+			result = service.saveDemandeSIRH(idAgent, dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent n'est pas habilité à saisir une demande.", result.getErrors().get(0).toString());
@@ -4817,7 +4840,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
-		result = service.saveDemandeSIRH(idAgent, dto);
+		try {
+			result = service.saveDemandeSIRH(idAgent, dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent n'est pas habilité à saisir une demande.", result.getErrors().get(0).toString());
@@ -4858,7 +4885,8 @@ public class AbsenceServiceTest {
 				absDataConsistencyRules);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(null);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(null);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -8412,7 +8440,8 @@ public class AbsenceServiceTest {
 				absDataConsistencyRules);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(null);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(null);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -8633,7 +8662,8 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138, null)).thenReturn(listDroitAgent);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(null);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(null);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -8691,8 +8721,9 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138, null)).thenReturn(listDroitAgent);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(null);
-		
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(null);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
@@ -9624,7 +9655,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 
-		result = service.saveDemande(idAgent, dto);
+		try {
+			result = service.saveDemande(idAgent, dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("erreur droit", result.getErrors().get(0).toString());
@@ -10127,7 +10162,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 
-		result = service.saveDemande(idAgent, dto);
+		try {
+			result = service.saveDemande(idAgent, dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("erreur droit", result.getErrors().get(0).toString());
@@ -10169,7 +10208,8 @@ public class AbsenceServiceTest {
 				absDataConsistencyRules);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(null);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(null);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -10243,7 +10283,8 @@ public class AbsenceServiceTest {
 		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138, null)).thenReturn(listDroitAgent);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(null);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(null);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);

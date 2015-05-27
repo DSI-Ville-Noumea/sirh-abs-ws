@@ -49,6 +49,7 @@ import nc.noumea.mairie.abs.dto.RefAlimCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
@@ -182,7 +183,7 @@ public class AbsenceService implements IAbsenceService {
 		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getAgentWithServiceDto()
 				.getIdAgent(), returnDto);
 		if (!returnDto.getErrors().isEmpty())
-			return returnDto;
+			throw new ReturnMessageDtoException(returnDto);
 
 		Demande demande = null;
 		Date dateJour = new Date();
@@ -191,7 +192,7 @@ public class AbsenceService implements IAbsenceService {
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
-			return returnDto;
+			throw new ReturnMessageDtoException(returnDto);
 		}
 
 		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
@@ -201,7 +202,7 @@ public class AbsenceService implements IAbsenceService {
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
-			return returnDto;
+			throw new ReturnMessageDtoException(returnDto);
 		}
 
 		demandeRepository.persistEntity(demande);
@@ -1126,7 +1127,7 @@ public class AbsenceService implements IAbsenceService {
 		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
 			logger.warn("L'agent n'est pas habilité à saisir une demande.");
 			returnDto.getErrors().add(String.format("L'agent n'est pas habilité à saisir une demande."));
-			return returnDto;
+			throw new ReturnMessageDtoException(returnDto);
 		}
 
 		Demande demande = null;
@@ -1136,7 +1137,7 @@ public class AbsenceService implements IAbsenceService {
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
-			return returnDto;
+			throw new ReturnMessageDtoException(returnDto);
 		}
 
 		// si la demande provient de SIRH, et que la SAISIE KIOSQUE dans la
@@ -1157,7 +1158,7 @@ public class AbsenceService implements IAbsenceService {
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
-			return returnDto;
+			throw new ReturnMessageDtoException(returnDto);
 		}
 
 		demandeRepository.persistEntity(demande);
