@@ -96,7 +96,8 @@ public class DemandeController {
 		demande.setDateFin(demandeDto.getDateFin());
 		demande.setTypeSaisiCongeAnnuel(typeCongeAnnuel);
 
-		Double duree = helperService.getDureeCongeAnnuel(demande, demandeDto.getDateReprise());
+		Double duree = helperService.getDureeCongeAnnuel(demande, demandeDto.getDateReprise()) < 0 ? 0.0
+				: helperService.getDureeCongeAnnuel(demande, demandeDto.getDateReprise());
 
 		DemandeDto res = new DemandeDto();
 		res.setDuree(duree);

@@ -370,22 +370,23 @@ public class AbsenceService implements IAbsenceService {
 			demandeDto
 					.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(demandeDto));
 		}
-		
-		if(!FiltreService.ONGLET_EN_COURS.equals(ongletDemande)
+
+		if (!FiltreService.ONGLET_EN_COURS.equals(ongletDemande)
 				&& !FiltreService.ONGLET_NON_PRISES.equals(ongletDemande)) {
 			// on recupere tous les idAgents
 			List<Integer> listIdAgents = new ArrayList<Integer>();
-			if(!listDroitAgent.isEmpty()) {
-				for(DroitsAgent agent : listDroitAgent) {
+			if (!listDroitAgent.isEmpty()) {
+				for (DroitsAgent agent : listDroitAgent) {
 					listIdAgents.add(agent.getIdAgent());
 				}
 			}
 			// #15586
-			listeDto.addAll(getListRestitutionMassiveByIdAgent(listIdAgents.isEmpty() ? Arrays.asList(idAgentConcerne) : listIdAgents, fromDate, toDate, idRefGroupeAbsence));
+			listeDto.addAll(getListRestitutionMassiveByIdAgent(listIdAgents.isEmpty() ? Arrays.asList(idAgentConcerne)
+					: listIdAgents, fromDate, toDate, idRefGroupeAbsence));
 		}
-		
+
 		Collections.sort(listeDto, new DemandeDtoComparator());
-		
+
 		return listeDto;
 	}
 
@@ -1202,47 +1203,51 @@ public class AbsenceService implements IAbsenceService {
 			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto));
 			dto.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(dto));
 		}
-		
+
 		// #15586
 		listeDto.addAll(getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate, idRefGroupeAbsence));
 
 		Collections.sort(listeDto, new DemandeDtoComparator());
-		
+
 		return listeDto;
 	}
-	
+
 	/**
-	 * #15586
-	 * Retourne la liste des restitutions massives
+	 * #15586 Retourne la liste des restitutions massives
 	 * 
-	 * @param agentIds liste des agents a rechercher
-	 * @param fromDate date de debut
-	 * @param toDate date de fin
+	 * @param agentIds
+	 *            liste des agents a rechercher
+	 * @param fromDate
+	 *            date de debut
+	 * @param toDate
+	 *            date de fin
 	 * @return liste de DemandeDto
 	 */
-	private List<DemandeDto> getListRestitutionMassiveByIdAgent(List<Integer> agentIds, Date fromDate, Date toDate, Integer idRefGroupeAbsence) {
-		
+	private List<DemandeDto> getListRestitutionMassiveByIdAgent(List<Integer> agentIds, Date fromDate, Date toDate,
+			Integer idRefGroupeAbsence) {
+
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
-		
-		if(null == idRefGroupeAbsence
-				|| RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.equals(RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence))) {
-			
-			List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassiveCA = 
-					congeAnnuelRepository.getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate);
-			
-			if(null != listRestitutionMassiveCA) {
+
+		if (null == idRefGroupeAbsence
+				|| RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.equals(RefTypeGroupeAbsenceEnum
+						.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence))) {
+
+			List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassiveCA = congeAnnuelRepository
+					.getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate);
+
+			if (null != listRestitutionMassiveCA) {
 				List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
-				
-				for(CongeAnnuelRestitutionMassiveHisto restitution : listRestitutionMassiveCA) {
-					AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, restitution.getIdAgent(),
-							restitution.getRestitutionMassive().getDateRestitution());
-					
+
+				for (CongeAnnuelRestitutionMassiveHisto restitution : listRestitutionMassiveCA) {
+					AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants,
+							restitution.getIdAgent(), restitution.getRestitutionMassive().getDateRestitution());
+
 					DemandeDto dto = new DemandeDto(restitution, agentOptimise);
 					result.add(dto);
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -1562,7 +1567,8 @@ public class AbsenceService implements IAbsenceService {
 
 				demandeCongesAnnuels = (DemandeCongesAnnuels) demande;
 				demandeCongesAnnuels.setDuree(helperService.getDureeCongeAnnuel(demandeCongesAnnuels,
-						demandeDto.getDateReprise()));
+						demandeDto.getDateReprise()) < 0 ? 0.0 : helperService.getDureeCongeAnnuel(
+						demandeCongesAnnuels, demandeDto.getDateReprise()));
 				demandeCongesAnnuels.setDureeAnneeN1(0.0);
 				demandeCongesAnnuels.setNbSamediOffert(helperService.getNombreSamediOffert(demandeCongesAnnuels));
 				demandeCongesAnnuels.setNbSamediDecompte(helperService.getNombreSamediDecompte(demandeCongesAnnuels));
