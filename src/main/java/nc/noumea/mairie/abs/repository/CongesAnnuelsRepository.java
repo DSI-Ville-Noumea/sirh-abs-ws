@@ -208,7 +208,7 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 
 		TypedQuery<CongeAnnuelRestitutionMassive> query = absEntityManager.createQuery(sb.toString(),
 				CongeAnnuelRestitutionMassive.class);
-		
+
 		return query.getResultList();
 	}
 
@@ -258,13 +258,16 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 	}
 
 	@Override
-	public List<CongeAnnuelRestitutionMassiveHisto> getListRestitutionMassiveByIdAgent(List<Integer> idAgent, Date fromDate,
-			Date toDate) {
+	public List<CongeAnnuelRestitutionMassiveHisto> getListRestitutionMassiveByIdAgent(List<Integer> idAgent,
+			Date fromDate, Date toDate) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select histo from CongeAnnuelRestitutionMassiveHisto histo ");
 		sb.append("inner join histo.restitutionMassive d ");
-		sb.append("where histo.idAgent in :idAgent ");
+		sb.append("where 1=1 ");
+
+		if (idAgent != null && !idAgent.isEmpty())
+			sb.append("and histo.idAgent in :idAgent ");
 
 		if (fromDate != null && toDate == null) {
 			sb.append("and d.dateRestitution >= :fromDate ");
@@ -274,11 +277,12 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 			sb.append("and d.dateRestitution >= :fromDate and d.dateRestitution <= :toDate ");
 		}
 		sb.append("order by d.dateRestitution desc ");
-		
+
 		TypedQuery<CongeAnnuelRestitutionMassiveHisto> query = absEntityManager.createQuery(sb.toString(),
 				CongeAnnuelRestitutionMassiveHisto.class);
 
-		query.setParameter("idAgent", idAgent);
+		if (idAgent != null && !idAgent.isEmpty())
+			query.setParameter("idAgent", idAgent);
 
 		if (fromDate != null && toDate == null) {
 			query.setParameter("fromDate", fromDate);
