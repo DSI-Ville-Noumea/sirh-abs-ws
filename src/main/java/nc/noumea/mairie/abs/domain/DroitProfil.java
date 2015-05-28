@@ -23,7 +23,7 @@ import javax.persistence.Version;
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
 		@NamedQuery(name = "getInputterDroitProfilOfApprobateurByLibelle", query = "select dp from DroitProfil dp where dp.droitApprobateur.idAgent= :idAgentApprobateur and dp.droit.idAgent= :idAgent and dp.droit.idAgent!= :idAgentApprobateur and dp.profil.libelle= :libelle "),
-		@NamedQuery(name = "getDroitProfilByAgent", query = "select dp from DroitProfil dp where dp.droitApprobateur.idAgent = :idAgentApprobateur and dp.droit.idAgent = :idAgent"),
+		@NamedQuery(name = "getDroitProfilByAgent", query = "select dp from DroitProfil dp LEFT JOIN FETCH dp.droitDroitsAgent dda where dp.droitApprobateur.idAgent = :idAgentApprobateur and dp.droit.idAgent = :idAgent"),
 		@NamedQuery(name = "getDroitProfilApprobateur", query = "select dp from DroitProfil dp where dp.droitApprobateur.idAgent = :idAgentApprobateur and dp.droit.idAgent = :idAgentApprobateur"),
 		@NamedQuery(name = "getDroitProfilByLibelleProfil", query = "select dp from DroitProfil dp where dp.droit.idAgent= :idAgent and dp.profil.libelle= :libelle ")
 })

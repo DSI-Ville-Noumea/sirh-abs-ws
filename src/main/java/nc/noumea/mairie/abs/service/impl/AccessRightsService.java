@@ -377,8 +377,9 @@ public class AccessRightsService implements IAccessRightsService {
 			Droit newViseur = null;
 
 			// on verifie si le viseur existe deja ou non
+			// #15711 bug lors de la suppression
 			for (Droit existingViseur : originalViseurs) {
-				if (accessRightsRepository.isUserViseurOfApprobateur(idAgentAppro, viseurDto.getIdAgent())) {
+				if (existingViseur.getIdAgent().equals(viseurDto.getIdAgent())) {
 					newViseur = existingViseur;
 					originalViseurs.remove(newViseur);
 					break;
@@ -463,9 +464,10 @@ public class AccessRightsService implements IAccessRightsService {
 
 			Droit newOperateur = null;
 
-			// on verifie si l operateur existe deja ou non
+			// on verifie si l operateur existe deja ou non.
+			// #15711 bug lors de la suppression
 			for (Droit existingOperateur : originalOperateurs) {
-				if (accessRightsRepository.isUserOperateurOfApprobateur(idAgentAppro, operateurDto.getIdAgent())) {
+				if (existingOperateur.getIdAgent().equals(operateurDto.getIdAgent())) {
 					newOperateur = existingOperateur;
 					originalOperateurs.remove(newOperateur);
 					break;
@@ -720,6 +722,7 @@ public class AccessRightsService implements IAccessRightsService {
 	 *  sauvegarde les agents saisis par un operateur
 	 */
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur,
 			List<AgentDto> agents) {
 		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.OPERATEUR);
@@ -730,46 +733,20 @@ public class AccessRightsService implements IAccessRightsService {
 	 *  sauvegarde les agents saisis par un viseur
 	 */
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur,
 			List<AgentDto> agents) {
 		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.VISEUR);
 	}
 	
-	@Transactional(value = "absTransactionManager")
 	protected ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur,
 			List<AgentDto> agents, ProfilEnum profil) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		Droit droitApprobateur = accessRightsRepository.getAgentDroitFetchAgents(idAgentApprobateur);
-		Droit droitOperateurOrViseur = accessRightsRepository.getAgentDroitFetchAgents(idAgentOperateurOrViseur);
 		List<DroitProfil> listDroitsProfil = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur,
 				idAgentOperateurOrViseur);
-
-		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgentApprobateur);
-
-		if (!droitSousAgentsByApprobateur.contains(droitOperateurOrViseur)) {
-			logger.warn(
-					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur {} car il n'est pas un opérateur ou viseur de l'agent {}.",
-					idAgentOperateurOrViseur, idAgentApprobateur);
-			result.getErrors()
-					.add(String
-							.format("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [%d] car il n'est pas un opérateur ou viseur de l'agent [%d].",
-									idAgentOperateurOrViseur, idAgentApprobateur));
-			return result;
-		} else {
-			if (!accessRightsRepository.isUserOperateur(idAgentOperateurOrViseur)
-					&& !accessRightsRepository.isUserViseur(idAgentOperateurOrViseur)) {
-				logger.warn(
-						"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur {} car il n'est pas un opérateur ou viseur de l'agent {}.",
-						idAgentOperateurOrViseur, idAgentApprobateur);
-				result.getErrors()
-						.add(String
-								.format("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [%d] car il n'est pas un opérateur ou viseur de l'agent [%d].",
-										idAgentOperateurOrViseur, idAgentApprobateur));
-				return result;
-			}
-		}
 		
 		// #15688 bug cumul de rôles sous un même approbateur
 		DroitProfil droitProfilOperateurOrViseur = null;
@@ -818,7 +795,7 @@ public class AccessRightsService implements IAccessRightsService {
 				// once found, if this agent is not in the operator list, add it
 				if (!droitProfilOperateurOrViseur.getDroitDroitsAgent().contains(ddaInAppro)) {
 					DroitDroitsAgent dda = new DroitDroitsAgent();
-					dda.setDroit(droitOperateurOrViseur);
+					dda.setDroit(droitProfilOperateurOrViseur.getDroit());
 					dda.setDroitsAgent(ddaInAppro.getDroitsAgent());
 					dda.setDroitProfil(droitProfilOperateurOrViseur);
 

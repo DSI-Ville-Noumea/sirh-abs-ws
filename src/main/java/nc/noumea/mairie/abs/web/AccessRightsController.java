@@ -243,21 +243,21 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<AgentDto> getInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idOperateur") Integer idOperateurOrViseur) {
+			@RequestParam(value = "idOperateur") Integer idOperateur) {
 
 		logger.debug(
 				"entered GET [droits/agentsSaisisByOperateur] => getInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {} ",
-				idAgent, idOperateurOrViseur);
+				idAgent, idOperateur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		int convertedIdOperateurOrViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateurOrViseur);
+		int convertedIdOperateur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateur);
 
 		List<AgentDto> result = accessRightService.getAgentsToInputByOperateur(convertedIdAgent,
-				convertedIdOperateurOrViseur);
+				convertedIdOperateur);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -271,21 +271,21 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByViseur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<AgentDto> getInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idViseur") Integer idOperateurOrViseur) {
+			@RequestParam(value = "idViseur") Integer idViseur) {
 
 		logger.debug(
 				"entered GET [droits/agentsSaisisByViseur] => getInputAgentsByViseur with parameter idAgent = {} and idViseur = {} ",
-				idAgent, idOperateurOrViseur);
+				idAgent, idViseur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		int convertedIdOperateurOrViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateurOrViseur);
+		int convertedIdViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idViseur);
 
 		List<AgentDto> result = accessRightService.getAgentsToInputByViseur(convertedIdAgent,
-				convertedIdOperateurOrViseur);
+				convertedIdViseur);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -297,8 +297,8 @@ public class AccessRightsController {
 	 * Saisie/modifie la liste des agents affectes a un operateur
 	 */
 	@ResponseBody
-	@RequestMapping(value = "agentsSaisisForOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setInputAgentsForOperateur(@RequestParam("idAgent") Integer idAgent,
+	@RequestMapping(value = "agentsSaisisByOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("idOperateur") Integer idOperateur,
 			@RequestBody List<AgentDto> agentsApprouves, HttpServletResponse response) {
 
@@ -330,13 +330,13 @@ public class AccessRightsController {
 	 * Saisie/modifie la liste des agents affectes a un viseur
 	 */
 	@ResponseBody
-	@RequestMapping(value = "agentsSaisisForViseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setInputAgentsForViseur(@RequestParam("idAgent") Integer idAgent,
+	@RequestMapping(value = "agentsSaisisByViseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("idViseur") Integer idViseur,
 			@RequestBody List<AgentDto> agentsApprouves, HttpServletResponse response) {
 
 		logger.debug(
-				"entered POST [droits/agentsSaisis] => setInputAgents with parameter idAgent = {} and idViseur = {}",
+				"entered POST [droits/agentsSaisisByViseur] => setInputAgentsByViseur with parameter idAgent = {} and idViseur = {}",
 				idAgent, idViseur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
