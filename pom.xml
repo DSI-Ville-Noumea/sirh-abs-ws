@@ -14,7 +14,6 @@
 		<slf4j.version>1.7.7</slf4j.version>
 		<!-- ne fonctionne pas en 4.1.4.RELEASE -->
 		<spring.version>4.0.6.RELEASE</spring.version>
-		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 	</properties>
 
 	<issueManagement>
@@ -26,14 +25,6 @@
 		<developerConnection>scm:svn:https://svn.ville-noumea.nc/sed/sirh-abs-ws/trunk</developerConnection>
 		<url>https://svn.ville-noumea.nc/sed/sirh-abs-ws/trunk</url>
 	</scm>
-
-	<distributionManagement>
-		<site>
-			<id>sirhabsws.website.prod</id>
-			<name>SIRH ABS Website Prod</name>
-			<url>file:\\cristal\DSI$\DSI\PROJETS\doxia\${project.name}</url>
-		</site>
-	</distributionManagement>
 
 	<repositories>
 		<repository>
@@ -294,7 +285,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>sirh-abs-ws##${maven.build.timestamp}-${project.version}</finalName>
+		<finalName>sirh-abs-ws##${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
