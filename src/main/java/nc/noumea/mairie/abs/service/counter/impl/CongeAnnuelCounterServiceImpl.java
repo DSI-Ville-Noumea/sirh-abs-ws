@@ -215,11 +215,19 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		// si on approuve, le compteur decremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
 				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
-			jours = 0 - ((DemandeCongesAnnuels) demande).getDuree()
-					- ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
+			if (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
+				return jours;
+			} else if (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.REFUSEE)) {
+				jours = ((DemandeCongesAnnuels) demande).getDuree()
+						+ ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
+			} else {
+				jours = 0 - ((DemandeCongesAnnuels) demande).getDuree()
+						- ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
+			}
 		}
 		// si on passe de Approuve a Refuse, le compteur incremente
-		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
+		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()) || demandeEtatChangeDto
+				.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat()))
 				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
 			jours = ((DemandeCongesAnnuels) demande).getDuree() + ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
 		}
@@ -1060,14 +1068,13 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 
 		return result;
 	}
-	
+
 	/**
 	 * #15586 retroune l'historique des restitutions massives pour un agent
 	 */
 	@Override
 	@Transactional(readOnly = true)
 	public List<RestitutionMassiveDto> getHistoRestitutionMassiveCAByAgent(Integer idAgent) {
-
 
 		List<RestitutionMassiveDto> result = new ArrayList<RestitutionMassiveDto>();
 
