@@ -238,15 +238,15 @@ public class AccessRightsController {
 	}
 
 	/**
-	 * Retourne la liste des agents affectes a un operateur ou viseur
+	 * Retourne la liste des agents affectes a un operateur
 	 */
 	@ResponseBody
-	@RequestMapping(value = "agentsSaisis", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<AgentDto> getInputAgents(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idOperateurOrViseur") Integer idOperateurOrViseur) {
+	@RequestMapping(value = "agentsSaisisByOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<AgentDto> getInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent,
+			@RequestParam(value = "idOperateur") Integer idOperateurOrViseur) {
 
 		logger.debug(
-				"entered GET [droits/agentsSaisis] => getInputAgents with parameter idAgent = {} and idOperateurOrViseur = {} ",
+				"entered GET [droits/agentsSaisisByOperateur] => getInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {} ",
 				idAgent, idOperateurOrViseur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
@@ -256,7 +256,35 @@ public class AccessRightsController {
 
 		int convertedIdOperateurOrViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateurOrViseur);
 
-		List<AgentDto> result = accessRightService.getAgentsToApproveOrInput(convertedIdAgent,
+		List<AgentDto> result = accessRightService.getAgentsToInputByOperateur(convertedIdAgent,
+				convertedIdOperateurOrViseur);
+
+		if (result.size() == 0)
+			throw new NoContentException();
+
+		return result;
+	}
+	
+	/**
+	 * Retourne la liste des agents affectes a un viseur
+	 */
+	@ResponseBody
+	@RequestMapping(value = "agentsSaisisByViseur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<AgentDto> getInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent,
+			@RequestParam(value = "idViseur") Integer idOperateurOrViseur) {
+
+		logger.debug(
+				"entered GET [droits/agentsSaisisByViseur] => getInputAgentsByViseur with parameter idAgent = {} and idViseur = {} ",
+				idAgent, idOperateurOrViseur);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		int convertedIdOperateurOrViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateurOrViseur);
+
+		List<AgentDto> result = accessRightService.getAgentsToInputByViseur(convertedIdAgent,
 				convertedIdOperateurOrViseur);
 
 		if (result.size() == 0)
@@ -266,30 +294,63 @@ public class AccessRightsController {
 	}
 
 	/**
-	 * Saisie/modifie la liste des agents affectes a un operateur ou viseur
+	 * Saisie/modifie la liste des agents affectes a un operateur
 	 */
 	@ResponseBody
-	@RequestMapping(value = "agentsSaisis", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setInputAgents(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("idOperateurOrViseur") Integer idOperateurOrViseur,
+	@RequestMapping(value = "agentsSaisisForOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setInputAgentsForOperateur(@RequestParam("idAgent") Integer idAgent,
+			@RequestParam("idOperateur") Integer idOperateur,
 			@RequestBody List<AgentDto> agentsApprouves, HttpServletResponse response) {
 
 		logger.debug(
-				"entered POST [droits/agentsSaisis] => setInputAgents with parameter idAgent = {} and idOperateurOrViseur = {}",
-				idAgent, idOperateurOrViseur);
+				"entered POST [droits/agentsSaisisByOperateur] => setInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {}",
+				idAgent, idOperateur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		int convertedIdOperateurOrViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateurOrViseur);
+		int convertedIdOperateur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateur);
 
-		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdOperateurOrViseur);
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdOperateur);
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		ReturnMessageDto result = accessRightService.setAgentsToInput(convertedIdAgent, convertedIdOperateurOrViseur,
+		ReturnMessageDto result = accessRightService.setAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur,
+				agentsApprouves);
+
+		if (result.getErrors().size() != 0)
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+
+		return result;
+	}
+
+	/**
+	 * Saisie/modifie la liste des agents affectes a un viseur
+	 */
+	@ResponseBody
+	@RequestMapping(value = "agentsSaisisForViseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setInputAgentsForViseur(@RequestParam("idAgent") Integer idAgent,
+			@RequestParam("idViseur") Integer idViseur,
+			@RequestBody List<AgentDto> agentsApprouves, HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [droits/agentsSaisis] => setInputAgents with parameter idAgent = {} and idViseur = {}",
+				idAgent, idViseur);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		int convertedIdViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idViseur);
+
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdViseur);
+		if (agent == null || agent.getIdAgent() == null)
+			throw new NotFoundException();
+
+		ReturnMessageDto result = accessRightService.setAgentsToInputByViseur(convertedIdAgent, convertedIdViseur,
 				agentsApprouves);
 
 		if (result.getErrors().size() != 0)

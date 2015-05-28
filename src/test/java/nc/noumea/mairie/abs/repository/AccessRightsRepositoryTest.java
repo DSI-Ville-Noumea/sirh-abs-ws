@@ -779,10 +779,10 @@ public class AccessRightsRepositoryTest {
 		dp.setDroit(droit);
 		absEntityManager.persist(dp);
 
-		DroitProfil result = repository.getDroitProfilByAgent(droitApprobateur.getIdAgent(), droit.getIdAgent());
+		List<DroitProfil> result = repository.getDroitProfilByAgent(droitApprobateur.getIdAgent(), droit.getIdAgent());
 
 		assertNotNull(result);
-		assertEquals("OPERATEUR", result.getProfil().getLibelle());
+		assertEquals("OPERATEUR", result.get(0).getProfil().getLibelle());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -807,10 +807,10 @@ public class AccessRightsRepositoryTest {
 		dp.setDroit(droit);
 		absEntityManager.persist(dp);
 
-		DroitProfil result = repository.getDroitProfilByAgent(droit.getIdAgent(), droit.getIdAgent());
+		List<DroitProfil> result = repository.getDroitProfilByAgent(droit.getIdAgent(), droit.getIdAgent());
 
 		assertNotNull(result);
-		assertEquals("APPROBATEUR", result.getProfil().getLibelle());
+		assertEquals("APPROBATEUR", result.get(0).getProfil().getLibelle());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -840,9 +840,9 @@ public class AccessRightsRepositoryTest {
 		dp.setDroit(droit);
 		absEntityManager.persist(dp);
 
-		DroitProfil result = repository.getDroitProfilByAgent(droit.getIdAgent(), droit.getIdAgent());
+		List<DroitProfil> result = repository.getDroitProfilByAgent(droit.getIdAgent(), droit.getIdAgent());
 
-		assertNull(result);
+		assertEquals(0, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

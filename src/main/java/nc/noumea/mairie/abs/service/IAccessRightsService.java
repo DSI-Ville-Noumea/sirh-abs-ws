@@ -34,12 +34,6 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto setViseurs(Integer idAgentAppro, ViseursDto dto);
 
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent);
-
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent, String codeService);
-
-	ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents);
-
 	ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents);
 
 	AgentWithServiceDto getApprobateurOfAgent(Integer convertedIdAgent);
@@ -57,4 +51,19 @@ public interface IAccessRightsService {
 	ReturnMessageDto setDelegataire(Integer idAgentAppro, InputterDto inputterDto, ReturnMessageDto returnDto);
 
 	ActeursDto getListeActeurs(Integer idAgent);
+
+	List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur,
+			Integer idAgent);
+
+	List<AgentDto> getAgentsToInputByViseur(Integer idAgentApprobateur,
+			Integer idAgentViseur);
+
+	ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur,
+			Integer idAgentOperateur, List<AgentDto> agents);
+
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur,
+			Integer idAgent);
+
+	ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur,
+			Integer idAgentOperateur, List<AgentDto> agents);
 }

@@ -45,7 +45,7 @@ public interface IAccessRightsRepository {
 
 	Droit getAgentDroitFetchAgents(Integer idAgent);
 
-	DroitProfil getDroitProfilByAgent(Integer idAgentApprobateur, Integer idAgent);
+	List<DroitProfil> getDroitProfilByAgent(Integer idAgentApprobateur, Integer idAgent);
 
 	DroitsAgent getDroitsAgent(Integer idAgent);
 

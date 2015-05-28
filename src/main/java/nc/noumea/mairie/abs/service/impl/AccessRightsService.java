@@ -621,25 +621,61 @@ public class AccessRightsService implements IAccessRightsService {
 
 	}
 
+	/**
+	 * Liste des agents que l approbateur approuve
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent) {
-		return getAgentsToApproveOrInput(idAgentApprobateur, idAgent, null);
+		return getAgentsToApproveOrInput(idAgentApprobateur, idAgent, null, ProfilEnum.APPROBATEUR);
+	}
+	
+	/**
+	 * #15688 bug cumul de rôles sous un même approbateur
+	 * Liste des agents que l operateur saisit
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur) {
+		return getAgentsToApproveOrInput(idAgentApprobateur, idAgentOperateur, null, ProfilEnum.OPERATEUR);
+	}
+	
+	/**
+	 * #15688 bug cumul de rôles sous un même approbateur
+	 * Liste des agents que le viseur saisit
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<AgentDto> getAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentViseur) {
+		return getAgentsToApproveOrInput(idAgentApprobateur, idAgentViseur, null, ProfilEnum.VISEUR);
 	}
 
 	/**
 	 * Retrieves the agent an approbator is set to Approve or an Operator is set
 	 * to Input. This service also filters by service
 	 */
-	@Override
-	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent, String codeService) {
+	protected List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent, String codeService, ProfilEnum profil) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
-		DroitProfil dp = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgent);
+		List<DroitProfil> listDp = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgent);
 
-		if (dp == null) {
+		if (listDp == null
+				|| listDp.isEmpty()) {
 			logger.warn("L'agent {} ne possède pas de DroitProfil associé à l'approbateur {}.", idAgent,
 					idAgentApprobateur);
+			return result;
+		}
+		
+		DroitProfil dp = null;
+		for(DroitProfil droitProfil : listDp) {
+			if(profil.toString().equals(droitProfil.getProfil().getLibelle())) {
+				dp = droitProfil;
+				break;
+			}
+		}
+		if(null == dp) {
+			logger.warn("L'agent {} ne possède pas de rôle {} associé à l'approbateur {}.", idAgent,
+					profil.toString(), idAgentApprobateur);
 			return result;
 		}
 
@@ -679,16 +715,35 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 	}
 
+	/**
+	 *  #15688 bug cumul de rôles sous un même approbateur
+	 *  sauvegarde les agents saisis par un operateur
+	 */
 	@Override
-	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur,
+	public ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur,
 			List<AgentDto> agents) {
+		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.OPERATEUR);
+	}
+
+	/**
+	 *  #15688 bug cumul de rôles sous un même approbateur
+	 *  sauvegarde les agents saisis par un viseur
+	 */
+	@Override
+	public ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur,
+			List<AgentDto> agents) {
+		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.VISEUR);
+	}
+	
+	@Transactional(value = "absTransactionManager")
+	protected ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur,
+			List<AgentDto> agents, ProfilEnum profil) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		Droit droitApprobateur = accessRightsRepository.getAgentDroitFetchAgents(idAgentApprobateur);
 		Droit droitOperateurOrViseur = accessRightsRepository.getAgentDroitFetchAgents(idAgentOperateurOrViseur);
-		DroitProfil droitProfilOperateurOrViseur = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur,
+		List<DroitProfil> listDroitsProfil = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur,
 				idAgentOperateurOrViseur);
 
 		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgentApprobateur);
@@ -701,6 +756,7 @@ public class AccessRightsService implements IAccessRightsService {
 					.add(String
 							.format("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [%d] car il n'est pas un opérateur ou viseur de l'agent [%d].",
 									idAgentOperateurOrViseur, idAgentApprobateur));
+			return result;
 		} else {
 			if (!accessRightsRepository.isUserOperateur(idAgentOperateurOrViseur)
 					&& !accessRightsRepository.isUserViseur(idAgentOperateurOrViseur)) {
@@ -711,7 +767,27 @@ public class AccessRightsService implements IAccessRightsService {
 						.add(String
 								.format("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [%d] car il n'est pas un opérateur ou viseur de l'agent [%d].",
 										idAgentOperateurOrViseur, idAgentApprobateur));
+				return result;
 			}
+		}
+		
+		// #15688 bug cumul de rôles sous un même approbateur
+		DroitProfil droitProfilOperateurOrViseur = null;
+		for(DroitProfil droitProfil : listDroitsProfil) {
+			if(profil.toString().equals(droitProfil.getProfil().getLibelle())) {
+				droitProfilOperateurOrViseur = droitProfil;
+				break;
+			}
+		}
+		if(null == droitProfilOperateurOrViseur) {
+			logger.warn(
+					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur {} car il n'est pas un opérateur ou viseur de l'agent {}.",
+					idAgentOperateurOrViseur, idAgentApprobateur);
+			result.getErrors()
+					.add(String
+							.format("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [%d] car il n'est pas un opérateur ou viseur de l'agent [%d].",
+									idAgentOperateurOrViseur, idAgentApprobateur));
+			return result;
 		}
 
 		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(

@@ -222,19 +222,14 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public DroitProfil getDroitProfilByAgent(Integer idAgentApprobateur, Integer idAgent) {
+	public List<DroitProfil> getDroitProfilByAgent(Integer idAgentApprobateur, Integer idAgent) {
 
 		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getDroitProfilByAgent", DroitProfil.class);
 
 		q.setParameter("idAgentApprobateur", idAgentApprobateur);
 		q.setParameter("idAgent", idAgent);
 
-		List<DroitProfil> r = q.getResultList();
-
-		if (r.size() == 0)
-			return null;
-
-		return r.get(0);
+		return q.getResultList();
 	}
 
 	@Override
