@@ -159,7 +159,7 @@ public class AccessRightsController {
 	 * WS specifique a SIRH
 	 */
 	@ResponseBody
-	@RequestMapping(value = "operateur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@RequestMapping(value = "operateurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto setOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
 			HttpServletResponse response) {
 
@@ -184,7 +184,7 @@ public class AccessRightsController {
 	 * WS specifique a SIRH
 	 */
 	@ResponseBody
-	@RequestMapping(value = "operateur", produces = "application/json;charset=utf-8", method = RequestMethod.DELETE)
+	@RequestMapping(value = "deleteOperateurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto deleteOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
 			HttpServletResponse response) {
 
@@ -248,11 +248,11 @@ public class AccessRightsController {
 	 * WS specifique a SIRH
 	 */
 	@ResponseBody
-	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@RequestMapping(value = "viseurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto setViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
 			HttpServletResponse response) {
 
-		logger.debug("entered POST [droits/viseur] => setViseur with parameter idAgent = {}", idAgent);
+		logger.debug("entered POST [droits/viseurSIRH] => setViseur with parameter idAgent = {}", idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -273,7 +273,7 @@ public class AccessRightsController {
 	 * WS specifique a SIRH
 	 */
 	@ResponseBody
-	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.DELETE)
+	@RequestMapping(value = "deleteViseurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto deleteViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
 			HttpServletResponse response) {
 
