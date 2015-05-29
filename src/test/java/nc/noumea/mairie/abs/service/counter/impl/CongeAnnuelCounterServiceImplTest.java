@@ -417,9 +417,15 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
 		demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.SAISIE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setDuree(10.0);
 		demande.setDureeAnneeN1(20.0);
+		demande.setEtatsDemande(etatsDemande);
 
 		IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl = Mockito
 				.mock(IAbsenceDataConsistencyRules.class);
