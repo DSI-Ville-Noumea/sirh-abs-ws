@@ -287,6 +287,40 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
+	public DroitProfil getUserOperateurOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
+
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
+				DroitProfil.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("idAgentApprobateur", idAgentApprobateur);
+		q.setParameter("libelle", ProfilEnum.OPERATEUR.toString());
+
+		try {
+			return q.getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Override
+	public DroitProfil getUserViseurOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
+
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
+				DroitProfil.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("idAgentApprobateur", idAgentApprobateur);
+		q.setParameter("libelle", ProfilEnum.VISEUR.toString());
+
+		try {
+			return q.getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Override
 	public DroitsAgent getDroitsAgent(Integer idAgent) {
 
 		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery("getDroitsAgent", DroitsAgent.class);

@@ -66,4 +66,12 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur,
 			Integer idAgentOperateur, List<AgentDto> agents);
+
+	ReturnMessageDto setOperateur(Integer idAgentAppro, AgentDto operateurDto);
+
+	ReturnMessageDto deleteOperateur(Integer idAgentAppro, AgentDto operateurDto);
+
+	ReturnMessageDto deleteViseur(Integer idAgentAppro, AgentDto viseurDto);
+
+	ReturnMessageDto setViseur(Integer idAgentAppro, AgentDto viseurDto);
 }

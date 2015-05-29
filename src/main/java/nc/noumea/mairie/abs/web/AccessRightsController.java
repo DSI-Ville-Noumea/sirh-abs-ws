@@ -154,6 +154,56 @@ public class AccessRightsController {
 	}
 
 	/**
+	 * #15713 special pour SIRH : one shot
+	 * Saisie/modification d un operateurs d un approbateur
+	 * WS specifique a SIRH
+	 */
+	@ResponseBody
+	@RequestMapping(value = "operateur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
+			HttpServletResponse response) {
+
+		logger.debug("entered POST [droits/operateur] => setOperateur with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		ReturnMessageDto result = accessRightService.setOperateur(convertedIdAgent, agentDto);
+
+		if (result.getErrors().size() != 0)
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+
+		return result;
+	}
+
+	/**
+	 * #15713 special pour SIRH : one shot
+	 * Saisie/modification d un operateurs d un approbateur
+	 * WS specifique a SIRH
+	 */
+	@ResponseBody
+	@RequestMapping(value = "operateur", produces = "application/json;charset=utf-8", method = RequestMethod.DELETE)
+	public ReturnMessageDto deleteOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
+			HttpServletResponse response) {
+
+		logger.debug("entered DELETE [droits/operateur] => deleteOperateur with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		ReturnMessageDto result = accessRightService.deleteOperateur(convertedIdAgent, agentDto);
+
+		if (result.getErrors().size() != 0)
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+
+		return result;
+	}
+
+	/**
 	 * Retourne les viseurs d un approbateur
 	 */
 	@ResponseBody
@@ -185,6 +235,56 @@ public class AccessRightsController {
 			throw new AccessForbiddenException();
 
 		ReturnMessageDto result = accessRightService.setViseurs(convertedIdAgent, viseursDto);
+
+		if (result.getErrors().size() != 0)
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+
+		return result;
+	}
+
+	/**
+	 * #15713 special pour SIRH : one shot
+	 * Saisie/modification d un operateurs d un approbateur
+	 * WS specifique a SIRH
+	 */
+	@ResponseBody
+	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
+			HttpServletResponse response) {
+
+		logger.debug("entered POST [droits/viseur] => setViseur with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		ReturnMessageDto result = accessRightService.setViseur(convertedIdAgent, agentDto);
+
+		if (result.getErrors().size() != 0)
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+
+		return result;
+	}
+
+	/**
+	 * #15713 special pour SIRH : one shot
+	 * Saisie/modification d un operateurs d un approbateur
+	 * WS specifique a SIRH
+	 */
+	@ResponseBody
+	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.DELETE)
+	public ReturnMessageDto deleteViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
+			HttpServletResponse response) {
+
+		logger.debug("entered DELETE [droits/viseur] => deleteViseur with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		ReturnMessageDto result = accessRightService.deleteViseur(convertedIdAgent, agentDto);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);

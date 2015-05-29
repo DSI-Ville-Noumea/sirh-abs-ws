@@ -65,4 +65,10 @@ public interface IAccessRightsRepository {
 			String codeService);
 
 	List<DroitsAgent> getListeActeursOfAgent(Integer idAgent);
+
+	DroitProfil getUserOperateurOfApprobateur(Integer idAgentApprobateur,
+			Integer idAgent);
+
+	DroitProfil getUserViseurOfApprobateur(Integer idAgentApprobateur,
+			Integer idAgent);
 }

@@ -558,6 +558,71 @@ public class AccessRightsRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
+	public void getUserOperateurOfApprobateur() {
+		Profil p1 = new Profil();
+		p1.setLibelle("OPERATEUR");
+		absEntityManager.persist(p1);
+		Profil appro = new Profil();
+		appro.setLibelle("APPROBATEUR");
+		absEntityManager.persist(appro);
+
+		Integer idAgentAppro1 = 9005138;
+		Integer idAgentAppro2 = 9005131;
+		Integer idAgentOperateur1 = 9002990;
+		Integer idAgentOperateur2 = 9003041;
+
+		// on definit un approbateur 1
+		Droit droitApprobateur1 = new Droit();
+		droitApprobateur1.setIdAgent(idAgentAppro1);
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitApprobateur1);
+		dp1.setDroitApprobateur(droitApprobateur1);
+		dp1.setProfil(appro);
+		droitApprobateur1.getDroitProfils().add(dp1);
+
+		// on definit un approbateur 2
+		Droit droitApprobateur2 = new Droit();
+		droitApprobateur2.setIdAgent(idAgentAppro2);
+		DroitProfil dp2 = new DroitProfil();
+		dp2.setDroit(droitApprobateur2);
+		dp2.setDroitApprobateur(droitApprobateur2);
+		dp2.setProfil(appro);
+		droitApprobateur2.getDroitProfils().add(dp2);
+
+		// on ajoute les opérateurs a chaque approbateur
+		Droit droitOpe1 = new Droit();
+		droitOpe1.setIdAgent(idAgentOperateur1);
+		DroitProfil dp3 = new DroitProfil();
+		dp3.setDroit(droitOpe1);
+		dp3.setDroitApprobateur(droitApprobateur1);
+		dp3.setProfil(p1);
+		droitApprobateur1.getDroitProfils().add(dp3);
+		Droit droitOpe2 = new Droit();
+		droitOpe2.setIdAgent(idAgentOperateur2);
+		DroitProfil dp4 = new DroitProfil();
+		dp4.setDroit(droitOpe2);
+		dp4.setDroitApprobateur(droitApprobateur2);
+		dp4.setProfil(p1);
+		droitApprobateur2.getDroitProfils().add(dp4);
+
+		// on persist les objets
+		absEntityManager.persist(droitApprobateur1);
+		absEntityManager.persist(droitApprobateur2);
+		absEntityManager.persist(droitOpe1);
+		absEntityManager.persist(droitOpe2);
+
+		// When
+		assertNotNull(repository.getUserOperateurOfApprobateur(idAgentAppro1, idAgentOperateur1));
+		assertNull(repository.getUserOperateurOfApprobateur(idAgentAppro2, idAgentOperateur1));
+		assertNotNull(repository.getUserOperateurOfApprobateur(idAgentAppro2, idAgentOperateur2));
+		assertNull(repository.getUserOperateurOfApprobateur(idAgentAppro1, idAgentOperateur2));
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
 	public void isUserDelagataireOfApprobateur() {
 		Profil p1 = new Profil();
 		p1.setLibelle("DELEGATAIRE");
@@ -681,6 +746,71 @@ public class AccessRightsRepositoryTest {
 		assertFalse(repository.isUserViseurOfApprobateur(idAgentAppro2, idAgentVis1));
 		assertTrue(repository.isUserViseurOfApprobateur(idAgentAppro2, idAgentVis2));
 		assertFalse(repository.isUserViseurOfApprobateur(idAgentAppro1, idAgentVis2));
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getUserViseurOfApprobateur() {
+		Profil p1 = new Profil();
+		p1.setLibelle("VISEUR");
+		absEntityManager.persist(p1);
+		Profil appro = new Profil();
+		appro.setLibelle("APPROBATEUR");
+		absEntityManager.persist(appro);
+
+		Integer idAgentAppro1 = 9005138;
+		Integer idAgentAppro2 = 9005131;
+		Integer idAgentVis1 = 9002990;
+		Integer idAgentVis2 = 9003041;
+
+		// on definit un approbateur 1
+		Droit droitApprobateur1 = new Droit();
+		droitApprobateur1.setIdAgent(idAgentAppro1);
+		DroitProfil dp1 = new DroitProfil();
+		dp1.setDroit(droitApprobateur1);
+		dp1.setDroitApprobateur(droitApprobateur1);
+		dp1.setProfil(appro);
+		droitApprobateur1.getDroitProfils().add(dp1);
+
+		// on definit un approbateur 2
+		Droit droitApprobateur2 = new Droit();
+		droitApprobateur2.setIdAgent(idAgentAppro2);
+		DroitProfil dp2 = new DroitProfil();
+		dp2.setDroit(droitApprobateur2);
+		dp2.setDroitApprobateur(droitApprobateur2);
+		dp2.setProfil(appro);
+		droitApprobateur2.getDroitProfils().add(dp2);
+
+		// on ajoute les viseurs a chaque approbateur
+		Droit droitVis1 = new Droit();
+		droitVis1.setIdAgent(idAgentVis1);
+		DroitProfil dp3 = new DroitProfil();
+		dp3.setDroit(droitVis1);
+		dp3.setDroitApprobateur(droitApprobateur1);
+		dp3.setProfil(p1);
+		droitApprobateur1.getDroitProfils().add(dp3);
+		Droit droitVis2 = new Droit();
+		droitVis2.setIdAgent(idAgentVis2);
+		DroitProfil dp4 = new DroitProfil();
+		dp4.setDroit(droitVis2);
+		dp4.setDroitApprobateur(droitApprobateur2);
+		dp4.setProfil(p1);
+		droitApprobateur2.getDroitProfils().add(dp4);
+
+		// on persist les objets
+		absEntityManager.persist(droitApprobateur1);
+		absEntityManager.persist(droitApprobateur2);
+		absEntityManager.persist(droitVis1);
+		absEntityManager.persist(droitVis2);
+
+		// When
+		assertNotNull(repository.getUserViseurOfApprobateur(idAgentAppro1, idAgentVis1));
+		assertNull(repository.getUserViseurOfApprobateur(idAgentAppro2, idAgentVis1));
+		assertNotNull(repository.getUserViseurOfApprobateur(idAgentAppro2, idAgentVis2));
+		assertNull(repository.getUserViseurOfApprobateur(idAgentAppro1, idAgentVis2));
 
 		absEntityManager.flush();
 		absEntityManager.clear();
