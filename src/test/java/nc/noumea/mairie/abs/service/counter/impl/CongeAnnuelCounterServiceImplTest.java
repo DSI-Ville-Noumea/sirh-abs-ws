@@ -251,10 +251,16 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.SAISIE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setDuree(2.0);
 		demande.setDureeAnneeN1(0.0);
 		demande.setIdAgent(9005138);
+		demande.setEtatsDemande(etatsDemande);
 
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
@@ -293,10 +299,16 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.SAISIE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setDuree(6.0);
 		demande.setDureeAnneeN1(0.0);
 		demande.setIdAgent(9005138);
+		demande.setEtatsDemande(etatsDemande);
 
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
@@ -342,10 +354,16 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
+		EtatDemande e = new EtatDemande();
+		e.setEtat(RefEtatEnum.SAISIE);
+		List<EtatDemande> etatsDemande = new ArrayList<>();
+		etatsDemande.add(e);
+
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setDuree(2.0);
 		demande.setDureeAnneeN1(0.0);
 		demande.setIdAgent(9005138);
+		demande.setEtatsDemande(etatsDemande);
 
 		DemandeEtatChangeDto dto = new DemandeEtatChangeDto();
 		dto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
