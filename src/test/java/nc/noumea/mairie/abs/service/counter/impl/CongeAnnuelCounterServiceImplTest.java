@@ -1734,7 +1734,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Integer idAgent = 9005138;
 
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
-		dto.setDateRestitution(new DateTime().withDayOfMonth(new DateTime().getDayOfMonth() - 1).toDate());
+		dto.setDateRestitution(new DateTime().minusDays(1).toDate());
 		dto.setJournee(false);
 		dto.setApresMidi(false);
 		dto.setMatin(true);
@@ -1776,7 +1776,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Integer idAgent = 9005138;
 
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
-		dto.setDateRestitution(new DateTime().withDayOfMonth(new DateTime().getDayOfMonth() - 1).toDate());
+		dto.setDateRestitution(new DateTime().minusDays(1).toDate());
 		dto.setJournee(false);
 		dto.setApresMidi(false);
 		dto.setMatin(true);
@@ -1819,7 +1819,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		Integer idAgent = 9005138;
 
 		RestitutionMassiveDto dto = new RestitutionMassiveDto();
-		dto.setDateRestitution(new DateTime().withDayOfMonth(new DateTime().getDayOfMonth() - 1).toDate());
+		dto.setDateRestitution(new DateTime().minusDays(1).toDate());
 		dto.setJournee(false);
 		dto.setApresMidi(false);
 		dto.setMatin(true);
