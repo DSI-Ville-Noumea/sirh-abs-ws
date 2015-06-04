@@ -1253,10 +1253,11 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
-		Mockito.when(sirhWSConsumer.getListPAByAgent(9005138)).thenReturn(listPA);
+		Mockito.when(sirhWSConsumer.getListPAByAgentSansPAFuture(9005138, dateFin)).thenReturn(listPA);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(20.0);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(20.0);
 
 		RefAlimCongeAnnuel refAlimCongeAnnuel = new RefAlimCongeAnnuel();
 		refAlimCongeAnnuel.setFevrier(10.0);
@@ -1334,10 +1335,11 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListPAPourAlimAutoCongesAnnuels(9005138, dateDebut, dateFin)).thenReturn(listPA);
-		Mockito.when(sirhWSConsumer.getListPAByAgent(9005138)).thenReturn(listPA);
+		Mockito.when(sirhWSConsumer.getListPAByAgentSansPAFuture(9005138, dateFin)).thenReturn(listPA);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(20.0);
+		Mockito.when(helperService.calculNombreJours(Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(20.0);
 
 		RefAlimCongeAnnuel refAlimCongeAnnuel = new RefAlimCongeAnnuel();
 		refAlimCongeAnnuel.setFevrier(10.0);
@@ -3335,10 +3337,10 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		assertEquals(result.get(0).isApresMidi(), restitution.isApresMidi());
 		assertEquals(result.get(0).getListHistoAgents().size(), 0);
 	}
-	
+
 	@Test
 	public void getHistoRestitutionMassiveCAByAgent_noResult() {
-		
+
 		CongeAnnuelRestitutionMassive restitution = new CongeAnnuelRestitutionMassive();
 		restitution.setApresMidi(true);
 		restitution.setJournee(false);
@@ -3346,13 +3348,13 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		restitution.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		restitution.setDateModification(new DateTime(2015, 1, 13, 0, 0, 0).toDate());
 		restitution.setMotif("motif");
-		
+
 		CongeAnnuelRestitutionMassiveHisto histo = new CongeAnnuelRestitutionMassiveHisto();
 		histo.setIdAgent(9005138);
 		histo.setJours(1.0);
 		histo.setRestitutionMassive(restitution);
 		histo.setStatus("OK");
-		
+
 		CongeAnnuelRestitutionMassive restitution2 = new CongeAnnuelRestitutionMassive();
 		restitution2.setApresMidi(true);
 		restitution2.setJournee(false);
@@ -3360,24 +3362,25 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		restitution2.setDateRestitution(new DateTime(2015, 2, 23, 0, 0, 0).toDate());
 		restitution2.setDateModification(new DateTime(2015, 2, 13, 0, 0, 0).toDate());
 		restitution2.setMotif("motif 2");
-		
+
 		CongeAnnuelRestitutionMassiveHisto histo3 = new CongeAnnuelRestitutionMassiveHisto();
 		histo3.setIdAgent(9005138);
 		histo3.setJours(0.5);
 		histo3.setRestitutionMassive(restitution2);
 		histo3.setStatus("OK");
-		
+
 		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionCA = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
 		listRestitutionCA.add(histo);
 		listRestitutionCA.add(histo3);
 
 		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congesAnnuelsRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(listRestitutionCA);
-		
+		Mockito.when(congesAnnuelsRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(listRestitutionCA);
+
 		ReflectionTestUtils.setField(service, "congesAnnuelsRepository", congesAnnuelsRepository);
-		
+
 		List<RestitutionMassiveDto> result = service.getHistoRestitutionMassiveCAByAgent(9005138);
-		
+
 		assertEquals(2, result.size());
 		assertEquals(new DateTime(2015, 1, 13, 0, 0, 0).toDate(), result.get(0).getDateModification());
 		assertEquals(new DateTime(2015, 1, 23, 0, 0, 0).toDate(), result.get(0).getDateRestitution());
