@@ -36,7 +36,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
 	private static final String sirhOldBaseCongeUrl = "absences/oldBaseHoraire";
 	private static final String sirhListPAPourAlimAutoCongesAnnuelsUrl = "absences/listPAPourAlimAutoCongesAnnuels";	
-	private static final String sirhListPAByAgentUrl = "absences/listPAByAgent";	
+	private static final String sirhListPAByAgentUrl = "absences/listPAByAgentSansFuture";	
 	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
 	private static final String sirhAgentDirectionUrl = "agents/direction";
 	private static final String isPaieEnCoursUrl = "utils/isPaieEnCours";
@@ -209,12 +209,14 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public List<InfosAlimAutoCongesAnnuelsDto> getListPAByAgent(Integer idAgent) {
+	public List<InfosAlimAutoCongesAnnuelsDto> getListPAByAgentSansPAFuture(Integer idAgent,Date dateFin) {
 
 		String url = String.format(sirhWsBaseUrl + sirhListPAByAgentUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+		parameters.put("dateFin", sf.format(dateFin));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 

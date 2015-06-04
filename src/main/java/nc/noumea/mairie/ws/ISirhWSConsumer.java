@@ -36,5 +36,5 @@ public interface ISirhWSConsumer {
 
 	RefTypeSaisiCongeAnnuelDto getOldBaseHoraireAbsence(Integer idAgent);
 
-	List<InfosAlimAutoCongesAnnuelsDto> getListPAByAgent(Integer idAgent);
+	List<InfosAlimAutoCongesAnnuelsDto> getListPAByAgentSansPAFuture(Integer idAgent, Date dateFin);
 }

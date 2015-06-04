@@ -488,8 +488,8 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			}
 			// on cherche ensuite toutes les PA
 			InfosAlimAutoCongesAnnuelsDto paAncienne12Mois = null;
-			List<InfosAlimAutoCongesAnnuelsDto> listPaAgent = sirhWSConsumer.getListPAByAgent(listPA.get(0)
-					.getIdAgent());
+			List<InfosAlimAutoCongesAnnuelsDto> listPaAgent = sirhWSConsumer.getListPAByAgentSansPAFuture(listPA.get(0)
+					.getIdAgent(),listPA.get(0).getDateFin());
 			for (InfosAlimAutoCongesAnnuelsDto dto : listPaAgent) {
 				if (dto.isDroitConges() && dto.getDureeDroitConges() != 0) {
 					paAncienne12Mois = dto;
