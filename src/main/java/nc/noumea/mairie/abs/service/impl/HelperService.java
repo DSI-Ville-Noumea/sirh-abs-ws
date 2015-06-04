@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
@@ -93,8 +94,8 @@ public class HelperService {
 				String durDecimal = duree.toString().substring(duree.toString().indexOf(".") + 1,
 						duree.toString().length());
 				Double heure = new Double(durEntier) * 60;
-				Double minute = durDecimal.substring(0, 1).equals("0") ? new Double(durDecimal) : 10.0 * new Double(
-						durDecimal);
+				Double minute = durDecimal.substring(0, 1).equals("0") ? new Double(durDecimal)
+						: durDecimal.length() == 1 ? 10.0 * new Double(durDecimal) : new Double(durDecimal);
 				Double dur = heure + minute;
 				return recupDateFin.plusMinutes(dur.intValue()).toDate();
 			}
@@ -170,8 +171,7 @@ public class HelperService {
 			if (UNITE_DECOMPTE_JOURS.equals(typeSaisi.getUniteDecompte())) {
 				Double dureeCalculee = calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
 				List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin);
-				dureeCalculee -= calculJoursNonComptesDimancheFerieChome(dateDebut, dateFin,
-						listJoursFeries);
+				dureeCalculee -= calculJoursNonComptesDimancheFerieChome(dateDebut, dateFin, listJoursFeries);
 				return dureeCalculee;
 			}
 			if (UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
@@ -185,8 +185,8 @@ public class HelperService {
 				String durDecimal = duree.toString().substring(duree.toString().indexOf(".") + 1,
 						duree.toString().length());
 				Double heure = new Double(durEntier) * 60;
-				Double minute = durDecimal.length() == 1 ? new Double(durDecimal)*10 : new Double(durDecimal);
-				
+				Double minute = durDecimal.length() == 1 ? new Double(durDecimal) * 10 : new Double(durDecimal);
+
 				Double dur = heure + minute;
 				return dur;
 
@@ -440,12 +440,13 @@ public class HelperService {
 				duree = calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())
 						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin(),
 								listJoursFeries)
-						- getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY, listJoursFeries) // on
-																															// retire
-																															// le
-																															// nombre
-																															// de
-																															// samedi
+						- getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(),
+								DateTimeConstants.SATURDAY, listJoursFeries) // on
+						// retire
+						// le
+						// nombre
+						// de
+						// samedi
 						+ getNombreSamediDecompte(demande, listJoursFeries)
 						- getNombreSamediOffert(demande, listJoursFeries); // puis
 				// on
@@ -551,7 +552,8 @@ public class HelperService {
 		return (double) compteur;
 	}
 
-	protected Double getNombreJourSemaineWithoutFerie(Date dateDebut, Date dateFin, int jourDonne, List<JourDto> listJoursFeries) {
+	protected Double getNombreJourSemaineWithoutFerie(Date dateDebut, Date dateFin, int jourDonne,
+			List<JourDto> listJoursFeries) {
 
 		int compteur = 0;
 		// on calcule le nombre de vendredi
@@ -581,7 +583,7 @@ public class HelperService {
 			startDate = thisDay; // start on this SUNDAY
 		}
 		while (startDate.isBefore(endDate)) {
-			if(!isJourHoliday(listJoursFeries, startDate.toDate())) {
+			if (!isJourHoliday(listJoursFeries, startDate.toDate())) {
 				compteur++;
 			}
 			startDate = startDate.plusWeeks(1);
