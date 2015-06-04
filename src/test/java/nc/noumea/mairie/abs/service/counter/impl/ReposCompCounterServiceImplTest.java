@@ -24,6 +24,7 @@ import nc.noumea.mairie.abs.dto.MotifCompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
+import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.NotAMondayException;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -73,10 +74,14 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
 		Mockito.when(sirhWSConsumer.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+		
+		IAbsenceService absenceService =Mockito.mock(IAbsenceService.class); 
+		Mockito.when(absenceService.miseAJourSpsorc(idAgent)).thenReturn(result);
 
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "absenceService", absenceService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
@@ -113,10 +118,14 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
 		Mockito.when(sirhWSConsumer.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+		
+		IAbsenceService absenceService =Mockito.mock(IAbsenceService.class); 
+		Mockito.when(absenceService.miseAJourSpsorc(idAgent)).thenReturn(result);
 
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "absenceService", absenceService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);

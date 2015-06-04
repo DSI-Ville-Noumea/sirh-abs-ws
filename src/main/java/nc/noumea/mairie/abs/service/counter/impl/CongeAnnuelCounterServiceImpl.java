@@ -35,6 +35,7 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
+import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.web.AccessForbiddenException;
 import nc.noumea.mairie.abs.web.NotFoundException;
@@ -52,6 +53,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("CongeAnnuelCounterServiceImpl")
 public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
+
+	@Autowired
+	private IAbsenceService absenceService;
 
 	@Autowired
 	private ITypeAbsenceRepository typeAbsenceRepository;
@@ -362,8 +366,13 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		}
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, jours, joursAnneeN1,
+			srm = majManuelleCompteurToAgent(idAgent, compteurDto, jours, joursAnneeN1,
 					RefTypeAbsenceEnum.CONGE_ANNUEL.getValue(), srm, motifCompteur);
+			// #15863 --> on met aussi à jour SPSOLD
+			if (srm.getErrors().size() == 0) {
+				srm = absenceService.miseAJourSpsold(compteurDto.getIdAgent());
+			}
+			return srm;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update conge annuel counters :", e);
 		}
@@ -489,7 +498,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			// on cherche ensuite toutes les PA
 			InfosAlimAutoCongesAnnuelsDto paAncienne12Mois = null;
 			List<InfosAlimAutoCongesAnnuelsDto> listPaAgent = sirhWSConsumer.getListPAByAgentSansPAFuture(listPA.get(0)
-					.getIdAgent(),listPA.get(0).getDateFin());
+					.getIdAgent(), listPA.get(0).getDateFin());
 			for (InfosAlimAutoCongesAnnuelsDto dto : listPaAgent) {
 				if (dto.isDroitConges() && dto.getDureeDroitConges() != 0) {
 					paAncienne12Mois = dto;

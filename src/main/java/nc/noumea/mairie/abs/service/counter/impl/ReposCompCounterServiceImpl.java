@@ -19,13 +19,18 @@ import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
+import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.NotAMondayException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("ReposCompCounterServiceImpl")
 public class ReposCompCounterServiceImpl extends AbstractCounterService {
+
+	@Autowired
+	private IAbsenceService absenceService;
 
 	/**
 	 * appeler par PTG exclusivement l historique utilise a pour seul but de
@@ -248,8 +253,13 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		}
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, minutes, minutesAnneeN1,
+			srm = majManuelleCompteurToAgent(idAgent, compteurDto, minutes, minutesAnneeN1,
 					RefTypeAbsenceEnum.REPOS_COMP.getValue(), srm, motifCompteur);
+			// #15863 --> on met aussi à jour SPSOLD
+			if (srm.getErrors().size() == 0) {
+				srm = absenceService.miseAJourSpsorc(compteurDto.getIdAgent());
+			}
+			return srm;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -297,16 +307,19 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		String textLog = "";
 		if (null != compteurDto.getDureeAAjouter()) {
 			if (compteurDto.isAnneePrecedente()) {
-				textLog = "Ajout de " + helperService.getHeureMinuteToString(minutesAnneeN1) + " sur le compteur de l'année précédente.";
+				textLog = "Ajout de " + helperService.getHeureMinuteToString(minutesAnneeN1)
+						+ " sur le compteur de l'année précédente.";
 			} else {
 				textLog = "Ajout de " + helperService.getHeureMinuteToString(minutes) + " sur le compteur de l'année.";
 			}
 		}
 		if (null != compteurDto.getDureeARetrancher()) {
 			if (compteurDto.isAnneePrecedente()) {
-				textLog = "Retrait de " + helperService.getHeureMinuteToString(minutesAnneeN1) + " sur le compteur de l'année précédente.";
+				textLog = "Retrait de " + helperService.getHeureMinuteToString(minutesAnneeN1)
+						+ " sur le compteur de l'année précédente.";
 			} else {
-				textLog = "Retrait de " + helperService.getHeureMinuteToString(minutes) + " sur le compteur de l'année.";
+				textLog = "Retrait de " + helperService.getHeureMinuteToString(minutes)
+						+ " sur le compteur de l'année.";
 			}
 		}
 
@@ -428,12 +441,13 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		// #13519 maj solde sur la demande
 		Integer minutesOld = arc.getTotalMinutes();
 		Integer minutesAnneeN1Old = arc.getTotalMinutesAnneeN1();
-		
+
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutesAnneeEnCours);
 		arc.setTotalMinutesAnneeN1(arc.getTotalMinutesAnneeN1() + minutesAnneeN1);
 		arc.setLastModification(helperService.getCurrentDate());
-		
-		updateDemandeWithNewSolde(demande, minutesOld, arc.getTotalMinutes(), minutesAnneeN1Old, arc.getTotalMinutesAnneeN1());
+
+		updateDemandeWithNewSolde(demande, minutesOld, arc.getTotalMinutes(), minutesAnneeN1Old,
+				arc.getTotalMinutesAnneeN1());
 
 		counterRepository.persistEntity(arc);
 		counterRepository.persistEntity(demande);
@@ -444,16 +458,20 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	/**
 	 * #13519 maj solde sur la demande
 	 * 
-	 * @param demande demande a mettre a jour
-	 * @param joursOld ancien solde en jours
-	 * @param JoursNew nouveau solde en jours
-	 * @param minutesOld ancien solde en minutes
-	 * @param minutesNew nouveau solde en minutes
+	 * @param demande
+	 *            demande a mettre a jour
+	 * @param joursOld
+	 *            ancien solde en jours
+	 * @param JoursNew
+	 *            nouveau solde en jours
+	 * @param minutesOld
+	 *            ancien solde en minutes
+	 * @param minutesNew
+	 *            nouveau solde en minutes
 	 */
-	protected void updateDemandeWithNewSolde (DemandeReposComp demande, 
-			Integer minutesOld, Integer minutesNew,
+	protected void updateDemandeWithNewSolde(DemandeReposComp demande, Integer minutesOld, Integer minutesNew,
 			Integer minutesAnneeN1Old, Integer minutesAnneeN1New) {
-		
+
 		demande.setTotalMinutesOld(minutesOld);
 		demande.setTotalMinutesNew(minutesNew);
 		demande.setTotalMinutesAnneeN1Old(minutesAnneeN1Old);

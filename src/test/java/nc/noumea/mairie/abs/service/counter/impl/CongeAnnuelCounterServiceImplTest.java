@@ -42,6 +42,7 @@ import nc.noumea.mairie.abs.repository.ITypeAbsenceRepository;
 import nc.noumea.mairie.abs.repository.TypeAbsenceRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
+import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.abs.web.AccessForbiddenException;
@@ -805,10 +806,14 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(result);
 		Mockito.when(sirhWSConsumer.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+		
+		IAbsenceService absenceService =Mockito.mock(IAbsenceService.class); 
+		Mockito.when(absenceService.miseAJourSpsold(idAgent)).thenReturn(result);
 
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "absenceService", absenceService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
