@@ -20,6 +20,8 @@ import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.AgentWeekReposComp;
 import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
+import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
@@ -10222,7 +10224,6 @@ public class AbsenceServiceTest {
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
 		assertTrue(listResult.get(0).isDepassementMultiple());
-
 	}
 
 	@Test
@@ -12626,6 +12627,205 @@ public class AbsenceServiceTest {
 
 		assertEquals(1, result.size());
 		assertEquals(c2.getIdAgent(), result.get(0).getAgent().getIdAgent());
+	}
+
+	@Test
+	public void getListeDemandesSIRH_return1Liste_WithCongeAnnuelAndRestitutionMassive() {
+
+		List<Demande> listdemande = new ArrayList<Demande>();
+		Demande d = new Demande();
+		d.setIdDemande(1);
+		listdemande.add(d);
+
+		List<DemandeDto> listdemandeDto = new ArrayList<DemandeDto>();
+
+		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
+		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		DemandeDto dto = new DemandeDto();
+		dto.setIdDemande(1);
+		dto.setIdTypeDemande(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		dto.setGroupeAbsence(groupeAbsence);
+		dto.setDateDebut(new DateTime(2015,6,1,0,0,0).toDate());
+
+		listdemandeDto.add(dto);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.listeDemandesSIRH(null, null, null, null, null, null)).thenReturn(listdemande);
+
+		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, null, null)).thenReturn(
+				listdemandeDto);
+		Mockito.when(absDataConsistencyRules.filtreDroitOfDemandeSIRH(dto)).thenReturn(dto);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+		Mockito.when(absDataConsistencyRules.checkDepassementMultipleAgent(dto)).thenReturn(true);
+
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
+				absDataConsistencyRules);
+
+		CongeAnnuelRestitutionMassive restitutionMassive = new CongeAnnuelRestitutionMassive();
+		restitutionMassive.setDateRestitution(new DateTime(2015,6,5,0,0,0).toDate());
+		
+		CongeAnnuelRestitutionMassiveHisto restitutionMassiveHisto = new CongeAnnuelRestitutionMassiveHisto();
+		restitutionMassiveHisto.setIdAgent(9002990);
+		restitutionMassiveHisto.setRestitutionMassive(restitutionMassive);
+		
+		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassive = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
+		listRestitutionMassive.add(restitutionMassiveHisto);
+		
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(null, null, null))
+				.thenReturn(listRestitutionMassive);
+
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(Mockito.anyList(), Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(new AgentWithServiceDto());
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "agentService", agentService);
+
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null);
+
+		assertEquals(2, listResult.size());
+	}
+	
+	@Test
+	public void getListRestitutionMassiveByIdAgent_return1Demande() {
+
+		CongeAnnuelRestitutionMassive restitutionMassive = new CongeAnnuelRestitutionMassive();
+		restitutionMassive.setDateRestitution(new DateTime(2015,6,5,0,0,0).toDate());
+		
+		CongeAnnuelRestitutionMassiveHisto restitutionMassiveHisto = new CongeAnnuelRestitutionMassiveHisto();
+		restitutionMassiveHisto.setIdAgent(9002990);
+		restitutionMassiveHisto.setRestitutionMassive(restitutionMassive);
+		
+		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassive = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
+		listRestitutionMassive.add(restitutionMassiveHisto);
+		
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(listRestitutionMassive);
+
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(Mockito.anyList(), Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(new AgentWithServiceDto());
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "agentService", agentService);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		
+		List<DemandeDto> listResult = service.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null, null, null);
+
+		assertEquals(1, listResult.size());
+	}
+	
+	@Test
+	public void getListRestitutionMassiveByIdAgent_testEtat() {
+
+		CongeAnnuelRestitutionMassive restitutionMassive = new CongeAnnuelRestitutionMassive();
+		restitutionMassive.setDateRestitution(new DateTime(2015,6,5,0,0,0).toDate());
+		
+		CongeAnnuelRestitutionMassiveHisto restitutionMassiveHisto = new CongeAnnuelRestitutionMassiveHisto();
+		restitutionMassiveHisto.setIdAgent(9002990);
+		restitutionMassiveHisto.setRestitutionMassive(restitutionMassive);
+		
+		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassive = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
+		listRestitutionMassive.add(restitutionMassiveHisto);
+		
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(listRestitutionMassive);
+
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(Mockito.anyList(), Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(new AgentWithServiceDto());
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "agentService", agentService);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		
+		for(int i=0; i<12; i++) {
+			List<DemandeDto> listResult = service.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null, null, Arrays.asList(i));
+			
+			if(i == RefEtatEnum.APPROUVEE.getCodeEtat()
+					|| i == RefEtatEnum.VALIDEE.getCodeEtat()
+					|| i == RefEtatEnum.PRISE.getCodeEtat()) {
+				assertEquals(1, listResult.size());
+			}else{
+				assertEquals(0, listResult.size());
+			}
+		}
+	}
+	
+	@Test
+	public void getListRestitutionMassiveByIdAgent_testTypeAbsence() {
+
+		CongeAnnuelRestitutionMassive restitutionMassive = new CongeAnnuelRestitutionMassive();
+		restitutionMassive.setDateRestitution(new DateTime(2015,6,5,0,0,0).toDate());
+		
+		CongeAnnuelRestitutionMassiveHisto restitutionMassiveHisto = new CongeAnnuelRestitutionMassiveHisto();
+		restitutionMassiveHisto.setIdAgent(9002990);
+		restitutionMassiveHisto.setRestitutionMassive(restitutionMassive);
+		
+		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassive = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
+		listRestitutionMassive.add(restitutionMassiveHisto);
+		
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(listRestitutionMassive);
+
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(Mockito.anyList(), Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(new AgentWithServiceDto());
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "agentService", agentService);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		
+		for(int i=1; i<6; i++) {
+			List<DemandeDto> listResult = service.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null, i, Arrays.asList(4));
+			
+			if(i == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
+				assertEquals(1, listResult.size());
+			}else{
+				assertEquals(0, listResult.size());
+			}
+		}
+	}
+	
+	@Test
+	public void getListRestitutionMassiveByIdAgent_pasRestitutionEnBDD() {
+
+		CongeAnnuelRestitutionMassive restitutionMassive = new CongeAnnuelRestitutionMassive();
+		restitutionMassive.setDateRestitution(new DateTime(2015,6,5,0,0,0).toDate());
+		
+		CongeAnnuelRestitutionMassiveHisto restitutionMassiveHisto = new CongeAnnuelRestitutionMassiveHisto();
+		restitutionMassiveHisto.setIdAgent(9002990);
+		restitutionMassiveHisto.setRestitutionMassive(restitutionMassive);
+		
+		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassive = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
+		listRestitutionMassive.add(restitutionMassiveHisto);
+		
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(null);
+
+		IAgentService agentService = Mockito.mock(IAgentService.class);
+		Mockito.when(agentService.getAgentOptimise(Mockito.anyList(), Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(new AgentWithServiceDto());
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "agentService", agentService);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		
+		List<DemandeDto> listResult = service.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null, 5, Arrays.asList(4));
+		
+		assertEquals(0, listResult.size());
 	}
 
 }

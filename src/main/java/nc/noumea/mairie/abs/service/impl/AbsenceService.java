@@ -383,7 +383,7 @@ public class AbsenceService implements IAbsenceService {
 			}
 			// #15586
 			listeDto.addAll(getListRestitutionMassiveByIdAgent(listIdAgents.isEmpty() ? Arrays.asList(idAgentConcerne)
-					: listIdAgents, fromDate, toDate, idRefGroupeAbsence));
+					: listIdAgents, fromDate, toDate, idRefGroupeAbsence, etatIds));
 		}
 
 		Collections.sort(listeDto, new DemandeDtoComparator());
@@ -1206,7 +1206,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// #15586
-		listeDto.addAll(getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate, idRefGroupeAbsence));
+		listeDto.addAll(getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate, idRefGroupeAbsence, null != idRefEtat ? Arrays.asList(idRefEtat) : null));
 
 		Collections.sort(listeDto, new DemandeDtoComparator());
 
@@ -1224,14 +1224,18 @@ public class AbsenceService implements IAbsenceService {
 	 *            date de fin
 	 * @return liste de DemandeDto
 	 */
-	private List<DemandeDto> getListRestitutionMassiveByIdAgent(List<Integer> agentIds, Date fromDate, Date toDate,
-			Integer idRefGroupeAbsence) {
+	protected List<DemandeDto> getListRestitutionMassiveByIdAgent(List<Integer> agentIds, Date fromDate, Date toDate,
+			Integer idRefGroupeAbsence, List<Integer> listEtats) {
 
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 
-		if (null == idRefGroupeAbsence
+		if ((null == idRefGroupeAbsence
 				|| RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.equals(RefTypeGroupeAbsenceEnum
-						.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence))) {
+						.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence)))
+					&& (null == listEtats || listEtats.isEmpty() 
+							|| listEtats.contains(RefEtatEnum.APPROUVEE.getCodeEtat())
+							|| listEtats.contains(RefEtatEnum.VALIDEE.getCodeEtat())
+							|| listEtats.contains(RefEtatEnum.PRISE.getCodeEtat()))) {
 
 			List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassiveCA = congeAnnuelRepository
 					.getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate);
