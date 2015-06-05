@@ -132,6 +132,14 @@ public class FiltreService implements IFiltreService {
 				}
 				break;
 			case ONGLET_TOUTES:
+				if (lisIdRefEtat != null && lisIdRefEtat.size() != 0) {
+					for (Integer idEtat : lisIdRefEtat) {
+						etats.add(filtreRepository.getEntity(RefEtat.class, idEtat));
+					}
+				} else {
+					etats = filtreRepository.findAllRefEtats();
+				}
+				break;
 				// #12159
 			case ONGLET_PLANNING:
 				if (lisIdRefEtat != null && lisIdRefEtat.size() != 0) {
