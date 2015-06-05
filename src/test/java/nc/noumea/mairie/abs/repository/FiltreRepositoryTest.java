@@ -77,6 +77,53 @@ public class FiltreRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void findRefEtatPlanning() {
+		// Given
+		RefEtat etatProvisoire = new RefEtat();
+		etatProvisoire.setLabel("PROVISOIRE");
+		absEntityManager.persist(etatProvisoire);
+		RefEtat etatSaisie = new RefEtat();
+		etatSaisie.setLabel("SAISIE");
+		absEntityManager.persist(etatSaisie);
+		RefEtat etatViseFav = new RefEtat();
+		etatViseFav.setLabel("VISEE_FAVORABLE");
+		absEntityManager.persist(etatViseFav);
+		RefEtat etatViseDefav = new RefEtat();
+		etatViseDefav.setLabel("VISEE_DEFAVORABLE");
+		absEntityManager.persist(etatViseDefav);
+		RefEtat etatApprouve = new RefEtat();
+		etatApprouve.setLabel("APPROUVEE");
+		absEntityManager.persist(etatApprouve);
+		RefEtat etatRefuse = new RefEtat();
+		etatRefuse.setLabel("REFUSEE");
+		absEntityManager.persist(etatRefuse);
+		RefEtat etatPris = new RefEtat();
+		etatPris.setLabel("PRISE");
+		absEntityManager.persist(etatPris);
+		RefEtat etatValide = new RefEtat();
+		etatValide.setLabel("VALIDEE");
+		absEntityManager.persist(etatValide);
+		RefEtat etatRejete = new RefEtat();
+		etatRejete.setLabel("REJETEE");
+		absEntityManager.persist(etatRejete);
+		RefEtat etatAttente = new RefEtat();
+		etatAttente.setLabel("EN ATTENTE");
+		absEntityManager.persist(etatAttente);
+
+		// When
+		List<RefEtat> result = repository.findRefEtatPlanning();
+
+		// Then
+		assertEquals(9, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 
 	@Test
 	@Transactional("absTransactionManager")

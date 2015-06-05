@@ -43,6 +43,21 @@ public class FiltreRepository implements IFiltreRepository {
 	}
 
 	@Override
+	public List<RefEtat> findRefEtatPlanning() {
+		List<RefEtat> res = new ArrayList<RefEtat>();
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.PROVISOIRE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.SAISIE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.APPROUVEE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.VALIDEE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.EN_ATTENTE.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.A_VALIDER.getCodeEtat())));
+		res.add(absEntityManager.find(RefEtat.class, (RefEtatEnum.PRISE.getCodeEtat())));
+		return res;
+	}
+
+	@Override
 	public List<RefEtat> findAllRefEtats() {
 
 		return absEntityManager.createQuery("SELECT o FROM RefEtat o", RefEtat.class).getResultList();

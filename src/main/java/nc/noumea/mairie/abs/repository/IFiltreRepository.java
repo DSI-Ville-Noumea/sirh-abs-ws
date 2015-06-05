@@ -33,4 +33,6 @@ public interface IFiltreRepository {
 	List<RefTypeAbsence> findAllRefTypeAbsencesWithGroup(Integer idRefGroupeAbsence);
 
 	List<RefEtat> findRefEtatAValider();
+
+	List<RefEtat> findRefEtatPlanning();
 }

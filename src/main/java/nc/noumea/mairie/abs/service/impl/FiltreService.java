@@ -49,6 +49,7 @@ public class FiltreService implements IFiltreService {
 	public static final String ONGLET_NON_PRISES = "NON_PRISES";
 	public static final String ONGLET_EN_COURS = "EN_COURS";
 	public static final String ONGLET_TOUTES = "TOUTES";
+	public static final String ONGLET_PLANNING = "PLANNING";
 
 	@Override
 	@Transactional(readOnly = true)
@@ -131,12 +132,14 @@ public class FiltreService implements IFiltreService {
 				}
 				break;
 			case ONGLET_TOUTES:
+				// #12159
+			case ONGLET_PLANNING:
 				if (lisIdRefEtat != null && lisIdRefEtat.size() != 0) {
 					for (Integer idEtat : lisIdRefEtat) {
 						etats.add(filtreRepository.getEntity(RefEtat.class, idEtat));
 					}
 				} else {
-					etats = filtreRepository.findAllRefEtats();
+					etats = filtreRepository.findRefEtatPlanning();
 				}
 				break;
 		}
