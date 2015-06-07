@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @PersistenceUnit(unitName = "sirhPersistenceUnit")
 @NamedQuery(
 		name = "getAgentSpadmnAsOfDate",
-		query = "from Spadmn sp where sp.id.nomatr = :nomatr and sp.id.datdeb <= :dateFormatMairie and (sp.datfin >= :dateFormatMairie or sp.datfin = 0)")
+		query = "from Spadmn sp where sp.id.nomatr = :nomatr and sp.id.datdeb <= :dateFormatMairie and (sp.datfin > :dateFormatMairie or sp.datfin = 0)")
 public class Spadmn {
 
 	@Id
