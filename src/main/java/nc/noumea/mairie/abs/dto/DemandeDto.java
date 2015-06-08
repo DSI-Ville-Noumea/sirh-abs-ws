@@ -53,6 +53,7 @@ public class DemandeDto {
 	private Date dateReprise;
 
 	private Integer idRefEtat;
+	private RefEtatDto etatDto;
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateSaisie;
@@ -741,6 +742,14 @@ public class DemandeDto {
 
 	public void setAffichageBoutonHistorique(boolean affichageBoutonHistorique) {
 		this.affichageBoutonHistorique = affichageBoutonHistorique;
+	}
+
+	public RefEtatDto getEtatDto() {
+		return etatDto;
+	}
+
+	public void setEtatDto(RefEtatDto etatDto) {
+		this.etatDto = etatDto;
 	}
 
 }

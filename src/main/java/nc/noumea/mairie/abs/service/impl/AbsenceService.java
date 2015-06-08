@@ -1144,9 +1144,14 @@ public class AbsenceService implements IAbsenceService {
 		// table de parametrage est a FALSE
 		// l etat de la demande passe automatiquement a VALIDE en ajoutant une
 		// ligne dans la table ABS_ETAT_DEMANDE
+		// #15893 --> on choisi l'etat pour les non saisissable dans le kiosque.
 		if (demande.getType().getTypeSaisi() != null && !demande.getType().getTypeSaisi().isSaisieKiosque()) {
 			DemandeEtatChangeDto demandeEtatChangeDto = new DemandeEtatChangeDto();
-			demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+			if (demandeDto.getEtatDto() == null || demandeDto.getEtatDto().getIdRefEtat() == null) {
+				demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
+			} else {
+				demandeEtatChangeDto.setIdRefEtat(demandeDto.getEtatDto().getIdRefEtat());
+			}
 			demandeEtatChangeDto.setMotif(null);
 			majEtatDemande(idAgent, demandeEtatChangeDto, demande, false);
 		}
@@ -1206,7 +1211,8 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// #15586
-		listeDto.addAll(getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate, idRefGroupeAbsence, null != idRefEtat ? Arrays.asList(idRefEtat) : null));
+		listeDto.addAll(getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate, idRefGroupeAbsence,
+				null != idRefEtat ? Arrays.asList(idRefEtat) : null));
 
 		Collections.sort(listeDto, new DemandeDtoComparator());
 
@@ -1229,13 +1235,11 @@ public class AbsenceService implements IAbsenceService {
 
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 
-		if ((null == idRefGroupeAbsence
-				|| RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.equals(RefTypeGroupeAbsenceEnum
-						.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence)))
-					&& (null == listEtats || listEtats.isEmpty() 
-							|| listEtats.contains(RefEtatEnum.APPROUVEE.getCodeEtat())
-							|| listEtats.contains(RefEtatEnum.VALIDEE.getCodeEtat())
-							|| listEtats.contains(RefEtatEnum.PRISE.getCodeEtat()))) {
+		if ((null == idRefGroupeAbsence || RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.equals(RefTypeGroupeAbsenceEnum
+				.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence)))
+				&& (null == listEtats || listEtats.isEmpty() || listEtats.contains(RefEtatEnum.APPROUVEE.getCodeEtat())
+						|| listEtats.contains(RefEtatEnum.VALIDEE.getCodeEtat()) || listEtats
+							.contains(RefEtatEnum.PRISE.getCodeEtat()))) {
 
 			List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassiveCA = congeAnnuelRepository
 					.getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate);
