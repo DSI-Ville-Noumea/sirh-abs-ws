@@ -1311,16 +1311,19 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public boolean isUserApprobateur(Integer idAgent) {
 		return accessRightsRepository.isUserApprobateur(idAgent) || accessRightsRepository.isUserDelegataire(idAgent);
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public boolean isUserOperateur(Integer idAgent) {
 		return accessRightsRepository.isUserOperateur(idAgent);
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public boolean isUserViseur(Integer idAgent) {
 		return accessRightsRepository.isUserViseur(idAgent);
 	}
