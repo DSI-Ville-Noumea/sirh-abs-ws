@@ -578,7 +578,10 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 					Integer dernierJourMois = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 					calendar.set(Calendar.DAY_OF_MONTH, dernierJourMois);
 
-					joursAAjouter += getNombreJoursDonnantDroitsAConges(dernierJourMois, quotaMois, nombreJoursPA);
+					// #15974 : on ne comptait pas la date de fin comme un jour.
+					// Il faut donc ajouter 1 jour pour prendre date de fin
+					// inclue.
+					joursAAjouter += getNombreJoursDonnantDroitsAConges(dernierJourMois, quotaMois, nombreJoursPA + 1);
 
 					// #15283
 					// cas partiuclier de la base C :
