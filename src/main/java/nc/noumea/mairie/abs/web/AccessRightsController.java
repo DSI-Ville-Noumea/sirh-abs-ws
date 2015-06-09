@@ -20,7 +20,10 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -154,9 +157,8 @@ public class AccessRightsController {
 	}
 
 	/**
-	 * #15713 special pour SIRH : one shot
-	 * Saisie/modification d un operateurs d un approbateur
-	 * WS specifique a SIRH
+	 * #15713 special pour SIRH : one shot Saisie/modification d un operateurs d
+	 * un approbateur WS specifique a SIRH
 	 */
 	@ResponseBody
 	@RequestMapping(value = "operateurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
@@ -179,9 +181,8 @@ public class AccessRightsController {
 	}
 
 	/**
-	 * #15713 special pour SIRH : one shot
-	 * Saisie/modification d un operateurs d un approbateur
-	 * WS specifique a SIRH
+	 * #15713 special pour SIRH : one shot Saisie/modification d un operateurs d
+	 * un approbateur WS specifique a SIRH
 	 */
 	@ResponseBody
 	@RequestMapping(value = "deleteOperateurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
@@ -243,9 +244,8 @@ public class AccessRightsController {
 	}
 
 	/**
-	 * #15713 special pour SIRH : one shot
-	 * Saisie/modification d un operateurs d un approbateur
-	 * WS specifique a SIRH
+	 * #15713 special pour SIRH : one shot Saisie/modification d un operateurs d
+	 * un approbateur WS specifique a SIRH
 	 */
 	@ResponseBody
 	@RequestMapping(value = "viseurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
@@ -268,9 +268,8 @@ public class AccessRightsController {
 	}
 
 	/**
-	 * #15713 special pour SIRH : one shot
-	 * Saisie/modification d un operateurs d un approbateur
-	 * WS specifique a SIRH
+	 * #15713 special pour SIRH : one shot Saisie/modification d un operateurs d
+	 * un approbateur WS specifique a SIRH
 	 */
 	@ResponseBody
 	@RequestMapping(value = "deleteViseurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
@@ -356,15 +355,14 @@ public class AccessRightsController {
 
 		int convertedIdOperateur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateur);
 
-		List<AgentDto> result = accessRightService.getAgentsToInputByOperateur(convertedIdAgent,
-				convertedIdOperateur);
+		List<AgentDto> result = accessRightService.getAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur);
 
 		if (result.size() == 0)
 			throw new NoContentException();
 
 		return result;
 	}
-	
+
 	/**
 	 * Retourne la liste des agents affectes a un viseur
 	 */
@@ -384,8 +382,7 @@ public class AccessRightsController {
 
 		int convertedIdViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idViseur);
 
-		List<AgentDto> result = accessRightService.getAgentsToInputByViseur(convertedIdAgent,
-				convertedIdViseur);
+		List<AgentDto> result = accessRightService.getAgentsToInputByViseur(convertedIdAgent, convertedIdViseur);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -399,8 +396,8 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto setInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("idOperateur") Integer idOperateur,
-			@RequestBody List<AgentDto> agentsApprouves, HttpServletResponse response) {
+			@RequestParam("idOperateur") Integer idOperateur, @RequestBody List<AgentDto> agentsApprouves,
+			HttpServletResponse response) {
 
 		logger.debug(
 				"entered POST [droits/agentsSaisisByOperateur] => setInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {}",
@@ -417,8 +414,8 @@ public class AccessRightsController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		ReturnMessageDto result = accessRightService.setAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur,
-				agentsApprouves);
+		ReturnMessageDto result = accessRightService.setAgentsToInputByOperateur(convertedIdAgent,
+				convertedIdOperateur, agentsApprouves);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -432,8 +429,8 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByViseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto setInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("idViseur") Integer idViseur,
-			@RequestBody List<AgentDto> agentsApprouves, HttpServletResponse response) {
+			@RequestParam("idViseur") Integer idViseur, @RequestBody List<AgentDto> agentsApprouves,
+			HttpServletResponse response) {
 
 		logger.debug(
 				"entered POST [droits/agentsSaisisByViseur] => setInputAgentsByViseur with parameter idAgent = {} and idViseur = {}",
@@ -483,7 +480,8 @@ public class AccessRightsController {
 	}
 
 	/**
-	 * Liste des acteurs (opérateur(s), viseur(s), approbateur(s) (+ delegataire) d un agent
+	 * Liste des acteurs (opérateur(s), viseur(s), approbateur(s) (+
+	 * delegataire) d un agent
 	 */
 	@ResponseBody
 	@RequestMapping(value = "listeActeurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -494,5 +492,59 @@ public class AccessRightsController {
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		return accessRightService.getListeActeurs(convertedIdAgent);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "isUserApprobateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isUserApprobateur(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered GET [droits/isUserApprobateur] => isUserApprobateur with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (accessRightService.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+
+		if (accessRightService.isUserApprobateur(convertedIdAgent))
+			return new ResponseEntity<String>(HttpStatus.OK);
+		else
+			return new ResponseEntity<String>(HttpStatus.CONFLICT);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "isUserOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isUserOperateur(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered GET [droits/isUserOperateur] => isUserOperateur with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (accessRightService.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+
+		if (accessRightService.isUserOperateur(convertedIdAgent))
+			return new ResponseEntity<String>(HttpStatus.OK);
+		else
+			return new ResponseEntity<String>(HttpStatus.CONFLICT);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "isUserViseur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isUserViseur(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered GET [droits/isUserViseur] => isUserViseur with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (accessRightService.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+
+		if (accessRightService.isUserViseur(convertedIdAgent))
+			return new ResponseEntity<String>(HttpStatus.OK);
+		else
+			return new ResponseEntity<String>(HttpStatus.CONFLICT);
 	}
 }

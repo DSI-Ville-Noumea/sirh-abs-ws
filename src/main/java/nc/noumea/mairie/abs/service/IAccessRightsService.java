@@ -5,6 +5,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.ActeursDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.ApprobateurDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
@@ -74,4 +75,12 @@ public interface IAccessRightsService {
 	ReturnMessageDto deleteViseur(Integer idAgentAppro, AgentDto viseurDto);
 
 	ReturnMessageDto setViseur(Integer idAgentAppro, AgentDto viseurDto);
+
+	AgentGeneriqueDto findAgent(Integer idAgent);
+
+	boolean isUserApprobateur(Integer idAgent);
+
+	boolean isUserOperateur(Integer idAgent);
+
+	boolean isUserViseur(Integer idAgent);
 }
