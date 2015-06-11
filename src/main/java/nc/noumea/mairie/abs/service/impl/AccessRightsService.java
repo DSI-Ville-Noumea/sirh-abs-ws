@@ -872,15 +872,15 @@ public class AccessRightsService implements IAccessRightsService {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentApprobateur);
+		DroitProfil droitProfilApprobateur = accessRightsRepository.getDroitProfilApprobateur(idAgentApprobateur);
 
-		Set<DroitDroitsAgent> agentsToDelete = droitApprobateur.getDroitDroitsAgent();
+		Set<DroitDroitsAgent> agentsToDelete = droitProfilApprobateur.getDroitDroitsAgent();
 
 		for (AgentDto ag : agents) {
 
 			DroitDroitsAgent existingAgent = null;
 
-			for (DroitDroitsAgent da : droitApprobateur.getDroitDroitsAgent()) {
+			for (DroitDroitsAgent da : droitProfilApprobateur.getDroitDroitsAgent()) {
 				if (da.getDroitsAgent().getIdAgent().equals(ag.getIdAgent())) {
 					existingAgent = da;
 					agentsToDelete.remove(existingAgent);
@@ -910,10 +910,8 @@ public class AccessRightsService implements IAccessRightsService {
 			newDroitAgent.setLibelleService(dto.getService());
 			newDroitAgent.setCodeService(dto.getCodeService());
 
-			DroitProfil droitProfilApprobateur = accessRightsRepository.getDroitProfilApprobateur(idAgentApprobateur);
-
 			existingAgent = new DroitDroitsAgent();
-			existingAgent.setDroit(droitApprobateur);
+			existingAgent.setDroit(droitProfilApprobateur.getDroit());
 			existingAgent.setDroitProfil(droitProfilApprobateur);
 			existingAgent.setDroitsAgent(newDroitAgent);
 
