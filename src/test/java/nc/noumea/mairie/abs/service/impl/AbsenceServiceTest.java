@@ -12364,8 +12364,8 @@ public class AbsenceServiceTest {
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, new DateTime(new Date()).getYear(), null))
-			.thenReturn(0);
-				
+				.thenReturn(0);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
@@ -12397,7 +12397,7 @@ public class AbsenceServiceTest {
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, new DateTime(new Date()).getYear(), null))
-			.thenReturn(1);
+				.thenReturn(1);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
@@ -12499,15 +12499,11 @@ public class AbsenceServiceTest {
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, 9005138)).thenReturn(count);
 
-		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
-		Mockito.when(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(9005138)).thenReturn(45.5);
-
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
 
 		ReturnMessageDto result = service.miseAJourSpsorc(9005138);
 
@@ -12540,15 +12536,11 @@ public class AbsenceServiceTest {
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentReposCompCount.class, 9005138)).thenReturn(count);
 
-		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
-		Mockito.when(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(9005138)).thenReturn(45.5);
-
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
 		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
 
 		ReturnMessageDto result = service.miseAJourSpsorc(9005138);
 
