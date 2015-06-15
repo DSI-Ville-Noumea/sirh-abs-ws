@@ -8,7 +8,5 @@ public interface IReposCompensateurRepository {
 
 	Integer getSommeDureeDemandeReposCompEnCoursSaisieouVisee(Integer idAgent, Integer idDemande);
 
-	Double getSommeDureeDemandePrises2Ans(Integer idAgent);
-
 	List<AgentWeekReposComp> getListeAlimAutoReposCompByAgent(Integer convertedIdAgent);
 }

@@ -1995,10 +1995,10 @@ public class AbsenceService implements IAbsenceService {
 		}
 		soldeConge.setSoldeAnneeEnCours(soldeCongeAgent.getTotalJours());
 		soldeConge.setSoldeAnneePrec(soldeCongeAgent.getTotalJoursAnneeN1());
-		
-		Integer nombreSamediDejaOffert = demandeRepository.getNombreSamediOffertSurAnnee(idAgent,
-				new DateTime(new Date()).getYear(), null);
-		
+
+		Integer nombreSamediDejaOffert = demandeRepository.getNombreSamediOffertSurAnnee(idAgent, new DateTime(
+				new Date()).getYear(), null);
+
 		soldeConge.setSoldeSamediOffert(nombreSamediDejaOffert > 0 ? 0 : 1);
 
 		sirhRepository.persistEntity(soldeConge);
@@ -2038,9 +2038,11 @@ public class AbsenceService implements IAbsenceService {
 			soldeReposComp.setNomatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent));
 		}
 
-		soldeReposComp.setSoldeAnneeEnCours((double) (soldeReposCompAgent.getTotalMinutes() / 60));
-		soldeReposComp.setSoldeAnneePrec((double) (soldeReposCompAgent.getTotalMinutesAnneeN1() / 60));
-		soldeReposComp.setNombrePris(reposCompensateurRepository.getSommeDureeDemandePrises2Ans(idAgent) / 60);
+		soldeReposComp.setSoldeAnneeEnCours(new Double(soldeReposCompAgent.getTotalMinutes()) / 60.0);
+		soldeReposComp.setSoldeAnneePrec(new Double(soldeReposCompAgent.getTotalMinutesAnneeN1()) / 60.0);
+		// #16118 : on met 0 dans le NBRCP pour que le solde sur le bulletin de
+		// paie soit correct.
+		soldeReposComp.setNombrePris(0.0);
 
 		sirhRepository.persistEntity(soldeReposComp);
 		result.getInfos().add("Mise à jour SPSORC OK");

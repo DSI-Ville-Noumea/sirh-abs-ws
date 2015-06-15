@@ -255,7 +255,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 		try {
 			srm = majManuelleCompteurToAgent(idAgent, compteurDto, minutes, minutesAnneeN1,
 					RefTypeAbsenceEnum.REPOS_COMP.getValue(), srm, motifCompteur);
-			// #15863 --> on met aussi à jour SPSOLD
+			// #15863 --> on met aussi à jour SPSORC
 			if (srm.getErrors().size() == 0) {
 				srm = absenceService.miseAJourSpsorc(compteurDto.getIdAgent());
 			}
