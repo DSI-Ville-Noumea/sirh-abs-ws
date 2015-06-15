@@ -12346,14 +12346,14 @@ public class AbsenceServiceTest {
 	}
 
 	@Test
-	public void miseAJourSpsold_OK() {
+	public void miseAJourSpsold_OK_with1SamediOffert() {
 		Integer idAgent = 9005138;
 		AgentCongeAnnuelCount count = new AgentCongeAnnuelCount();
 		count.setIdAgent(idAgent);
 		count.setTotalJours(0.0);
 		count.setTotalJoursAnneeN1(12.0);
 
-		SpSold soldeConge = new SpSold();
+		SpSold soldeConge = Mockito.spy(new SpSold());
 		soldeConge.setNomatr(5138);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
@@ -12362,14 +12362,53 @@ public class AbsenceServiceTest {
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sirhRepository.getSpsold(idAgent)).thenReturn(soldeConge);
 
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, new DateTime(new Date()).getYear(), null))
+			.thenReturn(0);
+				
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		ReturnMessageDto result = service.miseAJourSpsold(idAgent);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(SpSold.class));
+		assertEquals(1, soldeConge.getSoldeSamediOffert().intValue());
+	}
+
+	@Test
+	public void miseAJourSpsold_OK_with0SamediOffert() {
+		Integer idAgent = 9005138;
+		AgentCongeAnnuelCount count = new AgentCongeAnnuelCount();
+		count.setIdAgent(idAgent);
+		count.setTotalJours(0.0);
+		count.setTotalJoursAnneeN1(12.0);
+
+		SpSold soldeConge = Mockito.spy(new SpSold());
+		soldeConge.setNomatr(5138);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(count);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getSpsold(idAgent)).thenReturn(soldeConge);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, new DateTime(new Date()).getYear(), null))
+			.thenReturn(1);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		ReturnMessageDto result = service.miseAJourSpsold(idAgent);
+
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(sirhRepository, Mockito.times(1)).persistEntity(Mockito.isA(SpSold.class));
+		assertEquals(0, soldeConge.getSoldeSamediOffert().intValue());
 	}
 
 	@Test

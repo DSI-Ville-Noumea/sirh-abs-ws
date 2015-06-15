@@ -1995,6 +1995,11 @@ public class AbsenceService implements IAbsenceService {
 		}
 		soldeConge.setSoldeAnneeEnCours(soldeCongeAgent.getTotalJours());
 		soldeConge.setSoldeAnneePrec(soldeCongeAgent.getTotalJoursAnneeN1());
+		
+		Integer nombreSamediDejaOffert = demandeRepository.getNombreSamediOffertSurAnnee(idAgent,
+				new DateTime(new Date()).getYear(), null);
+		
+		soldeConge.setSoldeSamediOffert(nombreSamediDejaOffert > 0 ? 0 : 1);
 
 		sirhRepository.persistEntity(soldeConge);
 		result.getInfos().add("Mise à jour SPSOLD OK");

@@ -24,6 +24,10 @@ public class SpSold {
 	@Column(name = "SOLDE2", columnDefinition = "decimal")
 	private Double soldeAnneePrec;
 
+	@NotNull
+	@Column(name = "SOLDSA", columnDefinition = "numeric")
+	private Integer soldeSamediOffert;
+
 	public Integer getNomatr() {
 		return nomatr;
 	}
@@ -46,6 +50,14 @@ public class SpSold {
 
 	public void setSoldeAnneePrec(Double soldeAnneePrec) {
 		this.soldeAnneePrec = soldeAnneePrec;
+	}
+
+	public Integer getSoldeSamediOffert() {
+		return soldeSamediOffert;
+	}
+
+	public void setSoldeSamediOffert(Integer soldeSamediOffert) {
+		this.soldeSamediOffert = soldeSamediOffert;
 	}
 
 }
