@@ -96,9 +96,9 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		srm = impl.checkDroitCompteurAsaA48(srm, demande);
 
-		assertEquals(0, srm.getErrors().size());
-		assertEquals(1, srm.getInfos().size());
-		assertEquals(srm.getInfos().get(0), AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG);
+		assertEquals(0, srm.getInfos().size());
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0), AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG);
 	}
 
 	@Test
@@ -138,9 +138,9 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		srm = impl.checkDroitCompteurAsaA48(srm, demande);
 
-		assertEquals(0, srm.getErrors().size());
-		assertEquals(1, srm.getInfos().size());
-		assertEquals(srm.getInfos().get(0), AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG);
+		assertEquals(0, srm.getInfos().size());
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0), AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG);
 	}
 
 	@Test

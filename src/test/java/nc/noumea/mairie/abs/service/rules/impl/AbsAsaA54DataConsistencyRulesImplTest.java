@@ -27,14 +27,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @MockStaticEntityMethods
 public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistencyRulesImplTest {
-	
+
 	@Test
 	public void testMethodeParenteHeritage() throws Throwable {
-		
+
 		super.impl = new AbsAsaA54DataConsistencyRulesImpl();
 		super.allTest();
 	}
-	
+
 	@Test
 	public void checkDroitCompteurAsaA54_aucunDroit() {
 
@@ -79,8 +79,8 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(
-				listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
+				.thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -96,9 +96,9 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		srm = impl.checkDroitCompteurAsaA54(srm, demande);
 
-		assertEquals(0, srm.getErrors().size());
-		assertEquals(1, srm.getInfos().size());
-		assertEquals(srm.getInfos().get(0), AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG);
+		assertEquals(0, srm.getInfos().size());
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0), AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG);
 	}
 
 	@Test
@@ -121,8 +121,8 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(
-				listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
+				.thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -138,9 +138,9 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		srm = impl.checkDroitCompteurAsaA54(srm, demande);
 
-		assertEquals(0, srm.getErrors().size());
-		assertEquals(1, srm.getInfos().size());
-		assertEquals(srm.getInfos().get(0), AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG);
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(0, srm.getInfos().size());
+		assertEquals(srm.getErrors().get(0), AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG);
 	}
 
 	@Test
@@ -163,8 +163,8 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(
-				listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
+				.thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -229,8 +229,8 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(
-				listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
+				.thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -272,8 +272,8 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(
-				listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
+				.thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
