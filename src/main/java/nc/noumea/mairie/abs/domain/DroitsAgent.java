@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
 	@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d INNER JOIN FETCH dda.droitProfil dp where d.idAgent = :idAgent and dp.idDroitProfil = :idDroitProfil "),
 	@NamedQuery(name = "getDroitsAgent", query = "select da from DroitsAgent da where da.idAgent = :idAgent"),
+	@NamedQuery(name = "getDroitsAgentByService", query = "select da from DroitsAgent da where da.codeService = :codeService"),
 	@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d INNER JOIN FETCH dda.droitProfil dp where (d.idAgent = :idAgent) and da.codeService = :codeService and dp.idDroitProfil = :idDroitProfil "),
 	@NamedQuery(name = "getListOfAgentsToInputOrApproveWithoutProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d where d.idAgent = :idAgent "),
 	@NamedQuery(name = "getListOfAgentsToInputOrApproveByServiceWithoutProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d where (d.idAgent = :idAgent) and da.codeService = :codeService "),

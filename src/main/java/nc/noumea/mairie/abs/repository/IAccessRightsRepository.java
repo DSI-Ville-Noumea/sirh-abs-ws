@@ -49,6 +49,8 @@ public interface IAccessRightsRepository {
 
 	DroitsAgent getDroitsAgent(Integer idAgent);
 
+	List<DroitsAgent> getDroitsAgentByService(String codeService);
+
 	DroitProfil getDroitProfilApprobateur(Integer idAgentApprobateur);
 
 	Droit getApprobateurOfAgent(DroitsAgent droitAgent);

@@ -1325,4 +1325,13 @@ public class AccessRightsService implements IAccessRightsService {
 	public boolean isUserViseur(Integer idAgent) {
 		return accessRightsRepository.isUserViseur(idAgent);
 	}
+
+	@Override
+	public List<Integer> getListAgentByService(String codeService) {
+		List<Integer> result = new ArrayList<Integer>();
+		for (DroitsAgent da : accessRightsRepository.getDroitsAgentByService(codeService)) {
+			result.add(da.getIdAgent());
+		}
+		return result;
+	}
 }

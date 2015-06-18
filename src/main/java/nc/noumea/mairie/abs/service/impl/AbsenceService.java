@@ -315,9 +315,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, String ongletDemande,
-			Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat, Integer idRefType,
-			Integer idRefGroupeAbsence, boolean isAgent) {
+	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne,
+			String ongletDemande, Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat,
+			Integer idRefType, Integer idRefGroupeAbsence, boolean isAgent) {
 
 		// si date de debut et de fin nulles, alors on filtre sur 12 mois
 		// glissants
@@ -382,8 +382,8 @@ public class AbsenceService implements IAbsenceService {
 				}
 			}
 			// #15586
-			listeDto.addAll(getListRestitutionMassiveByIdAgent(listIdAgents.isEmpty() ? Arrays.asList(idAgentConcerne)
-					: listIdAgents, fromDate, toDate, idRefGroupeAbsence, etatIds));
+			listeDto.addAll(getListRestitutionMassiveByIdAgent(listIdAgents.isEmpty() ? idAgentConcerne : listIdAgents,
+					fromDate, toDate, idRefGroupeAbsence, etatIds));
 		}
 
 		Collections.sort(listeDto, new DemandeDtoComparator());
@@ -391,21 +391,40 @@ public class AbsenceService implements IAbsenceService {
 		return listeDto;
 	}
 
-	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, Integer idAgentConcerne, Date fromDate,
-			Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
+	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne,
+			Date fromDate, Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
 
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
 
-		List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte,
-				idAgentConcerne);
-
-		listeSansFiltre = demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate,
-				idRefType, idRefGroupeAbsence);
-		if (null != idsApprobateurOfDelegataire) {
-			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-				listeSansFiltredelegataire.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
-						idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence));
+		List<Integer> idsApprobateurOfDelegataire = new ArrayList<Integer>();
+		for (Integer idAgentChoisi : idAgentConcerne == null ? new ArrayList<Integer>() : idAgentConcerne) {
+			for (Integer id : accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte, idAgentChoisi)) {
+				if (!idsApprobateurOfDelegataire.contains(id)) {
+					idsApprobateurOfDelegataire.add(id);
+				}
+			}
+		}
+		if (idAgentConcerne != null) {
+			for (Integer idAgentChoisi : idAgentConcerne) {
+				listeSansFiltre.addAll(demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentChoisi, fromDate,
+						toDate, idRefType, idRefGroupeAbsence));
+				if (null != idsApprobateurOfDelegataire) {
+					for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+						listeSansFiltredelegataire.addAll(demandeRepository.listeDemandesAgent(
+								idApprobateurOfDelegataire, idAgentChoisi, fromDate, toDate, idRefType,
+								idRefGroupeAbsence));
+					}
+				}
+			}
+		} else {
+			listeSansFiltre.addAll(demandeRepository.listeDemandesAgent(idAgentConnecte, null, fromDate, toDate,
+					idRefType, idRefGroupeAbsence));
+			if (null != idsApprobateurOfDelegataire) {
+				for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+					listeSansFiltredelegataire.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
+							null, fromDate, toDate, idRefType, idRefGroupeAbsence));
+				}
 			}
 		}
 

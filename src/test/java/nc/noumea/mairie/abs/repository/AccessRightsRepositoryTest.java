@@ -1701,7 +1701,8 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dp);
 
-		List<DroitProfil> result = repository.getDroitProfilByAgentAndLibelle(9005138, ProfilEnum.DELEGATAIRE.toString());
+		List<DroitProfil> result = repository.getDroitProfilByAgentAndLibelle(9005138,
+				ProfilEnum.DELEGATAIRE.toString());
 
 		assertNotNull(result);
 		assertEquals(9005138, result.get(0).getDroit().getIdAgent().intValue());
@@ -1734,11 +1735,11 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getListeActeursOfAgent_1Viseur1Operateur1Approbateur() {
-		
+
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
 		da.setCodeService("DCCB");
@@ -1747,10 +1748,10 @@ public class AccessRightsRepositoryTest {
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
-		
+
 		Profil pViseur = new Profil();
 		pAppro.setLibelle("VISEUR");
-		
+
 		Profil pOperateur = new Profil();
 		pAppro.setLibelle("OPERATEUR");
 
@@ -1826,7 +1827,7 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droitOperateur);
 		absEntityManager.persist(dpOperateur);
 		absEntityManager.persist(ddaOperateur);
-		
+
 		List<DroitsAgent> result = repository.getListeActeursOfAgent(9005131);
 
 		assertEquals(3, result.size());
@@ -1834,11 +1835,11 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("absTransactionManager")
 	public void getListeActeursOfAgent_1Viseur2Operateur2Approbateur() {
-		
+
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
 		da.setCodeService("DCCB");
@@ -1847,10 +1848,10 @@ public class AccessRightsRepositoryTest {
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
-		
+
 		Profil pViseur = new Profil();
 		pAppro.setLibelle("VISEUR");
-		
+
 		Profil pOperateur = new Profil();
 		pAppro.setLibelle("OPERATEUR");
 
@@ -1951,11 +1952,11 @@ public class AccessRightsRepositoryTest {
 
 		absEntityManager.persist(da);
 		absEntityManager.persist(pAppro);
-		
+
 		absEntityManager.persist(droitAppro);
 		absEntityManager.persist(dpAppr);
 		absEntityManager.persist(ddaAppro);
-		
+
 		absEntityManager.persist(droitAppro2);
 		absEntityManager.persist(dpAppr2);
 		absEntityManager.persist(ddaAppro2);
@@ -1966,18 +1967,52 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(ddaViseur);
 
 		absEntityManager.persist(pOperateur);
-		
+
 		absEntityManager.persist(droitOperateur);
 		absEntityManager.persist(dpOperateur);
 		absEntityManager.persist(ddaOperateur);
-		
+
 		absEntityManager.persist(droitOperateur2);
 		absEntityManager.persist(dpOperateur2);
 		absEntityManager.persist(ddaOperateur2);
-		
+
 		List<DroitsAgent> result = repository.getListeActeursOfAgent(9005131);
 
 		assertEquals(5, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getDroitsAgentByService_ReturnNull() {
+
+		// When
+		List<DroitsAgent> result = repository.getDroitsAgentByService("code");
+
+		// Then
+		assertNotNull(result);
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getDroitsAgentByService_ReturnResult() {
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+		da.setLibelleService("TEST");
+		da.setCodeService("code");
+		absEntityManager.persist(da);
+
+		// When
+		List<DroitsAgent> result = repository.getDroitsAgentByService("code");
+
+		// Then
+		assertEquals(1, result.size());
+		assertEquals(new Integer(9005138), result.get(0).getIdAgent());
+		assertEquals("TEST", result.get(0).getLibelleService());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

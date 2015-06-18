@@ -133,7 +133,6 @@ public class AbsenceServiceTest {
 		Integer idAgentConnecte = 9005138;
 		Integer idApprobateurOfDelegataire = 9005140;
 		List<Integer> idsApprobateurOfDelegataire = new ArrayList<Integer>();
-		idsApprobateurOfDelegataire.add(idApprobateurOfDelegataire);
 
 		Demande demande1 = new Demande();
 		demande1.setIdDemande(1);
@@ -179,7 +178,7 @@ public class AbsenceServiceTest {
 		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null,
 				RefTypeAbsenceEnum.RECUP.getValue(), null);
 
-		assertEquals(3, listResult.size());
+		assertEquals(2, listResult.size());
 	}
 
 	@Test
@@ -8805,8 +8804,8 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
-				null, null, false);
+		List<DemandeDto> listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null,
+				null, null, null, null, false);
 
 		assertEquals(1, listResult.size());
 		assertFalse(listResult.get(0).isDepassementCompteur());
@@ -8863,8 +8862,8 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
-				null, null, false);
+		List<DemandeDto> listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null,
+				null, null, null, null, false);
 
 		assertEquals(0, listResult.size());
 	}
@@ -10425,8 +10424,8 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandes(9005138, 9005131, "TOUTES", null, null, null, null,
-				null, null, false);
+		List<DemandeDto> listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null,
+				null, null, null, null, false);
 
 		assertEquals(1, listResult.size());
 		assertFalse(listResult.get(0).isDepassementCompteur());

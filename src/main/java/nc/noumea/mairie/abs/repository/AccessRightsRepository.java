@@ -189,7 +189,6 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		return q.getResultList();
 	}
 
-
 	@Override
 	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService, Integer idDroitProfil) {
 
@@ -463,17 +462,23 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public List<DroitsAgent> getListeActeursOfAgent(Integer idAgent) {
-		
+
 		TypedQuery<DroitsAgent> q = absEntityManager.createQuery(
-				"from DroitsAgent da LEFT JOIN FETCH da.droitDroitsAgent dda "
-				+ "LEFT JOIN FETCH dda.droitProfil dp "
-				+ "LEFT JOIN FETCH dp.profil p "
-				+ "LEFT JOIN FETCH dp.droit d "
-				+ "where da.idAgent = :idAgent ", DroitsAgent.class);
+				"from DroitsAgent da LEFT JOIN FETCH da.droitDroitsAgent dda " + "LEFT JOIN FETCH dda.droitProfil dp "
+						+ "LEFT JOIN FETCH dp.profil p " + "LEFT JOIN FETCH dp.droit d "
+						+ "where da.idAgent = :idAgent ", DroitsAgent.class);
 		q.setParameter("idAgent", idAgent);
+
+		return q.getResultList();
+	}
+
+	@Override
+	public List<DroitsAgent> getDroitsAgentByService(String codeService) {
+		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery("getDroitsAgentByService", DroitsAgent.class);
+		q.setParameter("codeService", codeService);
 
 		return q.getResultList();
 	}

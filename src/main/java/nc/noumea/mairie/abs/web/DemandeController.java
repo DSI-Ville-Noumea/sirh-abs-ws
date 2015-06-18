@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.web;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -210,8 +211,8 @@ public class DemandeController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, convertedIdAgent, ongletDemande,
-				fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence, true);
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, Arrays.asList(convertedIdAgent),
+				ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence, true);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -262,12 +263,13 @@ public class DemandeController {
 			@RequestParam(value = "etat", required = false) String listIdRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType,
 			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence,
-			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche) {
+			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche,
+			@RequestParam(value = "codeService", required = false) String codeService) {
 
 		logger.debug(
-				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters idInputter = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, type = {}, groupe = {} and idAgentConcerne= {}",
+				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters idInputter = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, type = {}, groupe = {}, idAgentConcerne = {} and codeService = {}",
 				idAgent, ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence,
-				idAgentRecherche);
+				idAgentRecherche, codeService);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -275,6 +277,7 @@ public class DemandeController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
+		List<Integer> listAgents = new ArrayList<Integer>();
 		// ON VERIFIE LES DROITS
 		if (idAgentRecherche != null) {
 			ReturnMessageDto srm = new ReturnMessageDto();
@@ -282,11 +285,23 @@ public class DemandeController {
 				if (!srm.getErrors().isEmpty()) {
 					throw new AccessForbiddenException();
 				}
+			} else {
+				listAgents.add(idAgentRecherche);
+			}
+		} else if (codeService != null) {
+			// #16262 : on cherche tous les agents qui ont ce service
+			List<Integer> listAgentService = accessRightService.getListAgentByService(codeService);
+			for (Integer idAgentService : listAgentService) {
+				if (accessRightService.verifAccessRightListDemande(convertedIdAgent, idAgentService,
+						new ReturnMessageDto())) {
+					listAgents.add(idAgentService);
+				}
 			}
 		}
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, idAgentRecherche, ongletDemande,
-				fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence, false);
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, listAgents.size() == 0 ? null
+				: listAgents, ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType,
+				idRefGroupeAbsence, false);
 
 		if (result.size() == 0)
 			throw new NoContentException();

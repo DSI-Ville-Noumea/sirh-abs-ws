@@ -83,4 +83,6 @@ public interface IAccessRightsService {
 	boolean isUserOperateur(Integer idAgent);
 
 	boolean isUserViseur(Integer idAgent);
+
+	List<Integer> getListAgentByService(String codeService);
 }
