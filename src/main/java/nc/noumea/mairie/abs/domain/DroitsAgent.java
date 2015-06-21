@@ -58,6 +58,9 @@ public class DroitsAgent {
 	@OneToMany(mappedBy = "droitsAgent", fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.ALL, CascadeType.REMOVE})
 	private Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 
+	@Column(name = "ID_SERVICE_ADS")
+	private Integer idServiceADS;
+
 	@Version
     @Column(name = "version")
 	private Integer version;
