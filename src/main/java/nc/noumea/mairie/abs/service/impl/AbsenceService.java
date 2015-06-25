@@ -1345,7 +1345,7 @@ public class AbsenceService implements IAbsenceService {
 
 			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
 					|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())) {
-				setDemandeEtatValide(idAgent, demandeEtatChangeDto, demande, result);
+				setDemandeEtatValide(idAgent, demandeEtatChangeDto, demande, result, true);
 				continue;
 			}
 
@@ -1364,7 +1364,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	protected void setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
-			ReturnMessageDto result) {
+			ReturnMessageDto result, boolean isProvenanceSIRH) {
 
 		// #15224 : on ajoute de nouveaux états pour les congés annuels
 		List<RefEtatEnum> listEtat = new ArrayList<RefEtatEnum>();
@@ -1384,7 +1384,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// #12664
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, false);
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, isProvenanceSIRH);
 
 		if (0 < result.getErrors().size()) {
 			return;
