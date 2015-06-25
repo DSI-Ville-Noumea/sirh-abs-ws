@@ -789,10 +789,19 @@ public class AccessRightsService implements IAccessRightsService {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		Droit droitApprobateur = accessRightsRepository.getAgentDroitFetchAgents(idAgentApprobateur);
+		List<DroitProfil> listDroitsProfilApprobateur = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgentApprobateur);
 		List<DroitProfil> listDroitsProfil = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur,
 				idAgentOperateurOrViseur);
 
+		// #16432 bug cumul de rôles de l approbateur
+		DroitProfil droitProfilApprobateur = null;
+		for (DroitProfil droitProfil : listDroitsProfilApprobateur) {
+			if (ProfilEnum.APPROBATEUR.toString().equals(droitProfil.getProfil().getLibelle())) {
+				droitProfilApprobateur = droitProfil;
+				break;
+			}
+		}
+		
 		// #15688 bug cumul de rôles sous un même approbateur
 		DroitProfil droitProfilOperateurOrViseur = null;
 		for (DroitProfil droitProfil : listDroitsProfil) {
@@ -830,7 +839,7 @@ public class AccessRightsService implements IAccessRightsService {
 				continue;
 			}
 
-			for (DroitDroitsAgent ddaInAppro : droitApprobateur.getDroitDroitsAgent()) {
+			for (DroitDroitsAgent ddaInAppro : droitProfilApprobateur.getDroitDroitsAgent()) {
 
 				// if this is not the agent we're currently looking for,
 				// continue
