@@ -683,8 +683,9 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur) {
-		return getAgentsToApproveOrInput(idAgentApprobateur, idAgentOperateur, null, ProfilEnum.OPERATEUR);
+	public List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur,
+			String codeService) {
+		return getAgentsToApproveOrInput(idAgentApprobateur, idAgentOperateur, codeService, ProfilEnum.OPERATEUR);
 	}
 
 	/**
@@ -1340,6 +1341,50 @@ public class AccessRightsService implements IAccessRightsService {
 		List<Integer> result = new ArrayList<Integer>();
 		for (DroitsAgent da : accessRightsRepository.getDroitsAgentByService(codeService)) {
 			result.add(da.getIdAgent());
+		}
+		return result;
+	}
+
+	@Override
+	public List<ServiceDto> getAgentsServicesForOperateur(Integer idAgentOperateur) {
+
+		List<ServiceDto> result = new ArrayList<ServiceDto>();
+
+		List<String> codeServices = new ArrayList<String>();
+
+		List<DroitProfil> listeDroitProfilOperateur = accessRightsRepository.getDroitProfilByAgentAndLibelle(
+				idAgentOperateur, ProfilEnum.OPERATEUR.toString());
+		for (DroitProfil dp : listeDroitProfilOperateur) {
+			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentOperateur, null,
+					dp.getIdDroitProfil())) {
+				if (!accessRightsRepository.isOperateurOfAgent(idAgentOperateur, da.getIdAgent())) {
+					continue;
+				}
+				if (codeServices.contains(da.getCodeService()))
+					continue;
+
+				codeServices.add(da.getCodeService());
+				ServiceDto svDto = new ServiceDto();
+				svDto.setCodeService(da.getCodeService());
+				svDto.setService(da.getLibelleService());
+				result.add(svDto);
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public List<Droit> getListApprobateursOfOperateur(Integer idAgentOperateur) {
+
+		List<Droit> result = new ArrayList<Droit>();
+
+		List<DroitProfil> listeDroitProfilOperateur = accessRightsRepository.getDroitProfilByAgentAndLibelle(
+				idAgentOperateur, ProfilEnum.OPERATEUR.toString());
+		for (DroitProfil dp : listeDroitProfilOperateur) {
+			if (dp.getDroitApprobateur() != null && !result.contains(dp.getDroitApprobateur())) {
+				result.add(dp.getDroitApprobateur());
+			}
 		}
 		return result;
 	}

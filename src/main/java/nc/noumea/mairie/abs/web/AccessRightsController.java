@@ -355,7 +355,8 @@ public class AccessRightsController {
 
 		int convertedIdOperateur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateur);
 
-		List<AgentDto> result = accessRightService.getAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur);
+		List<AgentDto> result = accessRightService.getAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur,
+				null);
 
 		if (result.size() == 0)
 			throw new NoContentException();

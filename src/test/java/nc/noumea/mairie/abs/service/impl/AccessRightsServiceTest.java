@@ -5288,4 +5288,104 @@ public class AccessRightsServiceTest {
 		assertEquals(droitAgent2.getIdAgent(), dto.get(0));
 		assertEquals(droitAgent.getIdAgent(), dto.get(1));
 	}
+
+	@Test
+	public void getAgentsServicesForOperateur_2agents_return2Dtos() {
+
+		// Given
+		Integer idAgent = 9007654;
+
+		DroitProfil dp = new DroitProfil();
+
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(1);
+		da1.setCodeService("SERV 1");
+		da1.setLibelleService("SERVICE 1");
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(2);
+		da2.setCodeService("SERV 2");
+		da2.setLibelleService("SERVICE 2");
+
+		Droit d = new Droit();
+
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(d);
+		dda.setDroitsAgent(da1);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(d);
+		dda2.setDroitsAgent(da2);
+
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.addAll(Arrays.asList(dda, dda2));
+
+		d.setDroitDroitsAgent(droitDroitsAgent);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getDroitProfilByAgentAndLibelle(idAgent, ProfilEnum.OPERATEUR.toString())).thenReturn(
+				Arrays.asList(dp));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null, dp.getIdDroitProfil())).thenReturn(
+				Arrays.asList(da1, da2));
+		Mockito.when(arRepo.isOperateurOfAgent(idAgent, da1.getIdAgent())).thenReturn(true);
+		Mockito.when(arRepo.isOperateurOfAgent(idAgent, da2.getIdAgent())).thenReturn(true);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		// When
+		List<ServiceDto> result = service.getAgentsServicesForOperateur(idAgent);
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals("SERV 1", result.get(0).getCodeService());
+		assertEquals("SERVICE 2", result.get(1).getService());
+	}
+
+	@Test
+	public void getAgentsServicesForOperateur_2agentsSameService_return1Dtos() {
+
+		// Given
+		Integer idAgent = 9007654;
+
+		DroitProfil dp = new DroitProfil();
+
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(1);
+		da1.setCodeService("SERV 1");
+		da1.setLibelleService("SERVICE 1");
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(2);
+		da2.setCodeService("SERV 1");
+		da2.setLibelleService("SERVICE 1");
+
+		Droit d = new Droit();
+
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(d);
+		dda.setDroitsAgent(da1);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(d);
+		dda2.setDroitsAgent(da2);
+
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.addAll(Arrays.asList(dda, dda2));
+
+		d.setDroitDroitsAgent(droitDroitsAgent);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null, dp.getIdDroitProfil())).thenReturn(
+				Arrays.asList(da1, da2));
+		Mockito.when(arRepo.getDroitProfilByAgentAndLibelle(idAgent, ProfilEnum.OPERATEUR.toString())).thenReturn(
+				Arrays.asList(dp));
+		Mockito.when(arRepo.isOperateurOfAgent(idAgent, da1.getIdAgent())).thenReturn(true);
+		Mockito.when(arRepo.isOperateurOfAgent(idAgent, da2.getIdAgent())).thenReturn(true);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		// When
+		List<ServiceDto> result = service.getAgentsServicesForOperateur(idAgent);
+
+		// Then
+		assertEquals(1, result.size());
+	}
 }

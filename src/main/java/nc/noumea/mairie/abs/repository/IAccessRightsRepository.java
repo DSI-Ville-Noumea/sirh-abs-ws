@@ -59,7 +59,7 @@ public interface IAccessRightsRepository {
 
 	boolean isApprobateurOrDelegataireOfAgent(Integer idAgentApprobateurOrDelegataire, Integer IdAgent);
 
-	boolean isOperateurOfAgent(Integer idAgentViseur, Integer IdAgent);
+	boolean isOperateurOfAgent(Integer idAgentOperateur, Integer IdAgent);
 
 	List<DroitProfil> getDroitProfilByAgentAndLibelle(Integer idAgent, String libelleProfil);
 

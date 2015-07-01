@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.service;
 
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.dto.AccessRightsDto;
 import nc.noumea.mairie.abs.dto.ActeursDto;
 import nc.noumea.mairie.abs.dto.AgentDto;
@@ -19,7 +20,7 @@ public interface IAccessRightsService {
 
 	boolean canUserAccessAccessRights(Integer idAgent);
 
-	List<ApprobateurDto> getApprobateurs(Integer idAgent,String codeService);
+	List<ApprobateurDto> getApprobateurs(Integer idAgent, String codeService);
 
 	ReturnMessageDto setApprobateur(AgentWithServiceDto dto);
 
@@ -53,20 +54,17 @@ public interface IAccessRightsService {
 
 	ActeursDto getListeActeurs(Integer idAgent);
 
-	List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur,
-			Integer idAgent);
+	List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgent, String codeService);
 
-	List<AgentDto> getAgentsToInputByViseur(Integer idAgentApprobateur,
-			Integer idAgentViseur);
+	List<AgentDto> getAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentViseur);
 
-	ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur,
-			Integer idAgentOperateur, List<AgentDto> agents);
+	ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur,
+			List<AgentDto> agents);
 
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur,
-			Integer idAgent);
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent);
 
-	ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur,
-			Integer idAgentOperateur, List<AgentDto> agents);
+	ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur,
+			List<AgentDto> agents);
 
 	ReturnMessageDto setOperateur(Integer idAgentAppro, AgentDto operateurDto);
 
@@ -85,4 +83,8 @@ public interface IAccessRightsService {
 	boolean isUserViseur(Integer idAgent);
 
 	List<Integer> getListAgentByService(String codeService);
+
+	List<ServiceDto> getAgentsServicesForOperateur(Integer idAgentOperateur);
+
+	List<Droit> getListApprobateursOfOperateur(Integer idAgentOperateur);
 }
