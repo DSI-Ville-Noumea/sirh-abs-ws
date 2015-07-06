@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
+import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -297,6 +298,12 @@ public class DemandeController {
 					listAgents.add(idAgentService);
 				}
 			}
+		} else {
+			for (AgentDto da : accessRightService.getAgentsToApproveOrInput(convertedIdAgent, "")) {
+				if (!listAgents.contains(da.getIdAgent()))
+					listAgents.add(da.getIdAgent());
+			}
+
 		}
 
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, listAgents.size() == 0 ? null

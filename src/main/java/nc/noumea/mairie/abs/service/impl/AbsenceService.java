@@ -405,6 +405,7 @@ public class AbsenceService implements IAbsenceService {
 				}
 			}
 		}
+
 		if (idAgentConcerne != null) {
 			for (Integer idAgentChoisi : idAgentConcerne) {
 				listeSansFiltre.addAll(demandeRepository.listeDemandesAgent(idAgentConnecte, idAgentChoisi, fromDate,
