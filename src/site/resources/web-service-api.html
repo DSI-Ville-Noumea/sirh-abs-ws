@@ -579,9 +579,21 @@
                     </div>
                 </div>
                 <div class="resource-summary">
+                    <span class="resource-summary-path">/filtres/servicesOperateur</span>
+                    <div>
+                            <a href="#/filtres/servicesOperateur_GET_idAgent">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
                     <span class="resource-summary-path">/filtres/agents</span>
                     <div>
                             <a href="#/filtres/agents_GET_idAgent_codeService">GET</a>
+                    </div>
+                </div>
+                <div class="resource-summary">
+                    <span class="resource-summary-path">/filtres/agentsOperateur</span>
+                    <div>
+                            <a href="#/filtres/agentsOperateur_GET_idAgent_codeService">GET</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -9944,6 +9956,37 @@
 </div>
                             </div>
                     </div>
+                    <a id="/filtres/servicesOperateur_GET_idAgent"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/filtres/servicesOperateur</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des services pour un agent donne pour la gestion des compteurs
+ uniquement accessible aux opérateurs
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">codeService</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">service</span>
+<span class="json-primitive-type">string</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
                     <a id="/filtres/agents_GET_idAgent_codeService"/>
                     <div class="resource">
                         <div class="resource-header">
@@ -9953,6 +9996,40 @@
                             <div class="resource-docs">
                                  Liste des agents affectes a un operateur, viseur ou approbateur selon son
  service
+
+                            </div>
+
+
+
+
+                            <div class="response-body">
+                                <div class="body-title">Response Body</div>
+                                <div class="body-contents">    <span class="json-array">[
+    <span class="json-object">{
+    <div class="json-fields">
+            <div class="json-field">
+                <span class="json-field-name">nom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">prenom</span>
+<span class="json-primitive-type">string</span>            </div>
+            <div class="json-field">
+                <span class="json-field-name">idAgent</span>
+<span class="json-primitive-type">int</span>            </div>
+</div></span>    }
+    ]</span>
+</div>
+                            </div>
+                    </div>
+                    <a id="/filtres/agentsOperateur_GET_idAgent_codeService"/>
+                    <div class="resource">
+                        <div class="resource-header">
+                                <span class="method">GET</span>
+<span class="path">/filtres/agentsOperateur</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">codeService</span>=<span class="url-param-expected-type"><span class="json-primitive-type">string</span></span>                        </div>
+
+                            <div class="resource-docs">
+                                 Liste des agents affectes a un operateur , selon le service, pour la
+ gestion des compteurs uniquement accessible aux opérateurs
 
                             </div>
 
