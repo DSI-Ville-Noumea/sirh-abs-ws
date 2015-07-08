@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -35,8 +36,8 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String isJourHolidayUrl = "utils/isHoliday";
 	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
 	private static final String sirhOldBaseCongeUrl = "absences/oldBaseHoraire";
-	private static final String sirhListPAPourAlimAutoCongesAnnuelsUrl = "absences/listPAPourAlimAutoCongesAnnuels";	
-	private static final String sirhListPAByAgentUrl = "absences/listPAByAgentSansFuture";	
+	private static final String sirhListPAPourAlimAutoCongesAnnuelsUrl = "absences/listPAPourAlimAutoCongesAnnuels";
+	private static final String sirhListPAByAgentUrl = "absences/listPAByAgentSansFuture";
 	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
 	private static final String sirhAgentDirectionUrl = "agents/direction";
 	private static final String isPaieEnCoursUrl = "utils/isPaieEnCours";
@@ -144,6 +145,10 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	@Override
 	public List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin) {
+		// #16811 : on ajoute 3 jours à la date de fin pour recuperer les jours
+		// feries suivant
+		DateTime endDate = new DateTime(dateFin);
+		endDate = endDate.plusDays(3);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
@@ -151,7 +156,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("dateDebut", sdf.format(dateDebut));
-		parameters.put("dateFin", sdf.format(dateFin));
+		parameters.put("dateFin", sdf.format(endDate.toDate()));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
@@ -209,7 +214,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public List<InfosAlimAutoCongesAnnuelsDto> getListPAByAgentSansPAFuture(Integer idAgent,Date dateFin) {
+	public List<InfosAlimAutoCongesAnnuelsDto> getListPAByAgentSansPAFuture(Integer idAgent, Date dateFin) {
 
 		String url = String.format(sirhWsBaseUrl + sirhListPAByAgentUrl);
 
