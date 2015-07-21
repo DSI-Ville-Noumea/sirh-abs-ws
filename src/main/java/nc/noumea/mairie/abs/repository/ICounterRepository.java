@@ -7,6 +7,8 @@ import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
+import nc.noumea.mairie.abs.domain.AgentRecupCountTemp;
+import nc.noumea.mairie.abs.domain.AgentWeekRecupTemp;
 
 public interface ICounterRepository {
 
@@ -42,4 +44,9 @@ public interface ICounterRepository {
 
 	List<AgentAsaA52Count> getListOSCounterByDateAndOrganisation(Integer idOrganisationSyndicale, Date dateDebut,
 			Date dateFin, Integer idCompteur);
+
+	AgentRecupCountTemp getAgentRecupCountTempByIdAgent(Integer idAgent);
+
+	AgentWeekRecupTemp getWeekHistoRecupCountTempByIdAgentAndDate(
+			Integer idAgent, Date date);
 }

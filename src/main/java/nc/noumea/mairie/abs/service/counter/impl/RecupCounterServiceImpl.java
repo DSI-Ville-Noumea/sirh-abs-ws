@@ -3,7 +3,9 @@ package nc.noumea.mairie.abs.service.counter.impl;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
+import nc.noumea.mairie.abs.domain.AgentRecupCountTemp;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
+import nc.noumea.mairie.abs.domain.AgentWeekRecupTemp;
 import nc.noumea.mairie.abs.domain.BaseAgentWeekHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
@@ -59,6 +61,52 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
 	}
+	
+	/**
+	 * appeler par PTG exclusivement l historique utilise a pour seul but de
+	 * rectifier le compteur en cas de modification par l agent dans ses
+	 * pointages.
+	 * On retire en meme temps les recuperations non majorees du compteur provisoire.
+	 */
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes, Integer minutesNonMajorees) {
+
+		logger.info("Trying to update recuperation counters for Agent [{}] and date [{}] with {} minutes...", idAgent,
+				dateMonday, minutes);
+
+		try {
+			resetTempCounterAgent(idAgent, dateMonday, minutesNonMajorees);
+			return addMinutesToAgent(AgentRecupCount.class, AgentWeekRecup.class, idAgent, dateMonday, minutes);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+		}
+	}
+
+	/**
+	 * #16761 : 
+	 * Alimente un compteur provisoire qui doit permettre a un agent d utiliser tout de suite ses heures a recuperer.
+	 * 
+	 * Lors de l export de l etat payeur, et la mise a jour du vrai compteur de recup,
+	 * ce compteur provisoire est reinitialise.
+	 * 
+	 * appeler par PTG lors d un pointage approuve exclusivement l historique utilise a pour seul but de
+	 * rectifier le compteur en cas de modification par l agent dans ses
+	 * pointages.
+	 */
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public int addProvisoireToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage) {
+
+		logger.info("Trying to update temporaly recuperation counters for Agent [{}] and date [{}] with {} minutes...", idAgent,
+				date, minutes);
+
+		try {
+			return addMinutesToTempCounterAgent(idAgent, date, minutes, idPointage);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+		}
+	}
 
 	/**
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
@@ -96,6 +144,90 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 		return duree;
 	}
 
+	/**
+	 * Mets à jour le compteur provisoire de recup
+	 * 
+	 * @param idAgent Integer
+	 * @param date Date
+	 * @param minutes Integer
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	protected int addMinutesToTempCounterAgent(Integer idAgent, Date date,
+			Integer minutes, Integer idPointage) throws InstantiationException, IllegalAccessException {
+
+		if (sirhWSConsumer.getAgent(idAgent) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+			throw new AgentNotFoundException();
+		}
+
+		logger.info("updating temporaly counters for Agent [{}] and date [{}] with {} minutes...", idAgent, date, minutes);
+
+		AgentWeekRecupTemp awr = new AgentWeekRecupTemp();
+		awr.setIdAgent(idAgent);
+		awr.setDate(date);
+		awr.setMinutes(minutes);
+		awr.setLastModification(helperService.getCurrentDate());
+		awr.setIdPointage(idPointage);
+
+		AgentRecupCountTemp arc = counterRepository.getAgentCounter(AgentRecupCountTemp.class, idAgent);
+
+		if (arc == null) {
+			arc = new AgentRecupCountTemp();
+			arc.setIdAgent(idAgent);
+		}
+
+		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
+		arc.setLastModification(helperService.getCurrentDate());
+
+		counterRepository.persistEntity(awr);
+		counterRepository.persistEntity(arc);
+
+		return arc.getTotalMinutes();
+	}
+
+	/**
+	 * Lors de l export etat payeur, le vrai compteur est mis a jour, 
+	 * et il faut reinitialiser le compteur de recup provisoire
+	 * 
+	 * @param idAgent Integer
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	protected void resetTempCounterAgent(Integer idAgent, Date dateMonday, int minutesADeduire) 
+			throws InstantiationException, IllegalAccessException {
+
+		if (sirhWSConsumer.getAgent(idAgent) == null) {
+			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
+			throw new AgentNotFoundException();
+		}
+
+		logger.info("Reset temporaly counters for Agent [{}] and date [{}].", idAgent, dateMonday);
+
+		AgentRecupCountTemp arc = counterRepository.getAgentCounter(AgentRecupCountTemp.class, idAgent);
+		
+		AgentWeekRecupTemp awr = new AgentWeekRecupTemp();
+		awr.setIdAgent(idAgent);
+		awr.setDate(dateMonday);
+
+		awr.setMinutes(0 - minutesADeduire);
+		awr.setLastModification(helperService.getCurrentDate());
+
+
+		if (arc == null) {
+			arc = new AgentRecupCountTemp();
+			arc.setIdAgent(idAgent);
+		}
+
+		arc.setTotalMinutes(arc.getTotalMinutes() - minutesADeduire);
+		arc.setLastModification(helperService.getCurrentDate());
+
+		counterRepository.persistEntity(awr);
+		counterRepository.persistEntity(arc);
+	}
+	
 	/**
 	 * Mets à jour le compteur de minutes désiré (en fonction des types passés
 	 * en paramètre)
@@ -187,11 +319,12 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 
 		// on verifie que le solde est positif seulement si on debite le
 		// compteur
-		if (0 > minutes && 0 > arc.getTotalMinutes() + minutes) {
-			logger.warn(SOLDE_COMPTEUR_NEGATIF);
-			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
-			return srm;
-		}
+		// #16761 nouvelle RG de compteur avec le compteur provisoire de RECUPERATION
+//		if (0 > minutes && 0 > arc.getTotalMinutes() + minutes) {
+//			logger.warn(SOLDE_COMPTEUR_NEGATIF);
+//			srm.getErrors().add(String.format(SOLDE_COMPTEUR_NEGATIF));
+//			return srm;
+//		}
 		// #13519 maj solde sur la demande
 		Integer minutesOld = arc.getTotalMinutes();
 		

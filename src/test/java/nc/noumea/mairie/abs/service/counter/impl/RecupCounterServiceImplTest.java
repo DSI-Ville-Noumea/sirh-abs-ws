@@ -270,6 +270,7 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentCount.class));
 	}
 
+	// #17063 evol
 	@Test
 	public void majCompteurRecupToAgent_compteurNegatif_debit() {
 
@@ -297,9 +298,8 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 
 		result = service.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
-		assertEquals(1, result.getErrors().size());
-		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0));
-		Mockito.verify(rr, Mockito.times(0)).persistEntity(Mockito.isA(AgentCount.class));
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentCount.class));
 	}
 
 	@Test

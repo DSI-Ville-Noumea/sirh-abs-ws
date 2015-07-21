@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
+import nc.noumea.mairie.abs.domain.AgentRecupCountTemp;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
@@ -135,8 +136,11 @@ public class SoldeService implements ISoldeService {
 	private void getSoldeRecup(Integer idAgent, SoldeDto dto) {
 		// on traite les recup
 		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, idAgent);
+		AgentRecupCountTemp soldeRecupTemp = counterRepository.getAgentRecupCountTempByIdAgent(idAgent);
+		Integer soldeTemp = null == soldeRecupTemp ? 0 : soldeRecupTemp.getTotalMinutes();
+		Integer solde = soldeRecup == null ? 0 : soldeRecup.getTotalMinutes();
 		dto.setAfficheSoldeRecup(true);
-		dto.setSoldeRecup((double) (soldeRecup == null ? 0 : soldeRecup.getTotalMinutes()));
+		dto.setSoldeRecup((double) (solde + soldeTemp));
 	}
 
 	private void getSoldeReposComp(Integer idAgent, SoldeDto dto, ReturnMessageDto msg) {

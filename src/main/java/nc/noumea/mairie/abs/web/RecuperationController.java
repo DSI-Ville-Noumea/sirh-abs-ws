@@ -55,13 +55,33 @@ public class RecuperationController {
 	@RequestMapping(value = "/addForPTG", method = RequestMethod.POST)
 	public void addRecuperationForAgentAndWeek(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("dateLundi") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonday,
-			@RequestParam("minutes") int minutes) {
+			@RequestParam("minutes") int minutes, @RequestParam("minutesNonMajorees") int minutesNonMajorees) {
 
 		logger.debug(
-				"entered POST [recuperations/addForPTG] => addRecuperationForAgentAndWeek with parameters idAgent = {}, dateMonday = {} and minutes = {}",
-				idAgent, dateMonday, minutes);
+				"entered POST [recuperations/addForPTG] => addRecuperationForAgentAndWeek "
+				+ "with parameters idAgent = {}, dateMonday = {} and minutes = {} and minutesNonMajorees = {}",
+				idAgent, dateMonday, minutes, minutesNonMajorees);
 
-		counterService.addToAgentForPTG(idAgent, dateMonday, minutes);
+		counterService.addToAgentForPTG(idAgent, dateMonday, minutes, minutesNonMajorees);
+	}
+	
+	/**
+	 * Ajoute des minutes au compteur provisoire de recuperation a un agent 
+	 * des qu une heure supp en recuperation est approuvee <br />
+	 * utile a SIRH-PTG-WS <br />
+	 * Parametres en entree : format du type timestamp : yyyyMMdd
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/addProvisoireForPTG", method = RequestMethod.POST)
+	public void addRecuperationProvisoireForAgent(@RequestParam("idAgent") Integer idAgent,
+			@RequestParam(value = "date") @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm") Date date,
+			@RequestParam("minutes") int minutes, @RequestParam(value = "idPointage", required = false) Integer idPointage) {
+
+		logger.debug(
+				"entered POST [recuperations/addProvisoireForPTG] => addRecuperationProvisoireForAgent with parameters idAgent = {}, date = {} and minutes = {}",
+				idAgent, date, minutes);
+
+		counterService.addProvisoireToAgentForPTG(idAgent, date, minutes, idPointage);
 	}
 
 	/**

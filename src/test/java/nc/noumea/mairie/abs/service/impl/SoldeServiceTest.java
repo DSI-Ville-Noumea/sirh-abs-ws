@@ -21,6 +21,7 @@ import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
+import nc.noumea.mairie.abs.domain.AgentRecupCountTemp;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
@@ -1243,6 +1244,58 @@ public class SoldeServiceTest {
 		assertEquals(e.getDateModification(), listResult.get(0).getDateModifcation());
 		assertEquals(e.getIdAgent(), listResult.get(0).getIdAgentModification());
 		assertEquals(motifCompteur.getLibelle(), listResult.get(0).getMotif().getLibelle());
+	}
+	
+	@Test
+	public void getSoldeRecup_withSoldeProvisoire() {
+		
+		// Given
+		Integer idAgent = 9008765;
+
+		AgentRecupCount arc = new AgentRecupCount();
+		arc.setIdAgent(idAgent);
+		arc.setTotalMinutes(10);
+
+		AgentRecupCountTemp arcTmp = new AgentRecupCountTemp();
+		arcTmp.setIdAgent(idAgent);
+		arcTmp.setTotalMinutes(2);
+
+		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
+		Mockito.when(cr.getAgentRecupCountTempByIdAgent(idAgent)).thenReturn(arcTmp);
+
+		SoldeService service = new SoldeService();
+		ReflectionTestUtils.setField(service, "counterRepository", cr);
+
+		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, RefTypeAbsenceEnum.RECUP.getValue());
+
+		assertEquals("12.0", dto.getSoldeRecup().toString());
+	}
+	
+	@Test
+	public void getSoldeRecup_withSoldeProvisoire_withoutSoldeRecupNormal() {
+		
+		// Given
+		Integer idAgent = 9008765;
+
+		AgentRecupCountTemp arcTmp = new AgentRecupCountTemp();
+		arcTmp.setIdAgent(idAgent);
+		arcTmp.setTotalMinutes(2);
+
+		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(null);
+		Mockito.when(cr.getAgentRecupCountTempByIdAgent(idAgent)).thenReturn(arcTmp);
+
+		SoldeService service = new SoldeService();
+		ReflectionTestUtils.setField(service, "counterRepository", cr);
+
+		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, RefTypeAbsenceEnum.RECUP.getValue());
+
+		assertEquals("2.0", dto.getSoldeRecup().toString());
 	}
 
 }

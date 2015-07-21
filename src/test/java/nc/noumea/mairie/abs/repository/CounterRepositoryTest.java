@@ -21,8 +21,10 @@ import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
+import nc.noumea.mairie.abs.domain.AgentRecupCountTemp;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
+import nc.noumea.mairie.abs.domain.AgentWeekRecupTemp;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 
@@ -752,6 +754,102 @@ public class CounterRepositoryTest {
 
 		// Then
 		assertEquals(1, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}@Test
+	@Transactional("absTransactionManager")
+	public void getAgentRecupCountTemp_NoAgent_ReturnNull() {
+
+		// When
+		AgentRecupCountTemp result = repository.getAgentRecupCountTempByIdAgent(9008767);
+
+		// Then
+		assertNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getAgentRecupCountTemp_1Agent_ReturnRecord() {
+
+		// Given
+		AgentRecupCountTemp record = new AgentRecupCountTemp();
+		record.setIdAgent(9008767);
+		record.setTotalMinutes(90);
+		absEntityManager.persist(record);
+
+		// When
+		AgentRecupCountTemp result = repository.getAgentRecupCountTempByIdAgent(9008767);
+
+		// Then
+		assertNotNull(result);
+		assertEquals(result, record);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getWeekRecupTempForAgentAndDate_NoResultForWeek_ReturnNull() {
+
+		// Given
+		AgentWeekRecupTemp r1 = new AgentWeekRecupTemp();
+		r1.setIdAgent(9008989);
+		r1.setDate(new LocalDate(2013, 11, 11).toDate());
+		absEntityManager.persist(r1);
+
+		// When
+		AgentWeekRecupTemp result = repository.getWeekHistoRecupCountTempByIdAgentAndDate(9008990, new LocalDate(
+				2013, 11, 11).toDate());
+
+		// Then
+		assertNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getWeekRecupTempForAgentAndDate_NoResultForAgent_ReturnNull() {
+
+		// Given
+		AgentWeekRecupTemp r1 = new AgentWeekRecupTemp();
+		r1.setIdAgent(9008989);
+		r1.setDate(new LocalDate(2013, 11, 11).toDate());
+		absEntityManager.persist(r1);
+
+		// When
+		AgentWeekRecupTemp result = repository.getWeekHistoRecupCountTempByIdAgentAndDate(9008989, new LocalDate(
+				2013, 11, 18).toDate());
+
+		// Then
+		assertNull(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getWeekRecupTempForAgentAndDate_1ResultForAgent_ReturnNull() {
+
+		// Given
+		AgentWeekRecupTemp r1 = new AgentWeekRecupTemp();
+		r1.setIdAgent(9008989);
+		r1.setDate(new LocalDate(2013, 11, 11).toDate());
+		absEntityManager.persist(r1);
+
+		// When
+		AgentWeekRecupTemp result = repository.getWeekHistoRecupCountTempByIdAgentAndDate(9008989, new LocalDate(
+				2013, 11, 11).toDate());
+
+		// Then
+		assertEquals(result, r1);
 
 		absEntityManager.flush();
 		absEntityManager.clear();
