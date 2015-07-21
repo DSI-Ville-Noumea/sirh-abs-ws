@@ -215,7 +215,6 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 		awr.setMinutes(0 - minutesADeduire);
 		awr.setLastModification(helperService.getCurrentDate());
 
-
 		if (arc == null) {
 			arc = new AgentRecupCountTemp();
 			arc.setIdAgent(idAgent);
