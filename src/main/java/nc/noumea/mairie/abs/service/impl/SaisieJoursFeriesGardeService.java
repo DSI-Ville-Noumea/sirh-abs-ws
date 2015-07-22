@@ -8,14 +8,15 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentJoursFeriesGarde;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentJoursFeriesGardeDto;
+import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.JoursFeriesSaisiesGardeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SaisieGardeDto;
-import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 import nc.noumea.mairie.abs.repository.IAgentJoursFeriesGardeRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ISaisieJoursFeriesGardeService;
+import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -38,24 +39,27 @@ public class SaisieJoursFeriesGardeService implements ISaisieJoursFeriesGardeSer
 	@Autowired
 	protected ISirhWSConsumer sirhWSConsumer;
 
+	@Autowired
+	protected IAdsWSConsumer adsWsConsumer;
+
 	protected final static String ERREUR_JOUR_FERIE_ERRONE = "Le jour de garde %s n'est pas un jour férié ou chômé.";
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 	@Override
 	@Transactional(readOnly = true)
-	public SaisieGardeDto getListAgentsWithJoursFeriesEnGarde(Integer idAgent, String codeService, Date dateDebut,
+	public SaisieGardeDto getListAgentsWithJoursFeriesEnGarde(Integer idAgent, Integer idServiveADS, Date dateDebut,
 			Date dateFin) {
 
 		logger.debug("Start getListAgentsWithJoursFeriesEnGarde");
 
 		SaisieGardeDto result = new SaisieGardeDto();
 
-		List<AgentDto> listAgentTemp = accessRightsService.getAgentsToApproveOrInput(idAgent, codeService);
+		List<AgentDto> listAgentTemp = accessRightsService.getAgentsToApproveOrInputByService(idAgent, idServiveADS);
 		List<AgentDto> listAgent = new ArrayList<>();
 		for (AgentDto ag : listAgentTemp) {
-			SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(ag.getIdAgent(), new Date());
-			if (null != service && null != service.getSigle() && service.getSigle().toUpperCase().equals("DPM")) {
+			EntiteDto direction = adsWsConsumer.getDirection(idServiveADS);
+			if (null != direction && null != direction.getSigle() && direction.getSigle().toUpperCase().equals("DPM")) {
 				listAgent.add(ag);
 			}
 		}

@@ -70,13 +70,13 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<ApprobateurDto> listApprobateurs(@RequestParam(value = "idAgent", required = false) Integer idAgent,
-			@RequestParam(value = "codeService", required = false) String codeService) {
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
 		logger.debug(
-				"entered GET [droits/approbateurs] => listApprobateurs with parameter idAgent = {} and codeService = {} --> for SIRH ",
-				idAgent, codeService);
+				"entered GET [droits/approbateurs] => listApprobateurs with parameter idAgent = {} and idServiceADS = {} --> for SIRH ",
+				idAgent, idServiceADS);
 
-		return accessRightService.getApprobateurs(idAgent, codeService);
+		return accessRightService.getApprobateurs(idAgent, idServiceADS);
 	}
 
 	/**
@@ -305,7 +305,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		List<AgentDto> result = accessRightService.getAgentsToApproveOrInput(convertedIdAgent, convertedIdAgent);
+		List<AgentDto> result = accessRightService.getAgentsToApproveOrInputByAgent(convertedIdAgent, convertedIdAgent);
 
 		if (result.size() == 0)
 			throw new NoContentException();

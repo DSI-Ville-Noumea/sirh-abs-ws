@@ -265,12 +265,12 @@ public class DemandeController {
 			@RequestParam(value = "type", required = false) Integer idRefType,
 			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence,
 			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche,
-			@RequestParam(value = "codeService", required = false) String codeService) {
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
 		logger.debug(
-				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters idInputter = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, type = {}, groupe = {}, idAgentConcerne = {} and codeService = {}",
+				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters idInputter = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, type = {}, groupe = {}, idAgentConcerne = {} and idServiceADS = {}",
 				idAgent, ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence,
-				idAgentRecherche, codeService);
+				idAgentRecherche, idServiceADS);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -289,9 +289,9 @@ public class DemandeController {
 			} else {
 				listAgents.add(idAgentRecherche);
 			}
-		} else if (codeService != null) {
+		} else if (idServiceADS != null) {
 			// #16262 : on cherche tous les agents qui ont ce service
-			List<Integer> listAgentService = accessRightService.getListAgentByService(codeService);
+			List<Integer> listAgentService = accessRightService.getListAgentByService(idServiceADS);
 			for (Integer idAgentService : listAgentService) {
 				if (accessRightService.verifAccessRightListDemande(convertedIdAgent, idAgentService,
 						new ReturnMessageDto())) {
@@ -299,7 +299,7 @@ public class DemandeController {
 				}
 			}
 		} else {
-			for (AgentDto da : accessRightService.getAgentsToApproveOrInput(convertedIdAgent, "")) {
+			for (AgentDto da : accessRightService.getAgentsToApproveOrInputByService(convertedIdAgent, null)) {
 				if (!listAgents.contains(da.getIdAgent()))
 					listAgents.add(da.getIdAgent());
 			}
@@ -448,7 +448,7 @@ public class DemandeController {
 			@RequestParam(value = "idAgents", required = false) String idAgents) {
 
 		logger.debug(
-				"entered GET [demandes/listeDemandesSIRH] => getListeDemandesAbsenceSIRH with parameters  from = {}, to = {},  etat = {}, groupe = {}, type = {}, idAgentConcerne= {}, aValider= {} and codeService = {}",
+				"entered GET [demandes/listeDemandesSIRH] => getListeDemandesAbsenceSIRH with parameters  from = {}, to = {},  etat = {}, groupe = {}, type = {}, idAgentConcerne= {}, aValider= {} and idAgents = {}",
 				fromDate, toDate, idRefEtat, idRefGroupeAbsence, idRefType, idAgentRecherche, aValider, idAgents);
 
 		List<Integer> agentIds = new ArrayList<Integer>();

@@ -26,8 +26,7 @@ public class EditionDemandeDtoTest {
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);
 		AgentWithServiceDto agDto = new AgentWithServiceDto(ag);
-		agDto.setCodeService("DCCA");
-		agDto.setDirection("DIR");
+		agDto.setIdServiceADS(1);
 		agDto.setService("SERV");
 		agDto.setStatut("F");
 
@@ -76,7 +75,7 @@ public class EditionDemandeDtoTest {
 		assertEquals("RAYNAUD", result.getDemande().getAgentWithServiceDto().getNom());
 		assertEquals("Nicolas", result.getDemande().getAgentWithServiceDto().getPrenom());
 		assertEquals(9006765, (int) result.getDemande().getAgentWithServiceDto().getIdAgent());
-		assertEquals("DIR", result.getDemande().getAgentWithServiceDto().getDirection());
+		assertEquals(1, (int) result.getDemande().getAgentWithServiceDto().getIdServiceADS());
 		assertEquals("SERV", result.getDemande().getAgentWithServiceDto().getService());
 		assertEquals("F", result.getDemande().getAgentWithServiceDto().getStatut());
 

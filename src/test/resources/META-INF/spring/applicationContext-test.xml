@@ -90,6 +90,8 @@
 
 	<bean class="java.lang.String" id="sirhWsBaseUrl" />
 
+	<bean class="java.lang.String" id="adsWsBaseUrl" />
+
 	<bean class="java.lang.String" id="sirhPtgWsBaseUrl" />
 
 	<bean class="java.lang.String" id="reportingBaseUrl" />

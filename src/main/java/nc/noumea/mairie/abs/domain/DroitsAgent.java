@@ -22,18 +22,17 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "ABS_DROITS_AGENT") 
+@Table(name = "ABS_DROITS_AGENT")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
-	@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d INNER JOIN FETCH dda.droitProfil dp where d.idAgent = :idAgent and dp.idDroitProfil = :idDroitProfil "),
-	@NamedQuery(name = "getDroitsAgent", query = "select da from DroitsAgent da where da.idAgent = :idAgent"),
-	@NamedQuery(name = "getDroitsAgentByService", query = "select da from DroitsAgent da where da.codeService = :codeService"),
-	@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d INNER JOIN FETCH dda.droitProfil dp where (d.idAgent = :idAgent) and da.codeService = :codeService and dp.idDroitProfil = :idDroitProfil "),
-	@NamedQuery(name = "getListOfAgentsToInputOrApproveWithoutProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d where d.idAgent = :idAgent "),
-	@NamedQuery(name = "getListOfAgentsToInputOrApproveByServiceWithoutProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d where (d.idAgent = :idAgent) and da.codeService = :codeService "),
-	@NamedQuery(name = "getListOfAgentsToInputOrApproveWithProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droitProfil dp INNER JOIN FETCH dp.droit d where d.idAgent in :idAgent "),
-	@NamedQuery(name = "getListOfAgentsToInputOrApproveByServiceWithProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droitProfil dp INNER JOIN FETCH dp.droit d where (d.idAgent in :idAgent) and da.codeService = :codeService ")
-})
+		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d INNER JOIN FETCH dda.droitProfil dp where d.idAgent = :idAgent and dp.idDroitProfil = :idDroitProfil "),
+		@NamedQuery(name = "getDroitsAgent", query = "select da from DroitsAgent da where da.idAgent = :idAgent"),
+		@NamedQuery(name = "getDroitsAgentByService", query = "select da from DroitsAgent da where da.idServiceADS = :idServiceADS"),
+		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d INNER JOIN FETCH dda.droitProfil dp where (d.idAgent = :idAgent) and da.idServiceADS = :idServiceADS and dp.idDroitProfil = :idDroitProfil "),
+		@NamedQuery(name = "getListOfAgentsToInputOrApproveWithoutProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d where d.idAgent = :idAgent "),
+		@NamedQuery(name = "getListOfAgentsToInputOrApproveByServiceWithoutProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d where (d.idAgent = :idAgent) and da.idServiceADS = :idServiceADS "),
+		@NamedQuery(name = "getListOfAgentsToInputOrApproveWithProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droitProfil dp INNER JOIN FETCH dp.droit d where d.idAgent in :idAgent "),
+		@NamedQuery(name = "getListOfAgentsToInputOrApproveByServiceWithProfil", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droitProfil dp INNER JOIN FETCH dp.droit d where (d.idAgent in :idAgent) and da.idServiceADS = :idServiceADS ") })
 public class DroitsAgent {
 
 	@Id
@@ -45,26 +44,24 @@ public class DroitsAgent {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 
-	@Column(name = "CODE_SERVICE")
-	private String codeService;
-
 	@Column(name = "LIBELLE_SERVICE")
 	private String libelleService;
 
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
-	
-	@OneToMany(mappedBy = "droitsAgent", fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.ALL, CascadeType.REMOVE})
+
+	@OneToMany(mappedBy = "droitsAgent", fetch = FetchType.LAZY, orphanRemoval = true, cascade = { CascadeType.ALL,
+			CascadeType.REMOVE })
 	private Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 
 	@Column(name = "ID_SERVICE_ADS")
 	private Integer idServiceADS;
 
 	@Version
-    @Column(name = "version")
+	@Column(name = "version")
 	private Integer version;
-	
+
 	public Integer getIdDroitsAgent() {
 		return idDroitsAgent;
 	}
@@ -79,14 +76,6 @@ public class DroitsAgent {
 
 	public void setIdAgent(Integer idAgent) {
 		this.idAgent = idAgent;
-	}
-
-	public String getCodeService() {
-		return codeService;
-	}
-
-	public void setCodeService(String codeService) {
-		this.codeService = codeService;
 	}
 
 	public String getLibelleService() {
@@ -120,6 +109,13 @@ public class DroitsAgent {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
-	
-	
+
+	public Integer getIdServiceADS() {
+		return idServiceADS;
+	}
+
+	public void setIdServiceADS(Integer idServiceADS) {
+		this.idServiceADS = idServiceADS;
+	}
+
 }

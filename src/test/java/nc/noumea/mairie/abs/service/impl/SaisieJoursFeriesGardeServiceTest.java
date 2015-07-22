@@ -11,13 +11,14 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentJoursFeriesGarde;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentJoursFeriesGardeDto;
+import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.JoursFeriesSaisiesGardeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SaisieGardeDto;
-import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 import nc.noumea.mairie.abs.repository.IAgentJoursFeriesGardeRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
+import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -74,7 +75,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
-		Mockito.when(accessRightsService.getAgentsToApproveOrInput(9005138, "codeService")).thenReturn(listAgent);
+		Mockito.when(accessRightsService.getAgentsToApproveOrInputByService(9005138, 1)).thenReturn(listAgent);
 
 		List<JourDto> listJoursDto = new ArrayList<JourDto>();
 
@@ -85,7 +86,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, "codeService", dateDebut, dateFin);
+		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, 1, dateDebut, dateFin);
 
 		assertEquals(0, result.getListAgentAvecGarde().size());
 	}
@@ -101,18 +102,19 @@ public class SaisieJoursFeriesGardeServiceTest {
 		agent.setIdAgent(9005131);
 		listAgent.add(agent);
 
-		SirhWsServiceDto serviceAgent = new SirhWsServiceDto();
+		EntiteDto serviceAgent = new EntiteDto();
 		serviceAgent.setSigle("dpm");
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
-		Mockito.when(accessRightsService.getAgentsToApproveOrInput(9005138, "codeService")).thenReturn(listAgent);
+		Mockito.when(accessRightsService.getAgentsToApproveOrInputByService(9005138, 1)).thenReturn(listAgent);
 
 		List<JourDto> listJoursDto = new ArrayList<JourDto>();
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
-				serviceAgent);
+
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getDirection(Mockito.anyInt())).thenReturn(serviceAgent);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
 
@@ -126,9 +128,10 @@ public class SaisieJoursFeriesGardeServiceTest {
 		SaisieJoursFeriesGardeService service = new SaisieJoursFeriesGardeService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesGardeRepository", agentJoursFeriesGardeRepository);
 
-		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, "codeService", dateDebut, dateFin);
+		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, 1, dateDebut, dateFin);
 
 		assertEquals(1, result.getListAgentAvecGarde().size());
 		assertEquals(0, result.getListAgentAvecGarde().get(0).getJoursFeriesEnGarde().size());
@@ -140,7 +143,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
-		SirhWsServiceDto serviceAgent = new SirhWsServiceDto();
+		EntiteDto serviceAgent = new EntiteDto();
 		serviceAgent.setSigle("dpm");
 
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
@@ -149,7 +152,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		listAgent.add(agent);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
-		Mockito.when(accessRightsService.getAgentsToApproveOrInput(9005138, "codeService")).thenReturn(listAgent);
+		Mockito.when(accessRightsService.getAgentsToApproveOrInputByService(9005138, 1)).thenReturn(listAgent);
 
 		List<JourDto> listJoursDto = new ArrayList<JourDto>();
 		JourDto jour = new JourDto();
@@ -159,8 +162,9 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
-				serviceAgent);
+
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getDirection(Mockito.anyInt())).thenReturn(serviceAgent);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
 
@@ -174,9 +178,10 @@ public class SaisieJoursFeriesGardeServiceTest {
 		SaisieJoursFeriesGardeService service = new SaisieJoursFeriesGardeService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesGardeRepository", agentJoursFeriesGardeRepository);
 
-		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, "codeService", dateDebut, dateFin);
+		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, 1, dateDebut, dateFin);
 
 		assertEquals(1, result.getListAgentAvecGarde().size());
 		assertEquals(1, result.getListAgentAvecGarde().get(0).getJoursFeriesEnGarde().size());
@@ -191,7 +196,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
-		SirhWsServiceDto serviceAgent = new SirhWsServiceDto();
+		EntiteDto serviceAgent = new EntiteDto();
 		serviceAgent.setSigle("dpm");
 
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
@@ -200,7 +205,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		listAgent.add(agent);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
-		Mockito.when(accessRightsService.getAgentsToApproveOrInput(9005138, "codeService")).thenReturn(listAgent);
+		Mockito.when(accessRightsService.getAgentsToApproveOrInputByService(9005138, 1)).thenReturn(listAgent);
 
 		List<JourDto> listJoursDto = new ArrayList<JourDto>();
 		JourDto jour = new JourDto();
@@ -210,8 +215,9 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
-				serviceAgent);
+
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getDirection(Mockito.anyInt())).thenReturn(serviceAgent);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
 		AgentJoursFeriesGarde repos = new AgentJoursFeriesGarde();
@@ -229,9 +235,10 @@ public class SaisieJoursFeriesGardeServiceTest {
 		SaisieJoursFeriesGardeService service = new SaisieJoursFeriesGardeService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesGardeRepository", agentJoursFeriesGardeRepository);
 
-		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, "codeService", dateDebut, dateFin);
+		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, 1, dateDebut, dateFin);
 
 		assertEquals(1, result.getListAgentAvecGarde().size());
 		assertEquals(1, result.getListAgentAvecGarde().get(0).getJoursFeriesEnGarde().size());
@@ -246,7 +253,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
-		SirhWsServiceDto serviceAgent = new SirhWsServiceDto();
+		EntiteDto serviceAgent = new EntiteDto();
 		serviceAgent.setSigle("dpm");
 
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
@@ -258,7 +265,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		listAgent.add(agent2);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
-		Mockito.when(accessRightsService.getAgentsToApproveOrInput(9005138, "codeService")).thenReturn(listAgent);
+		Mockito.when(accessRightsService.getAgentsToApproveOrInputByService(9005138, 1)).thenReturn(listAgent);
 
 		List<JourDto> listJoursDto = new ArrayList<JourDto>();
 		JourDto jour = new JourDto();
@@ -272,8 +279,9 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
-				serviceAgent);
+
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getDirection(Mockito.anyInt())).thenReturn(serviceAgent);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
 		AgentJoursFeriesGarde repos = new AgentJoursFeriesGarde();
@@ -305,9 +313,10 @@ public class SaisieJoursFeriesGardeServiceTest {
 		SaisieJoursFeriesGardeService service = new SaisieJoursFeriesGardeService();
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 		ReflectionTestUtils.setField(service, "agentJoursFeriesGardeRepository", agentJoursFeriesGardeRepository);
 
-		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, "codeService", dateDebut, dateFin);
+		SaisieGardeDto result = service.getListAgentsWithJoursFeriesEnGarde(9005138, 1, dateDebut, dateFin);
 
 		assertEquals(2, result.getListAgentAvecGarde().size());
 		assertEquals(2, result.getListAgentAvecGarde().get(0).getJoursFeriesEnGarde().size());

@@ -5,11 +5,11 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.dto.AgentDto;
+import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
-import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -73,13 +73,13 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/services", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<ServiceDto> getServices(@RequestParam("idAgent") Integer idAgent) {
+	public List<EntiteDto> getServices(@RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug("entered GET [filtres/services] => getServices with parameter idAgent = {}", idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<ServiceDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent);
+		List<EntiteDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent);
 
 		if (services.size() == 0)
 			throw new NoContentException();
@@ -93,14 +93,14 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/servicesOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<ServiceDto> getServicesOperateur(@RequestParam("idAgent") Integer idAgent) {
+	public List<EntiteDto> getServicesOperateur(@RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug("entered GET [filtres/servicesOperateur] => getServicesOperateur with parameter idAgent = {}",
 				idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<ServiceDto> services = accessRightsService.getAgentsServicesForOperateur(convertedIdAgent);
+		List<EntiteDto> services = accessRightsService.getAgentsServicesForOperateur(convertedIdAgent);
 
 		if (services.size() == 0)
 			throw new NoContentException();
@@ -115,14 +115,15 @@ public class FiltreController {
 	@ResponseBody
 	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<AgentDto> getAgents(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "codeService", required = false) String codeService) {
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
-		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and codeService = {}",
-				idAgent, codeService);
+		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and idServiceADS = {}",
+				idAgent, idServiceADS);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, codeService);
+		List<AgentDto> services = accessRightsService
+				.getAgentsToApproveOrInputByService(convertedIdAgent, idServiceADS);
 
 		if (services.size() == 0)
 			throw new NoContentException();
@@ -137,11 +138,11 @@ public class FiltreController {
 	@ResponseBody
 	@RequestMapping(value = "/agentsOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<AgentDto> getAgentsOperateur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "codeService", required = false) String codeService) {
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
 		logger.debug(
-				"entered GET [filtres/agentsOperateur] => getAgentsOperateur with parameter idAgent = {} and codeService = {}",
-				idAgent, codeService);
+				"entered GET [filtres/agentsOperateur] => getAgentsOperateur with parameter idAgent = {} and idServiceADS = {}",
+				idAgent, idServiceADS);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -150,7 +151,7 @@ public class FiltreController {
 		List<Droit> listeApprobateurs = accessRightsService.getListApprobateursOfOperateur(convertedIdAgent);
 		for (Droit approbateur : listeApprobateurs) {
 			for (AgentDto ag : accessRightsService.getAgentsToInputByOperateur(approbateur.getIdAgent(),
-					convertedIdAgent, codeService)) {
+					convertedIdAgent, idServiceADS)) {
 				if (!services.contains(ag))
 					services.add(ag);
 			}

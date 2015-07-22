@@ -9,9 +9,9 @@ import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.ApprobateurDto;
+import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.dto.ServiceDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 
 public interface IAccessRightsService {
@@ -20,7 +20,7 @@ public interface IAccessRightsService {
 
 	boolean canUserAccessAccessRights(Integer idAgent);
 
-	List<ApprobateurDto> getApprobateurs(Integer idAgent, String codeService);
+	List<ApprobateurDto> getApprobateurs(Integer idAgent, Integer idServiceADS);
 
 	ReturnMessageDto setApprobateur(AgentWithServiceDto dto);
 
@@ -42,9 +42,9 @@ public interface IAccessRightsService {
 
 	boolean verifAccessRightListDemande(Integer idAgentConnecte, Integer idAgentOfDemande, ReturnMessageDto returnDto);
 
-	List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent);
+	List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent);
 
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService);
+	List<AgentDto> getAgentsToApproveOrInputByService(Integer idAgent, Integer idServiceADS);
 
 	ReturnMessageDto verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto);
 
@@ -54,14 +54,14 @@ public interface IAccessRightsService {
 
 	ActeursDto getListeActeurs(Integer idAgent);
 
-	List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgent, String codeService);
+	List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgent, Integer idServiceADS);
 
 	List<AgentDto> getAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentViseur);
 
 	ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur,
 			List<AgentDto> agents);
 
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent);
+	List<AgentDto> getAgentsToApproveOrInputByAgent(Integer idAgentApprobateur, Integer idAgent);
 
 	ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur,
 			List<AgentDto> agents);
@@ -82,9 +82,9 @@ public interface IAccessRightsService {
 
 	boolean isUserViseur(Integer idAgent);
 
-	List<Integer> getListAgentByService(String codeService);
+	List<Integer> getListAgentByService(Integer idServiceADS);
 
-	List<ServiceDto> getAgentsServicesForOperateur(Integer idAgentOperateur);
+	List<EntiteDto> getAgentsServicesForOperateur(Integer idAgentOperateur);
 
 	List<Droit> getListApprobateursOfOperateur(Integer idAgentOperateur);
 }
