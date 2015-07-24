@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
@@ -31,4 +32,6 @@ public interface ISirhWSConsumer {
 	RefTypeSaisiCongeAnnuelDto getOldBaseHoraireAbsence(Integer idAgent);
 
 	List<InfosAlimAutoCongesAnnuelsDto> getListPAByAgentSansPAFuture(Integer idAgent, Date dateFin);
+
+	EntiteDto getAgentDirection(Integer idAgent, Date date);
 }

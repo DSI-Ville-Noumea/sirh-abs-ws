@@ -95,7 +95,7 @@ public class AccessRightsService implements IAccessRightsService {
 			if (result.isMajSolde()) {
 				boolean contientAgentDPM = false;
 				for (DroitDroitsAgent droitAg : da.getDroitDroitsAgent()) {
-					EntiteDto direction = adsWsConsumer.getDirection(droitAg.getDroitsAgent().getIdServiceADS());
+					EntiteDto direction = sirhWSConsumer.getAgentDirection(droitAg.getDroitsAgent().getIdAgent(), null);
 					if (direction != null && null != direction.getSigle()
 							&& direction.getSigle().toUpperCase().equals("DPM")) {
 						contientAgentDPM = true;

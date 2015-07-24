@@ -264,12 +264,12 @@ public class AccessRightsServiceTest {
 		EntiteDto serviceDto = new EntiteDto();
 		serviceDto.setSigle("DPM");
 
-		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
-		Mockito.when(adsWsConsumer.getDirection(Mockito.anyInt())).thenReturn(serviceDto);
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(serviceDto);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		AccessRightsDto result = service.getAgentAccessRights(idAgent);
