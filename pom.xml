@@ -280,7 +280,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>sirh-abs-ws##${project.version}</finalName>
+		<finalName>sirh-abs-ws-org##${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
