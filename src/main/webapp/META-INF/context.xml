@@ -45,14 +45,14 @@
 	<!-- WS SIRH -->
 	<!--  -->	
 	<Environment name="SIRH_WS_URL" type="java.lang.String" description="SIRH WS endpoint url" 
-		value="http://svi-tomcat0:8085/sirhws/" override="false" />
+		value="http://svi-tomcat0:8087/sirhws/" override="false" />
 		
 
 	<!-- -->
 	<!-- WS DES POINTAGES -->
 	<!-- -->
 	<Environment description="SIRH PTG WS url" name="SIRH_PTG_WS_URL"
-		type="java.lang.String" override="false" value="http://svi-tomcat0:8085/sirh-ptg-ws/" />
+		type="java.lang.String" override="false" value="http://svi-tomcat0:8087/sirh-ptg-ws/" />
 
 
 	<!-- -->
