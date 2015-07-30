@@ -95,7 +95,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	 * #16761 
 	 */
 	@Override
-	public int addProvisoireToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes, Integer idPointage) {
+	public int addProvisoireToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes, Integer idPointage, Integer idPointageParent) {
 		return 0;
 	}
 

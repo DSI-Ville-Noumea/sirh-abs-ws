@@ -75,13 +75,15 @@ public class RecuperationController {
 	@RequestMapping(value = "/addProvisoireForPTG", method = RequestMethod.POST)
 	public void addRecuperationProvisoireForAgent(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam(value = "date") @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm") Date date,
-			@RequestParam("minutes") int minutes, @RequestParam(value = "idPointage", required = false) Integer idPointage) {
+			@RequestParam("minutes") int minutes, @RequestParam(value = "idPointage", required = false) Integer idPointage,
+			@RequestParam(value = "idPointageParent", required = false) Integer idPointageParent) {
 
 		logger.debug(
-				"entered POST [recuperations/addProvisoireForPTG] => addRecuperationProvisoireForAgent with parameters idAgent = {}, date = {} and minutes = {}",
-				idAgent, date, minutes);
+				"entered POST [recuperations/addProvisoireForPTG] => addRecuperationProvisoireForAgent with parameters idAgent = {}, date = {} and minutes = {}"
+				+ " and idPointage = {} and idPointageParent = {}",
+				idAgent, date, minutes, idPointage, idPointageParent);
 
-		counterService.addProvisoireToAgentForPTG(idAgent, date, minutes, idPointage);
+		counterService.addProvisoireToAgentForPTG(idAgent, date, minutes, idPointage, idPointageParent);
 	}
 
 	/**

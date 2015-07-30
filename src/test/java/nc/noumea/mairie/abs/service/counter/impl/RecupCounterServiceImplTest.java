@@ -345,7 +345,7 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		int result = service.addProvisoireToAgentForPTG(idAgent, date, 90, 1);
+		int result = service.addProvisoireToAgentForPTG(idAgent, date, 90, 1, null);
 
 		// Then
 		assertEquals(90, result);
@@ -376,11 +376,48 @@ public class RecupCounterServiceImplTest extends AbstractCounterServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		int result = service.addProvisoireToAgentForPTG(idAgent, date, 90, 1);
+		int result = service.addProvisoireToAgentForPTG(idAgent, date, 90, 1, null);
 
 		// Then
 		assertEquals(140, result);
 		assertEquals(140, arcTemp.getTotalMinutes());
+		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentRecupCountTemp.class));
+		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekRecupTemp.class));
+	}
+	
+	@Test
+	public void addProvisoireToAgentForPTG_counterExistAndUpdatedYet() {
+
+		// Given
+		Integer idAgent = 9008765;
+		Integer idPointage = 1;
+		Date date = new LocalDate(2013, 9, 30).toDate();
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(new AgentGeneriqueDto());
+
+		AgentRecupCountTemp arcTemp = new AgentRecupCountTemp();
+		arcTemp.setTotalMinutes(50);
+		
+		AgentWeekRecupTemp weekTemp = new AgentWeekRecupTemp();
+		weekTemp.setMinutes(50);
+		
+		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(rr.getAgentCounter(AgentRecupCountTemp.class, idAgent)).thenReturn(arcTemp);
+		Mockito.when(rr.getWeekHistoRecupCountTempByIdAgentAndDate(idAgent, idPointage)).thenReturn(weekTemp);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+
+		ReflectionTestUtils.setField(service, "counterRepository", rr);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		// When
+		int result = service.addProvisoireToAgentForPTG(idAgent, date, 90, idPointage, null);
+
+		// Then
+		assertEquals(90, result);
+		assertEquals(90, arcTemp.getTotalMinutes());
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentRecupCountTemp.class));
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentWeekRecupTemp.class));
 	}

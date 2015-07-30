@@ -90,19 +90,19 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 	 * Lors de l export de l etat payeur, et la mise a jour du vrai compteur de recup,
 	 * ce compteur provisoire est reinitialise.
 	 * 
-	 * appeler par PTG lors d un pointage approuve exclusivement l historique utilise a pour seul but de
+	 * appeler par PTG lors d un pointage approuve/refuse/saisi exclusivement l historique utilise a pour seul but de
 	 * rectifier le compteur en cas de modification par l agent dans ses
 	 * pointages.
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public int addProvisoireToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage) {
+	public int addProvisoireToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent) {
 
-		logger.info("Trying to update temporaly recuperation counters for Agent [{}] and date [{}] with {} minutes...", idAgent,
-				date, minutes);
+		logger.info("Trying to update temporaly recuperation counters for Agent [{}] and date [{}] and idPointage [{}] and idPointageParent [{}] with {} minutes...", idAgent,
+				date, minutes, idPointage, idPointageParent);
 
 		try {
-			return addMinutesToTempCounterAgent(idAgent, date, minutes, idPointage);
+			return addMinutesToTempCounterAgent(idAgent, date, minutes, idPointage, idPointageParent);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -155,18 +155,37 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 	 * @throws IllegalAccessException
 	 */
 	protected int addMinutesToTempCounterAgent(Integer idAgent, Date date,
-			Integer minutes, Integer idPointage) throws InstantiationException, IllegalAccessException {
+			Integer minutes, Integer idPointage, Integer idPointageParent) throws InstantiationException, IllegalAccessException {
 
 		if (sirhWSConsumer.getAgent(idAgent) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
 			throw new AgentNotFoundException();
 		}
 
-		logger.info("updating temporaly counters for Agent [{}] and date [{}] with {} minutes...", idAgent, date, minutes);
+		logger.info("updating temporaly counters for Agent [{}] and date [{}] and idPointage [{}] and idPointageParent [{}] with {} minutes...", 
+				idAgent, date, minutes, idPointage, idPointageParent);
 
-		AgentWeekRecupTemp awr = new AgentWeekRecupTemp();
-		awr.setIdAgent(idAgent);
-		awr.setDate(date);
+		int minutesParentBeforeUpdate = 0;
+		if(null != idPointageParent) {
+			AgentWeekRecupTemp awrParent = counterRepository.getWeekHistoRecupCountTempByIdAgentAndDate(idAgent, idPointageParent);
+			
+			if(0 < awrParent.getMinutes()) {
+				minutesParentBeforeUpdate = awrParent.getMinutes();
+				awrParent.setMinutes(0);
+				awrParent.setLastModification(helperService.getCurrentDate());
+				counterRepository.persistEntity(awrParent);
+			}
+		}
+		
+		AgentWeekRecupTemp awr = counterRepository.getWeekHistoRecupCountTempByIdAgentAndDate(idAgent, idPointage);
+		
+		if (awr == null) {
+			awr = new AgentWeekRecupTemp();
+			awr.setIdAgent(idAgent);
+			awr.setDate(date);
+		}
+
+		int minutesBeforeUpdate = awr.getMinutes();
 		awr.setMinutes(minutes);
 		awr.setLastModification(helperService.getCurrentDate());
 		awr.setIdPointage(idPointage);
@@ -178,7 +197,7 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 			arc.setIdAgent(idAgent);
 		}
 
-		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
+		arc.setTotalMinutes(arc.getTotalMinutes() + minutes - minutesBeforeUpdate - minutesParentBeforeUpdate);
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(awr);

@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({ 
 	@NamedQuery(name = "findAgentWeekRecupTempByIdAgent", query = "select awr from AgentWeekRecupTemp awr where awr.idAgent = :idAgent"),
-	@NamedQuery(name = "getWeekHistoRecupCountTempByIdAgentAndDate", query = "select awr from AgentWeekRecupTemp awr where awr.idAgent = :idAgent and awr.date = :date")
+	@NamedQuery(name = "getWeekHistoRecupCountTempByIdAgentAndIdPointage", query = "select awr from AgentWeekRecupTemp awr where awr.idAgent = :idAgent and awr.idPointage = :idPointage")
 })
 public class AgentWeekRecupTemp {
 

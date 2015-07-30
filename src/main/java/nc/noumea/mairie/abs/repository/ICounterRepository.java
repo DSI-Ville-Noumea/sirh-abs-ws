@@ -48,5 +48,5 @@ public interface ICounterRepository {
 	AgentRecupCountTemp getAgentRecupCountTempByIdAgent(Integer idAgent);
 
 	AgentWeekRecupTemp getWeekHistoRecupCountTempByIdAgentAndDate(
-			Integer idAgent, Date date);
+			Integer idAgent, Integer idPointage);
 }

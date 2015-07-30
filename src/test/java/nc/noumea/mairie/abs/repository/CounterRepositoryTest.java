@@ -800,11 +800,11 @@ public class CounterRepositoryTest {
 		AgentWeekRecupTemp r1 = new AgentWeekRecupTemp();
 		r1.setIdAgent(9008989);
 		r1.setDate(new LocalDate(2013, 11, 11).toDate());
+		r1.setIdPointage(1);
 		absEntityManager.persist(r1);
 
 		// When
-		AgentWeekRecupTemp result = repository.getWeekHistoRecupCountTempByIdAgentAndDate(9008990, new LocalDate(
-				2013, 11, 11).toDate());
+		AgentWeekRecupTemp result = repository.getWeekHistoRecupCountTempByIdAgentAndDate(9009999, 1);
 
 		// Then
 		assertNull(result);
@@ -821,11 +821,11 @@ public class CounterRepositoryTest {
 		AgentWeekRecupTemp r1 = new AgentWeekRecupTemp();
 		r1.setIdAgent(9008989);
 		r1.setDate(new LocalDate(2013, 11, 11).toDate());
+		r1.setIdPointage(1);
 		absEntityManager.persist(r1);
 
 		// When
-		AgentWeekRecupTemp result = repository.getWeekHistoRecupCountTempByIdAgentAndDate(9008989, new LocalDate(
-				2013, 11, 18).toDate());
+		AgentWeekRecupTemp result = repository.getWeekHistoRecupCountTempByIdAgentAndDate(9008989, 2);
 
 		// Then
 		assertNull(result);
@@ -836,17 +836,17 @@ public class CounterRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getWeekRecupTempForAgentAndDate_1ResultForAgent_ReturnNull() {
+	public void getWeekRecupTempForAgentAndDate_1ResultForAgent() {
 
 		// Given
 		AgentWeekRecupTemp r1 = new AgentWeekRecupTemp();
 		r1.setIdAgent(9008989);
 		r1.setDate(new LocalDate(2013, 11, 11).toDate());
+		r1.setIdPointage(1);
 		absEntityManager.persist(r1);
 
 		// When
-		AgentWeekRecupTemp result = repository.getWeekHistoRecupCountTempByIdAgentAndDate(9008989, new LocalDate(
-				2013, 11, 11).toDate());
+		AgentWeekRecupTemp result = repository.getWeekHistoRecupCountTempByIdAgentAndDate(9008989, 1);
 
 		// Then
 		assertEquals(result, r1);

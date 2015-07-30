@@ -287,11 +287,11 @@ public class CounterRepository implements ICounterRepository {
 	}
 	
 	@Override
-	public AgentWeekRecupTemp getWeekHistoRecupCountTempByIdAgentAndDate(Integer idAgent, Date date) {
+	public AgentWeekRecupTemp getWeekHistoRecupCountTempByIdAgentAndDate(Integer idAgent, Integer idPointage) {
 		
-		TypedQuery<AgentWeekRecupTemp> q = absEntityManager.createNamedQuery("getWeekHistoRecupCountTempByIdAgentAndDate", AgentWeekRecupTemp.class);
+		TypedQuery<AgentWeekRecupTemp> q = absEntityManager.createNamedQuery("getWeekHistoRecupCountTempByIdAgentAndIdPointage", AgentWeekRecupTemp.class);
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("date", date);
+		q.setParameter("idPointage", idPointage);
 		
 		List<AgentWeekRecupTemp> list = q.getResultList();
 		if (null == list || list.size() == 0) {
