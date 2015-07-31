@@ -926,6 +926,8 @@ public class AccessRightsService implements IAccessRightsService {
 			newDroitAgent.setDateModification(helperService.getCurrentDate());
 			newDroitAgent.setLibelleService(dto.getService());
 			newDroitAgent.setIdServiceADS(dto.getIdServiceADS());
+			EntiteDto serv = adsWsConsumer.getEntiteWithChildrenByIdEntite(dto.getIdServiceADS());
+			newDroitAgent.setCodeService(serv.getCodeServi());
 
 			existingAgent = new DroitDroitsAgent();
 			existingAgent.setDroit(droitProfilApprobateur.getDroit());

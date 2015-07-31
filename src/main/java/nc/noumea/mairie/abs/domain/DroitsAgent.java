@@ -44,6 +44,9 @@ public class DroitsAgent {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 
+	@Column(name = "CODE_SERVICE")
+	private String codeService;
+
 	@Column(name = "LIBELLE_SERVICE")
 	private String libelleService;
 
@@ -116,6 +119,14 @@ public class DroitsAgent {
 
 	public void setIdServiceADS(Integer idServiceADS) {
 		this.idServiceADS = idServiceADS;
+	}
+
+	public String getCodeService() {
+		return codeService;
+	}
+
+	public void setCodeService(String codeService) {
+		this.codeService = codeService;
 	}
 
 }
