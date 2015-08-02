@@ -34,7 +34,6 @@ public class AgentWeekRecupTemp {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 	
-	@NotNull
 	@Column(name = "ID_POINTAGE")
 	private Integer idPointage;
 
