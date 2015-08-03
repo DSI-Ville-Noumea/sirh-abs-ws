@@ -197,8 +197,10 @@ public class ReposCompController {
 
 		logger.debug("entered GET [reposcomps/miseAJourSpsorc] => miseAJourSpsorc with parameters idAgent = {}",
 				idAgent);
+		
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		ReturnMessageDto srm = absenceService.miseAJourSpsorc(idAgent);
+		ReturnMessageDto srm = absenceService.miseAJourSpsorc(convertedIdAgent);
 
 		return srm;
 	}

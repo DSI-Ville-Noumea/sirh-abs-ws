@@ -369,8 +369,10 @@ public class CongeAnnuelController {
 
 		logger.debug("entered GET [congeannuel/miseAJourSpsold] => miseAJourSpsold with parameters idAgent = {}",
 				idAgent);
+		
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		ReturnMessageDto srm = absenceService.miseAJourSpsold(idAgent);
+		ReturnMessageDto srm = absenceService.miseAJourSpsold(convertedIdAgent);
 
 		return srm;
 	}
