@@ -76,9 +76,8 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		String textLog = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		if (null != compteurDto.getDureeAAjouter()) {
-			textLog = "Mise en place de " + helperService.getHeureMinuteToString(nbMinutes)
-					+ " pour la période du " + sdf.format(compteurDto.getDateDebut()) + " au "
-					+ sdf.format(compteurDto.getDateFin()) + ".";
+			textLog = "Mise en place de " + helperService.getHeureMinuteToString(nbMinutes) + " pour la période du "
+					+ sdf.format(compteurDto.getDateDebut()) + " au " + sdf.format(compteurDto.getDateFin()) + ".";
 		}
 
 		arc.setTotalMinutes(nbMinutes);
@@ -120,7 +119,7 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 				demande.getDateFin());
 		if (0 != minutes) {
 			try {
-				srm = majCompteurToAgent((DemandeAsa)demande, minutes, srm);
+				srm = majCompteurToAgent((DemandeAsa) demande, minutes, srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update ASA_A55 counters :", e);
 			}
@@ -154,7 +153,10 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 
 		logger.info("updating counters for Agent [{}] with {} minutes...", demande.getIdAgent(), minutes);
 
-		AgentAsaA55Count arc = (AgentAsaA55Count) counterRepository.getAgentCounter(AgentAsaA55Count.class, demande.getIdAgent());
+		// #174004 : on cherche le bon compteur par rapport à la date de debut
+		// de la demande
+		AgentAsaA55Count arc = (AgentAsaA55Count) counterRepository.getAgentCounterByDate(AgentAsaA55Count.class,
+				demande.getIdAgent(), demande.getDateDebut());
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
@@ -168,10 +170,10 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF_AUTORISE);
 			srm.getInfos().add(String.format(SOLDE_COMPTEUR_NEGATIF_AUTORISE));
 		}
-		
+
 		// #13519 maj solde sur la demande
 		Integer minutesOld = arc.getTotalMinutes();
-		
+
 		arc.setTotalMinutes(arc.getTotalMinutes() + minutes);
 		arc.setLastModification(helperService.getCurrentDate());
 

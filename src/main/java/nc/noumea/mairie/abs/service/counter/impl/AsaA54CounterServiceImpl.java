@@ -34,7 +34,8 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 		Double nbJours = helperService.calculAlimManuelleCompteur(compteurDto);
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A54.getValue(), result, motifCompteur);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A54.getValue(),
+					result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -53,8 +54,8 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws IllegalAccessException
 	 */
 	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException,
-			IllegalAccessException {
+			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
+			throws InstantiationException, IllegalAccessException {
 
 		if (sirhWSConsumer.getAgent(compteurDto.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
@@ -87,7 +88,8 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		counterRepository.persistEntity(arc);
-		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc,
+				idRefTypeAbsence);
 
 		return srm;
 	}
@@ -100,7 +102,7 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 		List<AgentAsaA54Count> listeArc = counterRepository.getListCounter(AgentAsaA54Count.class);
 		for (AgentAsaA54Count arc : listeArc) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
-			CompteurDto dto = new CompteurDto(arc,list.size()>0 ? list.get(0) : null);
+			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
 			result.add(dto);
 		}
 		return result;
@@ -119,7 +121,7 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 				demande.getDateFin());
 		if (0.0 != jours) {
 			try {
-				srm = majCompteurToAgent((DemandeAsa)demande, jours, srm);
+				srm = majCompteurToAgent((DemandeAsa) demande, jours, srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 			}
@@ -153,7 +155,10 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 
 		logger.info("updating counters for Agent [{}] with {} jours...", demande.getIdAgent(), jours);
 
-		AgentAsaA54Count arc = (AgentAsaA54Count) counterRepository.getAgentCounter(AgentAsaA54Count.class, demande.getIdAgent());
+		// #174004 : on cherche le bon compteur par rapport à la date de debut
+		// de la demande
+		AgentAsaA54Count arc = (AgentAsaA54Count) counterRepository.getAgentCounterByDate(AgentAsaA54Count.class,
+				demande.getIdAgent(), demande.getDateDebut());
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
@@ -170,7 +175,7 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 
 		// #13519 maj solde sur la demande
 		Double joursOld = arc.getTotalJours();
-		
+
 		arc.setTotalJours(arc.getTotalJours() + jours);
 		arc.setLastModification(helperService.getCurrentDate());
 
@@ -181,5 +186,4 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 		return srm;
 	}
 
-	
 }

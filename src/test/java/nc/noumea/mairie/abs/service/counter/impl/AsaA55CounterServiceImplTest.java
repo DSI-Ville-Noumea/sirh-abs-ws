@@ -342,7 +342,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 		AgentAsaA55Count arc = new AgentAsaA55Count();
 		arc.setTotalMinutes(10 * 60);
-		Mockito.when(rr.getAgentCounter(AgentAsaA55Count.class, demande.getIdAgent())).thenReturn(arc);
+		Mockito.when(rr.getAgentCounterByDate(AgentAsaA55Count.class, demande.getIdAgent(),demande.getDateDebut())).thenReturn(arc);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(
@@ -379,7 +379,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ICounterRepository rr = Mockito.mock(ICounterRepository.class);
 		AgentAsaA55Count arc = new AgentAsaA55Count();
 		arc.setTotalMinutes(12 * 60);
-		Mockito.when(rr.getAgentCounter(AgentAsaA55Count.class, demande.getIdAgent())).thenReturn(arc);
+		Mockito.when(rr.getAgentCounterByDate(AgentAsaA55Count.class, demande.getIdAgent(),demande.getDateDebut())).thenReturn(arc);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.calculNombreMinutes(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(

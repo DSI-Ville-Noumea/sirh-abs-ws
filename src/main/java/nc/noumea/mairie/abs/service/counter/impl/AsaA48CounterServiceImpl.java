@@ -121,7 +121,7 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 				demande.getDateFin());
 		if (0.0 != jours) {
 			try {
-				srm = majCompteurToAgent((DemandeAsa)demande, jours, srm);
+				srm = majCompteurToAgent((DemandeAsa) demande, jours, srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 			}
@@ -155,7 +155,10 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 
 		logger.info("updating counters for Agent [{}] with {} jours...", demande.getIdAgent(), jours);
 
-		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounter(AgentAsaA48Count.class, demande.getIdAgent());
+		// #174004 : on cherche le bon compteur par rapport à la date de debut
+		// de la demande
+		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounterByDate(AgentAsaA48Count.class,
+				demande.getIdAgent(), demande.getDateDebut());
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
@@ -172,12 +175,12 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 
 		// #13519 maj solde sur la demande
 		Double joursOld = arc.getTotalJours();
-		
+
 		arc.setTotalJours(arc.getTotalJours() + jours);
 		arc.setLastModification(helperService.getCurrentDate());
 
 		super.updateDemandeWithNewSolde(demande, joursOld, arc.getTotalJours(), 0, 0);
-		
+
 		counterRepository.persistEntity(arc);
 
 		return srm;
