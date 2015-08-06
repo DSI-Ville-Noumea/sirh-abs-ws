@@ -7,8 +7,7 @@ import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
-import nc.noumea.mairie.abs.domain.AgentRecupCountTemp;
-import nc.noumea.mairie.abs.domain.AgentWeekRecupTemp;
+import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 
 public interface ICounterRepository {
 
