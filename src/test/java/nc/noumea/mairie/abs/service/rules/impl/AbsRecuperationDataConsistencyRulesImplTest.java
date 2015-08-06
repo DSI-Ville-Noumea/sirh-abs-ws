@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
-import nc.noumea.mairie.abs.domain.AgentRecupCountTemp;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
@@ -152,73 +151,6 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent())).thenReturn(
 				soldeRecup);
-
-		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande.getIdAgent(), null))
-				.thenReturn(10);
-
-		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
-		ReflectionTestUtils.setField(impl, "recuperationRepository", recuperationRepository);
-		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
-
-		srm = impl.checkDepassementDroitsAcquis(srm, demande);
-
-		assertEquals(1, srm.getErrors().size());
-		assertEquals("Le dépassement des droits acquis n'est pas autorisé.", srm.getErrors().get(0).toString());
-	}
-
-	@Test
-	public void checkDepassementDroitsAcquis_withCounterTemp_isOk() {
-
-		ReturnMessageDto srm = new ReturnMessageDto();
-		DemandeRecup demande = new DemandeRecup();
-		demande.setIdAgent(9005138);
-		demande.setDuree(90);
-
-		AgentRecupCount soldeRecup = new AgentRecupCount();
-		soldeRecup.setTotalMinutes(50);
-
-		AgentRecupCountTemp soldeRecupTemp = new AgentRecupCountTemp();
-		soldeRecupTemp.setTotalMinutes(50);
-
-		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent())).thenReturn(
-				soldeRecup);
-		Mockito.when(counterRepository.getAgentRecupCountTempByIdAgent(demande.getIdAgent())).thenReturn(
-				soldeRecupTemp);
-
-		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
-		Mockito.when(recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande.getIdAgent(), null))
-				.thenReturn(10);
-
-		AbsRecuperationDataConsistencyRulesImpl impl = new AbsRecuperationDataConsistencyRulesImpl();
-		ReflectionTestUtils.setField(impl, "recuperationRepository", recuperationRepository);
-		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
-
-		srm = impl.checkDepassementDroitsAcquis(srm, demande);
-
-		assertEquals(0, srm.getErrors().size());
-	}
-
-	@Test
-	public void checkDepassementDroitsAcquis_withCounterTemp_isKo() {
-
-		ReturnMessageDto srm = new ReturnMessageDto();
-		DemandeRecup demande = new DemandeRecup();
-		demande.setIdAgent(9005138);
-		demande.setDuree(101);
-
-		AgentRecupCount soldeRecup = new AgentRecupCount();
-		soldeRecup.setTotalMinutes(50);
-
-		AgentRecupCountTemp soldeRecupTemp = new AgentRecupCountTemp();
-		soldeRecupTemp.setTotalMinutes(50);
-
-		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent())).thenReturn(
-				soldeRecup);
-		Mockito.when(counterRepository.getAgentRecupCountTempByIdAgent(demande.getIdAgent())).thenReturn(
-				soldeRecupTemp);
 
 		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
 		Mockito.when(recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(demande.getIdAgent(), null))

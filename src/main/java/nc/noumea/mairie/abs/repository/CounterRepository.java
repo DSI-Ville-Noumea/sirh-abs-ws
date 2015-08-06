@@ -16,8 +16,7 @@ import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
-import nc.noumea.mairie.abs.domain.AgentRecupCountTemp;
-import nc.noumea.mairie.abs.domain.AgentWeekRecupTemp;
+import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 
 import org.springframework.stereotype.Repository;
@@ -271,27 +270,13 @@ public class CounterRepository implements ICounterRepository {
 	}
 	
 	@Override
-	public AgentRecupCountTemp getAgentRecupCountTempByIdAgent(Integer idAgent) {
+	public AgentWeekRecup getWeekHistoRecupCountByIdAgentAndIdPointage(Integer idAgent, Integer idPointage) {
 		
-		TypedQuery<AgentRecupCountTemp> q = absEntityManager.createNamedQuery("getAgentRecupCountTempByIdAgent", AgentRecupCountTemp.class);
-		q.setParameter("idAgent", idAgent);
-		
-		List<AgentRecupCountTemp> list = q.getResultList();
-		if (null == list || list.size() == 0) {
-			return null;
-		} else {
-			return list.get(0);
-		}
-	}
-	
-	@Override
-	public AgentWeekRecupTemp getWeekHistoRecupCountTempByIdAgentAndDate(Integer idAgent, Integer idPointage) {
-		
-		TypedQuery<AgentWeekRecupTemp> q = absEntityManager.createNamedQuery("getWeekHistoRecupCountTempByIdAgentAndIdPointage", AgentWeekRecupTemp.class);
+		TypedQuery<AgentWeekRecup> q = absEntityManager.createNamedQuery("getWeekHistoRecupCountByIdAgentAndIdPointage", AgentWeekRecup.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idPointage", idPointage);
 		
-		List<AgentWeekRecupTemp> list = q.getResultList();
+		List<AgentWeekRecup> list = q.getResultList();
 		if (null == list || list.size() == 0) {
 			return null;
 		} else {

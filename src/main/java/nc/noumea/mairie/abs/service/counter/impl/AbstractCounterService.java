@@ -79,23 +79,13 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 	
 	/**
-	 * appeler par PTG exclusivement pour les RECUP l historique utilise a pour seul but de
-	 * rectifier le compteur en cas de modification par l agent dans ses
-	 * pointages
-	 */
-	@Override
-	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes, Integer minutesNonMajorees) {
-		return 0;
-	}
-	
-	/**
 	 * appeler par PTG exclusivement l historique utilise a pour seul but de
 	 * rectifier le compteur en cas de modification par l agent dans ses
 	 * pointages
 	 * #16761 
 	 */
 	@Override
-	public int addProvisoireToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes, Integer idPointage, Integer idPointageParent) {
+	public int addToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent) {
 		return 0;
 	}
 

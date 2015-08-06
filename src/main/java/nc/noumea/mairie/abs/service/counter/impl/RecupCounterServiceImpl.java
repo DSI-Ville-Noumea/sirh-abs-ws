@@ -3,9 +3,7 @@ package nc.noumea.mairie.abs.service.counter.impl;
 import java.util.Date;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
-import nc.noumea.mairie.abs.domain.AgentRecupCountTemp;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
-import nc.noumea.mairie.abs.domain.AgentWeekRecupTemp;
 import nc.noumea.mairie.abs.domain.BaseAgentWeekHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
@@ -61,48 +59,24 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
 	}
-	
-	/**
-	 * appeler par PTG exclusivement l historique utilise a pour seul but de
-	 * rectifier le compteur en cas de modification par l agent dans ses
-	 * pointages.
-	 * On retire en meme temps les recuperations non majorees du compteur provisoire.
-	 */
-	@Override
-	@Transactional(value = "absTransactionManager")
-	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes, Integer minutesNonMajorees) {
-
-		logger.info("Trying to update recuperation counters for Agent [{}] and date [{}] with {} minutes...", idAgent,
-				dateMonday, minutes);
-
-		try {
-			resetTempCounterAgent(idAgent, dateMonday, minutesNonMajorees);
-			return addMinutesToAgent(AgentRecupCount.class, AgentWeekRecup.class, idAgent, dateMonday, minutes);
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
-		}
-	}
 
 	/**
-	 * #16761 : 
-	 * Alimente un compteur provisoire qui doit permettre a un agent d utiliser tout de suite ses heures a recuperer.
+	 * #17538 : 
+	 * Alimente le compteur qui doit permettre a un agent d utiliser tout de suite ses heures a recuperer.
 	 * 
-	 * Lors de l export de l etat payeur, et la mise a jour du vrai compteur de recup,
-	 * ce compteur provisoire est reinitialise.
-	 * 
-	 * appeler par PTG lors d un pointage approuve/refuse/saisi exclusivement l historique utilise a pour seul but de
-	 * rectifier le compteur en cas de modification par l agent dans ses
+	 * Appeler par PTG pour crediter ou debiter le compteur
+	 * l historique utilise a pour seul but de rectifier le compteur en cas de modification par l agent dans ses
 	 * pointages.
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public int addProvisoireToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent) {
+	public int addToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent) {
 
 		logger.info("Trying to update temporaly recuperation counters for Agent [{}] and date [{}] and idPointage [{}] and idPointageParent [{}] with {} minutes...", idAgent,
 				date, minutes, idPointage, idPointageParent);
 
 		try {
-			return addMinutesToTempCounterAgent(idAgent, date, minutes, idPointage, idPointageParent);
+			return addMinutesToCounterAgentForOnePointage(idAgent, date, minutes, idPointage, idPointageParent);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -154,7 +128,7 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected int addMinutesToTempCounterAgent(Integer idAgent, Date date,
+	protected int addMinutesToCounterAgentForOnePointage(Integer idAgent, Date date,
 			Integer minutes, Integer idPointage, Integer idPointageParent) throws InstantiationException, IllegalAccessException {
 
 		if (sirhWSConsumer.getAgent(idAgent) == null) {
@@ -167,9 +141,10 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 
 		int minutesParentBeforeUpdate = 0;
 		if(null != idPointageParent) {
-			AgentWeekRecupTemp awrParent = counterRepository.getWeekHistoRecupCountTempByIdAgentAndDate(idAgent, idPointageParent);
+			AgentWeekRecup awrParent = counterRepository.getWeekHistoRecupCountByIdAgentAndIdPointage(idAgent, idPointageParent);
 			
-			if(0 < awrParent.getMinutes()) {
+			if(null != awrParent 
+					&& 0 < awrParent.getMinutes()) {
 				minutesParentBeforeUpdate = awrParent.getMinutes();
 				awrParent.setMinutes(0);
 				awrParent.setLastModification(helperService.getCurrentDate());
@@ -177,12 +152,12 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 			}
 		}
 		
-		AgentWeekRecupTemp awr = counterRepository.getWeekHistoRecupCountTempByIdAgentAndDate(idAgent, idPointage);
+		AgentWeekRecup awr = counterRepository.getWeekHistoRecupCountByIdAgentAndIdPointage(idAgent, idPointage);
 		
 		if (awr == null) {
-			awr = new AgentWeekRecupTemp();
+			awr = new AgentWeekRecup();
 			awr.setIdAgent(idAgent);
-			awr.setDate(date);
+			awr.setDateDay(date);
 		}
 
 		int minutesBeforeUpdate = awr.getMinutes();
@@ -190,10 +165,10 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 		awr.setLastModification(helperService.getCurrentDate());
 		awr.setIdPointage(idPointage);
 
-		AgentRecupCountTemp arc = counterRepository.getAgentCounter(AgentRecupCountTemp.class, idAgent);
+		AgentRecupCount arc = counterRepository.getAgentCounter(AgentRecupCount.class, idAgent);
 
 		if (arc == null) {
-			arc = new AgentRecupCountTemp();
+			arc = new AgentRecupCount();
 			arc.setIdAgent(idAgent);
 		}
 
@@ -204,46 +179,6 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 		counterRepository.persistEntity(arc);
 
 		return arc.getTotalMinutes();
-	}
-
-	/**
-	 * Lors de l export etat payeur, le vrai compteur est mis a jour, 
-	 * et il faut reinitialiser le compteur de recup provisoire
-	 * 
-	 * @param idAgent Integer
-	 * @return
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 */
-	protected void resetTempCounterAgent(Integer idAgent, Date dateMonday, int minutesADeduire) 
-			throws InstantiationException, IllegalAccessException {
-
-		if (sirhWSConsumer.getAgent(idAgent) == null) {
-			logger.error("There is no Agent [{}]. Impossible to update its counters.", idAgent);
-			throw new AgentNotFoundException();
-		}
-
-		logger.info("Reset temporaly counters for Agent [{}] and date [{}].", idAgent, dateMonday);
-
-		AgentRecupCountTemp arc = counterRepository.getAgentCounter(AgentRecupCountTemp.class, idAgent);
-		
-		AgentWeekRecupTemp awr = new AgentWeekRecupTemp();
-		awr.setIdAgent(idAgent);
-		awr.setDate(dateMonday);
-
-		awr.setMinutes(0 - minutesADeduire);
-		awr.setLastModification(helperService.getCurrentDate());
-
-		if (arc == null) {
-			arc = new AgentRecupCountTemp();
-			arc.setIdAgent(idAgent);
-		}
-
-		arc.setTotalMinutes(arc.getTotalMinutes() - minutesADeduire);
-		arc.setLastModification(helperService.getCurrentDate());
-
-		counterRepository.persistEntity(awr);
-		counterRepository.persistEntity(arc);
 	}
 	
 	/**

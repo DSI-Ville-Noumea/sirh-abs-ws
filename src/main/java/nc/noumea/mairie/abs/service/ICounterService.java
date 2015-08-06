@@ -55,8 +55,6 @@ public interface ICounterService {
 	List<RestitutionMassiveDto> getHistoRestitutionMassiveCAByAgent(
 			Integer idAgent);
 
-	int addProvisoireToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent);
-
-	int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes,
-			Integer minutesNonMajorees);
+	int addToAgentForPTG(Integer idAgent, Date date, Integer minutes,
+			Integer idPointage, Integer idPointageParent);
 }

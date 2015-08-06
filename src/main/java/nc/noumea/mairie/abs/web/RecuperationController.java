@@ -55,35 +55,36 @@ public class RecuperationController {
 	@RequestMapping(value = "/addForPTG", method = RequestMethod.POST)
 	public void addRecuperationForAgentAndWeek(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("dateLundi") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonday,
-			@RequestParam("minutes") int minutes, @RequestParam("minutesNonMajorees") int minutesNonMajorees) {
+			@RequestParam("minutes") int minutes) {
 
 		logger.debug(
 				"entered POST [recuperations/addForPTG] => addRecuperationForAgentAndWeek "
-				+ "with parameters idAgent = {}, dateMonday = {} and minutes = {} and minutesNonMajorees = {}",
-				idAgent, dateMonday, minutes, minutesNonMajorees);
+				+ "with parameters idAgent = {}, dateMonday = {} and minutes = {}",
+				idAgent, dateMonday, minutes);
 
-		counterService.addToAgentForPTG(idAgent, dateMonday, minutes, minutesNonMajorees);
+		counterService.addToAgentForPTG(idAgent, dateMonday, minutes);
 	}
 	
 	/**
-	 * Ajoute des minutes au compteur provisoire de recuperation a un agent 
+	 * Ajoute des minutes au compteur de recuperation a un agent 
 	 * des qu une heure supp en recuperation est approuvee <br />
+	 * ou debite si l heure est des-approuvee (refusee, rejetee, annulee, modifiee en saisie) <br />
 	 * utile a SIRH-PTG-WS <br />
 	 * Parametres en entree : format du type timestamp : yyyyMMdd
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/addProvisoireForPTG", method = RequestMethod.POST)
-	public void addRecuperationProvisoireForAgent(@RequestParam("idAgent") Integer idAgent,
+	@RequestMapping(value = "/addForPointagePTG", method = RequestMethod.POST)
+	public void addForPointagePTG(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam(value = "date") @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm") Date date,
 			@RequestParam("minutes") int minutes, @RequestParam(value = "idPointage", required = false) Integer idPointage,
 			@RequestParam(value = "idPointageParent", required = false) Integer idPointageParent) {
 
 		logger.debug(
-				"entered POST [recuperations/addProvisoireForPTG] => addRecuperationProvisoireForAgent with parameters idAgent = {}, date = {} and minutes = {}"
+				"entered POST [recuperations/addForPointagePTG] => addForPointagePTG with parameters idAgent = {}, date = {} and minutes = {}"
 				+ " and idPointage = {} and idPointageParent = {}",
 				idAgent, date, minutes, idPointage, idPointageParent);
 
-		counterService.addProvisoireToAgentForPTG(idAgent, date, minutes, idPointage, idPointageParent);
+		counterService.addToAgentForPTG(idAgent, date, minutes, idPointage, idPointageParent);
 	}
 
 	/**

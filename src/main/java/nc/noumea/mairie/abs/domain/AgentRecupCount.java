@@ -2,6 +2,8 @@ package nc.noumea.mairie.abs.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -11,6 +13,9 @@ import javax.validation.constraints.NotNull;
 @Table(name = "ABS_AGENT_RECUP_COUNT")
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @PrimaryKeyJoinColumn(name = "ID_AGENT_COUNT")
+@NamedQueries({
+	@NamedQuery(name = "getAgentRecupCountByIdAgent", query = "select d from AgentRecupCount d where d.idAgent = :idAgent")
+})
 public class AgentRecupCount extends AgentCount {
 
 	@NotNull
