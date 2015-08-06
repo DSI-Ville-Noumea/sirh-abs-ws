@@ -227,20 +227,18 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public List<AgentAsaA52Count> getListOSCounterByDate(Integer idOrganisationSyndicale, Date dateDebut, Date dateFin, Integer idAgent) {
+	public List<AgentAsaA52Count> getListOSCounterByDate(Integer idOrganisationSyndicale, Date dateDebut, Date dateFin) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("from AgentAsaA52Count h ");
 		sb.append("where h.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale ");
-		sb.append("and h.dateDebut BETWEEN :dateDebut and :dateFin ");
-		sb.append("and h.idAgent = :idAgent ");		
+		sb.append("and h.dateDebut BETWEEN :dateDebut and :dateFin ");		
 		sb.append("order by h.dateDebut asc ");
 
 		TypedQuery<AgentAsaA52Count> q = absEntityManager.createQuery(sb.toString(), AgentAsaA52Count.class);
 		q.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
 		q.setParameter("dateDebut", dateDebut);
 		q.setParameter("dateFin", dateFin);
-		q.setParameter("idAgent", idAgent);
 
 		return q.getResultList();
 	}
