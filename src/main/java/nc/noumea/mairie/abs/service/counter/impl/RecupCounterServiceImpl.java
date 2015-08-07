@@ -111,7 +111,8 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 		// si on passe de Approuve a Refuse, le compteur incremente
 		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()) || demandeEtatChangeDto
 				.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))
-				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
+				&& (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)
+						|| demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.PRISE))) {
 			duree = ((DemandeRecup) demande).getDuree();
 		}
 

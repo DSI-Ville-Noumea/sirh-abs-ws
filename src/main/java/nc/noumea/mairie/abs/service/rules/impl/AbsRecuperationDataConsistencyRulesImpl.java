@@ -1,11 +1,14 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 
@@ -49,5 +52,30 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 		}
 
 		return srm;
+	}
+
+	// #17483
+	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
+		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat())
+				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()));
+	}
+
+	@Override
+	public ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande,
+			List<RefEtatEnum> listEtatsAcceptes) {
+
+		List<RefEtatEnum> listEtats = new ArrayList<RefEtatEnum>();
+		listEtats.addAll(listEtatsAcceptes);
+		listEtats.addAll(Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE,
+				RefEtatEnum.APPROUVEE, RefEtatEnum.PRISE, RefEtatEnum.VALIDEE, RefEtatEnum.EN_ATTENTE,
+				RefEtatEnum.A_VALIDER));
+		// dans le cas des CONGES ANNUELS, on peut tout annuler sauf
+		// saisie,provisoire,refuse,rejeté et annulé
+		return super.checkEtatsDemandeAnnulee(srm, demande, listEtats);
 	}
 }
