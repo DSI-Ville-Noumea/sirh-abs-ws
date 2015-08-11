@@ -2536,10 +2536,14 @@ public class AccessRightsServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
 
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getEntiteWithChildrenByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 
 		// /////////// WHEN /////////////
 		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
@@ -2618,9 +2622,13 @@ public class AccessRightsServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
 
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getEntiteWithChildrenByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// /////////// WHEN /////////////
@@ -2760,10 +2768,14 @@ public class AccessRightsServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
 
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getEntiteWithChildrenByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 
 		// /////////// WHEN /////////////
 		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
