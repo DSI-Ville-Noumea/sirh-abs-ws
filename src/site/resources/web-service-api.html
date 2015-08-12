@@ -467,13 +467,13 @@
                 <div class="resource-summary">
                     <span class="resource-summary-path">/recuperations/addForPTG</span>
                     <div>
-                            <a href="#/recuperations/addForPTG_POST_idAgent_dateLundi_minutes_minutesNonMajorees">POST</a>
+                            <a href="#/recuperations/addForPTG_POST_idAgent_dateLundi_minutes">POST</a>
                     </div>
                 </div>
                 <div class="resource-summary">
-                    <span class="resource-summary-path">/recuperations/addProvisoireForPTG</span>
+                    <span class="resource-summary-path">/recuperations/addForPointagePTG</span>
                     <div>
-                            <a href="#/recuperations/addProvisoireForPTG_POST_idAgent_date_minutes_idPointage_idPointageParent">POST</a>
+                            <a href="#/recuperations/addForPointagePTG_POST_idAgent_date_minutes_idPointage_idPointageParent">POST</a>
                     </div>
                 </div>
                 <div class="resource-summary">
@@ -8886,11 +8886,11 @@
 </div>
                             </div>
                     </div>
-                    <a id="/recuperations/addForPTG_POST_idAgent_dateLundi_minutes_minutesNonMajorees"/>
+                    <a id="/recuperations/addForPTG_POST_idAgent_dateLundi_minutes"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">POST</span>
-<span class="path">/recuperations/addForPTG</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateLundi</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">minutes</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">minutesNonMajorees</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+<span class="path">/recuperations/addForPTG</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">dateLundi</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">minutes</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
                                  Ajoute des minutes au compteur de recuperation a un agent pour une
@@ -8908,15 +8908,16 @@
                                 <div class="body-contents"><span class="json-primitive-type">void</span></div>
                             </div>
                     </div>
-                    <a id="/recuperations/addProvisoireForPTG_POST_idAgent_date_minutes_idPointage_idPointageParent"/>
+                    <a id="/recuperations/addForPointagePTG_POST_idAgent_date_minutes_idPointage_idPointageParent"/>
                     <div class="resource">
                         <div class="resource-header">
                                 <span class="method">POST</span>
-<span class="path">/recuperations/addProvisoireForPTG</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">date</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">minutes</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idPointage</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idPointageParent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
+<span class="path">/recuperations/addForPointagePTG</span>?<span class="url-param-key">idAgent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">date</span>=<span class="url-param-expected-type"><span class="json-primitive-type">timestamp</span></span>&<span class="url-param-key">minutes</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idPointage</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>&<span class="url-param-key">idPointageParent</span>=<span class="url-param-expected-type"><span class="json-primitive-type">int</span></span>                        </div>
 
                             <div class="resource-docs">
-                                 Ajoute des minutes au compteur provisoire de recuperation a un agent 
+                                 Ajoute des minutes au compteur de recuperation a un agent 
  des qu une heure supp en recuperation est approuvee <br />
+ ou debite si l heure est des-approuvee (refusee, rejetee, annulee, modifiee en saisie) <br />
  utile a SIRH-PTG-WS <br />
  Parametres en entree : format du type timestamp : yyyyMMdd
 
