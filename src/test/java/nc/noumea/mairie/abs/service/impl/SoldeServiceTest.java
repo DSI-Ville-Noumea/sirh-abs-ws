@@ -214,7 +214,7 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, dateDeb)).thenReturn(arccc);
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, dateDeb)).thenReturn(arc54);
-		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateDeb)).thenReturn(arc55);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateJour)).thenReturn(arc55);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(soldeCongeAnnu);
 		Mockito.when(cr.getListAgentCounterA55ByDate(9008765, dateDeb, dateFin)).thenReturn(listeArc55);
 		Mockito.when(
@@ -263,7 +263,7 @@ public class SoldeServiceTest {
 		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
-				asaRepository.getListDemandeAsaEnCoursByOSByDate(Mockito.anyInt(), Mockito.any(Date.class),
+				asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class),
 						Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
 
 		SoldeService service = new SoldeService();
@@ -430,7 +430,7 @@ public class SoldeServiceTest {
 		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
-				asaRepository.getListDemandeAsaEnCoursByOSByDate(Mockito.anyInt(), Mockito.any(Date.class),
+				asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class),
 						Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
 
 		SoldeService service = new SoldeService();

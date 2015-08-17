@@ -240,8 +240,9 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		listDemandeAsa.addAll(Arrays.asList(demande1, demande2));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
-				.thenReturn(listDemandeAsa);
+		Mockito.when(
+				asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(),
+						Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
 				.mock(IOrganisationSyndicaleRepository.class);

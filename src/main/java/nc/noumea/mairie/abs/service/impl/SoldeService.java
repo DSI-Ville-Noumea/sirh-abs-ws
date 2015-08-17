@@ -90,7 +90,7 @@ public class SoldeService implements ISoldeService {
 			getSoldeRecup(idAgent, dto);
 			getSoldeAsaA48(idAgent, dto, dateDeb);
 			getSoldeAsaA54(idAgent, dto, dateDeb);
-			getSoldeAsaA55(idAgent, dto, dateDeb, dateFin);
+			getSoldeAsaA55(idAgent, dto, dateDeb, dateFin, dateJour);
 			getSoldeAsaA52(idAgent, dto, dateDeb, dateFin, dateJour);
 			getSoldeCongesExcep(idAgent, dto, dateDeb, dateFin);
 		} else {
@@ -111,7 +111,7 @@ public class SoldeService implements ISoldeService {
 					getSoldeAsaA54(idAgent, dto, dateDeb);
 					break;
 				case ASA_A55:
-					getSoldeAsaA55(idAgent, dto, dateDeb, dateFin);
+					getSoldeAsaA55(idAgent, dto, dateDeb, dateFin, dateJour);
 					break;
 				case ASA_A52:
 					getSoldeAsaA52(idAgent, dto, dateDeb, dateFin, dateJour);
@@ -170,13 +170,21 @@ public class SoldeService implements ISoldeService {
 		dto.setSoldeAsaA54(soldeAsaA54 == null ? 0 : soldeAsaA54.getTotalJours());
 	}
 
-	private void getSoldeAsaA55(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin) {
+	private void getSoldeAsaA55(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin, Date dateJour) {
 		// on traite les ASA A55 pour la date en parametre
 		// on affiche le solde courant
-		AgentAsaA55Count soldeAsaA55 = counterRepository
-				.getAgentCounterByDate(AgentAsaA55Count.class, idAgent, dateDeb);
+		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, idAgent,
+				dateJour);
 		dto.setAfficheSoldeAsaA55(soldeAsaA55 == null ? false : true);
-		dto.setSoldeAsaA55((double) (soldeAsaA55 == null ? 0 : soldeAsaA55.getTotalMinutes()));
+		if (soldeAsaA55 != null) {
+			// #17691
+			// il faut deduire ce qui a dejà été pris
+			int sommeDemandeEnCours = getSommeDureeDemandeA55EnCours(idAgent, soldeAsaA55.getDateDebut(),
+					soldeAsaA55.getDateFin());
+			dto.setSoldeAsaA55((double) (soldeAsaA55.getTotalMinutes() - sommeDemandeEnCours));
+		} else {
+			dto.setSoldeAsaA55((double) 0);
+		}
 		// on affiche tous les soldes de l'année
 		List<AgentAsaA55Count> listeSoldeAsaA55 = counterRepository.getListAgentCounterA55ByDate(idAgent, dateDeb,
 				dateFin);
@@ -189,6 +197,21 @@ public class SoldeService implements ISoldeService {
 			listDto.add(dtoMonth);
 		}
 		dto.setListeSoldeAsaA55(listDto);
+	}
+
+	private int getSommeDureeDemandeA55EnCours(Integer idAgent, Date dateDebut, Date dateFin) {
+
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByAgent(idAgent, null, dateDebut, dateFin,
+				RefTypeAbsenceEnum.ASA_A55.getValue());
+
+		int somme = 0;
+
+		if (null != listAsa) {
+			for (DemandeAsa asa : listAsa) {
+				somme += asa.getDuree();
+			}
+		}
+		return somme;
 	}
 
 	private void getSoldeAsaA52(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin, Date dateJour) {
@@ -207,12 +230,15 @@ public class SoldeService implements ISoldeService {
 			OrganisationSyndicaleDto dtoOrga = new OrganisationSyndicaleDto(list.get(0).getOrganisationSyndicale());
 			dto.setOrganisationA52(dtoOrga);
 			dto.setAfficheSoldeAsaA52(soldeAsaA52 == null ? false : true);
-			//#17691
-			// il faut deduire ce qui a dejà été pris
-			int sommeDemandeEnCours = getSommeDureeDemandeA42EnCoursByOS(dtoOrga.getIdOrganisation(),
-					soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin());
-			dto.setSoldeAsaA52((double) (soldeAsaA52 == null ? (0 - sommeDemandeEnCours) : (soldeAsaA52
-					.getTotalMinutes() - sommeDemandeEnCours)));
+			if (soldeAsaA52 != null) {
+				// #17691
+				// il faut deduire ce qui a dejà été pris
+				int sommeDemandeEnCours = getSommeDureeDemandeA42EnCoursByOS(dtoOrga.getIdOrganisation(),
+						soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin());
+				dto.setSoldeAsaA52((double) (soldeAsaA52.getTotalMinutes() - sommeDemandeEnCours));
+			} else {
+				dto.setSoldeAsaA52((double) 0);
+			}
 			// on affiche tous les soldes de l'année
 			List<AgentAsaA52Count> listeSoldeAsaA52 = counterRepository.getListOSCounterByDateAndOrganisation(
 					list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb, dateFin, null);
@@ -230,8 +256,8 @@ public class SoldeService implements ISoldeService {
 
 	private int getSommeDureeDemandeA42EnCoursByOS(Integer idOrganisation, Date dateDebut, Date dateFin) {
 
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCoursByOSByDate(idOrganisation, dateDebut, dateFin,
-				RefTypeAbsenceEnum.ASA_A52.getValue());
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByOS(idOrganisation, null, dateDebut,
+				dateFin, RefTypeAbsenceEnum.ASA_A52.getValue());
 
 		int somme = 0;
 

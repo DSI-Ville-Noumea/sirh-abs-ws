@@ -54,7 +54,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
-				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
+				asaRepository.getListDemandeAsaPourMoisByAgent(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
 						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();
@@ -95,7 +95,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
-				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
+				asaRepository.getListDemandeAsaPourMoisByAgent(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
 						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();
@@ -125,7 +125,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
-				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
+				asaRepository.getListDemandeAsaPourMoisByAgent(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
 						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(
 				new ArrayList<DemandeAsa>());
 
@@ -167,7 +167,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
-				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
+				asaRepository.getListDemandeAsaPourMoisByAgent(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
 						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();
@@ -209,7 +209,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
-				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
+				asaRepository.getListDemandeAsaPourMoisByAgent(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
 						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA49DataConsistencyRulesImpl impl = new AbsAsaA49DataConsistencyRulesImpl();
@@ -241,7 +241,7 @@ public class AbsAsaA49DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(
-				asaRepository.getListDemandeAsaPourMois(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
+				asaRepository.getListDemandeAsaPourMoisByAgent(Mockito.anyInt(), Mockito.anyInt(), Mockito.isA(Date.class),
 						Mockito.isA(Date.class), Mockito.anyInt())).thenReturn(
 				new ArrayList<DemandeAsa>());
 

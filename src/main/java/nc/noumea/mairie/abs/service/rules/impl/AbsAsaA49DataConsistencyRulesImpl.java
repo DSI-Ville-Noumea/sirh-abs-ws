@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 public class AbsAsaA49DataConsistencyRulesImpl extends AbsAsaDataConsistencyRulesImpl {
 
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
+			boolean isProvenanceSIRH) {
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		checkDroitAsaA49(srm, demande);
@@ -37,8 +38,7 @@ public class AbsAsaA49DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	}
 
 	private int getSommeDureeDemandeAsaPourMoisDemande(Integer idDemande, Integer idAgent, Date dateDemande) {
-
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMois(idAgent, idDemande,
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByAgent(idAgent, idDemande,
 				helperService.getDateDebutMoisForOneDate(dateDemande),
 				helperService.getDateFinMoisForOneDate(dateDemande), RefTypeAbsenceEnum.ASA_A49.getValue());
 

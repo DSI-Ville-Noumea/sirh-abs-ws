@@ -9,9 +9,9 @@ public interface IAsaRepository {
 
 	List<DemandeAsa> getListDemandeAsaEnCours(Integer idAgent, Integer idDemande, Integer type);
 
-	List<DemandeAsa> getListDemandeAsaPourMois(Integer idAgent, Integer idDemande, Date dateDeb, Date dateFin,
+	List<DemandeAsa> getListDemandeAsaPourMoisByAgent(Integer idAgent, Integer idDemande, Date dateDeb, Date dateFin,
 			Integer type);
 
-	List<DemandeAsa> getListDemandeAsaEnCoursByOSByDate(Integer idOrganisation, Date dateDebut, Date dateFin,
-			Integer type);
+	List<DemandeAsa> getListDemandeAsaPourMoisByOS(Integer idOrganisation, Integer idDemande, Date dateDebut,
+			Date dateFin, Integer type);
 }
