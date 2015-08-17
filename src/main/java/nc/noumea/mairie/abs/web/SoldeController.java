@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.web;
 
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
@@ -44,17 +45,18 @@ public class SoldeController {
 	public SoldeDto getSoldeAgent(@RequestParam(value = "idAgent", required = true) Integer idAgent,
 			@RequestBody(required = true) FiltreSoldeDto filtreSoldeDto) {
 
-		logger.debug("entered POST [solde/soldeAgent] => getSoldeAgent with parameter idAgent = {}, dateDebut = {}, dateFin = {}", 
+		logger.debug(
+				"entered POST [solde/soldeAgent] => getSoldeAgent with parameter idAgent = {}, dateDebut = {}, dateFin = {}",
 				idAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin());
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
-		if (agent == null
-				|| agent.getIdAgent() == null)
+		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		return soldeService.getAgentSolde(convertedIdAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin(), filtreSoldeDto.getTypeDemande());
+		return soldeService.getAgentSolde(convertedIdAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin(),
+				filtreSoldeDto.getTypeDemande(), new Date());
 	}
 
 	/**

@@ -12,6 +12,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
@@ -77,15 +78,15 @@ public abstract class AbstractCounterService implements ICounterService {
 	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes) {
 		return 0;
 	}
-	
+
 	/**
 	 * appeler par PTG exclusivement l historique utilise a pour seul but de
 	 * rectifier le compteur en cas de modification par l agent dans ses
-	 * pointages
-	 * #16761 
+	 * pointages #16761
 	 */
 	@Override
-	public int addToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent) {
+	public int addToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage,
+			Integer idPointageParent) {
 		return 0;
 	}
 
@@ -228,7 +229,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public List<CompteurDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation) {
 		return null;
 	}
 
@@ -279,20 +280,29 @@ public abstract class AbstractCounterService implements ICounterService {
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 		return srm;
 	}
-	
+
 	@Override
 	public List<RestitutionMassiveDto> getHistoRestitutionMassiveCA(Integer idAgentConnecte) {
 		return null;
 	}
-	
+
 	@Override
-	public RestitutionMassiveDto getDetailsHistoRestitutionMassive(Integer idAgentConnecte,
-			RestitutionMassiveDto dto) {
+	public RestitutionMassiveDto getDetailsHistoRestitutionMassive(Integer idAgentConnecte, RestitutionMassiveDto dto) {
 		return null;
 	}
-	
+
 	@Override
 	public List<RestitutionMassiveDto> getHistoRestitutionMassiveCAByAgent(Integer idAgent) {
+		return null;
+	}
+
+	@Override
+	public List<OrganisationSyndicaleDto> getlisteOrganisationSyndicaleA52() {
+		return null;
+	}
+
+	@Override
+	public List<AgentOrganisationSyndicaleDto> listeRepresentantA52(Integer idOrganisationSyndicale) {
 		return null;
 	}
 }

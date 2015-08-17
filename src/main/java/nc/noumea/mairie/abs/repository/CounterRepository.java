@@ -226,25 +226,6 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public List<AgentAsaA52Count> getListOSCounterByDate(Integer idOrganisationSyndicale, Date dateDebut, Date dateFin, Integer idAgent) {
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("from AgentAsaA52Count h ");
-		sb.append("where h.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale ");
-		sb.append("and h.dateDebut BETWEEN :dateDebut and :dateFin ");
-		sb.append("and h.idAgent = :idAgent ");		
-		sb.append("order by h.dateDebut asc ");
-
-		TypedQuery<AgentAsaA52Count> q = absEntityManager.createQuery(sb.toString(), AgentAsaA52Count.class);
-		q.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
-		q.setParameter("dateDebut", dateDebut);
-		q.setParameter("dateFin", dateFin);
-		q.setParameter("idAgent", idAgent);
-
-		return q.getResultList();
-	}
-
-	@Override
 	public void removeEntity(Object obj) {
 		absEntityManager.remove(obj);
 	}
@@ -270,20 +251,45 @@ public class CounterRepository implements ICounterRepository {
 
 		return q.getResultList();
 	}
-	
+
 	@Override
 	public AgentWeekRecup getWeekHistoRecupCountByIdAgentAndIdPointage(Integer idAgent, Integer idPointage) {
-		
-		TypedQuery<AgentWeekRecup> q = absEntityManager.createNamedQuery("getWeekHistoRecupCountByIdAgentAndIdPointage", AgentWeekRecup.class);
+
+		TypedQuery<AgentWeekRecup> q = absEntityManager.createNamedQuery(
+				"getWeekHistoRecupCountByIdAgentAndIdPointage", AgentWeekRecup.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idPointage", idPointage);
-		
+
 		List<AgentWeekRecup> list = q.getResultList();
 		if (null == list || list.size() == 0) {
 			return null;
 		} else {
 			return list.get(0);
 		}
+	}
+
+	@Override
+	public <T> List<T> getListCounterByOrganisation(Class<T> T, Integer idOrganisation) {
+
+		// Build query criteria
+		CriteriaBuilder cb = absEntityManager.getCriteriaBuilder();
+		CriteriaQuery<T> cq = cb.createQuery(T);
+		Root<T> c = cq.from(T);
+		cq.select(c);
+
+		Join<T, OrganisationSyndicale> j = c.join("organisationSyndicale");
+		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idOrganisationSyndicale");
+		cq.where(cb.equal(j.get("idOrganisationSyndicale"), p));
+		cq.orderBy(cb.asc(c.get("idAgent")), cb.desc(c.get("dateDebut")));
+
+		// Build query
+		TypedQuery<T> q = absEntityManager.createQuery(cq);
+		q.setParameter("idOrganisationSyndicale", idOrganisation);
+
+		// Exec query
+		List<T> r = q.getResultList();
+
+		return r;
 	}
 
 }

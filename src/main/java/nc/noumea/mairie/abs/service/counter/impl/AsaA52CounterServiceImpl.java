@@ -16,6 +16,7 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 
@@ -118,10 +119,10 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation) {
 		List<CompteurDto> result = new ArrayList<>();
 
-		List<AgentAsaA52Count> listeArc = counterRepository.getListCounter(AgentAsaA52Count.class);
+		List<AgentAsaA52Count> listeArc = counterRepository.getListCounterByOrganisation(AgentAsaA52Count.class,idOrganisation);
 		for (AgentAsaA52Count arc : listeArc) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHistoOrganisationSyndicale(arc);
 			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
@@ -143,7 +144,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 				demande.getDateFin());
 		if (0 != minutes) {
 			try {
-				srm = majCompteurToAgent((DemandeAsa)demande, ((DemandeAsa) demande).getOrganisationSyndicale()
+				srm = majCompteurToAgent((DemandeAsa) demande, ((DemandeAsa) demande).getOrganisationSyndicale()
 						.getIdOrganisationSyndicale(), minutes, demande.getDateDebut(), srm);
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException("An error occured while trying to update ASA_A52 counters :", e);
@@ -203,7 +204,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 			logger.warn(SOLDE_COMPTEUR_NEGATIF_AUTORISE);
 			srm.getInfos().add(String.format(SOLDE_COMPTEUR_NEGATIF_AUTORISE));
 		}
-		
+
 		// #13519 maj solde sur la demande
 		Integer minutesOld = arc.getTotalMinutes();
 
@@ -211,7 +212,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 		arc.setLastModification(helperService.getCurrentDate());
 
 		super.updateDemandeWithNewSolde(demande, 0.0, 0.0, minutesOld, arc.getTotalMinutes());
-		
+
 		counterRepository.persistEntity(arc);
 
 		return srm;
@@ -294,5 +295,31 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 		}
 
 		return srm;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<OrganisationSyndicaleDto> getlisteOrganisationSyndicaleA52() {
+		List<OrganisationSyndicaleDto> result = new ArrayList<>();
+
+		List<OrganisationSyndicale> listeOrg = OSRepository.getListOSCounterForA52();
+		for (OrganisationSyndicale org : listeOrg) {
+			OrganisationSyndicaleDto dto = new OrganisationSyndicaleDto(org);
+			result.add(dto);
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public List<AgentOrganisationSyndicaleDto> listeRepresentantA52(Integer idOrganisationSyndicale) {
+		List<AgentOrganisationSyndicaleDto> result = new ArrayList<>();
+
+		List<AgentOrganisationSyndicale> listeOrg = OSRepository.getListeAgentOrganisation(idOrganisationSyndicale);
+		for (AgentOrganisationSyndicale ag : listeOrg) {
+			AgentOrganisationSyndicaleDto dto = new AgentOrganisationSyndicaleDto(ag);
+			result.add(dto);
+		}
+		return result;
 	}
 }

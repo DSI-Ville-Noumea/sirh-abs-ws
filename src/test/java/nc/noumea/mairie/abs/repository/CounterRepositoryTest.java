@@ -686,7 +686,7 @@ public class CounterRepositoryTest {
 		absEntityManager.persist(record3);
 
 		// When
-		List<AgentAsaA52Count> result = repository.getListOSCounterByDate(1, dateDeb, dateFin, 9005138);
+		List<AgentAsaA52Count> result = repository.getListOSCounterByDateAndOrganisation(1, dateDeb, dateFin, null);
 
 		// Then
 		assertNotNull(result);

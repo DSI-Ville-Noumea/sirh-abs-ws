@@ -17,6 +17,7 @@ import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
@@ -24,6 +25,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeMonthDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
+import nc.noumea.mairie.abs.repository.IAsaRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -66,13 +68,16 @@ public class SoldeService implements ISoldeService {
 
 	@Autowired
 	protected ISirhRepository sirhRepository;
-	
+
 	@Autowired
 	private ICongesAnnuelsRepository congeAnnuelRepository;
 
+	@Autowired
+	protected IAsaRepository asaRepository;
+
 	@Override
 	@Transactional(readOnly = true)
-	public SoldeDto getAgentSolde(Integer idAgent, Date dateDeb, Date dateFin, Integer typeDemande) {
+	public SoldeDto getAgentSolde(Integer idAgent, Date dateDeb, Date dateFin, Integer typeDemande, Date dateJour) {
 
 		logger.info("Read getAgentSolde for Agent {}, and date {} ...", idAgent, dateDeb);
 		ReturnMessageDto msg = new ReturnMessageDto();
@@ -86,7 +91,7 @@ public class SoldeService implements ISoldeService {
 			getSoldeAsaA48(idAgent, dto, dateDeb);
 			getSoldeAsaA54(idAgent, dto, dateDeb);
 			getSoldeAsaA55(idAgent, dto, dateDeb, dateFin);
-			getSoldeAsaA52(idAgent, dto, dateDeb, dateFin);
+			getSoldeAsaA52(idAgent, dto, dateDeb, dateFin, dateJour);
 			getSoldeCongesExcep(idAgent, dto, dateDeb, dateFin);
 		} else {
 			switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(typeDemande)) {
@@ -109,7 +114,7 @@ public class SoldeService implements ISoldeService {
 					getSoldeAsaA55(idAgent, dto, dateDeb, dateFin);
 					break;
 				case ASA_A52:
-					getSoldeAsaA52(idAgent, dto, dateDeb, dateFin);
+					getSoldeAsaA52(idAgent, dto, dateDeb, dateFin, dateJour);
 					break;
 				case MALADIES:
 					// TODO
@@ -186,7 +191,7 @@ public class SoldeService implements ISoldeService {
 		dto.setListeSoldeAsaA55(listDto);
 	}
 
-	private void getSoldeAsaA52(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin) {
+	private void getSoldeAsaA52(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin, Date dateJour) {
 		// on traite les ASA A52 pour la date en parametre
 		// on affiche le solde courant
 
@@ -198,14 +203,19 @@ public class SoldeService implements ISoldeService {
 			dto.setListeSoldeAsaA52(new ArrayList<SoldeMonthDto>());
 		} else {
 			AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class, list.get(0)
-					.getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb);
+					.getOrganisationSyndicale().getIdOrganisationSyndicale(), dateJour);
 			OrganisationSyndicaleDto dtoOrga = new OrganisationSyndicaleDto(list.get(0).getOrganisationSyndicale());
 			dto.setOrganisationA52(dtoOrga);
 			dto.setAfficheSoldeAsaA52(soldeAsaA52 == null ? false : true);
-			dto.setSoldeAsaA52((double) (soldeAsaA52 == null ? 0 : soldeAsaA52.getTotalMinutes()));
+			//#17691
+			// il faut deduire ce qui a dejà été pris
+			int sommeDemandeEnCours = getSommeDureeDemandeA42EnCoursByOS(dtoOrga.getIdOrganisation(),
+					soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin());
+			dto.setSoldeAsaA52((double) (soldeAsaA52 == null ? (0 - sommeDemandeEnCours) : (soldeAsaA52
+					.getTotalMinutes() - sommeDemandeEnCours)));
 			// on affiche tous les soldes de l'année
-			List<AgentAsaA52Count> listeSoldeAsaA52 = counterRepository.getListOSCounterByDate(list.get(0)
-					.getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb, dateFin, idAgent);
+			List<AgentAsaA52Count> listeSoldeAsaA52 = counterRepository.getListOSCounterByDateAndOrganisation(
+					list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb, dateFin, null);
 			List<SoldeMonthDto> listDto = new ArrayList<SoldeMonthDto>();
 			for (AgentAsaA52Count arc : listeSoldeAsaA52) {
 				SoldeMonthDto dtoMonth = new SoldeMonthDto();
@@ -216,6 +226,21 @@ public class SoldeService implements ISoldeService {
 			}
 			dto.setListeSoldeAsaA52(listDto);
 		}
+	}
+
+	private int getSommeDureeDemandeA42EnCoursByOS(Integer idOrganisation, Date dateDebut, Date dateFin) {
+
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCoursByOSByDate(idOrganisation, dateDebut, dateFin,
+				RefTypeAbsenceEnum.ASA_A52.getValue());
+
+		int somme = 0;
+
+		if (null != listAsa) {
+			for (DemandeAsa asa : listAsa) {
+				somme += asa.getDuree();
+			}
+		}
+		return somme;
 	}
 
 	private void getSoldeCongesExcep(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin) {
@@ -245,10 +270,11 @@ public class SoldeService implements ISoldeService {
 						idAgent);
 				if (countCongeAnnuel != null)
 					listAgentCount.add(countCongeAnnuel);
-				
-				if(!isSirh)
-					listRestitutionMassive = congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(idAgent), null, null);
-				
+
+				if (!isSirh)
+					listRestitutionMassive = congeAnnuelRepository.getListRestitutionMassiveByIdAgent(
+							Arrays.asList(idAgent), null, null);
+
 				break;
 			case REPOS_COMP:
 				AgentReposCompCount countReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
@@ -293,17 +319,16 @@ public class SoldeService implements ISoldeService {
 				result.add(dto);
 			}
 		}
-		
-		if(null != listRestitutionMassive
-				&& !listRestitutionMassive.isEmpty()) {
+
+		if (null != listRestitutionMassive && !listRestitutionMassive.isEmpty()) {
 			for (CongeAnnuelRestitutionMassiveHisto restitution : listRestitutionMassive) {
 				HistoriqueSoldeDto dto = new HistoriqueSoldeDto(restitution);
 				result.add(dto);
 			}
 		}
-		
+
 		Collections.sort(result, new HistoriqueSoldeDtoComparator());
-		
+
 		return result;
 	}
 }

@@ -87,4 +87,16 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 
 		return query.getResultList();
 	}
+
+	@Override
+	public List<OrganisationSyndicale> getListOSCounterForA52() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(h.organisationSyndicale) from AgentAsaA52Count h ");
+
+		TypedQuery<OrganisationSyndicale> q = absEntityManager.createQuery(sb.toString(), OrganisationSyndicale.class);
+		
+
+		return q.getResultList();
+	}
 }

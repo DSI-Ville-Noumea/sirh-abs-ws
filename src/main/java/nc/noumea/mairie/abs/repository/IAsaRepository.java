@@ -11,4 +11,7 @@ public interface IAsaRepository {
 
 	List<DemandeAsa> getListDemandeAsaPourMois(Integer idAgent, Integer idDemande, Date dateDeb, Date dateFin,
 			Integer type);
+
+	List<DemandeAsa> getListDemandeAsaEnCoursByOSByDate(Integer idOrganisation, Date dateDebut, Date dateFin,
+			Integer type);
 }

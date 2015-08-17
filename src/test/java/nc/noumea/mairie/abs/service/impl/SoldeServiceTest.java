@@ -24,6 +24,7 @@ import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
+import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
@@ -32,6 +33,7 @@ import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
+import nc.noumea.mairie.abs.repository.IAsaRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
@@ -104,7 +106,8 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
+		Date dateJour = new Date();
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null, dateJour);
 
 		assertEquals("0.0", dto.getSoldeCongeAnnee().toString());
 		assertEquals("0.0", dto.getSoldeCongeAnneePrec().toString());
@@ -204,6 +207,8 @@ public class SoldeServiceTest {
 		List<AgentOrganisationSyndicale> list = new ArrayList<>();
 		list.add(ag);
 
+		Date dateJour = new Date();
+
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
@@ -214,10 +219,10 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getListAgentCounterA55ByDate(9008765, dateDeb, dateFin)).thenReturn(listeArc55);
 		Mockito.when(
 				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
-						.getIdOrganisationSyndicale(), dateDeb)).thenReturn(arc52);
+						.getIdOrganisationSyndicale(), dateJour)).thenReturn(arc52);
 		Mockito.when(
-				cr.getListOSCounterByDate(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb,
-						dateFin, idAgent)).thenReturn(listeArc52);
+				cr.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale()
+						.getIdOrganisationSyndicale(), dateDeb, dateFin, null)).thenReturn(listeArc52);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -255,15 +260,22 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
 
+		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
+		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
+		Mockito.when(
+				asaRepository.getListDemandeAsaEnCoursByOSByDate(Mockito.anyInt(), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "asaRepository", asaRepository);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null, dateJour);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -362,6 +374,7 @@ public class SoldeServiceTest {
 		ag.setOrganisationSyndicale(organisationSyndicale);
 		List<AgentOrganisationSyndicale> list = new ArrayList<>();
 		list.add(ag);
+		Date dateJour = new Date();
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
@@ -381,11 +394,11 @@ public class SoldeServiceTest {
 						12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
 		Mockito.when(
 				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
-						.getIdOrganisationSyndicale(), new DateTime(2013, 1, 1, 0, 0, 0).toDate())).thenReturn(arc52);
+						.getIdOrganisationSyndicale(), dateJour)).thenReturn(arc52);
 		Mockito.when(
-				cr.getListOSCounterByDate(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(),
-						new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 23, 59, 0).toDate(),
-						idAgent)).thenReturn(listeArc52);
+				cr.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale()
+						.getIdOrganisationSyndicale(), new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
+						12, 31, 23, 59, 0).toDate(), null)).thenReturn(listeArc52);
 
 		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
 				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
@@ -414,16 +427,23 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
 
+		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
+		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
+		Mockito.when(
+				asaRepository.getListDemandeAsaEnCoursByOSByDate(Mockito.anyInt(), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "asaRepository", asaRepository);
 
 		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
-		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null);
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null, dateJour);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -477,7 +497,6 @@ public class SoldeServiceTest {
 		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
 		ag.setOrganisationSyndicale(organisationSyndicale);
 		List<AgentOrganisationSyndicale> list = new ArrayList<>();
-		list.add(ag);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
@@ -523,7 +542,8 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
+		Date dateJour = new Date();
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null, dateJour);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -573,7 +593,6 @@ public class SoldeServiceTest {
 		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
 		ag.setOrganisationSyndicale(organisationSyndicale);
 		List<AgentOrganisationSyndicale> list = new ArrayList<>();
-		list.add(ag);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
@@ -619,7 +638,8 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
+		Date dateJour = new Date();
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null, dateJour);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -669,7 +689,6 @@ public class SoldeServiceTest {
 		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
 		ag.setOrganisationSyndicale(organisationSyndicale);
 		List<AgentOrganisationSyndicale> list = new ArrayList<>();
-		list.add(ag);
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
@@ -715,7 +734,8 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null);
+		Date dateJour = new Date();
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null, dateJour);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -803,7 +823,8 @@ public class SoldeServiceTest {
 		prepareDataTest(service, idAgent);
 
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.RECUP.getValue());
+		Date dateJour = new Date();
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.RECUP.getValue(), dateJour);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
 		assertNull(dto.getSoldeCongeAnnee());
@@ -829,7 +850,8 @@ public class SoldeServiceTest {
 
 		prepareDataTest(service, idAgent);
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.REPOS_COMP.getValue());
+		Date dateJour = new Date();
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.REPOS_COMP.getValue(), dateJour);
 
 		assertNull(dto.getSoldeRecup());
 		assertNull(dto.getSoldeCongeAnnee());
@@ -855,7 +877,8 @@ public class SoldeServiceTest {
 
 		prepareDataTest(service, idAgent);
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
+		Date dateJour = new Date();
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.CONGE_ANNUEL.getValue(), dateJour);
 
 		assertNull(dto.getSoldeRecup());
 		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
@@ -881,7 +904,8 @@ public class SoldeServiceTest {
 
 		prepareDataTest(service, idAgent);
 		// When
-		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.ASA_A50.getValue());
+		Date dateJour = new Date();
+		SoldeDto dto = service.getAgentSolde(idAgent, null, null, RefTypeAbsenceEnum.ASA_A50.getValue(), dateJour);
 
 		assertNull(dto.getSoldeRecup());
 		assertNull(dto.getSoldeCongeAnnee());
@@ -1025,8 +1049,9 @@ public class SoldeServiceTest {
 		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, 9005138)).thenReturn(compteurAgent);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(null);
-		
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(null);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
@@ -1073,33 +1098,34 @@ public class SoldeServiceTest {
 		restitution.setMatin(false);
 		restitution.setDateRestitution(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
 		restitution.setMotif("motif");
-		
+
 		CongeAnnuelRestitutionMassiveHisto histo = new CongeAnnuelRestitutionMassiveHisto();
 		histo.setIdAgent(9005138);
 		histo.setJours(1.0);
 		histo.setRestitutionMassive(restitution);
 		histo.setStatus("OK");
-		
+
 		CongeAnnuelRestitutionMassive restitution2 = new CongeAnnuelRestitutionMassive();
 		restitution2.setApresMidi(true);
 		restitution2.setJournee(false);
 		restitution2.setMatin(false);
 		restitution2.setDateRestitution(new DateTime(2015, 2, 23, 0, 0, 0).toDate());
 		restitution2.setMotif("motif 2");
-		
+
 		CongeAnnuelRestitutionMassiveHisto histo3 = new CongeAnnuelRestitutionMassiveHisto();
 		histo3.setIdAgent(9005138);
 		histo3.setJours(1.0);
 		histo3.setRestitutionMassive(restitution2);
 		histo3.setStatus("OK");
-		
+
 		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassive = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
 		listRestitutionMassive.add(histo);
 		listRestitutionMassive.add(histo3);
-		
+
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(listRestitutionMassive);
-		
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
+				.thenReturn(listRestitutionMassive);
+
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);

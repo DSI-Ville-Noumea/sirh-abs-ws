@@ -407,7 +407,7 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		result = service.getListeCompteur();
+		result = service.getListeCompteur(1);
 
 		assertEquals(0, result.size());
 
@@ -430,12 +430,12 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		list.add(e);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListCounter(AgentAsaA52Count.class)).thenReturn(list);
+		Mockito.when(counterRepository.getListCounterByOrganisation(AgentAsaA52Count.class, 1)).thenReturn(list);
 
 		AsaA52CounterServiceImpl service = new AsaA52CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		result = service.getListeCompteur();
+		result = service.getListeCompteur(1);
 
 		assertEquals(1, result.size());
 		assertEquals(12 * 60, result.get(0).getDureeAAjouter().intValue());
@@ -930,7 +930,7 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ag.setIdAgent(9005138);
 		ag.setActif(true);
 		ag.setOrganisationSyndicale(organisationSyndicaleDto);
-		
+
 		organisationSyndicale.getAgents().add(ag);
 		organisationSyndicale.getAgents().add(ag2);
 
@@ -952,8 +952,9 @@ public class AsaA52CounterServiceImplTest extends AsaCounterServiceImplTest {
 				listAgDto);
 
 		assertEquals(1, result.getErrors().size());
-		assertEquals("L'agent [9005138] fait déja partie d'une autre organisation syndicale.", result.getErrors().get(0));
-		assertEquals(1, organisationSyndicale.getAgents().size()); 
+		assertEquals("L'agent [9005138] fait déja partie d'une autre organisation syndicale.", result.getErrors()
+				.get(0));
+		assertEquals(1, organisationSyndicale.getAgents().size());
 	}
 
 }

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ICounterService;
@@ -62,11 +63,31 @@ public class AsaA52Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurA52", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<CompteurDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur(
+			@RequestParam("idOrganisationSyndicale") Integer idOrganisationSyndicale) {
 
 		logger.debug("entered GET [asaA52/listeCompteurA52] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur();
+		List<CompteurDto> result = counterService.getListeCompteur(idOrganisationSyndicale);
+
+		if (result.size() == 0)
+			throw new NoContentException();
+
+		return result;
+	}
+
+	/**
+	 * Liste des compteurs ASA A52 ResponseBody : Format du type timestamp :
+	 * "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/listeRepresentantA52", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<AgentOrganisationSyndicaleDto> listeRepresentantA52(
+			@RequestParam("idOrganisationSyndicale") Integer idOrganisationSyndicale) {
+
+		logger.debug("entered GET [asaA52/listeRepresentantA52] => listeRepresentantA52 ");
+
+		List<AgentOrganisationSyndicaleDto> result = counterService.listeRepresentantA52(idOrganisationSyndicale);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -91,5 +112,23 @@ public class AsaA52Controller {
 		ReturnMessageDto srm = counterService.saveRepresentantA52(idOrganisationSyndicale, listeAgentDto);
 
 		return srm;
+	}
+
+	/**
+	 * Liste des OS présents dans le compteur ASA A52 ResponseBody : Format du
+	 * type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/listeOrganisationSyndicaleA52", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<OrganisationSyndicaleDto> listeOrganisationSyndicaleA52() {
+
+		logger.debug("entered GET [asaA52/listeOrganisationSyndicaleA52] => listeOrganisationSyndicaleA52 ");
+
+		List<OrganisationSyndicaleDto> result = counterService.getlisteOrganisationSyndicaleA52();
+
+		if (result.size() == 0)
+			throw new NoContentException();
+
+		return result;
 	}
 }
