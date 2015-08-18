@@ -2537,7 +2537,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
 
 		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
-		Mockito.when(adsWsConsumer.getEntiteWithChildrenByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
+		Mockito.when(adsWsConsumer.getInfoSiservByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -2623,7 +2623,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
 
 		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
-		Mockito.when(adsWsConsumer.getEntiteWithChildrenByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
+		Mockito.when(adsWsConsumer.getInfoSiservByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -2769,7 +2769,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
 
 		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
-		Mockito.when(adsWsConsumer.getEntiteWithChildrenByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
+		Mockito.when(adsWsConsumer.getInfoSiservByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
