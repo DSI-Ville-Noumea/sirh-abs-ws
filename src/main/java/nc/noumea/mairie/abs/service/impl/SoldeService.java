@@ -17,7 +17,6 @@ import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
-import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
@@ -177,11 +176,7 @@ public class SoldeService implements ISoldeService {
 				dateJour);
 		dto.setAfficheSoldeAsaA55(soldeAsaA55 == null ? false : true);
 		if (soldeAsaA55 != null) {
-			// #17691
-			// il faut deduire ce qui a dejà été pris
-			int sommeDemandeEnCours = getSommeDureeDemandeA55EnCours(idAgent, soldeAsaA55.getDateDebut(),
-					soldeAsaA55.getDateFin());
-			dto.setSoldeAsaA55((double) (soldeAsaA55.getTotalMinutes() - sommeDemandeEnCours));
+			dto.setSoldeAsaA55((double) soldeAsaA55.getTotalMinutes());
 		} else {
 			dto.setSoldeAsaA55((double) 0);
 		}
@@ -197,21 +192,6 @@ public class SoldeService implements ISoldeService {
 			listDto.add(dtoMonth);
 		}
 		dto.setListeSoldeAsaA55(listDto);
-	}
-
-	private int getSommeDureeDemandeA55EnCours(Integer idAgent, Date dateDebut, Date dateFin) {
-
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByAgent(idAgent, null, dateDebut, dateFin,
-				RefTypeAbsenceEnum.ASA_A55.getValue());
-
-		int somme = 0;
-
-		if (null != listAsa) {
-			for (DemandeAsa asa : listAsa) {
-				somme += asa.getDuree();
-			}
-		}
-		return somme;
 	}
 
 	private void getSoldeAsaA52(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin, Date dateJour) {
@@ -231,11 +211,7 @@ public class SoldeService implements ISoldeService {
 			dto.setOrganisationA52(dtoOrga);
 			dto.setAfficheSoldeAsaA52(soldeAsaA52 == null ? false : true);
 			if (soldeAsaA52 != null) {
-				// #17691
-				// il faut deduire ce qui a dejà été pris
-				int sommeDemandeEnCours = getSommeDureeDemandeA42EnCoursByOS(dtoOrga.getIdOrganisation(),
-						soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin());
-				dto.setSoldeAsaA52((double) (soldeAsaA52.getTotalMinutes() - sommeDemandeEnCours));
+				dto.setSoldeAsaA52((double) soldeAsaA52.getTotalMinutes());
 			} else {
 				dto.setSoldeAsaA52((double) 0);
 			}
@@ -252,21 +228,6 @@ public class SoldeService implements ISoldeService {
 			}
 			dto.setListeSoldeAsaA52(listDto);
 		}
-	}
-
-	private int getSommeDureeDemandeA42EnCoursByOS(Integer idOrganisation, Date dateDebut, Date dateFin) {
-
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByOS(idOrganisation, null, dateDebut,
-				dateFin, RefTypeAbsenceEnum.ASA_A52.getValue());
-
-		int somme = 0;
-
-		if (null != listAsa) {
-			for (DemandeAsa asa : listAsa) {
-				somme += asa.getDuree();
-			}
-		}
-		return somme;
 	}
 
 	private void getSoldeCongesExcep(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin) {
