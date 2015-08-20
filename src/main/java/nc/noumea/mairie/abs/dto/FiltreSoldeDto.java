@@ -15,6 +15,10 @@ public class FiltreSoldeDto {
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateFin;
 
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
+	private Date dateDemande;
+
 	private Integer typeDemande;
 
 	public Date getDateDebut() {
@@ -39,6 +43,14 @@ public class FiltreSoldeDto {
 
 	public void setTypeDemande(Integer typeDemande) {
 		this.typeDemande = typeDemande;
+	}
+
+	public Date getDateDemande() {
+		return dateDemande;
+	}
+
+	public void setDateDemande(Date dateDemande) {
+		this.dateDemande = dateDemande;
 	}
 	
 }

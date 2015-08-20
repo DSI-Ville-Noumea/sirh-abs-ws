@@ -46,8 +46,8 @@ public class SoldeController {
 			@RequestBody(required = true) FiltreSoldeDto filtreSoldeDto) {
 
 		logger.debug(
-				"entered POST [solde/soldeAgent] => getSoldeAgent with parameter idAgent = {}, dateDebut = {}, dateFin = {}",
-				idAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin());
+				"entered POST [solde/soldeAgent] => getSoldeAgent with parameter idAgent = {}, dateDebut = {}, dateFin = {}, dateDemande = {}",
+				idAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin(), filtreSoldeDto.getDateDemande());
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -56,7 +56,8 @@ public class SoldeController {
 			throw new NotFoundException();
 
 		return soldeService.getAgentSolde(convertedIdAgent, filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin(),
-				filtreSoldeDto.getTypeDemande(), new Date());
+				filtreSoldeDto.getTypeDemande(),
+				filtreSoldeDto.getDateDemande() == null ? new Date() : filtreSoldeDto.getDateDemande());
 	}
 
 	/**

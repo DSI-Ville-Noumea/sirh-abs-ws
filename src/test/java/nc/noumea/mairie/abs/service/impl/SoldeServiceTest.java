@@ -1270,4 +1270,172 @@ public class SoldeServiceTest {
 		assertEquals(e.getIdAgent(), listResult.get(0).getIdAgentModification());
 		assertEquals(motifCompteur.getLibelle(), listResult.get(0).getMotif().getLibelle());
 	}
+
+	@Test
+	public void getAgentSolde_GetAllSolde_WithDateDemande() throws ParseException {
+
+		// Given
+		Date dateDemande = new DateTime(2015, 03, 26, 12, 55, 0).toDate();
+		Integer idAgent = 9008765;
+		double cotaSoldeAnnee = 62.0;
+		double cotaSoldeAnneePrec = 25.5;
+
+		AgentRecupCount arc = new AgentRecupCount();
+		arc.setIdAgent(idAgent);
+		arc.setTotalMinutes(72);
+
+		AgentReposCompCount arcc = new AgentReposCompCount();
+		arcc.setIdAgent(idAgent);
+		arcc.setTotalMinutes(12);
+		arcc.setTotalMinutesAnneeN1(10);
+
+		AgentAsaA48Count arccc = new AgentAsaA48Count();
+		arccc.setIdAgent(idAgent);
+		arccc.setTotalJours(12.0);
+		arccc.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		arccc.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
+
+		AgentAsaA54Count arcc54 = new AgentAsaA54Count();
+		arcc54.setIdAgent(idAgent);
+		arcc54.setTotalJours(12.0);
+		arcc54.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		arcc54.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
+
+		AgentAsaA55Count arcc55 = new AgentAsaA55Count();
+		arcc55.setIdAgent(idAgent);
+		arcc55.setTotalMinutes(12 * 60);
+		arcc55.setDateDebut(new DateTime(2015, 1, 1, 0, 0, 0).toDate());
+		arcc55.setDateFin(new DateTime(2015, 1, 31, 23, 59, 0).toDate());
+
+		AgentAsaA55Count arc55bis = new AgentAsaA55Count();
+		arc55bis.setIdAgent(idAgent);
+		arc55bis.setTotalMinutes(2 * 60);
+		arc55bis.setDateDebut(new DateTime(2013, 3, 1, 0, 0, 0).toDate());
+		arc55bis.setDateFin(new DateTime(2013, 3, 31, 23, 59, 0).toDate());
+
+		List<AgentAsaA55Count> listeArc55 = new ArrayList<AgentAsaA55Count>();
+		listeArc55.add(arcc55);
+		listeArc55.add(arc55bis);
+
+		AgentCongeAnnuelCount soldeCongeAnnu = new AgentCongeAnnuelCount();
+		soldeCongeAnnu.setIdAgent(idAgent);
+		soldeCongeAnnu.setTotalJours(cotaSoldeAnnee);
+		soldeCongeAnnu.setTotalJoursAnneeN1(cotaSoldeAnneePrec);
+
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
+		AgentAsaA52Count arc52 = new AgentAsaA52Count();
+		arc52.setIdAgent(idAgent);
+		arc52.setOrganisationSyndicale(organisationSyndicale);
+		arc52.setTotalMinutes(12 * 60);
+		arc52.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		arc52.setDateFin(new DateTime(2014, 1, 31, 23, 59, 0).toDate());
+
+		AgentAsaA52Count arc52bis = new AgentAsaA52Count();
+		arc52bis.setIdAgent(idAgent);
+		arc52bis.setOrganisationSyndicale(organisationSyndicale);
+		arc52bis.setTotalMinutes(2 * 60);
+		arc52bis.setDateDebut(new DateTime(2014, 3, 1, 0, 0, 0).toDate());
+		arc52bis.setDateFin(new DateTime(2014, 3, 31, 23, 59, 0).toDate());
+
+		List<AgentAsaA52Count> listeArc52 = new ArrayList<AgentAsaA52Count>();
+		listeArc52.add(arc52);
+		listeArc52.add(arc52bis);
+
+		AgentOrganisationSyndicale ag = new AgentOrganisationSyndicale();
+		ag.setOrganisationSyndicale(organisationSyndicale);
+		List<AgentOrganisationSyndicale> list = new ArrayList<>();
+		list.add(ag);
+
+		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
+		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
+		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
+		Mockito.when(
+				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
+				.thenReturn(arccc);
+		Mockito.when(
+				cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
+				.thenReturn(arcc54);
+		Mockito.when(
+				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateDemande))
+				.thenReturn(arcc55);
+		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(soldeCongeAnnu);
+		Mockito.when(
+				cr.getListAgentCounterA55ByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
+						12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
+		Mockito.when(
+				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
+						.getIdOrganisationSyndicale(), dateDemande)).thenReturn(arc52);
+		Mockito.when(
+				cr.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale()
+						.getIdOrganisationSyndicale(), new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
+						12, 31, 23, 59, 0).toDate(), null)).thenReturn(listeArc52);
+
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
+				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReturnMessageDto result = (ReturnMessageDto) args[0];
+				// result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
+				return result;
+			}
+		})
+				.when(absDataConsistencyRules)
+				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+						Mockito.isA(Boolean.class));
+
+		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
+
+		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
+				listeSoldeSpecifiqueDto);
+
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
+				.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
+
+		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
+		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
+		Mockito.when(
+				asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class),
+						Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
+
+		SoldeService service = new SoldeService();
+		ReflectionTestUtils.setField(service, "counterRepository", cr);
+		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
+		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
+		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "asaRepository", asaRepository);
+
+		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
+		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null, dateDemande);
+
+		assertEquals("72.0", dto.getSoldeRecup().toString());
+		assertEquals("62.0", dto.getSoldeCongeAnnee().toString());
+		assertEquals("25.5", dto.getSoldeCongeAnneePrec().toString());
+		assertEquals("12.0", dto.getSoldeReposCompAnnee().toString());
+		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
+		assertEquals(0, dto.getSoldeAsaA48().intValue());
+		assertEquals(0, dto.getSoldeAsaA54().intValue());
+		assertEquals(720, dto.getSoldeAsaA55().intValue());
+		assertTrue(dto.isAfficheSoldeConge());
+		assertTrue(dto.isAfficheSoldeRecup());
+		assertTrue(dto.isAfficheSoldeReposComp());
+		assertFalse(dto.isAfficheSoldeAsaA48());
+		assertFalse(dto.isAfficheSoldeAsaA54());
+		assertTrue(dto.isAfficheSoldeAsaA55());
+		assertEquals(0, dto.getListeSoldeAsaA55().size());
+		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(0, dto.getListeSoldeCongesExcep().size());
+		assertEquals(12 * 60, dto.getSoldeAsaA52().intValue());
+		assertTrue(dto.isAfficheSoldeAsaA52());
+		assertEquals(2, dto.getListeSoldeAsaA52().size());
+	}
 }
