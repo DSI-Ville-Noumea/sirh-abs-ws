@@ -1733,7 +1733,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto, false);

@@ -377,7 +377,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat());
+				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
 	}
 
 	@Override

@@ -54,7 +54,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		// SAISIE
 		assertFalse(result2.isAffichageBoutonAnnuler());
 		// APPROUVEE
-		assertTrue(result3.isAffichageBoutonAnnuler());
+		assertFalse(result3.isAffichageBoutonAnnuler());
 		// REFUSEE
 		assertFalse(result4.isAffichageBoutonAnnuler());
 		// VISEE_FAVORABLE
@@ -66,7 +66,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		// ANNULEE
 		assertFalse(result8.isAffichageBoutonAnnuler());
 		// VALIDEE
-		assertTrue(result9.isAffichageBoutonAnnuler());
+		assertFalse(result9.isAffichageBoutonAnnuler());
 		// REJETE
 		assertFalse(result10.isAffichageBoutonAnnuler());
 		// EN ATTENTE
@@ -407,11 +407,11 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
