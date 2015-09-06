@@ -465,7 +465,7 @@ public class AccessRightsRepositoryTest {
 		droitDroitsAgents.add(droitDroitsAgent);
 
 		agent.setIdAgent(9008767);
-		agent.setCodeService("DEAB");
+		agent.setIdServiceADS(1);
 		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 		agent.setDroitDroitsAgent(droitDroitsAgents);
@@ -473,7 +473,7 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(agent);
 		absEntityManager.persist(droitDroitsAgent);
 
-		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008767, "DEAB",
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008767, 1,
 				droitProfil.getIdDroitProfil());
 
 		List<DroitsAgent> resultSansService = repository.getListOfAgentsToInputOrApprove(9008767, null,
@@ -834,7 +834,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008768);
-		agent.setCodeService("TEST");
+		agent.setIdServiceADS(1);
 		agent.setLibelleService("DASP Pôle Administratif et test");
 		agent.setDateModification(new Date());
 		agent.setDroitDroitsAgent(droitDroitsAgents);
@@ -845,7 +845,7 @@ public class AccessRightsRepositoryTest {
 		assertNotNull(result);
 		assertEquals(d, result.getDateModification());
 		for (DroitDroitsAgent ddaResult : result.getDroitDroitsAgent()) {
-			assertEquals("TEST", ddaResult.getDroitsAgent().getCodeService());
+			assertEquals("TEST", ddaResult.getDroitsAgent().getIdServiceADS());
 			assertEquals("DASP Pôle Administratif et test", ddaResult.getDroitsAgent().getLibelleService());
 		}
 
@@ -871,7 +871,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008767);
-		agent.setCodeService("DEAB");
+		agent.setIdServiceADS(1);
 		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 		agent.setDroitDroitsAgent(droitDroitsAgents);
@@ -1098,7 +1098,8 @@ public class AccessRightsRepositoryTest {
 	public void getApprobateurOfAgent_ReturnResult() {
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
+		;
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1149,7 +1150,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1197,7 +1198,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1245,7 +1246,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1293,7 +1294,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1341,7 +1342,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1404,7 +1405,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1466,7 +1467,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008778);
-		agent.setCodeService("DEAB");
+		agent.setIdServiceADS(1);
 		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 
@@ -1501,7 +1502,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008778);
-		agent.setCodeService("DEAB");
+		agent.setIdServiceADS(1);
 		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 
@@ -1535,7 +1536,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008778);
-		agent.setCodeService("DEAB");
+		agent.setIdServiceADS(1);
 		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 
@@ -1546,7 +1547,7 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dda);
 
-		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, "DEAB");
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, 1);
 
 		assertEquals(1, result.size());
 		assertEquals("9008778", result.get(0).getIdAgent().toString());
@@ -1570,7 +1571,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008778);
-		agent.setCodeService("DEAB");
+		agent.setIdServiceADS(1);
 		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 
@@ -1581,7 +1582,7 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dda);
 
-		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, "TEST");
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, 2);
 
 		assertEquals(0, result.size());
 
@@ -1595,7 +1596,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1643,7 +1644,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1742,7 +1743,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1842,7 +1843,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setCodeService("DCCB");
+		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
 		da.setLibelleService("SED");
 
@@ -1989,7 +1990,7 @@ public class AccessRightsRepositoryTest {
 	public void getDroitsAgentByService_ReturnNull() {
 
 		// When
-		List<DroitsAgent> result = repository.getDroitsAgentByService("code");
+		List<DroitsAgent> result = repository.getDroitsAgentByService(1);
 
 		// Then
 		assertNotNull(result);
@@ -2003,11 +2004,11 @@ public class AccessRightsRepositoryTest {
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005138);
 		da.setLibelleService("TEST");
-		da.setCodeService("code");
+		da.setIdServiceADS(1);
 		absEntityManager.persist(da);
 
 		// When
-		List<DroitsAgent> result = repository.getDroitsAgentByService("code");
+		List<DroitsAgent> result = repository.getDroitsAgentByService(1);
 
 		// Then
 		assertEquals(1, result.size());

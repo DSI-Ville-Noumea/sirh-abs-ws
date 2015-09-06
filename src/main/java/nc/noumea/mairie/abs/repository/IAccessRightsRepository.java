@@ -31,9 +31,9 @@ public interface IAccessRightsRepository {
 
 	List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur);
 
-	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService, Integer idDroitProfil);
+	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, Integer idServiceADS, Integer idDroitProfil);
 
-	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
+	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, Integer idServiceADS);
 
 	void removeEntity(Object obj);
 
@@ -49,7 +49,7 @@ public interface IAccessRightsRepository {
 
 	DroitsAgent getDroitsAgent(Integer idAgent);
 
-	List<DroitsAgent> getDroitsAgentByService(String codeService);
+	List<DroitsAgent> getDroitsAgentByService(Integer idServiceADS);
 
 	DroitProfil getDroitProfilApprobateur(Integer idAgentApprobateur);
 
@@ -63,14 +63,11 @@ public interface IAccessRightsRepository {
 
 	List<DroitProfil> getDroitProfilByAgentAndLibelle(Integer idAgent, String libelleProfil);
 
-	List<DroitsAgent> getListOfAgentsForListDemandes(List<Integer> idAgent,
-			String codeService);
+	List<DroitsAgent> getListOfAgentsForListDemandes(List<Integer> idAgent, Integer idServiceADS);
 
 	List<DroitsAgent> getListeActeursOfAgent(Integer idAgent);
 
-	DroitProfil getUserOperateurOfApprobateur(Integer idAgentApprobateur,
-			Integer idAgent);
+	DroitProfil getUserOperateurOfApprobateur(Integer idAgentApprobateur, Integer idAgent);
 
-	DroitProfil getUserViseurOfApprobateur(Integer idAgentApprobateur,
-			Integer idAgent);
+	DroitProfil getUserViseurOfApprobateur(Integer idAgentApprobateur, Integer idAgent);
 }

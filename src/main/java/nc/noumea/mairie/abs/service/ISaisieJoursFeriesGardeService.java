@@ -9,7 +9,8 @@ import nc.noumea.mairie.abs.dto.SaisieGardeDto;
 
 public interface ISaisieJoursFeriesGardeService {
 
-	SaisieGardeDto getListAgentsWithJoursFeriesEnGarde(Integer idAgent, String codeService, Date dateDebut, Date dateFin);
+	SaisieGardeDto getListAgentsWithJoursFeriesEnGarde(Integer idAgent, Integer idServiveADS, Date dateDebut,
+			Date dateFin);
 
 	ReturnMessageDto setListAgentsWithJoursFeriesEnGarde(Integer idAgent, List<AgentJoursFeriesGardeDto> listDto,
 			Date dateDebut, Date dateFin);

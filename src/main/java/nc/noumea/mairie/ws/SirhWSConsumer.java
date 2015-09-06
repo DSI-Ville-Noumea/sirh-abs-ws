@@ -8,12 +8,11 @@ import java.util.Map;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.dto.ServiceDto;
-import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +38,8 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhListPAPourAlimAutoCongesAnnuelsUrl = "absences/listPAPourAlimAutoCongesAnnuels";
 	private static final String sirhListPAByAgentUrl = "absences/listPAByAgentSansFuture";
 	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
-	private static final String sirhAgentDirectionUrl = "agents/direction";
 	private static final String isPaieEnCoursUrl = "utils/isPaieEnCours";
-	private static final String sirhSubServiceOfServiceUrl = "services/sousServices";
+	private static final String sirhAgentDirectionUrl = "agents/direction";
 
 	@Override
 	public AgentWithServiceDto getAgentService(Integer idAgent, Date date) {
@@ -60,6 +58,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		return readResponse(AgentWithServiceDto.class, res, url);
 	}
+
 
 	@Override
 	public ReturnMessageDto isUtilisateurSIRH(Integer idAgent) {
@@ -164,23 +163,6 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public SirhWsServiceDto getAgentDirection(Integer idAgent, Date date) {
-
-		String url = String.format(sirhWsBaseUrl + sirhAgentDirectionUrl);
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("idAgent", String.valueOf(idAgent));
-		if (date != null) {
-			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
-			parameters.put("dateAffectation", sf.format(date));
-		}
-
-		ClientResponse res = createAndFireGetRequest(parameters, url);
-
-		return readResponse(SirhWsServiceDto.class, res, url);
-	}
-
-	@Override
 	public ReturnMessageDto isPaieEnCours() {
 		String url = String.format(sirhWsBaseUrl + isPaieEnCoursUrl);
 		Map<String, String> parameters = new HashMap<String, String>();
@@ -188,17 +170,6 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(ReturnMessageDto.class, res, url);
-	}
-
-	@Override
-	public List<ServiceDto> getSubServiceOfService(String codeService) {
-		String url = String.format(sirhWsBaseUrl + sirhSubServiceOfServiceUrl);
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("codeService", codeService);
-
-		ClientResponse res = createAndFireGetRequest(parameters, url);
-		return readResponseAsList(ServiceDto.class, res, url);
 	}
 
 	@Override
@@ -226,5 +197,22 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponseAsList(InfosAlimAutoCongesAnnuelsDto.class, res, url);
+	}
+	
+	@Override
+	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
+
+		String url = String.format(sirhWsBaseUrl + sirhAgentDirectionUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		if (date != null) {
+			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+			parameters.put("dateAffectation", sf.format(date));
+		}
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(EntiteDto.class, res, url);
 	}
 }

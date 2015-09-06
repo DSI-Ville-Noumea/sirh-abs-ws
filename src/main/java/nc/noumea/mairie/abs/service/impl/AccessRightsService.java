@@ -2,7 +2,6 @@ package nc.noumea.mairie.abs.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -20,16 +19,16 @@ import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.ApprobateurDto;
+import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.dto.ServiceDto;
-import nc.noumea.mairie.abs.dto.SirhWsServiceDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
+import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -57,6 +56,9 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private IAgentService agentService;
+
+	@Autowired
+	protected IAdsWSConsumer adsWsConsumer;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -93,9 +95,9 @@ public class AccessRightsService implements IAccessRightsService {
 			if (result.isMajSolde()) {
 				boolean contientAgentDPM = false;
 				for (DroitDroitsAgent droitAg : da.getDroitDroitsAgent()) {
-					SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(droitAg.getDroitsAgent().getIdAgent(),
-							new Date());
-					if (service != null && null != service.getSigle() && service.getSigle().toUpperCase().equals("DPM")) {
+					EntiteDto direction = sirhWSConsumer.getAgentDirection(droitAg.getDroitsAgent().getIdAgent(), null);
+					if (direction != null && null != direction.getSigle()
+							&& direction.getSigle().toUpperCase().equals("DPM")) {
 						contientAgentDPM = true;
 						break;
 					}
@@ -115,7 +117,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ApprobateurDto> getApprobateurs(Integer idAgent, String codeService) {
+	public List<ApprobateurDto> getApprobateurs(Integer idAgent, Integer idServiceADS) {
 		List<ApprobateurDto> agentDtos = new ArrayList<ApprobateurDto>();
 		List<Droit> listeDroit = new ArrayList<Droit>();
 		if (idAgent != null) {
@@ -126,21 +128,25 @@ public class AccessRightsService implements IAccessRightsService {
 		} else {
 			listeDroit = accessRightsRepository.getAgentsApprobateurs();
 		}
-		List<String> listeSouService = new ArrayList<>();
-		if (codeService != null) {
+		List<Integer> listeSouService = new ArrayList<>();
+
+		if (idServiceADS != null) {
 			// on charge la liste des sous-services du service
-			List<ServiceDto> liste = sirhWSConsumer.getSubServiceOfService(codeService);
-			for (ServiceDto s : liste) {
-				listeSouService.add(s.getService());
+			List<EntiteDto> liste = new ArrayList<EntiteDto>();
+			EntiteDto entiteParent = adsWsConsumer.getEntiteWithChildrenByIdEntite(idServiceADS);
+			liste.addAll(entiteParent.getEnfants());
+
+			for (EntiteDto s : liste) {
+				listeSouService.add(s.getIdEntite());
 			}
-			listeSouService.add(codeService);
+			listeSouService.add(idServiceADS);
 		}
 
 		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			if (codeService != null) {
-				if (agentServiceDto != null && listeSouService.contains(agentServiceDto.getCodeService())) {
+			if (idServiceADS != null) {
+				if (agentServiceDto != null && listeSouService.contains(agentServiceDto.getIdServiceADS())) {
 					ApprobateurDto agentDto = new ApprobateurDto();
 					agentDto.setApprobateur(agentServiceDto);
 					InputterDto deleg = getDelegator(da.getIdAgent());
@@ -673,7 +679,7 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent) {
+	public List<AgentDto> getAgentsToApproveOrInputByAgent(Integer idAgentApprobateur, Integer idAgent) {
 		return getAgentsToApproveOrInput(idAgentApprobateur, idAgent, null, ProfilEnum.APPROBATEUR);
 	}
 
@@ -684,8 +690,8 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur,
-			String codeService) {
-		return getAgentsToApproveOrInput(idAgentApprobateur, idAgentOperateur, codeService, ProfilEnum.OPERATEUR);
+			Integer idServiceADS) {
+		return getAgentsToApproveOrInput(idAgentApprobateur, idAgentOperateur, idServiceADS, ProfilEnum.OPERATEUR);
 	}
 
 	/**
@@ -702,8 +708,8 @@ public class AccessRightsService implements IAccessRightsService {
 	 * Retrieves the agent an approbator is set to Approve or an Operator is set
 	 * to Input. This service also filters by service
 	 */
-	protected List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent, String codeService,
-			ProfilEnum profil) {
+	protected List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent,
+			Integer idServiceADS, ProfilEnum profil) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 		List<DroitProfil> listDp = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgent);
@@ -727,7 +733,7 @@ public class AccessRightsService implements IAccessRightsService {
 			return result;
 		}
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService,
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceADS,
 				dp.getIdDroitProfil())) {
 			AgentDto agDto = new AgentDto();
 			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
@@ -790,7 +796,8 @@ public class AccessRightsService implements IAccessRightsService {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		List<DroitProfil> listDroitsProfilApprobateur = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgentApprobateur);
+		List<DroitProfil> listDroitsProfilApprobateur = accessRightsRepository.getDroitProfilByAgent(
+				idAgentApprobateur, idAgentApprobateur);
 		List<DroitProfil> listDroitsProfil = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur,
 				idAgentOperateurOrViseur);
 
@@ -802,7 +809,7 @@ public class AccessRightsService implements IAccessRightsService {
 				break;
 			}
 		}
-		
+
 		// #15688 bug cumul de rôles sous un même approbateur
 		DroitProfil droitProfilOperateurOrViseur = null;
 		for (DroitProfil droitProfil : listDroitsProfil) {
@@ -918,7 +925,9 @@ public class AccessRightsService implements IAccessRightsService {
 
 			newDroitAgent.setDateModification(helperService.getCurrentDate());
 			newDroitAgent.setLibelleService(dto.getService());
-			newDroitAgent.setCodeService(dto.getCodeService());
+			newDroitAgent.setIdServiceADS(dto.getIdServiceADS());
+			EntiteDto serv = adsWsConsumer.getInfoSiservByIdEntite(dto.getIdServiceADS());
+			newDroitAgent.setCodeService(serv == null ? null : serv.getCodeServi());
 
 			existingAgent = new DroitDroitsAgent();
 			existingAgent.setDroit(droitProfilApprobateur.getDroit());
@@ -1041,21 +1050,21 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
+	public List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
 
-		List<ServiceDto> result = new ArrayList<ServiceDto>();
+		List<EntiteDto> result = new ArrayList<EntiteDto>();
 
-		List<String> codeServices = new ArrayList<String>();
+		List<Integer> codeServices = new ArrayList<Integer>();
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, null)) {
 
-			if (codeServices.contains(da.getCodeService()))
+			if (codeServices.contains(da.getIdServiceADS()))
 				continue;
 
-			codeServices.add(da.getCodeService());
-			ServiceDto svDto = new ServiceDto();
-			svDto.setCodeService(da.getCodeService());
-			svDto.setService(da.getLibelleService());
+			codeServices.add(da.getIdServiceADS());
+			EntiteDto svDto = new EntiteDto();
+			svDto.setIdEntite(da.getIdServiceADS());
+			svDto.setLabel(da.getLibelleService());
 			result.add(svDto);
 		}
 
@@ -1067,13 +1076,13 @@ public class AccessRightsService implements IAccessRightsService {
 					for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(
 							idApprobateurOfDelegataire, null)) {
 
-						if (codeServices.contains(da.getCodeService()))
+						if (codeServices.contains(da.getIdServiceADS()))
 							continue;
 
-						codeServices.add(da.getCodeService());
-						ServiceDto svDto = new ServiceDto();
-						svDto.setCodeService(da.getCodeService());
-						svDto.setService(da.getLibelleService());
+						codeServices.add(da.getIdServiceADS());
+						EntiteDto svDto = new EntiteDto();
+						svDto.setIdEntite(da.getIdServiceADS());
+						svDto.setLabel(da.getLibelleService());
 						result.add(svDto);
 					}
 				}
@@ -1089,11 +1098,11 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService) {
+	public List<AgentDto> getAgentsToApproveOrInputByService(Integer idAgent, Integer idServiceADS) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceADS)) {
 			if (isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();
 				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
@@ -1109,7 +1118,7 @@ public class AccessRightsService implements IAccessRightsService {
 		if (idsApprobateurOfDelegataire != null) {
 			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
 				for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(
-						idApprobateurOfDelegataire, codeService)) {
+						idApprobateurOfDelegataire, idServiceADS)) {
 					if (isContainAgentInList(result, da)) {
 						AgentDto agDto = new AgentDto();
 						AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
@@ -1337,20 +1346,20 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public List<Integer> getListAgentByService(String codeService) {
+	public List<Integer> getListAgentByService(Integer idServiceADS) {
 		List<Integer> result = new ArrayList<Integer>();
-		for (DroitsAgent da : accessRightsRepository.getDroitsAgentByService(codeService)) {
+		for (DroitsAgent da : accessRightsRepository.getDroitsAgentByService(idServiceADS)) {
 			result.add(da.getIdAgent());
 		}
 		return result;
 	}
 
 	@Override
-	public List<ServiceDto> getAgentsServicesForOperateur(Integer idAgentOperateur) {
+	public List<EntiteDto> getAgentsServicesForOperateur(Integer idAgentOperateur) {
 
-		List<ServiceDto> result = new ArrayList<ServiceDto>();
+		List<EntiteDto> result = new ArrayList<EntiteDto>();
 
-		List<String> codeServices = new ArrayList<String>();
+		List<Integer> codeServices = new ArrayList<Integer>();
 
 		List<DroitProfil> listeDroitProfilOperateur = accessRightsRepository.getDroitProfilByAgentAndLibelle(
 				idAgentOperateur, ProfilEnum.OPERATEUR.toString());
@@ -1360,13 +1369,13 @@ public class AccessRightsService implements IAccessRightsService {
 				if (!accessRightsRepository.isOperateurOfAgent(idAgentOperateur, da.getIdAgent())) {
 					continue;
 				}
-				if (codeServices.contains(da.getCodeService()))
+				if (codeServices.contains(da.getIdServiceADS()))
 					continue;
 
-				codeServices.add(da.getCodeService());
-				ServiceDto svDto = new ServiceDto();
-				svDto.setCodeService(da.getCodeService());
-				svDto.setService(da.getLibelleService());
+				codeServices.add(da.getIdServiceADS());
+				EntiteDto svDto = new EntiteDto();
+				svDto.setIdEntite(da.getIdServiceADS());
+				svDto.setLabel(da.getLibelleService());
 				result.add(svDto);
 			}
 		}

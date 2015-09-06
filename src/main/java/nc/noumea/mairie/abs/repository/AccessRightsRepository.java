@@ -160,47 +160,48 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService) {
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, Integer idServiceADS) {
 
 		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
-				codeService == null || "".equals(codeService) ? "getListOfAgentsToInputOrApproveWithoutProfil"
+				idServiceADS == null ? "getListOfAgentsToInputOrApproveWithoutProfil"
 						: "getListOfAgentsToInputOrApproveByServiceWithoutProfil", DroitsAgent.class);
 
 		q.setParameter("idAgent", idAgent);
 
-		if (codeService != null && !"".equals(codeService))
-			q.setParameter("codeService", codeService);
+		if (idServiceADS != null)
+			q.setParameter("idServiceADS", idServiceADS);
 
 		return q.getResultList();
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsForListDemandes(List<Integer> idAgent, String codeService) {
+	public List<DroitsAgent> getListOfAgentsForListDemandes(List<Integer> idAgent, Integer idServiceADS) {
 
 		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
-				codeService == null || "".equals(codeService) ? "getListOfAgentsToInputOrApproveWithProfil"
+				idServiceADS == null ? "getListOfAgentsToInputOrApproveWithProfil"
 						: "getListOfAgentsToInputOrApproveByServiceWithProfil", DroitsAgent.class);
 
 		q.setParameter("idAgent", idAgent);
 
-		if (codeService != null && !"".equals(codeService))
-			q.setParameter("codeService", codeService);
+		if (idServiceADS != null)
+			q.setParameter("idServiceADS", idServiceADS);
 
 		return q.getResultList();
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService, Integer idDroitProfil) {
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, Integer idServiceADS,
+			Integer idDroitProfil) {
 
 		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
-				codeService == null ? "getListOfAgentsToInputOrApprove" : "getListOfAgentsToInputOrApproveByService",
+				idServiceADS == null ? "getListOfAgentsToInputOrApprove" : "getListOfAgentsToInputOrApproveByService",
 				DroitsAgent.class);
 
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idDroitProfil", idDroitProfil);
-
-		if (codeService != null)
-			q.setParameter("codeService", codeService);
+		
+		if (idServiceADS != null)
+			q.setParameter("idServiceADS", idServiceADS);
 
 		return q.getResultList();
 	}
@@ -476,9 +477,9 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public List<DroitsAgent> getDroitsAgentByService(String codeService) {
+	public List<DroitsAgent> getDroitsAgentByService(Integer idServiceADS) {
 		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery("getDroitsAgentByService", DroitsAgent.class);
-		q.setParameter("codeService", codeService);
+		q.setParameter("idServiceADS", idServiceADS);
 
 		return q.getResultList();
 	}

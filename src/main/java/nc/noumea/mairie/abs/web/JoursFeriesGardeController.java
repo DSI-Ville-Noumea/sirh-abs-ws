@@ -32,16 +32,16 @@ public class JoursFeriesGardeController {
 	@RequestMapping(value = "/getListAgentsWithJoursFeriesEnGarde", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public SaisieGardeDto getListAgentsWithJoursFeriesEnGarde(
 			@RequestParam(value = "idAgent", required = true) Integer idAgent,
-			@RequestParam(value = "codeService", required = false) String codeService,
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS,
 			@RequestParam(value = "dateDebut", required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDebut,
 			@RequestParam(value = "dateFin", required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date dateFin) {
 
 		logger.debug(
-				"entered GET [motifCompteur/getListAgentsWithJoursFeriesEnGarde] => getListAgentsWithJoursFeriesEnGarde "
-						+ "with parameter idAgent = {}, codeService = {}, dateDebut = {}, dateFin = {}, ", idAgent,
-				codeService, dateDebut, dateFin);
+				"entered GET [joursFeriesGarde/getListAgentsWithJoursFeriesEnGarde] => getListAgentsWithJoursFeriesEnGarde "
+						+ "with parameter idAgent = {}, idServiceADS = {}, dateDebut = {}, dateFin = {}, ", idAgent,
+				idServiceADS, dateDebut, dateFin);
 
-		return saisieJoursFeriesGardeService.getListAgentsWithJoursFeriesEnGarde(idAgent, codeService, dateDebut,
+		return saisieJoursFeriesGardeService.getListAgentsWithJoursFeriesEnGarde(idAgent, idServiceADS, dateDebut,
 				dateFin);
 	}
 
@@ -54,7 +54,7 @@ public class JoursFeriesGardeController {
 			@RequestBody(required = true) List<AgentJoursFeriesGardeDto> listDto) {
 
 		logger.debug(
-				"entered POST [motifCompteur/setListAgentsWithJoursFeriesEnGarde] => setListAgentsWithJoursFeriesEnGarde"
+				"entered POST [joursFeriesGarde/setListAgentsWithJoursFeriesEnGarde] => setListAgentsWithJoursFeriesEnGarde"
 						+ "with parameter idAgent = {}, dateDebut = {}, dateFin = {}, ", idAgent, dateDebut, dateFin);
 
 		return saisieJoursFeriesGardeService.setListAgentsWithJoursFeriesEnGarde(idAgent, listDto, dateDebut, dateFin);
