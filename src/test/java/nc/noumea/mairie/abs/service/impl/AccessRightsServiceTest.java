@@ -581,8 +581,17 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(new ArrayList<Droit>());
 
+		Date currentDate = new DateTime(2013, 4, 9, 12, 9, 34).toDate();
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
 		// When
 		List<ApprobateurDto> result = service.getApprobateurs(null, null);
@@ -619,6 +628,12 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentService(9005138, currentDate)).thenReturn(agDto1);
 		Mockito.when(wsMock.getAgentService(9003041, currentDate)).thenReturn(null);
+		
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDto1);
+		
+		Mockito.when(wsMock.getListAgentsWithService(Arrays.asList(9005138, 9003041), 
+				currentDate)).thenReturn(listAgentsServiceDto);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(listeDroits);
@@ -670,7 +685,14 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentService(9005138, currentDate)).thenReturn(agDto1);
 		Mockito.when(wsMock.getAgentService(9003041, currentDate)).thenReturn(agDto2);
-
+		
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDto1);
+		listAgentsServiceDto.add(agDto2);
+		
+		Mockito.when(wsMock.getListAgentsWithService(Arrays.asList(9005138, 9003041), 
+				currentDate)).thenReturn(listAgentsServiceDto);
+		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(listeDroits);
 

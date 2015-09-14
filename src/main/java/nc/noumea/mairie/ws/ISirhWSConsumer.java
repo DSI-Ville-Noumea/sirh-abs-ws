@@ -34,4 +34,7 @@ public interface ISirhWSConsumer {
 	List<InfosAlimAutoCongesAnnuelsDto> getListPAByAgentSansPAFuture(Integer idAgent, Date dateFin);
 
 	EntiteDto getAgentDirection(Integer idAgent, Date date);
+
+	List<AgentWithServiceDto> getListAgentsWithService(
+			List<Integer> listAgentDto, Date date);
 }
