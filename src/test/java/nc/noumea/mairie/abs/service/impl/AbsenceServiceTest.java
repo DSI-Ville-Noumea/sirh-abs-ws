@@ -12721,6 +12721,7 @@ public class AbsenceServiceTest {
 
 		AgentWeekRecup c2 = new AgentWeekRecup();
 		c2.setIdAgent(idAgent);
+		c2.setDateDay(new Date());
 		list.add(c2);
 
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();

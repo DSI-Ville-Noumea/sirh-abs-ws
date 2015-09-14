@@ -2114,6 +2114,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoRecup(Integer convertedIdAgent) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
 		for (AgentWeekRecup histo : recuperationRepository.getListeAlimAutoRecupByAgent(convertedIdAgent)) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
@@ -2125,6 +2126,7 @@ public class AbsenceService implements IAbsenceService {
 			mois.setAgent(agDto);
 			mois.setDateModification(histo.getLastModification());
 			mois.setDateMois(histo.getDateMonday());
+			mois.setStatus("Pointage du "+sdf.format(histo.getDateDay()));
 			mois.setNbJours((double) histo.getMinutes());
 			result.add(mois);
 		}
@@ -2134,6 +2136,7 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoReposComp(Integer convertedIdAgent) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
 		for (AgentWeekReposComp histo : reposCompensateurRepository.getListeAlimAutoReposCompByAgent(convertedIdAgent)) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
