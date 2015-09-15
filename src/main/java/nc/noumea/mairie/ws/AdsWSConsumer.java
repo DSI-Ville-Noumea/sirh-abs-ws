@@ -36,6 +36,8 @@ public class AdsWSConsumer extends BaseWsConsumer implements IAdsWSConsumer {
 		String url = String.format(adsWsBaseUrl + sirhAdsGetEntiteUrl + idEntite.toString()
 				+ sirhAdsGetEntiteWithWildrenUrl);
 
+		logger.debug("Call ADS : " + url);
+
 		Map<String, String> parameters = new HashMap<String, String>();
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);

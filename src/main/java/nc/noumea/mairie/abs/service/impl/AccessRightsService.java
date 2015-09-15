@@ -92,12 +92,21 @@ public class AccessRightsService implements IAccessRightsService {
 			// seuls les operateurs de la DPM peuvent saisir les jours de repos
 			// seuls les operateurs peuvent mettre a jour les compteurs (solde)
 			// on recup les agents de l'operateur
+			List<Integer> listAgentDto = new ArrayList<Integer>();
+			for (DroitDroitsAgent droitAg : da.getDroitDroitsAgent()) {
+				listAgentDto.add(droitAg.getDroitsAgent().getIdAgent());
+			}
+
+			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, 
+					null);
+			
 			if (result.isMajSolde()) {
 				boolean contientAgentDPM = false;
 				for (DroitDroitsAgent droitAg : da.getDroitDroitsAgent()) {
-					EntiteDto direction = sirhWSConsumer.getAgentDirection(droitAg.getDroitsAgent().getIdAgent(), null);
-					if (direction != null && null != direction.getSigle()
-							&& direction.getSigle().toUpperCase().equals("DPM")) {
+					AgentWithServiceDto agentServiceDto = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, droitAg.getDroitsAgent().getIdAgent());
+					if (null != agentServiceDto 
+							&& null != agentServiceDto.getSigleDirection()
+							&& agentServiceDto.getSigleDirection().toUpperCase().equals("DPM")) {
 						contientAgentDPM = true;
 						break;
 					}

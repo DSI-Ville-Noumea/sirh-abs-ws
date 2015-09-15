@@ -387,16 +387,33 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		if (listeSansFiltre.size() == 0)
 			return listeDemandeDto;
 
-		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
+		
+		List<Integer> listAgentDto = new ArrayList<Integer>();
+		for(Demande d : listeSansFiltre) {
+			if(!listAgentDto.contains(d.getIdAgent())) {
+				listAgentDto.add(d.getIdAgent());
+			}
+			if(!listAgentDto.contains(d.getLatestEtatDemande().getIdAgent())) {
+				listAgentDto.add(d.getLatestEtatDemande().getIdAgent());
+			}
+		}
+		
+		// dans un souci de performances, on n affichera toçujours le service de l agent a la date du jour
+		// ce qui permet de ne faire qu un seul appel a SIRH-WS
+		// et non plus un appel par demande (avec la date de la demande)
+		List<AgentWithServiceDto> listAgentsExistants = sirhWSConsumer.getListAgentsWithService(listAgentDto, 
+				helperService.getCurrentDate());
 
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
-				AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, d.getIdAgent(),
-						d.getDateDebut());
+				AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
 				if (agentOptimise != null) {
 					DemandeDto dto = new DemandeDto(d, agentOptimise);
-					dto.updateEtat(d.getLatestEtatDemande(), agentService.getAgentOptimise(listAgentsExistants, d
-							.getLatestEtatDemande().getIdAgent(), d.getLatestEtatDemande().getDate()), d.getType()
+					dto.updateEtat(d.getLatestEtatDemande(), 
+							getAgentOfListAgentWithServiceDto(
+									listAgentsExistants, d
+									.getLatestEtatDemande().getIdAgent()), 
+								d.getType()
 							.getGroupe());
 					if (!listeDemandeDto.contains(dto)) {
 						listeDemandeDto.add(dto);
@@ -414,12 +431,14 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				String dateEtatSDF = sdf.format(d.getLatestEtatDemande().getDate());
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
-					AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants,
-							d.getIdAgent(), d.getDateDebut());
+					AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
 					if (agentOptimise != null) {
 						DemandeDto dto = new DemandeDto(d, agentOptimise);
-						dto.updateEtat(d.getLatestEtatDemande(), agentService.getAgentOptimise(listAgentsExistants, d
-								.getLatestEtatDemande().getIdAgent(), d.getLatestEtatDemande().getDate()), d.getType()
+						dto.updateEtat(d.getLatestEtatDemande(), 
+								getAgentOfListAgentWithServiceDto(
+									listAgentsExistants, d
+									.getLatestEtatDemande().getIdAgent()), 
+								d.getType()
 								.getGroupe());
 						if (!listeDemandeDto.contains(dto)) {
 							listeDemandeDto.add(dto);
@@ -433,12 +452,14 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		// ON TRAITE L'ETAT
 		if (etats != null) {
 			for (Demande d : listeSansFiltre) {
-				AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, d.getIdAgent(),
-						d.getDateDebut());
+				AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
 				if (agentOptimise != null) {
 					DemandeDto dto = new DemandeDto(d, agentOptimise);
-					dto.updateEtat(d.getLatestEtatDemande(), agentService.getAgentOptimise(listAgentsExistants, d
-							.getLatestEtatDemande().getIdAgent(), d.getLatestEtatDemande().getDate()), d.getType()
+					dto.updateEtat(d.getLatestEtatDemande(), 
+							getAgentOfListAgentWithServiceDto(
+								listAgentsExistants, d
+								.getLatestEtatDemande().getIdAgent()), 
+							d.getType()
 							.getGroupe());
 					if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
 							.getCodeEtat()))) {
@@ -453,6 +474,19 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		}
 
 		return listeDemandeDto;
+	}
+	
+	private AgentWithServiceDto getAgentOfListAgentWithServiceDto(List<AgentWithServiceDto> listAgents, Integer idAgent) {
+		
+		if(null != listAgents
+				&& null != idAgent) {
+			for(AgentWithServiceDto agent : listAgents) {
+				if(agent.getIdAgent().equals(idAgent)){
+					return agent;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
