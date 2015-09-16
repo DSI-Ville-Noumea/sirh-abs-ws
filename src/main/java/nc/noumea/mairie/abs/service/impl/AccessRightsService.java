@@ -22,6 +22,7 @@ import nc.noumea.mairie.abs.dto.ApprobateurDto;
 import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.InputterDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.StatutEntiteEnum;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
@@ -97,16 +98,13 @@ public class AccessRightsService implements IAccessRightsService {
 				listAgentDto.add(droitAg.getDroitsAgent().getIdAgent());
 			}
 
-			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, 
-					null);
-			
+			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, null);
+
 			if (result.isMajSolde()) {
 				boolean contientAgentDPM = false;
 				for (DroitDroitsAgent droitAg : da.getDroitDroitsAgent()) {
 					AgentWithServiceDto agentServiceDto = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, droitAg.getDroitsAgent().getIdAgent());
-					if (null != agentServiceDto 
-							&& null != agentServiceDto.getSigleDirection()
-							&& agentServiceDto.getSigleDirection().toUpperCase().equals("DPM")) {
+					if (null != agentServiceDto && null != agentServiceDto.getSigleDirection() && agentServiceDto.getSigleDirection().toUpperCase().equals("DPM")) {
 						contientAgentDPM = true;
 						break;
 					}
@@ -127,7 +125,7 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<ApprobateurDto> getApprobateurs(Integer idAgent, Integer idServiceADS) {
-		
+
 		List<ApprobateurDto> agentDtos = new ArrayList<ApprobateurDto>();
 		List<Droit> listeDroit = new ArrayList<Droit>();
 		if (idAgent != null) {
@@ -151,14 +149,13 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			listeSouService.add(idServiceADS);
 		}
-		
+
 		List<Integer> listAgentDto = new ArrayList<Integer>();
-		for(Droit da : listeDroit) {
+		for (Droit da : listeDroit) {
 			listAgentDto.add(da.getIdAgent());
 		}
-		
-		List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, 
-				helperService.getCurrentDate());
+
+		List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate());
 
 		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
@@ -197,13 +194,12 @@ public class AccessRightsService implements IAccessRightsService {
 		Collections.sort(agentDtos, new ApprobateurDtoComparator());
 		return agentDtos;
 	}
-	
+
 	private AgentWithServiceDto getAgentOfListAgentWithServiceDto(List<AgentWithServiceDto> listAgents, Integer idAgent) {
-		
-		if(null != listAgents
-				&& null != idAgent) {
-			for(AgentWithServiceDto agent : listAgents) {
-				if(agent.getIdAgent().equals(idAgent)){
+
+		if (null != listAgents && null != idAgent) {
+			for (AgentWithServiceDto agent : listAgents) {
+				if (agent.getIdAgent().equals(idAgent)) {
 					return agent;
 				}
 			}
@@ -296,8 +292,7 @@ public class AccessRightsService implements IAccessRightsService {
 		return result;
 	}
 
-	private ArrayList<Droit> getOperateursOfApprobateur(Integer idAgentApprobateur,
-			List<Droit> droitSousAgentsByApprobateur) {
+	private ArrayList<Droit> getOperateursOfApprobateur(Integer idAgentApprobateur, List<Droit> droitSousAgentsByApprobateur) {
 		ArrayList<Droit> result = new ArrayList<Droit>();
 		for (Droit droit : droitSousAgentsByApprobateur) {
 			if (accessRightsRepository.isUserOperateurOfApprobateur(idAgentApprobateur, droit.getIdAgent())) {
@@ -416,9 +411,7 @@ public class AccessRightsService implements IAccessRightsService {
 		// on verifie que l agent n est pas deja operateur de l approbateur
 		if (accessRightsRepository.isUserOperateurOfApprobateur(idAgentAppro, operateurDto.getIdAgent())) {
 			logger.debug("L'agent {} est déjà opérateur de l'approbateur {}.", operateurDto.getIdAgent(), idAgentAppro);
-			result.getErrors().add(
-					String.format("L'agent [%d] est déjà opérateur de l'approbateur [%d].", operateurDto.getIdAgent(),
-							idAgentAppro));
+			result.getErrors().add(String.format("L'agent [%d] est déjà opérateur de l'approbateur [%d].", operateurDto.getIdAgent(), idAgentAppro));
 			return result;
 		}
 
@@ -435,13 +428,10 @@ public class AccessRightsService implements IAccessRightsService {
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		// on verifie que l agent est bien operateur de l approbateur
-		DroitProfil droitProfilOperateur = accessRightsRepository.getUserOperateurOfApprobateur(idAgentAppro,
-				operateurDto.getIdAgent());
+		DroitProfil droitProfilOperateur = accessRightsRepository.getUserOperateurOfApprobateur(idAgentAppro, operateurDto.getIdAgent());
 		if (null == droitProfilOperateur) {
 			logger.debug("L'agent {} n'est pas opérateur de l'approbateur {}.", operateurDto.getIdAgent(), idAgentAppro);
-			result.getErrors().add(
-					String.format("L'agent [%d] n'est pas opérateur de l'approbateur [%d].", operateurDto.getIdAgent(),
-							idAgentAppro));
+			result.getErrors().add(String.format("L'agent [%d] n'est pas opérateur de l'approbateur [%d].", operateurDto.getIdAgent(), idAgentAppro));
 			return result;
 		}
 
@@ -461,9 +451,7 @@ public class AccessRightsService implements IAccessRightsService {
 		// on verifie que l agent n est pas deja operateur de l approbateur
 		if (accessRightsRepository.isUserViseurOfApprobateur(idAgentAppro, viseurDto.getIdAgent())) {
 			logger.debug("L'agent {} est déjà viseur de l'approbateur {}.", viseurDto.getIdAgent(), idAgentAppro);
-			result.getErrors().add(
-					String.format("L'agent [%d] est déjà viseur de l'approbateur [%d].", viseurDto.getIdAgent(),
-							idAgentAppro));
+			result.getErrors().add(String.format("L'agent [%d] est déjà viseur de l'approbateur [%d].", viseurDto.getIdAgent(), idAgentAppro));
 			return result;
 		}
 
@@ -480,13 +468,10 @@ public class AccessRightsService implements IAccessRightsService {
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		// on verifie que l agent est bien operateur de l approbateur
-		DroitProfil droitProfilViseur = accessRightsRepository.getUserViseurOfApprobateur(idAgentAppro,
-				viseurDto.getIdAgent());
+		DroitProfil droitProfilViseur = accessRightsRepository.getUserViseurOfApprobateur(idAgentAppro, viseurDto.getIdAgent());
 		if (null == droitProfilViseur) {
 			logger.debug("L'agent {} n'est pas viseur de l'approbateur {}.", viseurDto.getIdAgent(), idAgentAppro);
-			result.getErrors().add(
-					String.format("L'agent [%d] n'est pas viseur de l'approbateur [%d].", viseurDto.getIdAgent(),
-							idAgentAppro));
+			result.getErrors().add(String.format("L'agent [%d] n'est pas viseur de l'approbateur [%d].", viseurDto.getIdAgent(), idAgentAppro));
 			return result;
 		}
 
@@ -495,8 +480,7 @@ public class AccessRightsService implements IAccessRightsService {
 		return result;
 	}
 
-	private void traiteViseurs(ViseursDto dto, ArrayList<Droit> originalViseurs, Integer idAgentAppro,
-			Droit droitApprobateur, ReturnMessageDto result) {
+	private void traiteViseurs(ViseursDto dto, ArrayList<Droit> originalViseurs, Integer idAgentAppro, Droit droitApprobateur, ReturnMessageDto result) {
 
 		for (AgentDto viseurDto : dto.getViseurs()) {
 
@@ -566,8 +550,7 @@ public class AccessRightsService implements IAccessRightsService {
 			accessRightsRepository.persisEntity(newViseur);
 	}
 
-	private void traiteOperateurs(InputterDto dto, ArrayList<Droit> originalOperateurs, Integer idAgentAppro,
-			Droit droitApprobateur, ReturnMessageDto result) {
+	private void traiteOperateurs(InputterDto dto, ArrayList<Droit> originalOperateurs, Integer idAgentAppro, Droit droitApprobateur, ReturnMessageDto result) {
 
 		for (AgentDto operateurDto : dto.getOperateurs()) {
 
@@ -594,8 +577,7 @@ public class AccessRightsService implements IAccessRightsService {
 		Droit droitAppro = accessRightsRepository.getAgentAccessRights(idAgentAppro);
 		for (Droit droitOperateurToDelete : originalOperateurs) {
 			for (DroitProfil droitProfilOperateur : droitOperateurToDelete.getDroitProfils()) {
-				if (droitProfilOperateur.getDroitApprobateur().getIdDroit().equals(droitAppro.getIdDroit())
-						&& droitProfilOperateur.getProfil().getLibelle().equals(ProfilEnum.OPERATEUR.toString())) {
+				if (droitProfilOperateur.getDroitApprobateur().getIdDroit().equals(droitAppro.getIdDroit()) && droitProfilOperateur.getProfil().getLibelle().equals(ProfilEnum.OPERATEUR.toString())) {
 					if (!dpASupp.contains(droitProfilOperateur)) {
 						dpASupp.add(droitProfilOperateur);
 					}
@@ -639,8 +621,7 @@ public class AccessRightsService implements IAccessRightsService {
 			accessRightsRepository.persisEntity(newOperateur);
 	}
 
-	private void traiteDelegataire(InputterDto dto, DroitProfil delegataire, Droit droitApprobateur,
-			ReturnMessageDto result) {
+	private void traiteDelegataire(InputterDto dto, DroitProfil delegataire, Droit droitApprobateur, ReturnMessageDto result) {
 
 		// Si le nouveau délégataire est null
 		if (dto.getDelegataire() == null) {
@@ -660,8 +641,7 @@ public class AccessRightsService implements IAccessRightsService {
 		// on verifie que l idAgent existe
 		if (null == ag) {
 			logger.warn("L'agent délégataire {} n'existe pas.", dto.getDelegataire().getIdAgent());
-			result.getErrors().add(
-					String.format("L'agent délégataire [%d] n'existe pas.", dto.getDelegataire().getIdAgent()));
+			result.getErrors().add(String.format("L'agent délégataire [%d] n'existe pas.", dto.getDelegataire().getIdAgent()));
 			return;
 
 		}
@@ -719,8 +699,7 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur,
-			Integer idServiceADS) {
+	public List<AgentDto> getAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur, Integer idServiceADS) {
 		return getAgentsToApproveOrInput(idAgentApprobateur, idAgentOperateur, idServiceADS, ProfilEnum.OPERATEUR);
 	}
 
@@ -738,15 +717,13 @@ public class AccessRightsService implements IAccessRightsService {
 	 * Retrieves the agent an approbator is set to Approve or an Operator is set
 	 * to Input. This service also filters by service
 	 */
-	protected List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent,
-			Integer idServiceADS, ProfilEnum profil) {
+	protected List<AgentDto> getAgentsToApproveOrInput(Integer idAgentApprobateur, Integer idAgent, Integer idServiceADS, ProfilEnum profil) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 		List<DroitProfil> listDp = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgent);
 
 		if (listDp == null || listDp.isEmpty()) {
-			logger.warn("L'agent {} ne possède pas de DroitProfil associé à l'approbateur {}.", idAgent,
-					idAgentApprobateur);
+			logger.warn("L'agent {} ne possède pas de DroitProfil associé à l'approbateur {}.", idAgent, idAgentApprobateur);
 			return result;
 		}
 
@@ -758,13 +735,11 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 		}
 		if (null == dp) {
-			logger.warn("L'agent {} ne possède pas de rôle {} associé à l'approbateur {}.", idAgent, profil.toString(),
-					idAgentApprobateur);
+			logger.warn("L'agent {} ne possède pas de rôle {} associé à l'approbateur {}.", idAgent, profil.toString(), idAgentApprobateur);
 			return result;
 		}
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceADS,
-				dp.getIdDroitProfil())) {
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceADS, dp.getIdDroitProfil())) {
 			AgentDto agDto = new AgentDto();
 			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
 			if (null == ag) {
@@ -805,8 +780,7 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur,
-			List<AgentDto> agents) {
+	public ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents) {
 		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.OPERATEUR);
 	}
 
@@ -816,20 +790,16 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur,
-			List<AgentDto> agents) {
+	public ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents) {
 		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.VISEUR);
 	}
 
-	protected ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur,
-			List<AgentDto> agents, ProfilEnum profil) {
+	protected ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur, List<AgentDto> agents, ProfilEnum profil) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		List<DroitProfil> listDroitsProfilApprobateur = accessRightsRepository.getDroitProfilByAgent(
-				idAgentApprobateur, idAgentApprobateur);
-		List<DroitProfil> listDroitsProfil = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur,
-				idAgentOperateurOrViseur);
+		List<DroitProfil> listDroitsProfilApprobateur = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgentApprobateur);
+		List<DroitProfil> listDroitsProfil = accessRightsRepository.getDroitProfilByAgent(idAgentApprobateur, idAgentOperateurOrViseur);
 
 		// #16432 bug cumul de rôles de l approbateur
 		DroitProfil droitProfilApprobateur = null;
@@ -849,18 +819,15 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 		}
 		if (null == droitProfilOperateurOrViseur) {
-			logger.warn(
-					"Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur {} car il n'est pas un opérateur ou viseur de l'agent {}.",
-					idAgentOperateurOrViseur, idAgentApprobateur);
-			result.getErrors()
-					.add(String
-							.format("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [%d] car il n'est pas un opérateur ou viseur de l'agent [%d].",
-									idAgentOperateurOrViseur, idAgentApprobateur));
+			logger.warn("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur {} car il n'est pas un opérateur ou viseur de l'agent {}.", idAgentOperateurOrViseur,
+					idAgentApprobateur);
+			result.getErrors().add(
+					String.format("Impossible de modifier la liste des agents saisis de l'opérateur ou du viseur [%d] car il n'est pas un opérateur ou viseur de l'agent [%d].",
+							idAgentOperateurOrViseur, idAgentApprobateur));
 			return result;
 		}
 
-		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(
-				droitProfilOperateurOrViseur.getDroitDroitsAgent());
+		List<DroitDroitsAgent> agentsToUnlink = new ArrayList<DroitDroitsAgent>(droitProfilOperateurOrViseur.getDroitDroitsAgent());
 
 		for (AgentDto ag : agents) {
 
@@ -1044,15 +1011,13 @@ public class AccessRightsService implements IAccessRightsService {
 		DroitsAgent droitAgent = accessRightsRepository.getDroitsAgent(idAgent);
 
 		Droit droitApprobateur = accessRightsRepository.getApprobateurOfAgent(droitAgent);
-		AgentWithServiceDto agentApprobateurDto = sirhWSConsumer.getAgentService(droitApprobateur.getIdAgent(),
-				helperService.getCurrentDate());
+		AgentWithServiceDto agentApprobateurDto = sirhWSConsumer.getAgentService(droitApprobateur.getIdAgent(), helperService.getCurrentDate());
 		return agentApprobateurDto;
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public boolean verifAccessRightListDemande(Integer idAgentConnecte, Integer idAgentOfDemande,
-			ReturnMessageDto returnDto) {
+	public boolean verifAccessRightListDemande(Integer idAgentConnecte, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
 
 		boolean res = true;
 
@@ -1060,14 +1025,12 @@ public class AccessRightsService implements IAccessRightsService {
 		// de l agent
 		if (!idAgentConnecte.equals(idAgentOfDemande)) {
 
-			if (!accessRightsRepository.isViseurOfAgent(idAgentConnecte, idAgentOfDemande)
-					&& !accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgentConnecte, idAgentOfDemande)
+			if (!accessRightsRepository.isViseurOfAgent(idAgentConnecte, idAgentOfDemande) && !accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgentConnecte, idAgentOfDemande)
 					&& !accessRightsRepository.isOperateurOfAgent(idAgentConnecte, idAgentOfDemande)) {
 
 				res = false;
 				logger.warn("Vous n'êtes pas habilité à consulter la liste des demandes de cet agent.");
-				returnDto.getErrors().add(
-						String.format("Vous n'êtes pas habilité à consulter la liste des demandes de cet agent."));
+				returnDto.getErrors().add(String.format("Vous n'êtes pas habilité à consulter la liste des demandes de cet agent."));
 			}
 		}
 
@@ -1091,11 +1054,16 @@ public class AccessRightsService implements IAccessRightsService {
 			if (codeServices.contains(da.getIdServiceADS()))
 				continue;
 
-			codeServices.add(da.getIdServiceADS());
-			EntiteDto svDto = new EntiteDto();
-			svDto.setIdEntite(da.getIdServiceADS());
-			svDto.setLabel(da.getLibelleService());
-			result.add(svDto);
+			EntiteDto svDto = adsWsConsumer.getEntiteByIdEntite(da.getIdServiceADS());
+			if (svDto != null) {
+				codeServices.add(da.getIdServiceADS());
+				if (!svDto.getIdStatut().toString().equals(String.valueOf(StatutEntiteEnum.ACTIF.getIdRefStatutEntite()))) {
+					svDto.setLabel(svDto.getLabel() + "(" + StatutEntiteEnum.getStatutEntiteEnum(svDto.getIdStatut()).getLibStatutEntite() + ")");
+				} else {
+					svDto.setLabel(svDto.getLabel());
+				}
+				result.add(svDto);
+			}
 		}
 
 		// redmine #14201 : on cherche si l'agent est délégataire
@@ -1103,17 +1071,21 @@ public class AccessRightsService implements IAccessRightsService {
 		if (idsApprobateurOfDelegataire != null) {
 			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
 				if (idApprobateurOfDelegataire != null) {
-					for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(
-							idApprobateurOfDelegataire, null)) {
+					for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire, null)) {
 
 						if (codeServices.contains(da.getIdServiceADS()))
 							continue;
 
-						codeServices.add(da.getIdServiceADS());
-						EntiteDto svDto = new EntiteDto();
-						svDto.setIdEntite(da.getIdServiceADS());
-						svDto.setLabel(da.getLibelleService());
-						result.add(svDto);
+						EntiteDto svDto = adsWsConsumer.getEntiteByIdEntite(da.getIdServiceADS());
+						if (svDto != null) {
+							codeServices.add(da.getIdServiceADS());
+							if (!svDto.getIdStatut().toString().equals(String.valueOf(StatutEntiteEnum.ACTIF.getIdRefStatutEntite()))) {
+								svDto.setLabel(svDto.getLabel() + "(" + StatutEntiteEnum.getStatutEntiteEnum(svDto.getIdStatut()).getLibStatutEntite() + ")");
+							} else {
+								svDto.setLabel(svDto.getLabel());
+							}
+							result.add(svDto);
+						}
 					}
 				}
 			}
@@ -1147,8 +1119,7 @@ public class AccessRightsService implements IAccessRightsService {
 		List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
 		if (idsApprobateurOfDelegataire != null) {
 			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-				for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(
-						idApprobateurOfDelegataire, idServiceADS)) {
+				for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire, idServiceADS)) {
 					if (isContainAgentInList(result, da)) {
 						AgentDto agDto = new AgentDto();
 						AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
@@ -1174,8 +1145,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		if (null != listAgents) {
 			for (AgentDto agent : listAgents) {
-				if (null != agent && null != agent.getIdAgent() && null != ag.getIdAgent()
-						&& agent.getIdAgent().equals(ag.getIdAgent())) {
+				if (null != agent && null != agent.getIdAgent() && null != ag.getIdAgent() && agent.getIdAgent().equals(ag.getIdAgent())) {
 					return false;
 				}
 			}
@@ -1185,14 +1155,12 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public ReturnMessageDto verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande,
-			ReturnMessageDto returnDto) {
+	public ReturnMessageDto verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
 
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits
 		// sur l'agent pour qui il effectue la demande
 		if (!idAgent.equals(idAgentOfDemande)) {
-			if (accessRightsRepository.isUserOperateur(idAgent) || accessRightsRepository.isUserApprobateur(idAgent)
-					|| accessRightsRepository.isUserDelegataire(idAgent)
+			if (accessRightsRepository.isUserOperateur(idAgent) || accessRightsRepository.isUserApprobateur(idAgent) || accessRightsRepository.isUserDelegataire(idAgent)
 					|| accessRightsRepository.isUserViseur(idAgent)) {
 
 				// on recherche tous les sous agents de la personne
@@ -1210,8 +1178,7 @@ public class AccessRightsService implements IAccessRightsService {
 					List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
 
 					for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-						Droit droitApprobateurOfDelegataire = accessRightsRepository
-								.getAgentDroitFetchAgents(idApprobateurOfDelegataire);
+						Droit droitApprobateurOfDelegataire = accessRightsRepository.getAgentDroitFetchAgents(idApprobateurOfDelegataire);
 						for (DroitDroitsAgent dda : droitApprobateurOfDelegataire.getDroitDroitsAgent()) {
 							if (dda.getDroitsAgent().getIdAgent().equals(idAgentOfDemande)) {
 								trouve = true;
@@ -1225,21 +1192,12 @@ public class AccessRightsService implements IAccessRightsService {
 				}
 
 				if (!trouve) {
-					logger.warn(
-							"Vous n'êtes ni opérateur, ni approbateur, ni viseur de l'agent {}. Vous ne pouvez pas saisir de demandes.",
-							idAgentOfDemande);
-					returnDto
-							.getErrors()
-							.add(String
-									.format("Vous n'êtes ni opérateur, ni approbateur, ni viseur de l'agent %s. Vous ne pouvez pas saisir de demandes.",
-											idAgentOfDemande));
+					logger.warn("Vous n'êtes ni opérateur, ni approbateur, ni viseur de l'agent {}. Vous ne pouvez pas saisir de demandes.", idAgentOfDemande);
+					returnDto.getErrors().add(String.format("Vous n'êtes ni opérateur, ni approbateur, ni viseur de l'agent %s. Vous ne pouvez pas saisir de demandes.", idAgentOfDemande));
 				}
 			} else {
 				logger.warn("Vous n'êtes ni opérateur, ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes.");
-				returnDto
-						.getErrors()
-						.add(String
-								.format("Vous n'êtes ni opérateur, ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes."));
+				returnDto.getErrors().add(String.format("Vous n'êtes ni opérateur, ni approbateur, ni viseur. Vous ne pouvez pas saisir de demandes."));
 			}
 		}
 		return returnDto;
@@ -1255,8 +1213,7 @@ public class AccessRightsService implements IAccessRightsService {
 		if (null == idAgentConcerne) {
 			// on verifie si l agent est delegataire ou non
 			if (accessRightsRepository.isUserDelegataire(idAgentConnecte)) {
-				List<DroitProfil> droitsProfils = accessRightsRepository.getDroitProfilByAgentAndLibelle(
-						idAgentConnecte, ProfilEnum.DELEGATAIRE.toString());
+				List<DroitProfil> droitsProfils = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentConnecte, ProfilEnum.DELEGATAIRE.toString());
 				if (null != droitsProfils) {
 					for (DroitProfil droitProfil : droitsProfils) {
 						idsApprobateurOfDelegataire.add(droitProfil.getDroitApprobateur().getIdAgent());
@@ -1304,8 +1261,7 @@ public class AccessRightsService implements IAccessRightsService {
 				if (null != droitsAgent.getDroitDroitsAgent()) {
 					for (DroitDroitsAgent dda : droitsAgent.getDroitDroitsAgent()) {
 						if (ProfilEnum.OPERATEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())) {
-							AgentDto operateur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda
-									.getDroitProfil().getDroit().getIdAgent()));
+							AgentDto operateur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
 
 							if (!result.getListOperateurs().contains(operateur))
 								result.getListOperateurs().add(operateur);
@@ -1313,8 +1269,7 @@ public class AccessRightsService implements IAccessRightsService {
 							continue;
 						}
 						if (ProfilEnum.VISEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())) {
-							AgentDto viseur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda
-									.getDroitProfil().getDroit().getIdAgent()));
+							AgentDto viseur = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
 
 							if (!result.getListViseurs().contains(viseur))
 								result.getListViseurs().add(viseur);
@@ -1322,19 +1277,16 @@ public class AccessRightsService implements IAccessRightsService {
 							continue;
 						}
 						if (ProfilEnum.APPROBATEUR.toString().equals(dda.getDroitProfil().getProfil().getLibelle())) {
-							AgentWithServiceDto approbateur = new AgentWithServiceDto(agentService.getAgentOptimise(
-									listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
+							AgentWithServiceDto approbateur = new AgentWithServiceDto(agentService.getAgentOptimise(listAgentsExistants, dda.getDroitProfil().getDroit().getIdAgent()));
 
 							ApprobateurDto approbateurWithDelegataire = new ApprobateurDto();
 							approbateurWithDelegataire.setApprobateur(approbateur);
 
 							if (!result.getListApprobateurs().contains(approbateurWithDelegataire)) {
-								DroitProfil profilDelegataire = getDelegataireApprobateur(approbateur.getIdAgent(),
-										accessRightsRepository.getDroitSousApprobateur(approbateur.getIdAgent()));
+								DroitProfil profilDelegataire = getDelegataireApprobateur(approbateur.getIdAgent(), accessRightsRepository.getDroitSousApprobateur(approbateur.getIdAgent()));
 
 								if (null != profilDelegataire) {
-									AgentDto delegataire = new AgentDto(agentService.getAgentOptimise(
-											listAgentsExistants, profilDelegataire.getDroit().getIdAgent()));
+									AgentDto delegataire = new AgentDto(agentService.getAgentOptimise(listAgentsExistants, profilDelegataire.getDroit().getIdAgent()));
 									delegataire.setIdAgent(profilDelegataire.getDroit().getIdAgent());
 									approbateurWithDelegataire.setDelegataire(delegataire);
 								}
@@ -1391,11 +1343,9 @@ public class AccessRightsService implements IAccessRightsService {
 
 		List<Integer> codeServices = new ArrayList<Integer>();
 
-		List<DroitProfil> listeDroitProfilOperateur = accessRightsRepository.getDroitProfilByAgentAndLibelle(
-				idAgentOperateur, ProfilEnum.OPERATEUR.toString());
+		List<DroitProfil> listeDroitProfilOperateur = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentOperateur, ProfilEnum.OPERATEUR.toString());
 		for (DroitProfil dp : listeDroitProfilOperateur) {
-			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentOperateur, null,
-					dp.getIdDroitProfil())) {
+			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentOperateur, null, dp.getIdDroitProfil())) {
 				if (!accessRightsRepository.isOperateurOfAgent(idAgentOperateur, da.getIdAgent())) {
 					continue;
 				}
@@ -1418,8 +1368,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		List<Droit> result = new ArrayList<Droit>();
 
-		List<DroitProfil> listeDroitProfilOperateur = accessRightsRepository.getDroitProfilByAgentAndLibelle(
-				idAgentOperateur, ProfilEnum.OPERATEUR.toString());
+		List<DroitProfil> listeDroitProfilOperateur = accessRightsRepository.getDroitProfilByAgentAndLibelle(idAgentOperateur, ProfilEnum.OPERATEUR.toString());
 		for (DroitProfil dp : listeDroitProfilOperateur) {
 			if (dp.getDroitApprobateur() != null && !result.contains(dp.getDroitApprobateur())) {
 				result.add(dp.getDroitApprobateur());
