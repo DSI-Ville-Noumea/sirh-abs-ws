@@ -64,7 +64,8 @@ public class SaisieJoursFeriesGardeService implements ISaisieJoursFeriesGardeSer
 			}
 		}
 
-		List<JourDto> listjourFerie = sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin);
+		// bug #18617
+		List<JourDto> listjourFerie = sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin);
 		result.setJoursFerieHeader(listjourFerie);
 
 		// on boucle sur les lignes Agents

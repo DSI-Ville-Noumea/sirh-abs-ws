@@ -158,7 +158,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		listJoursDto.add(jour);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
+		Mockito.when(sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin)).thenReturn(listJoursDto);
 		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
 				serviceAgent);
 
@@ -209,7 +209,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		listJoursDto.add(jour);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
+		Mockito.when(sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin)).thenReturn(listJoursDto);
 		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
 				serviceAgent);
 
@@ -271,7 +271,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 		listJoursDto.add(jour2);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
+		Mockito.when(sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin)).thenReturn(listJoursDto);
 		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
 				serviceAgent);
 

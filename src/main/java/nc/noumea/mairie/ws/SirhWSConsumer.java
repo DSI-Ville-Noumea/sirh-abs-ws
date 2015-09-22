@@ -184,6 +184,23 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		return readResponseAsList(JourDto.class, res, url);
 	}
 
+	// #18617 bug avec l ajout des 3 jours à la date de fin de la methode getListeJoursFeries() ci-dessus
+	@Override
+	public List<JourDto> getListeJoursFeriesForSaisiDPM(Date dateDebut, Date dateFin) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+
+		String url = String.format(sirhWsBaseUrl + listeJoursFeriesUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("dateDebut", sdf.format(dateDebut));
+		parameters.put("dateFin", sdf.format(dateFin));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponseAsList(JourDto.class, res, url);
+	}
+
 	@Override
 	public ReturnMessageDto isPaieEnCours() {
 		String url = String.format(sirhWsBaseUrl + isPaieEnCoursUrl);
