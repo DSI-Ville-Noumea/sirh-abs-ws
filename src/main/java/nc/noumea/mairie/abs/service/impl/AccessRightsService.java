@@ -271,7 +271,9 @@ public class AccessRightsService implements IAccessRightsService {
 		for (Droit droit : droitSousAgentsByApprobateur) {
 			if (accessRightsRepository.isUserDelegataireOfApprobateur(idAgentApprobateur, droit.getIdAgent())) {
 				for (DroitProfil dp : droit.getDroitProfils()) {
-					if (dp.getDroitApprobateur().getIdAgent().equals(idAgentApprobateur)) {
+					if (dp.getDroitApprobateur().getIdAgent().equals(idAgentApprobateur)
+							// #17859
+							&& dp.getProfil().getLibelle().equals(ProfilEnum.DELEGATAIRE.toString())) {
 						droitProfil = dp;
 					}
 				}

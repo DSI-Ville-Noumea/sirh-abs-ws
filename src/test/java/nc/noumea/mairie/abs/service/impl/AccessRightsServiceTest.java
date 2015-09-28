@@ -1106,6 +1106,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		droitProfilDelegataireExistant.setProfil(profil);
+		
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -1536,6 +1541,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		droitProfilDelegataireExistant.setProfil(profil);
+		
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -1616,6 +1626,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		droitProfilDelegataireExistant.setProfil(profil);
+		
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4089,6 +4104,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		droitProfilDelegataireExistant.setProfil(profil);
+		
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4173,6 +4193,11 @@ public class AccessRightsServiceTest {
 		// delegataire a supprimer
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		droitProfilDelegataireExistant.setProfil(profil);
+		
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4265,6 +4290,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		droitProfilDelegataireExistant.setProfil(profil);
+		
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4348,6 +4378,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		droitProfilDelegataireExistant.setProfil(profil);
+		
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4403,6 +4438,110 @@ public class AccessRightsServiceTest {
 		Mockito.verify(arRepo, Mockito.times(0)).removeEntity(Mockito.isA(DroitProfil.class));
 	}
 
+	// #17859  bug sur changement delegataire
+	@Test
+	public void setDelegataire_newDelagatire_EtAutreDelegataireDejaExistant_etProfilViseur_bug17859() {
+		// Given
+		Integer idAgent = 9005138;
+		ReturnMessageDto msgDto = new ReturnMessageDto();
+
+		// ///////////// CREATION //////////////////
+		// approbateur
+		Droit droitApprobateur = new Droit();
+		droitApprobateur.setIdAgent(idAgent);
+		droitApprobateur.setIdDroit(13);
+
+		// delegataire a creer
+		InputterDto dto = new InputterDto();
+		AgentDto delegataire = new AgentDto();
+		delegataire.setIdAgent(9004321);
+		dto.setDelegataire(delegataire);
+		// ////////////////////////////////////////////////////
+
+		// /////////////// OPERATEUR VISEUR DELEGATAIRE DEJA EXISTANTS
+		// /////////////////////
+		List<Droit> listDroitSousAgentsByApprobateur = new ArrayList<Droit>();
+
+		// delegataire deja existant
+		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
+		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profilDelegataire = new Profil();
+		profilDelegataire.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		droitProfilDelegataireExistant.setProfil(profilDelegataire);
+
+		// delegataire deja existant
+		DroitProfil droitProfilViseurExistant = new DroitProfil();
+		droitProfilViseurExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profilViseur = new Profil();
+		profilViseur.setLibelle(ProfilEnum.VISEUR.toString());
+		droitProfilViseurExistant.setProfil(profilViseur);
+		
+		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
+		droitProfilDelegataireExistants.add(droitProfilViseurExistant);
+		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
+
+		Droit droitDelegataireExistant = Mockito.spy(new Droit());
+		droitDelegataireExistant.setIdAgent(9001234);
+		droitProfilDelegataireExistant.setDroit(droitDelegataireExistant);
+		droitProfilViseurExistant.setDroit(droitDelegataireExistant);
+		droitDelegataireExistant.setDroitProfils(droitProfilDelegataireExistants);
+
+		listDroitSousAgentsByApprobateur.add(droitDelegataireExistant);
+		// ////////////////////////////////////////////////////
+
+		// ////////////// mock //////////////////////
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(droitApprobateur);
+		Mockito.when(arRepo.getDroitSousApprobateur(idAgent)).thenReturn(listDroitSousAgentsByApprobateur);
+		Mockito.when(arRepo.isUserDelegataireOfApprobateur(idAgent, droitDelegataireExistant.getIdAgent())).thenReturn(true);
+
+		Mockito.when(arRepo.isUserOperateur(delegataire.getIdAgent())).thenReturn(false);
+
+		Mockito.when(arRepo.getProfilByName(ProfilEnum.DELEGATAIRE.toString())).thenReturn(new Profil());
+
+		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
+
+		final Date d = new Date();
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(arRepo).persisEntity(Mockito.any(Droit.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(arRepo).removeEntity(Mockito.any(Droit.class));
+
+		HelperService helpServ = Mockito.mock(HelperService.class);
+		Mockito.when(helpServ.getCurrentDate()).thenReturn(d);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(delegataire.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
+		ReflectionTestUtils.setField(service, "helperService", helpServ);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		// /////////// When //////////////
+		msgDto = service.setDelegataire(9005138, dto, msgDto);
+
+		// ///////////// Then //////////////
+		assertEquals(0, msgDto.getErrors().size());
+		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
+		Mockito.verify(arRepo, Mockito.times(0)).removeEntity(Mockito.isA(Droit.class));
+		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(DroitProfil.class));
+		assertEquals(droitDelegataireExistant.getDroitProfils().size(), 1);
+		DroitProfil droitProfilDelegataireRestant = droitDelegataireExistant.getDroitProfils().iterator().next();
+		assertEquals(droitProfilDelegataireRestant.getProfil().getLibelle(), ProfilEnum.VISEUR.toString());
+	}
+
 	@Test
 	public void setDelegataire_delegataireDejaExistantASupprimer_And_delegataireACreer() {
 		// Given
@@ -4429,6 +4568,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
+		
+		Profil profil = new Profil();
+		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
+		droitProfilDelegataireExistant.setProfil(profil);
+		
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
