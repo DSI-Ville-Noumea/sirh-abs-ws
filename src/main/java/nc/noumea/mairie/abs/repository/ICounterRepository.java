@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
@@ -45,4 +46,7 @@ public interface ICounterRepository {
 	AgentWeekRecup getWeekHistoRecupCountByIdAgentAndIdPointage(Integer idAgent, Integer idPointage);
 
 	<T> List<T> getListCounterByOrganisation(Class<T> T, Integer idOrganisation);
+
+	List<AgentCongeAnnuelCount> getListAgentCongeAnnuelCountWithListAgents(
+			List<Integer> listIdsAgent);
 }

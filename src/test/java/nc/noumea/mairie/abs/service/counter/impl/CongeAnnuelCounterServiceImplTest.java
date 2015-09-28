@@ -45,6 +45,7 @@ import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.abs.web.AccessForbiddenException;
 import nc.noumea.mairie.abs.web.NotFoundException;
 import nc.noumea.mairie.domain.Spcarr;
@@ -277,7 +278,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
@@ -329,7 +330,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -387,7 +388,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
@@ -419,7 +420,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
@@ -450,7 +451,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
@@ -481,7 +482,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
@@ -512,7 +513,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
@@ -543,7 +544,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
@@ -574,7 +575,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
@@ -608,7 +609,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(dto);
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(dto);
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl",
@@ -638,7 +639,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(
 				absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(
-						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class))).thenReturn(
+						Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(
 				new ReturnMessageDto());
 
 		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();

@@ -11,6 +11,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,21 +31,37 @@ public class AbsRecuperationDataConsistencyRulesImpl extends AbstractAbsenceData
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, 
 			boolean isProvenanceSIRH) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-		checkDepassementDroitsAcquis(srm, demande);
+		checkDepassementDroitsAcquis(srm, demande, null);
 
 		super.processDataConsistencyDemande(srm, idAgent, demande,  isProvenanceSIRH);
 	}
 
 	@Override
-	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande, CheckCompteurAgentVo checkCompteurAgentVo) {
 
+		Integer solde = 0;
+		Integer sommeDemandeEnCours = 0;
+		
 		// on recupere le solde de l agent
-		AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent());
+		if(null != checkCompteurAgentVo
+				&& null != checkCompteurAgentVo.getCompteurRecup()
+				&& null != checkCompteurAgentVo.getDureeDemandeEnCoursRecup()) {
+			solde = checkCompteurAgentVo.getCompteurRecup();
+			sommeDemandeEnCours = checkCompteurAgentVo.getDureeDemandeEnCoursRecup();
+		}else{
+			AgentRecupCount soldeRecup = counterRepository.getAgentCounter(AgentRecupCount.class, demande.getIdAgent());
 
-		Integer sommeDemandeEnCours = recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(
-				demande.getIdAgent(), demande.getIdDemande());
+			sommeDemandeEnCours = recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(
+					demande.getIdAgent(), demande.getIdDemande());
+			
 
-		Integer solde = null == soldeRecup ? 0 : soldeRecup.getTotalMinutes();
+			solde = null == soldeRecup ? 0 : soldeRecup.getTotalMinutes();
+			
+			if(null != checkCompteurAgentVo) {
+				checkCompteurAgentVo.setCompteurRecup(solde);
+				checkCompteurAgentVo.setDureeDemandeEnCoursRecup(sommeDemandeEnCours);
+			}
+		}
 		
 		if (solde - sommeDemandeEnCours - ((DemandeRecup) demande).getDuree() < 0) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));

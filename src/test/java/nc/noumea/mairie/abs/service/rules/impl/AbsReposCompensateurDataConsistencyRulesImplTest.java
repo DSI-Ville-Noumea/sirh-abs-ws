@@ -260,7 +260,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		ReflectionTestUtils.setField(impl, "reposCompensateurRepository", reposCompRepository);
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 
-		srm = impl.checkDepassementDroitsAcquis(srm, demande);
+		srm = impl.checkDepassementDroitsAcquis(srm, demande, null);
 
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -289,7 +289,7 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		ReflectionTestUtils.setField(impl, "reposCompensateurRepository", reposCompRepository);
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 
-		srm = impl.checkDepassementDroitsAcquis(srm, demande);
+		srm = impl.checkDepassementDroitsAcquis(srm, demande, null);
 
 		assertEquals(1, srm.getErrors().size());
 		assertEquals("Le dépassement des droits acquis n'est pas autorisé.", srm.getErrors().get(0).toString());

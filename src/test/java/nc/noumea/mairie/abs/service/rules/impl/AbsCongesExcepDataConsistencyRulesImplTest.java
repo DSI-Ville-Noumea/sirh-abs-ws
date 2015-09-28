@@ -553,7 +553,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
-		assertTrue(impl.checkDepassementCompteurAgent(demandeDto));
+		assertTrue(impl.checkDepassementCompteurAgent(demandeDto, null));
 	}
 
 	@Test
@@ -596,7 +596,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "congesExceptionnelsRepository", congesExceptionnelsRepository);
 
-		assertFalse(impl.checkDepassementCompteurAgent(demandeDto));
+		assertFalse(impl.checkDepassementCompteurAgent(demandeDto, null));
 	}
 
 	@Test
@@ -639,7 +639,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "congesExceptionnelsRepository", congesExceptionnelsRepository);
 
-		assertTrue(impl.checkDepassementCompteurAgent(demandeDto));
+		assertTrue(impl.checkDepassementCompteurAgent(demandeDto, null));
 	}
 	
 	@Test

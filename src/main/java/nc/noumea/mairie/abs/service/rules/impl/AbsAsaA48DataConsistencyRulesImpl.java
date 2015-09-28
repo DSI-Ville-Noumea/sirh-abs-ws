@@ -8,6 +8,7 @@ import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 
 import org.springframework.stereotype.Service;
 
@@ -61,7 +62,7 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	}
 
 	@Override
-	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto, CheckCompteurAgentVo checkCompteurAgentVo) {
 
 		// on verifie d abord l etat de la demande
 		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de

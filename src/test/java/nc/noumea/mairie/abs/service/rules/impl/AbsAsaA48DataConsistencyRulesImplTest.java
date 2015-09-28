@@ -204,7 +204,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		demande.setDateDebut(dateDebut);
 		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
-		boolean srm = impl.checkDepassementCompteurAgent(demande);
+		boolean srm = impl.checkDepassementCompteurAgent(demande, null);
 
 		assertTrue(srm);
 	}
@@ -247,7 +247,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		demande.setIdTypeDemande(7);
 		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
-		boolean srm = impl.checkDepassementCompteurAgent(demande);
+		boolean srm = impl.checkDepassementCompteurAgent(demande, null);
 
 		assertTrue(srm);
 	}
@@ -290,7 +290,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		demande.setIdTypeDemande(7);
 		demande.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
 
-		boolean srm = impl.checkDepassementCompteurAgent(demande);
+		boolean srm = impl.checkDepassementCompteurAgent(demande, null);
 
 		assertFalse(srm);
 	}

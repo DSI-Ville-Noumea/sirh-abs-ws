@@ -210,7 +210,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		// pas de mise a jour du compteur
 		// la DRH doit d abord valider
 		ReturnMessageDto srm = new ReturnMessageDto();
-		srm = absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srm, demande);
+		srm = absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srm, demande, null);
 		if (srm.getInfos().size() > 0
 				&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
 			return jours;

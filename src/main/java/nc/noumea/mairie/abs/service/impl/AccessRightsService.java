@@ -1103,11 +1103,38 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentDto> getAgentsToApproveOrInputByService(Integer idAgent, Integer idServiceADS) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
+		
+		List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceADS);
+		
+		List<DroitsAgent> listDroitsAgentDelegataire = new ArrayList<DroitsAgent>(); 
+		List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
+		if (idsApprobateurOfDelegataire != null) {
+			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
+				listDroitsAgentDelegataire.addAll(accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire, idServiceADS));
+			}
+		}
+					
+		// seuls les operateurs de la DPM peuvent saisir les jours de repos
+		// seuls les operateurs peuvent mettre a jour les compteurs (solde)
+		// on recup les agents de l'operateur
+		List<Integer> listAgentDto = new ArrayList<Integer>();
+		for (DroitsAgent droitAg : listDroitsAgent) {
+			listAgentDto.add(droitAg.getIdAgent());
+		}
+		
+		if(null != listDroitsAgentDelegataire
+				&& !listDroitsAgentDelegataire.isEmpty()) {
+			for (DroitsAgent droitAg : listDroitsAgentDelegataire) {
+				listAgentDto.add(droitAg.getIdAgent());
+			}
+		}
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceADS)) {
+		List<AgentGeneriqueDto> listAgentsServiceDto = sirhWSConsumer.getListAgents(listAgentDto);
+		
+		for (DroitsAgent da : listDroitsAgent) {
 			if (isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();
-				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+				AgentGeneriqueDto ag = getAgentOfListAgentGeneriqueDto(listAgentsServiceDto, da.getIdAgent());
 				agDto.setIdAgent(da.getIdAgent());
 				agDto.setNom(ag.getDisplayNom());
 				agDto.setPrenom(ag.getDisplayPrenom());
@@ -1116,25 +1143,34 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		// redmine #14201 : on cherche si l'agent est délégataire(s)
-		List<Integer> idsApprobateurOfDelegataire = getIdApprobateurOfDelegataire(idAgent, null);
 		if (idsApprobateurOfDelegataire != null) {
-			for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-				for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire, idServiceADS)) {
-					if (isContainAgentInList(result, da)) {
-						AgentDto agDto = new AgentDto();
-						AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-						agDto.setIdAgent(da.getIdAgent());
-						agDto.setNom(ag.getDisplayNom());
-						agDto.setPrenom(ag.getDisplayPrenom());
-						if (!result.contains(agDto)) {
-							result.add(agDto);
-						}
+			for (DroitsAgent da : listDroitsAgentDelegataire) {
+				if (isContainAgentInList(result, da)) {
+					AgentDto agDto = new AgentDto();
+					AgentGeneriqueDto ag = getAgentOfListAgentGeneriqueDto(listAgentsServiceDto, da.getIdAgent());
+					agDto.setIdAgent(da.getIdAgent());
+					agDto.setNom(ag.getDisplayNom());
+					agDto.setPrenom(ag.getDisplayPrenom());
+					if (!result.contains(agDto)) {
+						result.add(agDto);
 					}
 				}
 			}
 		}
 
 		return result;
+	}
+
+	private AgentGeneriqueDto getAgentOfListAgentGeneriqueDto(List<AgentGeneriqueDto> listAgents, Integer idAgent) {
+
+		if (null != listAgents && null != idAgent) {
+			for (AgentGeneriqueDto agent : listAgents) {
+				if (agent.getIdAgent().equals(idAgent)) {
+					return agent;
+				}
+			}
+		}
+		return null;
 	}
 
 	private boolean isContainAgentInList(List<AgentDto> listAgents, DroitsAgent ag) {

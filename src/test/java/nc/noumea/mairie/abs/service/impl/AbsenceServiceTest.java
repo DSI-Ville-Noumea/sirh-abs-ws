@@ -78,6 +78,7 @@ import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.rules.impl.AbsCongesAnnuelsDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.SpSorc;
 import nc.noumea.mairie.domain.Spcarr;
@@ -1259,7 +1260,7 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absenceDataConsistencyRulesImpl)
-				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
+				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -1370,7 +1371,7 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absenceDataConsistencyRulesImpl)
-				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
+				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -1475,7 +1476,7 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absenceDataConsistencyRulesImpl)
-				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
+				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -1565,7 +1566,7 @@ public class AbsenceServiceTest {
 		})
 				.when(congeAnnuelDataConsistencyRules)
 				.checkDepassementDroitsAcquis(Mockito.isA(ReturnMessageDto.class),
-						Mockito.isA(DemandeCongesAnnuels.class));
+						Mockito.isA(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -1668,7 +1669,7 @@ public class AbsenceServiceTest {
 		})
 				.when(congeAnnuelDataConsistencyRules)
 				.checkDepassementDroitsAcquis(Mockito.isA(ReturnMessageDto.class),
-						Mockito.isA(DemandeCongesAnnuels.class));
+						Mockito.isA(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -1772,7 +1773,7 @@ public class AbsenceServiceTest {
 		})
 				.when(congeAnnuelDataConsistencyRules)
 				.checkDepassementDroitsAcquis(Mockito.isA(ReturnMessageDto.class),
-						Mockito.isA(DemandeCongesAnnuels.class));
+						Mockito.isA(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -1876,7 +1877,7 @@ public class AbsenceServiceTest {
 		})
 				.when(congeAnnuelDataConsistencyRules)
 				.checkDepassementDroitsAcquis(Mockito.isA(ReturnMessageDto.class),
-						Mockito.isA(DemandeCongesAnnuels.class));
+						Mockito.isA(DemandeCongesAnnuels.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.when(
@@ -4993,7 +4994,11 @@ public class AbsenceServiceTest {
 		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
 		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+		
 		DemandeDto dto = new DemandeDto();
+		dto.setAgentWithServiceDto(agentWithServiceDto);
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
 		dto.setGroupeAbsence(groupeAbsence);
@@ -5007,7 +5012,7 @@ public class AbsenceServiceTest {
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, null, null)).thenReturn(
 				listdemandeDto);
 		Mockito.when(absDataConsistencyRules.filtreDroitOfDemandeSIRH(dto)).thenReturn(dto);
-		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(Mockito.any(DemandeDto.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(true);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -7590,7 +7595,7 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absenceDataConsistencyRulesImpl)
-				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
+				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -7699,7 +7704,7 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absenceDataConsistencyRulesImpl)
-				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class));
+				.checkDepassementDroitsAcquis(Mockito.any(ReturnMessageDto.class), Mockito.any(DemandeRecup.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -8548,7 +8553,11 @@ public class AbsenceServiceTest {
 		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
 		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+		
 		DemandeDto dto = new DemandeDto();
+		dto.setAgentWithServiceDto(agentWithServiceDto);
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
 		dto.setGroupeAbsence(groupeAbsence);
@@ -8562,7 +8571,7 @@ public class AbsenceServiceTest {
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, null, null)).thenReturn(
 				listdemandeDto);
 		Mockito.when(absDataConsistencyRules.filtreDroitOfDemandeSIRH(dto)).thenReturn(dto);
-		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(Mockito.any(DemandeDto.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(true);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -8748,7 +8757,10 @@ public class AbsenceServiceTest {
 		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
 		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		
 		DemandeDto dto = new DemandeDto();
+		dto.setAgentWithServiceDto(agentWithServiceDto);
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A54.getValue());
 		dto.setGroupeAbsence(groupeAbsence);
@@ -8764,7 +8776,7 @@ public class AbsenceServiceTest {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(9005138, 9005131, dat, null, null, null)).thenReturn(
+		Mockito.when(demandeRepository.listeDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null)).thenReturn(
 				listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -8775,7 +8787,7 @@ public class AbsenceServiceTest {
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				absDataConsistencyRules);
 		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent, false)).thenReturn(dto);
-		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(false);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(Mockito.any(DemandeDto.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(false);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDateMoinsUnAn()).thenReturn(dat);
@@ -9398,7 +9410,11 @@ public class AbsenceServiceTest {
 		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
 		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
 
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+		
 		DemandeDto dto = new DemandeDto();
+		dto.setAgentWithServiceDto(agentWithServiceDto);
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.ASA_A48.getValue());
 		dto.setGroupeAbsence(groupeAbsence);
@@ -9422,7 +9438,7 @@ public class AbsenceServiceTest {
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null)).thenReturn(
 				listdemandeDto);
 		Mockito.when(absDataConsistencyRules.filtreDroitOfDemandeSIRH(dto)).thenReturn(dto);
-		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(Mockito.any(DemandeDto.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(true);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -10315,7 +10331,11 @@ public class AbsenceServiceTest {
 		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
 		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+		
 		DemandeDto dto = new DemandeDto();
+		dto.setAgentWithServiceDto(agentWithServiceDto);
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
 		dto.setGroupeAbsence(groupeAbsence);
@@ -10329,7 +10349,7 @@ public class AbsenceServiceTest {
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, null, null)).thenReturn(
 				listdemandeDto);
 		Mockito.when(absDataConsistencyRules.filtreDroitOfDemandeSIRH(dto)).thenReturn(dto);
-		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(Mockito.any(DemandeDto.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(true);
 		Mockito.when(absDataConsistencyRules.checkDepassementMultipleAgent(dto)).thenReturn(true);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
@@ -10367,7 +10387,10 @@ public class AbsenceServiceTest {
 		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
 		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		
 		DemandeDto dto = new DemandeDto();
+		dto.setAgentWithServiceDto(agentWithServiceDto);
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
 		dto.setGroupeAbsence(groupeAbsence);
@@ -10383,7 +10406,7 @@ public class AbsenceServiceTest {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(9005138, 9005131, dat, null, null, null)).thenReturn(
+		Mockito.when(demandeRepository.listeDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null)).thenReturn(
 				listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
@@ -10394,7 +10417,7 @@ public class AbsenceServiceTest {
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				absDataConsistencyRules);
 		Mockito.when(absDataConsistencyRules.filtreDroitOfDemande(9005138, dto, listDroitAgent, false)).thenReturn(dto);
-		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(false);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(Mockito.any(DemandeDto.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(false);
 		Mockito.when(absDataConsistencyRules.checkDepassementMultipleAgent(dto)).thenReturn(true);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -10413,6 +10436,8 @@ public class AbsenceServiceTest {
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
 				.thenReturn(null);
+		
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -10423,6 +10448,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "filtresService", filtresService);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
 		List<DemandeDto> listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null,
 				null, null, null, null, false);
@@ -10510,7 +10536,7 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absCongesAnnuelsDataConsistencyRulesImpl)
-				.checkDepassementDroitsAcquis(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class));
+				.checkDepassementDroitsAcquis(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue(), null))
@@ -10605,7 +10631,7 @@ public class AbsenceServiceTest {
 				return new ReturnMessageDto();
 			}
 		}).when(absCongesAnnuelsDataConsistencyRulesImpl)
-				.checkDepassementDroitsAcquis(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class));
+				.checkDepassementDroitsAcquis(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class), Mockito.any(CheckCompteurAgentVo.class));
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(
@@ -10756,7 +10782,11 @@ public class AbsenceServiceTest {
 		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
 		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+		
 		DemandeDto dto = new DemandeDto();
+		dto.setAgentWithServiceDto(agentWithServiceDto);
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
 		dto.setGroupeAbsence(groupeAbsence);
@@ -10780,7 +10810,7 @@ public class AbsenceServiceTest {
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null)).thenReturn(
 				listdemandeDto);
 		Mockito.when(absDataConsistencyRules.filtreDroitOfDemandeSIRH(dto)).thenReturn(dto);
-		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(Mockito.any(DemandeDto.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(true);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
 		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(
@@ -12802,7 +12832,11 @@ public class AbsenceServiceTest {
 		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
 		groupeAbsence.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+		
 		DemandeDto dto = new DemandeDto();
+		dto.setAgentWithServiceDto(agentWithServiceDto);
 		dto.setIdDemande(1);
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
 		dto.setGroupeAbsence(groupeAbsence);
@@ -12817,7 +12851,7 @@ public class AbsenceServiceTest {
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, null, null)).thenReturn(
 				listdemandeDto);
 		Mockito.when(absDataConsistencyRules.filtreDroitOfDemandeSIRH(dto)).thenReturn(dto);
-		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(dto)).thenReturn(true);
+		Mockito.when(absDataConsistencyRules.checkDepassementCompteurAgent(Mockito.any(DemandeDto.class), Mockito.any(CheckCompteurAgentVo.class))).thenReturn(true);
 		Mockito.when(absDataConsistencyRules.checkDepassementMultipleAgent(dto)).thenReturn(true);
 
 		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);

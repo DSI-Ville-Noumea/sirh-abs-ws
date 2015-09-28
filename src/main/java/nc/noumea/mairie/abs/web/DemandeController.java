@@ -267,6 +267,8 @@ public class DemandeController {
 			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche,
 			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
+		long time1 = System.currentTimeMillis();
+		
 		logger.debug(
 				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters idInputter = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, type = {}, groupe = {}, idAgentConcerne = {} and idServiceADS = {}",
 				idAgent, ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence,
@@ -278,6 +280,9 @@ public class DemandeController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
+		long time2 = System.currentTimeMillis();
+		System.out.println("Temps : " + new Long(time2-time1).toString());
+		
 		List<Integer> listAgents = new ArrayList<Integer>();
 		// ON VERIFIE LES DROITS
 		if (idAgentRecherche != null) {
@@ -306,6 +311,9 @@ public class DemandeController {
 
 		}
 
+		long time3 = System.currentTimeMillis();
+		System.out.println("Temps : " + new Long(time3-time2).toString());
+		
 		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, listAgents.size() == 0 ? null
 				: listAgents, ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType,
 				idRefGroupeAbsence, false);
@@ -313,6 +321,9 @@ public class DemandeController {
 		if (result.size() == 0)
 			throw new NoContentException();
 
+		long time4 = System.currentTimeMillis();
+		System.out.println("Temps : " + new Long(time4-time3).toString());
+		
 		return result;
 	}
 

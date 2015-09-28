@@ -10,6 +10,7 @@ import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 
 public interface ICongesAnnuelsRepository {
 
@@ -44,5 +45,8 @@ public interface ICongesAnnuelsRepository {
 
 	List<CongeAnnuelRestitutionMassiveHisto> getListRestitutionMassiveByIdAgent(
 			List<Integer> idAgent, Date fromDate, Date toDate);
+
+	List<CheckCompteurAgentVo> getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeOuAValiderForListAgent(
+			List<Integer> listIdsAgent);
 
 }

@@ -1,11 +1,14 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
@@ -16,6 +19,7 @@ import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 
 import org.springframework.stereotype.Repository;
 
@@ -294,6 +298,49 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 		}
 
 		return query.getResultList();
+	}
+
+	@Override
+	public List<CheckCompteurAgentVo> getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeOuAValiderForListAgent(List<Integer> listIdsAgent) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select a.id_agent, sum(b.duree + b.duree_annee_n1) from abs_demande a ");
+		sb.append("inner join abs_demande_conges_annuels b on a.id_demande = b.id_demande ");
+		sb.append("inner join abs_etat_demande c on a.id_demande = c.id_demande ");
+		sb.append("where a.id_agent in :listIdsAgent ");
+		sb.append("and c.id_etat_demande in (  ");
+				sb.append("select max(ed2.id_etat_demande)  ");
+				sb.append("from abs_etat_demande ed2  ");
+				sb.append("inner join abs_demande d2 on ed2.id_demande = d2.id_demande  ");
+				sb.append("where d2.id_agent in :listIdsAgent group by ed2.id_demande ");
+		sb.append(" ) ");
+		sb.append("and c.id_ref_etat in ( :SAISIE, :VISEE_F, :VISEE_D, :A_VALIDER ) ");
+		sb.append("group by a.id_agent  ");
+
+		Query q = absEntityManager.createNativeQuery(sb.toString());
+
+		q.setParameter("listIdsAgent", listIdsAgent);
+		q.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat());
+		q.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
+		q.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
+		q.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER.getCodeEtat());
+
+		@SuppressWarnings("unchecked")
+		List<Object[]> r = q.getResultList();
+
+		List<CheckCompteurAgentVo> result = new ArrayList<CheckCompteurAgentVo>();
+		
+		if (null != r) {
+			for (Object[] l : r) {
+				CheckCompteurAgentVo vo = new CheckCompteurAgentVo();
+				
+				vo.setIdAgent((Integer)l[0]);
+				vo.setDureeDemandeEnCoursCongesAnnuels(((BigDecimal)l[1]).doubleValue());
+				
+				result.add(vo);
+			}
+		}
+		return result;
 	}
 
 }

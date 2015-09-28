@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
@@ -290,6 +291,19 @@ public class CounterRepository implements ICounterRepository {
 		List<T> r = q.getResultList();
 
 		return r;
+	}
+
+	@Override
+	public List<AgentCongeAnnuelCount> getListAgentCongeAnnuelCountWithListAgents(List<Integer> listIdsAgent) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select c from AgentCongeAnnuelCount c ");
+		sb.append("where c.idAgent in :listIdsAgent ");
+
+		TypedQuery<AgentCongeAnnuelCount> query = absEntityManager.createQuery(sb.toString(), AgentCongeAnnuelCount.class);
+		query.setParameter("listIdsAgent", listIdsAgent);
+
+		return query.getResultList();
 	}
 
 }

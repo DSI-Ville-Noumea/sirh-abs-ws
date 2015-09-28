@@ -16,6 +16,7 @@ import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 			boolean isProvenanceSIRH) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkBaseHoraireAbsenceAgent(srm, demande.getIdAgent(), demande.getDateDebut());
-		checkDepassementDroitsAcquis(srm, demande);
+		checkDepassementDroitsAcquis(srm, demande, null);
 		checkChampMotifDemandeSaisi(srm, (DemandeCongesAnnuels) demande);
 		checkMultipleCycle(srm, (DemandeCongesAnnuels) demande, idAgent);
 
@@ -122,27 +123,51 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 	}
 
 	@Override
-	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande, CheckCompteurAgentVo checkCompteurAgentVo) {
+		
 		// on recupere le solde de l agent
-		AgentCongeAnnuelCount soldeCongeAnnuel = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class,
-				demande.getIdAgent());
-
-		Double sommeDemandeEnCours = congesAnnuelsRepository
-				.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(demande.getIdAgent(),
-						demande.getIdDemande());
-
-		if (null == soldeCongeAnnuel
-				|| (soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1()) - sommeDemandeEnCours
-						- ((DemandeCongesAnnuels) demande).getDuree() < -5) {
-			double solde = 0.0;
-			if (soldeCongeAnnuel != null) {
-				solde = (soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1())
-						- sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
+		Double sommeDemandeEnCours = 0.0;
+		Double soldeCongeAnnuelNEtN1 = 0.0; 
+		
+		if(null != checkCompteurAgentVo
+				&& null != checkCompteurAgentVo.getDureeDemandeEnCoursCongesAnnuels()
+						&& null != checkCompteurAgentVo.getCompteurCongesAnnuels()) {
+			
+			// on prend toutes les demandes en cours avec notamment la demande concernee en parametre
+			// il faut donc a deduire
+			sommeDemandeEnCours = checkCompteurAgentVo.getDureeDemandeEnCoursCongesAnnuels() - ((DemandeCongesAnnuels) demande).getDuree();
+			soldeCongeAnnuelNEtN1 = checkCompteurAgentVo.getCompteurCongesAnnuels();
+			
+		}else{
+			
+			if(null != checkCompteurAgentVo
+					&& null != checkCompteurAgentVo.getCompteurCongesAnnuels()) {
+				soldeCongeAnnuelNEtN1 = checkCompteurAgentVo.getCompteurCongesAnnuels();
 			} else {
-				logger.debug(String.format(COMPTEUR_INEXISTANT, String.valueOf(solde)));
-				srm.getErrors().add(String.format(COMPTEUR_INEXISTANT, String.valueOf(solde)));
-				solde = 0 - sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
+				AgentCongeAnnuelCount soldeCongeAnnuel = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class,
+						demande.getIdAgent());
+				
+				if (soldeCongeAnnuel == null) {
+					logger.debug(COMPTEUR_INEXISTANT);
+					srm.getErrors().add(COMPTEUR_INEXISTANT);
+				}else{
+					soldeCongeAnnuelNEtN1 = soldeCongeAnnuel.getTotalJours() + soldeCongeAnnuel.getTotalJoursAnneeN1();
+					
+					if(null != checkCompteurAgentVo)
+						checkCompteurAgentVo.setCompteurCongesAnnuels(soldeCongeAnnuelNEtN1);
+				}
 			}
+
+			sommeDemandeEnCours = congesAnnuelsRepository
+					.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(demande.getIdAgent(),
+							demande.getIdDemande());
+		}
+
+		if (soldeCongeAnnuelNEtN1 - sommeDemandeEnCours
+						- ((DemandeCongesAnnuels) demande).getDuree() < -5) {
+			
+			double solde = soldeCongeAnnuelNEtN1
+						- sommeDemandeEnCours - ((DemandeCongesAnnuels) demande).getDuree();
 
 			logger.debug(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, String.valueOf(solde)));
 			srm.getInfos().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, String.valueOf(solde)));
@@ -263,7 +288,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 	}
 
 	@Override
-	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto) {
+	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto, CheckCompteurAgentVo checkCompteurAgentVo) {
 
 		// on verifie d abord l etat de la demande
 		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de
@@ -277,7 +302,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		demande.setIdDemande(demandeDto.getIdDemande());
 		demande.setDuree(demandeDto.getDuree());
 
-		dtoErreur = checkDepassementDroitsAcquis(dtoErreur, demande);
+		dtoErreur = checkDepassementDroitsAcquis(dtoErreur, demande, checkCompteurAgentVo);
 		if (dtoErreur.getInfos().size() > 0) {
 			return true;
 		} else {

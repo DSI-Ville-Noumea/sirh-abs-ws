@@ -3530,8 +3530,11 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idServiceADS)).thenReturn(new ArrayList<DroitsAgent>());
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		List<AgentDto> result = service.getAgentsToApproveOrInputByService(idAgent, idServiceADS);
@@ -3579,8 +3582,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(1)).thenReturn(a1);
-		Mockito.when(sirhWSConsumer.getAgent(2)).thenReturn(a2);
+		Mockito.when(sirhWSConsumer.getListAgents(Arrays.asList(1, 2))).thenReturn(Arrays.asList(a1, a2));
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);

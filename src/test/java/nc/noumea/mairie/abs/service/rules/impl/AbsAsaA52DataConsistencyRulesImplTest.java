@@ -345,7 +345,7 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		AbsAsaA52DataConsistencyRulesImpl impl = new AbsAsaA52DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 
-		boolean srm = impl.checkDepassementCompteurAgent(demande);
+		boolean srm = impl.checkDepassementCompteurAgent(demande, null);
 
 		assertTrue(srm);
 	}
@@ -393,7 +393,7 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
 
-		boolean srm = impl.checkDepassementCompteurAgent(demande);
+		boolean srm = impl.checkDepassementCompteurAgent(demande, null);
 
 		assertTrue(srm);
 	}
@@ -440,7 +440,7 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "asaRepository", asaRepository);
 
-		boolean srm = impl.checkDepassementCompteurAgent(demande);
+		boolean srm = impl.checkDepassementCompteurAgent(demande, null);
 
 		assertFalse(srm);
 	}

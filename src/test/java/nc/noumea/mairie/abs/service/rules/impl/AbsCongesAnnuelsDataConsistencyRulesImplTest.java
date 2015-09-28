@@ -411,7 +411,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
 
-		srm = impl.checkDepassementDroitsAcquis(srm, demande);
+		srm = impl.checkDepassementDroitsAcquis(srm, demande, null);
 
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(1, srm.getInfos().size());
@@ -447,7 +447,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
 
-		srm = impl.checkDepassementDroitsAcquis(srm, demande);
+		srm = impl.checkDepassementDroitsAcquis(srm, demande, null);
 
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(0, srm.getInfos().size());
@@ -483,7 +483,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
 
-		srm = impl.checkDepassementDroitsAcquis(srm, demande);
+		srm = impl.checkDepassementDroitsAcquis(srm, demande, null);
 
 		assertEquals(0, srm.getErrors().size());
 		assertEquals(0, srm.getInfos().size());
@@ -519,7 +519,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
 
-		boolean result = impl.checkDepassementCompteurAgent(demande);
+		boolean result = impl.checkDepassementCompteurAgent(demande, null);
 
 		assertTrue(result);
 	}
@@ -554,7 +554,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
 
-		boolean result = impl.checkDepassementCompteurAgent(demande);
+		boolean result = impl.checkDepassementCompteurAgent(demande, null);
 
 		assertFalse(result);
 	}
@@ -589,7 +589,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
 
-		boolean result = impl.checkDepassementCompteurAgent(demande);
+		boolean result = impl.checkDepassementCompteurAgent(demande, null);
 
 		assertFalse(result);
 	}

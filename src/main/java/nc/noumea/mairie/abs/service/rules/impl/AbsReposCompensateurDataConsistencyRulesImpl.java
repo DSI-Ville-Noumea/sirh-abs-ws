@@ -11,6 +11,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.domain.Spcarr;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 			boolean isProvenanceSIRH) {
 		checkStatutAgent(srm, demande.getIdAgent(), isProvenanceSIRH);
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-		checkDepassementDroitsAcquis(srm, demande);
+		checkDepassementDroitsAcquis(srm, demande, null);
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 	}
@@ -53,16 +54,33 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 	}
 
 	@Override
-	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande) {
+	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande, CheckCompteurAgentVo checkCompteurAgentVo) {
+		
 		// on recupere le solde de l agent
-		AgentReposCompCount soldeReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
+		Integer soldeReposCompNetN1 = 0;
+		Integer sommeDemandeEnCours = 0;
+		
+		if(null != checkCompteurAgentVo
+				&& null != checkCompteurAgentVo.getCompteurRecup()
+				&& null != checkCompteurAgentVo.getDureeDemandeEnCoursRecup()) {
+			soldeReposCompNetN1 = checkCompteurAgentVo.getCompteurReposComp();
+			sommeDemandeEnCours = checkCompteurAgentVo.getDureeDemandeEnCoursReposComp();
+		}else{
+			AgentReposCompCount soldeReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
 				demande.getIdAgent());
 
-		Integer sommeDemandeEnCours = reposCompensateurRepository.getSommeDureeDemandeReposCompEnCoursSaisieouVisee(
+			sommeDemandeEnCours = reposCompensateurRepository.getSommeDureeDemandeReposCompEnCoursSaisieouVisee(
 				demande.getIdAgent(), demande.getIdDemande());
+			
+			soldeReposCompNetN1 = soldeReposComp.getTotalMinutes() + soldeReposComp.getTotalMinutesAnneeN1();
+			
+			if(null != checkCompteurAgentVo) {
+				checkCompteurAgentVo.setCompteurReposComp(soldeReposCompNetN1);
+				checkCompteurAgentVo.setDureeDemandeEnCoursReposComp(sommeDemandeEnCours);
+			}
+		}
 
-		if (null == soldeReposComp
-				|| (soldeReposComp.getTotalMinutes() + soldeReposComp.getTotalMinutesAnneeN1()) - sommeDemandeEnCours
+		if (soldeReposCompNetN1 - sommeDemandeEnCours
 						- ((DemandeReposComp) demande).getDuree() < 0) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 			srm.getErrors().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));

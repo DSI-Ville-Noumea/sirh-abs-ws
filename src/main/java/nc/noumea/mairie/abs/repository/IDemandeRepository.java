@@ -42,4 +42,8 @@ public interface IDemandeRepository {
 	List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche);
 
 	List<Demande> listerDemandeCongeUnique(Integer idAgent, Integer annee);
+
+	List<Demande> listeDemandesForListAgent(Integer idAgentConnecte,
+			List<Integer> idAgentConcerne, Date fromDate, Date toDate,
+			Integer idRefType, Integer idRefGroupeAbsence);
 }

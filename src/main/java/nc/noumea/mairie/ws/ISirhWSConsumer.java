@@ -39,4 +39,6 @@ public interface ISirhWSConsumer {
 			List<Integer> listAgentDto, Date date);
 
 	List<JourDto> getListeJoursFeriesForSaisiDPM(Date dateDebut, Date dateFin);
+
+	List<AgentGeneriqueDto> getListAgents(List<Integer> listAgentDto);
 }

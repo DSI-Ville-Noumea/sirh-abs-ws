@@ -12,6 +12,7 @@ import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 
 public interface IAbsenceDataConsistencyRules {
 
@@ -35,7 +36,7 @@ public interface IAbsenceDataConsistencyRules {
 	List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
 			Date dateDemande);
 
-	boolean checkDepassementCompteurAgent(DemandeDto demandeDto);
+	boolean checkDepassementCompteurAgent(DemandeDto demandeDto, CheckCompteurAgentVo checkCompteurAgentVo);
 
 	boolean checkDepassementMultipleAgent(DemandeDto dto);
 
@@ -49,7 +50,7 @@ public interface IAbsenceDataConsistencyRules {
 	ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi, RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel,
 			ReturnMessageDto srm);
 
-	ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande);
+	ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande, CheckCompteurAgentVo checkCompteurAgentVo);
 
 	void checkSamediOffertToujoursOk(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande);
 }
