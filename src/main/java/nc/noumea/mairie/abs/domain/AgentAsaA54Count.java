@@ -11,6 +11,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name = "ABS_AGENT_ASA_A54_COUNT")
 @PersistenceUnit(unitName = "absPersistenceUnit")
@@ -28,6 +30,11 @@ public class AgentAsaA54Count extends AgentCount {
 	@Column(name = "DATE_FIN")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
+
+	@NotNull
+	@Column(name = "ACTIF", nullable = false)
+	@Type(type = "boolean")
+	private boolean actif;
 
 	public Double getTotalJours() {
 		return totalJours;
@@ -51,6 +58,14 @@ public class AgentAsaA54Count extends AgentCount {
 
 	public void setDateFin(Date dateFin) {
 		this.dateFin = dateFin;
+	}
+
+	public boolean isActif() {
+		return actif;
+	}
+
+	public void setActif(boolean actif) {
+		this.actif = actif;
 	}
 
 }

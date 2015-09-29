@@ -58,6 +58,31 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(srm.getErrors().get(0), "L'agent [9005138] ne possède pas de droit pour les absences syndicales.");
 	}
+	
+	@Test
+	public void checkDroitCompteurAsaA48_pasActif() {
+
+		Date dateDebut = new Date();
+		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
+		soldeAsaA48.setActif(false);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
+				soldeAsaA48);
+
+		AbsAsaA48DataConsistencyRulesImpl impl = new AbsAsaA48DataConsistencyRulesImpl();
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		demande.setIdAgent(9005138);
+		demande.setDateDebut(dateDebut);
+
+		srm = impl.checkDroitCompteurAsaA48(srm, demande);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0), "L'agent [9005138] ne possède pas de droit pour les absences syndicales.");
+	}
 
 	@Test
 	public void checkDroitCompteurAsaA48_compteurNegatif() {
@@ -65,6 +90,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		Date dateDebut = new Date();
 		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
 		soldeAsaA48.setTotalJours(0.0);
+		soldeAsaA48.setActif(true);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
@@ -107,6 +133,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		Date dateDebut = new Date();
 		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
 		soldeAsaA48.setTotalJours(9.0);
+		soldeAsaA48.setActif(true);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(
@@ -149,6 +176,7 @@ public class AbsAsaA48DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		Date dateDebut = new Date();
 		AgentAsaA48Count soldeAsaA48 = new AgentAsaA48Count();
 		soldeAsaA48.setTotalJours(10.5);
+		soldeAsaA48.setActif(true);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, dateDebut)).thenReturn(

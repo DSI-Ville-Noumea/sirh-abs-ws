@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class AbsAsaA54DataConsistencyRulesImpl extends AbsAsaDataConsistencyRulesImpl {
 
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,  boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, boolean isProvenanceSIRH) {
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		checkDroitCompteurAsaA54(srm, demande);
@@ -24,10 +24,9 @@ public class AbsAsaA54DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 	public ReturnMessageDto checkDroitCompteurAsaA54(ReturnMessageDto srm, Demande demande) {
 
-		AgentAsaA54Count soldeAsaA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class,
-				demande.getIdAgent(), demande.getDateDebut());
+		AgentAsaA54Count soldeAsaA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, demande.getIdAgent(), demande.getDateDebut());
 
-		if (null == soldeAsaA54) {
+		if (null == soldeAsaA54 || !soldeAsaA54.isActif()) {
 			logger.warn(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
 			srm.getErrors().add(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
 			return srm;
@@ -63,19 +62,18 @@ public class AbsAsaA54DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto, CheckCompteurAgentVo checkCompteurAgentVo) {
 
 		// on verifie d abord l etat de la demande
-		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur 
-		if(!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
+		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de
+		// depassement de compteur
+		if (!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
-		
-		AgentAsaA54Count soldeAsaA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, demandeDto
-				.getAgentWithServiceDto().getIdAgent(), demandeDto.getDateDebut());
+
+		AgentAsaA54Count soldeAsaA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, demandeDto.getAgentWithServiceDto().getIdAgent(), demandeDto.getDateDebut());
 
 		if (null == soldeAsaA54) {
 			return true;
 		}
 
-		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto
-				.getAgentWithServiceDto().getIdAgent());
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto.getAgentWithServiceDto().getIdAgent());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande

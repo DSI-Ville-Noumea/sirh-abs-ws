@@ -86,6 +86,7 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 		arc.setDateDebut(compteurDto.getDateDebut());
 		arc.setDateFin(compteurDto.getDateFin());
 		arc.setLastModification(helperService.getCurrentDate());
+		arc.setActif(compteurDto.isActif());
 
 		counterRepository.persistEntity(arc);
 		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc,

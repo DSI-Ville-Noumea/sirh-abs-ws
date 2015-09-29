@@ -28,7 +28,7 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class,
 				demande.getIdAgent(), demande.getDateDebut());
 
-		if (null == soldeAsaA48) {
+		if (null == soldeAsaA48 || !soldeAsaA48.isActif()) {
 			logger.warn(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
 			srm.getErrors().add(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
 			return srm;

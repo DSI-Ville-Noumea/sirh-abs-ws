@@ -35,6 +35,9 @@ public class CompteurDto {
 	private Date dateFin;
 
 	private OrganisationSyndicaleDto organisationSyndicaleDto;
+	
+	//#18726 
+	private boolean actif;
 
 	public Integer getIdAgent() {
 		return idAgent;
@@ -94,6 +97,7 @@ public class CompteurDto {
 			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
 			this.motifCompteurDto = dto;
 		}
+		this.actif = arc.isActif();
 	}
 
 	public CompteurDto(AgentAsaA53Count arc, AgentHistoAlimManuelle histo) {
@@ -134,6 +138,7 @@ public class CompteurDto {
 			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
 			this.motifCompteurDto = dto;
 		}
+		this.actif = arc.isActif();
 	}
 
 	public CompteurDto(AgentAsaA55Count arc, AgentHistoAlimManuelle histo) {
@@ -174,6 +179,14 @@ public class CompteurDto {
 
 	public void setIdCompteur(Integer idCompteur) {
 		this.idCompteur = idCompteur;
+	}
+
+	public boolean isActif() {
+		return actif;
+	}
+
+	public void setActif(boolean actif) {
+		this.actif = actif;
 	}
 
 }
