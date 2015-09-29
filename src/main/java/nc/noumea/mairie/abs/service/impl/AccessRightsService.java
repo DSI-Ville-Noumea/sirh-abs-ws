@@ -1051,12 +1051,15 @@ public class AccessRightsService implements IAccessRightsService {
 
 		List<Integer> codeServices = new ArrayList<Integer>();
 
+		// #18709 optimiser les appels ADS
+		EntiteDto root = adsWsConsumer.getWholeTree();
+		
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, null)) {
 
 			if (codeServices.contains(da.getIdServiceADS()))
 				continue;
 
-			EntiteDto svDto = adsWsConsumer.getEntiteByIdEntite(da.getIdServiceADS());
+			EntiteDto svDto = adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da.getIdServiceADS(), root);
 			if (svDto != null) {
 				codeServices.add(da.getIdServiceADS());
 				if (!svDto.getIdStatut().toString().equals(String.valueOf(StatutEntiteEnum.ACTIF.getIdRefStatutEntite()))) {
@@ -1078,7 +1081,7 @@ public class AccessRightsService implements IAccessRightsService {
 						if (codeServices.contains(da.getIdServiceADS()))
 							continue;
 
-						EntiteDto svDto = adsWsConsumer.getEntiteByIdEntite(da.getIdServiceADS());
+						EntiteDto svDto = adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da.getIdServiceADS(), root);
 						if (svDto != null) {
 							codeServices.add(da.getIdServiceADS());
 							if (!svDto.getIdStatut().toString().equals(String.valueOf(StatutEntiteEnum.ACTIF.getIdRefStatutEntite()))) {

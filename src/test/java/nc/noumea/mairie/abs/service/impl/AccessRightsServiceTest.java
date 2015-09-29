@@ -3657,8 +3657,9 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
 
 		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
-		Mockito.when(adsWsConsumer.getEntiteByIdEntite(1)).thenReturn(entiteDto);
-		Mockito.when(adsWsConsumer.getEntiteByIdEntite(2)).thenReturn(entiteDto2);
+		Mockito.when(adsWsConsumer.getWholeTree()).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da1.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da2.getIdServiceADS(), entiteDto)).thenReturn(entiteDto2);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -3710,7 +3711,9 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
 
 		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
-		Mockito.when(adsWsConsumer.getEntiteByIdEntite(Mockito.anyInt())).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getWholeTree()).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da1.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da2.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
