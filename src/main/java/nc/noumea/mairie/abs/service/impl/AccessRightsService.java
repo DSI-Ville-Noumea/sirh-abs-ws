@@ -938,8 +938,57 @@ public class AccessRightsService implements IAccessRightsService {
 			accessRightsRepository.persisEntity(newDroitAgent);
 		}
 
+		
+		// #18738
+		// on supprime egalement dans la table DroitDroitsAgent
+		// pour les operateurs et viseurs de l approbateur
+		
+		// on recupere la liste des
+		List<Droit> droitSousAgentsByApprobateur = accessRightsRepository.getDroitSousApprobateur(idAgentApprobateur);
+		
+		/////////// on supprime les agents affectes aux operateurs de l approbateur
+		List<Droit> droitsOperateurs = getOperateursOfApprobateur(idAgentApprobateur, droitSousAgentsByApprobateur);
+		if(null != droitsOperateurs) {
+			for(Droit operateur : droitsOperateurs) {
+				for (DroitProfil droitProfilOperateur : operateur.getDroitProfils()) {
+					if (droitProfilOperateur.getDroitApprobateur().getIdDroit().equals(droitProfilApprobateur.getDroit().getIdDroit()) 
+							&& droitProfilOperateur.getProfil().getLibelle().equals(ProfilEnum.OPERATEUR.toString())) {
+						
+						for(DroitDroitsAgent droitDroitsAgentOperateurToDelete : droitProfilOperateur.getDroitDroitsAgent()) {
+							for (DroitDroitsAgent agToDelete : agentsToDelete) {
+								if(droitDroitsAgentOperateurToDelete.getDroitsAgent().getIdAgent().equals(agToDelete.getDroitsAgent().getIdAgent())){
+									deleteDroitDroitsAgent(droitDroitsAgentOperateurToDelete);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		/////////// on supprime les agents affectes aux viseurs de l approbateur
+		List<Droit> droitsViseurs = getViseursApprobateur(idAgentApprobateur, droitSousAgentsByApprobateur);
+		if(null != droitsViseurs) {
+			for(Droit viseur : droitsViseurs) {
+				for (DroitProfil droitProfilViseur : viseur.getDroitProfils()) {
+					if (droitProfilViseur.getDroitApprobateur().getIdDroit().equals(droitProfilApprobateur.getDroit().getIdDroit()) 
+							&& droitProfilViseur.getProfil().getLibelle().equals(ProfilEnum.VISEUR.toString())) {
+						
+						for(DroitDroitsAgent droitDroitsAgentViseurToDelete : droitProfilViseur.getDroitDroitsAgent()) {
+							for (DroitDroitsAgent agToDelete : agentsToDelete) {
+								if(droitDroitsAgentViseurToDelete.getDroitsAgent().getIdAgent().equals(agToDelete.getDroitsAgent().getIdAgent())){
+									deleteDroitDroitsAgent(droitDroitsAgentViseurToDelete);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		for (DroitDroitsAgent agToDelete : agentsToDelete) {
 			deleteDroitDroitsAgent(agToDelete);
+			
 		}
 
 		return result;
