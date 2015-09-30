@@ -16,6 +16,7 @@ import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount;
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
@@ -61,39 +62,26 @@ public class SoldeServiceTest {
 
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(null);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA48Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(null);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA54Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(null);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA55Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(null);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA48Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate())).thenReturn(null);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA54Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate())).thenReturn(null);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, idAgent, new DateTime(annee, 1, 1, 0, 0, 0).toDate())).thenReturn(null);
 
-		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
-				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
 				return result;
 			}
-		})
-				.when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(Boolean.class));
+		}).when(absDataConsistencyRules).checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class), Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
-				listeSoldeSpecifiqueDto);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
 
-		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
-				.mock(IOrganisationSyndicaleRepository.class);
-		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(
-				new ArrayList<AgentOrganisationSyndicale>());
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(new ArrayList<AgentOrganisationSyndicale>());
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(0);
@@ -153,12 +141,21 @@ public class SoldeServiceTest {
 		arccc.setTotalJours(12.0);
 		arccc.setDateDebut(dateDeb);
 		arccc.setDateFin(dateFin);
+		arccc.setActif(true);
+
+		AgentAsaAmicaleCount arcAmicale = new AgentAsaAmicaleCount();
+		arcAmicale.setIdAgent(idAgent);
+		arcAmicale.setTotalMinutes(600);
+		arcAmicale.setDateDebut(dateDeb);
+		arcAmicale.setDateFin(dateFin);
+		arcAmicale.setActif(true);
 
 		AgentAsaA54Count arc54 = new AgentAsaA54Count();
 		arc54.setIdAgent(idAgent);
 		arc54.setTotalJours(12.0);
 		arc54.setDateDebut(dateDeb);
 		arc54.setDateFin(dateFin);
+		arc54.setActif(true);
 
 		AgentAsaA55Count arc55 = new AgentAsaA55Count();
 		arc55.setIdAgent(idAgent);
@@ -214,18 +211,14 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, dateDeb)).thenReturn(arccc);
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, dateDeb)).thenReturn(arc54);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaAmicaleCount.class, 9008765, dateDeb)).thenReturn(arcAmicale);
 		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateJour)).thenReturn(arc55);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(soldeCongeAnnu);
 		Mockito.when(cr.getListAgentCounterA55ByDate(9008765, dateDeb, dateFin)).thenReturn(listeArc55);
-		Mockito.when(
-				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
-						.getIdOrganisationSyndicale(), dateJour)).thenReturn(arc52);
-		Mockito.when(
-				cr.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale()
-						.getIdOrganisationSyndicale(), dateDeb, dateFin, null)).thenReturn(listeArc52);
+		Mockito.when(cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateJour)).thenReturn(arc52);
+		Mockito.when(cr.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb, dateFin, null)).thenReturn(listeArc52);
 
-		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
-				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
@@ -233,10 +226,7 @@ public class SoldeServiceTest {
 				// result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		})
-				.when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(Boolean.class));
+		}).when(absDataConsistencyRules).checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class), Mockito.isA(Boolean.class));
 
 		SoldeSpecifiqueDto soldeSpecifiqueDto = new SoldeSpecifiqueDto();
 		soldeSpecifiqueDto.setLibelle("libelle 1");
@@ -250,11 +240,9 @@ public class SoldeServiceTest {
 		listeSoldeSpecifiqueDto.addAll(Arrays.asList(soldeSpecifiqueDto, soldeSpecifiqueDto2));
 
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, dateDeb, dateFin)).thenReturn(
-				listeSoldeSpecifiqueDto);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, dateDeb, dateFin)).thenReturn(listeSoldeSpecifiqueDto);
 
-		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
-				.mock(IOrganisationSyndicaleRepository.class);
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -262,9 +250,7 @@ public class SoldeServiceTest {
 
 		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(
-				asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
+		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
@@ -284,6 +270,7 @@ public class SoldeServiceTest {
 		assertEquals("10.0", dto.getSoldeReposCompAnneePrec().toString());
 		assertEquals(12, dto.getSoldeAsaA48().intValue());
 		assertEquals(12, dto.getSoldeAsaA54().intValue());
+		assertEquals(600, dto.getSoldeAsaAmicale().intValue());
 		assertEquals(12 * 60, dto.getSoldeAsaA55().intValue());
 		assertEquals(12 * 60, dto.getSoldeAsaA52().intValue());
 		assertTrue(dto.isAfficheSoldeConge());
@@ -291,6 +278,7 @@ public class SoldeServiceTest {
 		assertTrue(dto.isAfficheSoldeReposComp());
 		assertTrue(dto.isAfficheSoldeAsaA48());
 		assertTrue(dto.isAfficheSoldeAsaA54());
+		assertTrue(dto.isAfficheSoldeAsaAmicale());
 		assertTrue(dto.isAfficheSoldeAsaA55());
 		assertTrue(dto.isAfficheSoldeAsaA52());
 		assertEquals(2, dto.getListeSoldeAsaA55().size());
@@ -379,29 +367,17 @@ public class SoldeServiceTest {
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(arccc);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(arcc54);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(arcc55);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(arccc);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(arcc54);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(arcc55);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(soldeCongeAnnu);
+		Mockito.when(cr.getListAgentCounterA55ByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
+		Mockito.when(cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateJour)).thenReturn(arc52);
 		Mockito.when(
-				cr.getListAgentCounterA55ByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
-						12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
-		Mockito.when(
-				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
-						.getIdOrganisationSyndicale(), dateJour)).thenReturn(arc52);
-		Mockito.when(
-				cr.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale()
-						.getIdOrganisationSyndicale(), new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
-						12, 31, 23, 59, 0).toDate(), null)).thenReturn(listeArc52);
+				cr.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31,
+						23, 59, 0).toDate(), null)).thenReturn(listeArc52);
 
-		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
-				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
@@ -409,19 +385,14 @@ public class SoldeServiceTest {
 				// result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		})
-				.when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(Boolean.class));
+		}).when(absDataConsistencyRules).checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class), Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
-				listeSoldeSpecifiqueDto);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
 
-		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
-				.mock(IOrganisationSyndicaleRepository.class);
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -429,9 +400,7 @@ public class SoldeServiceTest {
 
 		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(
-				asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
+		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
@@ -502,33 +471,24 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(soldeCongeAnnu);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(null);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(null);
 
-		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
-				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
-				result.getErrors()
-						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
+				result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		})
-				.when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(Boolean.class));
+		}).when(absDataConsistencyRules).checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class), Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
-				listeSoldeSpecifiqueDto);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
 
-		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
-				.mock(IOrganisationSyndicaleRepository.class);
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -598,33 +558,24 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(soldeCongeAnnu);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(null);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(null);
 
-		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
-				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
-				result.getErrors()
-						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
+				result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		})
-				.when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(Boolean.class));
+		}).when(absDataConsistencyRules).checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class), Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
-				listeSoldeSpecifiqueDto);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
 
-		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
-				.mock(IOrganisationSyndicaleRepository.class);
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -694,33 +645,24 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(soldeCongeAnnu);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(null);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(null);
 
-		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
-				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
-				result.getErrors()
-						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
+				result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		})
-				.when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(Boolean.class));
+		}).when(absDataConsistencyRules).checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class), Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
-				listeSoldeSpecifiqueDto);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
 
-		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
-				.mock(IOrganisationSyndicaleRepository.class);
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -779,30 +721,22 @@ public class SoldeServiceTest {
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, idAgent)).thenReturn(soldeCongeAnnu);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(null);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(null);
 
-		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
-				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
 				ReturnMessageDto result = (ReturnMessageDto) args[0];
-				result.getErrors()
-						.add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
+				result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		})
-				.when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(Boolean.class));
+		}).when(absDataConsistencyRules).checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class), Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
-				listeSoldeSpecifiqueDto);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
@@ -928,8 +862,7 @@ public class SoldeServiceTest {
 		compteurAgent.setIdAgentCount(1);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListHisto(9005138, compteurAgent)).thenReturn(
-				new ArrayList<AgentHistoAlimManuelle>());
+		Mockito.when(counterRepository.getListHisto(9005138, compteurAgent)).thenReturn(new ArrayList<AgentHistoAlimManuelle>());
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
@@ -964,15 +897,12 @@ public class SoldeServiceTest {
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getListHisto(9005138, compteurAgent)).thenReturn(list);
-		Mockito.when(
-				counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, new DateTime(2014, 1, 24, 0,
-						0, 0).toDate())).thenReturn(compteurAgent);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, 9005138, new DateTime(2014, 1, 24, 0, 0, 0).toDate())).thenReturn(compteurAgent);
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 7, new DateTime(2014, 1, 24, 0,
-				0, 0).toDate(), null, false);
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 7, new DateTime(2014, 1, 24, 0, 0, 0).toDate(), null, false);
 
 		assertEquals(1, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());
@@ -1006,15 +936,12 @@ public class SoldeServiceTest {
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getListHisto(9005138, compteurAgent)).thenReturn(list);
-		Mockito.when(
-				counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, new DateTime(2014, 1, 24, 0,
-						0, 0).toDate())).thenReturn(compteurAgent);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, new DateTime(2014, 1, 24, 0, 0, 0).toDate())).thenReturn(compteurAgent);
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 8, new DateTime(2014, 1, 24, 0,
-				0, 0).toDate(), null, false);
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 8, new DateTime(2014, 1, 24, 0, 0, 0).toDate(), null, false);
 
 		assertEquals(1, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());
@@ -1049,15 +976,13 @@ public class SoldeServiceTest {
 		Mockito.when(counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, 9005138)).thenReturn(compteurAgent);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
-				.thenReturn(null);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(null);
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 1, new DateTime(2014, 1, 24, 0,
-				0, 0).toDate(), null, false);
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 1, new DateTime(2014, 1, 24, 0, 0, 0).toDate(), null, false);
 
 		assertEquals(1, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());
@@ -1123,15 +1048,13 @@ public class SoldeServiceTest {
 		listRestitutionMassive.add(histo3);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
-		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
-				.thenReturn(listRestitutionMassive);
+		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null)).thenReturn(listRestitutionMassive);
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 1, new DateTime(2014, 1, 24, 0,
-				0, 0).toDate(), null, false);
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 1, new DateTime(2014, 1, 24, 0, 0, 0).toDate(), null, false);
 
 		assertEquals(3, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());
@@ -1178,8 +1101,7 @@ public class SoldeServiceTest {
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 3, new DateTime(2014, 1, 24, 0,
-				0, 0).toDate(), null, false);
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 3, new DateTime(2014, 1, 24, 0, 0, 0).toDate(), null, false);
 
 		assertEquals(1, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());
@@ -1216,8 +1138,7 @@ public class SoldeServiceTest {
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 2, new DateTime(2014, 1, 24, 0,
-				0, 0).toDate(), null, false);
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 2, new DateTime(2014, 1, 24, 0, 0, 0).toDate(), null, false);
 
 		assertEquals(1, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());
@@ -1254,15 +1175,13 @@ public class SoldeServiceTest {
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getListHisto(9005138, compteurAgent)).thenReturn(list);
-		Mockito.when(
-				counterRepository.getListAgentCounterA55ByDate(9005138, new DateTime(2014, 1, 1, 0, 0, 0).toDate(),
-						new DateTime(2014, 12, 31, 23, 59, 59).toDate())).thenReturn(listCompteurAgent);
+		Mockito.when(counterRepository.getListAgentCounterA55ByDate(9005138, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 23, 59, 59).toDate()))
+				.thenReturn(listCompteurAgent);
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 9, new DateTime(2014, 1, 1, 0,
-				0, 0).toDate(), new DateTime(2014, 12, 31, 23, 59, 59).toDate(), false);
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(9005138, 9, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 23, 59, 59).toDate(), false);
 
 		assertEquals(1, listResult.size());
 		assertEquals(e.getText(), listResult.get(0).getTextModification());
@@ -1294,12 +1213,21 @@ public class SoldeServiceTest {
 		arccc.setTotalJours(12.0);
 		arccc.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arccc.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
+		arccc.setActif(true);
+
+		AgentAsaAmicaleCount arccAmicale = new AgentAsaAmicaleCount();
+		arccAmicale.setIdAgent(idAgent);
+		arccAmicale.setTotalMinutes(600);
+		arccAmicale.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		arccAmicale.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
+		arccAmicale.setActif(true);
 
 		AgentAsaA54Count arcc54 = new AgentAsaA54Count();
 		arcc54.setIdAgent(idAgent);
 		arcc54.setTotalJours(12.0);
 		arcc54.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
 		arcc54.setDateFin(new DateTime(2014, 12, 31, 23, 59, 0).toDate());
+		arcc54.setActif(true);
 
 		AgentAsaA55Count arcc55 = new AgentAsaA55Count();
 		arcc55.setIdAgent(idAgent);
@@ -1351,29 +1279,18 @@ public class SoldeServiceTest {
 		ICounterRepository cr = Mockito.mock(ICounterRepository.class);
 		Mockito.when(cr.getAgentCounter(AgentRecupCount.class, idAgent)).thenReturn(arc);
 		Mockito.when(cr.getAgentCounter(AgentReposCompCount.class, idAgent)).thenReturn(arcc);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(arccc);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate()))
-				.thenReturn(arcc54);
-		Mockito.when(
-				cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateDemande))
-				.thenReturn(arcc55);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA48Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(arccc);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA54Count.class, 9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate())).thenReturn(arcc54);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaAmicaleCount.class, 9008765, new DateTime(2013, 1, 1, 0, 0, 0).toDate())).thenReturn(arccAmicale);
+		Mockito.when(cr.getAgentCounterByDate(AgentAsaA55Count.class, 9008765, dateDemande)).thenReturn(arcc55);
 		Mockito.when(cr.getAgentCounter(AgentCongeAnnuelCount.class, 9008765)).thenReturn(soldeCongeAnnu);
+		Mockito.when(cr.getListAgentCounterA55ByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
+		Mockito.when(cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDemande)).thenReturn(arc52);
 		Mockito.when(
-				cr.getListAgentCounterA55ByDate(9008765, new DateTime(2014, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
-						12, 31, 23, 59, 0).toDate())).thenReturn(listeArc55);
-		Mockito.when(
-				cr.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale()
-						.getIdOrganisationSyndicale(), dateDemande)).thenReturn(arc52);
-		Mockito.when(
-				cr.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale()
-						.getIdOrganisationSyndicale(), new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014,
-						12, 31, 23, 59, 0).toDate(), null)).thenReturn(listeArc52);
+				cr.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), new DateTime(2013, 1, 1, 0, 0, 0).toDate(), new DateTime(2014, 12, 31,
+						23, 59, 0).toDate(), null)).thenReturn(listeArc52);
 
-		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito
-				.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
+		AbsReposCompensateurDataConsistencyRulesImpl absDataConsistencyRules = Mockito.mock(AbsReposCompensateurDataConsistencyRulesImpl.class);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
@@ -1381,19 +1298,14 @@ public class SoldeServiceTest {
 				// result.getErrors().add("L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.");
 				return result;
 			}
-		})
-				.when(absDataConsistencyRules)
-				.checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
-						Mockito.isA(Boolean.class));
+		}).when(absDataConsistencyRules).checkStatutAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class), Mockito.isA(Boolean.class));
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
-		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(
-				listeSoldeSpecifiqueDto);
+		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
 
-		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito
-				.mock(IOrganisationSyndicaleRepository.class);
+		IOrganisationSyndicaleRepository organisationSyndicaleRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(organisationSyndicaleRepository.getAgentOrganisationActif(idAgent)).thenReturn(list);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
@@ -1401,9 +1313,7 @@ public class SoldeServiceTest {
 
 		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(
-				asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class),
-						Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
+		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
 
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
@@ -1431,6 +1341,8 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeAsaA48());
 		assertFalse(dto.isAfficheSoldeAsaA54());
 		assertTrue(dto.isAfficheSoldeAsaA55());
+		assertTrue(dto.isAfficheSoldeAsaAmicale());
+		assertEquals(600, dto.getSoldeAsaAmicale().intValue());
 		assertEquals(0, dto.getListeSoldeAsaA55().size());
 		assertFalse(dto.isAfficheSoldeCongesExcep());
 		assertEquals(0, dto.getListeSoldeCongesExcep().size());

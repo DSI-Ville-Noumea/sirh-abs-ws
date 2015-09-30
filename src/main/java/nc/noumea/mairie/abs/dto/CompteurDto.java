@@ -7,6 +7,7 @@ import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
@@ -155,6 +156,19 @@ public class CompteurDto {
 
 	public CompteurDto() {
 		super();
+	}
+
+	public CompteurDto(AgentAsaAmicaleCount arc, AgentHistoAlimManuelle histo) {
+		this.idCompteur = arc.getIdAgentCount();
+		this.idAgent = arc.getIdAgent();
+		this.dureeAAjouter = (double) arc.getTotalMinutes();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+		if (histo != null && histo.getMotifCompteur() != null) {
+			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
+			this.motifCompteurDto = dto;
+		}
+		this.actif = arc.isActif();
 	}
 
 	public OrganisationSyndicaleDto getOrganisationSyndicaleDto() {

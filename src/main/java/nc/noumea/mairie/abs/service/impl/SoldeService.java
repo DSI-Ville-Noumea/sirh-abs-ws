@@ -10,6 +10,7 @@ import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
+import nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount;
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
@@ -90,6 +91,7 @@ public class SoldeService implements ISoldeService {
 			getSoldeAsaA48(idAgent, dto, dateDeb);
 			getSoldeAsaA54(idAgent, dto, dateDeb);
 			getSoldeAsaA55(idAgent, dto, dateDeb, dateFin, dateJour);
+			getSoldeAsaAmicale(idAgent, dto, dateDeb, dateFin, dateJour);
 			getSoldeAsaA52(idAgent, dto, dateDeb, dateFin, dateJour);
 			getSoldeCongesExcep(idAgent, dto, dateDeb, dateFin);
 		} else {
@@ -115,6 +117,9 @@ public class SoldeService implements ISoldeService {
 				case ASA_A52:
 					getSoldeAsaA52(idAgent, dto, dateDeb, dateFin, dateJour);
 					break;
+				case ASA_AMICALE:
+					getSoldeAsaAmicale(idAgent, dto, dateDeb, dateFin, dateJour);
+					break;
 				case MALADIES:
 					// TODO
 					break;
@@ -126,14 +131,26 @@ public class SoldeService implements ISoldeService {
 		return dto;
 	}
 
+	private void getSoldeAsaAmicale(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin, Date dateJour) {
+		// on traite les ASA AMICALE pour la date en parametre
+		AgentAsaAmicaleCount soldeAsaAmicale = counterRepository.getAgentCounterByDate(AgentAsaAmicaleCount.class, idAgent, dateDeb);
+
+		if (soldeAsaAmicale != null && soldeAsaAmicale.isActif()) {
+			dto.setAfficheSoldeAsaAmicale(soldeAsaAmicale == null ? false : true);
+			dto.setSoldeAsaAmicale(soldeAsaAmicale == null ? 0.0 : soldeAsaAmicale.getTotalMinutes());
+		} else {
+			dto.setAfficheSoldeAsaAmicale(false);
+			dto.setSoldeAsaAmicale(0.0);
+		}
+	}
+
 	private void getSoldeConges(Integer idAgent, SoldeDto dto) {
 		// on traite les congés annuels
 		AgentCongeAnnuelCount soldeConge = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
 		dto.setAfficheSoldeConge(true);
 		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
 		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
-		dto.setSamediOffert(demandeRepository.getNombreSamediOffertSurAnnee(idAgent,
-				new DateTime(new Date()).getYear(), null) == 0 ? false : true);
+		dto.setSamediOffert(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, new DateTime(new Date()).getYear(), null) == 0 ? false : true);
 	}
 
 	private void getSoldeRecup(Integer idAgent, SoldeDto dto) {
@@ -155,25 +172,34 @@ public class SoldeService implements ISoldeService {
 
 	private void getSoldeAsaA48(Integer idAgent, SoldeDto dto, Date dateDeb) {
 		// on traite les ASA A48 pour la date en parametre
-		AgentAsaA48Count soldeAsaA48 = counterRepository
-				.getAgentCounterByDate(AgentAsaA48Count.class, idAgent, dateDeb);
-		dto.setAfficheSoldeAsaA48(soldeAsaA48 == null ? false : true);
-		dto.setSoldeAsaA48(soldeAsaA48 == null ? 0 : soldeAsaA48.getTotalJours());
+		AgentAsaA48Count soldeAsaA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, idAgent, dateDeb);
+
+		if (soldeAsaA48 != null && soldeAsaA48.isActif()) {
+			dto.setAfficheSoldeAsaA48(soldeAsaA48 == null ? false : true);
+			dto.setSoldeAsaA48(soldeAsaA48 == null ? 0 : soldeAsaA48.getTotalJours());
+		} else {
+			dto.setAfficheSoldeAsaA48(false);
+			dto.setSoldeAsaA48(0.0);
+		}
 	}
 
 	private void getSoldeAsaA54(Integer idAgent, SoldeDto dto, Date dateDeb) {
 		// on traite les ASA A54 pour la date en parametre
-		AgentAsaA54Count soldeAsaA54 = counterRepository
-				.getAgentCounterByDate(AgentAsaA54Count.class, idAgent, dateDeb);
-		dto.setAfficheSoldeAsaA54(soldeAsaA54 == null ? false : true);
-		dto.setSoldeAsaA54(soldeAsaA54 == null ? 0 : soldeAsaA54.getTotalJours());
+		AgentAsaA54Count soldeAsaA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, idAgent, dateDeb);
+
+		if (soldeAsaA54 != null && soldeAsaA54.isActif()) {
+			dto.setAfficheSoldeAsaA54(soldeAsaA54 == null ? false : true);
+			dto.setSoldeAsaA54(soldeAsaA54 == null ? 0 : soldeAsaA54.getTotalJours());
+		} else {
+			dto.setAfficheSoldeAsaA54(false);
+			dto.setSoldeAsaA54(0.0);
+		}
 	}
 
 	private void getSoldeAsaA55(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin, Date dateJour) {
 		// on traite les ASA A55 pour la date en parametre
 		// on affiche le solde courant
-		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, idAgent,
-				dateJour);
+		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, idAgent, dateJour);
 		dto.setAfficheSoldeAsaA55(soldeAsaA55 == null ? false : true);
 		if (soldeAsaA55 != null) {
 			dto.setSoldeAsaA55((double) soldeAsaA55.getTotalMinutes());
@@ -181,8 +207,7 @@ public class SoldeService implements ISoldeService {
 			dto.setSoldeAsaA55((double) 0);
 		}
 		// on affiche tous les soldes de l'année
-		List<AgentAsaA55Count> listeSoldeAsaA55 = counterRepository.getListAgentCounterA55ByDate(idAgent, dateDeb,
-				dateFin);
+		List<AgentAsaA55Count> listeSoldeAsaA55 = counterRepository.getListAgentCounterA55ByDate(idAgent, dateDeb, dateFin);
 		List<SoldeMonthDto> listDto = new ArrayList<SoldeMonthDto>();
 		for (AgentAsaA55Count arc : listeSoldeAsaA55) {
 			SoldeMonthDto dtoMonth = new SoldeMonthDto();
@@ -205,8 +230,7 @@ public class SoldeService implements ISoldeService {
 			dto.setSoldeAsaA52(0.0);
 			dto.setListeSoldeAsaA52(new ArrayList<SoldeMonthDto>());
 		} else {
-			AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class, list.get(0)
-					.getOrganisationSyndicale().getIdOrganisationSyndicale(), dateJour);
+			AgentAsaA52Count soldeAsaA52 = counterRepository.getOSCounterByDate(AgentAsaA52Count.class, list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateJour);
 			OrganisationSyndicaleDto dtoOrga = new OrganisationSyndicaleDto(list.get(0).getOrganisationSyndicale());
 			dto.setOrganisationA52(dtoOrga);
 			dto.setAfficheSoldeAsaA52(soldeAsaA52 == null ? false : true);
@@ -216,8 +240,8 @@ public class SoldeService implements ISoldeService {
 				dto.setSoldeAsaA52((double) 0);
 			}
 			// on affiche tous les soldes de l'année
-			List<AgentAsaA52Count> listeSoldeAsaA52 = counterRepository.getListOSCounterByDateAndOrganisation(
-					list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb, dateFin, null);
+			List<AgentAsaA52Count> listeSoldeAsaA52 = counterRepository.getListOSCounterByDateAndOrganisation(list.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale(), dateDeb, dateFin,
+					null);
 			List<SoldeMonthDto> listDto = new ArrayList<SoldeMonthDto>();
 			for (AgentAsaA52Count arc : listeSoldeAsaA52) {
 				SoldeMonthDto dtoMonth = new SoldeMonthDto();
@@ -232,8 +256,7 @@ public class SoldeService implements ISoldeService {
 
 	private void getSoldeCongesExcep(Integer idAgent, SoldeDto dto, Date dateDeb, Date dateFin) {
 		// Conges Exceptionnels
-		List<SoldeSpecifiqueDto> listeSoldeCongesExcep = congesExcepCounterServiceImpl.getListAgentCounterByDate(
-				idAgent, dateDeb, dateFin);
+		List<SoldeSpecifiqueDto> listeSoldeCongesExcep = congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, dateDeb, dateFin);
 		if (null != listeSoldeCongesExcep && !listeSoldeCongesExcep.isEmpty()) {
 			dto.setAfficheSoldeCongesExcep(true);
 			dto.setListeSoldeCongesExcep(listeSoldeCongesExcep);
@@ -242,30 +265,25 @@ public class SoldeService implements ISoldeService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<HistoriqueSoldeDto> getHistoriqueSoldeAgent(Integer idAgent, Integer codeRefTypeAbsence, Date dateDeb,
-			Date dateFin, boolean isSirh) {
-		logger.info(
-				"Read getHistoriqueSoldeAgent for Agent {}, and dateDeb {}, and dateFin {}, and typeAbsence {} ...",
-				idAgent, dateDeb, dateFin, RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence));
+	public List<HistoriqueSoldeDto> getHistoriqueSoldeAgent(Integer idAgent, Integer codeRefTypeAbsence, Date dateDeb, Date dateFin, boolean isSirh) {
+		logger.info("Read getHistoriqueSoldeAgent for Agent {}, and dateDeb {}, and dateFin {}, and typeAbsence {} ...", idAgent, dateDeb, dateFin,
+				RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence));
 
 		List<AgentCount> listAgentCount = new ArrayList<AgentCount>();
 		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassive = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
 		// on recupere le compteur correspondant
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence)) {
 			case CONGE_ANNUEL:
-				AgentCongeAnnuelCount countCongeAnnuel = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class,
-						idAgent);
+				AgentCongeAnnuelCount countCongeAnnuel = counterRepository.getAgentCounter(AgentCongeAnnuelCount.class, idAgent);
 				if (countCongeAnnuel != null)
 					listAgentCount.add(countCongeAnnuel);
 
 				if (!isSirh)
-					listRestitutionMassive = congeAnnuelRepository.getListRestitutionMassiveByIdAgent(
-							Arrays.asList(idAgent), null, null);
+					listRestitutionMassive = congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(idAgent), null, null);
 
 				break;
 			case REPOS_COMP:
-				AgentReposCompCount countReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
-						idAgent);
+				AgentReposCompCount countReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class, idAgent);
 				if (countReposComp != null)
 					listAgentCount.add(countReposComp);
 				break;
@@ -275,22 +293,24 @@ public class SoldeService implements ISoldeService {
 					listAgentCount.add(countRecup);
 				break;
 			case ASA_A48:
-				AgentAsaA48Count countA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, idAgent,
-						dateDeb);
+				AgentAsaA48Count countA48 = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, idAgent, dateDeb);
 				if (countA48 != null)
 					listAgentCount.add(countA48);
 				break;
 			case ASA_A54:
-				AgentAsaA54Count countA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, idAgent,
-						dateDeb);
+				AgentAsaA54Count countA54 = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, idAgent, dateDeb);
 				if (countA54 != null)
 					listAgentCount.add(countA54);
 				break;
 			case ASA_A55:
-				List<AgentAsaA55Count> countA55 = counterRepository.getListAgentCounterA55ByDate(idAgent, dateDeb,
-						dateFin);
+				List<AgentAsaA55Count> countA55 = counterRepository.getListAgentCounterA55ByDate(idAgent, dateDeb, dateFin);
 				if (countA55 != null)
 					listAgentCount.addAll(countA55);
+				break;
+			case ASA_AMICALE:
+				AgentAsaAmicaleCount countAmicale = counterRepository.getAgentCounterByDate(AgentAsaAmicaleCount.class, idAgent, dateDeb);
+				if (countAmicale != null)
+					listAgentCount.add(countAmicale);
 				break;
 			case MALADIES:
 				// TODO

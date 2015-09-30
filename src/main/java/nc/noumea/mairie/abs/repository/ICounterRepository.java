@@ -40,13 +40,12 @@ public interface ICounterRepository {
 
 	List<Integer> getListAgentCongeAnnuelCountForReset();
 
-	List<AgentAsaA52Count> getListOSCounterByDateAndOrganisation(Integer idOrganisationSyndicale, Date dateDebut,
-			Date dateFin, Integer idCompteur);
+	List<AgentAsaA52Count> getListOSCounterByDateAndOrganisation(Integer idOrganisationSyndicale, Date dateDebut, Date dateFin, Integer idCompteur);
 
 	AgentWeekRecup getWeekHistoRecupCountByIdAgentAndIdPointage(Integer idAgent, Integer idPointage);
 
 	<T> List<T> getListCounterByOrganisation(Class<T> T, Integer idOrganisation);
 
-	List<AgentCongeAnnuelCount> getListAgentCongeAnnuelCountWithListAgents(
-			List<Integer> listIdsAgent);
+	List<AgentCongeAnnuelCount> getListAgentCongeAnnuelCountWithListAgents(List<Integer> listIdsAgent);
+
 }

@@ -50,6 +50,7 @@
       	<class>nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto</class>
       	<class>nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive</class>
       	<class>nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto</class>
+      	<class>nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>

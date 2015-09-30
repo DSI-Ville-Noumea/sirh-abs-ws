@@ -48,6 +48,10 @@ public class CounterServiceFactory {
 	private ICounterService asaA55CounterServiceImpl;
 
 	@Autowired
+	@Qualifier("AsaAmicaleCounterServiceImpl")
+	private ICounterService asaAmicaleCounterServiceImpl;
+
+	@Autowired
 	@Qualifier("CongesExcepCounterServiceImpl")
 	private ICounterService congesExcepCounterServiceImpl;
 
@@ -94,6 +98,8 @@ public class CounterServiceFactory {
 				return asaA54CounterServiceImpl;
 			case ASA_A55:
 				return asaA55CounterServiceImpl;
+			case ASA_AMICALE:
+				return asaAmicaleCounterServiceImpl;
 		}
 		return defaultCounterServiceImpl;
 	}
