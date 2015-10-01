@@ -8,7 +8,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentJoursFeriesGarde;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentJoursFeriesGardeDto;
-import nc.noumea.mairie.abs.dto.EntiteDto;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.JoursFeriesSaisiesGardeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -57,10 +57,16 @@ public class SaisieJoursFeriesGardeService implements ISaisieJoursFeriesGardeSer
 
 		List<AgentDto> listAgentTemp = accessRightsService.getAgentsToApproveOrInputByService(idAgent, idServiveADS);
 		List<AgentDto> listAgent = new ArrayList<>();
+		List<Integer> listIdsAgent = new ArrayList<Integer>();
 		for (AgentDto ag : listAgentTemp) {
-			EntiteDto direction = sirhWSConsumer.getAgentDirection(ag.getIdAgent(), new Date());
-			if (null != direction && null != direction.getSigle() && direction.getSigle().toUpperCase().equals("DPM")) {
-				listAgent.add(ag);
+			listIdsAgent.add(ag.getIdAgent());
+		}
+		List<AgentWithServiceDto> listAgentWithServiceDto = sirhWSConsumer.getListAgentsWithService(listIdsAgent, new Date());
+		for(AgentWithServiceDto agentWithServiceDto : listAgentWithServiceDto) {
+			if (null != agentWithServiceDto 
+					&& null != agentWithServiceDto.getSigleDirection() 
+					&& agentWithServiceDto.getSigleDirection().toUpperCase().equals("DPM")) {
+				listAgent.add((AgentDto)agentWithServiceDto);
 			}
 		}
 

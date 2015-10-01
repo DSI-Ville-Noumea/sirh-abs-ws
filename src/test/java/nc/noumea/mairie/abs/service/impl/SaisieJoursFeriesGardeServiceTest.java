@@ -11,6 +11,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.domain.AgentJoursFeriesGarde;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentJoursFeriesGardeDto;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.JoursFeriesSaisiesGardeDto;
@@ -101,8 +102,12 @@ public class SaisieJoursFeriesGardeServiceTest {
 		agent.setIdAgent(9005131);
 		listAgent.add(agent);
 
-		EntiteDto serviceAgent = new EntiteDto();
-		serviceAgent.setSigle("dpm");
+		AgentWithServiceDto agentWithServiceDto1 = new AgentWithServiceDto();
+		agentWithServiceDto1.setSigleDirection("dpm");
+		agentWithServiceDto1.setIdAgent(9005131);
+		
+		List<AgentWithServiceDto> listAgentWithServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentWithServiceDto.add(agentWithServiceDto1);
 
 		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
 		Mockito.when(accessRightsService.getAgentsToApproveOrInputByService(9005138, 1)).thenReturn(listAgent);
@@ -111,8 +116,8 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
-				serviceAgent);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyList(), Mockito.any(Date.class))).thenReturn(
+				listAgentWithServiceDto);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
 
@@ -140,8 +145,12 @@ public class SaisieJoursFeriesGardeServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
-		EntiteDto serviceAgent = new EntiteDto();
-		serviceAgent.setSigle("dpm");
+		AgentWithServiceDto agentWithServiceDto1 = new AgentWithServiceDto();
+		agentWithServiceDto1.setSigleDirection("dpm");
+		agentWithServiceDto1.setIdAgent(9005138);
+		
+		List<AgentWithServiceDto> listAgentWithServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentWithServiceDto.add(agentWithServiceDto1);
 
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
 		AgentDto agent = new AgentDto();
@@ -159,8 +168,8 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
-				serviceAgent);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyList(), Mockito.any(Date.class))).thenReturn(
+				listAgentWithServiceDto);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
 
@@ -191,8 +200,12 @@ public class SaisieJoursFeriesGardeServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
-		EntiteDto serviceAgent = new EntiteDto();
-		serviceAgent.setSigle("dpm");
+		AgentWithServiceDto agentWithServiceDto1 = new AgentWithServiceDto();
+		agentWithServiceDto1.setSigleDirection("dpm");
+		agentWithServiceDto1.setIdAgent(9005138);
+		
+		List<AgentWithServiceDto> listAgentWithServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentWithServiceDto.add(agentWithServiceDto1);
 
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
 		AgentDto agent = new AgentDto();
@@ -210,8 +223,8 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
-				serviceAgent);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyList(), Mockito.any(Date.class))).thenReturn(
+				listAgentWithServiceDto);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
 		AgentJoursFeriesGarde repos = new AgentJoursFeriesGarde();
@@ -246,9 +259,17 @@ public class SaisieJoursFeriesGardeServiceTest {
 		Date dateDebut = new Date();
 		Date dateFin = new Date();
 
-		EntiteDto serviceAgent = new EntiteDto();
-		serviceAgent.setSigle("dpm");
-
+		AgentWithServiceDto agentWithServiceDto1 = new AgentWithServiceDto();
+		agentWithServiceDto1.setSigleDirection("dpm");
+		agentWithServiceDto1.setIdAgent(9005138);
+		AgentWithServiceDto agentWithServiceDto2 = new AgentWithServiceDto();
+		agentWithServiceDto2.setSigleDirection("dpm");
+		agentWithServiceDto2.setIdAgent(9002990);
+		
+		List<AgentWithServiceDto> listAgentWithServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentWithServiceDto.add(agentWithServiceDto1);
+		listAgentWithServiceDto.add(agentWithServiceDto2);
+		
 		List<AgentDto> listAgent = new ArrayList<AgentDto>();
 		AgentDto agent = new AgentDto();
 		agent.setIdAgent(9005138);
@@ -272,8 +293,8 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getAgentDirection(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
-				serviceAgent);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyList(), Mockito.any(Date.class))).thenReturn(
+				listAgentWithServiceDto);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
 		AgentJoursFeriesGarde repos = new AgentJoursFeriesGarde();
