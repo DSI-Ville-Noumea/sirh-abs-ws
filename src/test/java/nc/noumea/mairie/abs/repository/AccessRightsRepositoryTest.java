@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -465,27 +466,21 @@ public class AccessRightsRepositoryTest {
 		droitDroitsAgents.add(droitDroitsAgent);
 
 		agent.setIdAgent(9008767);
-		agent.setIdServiceADS(1);
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 		agent.setDroitDroitsAgent(droitDroitsAgents);
 
 		absEntityManager.persist(agent);
 		absEntityManager.persist(droitDroitsAgent);
 
-		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008767, 1,
-				droitProfil.getIdDroitProfil());
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008767, droitProfil.getIdDroitProfil());
 
-		List<DroitsAgent> resultSansService = repository.getListOfAgentsToInputOrApprove(9008767, null,
-				droitProfil.getIdDroitProfil());
+		List<DroitsAgent> resultSansService = repository.getListOfAgentsToInputOrApprove(9008767, droitProfil.getIdDroitProfil());
 
 		assertEquals(1, result.size());
 		assertEquals("9008767", result.get(0).getIdAgent().toString());
-		assertEquals("DASP Pôle Administratif et Budgétaire", result.get(0).getLibelleService());
 
 		assertEquals(1, resultSansService.size());
 		assertEquals("9008767", resultSansService.get(0).getIdAgent().toString());
-		assertEquals("DASP Pôle Administratif et Budgétaire", resultSansService.get(0).getLibelleService());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -834,8 +829,6 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008768);
-		agent.setIdServiceADS(1);
-		agent.setLibelleService("DASP Pôle Administratif et test");
 		agent.setDateModification(new Date());
 		agent.setDroitDroitsAgent(droitDroitsAgents);
 		absEntityManager.persist(agent);
@@ -845,8 +838,7 @@ public class AccessRightsRepositoryTest {
 		assertNotNull(result);
 		assertEquals(d, result.getDateModification());
 		for (DroitDroitsAgent ddaResult : result.getDroitDroitsAgent()) {
-			assertEquals("TEST", ddaResult.getDroitsAgent().getIdServiceADS());
-			assertEquals("DASP Pôle Administratif et test", ddaResult.getDroitsAgent().getLibelleService());
+			assertEquals(9008768, (int) ddaResult.getDroitsAgent().getIdAgent());
 		}
 
 		absEntityManager.flush();
@@ -871,8 +863,6 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008767);
-		agent.setIdServiceADS(1);
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 		agent.setDroitDroitsAgent(droitDroitsAgents);
 		absEntityManager.persist(agent);
@@ -1000,7 +990,6 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(idAgent);
-		da.setLibelleService("TEST");
 
 		Droit d = new Droit();
 		d.setIdAgent(idAgent);
@@ -1027,7 +1016,6 @@ public class AccessRightsRepositoryTest {
 		// Then
 		assertEquals(1, result.getDroitDroitsAgent().size());
 		assertEquals(idAgent, result.getIdAgent());
-		assertEquals("TEST", result.getLibelleService());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -1098,10 +1086,7 @@ public class AccessRightsRepositoryTest {
 	public void getApprobateurOfAgent_ReturnResult() {
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
-		;
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
@@ -1150,9 +1135,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("VISEUR");
@@ -1198,9 +1181,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
@@ -1246,9 +1227,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("VISEUR");
@@ -1294,9 +1273,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
@@ -1342,9 +1319,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil profilDelegataire = new Profil();
 		profilDelegataire.setLibelle("DELEGATAIRE");
@@ -1405,9 +1380,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("DELEGATAIRE");
@@ -1467,8 +1440,6 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008778);
-		agent.setIdServiceADS(1);
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 
 		dda.setDroit(droit);
@@ -1478,7 +1449,7 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dda);
 
-		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, null);
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777);
 
 		assertEquals(1, result.size());
 		assertEquals("9008778", result.get(0).getIdAgent().toString());
@@ -1502,8 +1473,6 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008778);
-		agent.setIdServiceADS(1);
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 
 		dda.setDroit(droit);
@@ -1513,7 +1482,7 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dda);
 
-		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008778, null);
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008778);
 
 		assertEquals(0, result.size());
 
@@ -1536,8 +1505,6 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008778);
-		agent.setIdServiceADS(1);
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 
 		dda.setDroit(droit);
@@ -1547,7 +1514,7 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dda);
 
-		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, 1);
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777);
 
 		assertEquals(1, result.size());
 		assertEquals("9008778", result.get(0).getIdAgent().toString());
@@ -1571,8 +1538,6 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent agent = new DroitsAgent();
 		agent.setIdAgent(9008778);
-		agent.setIdServiceADS(1);
-		agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
 		agent.setDateModification(new Date());
 
 		dda.setDroit(droit);
@@ -1582,9 +1547,9 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dda);
 
-		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777, 2);
+		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777);
 
-		assertEquals(0, result.size());
+		assertEquals(1, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -1596,9 +1561,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("OPERATEUR");
@@ -1644,9 +1607,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
@@ -1702,8 +1663,7 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.persist(droit);
 		absEntityManager.persist(dp);
 
-		List<DroitProfil> result = repository.getDroitProfilByAgentAndLibelle(9005138,
-				ProfilEnum.DELEGATAIRE.toString());
+		List<DroitProfil> result = repository.getDroitProfilByAgentAndLibelle(9005138, ProfilEnum.DELEGATAIRE.toString());
 
 		assertNotNull(result);
 		assertEquals(9005138, result.get(0).getDroit().getIdAgent().intValue());
@@ -1743,9 +1703,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
@@ -1843,9 +1801,7 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005131);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
@@ -1990,7 +1946,7 @@ public class AccessRightsRepositoryTest {
 	public void getDroitsAgentByService_ReturnNull() {
 
 		// When
-		List<DroitsAgent> result = repository.getDroitsAgentByService(1);
+		List<DroitsAgent> result = repository.getListDroitsAgent(Arrays.asList(1));
 
 		// Then
 		assertNotNull(result);
@@ -2003,17 +1959,14 @@ public class AccessRightsRepositoryTest {
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005138);
-		da.setLibelleService("TEST");
-		da.setIdServiceADS(1);
 		absEntityManager.persist(da);
 
 		// When
-		List<DroitsAgent> result = repository.getDroitsAgentByService(1);
+		List<DroitsAgent> result = repository.getListDroitsAgent(Arrays.asList(9005138));
 
 		// Then
 		assertEquals(1, result.size());
 		assertEquals(new Integer(9005138), result.get(0).getIdAgent());
-		assertEquals("TEST", result.get(0).getLibelleService());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

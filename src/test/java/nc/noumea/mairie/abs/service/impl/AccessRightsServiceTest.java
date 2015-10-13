@@ -831,14 +831,14 @@ public class AccessRightsServiceTest {
 		dp.setProfil(profilOperateur);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null, idAgent)).thenReturn(new ArrayList<DroitsAgent>());
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idAgent)).thenReturn(new ArrayList<DroitsAgent>());
 		Mockito.when(arRepo.getDroitProfilByAgent(idAgent, idAgent)).thenReturn(Arrays.asList(dp));
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		List<AgentDto> result = service.getAgentsToApproveOrInputByAgent(idAgent, idAgent);
+		List<AgentDto> result = service.getAgentsToApproveOrInputByAgent(idAgent, idAgent, null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -871,7 +871,7 @@ public class AccessRightsServiceTest {
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getDroitProfilByAgent(idAgent, idAgent)).thenReturn(Arrays.asList(dp));
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null, dp.getIdDroitProfil())).thenReturn(Arrays.asList(da1, da2));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, dp.getIdDroitProfil())).thenReturn(Arrays.asList(da1, da2));
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getAgent(1)).thenReturn(a1);
@@ -882,7 +882,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		List<AgentDto> result = service.getAgentsToApproveOrInputByAgent(idAgent, idAgent);
+		List<AgentDto> result = service.getAgentsToApproveOrInputByAgent(idAgent, idAgent, null);
 
 		// Then
 		assertEquals(2, result.size());
@@ -1106,11 +1106,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 		droitProfilDelegataireExistant.setProfil(profil);
-		
+
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -1541,11 +1541,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 		droitProfilDelegataireExistant.setProfil(profil);
-		
+
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -1626,11 +1626,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 		droitProfilDelegataireExistant.setProfil(profil);
-		
+
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -2833,7 +2833,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getDroitProfilApprobateur(idAgentApprobateur)).thenReturn(dpr);
 
 		List<Droit> droitSousAgentsByApprobateur = new ArrayList<Droit>();
-		
+
 		Droit droitOperateur = new Droit();
 		droitOperateur.setIdAgent(9008888);
 		DroitProfil droitProfilOperateur = new DroitProfil();
@@ -2846,7 +2846,7 @@ public class AccessRightsServiceTest {
 		DroitDroitsAgent ddaOperateur = new DroitDroitsAgent();
 		ddaOperateur.setDroitsAgent(droitsAgent);
 		droitProfilOperateur.getDroitDroitsAgent().add(ddaOperateur);
-		
+
 		Droit droitViseur = new Droit();
 		droitViseur.setIdAgent(9007777);
 		DroitProfil droitProfilViseur = new DroitProfil();
@@ -2861,17 +2861,16 @@ public class AccessRightsServiceTest {
 		droitsAgentFictif.setIdAgent(2);
 		ddaViseur.setDroitsAgent(droitsAgentFictif);
 		droitProfilViseur.getDroitDroitsAgent().add(ddaViseur);
-		
+
 		droitSousAgentsByApprobateur.add(droitOperateur);
 		droitSousAgentsByApprobateur.add(droitViseur);
-		
+
 		Mockito.when(arRepo.getDroitSousApprobateur(idAgentApprobateur)).thenReturn(droitSousAgentsByApprobateur);
 		Mockito.when(arRepo.isUserOperateurOfApprobateur(idAgentApprobateur, droitOperateur.getIdAgent())).thenReturn(true);
 		Mockito.when(arRepo.isUserOperateurOfApprobateur(idAgentApprobateur, droitViseur.getIdAgent())).thenReturn(false);
 		Mockito.when(arRepo.isUserViseurOfApprobateur(idAgentApprobateur, droitOperateur.getIdAgent())).thenReturn(false);
 		Mockito.when(arRepo.isUserViseurOfApprobateur(idAgentApprobateur, droitViseur.getIdAgent())).thenReturn(true);
-		
-		
+
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return true;
@@ -2952,7 +2951,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getDroitProfilApprobateur(idAgentApprobateur)).thenReturn(dpr);
 
 		List<Droit> droitSousAgentsByApprobateur = new ArrayList<Droit>();
-		
+
 		Droit droitOperateur = new Droit();
 		droitOperateur.setIdAgent(9008888);
 		DroitProfil droitProfilOperateur = new DroitProfil();
@@ -2965,7 +2964,7 @@ public class AccessRightsServiceTest {
 		DroitDroitsAgent ddaOperateur = new DroitDroitsAgent();
 		ddaOperateur.setDroitsAgent(droitsAgent);
 		droitProfilOperateur.getDroitDroitsAgent().add(ddaOperateur);
-		
+
 		Droit droitViseur = new Droit();
 		droitViseur.setIdAgent(9007777);
 		DroitProfil droitProfilViseur = new DroitProfil();
@@ -2978,17 +2977,16 @@ public class AccessRightsServiceTest {
 		DroitDroitsAgent ddaViseur = new DroitDroitsAgent();
 		ddaViseur.setDroitsAgent(droitsAgent);
 		droitProfilViseur.getDroitDroitsAgent().add(ddaViseur);
-		
+
 		droitSousAgentsByApprobateur.add(droitOperateur);
 		droitSousAgentsByApprobateur.add(droitViseur);
-		
+
 		Mockito.when(arRepo.getDroitSousApprobateur(idAgentApprobateur)).thenReturn(droitSousAgentsByApprobateur);
 		Mockito.when(arRepo.isUserOperateurOfApprobateur(idAgentApprobateur, droitOperateur.getIdAgent())).thenReturn(true);
 		Mockito.when(arRepo.isUserOperateurOfApprobateur(idAgentApprobateur, droitViseur.getIdAgent())).thenReturn(false);
 		Mockito.when(arRepo.isUserViseurOfApprobateur(idAgentApprobateur, droitOperateur.getIdAgent())).thenReturn(false);
 		Mockito.when(arRepo.isUserViseurOfApprobateur(idAgentApprobateur, droitViseur.getIdAgent())).thenReturn(true);
-		
-		
+
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return true;
@@ -3779,10 +3777,10 @@ public class AccessRightsServiceTest {
 		Integer idServiceADS = 1;
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idServiceADS)).thenReturn(new ArrayList<DroitsAgent>());
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(new ArrayList<DroitsAgent>());
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
@@ -3830,7 +3828,7 @@ public class AccessRightsServiceTest {
 		d.setDroitDroitsAgent(droitDroitsAgent);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da1, da2));
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListAgents(Arrays.asList(1, 2))).thenReturn(Arrays.asList(a1, a2));
@@ -3857,15 +3855,12 @@ public class AccessRightsServiceTest {
 
 		// Given
 		Integer idAgent = 9007654;
+		Date dateJour = new Date();
 
 		DroitsAgent da1 = new DroitsAgent();
 		da1.setIdAgent(1);
-		da1.setIdServiceADS(1);
-		da1.setLibelleService("SERVICE 1");
 		DroitsAgent da2 = new DroitsAgent();
 		da2.setIdAgent(2);
-		da2.setIdServiceADS(2);
-		da2.setLibelleService("SERVICE 2");
 
 		Droit d = new Droit();
 
@@ -3889,20 +3884,35 @@ public class AccessRightsServiceTest {
 		entiteDto.setLabel("SERVICE 1");
 		entiteDto.setIdStatut(1);
 
+		AgentWithServiceDto ag2 = new AgentWithServiceDto();
+		ag2.setIdAgent(2);
+		ag2.setIdServiceADS(2);
+		AgentWithServiceDto ag1 = new AgentWithServiceDto();
+		ag1.setIdAgent(1);
+		ag1.setIdServiceADS(1);
+		List<AgentWithServiceDto> listAg = new ArrayList<AgentWithServiceDto>();
+		listAg.add(ag1);
+		listAg.add(ag2);
+
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da1, da2));
 
 		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
 		Mockito.when(adsWsConsumer.getWholeTree()).thenReturn(entiteDto);
-		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da1.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
-		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da2.getIdServiceADS(), entiteDto)).thenReturn(entiteDto2);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(ag1.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(ag2.getIdServiceADS(), entiteDto)).thenReturn(entiteDto2);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(da1.getIdAgent(), dateJour)).thenReturn(ag1);
+		Mockito.when(sirhWSConsumer.getAgentService(da2.getIdAgent(), dateJour)).thenReturn(ag2);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		List<EntiteDto> result = service.getAgentsServicesToApproveOrInput(idAgent);
+		List<EntiteDto> result = service.getAgentsServicesToApproveOrInput(idAgent, dateJour);
 
 		// Then
 		assertEquals(2, result.size());
@@ -3915,15 +3925,12 @@ public class AccessRightsServiceTest {
 
 		// Given
 		Integer idAgent = 9007654;
+		Date dateJour = new Date();
 
 		DroitsAgent da1 = new DroitsAgent();
 		da1.setIdAgent(1);
-		da1.setIdServiceADS(1);
-		da1.setLibelleService("SERVICE 1");
 		DroitsAgent da2 = new DroitsAgent();
 		da2.setIdAgent(2);
-		da2.setIdServiceADS(1);
-		da2.setLibelleService("SERVICE 1");
 
 		Droit d = new Droit();
 
@@ -3938,25 +3945,40 @@ public class AccessRightsServiceTest {
 		entiteDto.setLabel("TEST");
 		entiteDto.setIdStatut(1);
 
+		AgentWithServiceDto ag2 = new AgentWithServiceDto();
+		ag2.setIdAgent(2);
+		ag2.setIdServiceADS(1);
+		AgentWithServiceDto ag1 = new AgentWithServiceDto();
+		ag1.setIdAgent(1);
+		ag1.setIdServiceADS(1);
+		List<AgentWithServiceDto> listAg = new ArrayList<AgentWithServiceDto>();
+		listAg.add(ag1);
+		listAg.add(ag2);
+
 		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 		droitDroitsAgent.addAll(Arrays.asList(dda, dda2));
 
 		d.setDroitDroitsAgent(droitDroitsAgent);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da1, da2));
 
 		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
 		Mockito.when(adsWsConsumer.getWholeTree()).thenReturn(entiteDto);
-		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da1.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
-		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da2.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(ag1.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(ag2.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(da1.getIdAgent(), dateJour)).thenReturn(ag1);
+		Mockito.when(sirhWSConsumer.getAgentService(da2.getIdAgent(), dateJour)).thenReturn(ag2);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		List<EntiteDto> result = service.getAgentsServicesToApproveOrInput(idAgent);
+		List<EntiteDto> result = service.getAgentsServicesToApproveOrInput(idAgent, dateJour);
 
 		// Then
 		assertEquals(1, result.size());
@@ -4343,11 +4365,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 		droitProfilDelegataireExistant.setProfil(profil);
-		
+
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4432,11 +4454,11 @@ public class AccessRightsServiceTest {
 		// delegataire a supprimer
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 		droitProfilDelegataireExistant.setProfil(profil);
-		
+
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4529,11 +4551,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 		droitProfilDelegataireExistant.setProfil(profil);
-		
+
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4617,11 +4639,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 		droitProfilDelegataireExistant.setProfil(profil);
-		
+
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4677,7 +4699,7 @@ public class AccessRightsServiceTest {
 		Mockito.verify(arRepo, Mockito.times(0)).removeEntity(Mockito.isA(DroitProfil.class));
 	}
 
-	// #17859  bug sur changement delegataire
+	// #17859 bug sur changement delegataire
 	@Test
 	public void setDelegataire_newDelagatire_EtAutreDelegataireDejaExistant_etProfilViseur_bug17859() {
 		// Given
@@ -4704,7 +4726,7 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profilDelegataire = new Profil();
 		profilDelegataire.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 		droitProfilDelegataireExistant.setProfil(profilDelegataire);
@@ -4712,11 +4734,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilViseurExistant = new DroitProfil();
 		droitProfilViseurExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profilViseur = new Profil();
 		profilViseur.setLibelle(ProfilEnum.VISEUR.toString());
 		droitProfilViseurExistant.setProfil(profilViseur);
-		
+
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilViseurExistant);
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
@@ -4807,11 +4829,11 @@ public class AccessRightsServiceTest {
 		// delegataire deja existant
 		DroitProfil droitProfilDelegataireExistant = new DroitProfil();
 		droitProfilDelegataireExistant.setDroitApprobateur(droitApprobateur);
-		
+
 		Profil profil = new Profil();
 		profil.setLibelle(ProfilEnum.DELEGATAIRE.toString());
 		droitProfilDelegataireExistant.setProfil(profil);
-		
+
 		Set<DroitProfil> droitProfilDelegataireExistants = new HashSet<DroitProfil>();
 		droitProfilDelegataireExistants.add(droitProfilDelegataireExistant);
 
@@ -4876,9 +4898,7 @@ public class AccessRightsServiceTest {
 		// l agent
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(idAgent);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
@@ -5027,9 +5047,7 @@ public class AccessRightsServiceTest {
 		// l agent
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(idAgent);
-		da.setIdServiceADS(1);
 		da.setDateModification(new Date());
-		da.setLibelleService("SED");
 
 		Profil pAppro = new Profil();
 		pAppro.setLibelle("APPROBATEUR");
@@ -5598,17 +5616,23 @@ public class AccessRightsServiceTest {
 		Mockito.verify(accessRightsRepository, Mockito.times(1)).removeEntity(Mockito.isA(DroitProfil.class));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getListAgentByService_NoAgents() {
+		Date dateJour = new Date();
 		// mock
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getDroitsAgentByService(1)).thenReturn(new ArrayList<DroitsAgent>());
+		Mockito.when(arRepo.getListDroitsAgent(Mockito.anyList())).thenReturn(new ArrayList<DroitsAgent>());
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getListAgentServiceWithParent(1, dateJour)).thenReturn(new ArrayList<AgentWithServiceDto>());
 
 		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		List<Integer> dto = service.getListAgentByService(1);
+		List<Integer> dto = service.getListAgentByService(1, dateJour);
 
 		// Then
 		assertEquals(0, dto.size());
@@ -5618,6 +5642,7 @@ public class AccessRightsServiceTest {
 	public void getListAgentByService_Agents() {
 		// Given
 		List<DroitsAgent> listDroitAg = new ArrayList<DroitsAgent>();
+		Date dateJour = new Date();
 
 		DroitsAgent droitAgent2 = new DroitsAgent();
 		droitAgent2.setIdAgent(9005138);
@@ -5626,15 +5651,29 @@ public class AccessRightsServiceTest {
 		droitAgent.setIdAgent(9005131);
 		listDroitAg.add(droitAgent);
 
+		AgentWithServiceDto ag2 = new AgentWithServiceDto();
+		ag2.setIdAgent(9005131);
+		ag2.setIdServiceADS(1);
+		AgentWithServiceDto ag1 = new AgentWithServiceDto();
+		ag1.setIdAgent(9005138);
+		ag1.setIdServiceADS(1);
+		List<AgentWithServiceDto> listAg = new ArrayList<AgentWithServiceDto>();
+		listAg.add(ag1);
+		listAg.add(ag2);
+
 		// mock
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getDroitsAgentByService(1)).thenReturn(listDroitAg);
+		Mockito.when(arRepo.getListDroitsAgent(Arrays.asList(ag1.getIdAgent(), ag2.getIdAgent()))).thenReturn(listDroitAg);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getListAgentServiceWithParent(1, dateJour)).thenReturn(listAg);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		List<Integer> dto = service.getListAgentByService(1);
+		List<Integer> dto = service.getListAgentByService(1, dateJour);
 
 		// Then
 		assertEquals(2, dto.size());
@@ -5647,17 +5686,26 @@ public class AccessRightsServiceTest {
 
 		// Given
 		Integer idAgent = 9007654;
+		Date dateJour = new Date();
+
+		AgentWithServiceDto ag2 = new AgentWithServiceDto();
+		ag2.setIdAgent(9005131);
+		ag2.setIdServiceADS(2);
+		ag2.setService("SERVICE 2");
+		AgentWithServiceDto ag1 = new AgentWithServiceDto();
+		ag1.setIdAgent(9005138);
+		ag1.setIdServiceADS(1);
+		ag1.setService("SERVICE 1");
+		List<AgentWithServiceDto> listAg = new ArrayList<AgentWithServiceDto>();
+		listAg.add(ag1);
+		listAg.add(ag2);
 
 		DroitProfil dp = new DroitProfil();
 
 		DroitsAgent da1 = new DroitsAgent();
 		da1.setIdAgent(1);
-		da1.setIdServiceADS(1);
-		da1.setLibelleService("SERVICE 1");
 		DroitsAgent da2 = new DroitsAgent();
 		da2.setIdAgent(2);
-		da2.setIdServiceADS(2);
-		da2.setLibelleService("SERVICE 2");
 
 		Droit d = new Droit();
 
@@ -5675,15 +5723,20 @@ public class AccessRightsServiceTest {
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getDroitProfilByAgentAndLibelle(idAgent, ProfilEnum.OPERATEUR.toString())).thenReturn(Arrays.asList(dp));
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null, dp.getIdDroitProfil())).thenReturn(Arrays.asList(da1, da2));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, dp.getIdDroitProfil())).thenReturn(Arrays.asList(da1, da2));
 		Mockito.when(arRepo.isOperateurOfAgent(idAgent, da1.getIdAgent())).thenReturn(true);
 		Mockito.when(arRepo.isOperateurOfAgent(idAgent, da2.getIdAgent())).thenReturn(true);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(da1.getIdAgent(), dateJour)).thenReturn(ag1);
+		Mockito.when(sirhWSConsumer.getAgentService(da2.getIdAgent(), dateJour)).thenReturn(ag2);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		List<EntiteDto> result = service.getAgentsServicesForOperateur(idAgent);
+		List<EntiteDto> result = service.getAgentsServicesForOperateur(idAgent, dateJour);
 
 		// Then
 		assertEquals(2, result.size());
@@ -5696,17 +5749,26 @@ public class AccessRightsServiceTest {
 
 		// Given
 		Integer idAgent = 9007654;
+		Date dateJour = new Date();
+
+		AgentWithServiceDto ag2 = new AgentWithServiceDto();
+		ag2.setIdAgent(9005131);
+		ag2.setIdServiceADS(1);
+		ag2.setService("SERVICE 1");
+		AgentWithServiceDto ag1 = new AgentWithServiceDto();
+		ag1.setIdAgent(9005138);
+		ag1.setIdServiceADS(1);
+		ag1.setService("SERVICE 1");
+		List<AgentWithServiceDto> listAg = new ArrayList<AgentWithServiceDto>();
+		listAg.add(ag1);
+		listAg.add(ag2);
 
 		DroitProfil dp = new DroitProfil();
 
 		DroitsAgent da1 = new DroitsAgent();
 		da1.setIdAgent(1);
-		da1.setIdServiceADS(1);
-		da1.setLibelleService("SERVICE 1");
 		DroitsAgent da2 = new DroitsAgent();
 		da2.setIdAgent(2);
-		da2.setIdServiceADS(1);
-		da2.setLibelleService("SERVICE 1");
 
 		Droit d = new Droit();
 
@@ -5723,16 +5785,21 @@ public class AccessRightsServiceTest {
 		d.setDroitDroitsAgent(droitDroitsAgent);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null, dp.getIdDroitProfil())).thenReturn(Arrays.asList(da1, da2));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, dp.getIdDroitProfil())).thenReturn(Arrays.asList(da1, da2));
 		Mockito.when(arRepo.getDroitProfilByAgentAndLibelle(idAgent, ProfilEnum.OPERATEUR.toString())).thenReturn(Arrays.asList(dp));
 		Mockito.when(arRepo.isOperateurOfAgent(idAgent, da1.getIdAgent())).thenReturn(true);
 		Mockito.when(arRepo.isOperateurOfAgent(idAgent, da2.getIdAgent())).thenReturn(true);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgentService(da1.getIdAgent(), dateJour)).thenReturn(ag1);
+		Mockito.when(sirhWSConsumer.getAgentService(da2.getIdAgent(), dateJour)).thenReturn(ag2);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		List<EntiteDto> result = service.getAgentsServicesForOperateur(idAgent);
+		List<EntiteDto> result = service.getAgentsServicesForOperateur(idAgent, dateJour);
 
 		// Then
 		assertEquals(1, result.size());

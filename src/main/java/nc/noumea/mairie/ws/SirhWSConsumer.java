@@ -32,6 +32,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private String sirhWsBaseUrl;
 
 	private static final String sirhAgentServiceUrl = "services/agent";
+	private static final String sirhListAgentServiceUrl = "services/agentsWithEntiteParent";
 	private static final String sirhListAgentsWithServiceUrl = "services/listAgentsWithService";
 	private static final String sirhAgentUrl = "agents/getAgent";
 	private static final String sirhListAgentsUrl = "agents/getListAgents";
@@ -69,9 +70,8 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		String url = String.format(sirhWsBaseUrl + sirhListAgentsWithServiceUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
-		
-		String json = new JSONSerializer().exclude("*.class")
-				.deepSerialize(listAgentDto);
+
+		String json = new JSONSerializer().exclude("*.class").deepSerialize(listAgentDto);
 
 		if (date != null) {
 			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
@@ -121,9 +121,8 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		String url = String.format(sirhWsBaseUrl + sirhListAgentsUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
-		
-		String json = new JSONSerializer().exclude("*.class")
-				.deepSerialize(listAgentDto);
+
+		String json = new JSONSerializer().exclude("*.class").deepSerialize(listAgentDto);
 
 		ClientResponse res = createAndFirePostRequest(parameters, url, json);
 
@@ -163,8 +162,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(Integer idAgent, Date dateDebut,
-			Date dateFin) {
+	public List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(Integer idAgent, Date dateDebut, Date dateFin) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
@@ -200,7 +198,8 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		return readResponseAsList(JourDto.class, res, url);
 	}
 
-	// #18617 bug avec l ajout des 3 jours à la date de fin de la methode getListeJoursFeries() ci-dessus
+	// #18617 bug avec l ajout des 3 jours à la date de fin de la methode
+	// getListeJoursFeries() ci-dessus
 	@Override
 	public List<JourDto> getListeJoursFeriesForSaisiDPM(Date dateDebut, Date dateFin) {
 
@@ -253,7 +252,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		return readResponseAsList(InfosAlimAutoCongesAnnuelsDto.class, res, url);
 	}
-	
+
 	@Override
 	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
 
@@ -269,5 +268,21 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(EntiteDto.class, res, url);
+	}
+
+	@Override
+	public List<AgentWithServiceDto> getListAgentServiceWithParent(Integer idServiceADS, Date date) {
+
+		String url = String.format(sirhWsBaseUrl + sirhListAgentServiceUrl);
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+
+		Map<String, String> parameters = new HashMap<String, String>();
+
+		parameters.put("idServiceADS", idServiceADS.toString());
+		parameters.put("date", sf.format(date));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponseAsList(AgentWithServiceDto.class, res, url);
 	}
 }

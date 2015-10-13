@@ -8800,7 +8800,7 @@ public class AbsenceServiceTest {
 		Mockito.when(filtresService.getListeEtatsByOnglet("TOUTES", new ArrayList<Integer>())).thenReturn(listEtat);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138, null)).thenReturn(listDroitAgent);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138)).thenReturn(listDroitAgent);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
@@ -8859,7 +8859,7 @@ public class AbsenceServiceTest {
 		Mockito.when(filtresService.getListeEtatsByOnglet("TOUTES", null)).thenReturn(listEtat);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138, null)).thenReturn(listDroitAgent);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138)).thenReturn(listDroitAgent);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
@@ -10431,7 +10431,7 @@ public class AbsenceServiceTest {
 		Mockito.when(filtresService.getListeEtatsByOnglet("TOUTES", new ArrayList<Integer>())).thenReturn(listEtat);
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138, null)).thenReturn(listDroitAgent);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(9005138)).thenReturn(listDroitAgent);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))

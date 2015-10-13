@@ -52,8 +52,7 @@ public class AccessRightsController {
 	@RequestMapping(value = "listeDroitsAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public AccessRightsDto listAgentAccessRights(@RequestParam("idAgent") Integer idAgent) {
 
-		logger.debug("entered GET [droits/listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}",
-				idAgent);
+		logger.debug("entered GET [droits/listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}", idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -69,12 +68,9 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<ApprobateurDto> listApprobateurs(@RequestParam(value = "idAgent", required = false) Integer idAgent,
-			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
+	public List<ApprobateurDto> listApprobateurs(@RequestParam(value = "idAgent", required = false) Integer idAgent, @RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
-		logger.debug(
-				"entered GET [droits/approbateurs] => listApprobateurs with parameter idAgent = {} and idServiceADS = {} --> for SIRH ",
-				idAgent, idServiceADS);
+		logger.debug("entered GET [droits/approbateurs] => listApprobateurs with parameter idAgent = {} and idServiceADS = {} --> for SIRH ", idAgent, idServiceADS);
 
 		return accessRightService.getApprobateurs(idAgent, idServiceADS);
 	}
@@ -138,8 +134,7 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "inputter", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setInputter(@RequestParam("idAgent") Integer idAgent, @RequestBody InputterDto inputterDto,
-			HttpServletResponse response) {
+	public ReturnMessageDto setInputter(@RequestParam("idAgent") Integer idAgent, @RequestBody InputterDto inputterDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/inputter] => setInputter with parameter idAgent = {}", idAgent);
 
@@ -162,8 +157,7 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "operateurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
-			HttpServletResponse response) {
+	public ReturnMessageDto setOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/operateur] => setOperateur with parameter idAgent = {}", idAgent);
 
@@ -186,8 +180,7 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "deleteOperateurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto deleteOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
-			HttpServletResponse response) {
+	public ReturnMessageDto deleteOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto, HttpServletResponse response) {
 
 		logger.debug("entered DELETE [droits/operateur] => deleteOperateur with parameter idAgent = {}", idAgent);
 
@@ -225,8 +218,7 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setViseurs(@RequestParam("idAgent") Integer idAgent, @RequestBody ViseursDto viseursDto,
-			HttpServletResponse response) {
+	public ReturnMessageDto setViseurs(@RequestParam("idAgent") Integer idAgent, @RequestBody ViseursDto viseursDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/viseur] => setViseurs with parameter idAgent = {}", idAgent);
 
@@ -249,8 +241,7 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "viseurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
-			HttpServletResponse response) {
+	public ReturnMessageDto setViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/viseurSIRH] => setViseur with parameter idAgent = {}", idAgent);
 
@@ -273,8 +264,7 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "deleteViseurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto deleteViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto,
-			HttpServletResponse response) {
+	public ReturnMessageDto deleteViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto, HttpServletResponse response) {
 
 		logger.debug("entered DELETE [droits/viseur] => deleteViseur with parameter idAgent = {}", idAgent);
 
@@ -305,7 +295,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		List<AgentDto> result = accessRightService.getAgentsToApproveOrInputByAgent(convertedIdAgent, convertedIdAgent);
+		List<AgentDto> result = accessRightService.getAgentsToApproveOrInputByAgent(convertedIdAgent, convertedIdAgent, null);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -318,8 +308,7 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsApprouves", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setApprovedAgents(@RequestParam("idAgent") Integer idAgent,
-			@RequestBody List<AgentDto> agDtos, HttpServletResponse response) {
+	public ReturnMessageDto setApprovedAgents(@RequestParam("idAgent") Integer idAgent, @RequestBody List<AgentDto> agDtos, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/agentsApprouves] => setApprovedAgents with parameter idAgent = {}", idAgent);
 
@@ -341,12 +330,9 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<AgentDto> getInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idOperateur") Integer idOperateur) {
+	public List<AgentDto> getInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "idOperateur") Integer idOperateur) {
 
-		logger.debug(
-				"entered GET [droits/agentsSaisisByOperateur] => getInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {} ",
-				idAgent, idOperateur);
+		logger.debug("entered GET [droits/agentsSaisisByOperateur] => getInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {} ", idAgent, idOperateur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -355,8 +341,7 @@ public class AccessRightsController {
 
 		int convertedIdOperateur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateur);
 
-		List<AgentDto> result = accessRightService.getAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur,
-				null);
+		List<AgentDto> result = accessRightService.getAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur, null);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -369,12 +354,9 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByViseur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<AgentDto> getInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idViseur") Integer idViseur) {
+	public List<AgentDto> getInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "idViseur") Integer idViseur) {
 
-		logger.debug(
-				"entered GET [droits/agentsSaisisByViseur] => getInputAgentsByViseur with parameter idAgent = {} and idViseur = {} ",
-				idAgent, idViseur);
+		logger.debug("entered GET [droits/agentsSaisisByViseur] => getInputAgentsByViseur with parameter idAgent = {} and idViseur = {} ", idAgent, idViseur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -383,7 +365,7 @@ public class AccessRightsController {
 
 		int convertedIdViseur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idViseur);
 
-		List<AgentDto> result = accessRightService.getAgentsToInputByViseur(convertedIdAgent, convertedIdViseur);
+		List<AgentDto> result = accessRightService.getAgentsToInputByViseur(convertedIdAgent, convertedIdViseur, null);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -396,13 +378,10 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("idOperateur") Integer idOperateur, @RequestBody List<AgentDto> agentsApprouves,
+	public ReturnMessageDto setInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent, @RequestParam("idOperateur") Integer idOperateur, @RequestBody List<AgentDto> agentsApprouves,
 			HttpServletResponse response) {
 
-		logger.debug(
-				"entered POST [droits/agentsSaisisByOperateur] => setInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {}",
-				idAgent, idOperateur);
+		logger.debug("entered POST [droits/agentsSaisisByOperateur] => setInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {}", idAgent, idOperateur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -415,8 +394,7 @@ public class AccessRightsController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		ReturnMessageDto result = accessRightService.setAgentsToInputByOperateur(convertedIdAgent,
-				convertedIdOperateur, agentsApprouves);
+		ReturnMessageDto result = accessRightService.setAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur, agentsApprouves);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -429,13 +407,10 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByViseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("idViseur") Integer idViseur, @RequestBody List<AgentDto> agentsApprouves,
+	public ReturnMessageDto setInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent, @RequestParam("idViseur") Integer idViseur, @RequestBody List<AgentDto> agentsApprouves,
 			HttpServletResponse response) {
 
-		logger.debug(
-				"entered POST [droits/agentsSaisisByViseur] => setInputAgentsByViseur with parameter idAgent = {} and idViseur = {}",
-				idAgent, idViseur);
+		logger.debug("entered POST [droits/agentsSaisisByViseur] => setInputAgentsByViseur with parameter idAgent = {} and idViseur = {}", idAgent, idViseur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -448,8 +423,7 @@ public class AccessRightsController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		ReturnMessageDto result = accessRightService.setAgentsToInputByViseur(convertedIdAgent, convertedIdViseur,
-				agentsApprouves);
+		ReturnMessageDto result = accessRightService.setAgentsToInputByViseur(convertedIdAgent, convertedIdViseur, agentsApprouves);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -462,8 +436,7 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "delegataire", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setDelegataire(@RequestParam("idAgent") Integer idAgent,
-			@RequestBody InputterDto inputterDto, HttpServletResponse response) {
+	public ReturnMessageDto setDelegataire(@RequestParam("idAgent") Integer idAgent, @RequestBody InputterDto inputterDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/delegataire] => setDelegataire with parameter idAgent = {}", idAgent);
 		ReturnMessageDto result = new ReturnMessageDto();

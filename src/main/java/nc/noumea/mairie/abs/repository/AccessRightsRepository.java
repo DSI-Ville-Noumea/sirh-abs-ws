@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -132,8 +133,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 	@Override
 	public Profil getProfilByName(String profilName) {
-		TypedQuery<Profil> q = absEntityManager
-				.createQuery("from Profil p where p.libelle = :profilName", Profil.class);
+		TypedQuery<Profil> q = absEntityManager.createQuery("from Profil p where p.libelle = :profilName", Profil.class);
 		q.setParameter("profilName", profilName);
 
 		Profil p = q.getSingleResult();
@@ -143,10 +143,9 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 	@Override
 	public List<Droit> getDroitSousApprobateur(Integer idAgentApprobateur) {
-		TypedQuery<Droit> q = absEntityManager
-				.createQuery(
-						"select dp.droit from DroitProfil dp where dp.droitApprobateur.idDroit in (select idDroit from Droit where idAgent = :idAgentApprobateur) and dp.droit.idAgent != :idAgentApprobateur",
-						Droit.class);
+		TypedQuery<Droit> q = absEntityManager.createQuery(
+				"select dp.droit from DroitProfil dp where dp.droitApprobateur.idDroit in (select idDroit from Droit where idAgent = :idAgentApprobateur) and dp.droit.idAgent != :idAgentApprobateur",
+				Droit.class);
 		q.setParameter("idAgentApprobateur", idAgentApprobateur);
 
 		List<Droit> listeFinale = q.getResultList();
@@ -160,48 +159,32 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, Integer idServiceADS) {
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent) {
 
-		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
-				idServiceADS == null ? "getListOfAgentsToInputOrApproveWithoutProfil"
-						: "getListOfAgentsToInputOrApproveByServiceWithoutProfil", DroitsAgent.class);
+		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery("getListOfAgentsToInputOrApproveWithoutProfil", DroitsAgent.class);
 
 		q.setParameter("idAgent", idAgent);
-
-		if (idServiceADS != null)
-			q.setParameter("idServiceADS", idServiceADS);
 
 		return q.getResultList();
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsForListDemandes(List<Integer> idAgent, Integer idServiceADS) {
+	public List<DroitsAgent> getListOfAgentsForListDemandes(List<Integer> idAgent) {
 
-		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
-				idServiceADS == null ? "getListOfAgentsToInputOrApproveWithProfil"
-						: "getListOfAgentsToInputOrApproveByServiceWithProfil", DroitsAgent.class);
+		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery("getListOfAgentsToInputOrApproveWithProfil", DroitsAgent.class);
 
 		q.setParameter("idAgent", idAgent);
-
-		if (idServiceADS != null)
-			q.setParameter("idServiceADS", idServiceADS);
 
 		return q.getResultList();
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, Integer idServiceADS,
-			Integer idDroitProfil) {
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, Integer idDroitProfil) {
 
-		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery(
-				idServiceADS == null ? "getListOfAgentsToInputOrApprove" : "getListOfAgentsToInputOrApproveByService",
-				DroitsAgent.class);
+		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery("getListOfAgentsToInputOrApprove", DroitsAgent.class);
 
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idDroitProfil", idDroitProfil);
-		
-		if (idServiceADS != null)
-			q.setParameter("idServiceADS", idServiceADS);
 
 		return q.getResultList();
 	}
@@ -209,8 +192,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public Droit getAgentDroitFetchAgents(Integer idAgent) {
 
-		TypedQuery<Droit> q = absEntityManager.createQuery(
-				"from Droit d LEFT JOIN FETCH d.droitDroitsAgent dda where d.idAgent = :idAgent ", Droit.class);
+		TypedQuery<Droit> q = absEntityManager.createQuery("from Droit d LEFT JOIN FETCH d.droitDroitsAgent dda where d.idAgent = :idAgent ", Droit.class);
 		q.setParameter("idAgent", idAgent);
 
 		List<Droit> r = q.getResultList();
@@ -234,8 +216,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 	@Override
 	public boolean isUserDelegataireOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
-		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
-				DroitProfil.class);
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle", DroitProfil.class);
 
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idAgentApprobateur", idAgentApprobateur);
@@ -253,8 +234,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public boolean isUserOperateurOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
 
-		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
-				DroitProfil.class);
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle", DroitProfil.class);
 
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idAgentApprobateur", idAgentApprobateur);
@@ -271,8 +251,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public boolean isUserViseurOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
 
-		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
-				DroitProfil.class);
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle", DroitProfil.class);
 
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idAgentApprobateur", idAgentApprobateur);
@@ -289,8 +268,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public DroitProfil getUserOperateurOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
 
-		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
-				DroitProfil.class);
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle", DroitProfil.class);
 
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idAgentApprobateur", idAgentApprobateur);
@@ -306,8 +284,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public DroitProfil getUserViseurOfApprobateur(Integer idAgentApprobateur, Integer idAgent) {
 
-		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle",
-				DroitProfil.class);
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getInputterDroitProfilOfApprobateurByLibelle", DroitProfil.class);
 
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idAgentApprobateur", idAgentApprobateur);
@@ -451,8 +428,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public List<DroitProfil> getDroitProfilByAgentAndLibelle(Integer idAgent, String libelleProfil) {
 
-		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getDroitProfilByLibelleProfil",
-				DroitProfil.class);
+		TypedQuery<DroitProfil> q = absEntityManager.createNamedQuery("getDroitProfilByLibelleProfil", DroitProfil.class);
 
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("libelle", libelleProfil);
@@ -467,20 +443,22 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public List<DroitsAgent> getListeActeursOfAgent(Integer idAgent) {
 
-		TypedQuery<DroitsAgent> q = absEntityManager.createQuery(
-				"from DroitsAgent da LEFT JOIN FETCH da.droitDroitsAgent dda " + "LEFT JOIN FETCH dda.droitProfil dp "
-						+ "LEFT JOIN FETCH dp.profil p " + "LEFT JOIN FETCH dp.droit d "
-						+ "where da.idAgent = :idAgent ", DroitsAgent.class);
+		TypedQuery<DroitsAgent> q = absEntityManager.createQuery("from DroitsAgent da LEFT JOIN FETCH da.droitDroitsAgent dda " + "LEFT JOIN FETCH dda.droitProfil dp "
+				+ "LEFT JOIN FETCH dp.profil p " + "LEFT JOIN FETCH dp.droit d " + "where da.idAgent = :idAgent ", DroitsAgent.class);
 		q.setParameter("idAgent", idAgent);
 
 		return q.getResultList();
 	}
 
 	@Override
-	public List<DroitsAgent> getDroitsAgentByService(Integer idServiceADS) {
-		TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery("getDroitsAgentByService", DroitsAgent.class);
-		q.setParameter("idServiceADS", idServiceADS);
+	public List<DroitsAgent> getListDroitsAgent(List<Integer> listIdAgent) {
+		if (listIdAgent == null || listIdAgent.size() == 0) {
+			return new ArrayList<DroitsAgent>();
+		} else {
+			TypedQuery<DroitsAgent> q = absEntityManager.createNamedQuery("getListDroitsAgent", DroitsAgent.class);
+			q.setParameter("listIdAgent", listIdAgent);
 
-		return q.getResultList();
+			return q.getResultList();
+		}
 	}
 }

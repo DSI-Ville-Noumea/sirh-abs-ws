@@ -26,7 +26,7 @@ public interface ISirhWSConsumer {
 	List<InfosAlimAutoCongesAnnuelsDto> getListPAPourAlimAutoCongesAnnuels(Integer idAgent, Date dateDebut, Date dateFin);
 
 	List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin);
-	
+
 	ReturnMessageDto isPaieEnCours();
 
 	RefTypeSaisiCongeAnnuelDto getOldBaseHoraireAbsence(Integer idAgent);
@@ -35,10 +35,11 @@ public interface ISirhWSConsumer {
 
 	EntiteDto getAgentDirection(Integer idAgent, Date date);
 
-	List<AgentWithServiceDto> getListAgentsWithService(
-			List<Integer> listAgentDto, Date date);
+	List<AgentWithServiceDto> getListAgentsWithService(List<Integer> listAgentDto, Date date);
 
 	List<JourDto> getListeJoursFeriesForSaisiDPM(Date dateDebut, Date dateFin);
 
 	List<AgentGeneriqueDto> getListAgents(List<Integer> listAgentDto);
+
+	List<AgentWithServiceDto> getListAgentServiceWithParent(Integer idServiceADS, Date date);
 }

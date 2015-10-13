@@ -2099,7 +2099,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
 				listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
@@ -2395,7 +2395,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
 				listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
@@ -2717,7 +2717,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
 				listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
@@ -3017,7 +3017,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
 				listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
@@ -3342,7 +3342,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte, null)).thenReturn(
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
 				listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);

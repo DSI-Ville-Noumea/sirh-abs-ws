@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.web;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Droit;
@@ -58,8 +59,7 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<RefTypeAbsenceDto> getTypes(
-			@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
+	public List<RefTypeAbsenceDto> getTypes(@RequestParam(value = "idAgentConcerne", required = false) Integer idAgentConcerne) {
 
 		logger.debug("entered GET [filtres/getTypes] => getTypes with parameter idAgentConcerne = {} ", idAgentConcerne);
 
@@ -79,7 +79,7 @@ public class FiltreController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<EntiteDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent);
+		List<EntiteDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent, new Date());
 
 		if (services.size() == 0)
 			throw new NoContentException();
@@ -95,12 +95,11 @@ public class FiltreController {
 	@RequestMapping(value = "/servicesOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<EntiteDto> getServicesOperateur(@RequestParam("idAgent") Integer idAgent) {
 
-		logger.debug("entered GET [filtres/servicesOperateur] => getServicesOperateur with parameter idAgent = {}",
-				idAgent);
+		logger.debug("entered GET [filtres/servicesOperateur] => getServicesOperateur with parameter idAgent = {}", idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<EntiteDto> services = accessRightsService.getAgentsServicesForOperateur(convertedIdAgent);
+		List<EntiteDto> services = accessRightsService.getAgentsServicesForOperateur(convertedIdAgent, new Date());
 
 		if (services.size() == 0)
 			throw new NoContentException();
@@ -114,16 +113,13 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<AgentDto> getAgents(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
+	public List<AgentDto> getAgents(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
-		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and idServiceADS = {}",
-				idAgent, idServiceADS);
+		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and idServiceADS = {}", idAgent, idServiceADS);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<AgentDto> services = accessRightsService
-				.getAgentsToApproveOrInputByService(convertedIdAgent, idServiceADS);
+		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInputByService(convertedIdAgent, idServiceADS);
 
 		if (services.size() == 0)
 			throw new NoContentException();
@@ -137,12 +133,9 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/agentsOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<AgentDto> getAgentsOperateur(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
+	public List<AgentDto> getAgentsOperateur(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
-		logger.debug(
-				"entered GET [filtres/agentsOperateur] => getAgentsOperateur with parameter idAgent = {} and idServiceADS = {}",
-				idAgent, idServiceADS);
+		logger.debug("entered GET [filtres/agentsOperateur] => getAgentsOperateur with parameter idAgent = {} and idServiceADS = {}", idAgent, idServiceADS);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -150,8 +143,7 @@ public class FiltreController {
 
 		List<Droit> listeApprobateurs = accessRightsService.getListApprobateursOfOperateur(convertedIdAgent);
 		for (Droit approbateur : listeApprobateurs) {
-			for (AgentDto ag : accessRightsService.getAgentsToInputByOperateur(approbateur.getIdAgent(),
-					convertedIdAgent, idServiceADS)) {
+			for (AgentDto ag : accessRightsService.getAgentsToInputByOperateur(approbateur.getIdAgent(), convertedIdAgent, idServiceADS)) {
 				if (!services.contains(ag))
 					services.add(ag);
 			}
@@ -169,8 +161,7 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypesSaisi", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<RefTypeSaisiDto> getTypesSaisi(
-			@RequestParam(value = "idRefTypeAbsence", required = false) Integer idRefTypeAbsence) {
+	public List<RefTypeSaisiDto> getTypesSaisi(@RequestParam(value = "idRefTypeAbsence", required = false) Integer idRefTypeAbsence) {
 
 		logger.debug("entered GET [filtres/getTypesSaisi] => getTypesSaisi");
 
@@ -184,8 +175,7 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getGroupesAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<RefGroupeAbsenceDto> getGroupesAbsence(
-			@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence) {
+	public List<RefGroupeAbsenceDto> getGroupesAbsence(@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence) {
 
 		logger.debug("entered GET [filtres/getGroupesAbsence] => getGroupesAbsence");
 
@@ -214,13 +204,10 @@ public class FiltreController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getTypeAbsenceKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<RefTypeAbsenceDto> getTypeAbsenceKiosque(
-			@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence,
+	public List<RefTypeAbsenceDto> getTypeAbsenceKiosque(@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence,
 			@RequestParam(value = "idAgent", required = false) Integer idAgent) {
 
-		logger.debug(
-				"entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter  idRefGroupeAbsence = {} and  idAgent = {}",
-				idRefGroupeAbsence, idAgent);
+		logger.debug("entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter  idRefGroupeAbsence = {} and  idAgent = {}", idRefGroupeAbsence, idAgent);
 
 		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsenceSaisieKiosque(idRefGroupeAbsence, idAgent);
 
