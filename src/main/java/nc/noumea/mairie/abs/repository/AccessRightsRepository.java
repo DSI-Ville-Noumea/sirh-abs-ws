@@ -416,13 +416,8 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		q.setParameter("idAgentApprobateurOrDelegataire", idAgentApprobateurOrDelegataire);
 		q.setParameter("approbateur", ProfilEnum.APPROBATEUR.toString());
 		q.setParameter("delegataire", ProfilEnum.DELEGATAIRE.toString());
-
-		try {
-			q.getSingleResult();
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		// #19097
+		return 0 < q.getResultList().size();
 	}
 
 	@Override

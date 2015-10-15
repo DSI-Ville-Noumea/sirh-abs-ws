@@ -1373,6 +1373,95 @@ public class AccessRightsRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+	// bug #19097
+	@Test
+	@Transactional("absTransactionManager")
+	public void isApprobateurOrDelegataireOfAgent_isDelegataire_TwoTimes() {
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005131);
+		da.setDateModification(new Date());
+
+		Profil profilDelegataire = new Profil();
+		profilDelegataire.setLibelle("DELEGATAIRE");
+
+		Profil profilApprobateur = new Profil();
+		profilApprobateur.setLibelle("APPROBATEUR");
+
+		Droit droitAppro = new Droit();
+		droitAppro.setDateModification(new Date());
+		droitAppro.setIdAgent(9005138);
+
+		Droit droitAppro2 = new Droit();
+		droitAppro2.setDateModification(new Date());
+		droitAppro2.setIdAgent(9002990);
+
+		Droit droitDelegataire = new Droit();
+		droitDelegataire.setDateModification(new Date());
+		droitDelegataire.setIdAgent(9005139);
+
+		DroitProfil dpDelegataire = new DroitProfil();
+		dpDelegataire.setDroit(droitDelegataire);
+		dpDelegataire.setDroitApprobateur(droitAppro);
+		dpDelegataire.setProfil(profilDelegataire);
+
+		DroitProfil dpAppr = new DroitProfil();
+		dpAppr.setDroit(droitAppro);
+		dpAppr.setDroitApprobateur(droitAppro);
+		dpAppr.setProfil(profilApprobateur);
+
+		DroitProfil dpDelegataire2 = new DroitProfil();
+		dpDelegataire2.setDroit(droitDelegataire);
+		dpDelegataire2.setDroitApprobateur(droitAppro2);
+		dpDelegataire2.setProfil(profilDelegataire);
+
+		DroitProfil dpAppr2 = new DroitProfil();
+		dpAppr2.setDroit(droitAppro2);
+		dpAppr2.setDroitApprobateur(droitAppro2);
+		dpAppr2.setProfil(profilApprobateur);
+
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(droitAppro);
+		dda.setDroitProfil(dpAppr);
+		dda.setDroitsAgent(da);
+
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(droitAppro2);
+		dda2.setDroitProfil(dpAppr2);
+		dda2.setDroitsAgent(da);
+
+		da.getDroitDroitsAgent().add(dda);
+		dpAppr.getDroitDroitsAgent().add(dda);
+		droitAppro.getDroitDroitsAgent().add(dda);
+		da.getDroitDroitsAgent().add(dda2);
+		dpAppr.getDroitDroitsAgent().add(dda2);
+		droitAppro.getDroitDroitsAgent().add(dda2);
+		droitAppro.getDroitProfils().add(dpAppr);
+		droitAppro2.getDroitProfils().add(dpAppr2);
+
+		absEntityManager.persist(da);
+		absEntityManager.persist(profilDelegataire);
+		absEntityManager.persist(profilApprobateur);
+		absEntityManager.persist(droitAppro);
+		absEntityManager.persist(droitAppro2);
+		absEntityManager.persist(droitDelegataire);
+		absEntityManager.persist(dpDelegataire);
+		absEntityManager.persist(dpAppr);
+		absEntityManager.persist(dda);
+		absEntityManager.persist(dpDelegataire2);
+		absEntityManager.persist(dpAppr2);
+		absEntityManager.persist(dda2);
+
+		absEntityManager.flush();
+
+		boolean result = repository.isApprobateurOrDelegataireOfAgent(9005139, 9005131);
+
+		assertTrue(result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 
 	@Test
 	@Transactional("absTransactionManager")
