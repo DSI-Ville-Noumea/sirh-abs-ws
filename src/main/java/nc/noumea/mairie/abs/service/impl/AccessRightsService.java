@@ -50,8 +50,8 @@ public class AccessRightsService implements IAccessRightsService {
 	@Autowired
 	private HelperService helperService;
 
-	 @Autowired
-	 private ISirhWSConsumer sirhWSConsumer;
+	@Autowired
+	private ISirhWSConsumer sirhWSConsumer;
 
 	@Autowired
 	private ISirhRepository sirhRepository;
@@ -761,7 +761,8 @@ public class AccessRightsService implements IAccessRightsService {
 			// service
 			List<Integer> listAgentDto = new ArrayList<Integer>();
 			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, dp.getIdDroitProfil())) {
-				listAgentDto.add(da.getIdAgent());
+				if (!listAgentDto.contains(da.getIdAgent()))
+					listAgentDto.add(da.getIdAgent());
 			}
 			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, new Date());
 
@@ -1132,7 +1133,8 @@ public class AccessRightsService implements IAccessRightsService {
 		// service
 		List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
-			listAgentDtoAppro.add(da.getIdAgent());
+			if (!listAgentDtoAppro.contains(da.getIdAgent()))
+				listAgentDtoAppro.add(da.getIdAgent());
 		}
 		List<AgentWithServiceDto> listAgentsApproServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoAppro, date);
 
@@ -1164,7 +1166,8 @@ public class AccessRightsService implements IAccessRightsService {
 					// service
 					List<Integer> listAgentDtoDeleg = new ArrayList<Integer>();
 					for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire)) {
-						listAgentDtoDeleg.add(da.getIdAgent());
+						if (!listAgentDtoDeleg.contains(da.getIdAgent()))
+							listAgentDtoDeleg.add(da.getIdAgent());
 					}
 					List<AgentWithServiceDto> listAgentsDelegServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoDeleg, new Date());
 
@@ -1237,7 +1240,8 @@ public class AccessRightsService implements IAccessRightsService {
 			// service
 			List<Integer> listAgentDtoServ = new ArrayList<Integer>();
 			for (Integer idAgentTemp : listAgentDtoTemp) {
-				listAgentDtoServ.add(idAgentTemp);
+				if (!listAgentDtoServ.contains(idAgentTemp))
+					listAgentDtoServ.add(idAgentTemp);
 			}
 			List<AgentWithServiceDto> listAgentsDelegServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoServ, new Date());
 
