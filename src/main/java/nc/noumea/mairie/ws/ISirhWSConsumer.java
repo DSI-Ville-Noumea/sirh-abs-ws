@@ -42,4 +42,6 @@ public interface ISirhWSConsumer {
 	List<AgentGeneriqueDto> getListAgents(List<Integer> listAgentDto);
 
 	List<AgentWithServiceDto> getListAgentServiceWithParent(Integer idServiceADS, Date date);
+
+	List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listAgentSansAffectation);
 }

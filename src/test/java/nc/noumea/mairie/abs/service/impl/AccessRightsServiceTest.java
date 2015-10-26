@@ -3890,6 +3890,76 @@ public class AccessRightsServiceTest {
 	}
 
 	@Test
+	public void getAgentsServicesToApproveOrInput_OldAffectation_2agents_return2Dtos() {
+
+		// Given
+		Integer idAgent = 9007654;
+		Date dateJour = new Date();
+
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(1);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(2);
+
+		Droit d = new Droit();
+
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroit(d);
+		dda.setDroitsAgent(da1);
+		DroitDroitsAgent dda2 = new DroitDroitsAgent();
+		dda2.setDroit(d);
+		dda2.setDroitsAgent(da2);
+
+		Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
+		droitDroitsAgent.addAll(Arrays.asList(dda, dda2));
+
+		d.setDroitDroitsAgent(droitDroitsAgent);
+
+		EntiteDto entiteDto2 = new EntiteDto();
+		entiteDto2.setLabel("SERVICE 2");
+		entiteDto2.setIdStatut(1);
+
+		EntiteDto entiteDto = new EntiteDto();
+		entiteDto.setLabel("SERVICE 1");
+		entiteDto.setIdStatut(1);
+
+		AgentWithServiceDto ag2 = new AgentWithServiceDto();
+		ag2.setIdAgent(2);
+		ag2.setIdServiceADS(2);
+		AgentWithServiceDto ag1 = new AgentWithServiceDto();
+		ag1.setIdAgent(1);
+		ag1.setIdServiceADS(1);
+		List<AgentWithServiceDto> listAg = new ArrayList<AgentWithServiceDto>();
+		listAg.add(ag1);
+		listAg.add(ag2);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da1, da2));
+
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getWholeTree()).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(ag1.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(ag2.getIdServiceADS(), entiteDto)).thenReturn(entiteDto2);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(da1.getIdAgent(),da2.getIdAgent()), dateJour)).thenReturn(Arrays.asList(ag1));
+		Mockito.when(sirhWSConsumer.getListAgentsWithServiceOldAffectation(Arrays.asList(da2.getIdAgent()))).thenReturn(Arrays.asList(ag2));
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		// When
+		List<EntiteDto> result = service.getAgentsServicesToApproveOrInput(idAgent, dateJour);
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals("SERVICE 1", result.get(0).getLabel());
+		assertEquals("SERVICE 2", result.get(1).getLabel());
+	}
+
+	@Test
 	public void getAgentsServicesToApproveOrInput_2agentsSameService_return1Dtos() {
 
 		// Given

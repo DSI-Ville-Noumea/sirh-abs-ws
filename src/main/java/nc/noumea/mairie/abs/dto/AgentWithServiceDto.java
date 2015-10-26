@@ -55,4 +55,9 @@ public class AgentWithServiceDto extends AgentDto {
 	public void setSigleDirection(String sigleDirection) {
 		this.sigleDirection = sigleDirection;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
 }

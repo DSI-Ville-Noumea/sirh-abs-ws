@@ -34,6 +34,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhAgentServiceUrl = "services/agent";
 	private static final String sirhListAgentServiceUrl = "services/agentsWithEntiteParent";
 	private static final String sirhListAgentsWithServiceUrl = "services/listAgentsWithService";
+	private static final String sirhListAgentsWithServiceOldAffectationUrl = "services/listAgentsWithServiceOldAffectation";
 	private static final String sirhAgentUrl = "agents/getAgent";
 	private static final String sirhListAgentsUrl = "agents/getListAgents";
 	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
@@ -282,6 +283,21 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		parameters.put("date", sf.format(date));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponseAsList(AgentWithServiceDto.class, res, url);
+	}
+
+	@Override
+	public List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listAgentSansAffectation) {
+
+		String url = String.format(sirhWsBaseUrl + sirhListAgentsWithServiceOldAffectationUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+
+		String json = new JSONSerializer().exclude("*.class").deepSerialize(listAgentSansAffectation);
+
+
+		ClientResponse res = createAndFirePostRequest(parameters, url, json);
 
 		return readResponseAsList(AgentWithServiceDto.class, res, url);
 	}
