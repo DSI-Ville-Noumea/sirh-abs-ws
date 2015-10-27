@@ -29,6 +29,7 @@ import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.staticmock.MockStaticEntityMethods;
@@ -1219,6 +1220,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
 		demande.setIdDemande(1);
+		demande.setIdAgent(21);
+		demande.setDateDebut(new DateTime(2010,01,01,0,0,0).toDate());
 		EtatDemande etat = new EtatDemande();
 		etat.setEtat(RefEtatEnum.REJETE);
 		demande.getEtatsDemande().add(etat);

@@ -40,12 +40,12 @@ import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
@@ -169,8 +169,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2, demandeExist3, demandeExist4));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
-				.thenReturn(listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null)).thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
@@ -212,8 +211,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
-				.thenReturn(listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null)).thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
@@ -255,16 +253,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
-				.thenReturn(listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null)).thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
 		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 
 		assertEquals(1, srm.getErrors().size());
-		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm
-				.getErrors().get(0).toString());
+		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm.getErrors().get(0).toString());
 	}
 
 	@Test
@@ -293,16 +289,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
-				.thenReturn(listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null)).thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
 		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 
 		assertEquals(1, srm.getErrors().size());
-		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm
-				.getErrors().get(0).toString());
+		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm.getErrors().get(0).toString());
 	}
 
 	@Test
@@ -331,16 +325,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
-				.thenReturn(listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null)).thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
 		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 
 		assertEquals(1, srm.getErrors().size());
-		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm
-				.getErrors().get(0).toString());
+		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm.getErrors().get(0).toString());
 	}
 
 	@Test
@@ -376,23 +368,20 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDemande.addAll(Arrays.asList(demandeExist1, demandeExist2));
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null))
-				.thenReturn(listDemande);
+		Mockito.when(demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null)).thenReturn(listDemande);
 
 		ReflectionTestUtils.setField(impl, "demandeRepository", demandeRepository);
 
 		srm = impl.checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 
 		assertEquals(1, srm.getErrors().size());
-		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm
-				.getErrors().get(0).toString());
+		assertEquals("La demande ne peut être couverte totalement ou partiellement par une autre absence.", srm.getErrors().get(0).toString());
 	}
 
 	@Test
 	public void checkAgentInactivity_AgentActif() {
 
-		List<String> activitesCode = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64",
-				"65", "66");
+		List<String> activitesCode = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Integer idAgent = 9005138;
@@ -554,6 +543,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		Demande demande = new Demande();
 		demande.setIdDemande(1);
+		demande.setIdAgent(21);
+		demande.setDateDebut(new DateTime(2010, 01, 01, 0, 0, 0).toDate());
 		EtatDemande etat = new EtatDemande();
 		etat.setEtat(RefEtatEnum.APPROUVEE);
 		demande.getEtatsDemande().add(etat);
@@ -561,8 +552,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		srm = impl.checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
 		assertEquals(1, srm.getErrors().size());
-		assertEquals("La modification de la demande [1] n'est autorisée que si l'état est à [PROVISOIRE SAISIE ].", srm
-				.getErrors().get(0).toString());
+		assertEquals("La modification de la demande de l'agent [21] du [01/01/2010] n'est autorisée que si l'état est à [PROVISOIRE SAISIE ].", srm.getErrors().get(0).toString());
 	}
 
 	@Test
@@ -575,7 +565,6 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertEquals(0, result.size());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void filtreDateAndEtatDemandeFromList_EtatAndDateDemandeFilter_NoResult_BadEtat() {
 
@@ -648,16 +637,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		listAgentsExistants.add(ag);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), 
-				date)).thenReturn(listAgentsExistants);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), date)).thenReturn(listAgentsExistants);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatPris),
-				new Date());
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatPris), new Date());
 		// Then
 		assertEquals(0, result.size());
 	}
@@ -731,16 +718,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		listAgentsExistants.add(ag);
 		listAgentsExistants.add(ag2);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent(), d2.getIdAgent()), 
-				date)).thenReturn(listAgentsExistants);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent(), d2.getIdAgent()), date)).thenReturn(listAgentsExistants);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande,
-				Arrays.asList(etatProvisoire, etatSaisie), new LocalDate(2014, 1, 8).toDate());
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire, etatSaisie), new LocalDate(2014, 1, 8).toDate());
 
 		// Then
 		assertEquals(1, result.size());
@@ -818,16 +803,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		listAgentsExistants.add(ag);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), 
-				date)).thenReturn(listAgentsExistants);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), date)).thenReturn(listAgentsExistants);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire),
-				new Date());
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire), new Date());
 
 		// Then
 		assertEquals(1, result.size());
@@ -906,16 +889,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		listAgentsExistants.add(ag);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), 
-				date)).thenReturn(listAgentsExistants);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), date)).thenReturn(listAgentsExistants);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire),
-				null);
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire), null);
 
 		// Then
 		assertEquals(1, result.size());
@@ -995,8 +976,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		listAgentsExistants.add(ag);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), 
-				date)).thenReturn(listAgentsExistants);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), date)).thenReturn(listAgentsExistants);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
@@ -1207,16 +1187,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		listAgentsExistants.add(ag);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), 
-				date)).thenReturn(listAgentsExistants);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), date)).thenReturn(listAgentsExistants);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande,
-				Arrays.asList(etatVISEE_F, etatSaisie, etatVISEE_D, etatApprouve), null);
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatVISEE_F, etatSaisie, etatVISEE_D, etatApprouve), null);
 
 		// Then
 		assertEquals(4, result.size());
@@ -1305,16 +1283,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		listAgentsExistants.add(ag);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), 
-				date)).thenReturn(listAgentsExistants);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), date)).thenReturn(listAgentsExistants);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatRefusee),
-				dateEtat);
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatRefusee), dateEtat);
 
 		// Then
 		assertEquals(1, result.size());
@@ -1394,16 +1370,14 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		listAgentsExistants.add(ag);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), 
-				date)).thenReturn(listAgentsExistants);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), date)).thenReturn(listAgentsExistants);
 
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatSaisie),
-				new Date());
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatSaisie), new Date());
 
 		// Then
 		assertEquals(1, result.size());
@@ -2099,8 +2073,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
-				listDroitAgent);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
@@ -2395,8 +2368,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
-				listDroitAgent);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
@@ -2717,8 +2689,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
-				listDroitAgent);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
@@ -3017,8 +2988,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
-				listDroitAgent);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
@@ -3342,8 +3312,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listDroitAgent.addAll(Arrays.asList(da, da1, da2, da3, da4, da5, da6, da7, da8, da9, da10, da11));
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(
-				listDroitAgent);
+		Mockito.when(accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte)).thenReturn(listDroitAgent);
 
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
@@ -3677,8 +3646,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
-				.thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
 
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
@@ -3719,8 +3687,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
-				.thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
 
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
@@ -3761,8 +3728,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
-				.thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
 
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
@@ -3803,8 +3769,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(false);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
-				.thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
 
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
@@ -3845,8 +3810,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(true);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
-				.thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
 
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
@@ -3887,8 +3851,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(helperService.isConventionCollective(carr)).thenReturn(true);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
-				.thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
 
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
@@ -4024,8 +3987,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		srm = impl.checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 
 		assertEquals(1, srm.getErrors().size());
-		assertEquals("La date de fin ne peut pas être inférieure à la date de début.", srm.getErrors().get(0)
-				.toString());
+		assertEquals("La date de fin ne peut pas être inférieure à la date de début.", srm.getErrors().get(0).toString());
 	}
 
 	@Test
@@ -4050,8 +4012,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(helperService.isAgentEligibleCongeAnnuel(carr)).thenReturn(false);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
-				.thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
 
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);
@@ -4088,8 +4049,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		Mockito.when(helperService.isAgentEligibleCongeAnnuel(carr)).thenReturn(false);
 
 		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class)))
-				.thenReturn(carr);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
 
 		IAgentMatriculeConverterService agentMatriculeServ = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(agentMatriculeServ.fromIdAgentToSIRHNomatrAgent(9005138)).thenReturn(5138);

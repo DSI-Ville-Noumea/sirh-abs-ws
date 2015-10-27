@@ -81,7 +81,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
 
-	public static final String ETAT_NON_AUTORISE_MSG = "La modification de la demande [%d] n'est autorisée que si l'état est à [%s].";
+	public static final String ETAT_NON_AUTORISE_MSG = "La modification de la demande de l'agent [%d] du [%s] n'est autorisée que si l'état est à [%s].";
 	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Le dépassement des droits acquis n'est pas autorisé.";
 	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
 	public static final String DEMANDE_DEJA_COUVERTE_MSG = "La demande ne peut être couverte totalement ou partiellement par une autre absence.";
@@ -99,8 +99,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String SAISIE_NON_MULTIPLE = "Pour la base congé %s, la durée du congé doit être un multiple de %d jours.";
 	public static final String STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL = "Ce type de demande ne peut pas être saisi par les adjoints, conseillers municipaux et le maire.";
 
-	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
-			"62", "63", "64", "65", "66");
+	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 
 	/**
 	 * Processes the data consistency of a set of Pointages being input by a
@@ -108,8 +107,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
-			boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, boolean isProvenanceSIRH) {
 		checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 		checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
 		if (srm.getErrors().size() == 0)
@@ -121,8 +119,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	private void checkNoPointages(ReturnMessageDto srm, Demande demande) {
-		ReturnMessageDto result = ptgWSConsumer.checkPointage(demande.getIdAgent(), demande.getDateDebut(),
-				demande.getDateFin());
+		ReturnMessageDto result = ptgWSConsumer.checkPointage(demande.getIdAgent(), demande.getDateDebut(), demande.getDateFin());
 
 		for (String info : result.getInfos()) {
 			srm.getInfos().add(info);
@@ -146,23 +143,18 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public ReturnMessageDto checkDemandeDejaSaisieSurMemePeriode(ReturnMessageDto srm, Demande demande) {
 
-		List<Demande> listDemande = demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null,
-				null);
+		List<Demande> listDemande = demandeRepository.listeDemandesAgent(null, demande.getIdAgent(), null, null, null, null);
 
 		Interval intervalDemande = new Interval(demande.getDateDebut().getTime(), demande.getDateFin().getTime());
 
 		for (Demande demandeExistante : listDemande) {
 
-			if ((null == demande.getIdDemande() || (null != demande.getIdDemande() && !demandeExistante.getIdDemande()
-					.equals(demande.getIdDemande())))
-					&& null != demandeExistante.getLatestEtatDemande()
-					&& !RefEtatEnum.REFUSEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
-					&& !RefEtatEnum.PROVISOIRE.equals(demandeExistante.getLatestEtatDemande().getEtat())
-					&& !RefEtatEnum.ANNULEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
+			if ((null == demande.getIdDemande() || (null != demande.getIdDemande() && !demandeExistante.getIdDemande().equals(demande.getIdDemande())))
+					&& null != demandeExistante.getLatestEtatDemande() && !RefEtatEnum.REFUSEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
+					&& !RefEtatEnum.PROVISOIRE.equals(demandeExistante.getLatestEtatDemande().getEtat()) && !RefEtatEnum.ANNULEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
 					&& !RefEtatEnum.REJETE.equals(demandeExistante.getLatestEtatDemande().getEtat())) {
 
-				Interval intervalDemandeExistante = new Interval(demandeExistante.getDateDebut().getTime(),
-						demandeExistante.getDateFin().getTime());
+				Interval intervalDemandeExistante = new Interval(demandeExistante.getDateDebut().getTime(), demandeExistante.getDateFin().getTime());
 
 				if (intervalDemandeExistante.overlaps(intervalDemande)) {
 					logger.warn(String.format(DEMANDE_DEJA_COUVERTE_MSG));
@@ -212,8 +204,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	@Override
-	public ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi,
-			boolean isProvenanceSIRH) {
+	public ReturnMessageDto checkSaisieKiosqueAutorisee(ReturnMessageDto srm, RefTypeSaisi typeSaisi, boolean isProvenanceSIRH) {
 		if (typeSaisi != null) {
 			if (!isProvenanceSIRH && !typeSaisi.isSaisieKiosque()) {
 				logger.warn(String.format(SAISIE_KIOSQUE_NON_AUTORISEE));
@@ -234,40 +225,30 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	@Override
-	public ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande,
-			List<RefEtatEnum> listEtatsAcceptes) {
+	public ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande, List<RefEtatEnum> listEtatsAcceptes) {
 
 		return checkEtatsDemandeAcceptes(srm, demande, listEtatsAcceptes);
 	}
 
 	@Override
-	public ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande,
-			List<RefEtatEnum> listEtatsAcceptes) {
+	public ReturnMessageDto checkEtatsDemandeAcceptes(ReturnMessageDto srm, Demande demande, List<RefEtatEnum> listEtatsAcceptes) {
 
-		if (null != demande.getLatestEtatDemande()
-				&& !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
-			logger.warn(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdDemande(),
-					RefEtatEnum.listToString(listEtatsAcceptes)));
-			srm.getErrors().add(
-					String.format(ETAT_NON_AUTORISE_MSG, demande.getIdDemande(),
-							RefEtatEnum.listToString(listEtatsAcceptes)));
+		if (null != demande.getLatestEtatDemande() && !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			logger.warn(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdAgent(), sdf.format(demande.getDateDebut()), RefEtatEnum.listToString(listEtatsAcceptes)));
+			srm.getErrors().add(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdAgent(), sdf.format(demande.getDateDebut()), RefEtatEnum.listToString(listEtatsAcceptes)));
 		}
 
 		return srm;
 	}
 
 	@Override
-	public DemandeDto filtreDroitOfDemande(Integer idAgentConnecte, DemandeDto demandeDto,
-			List<DroitsAgent> listDroitAgent, boolean isAgent) {
+	public DemandeDto filtreDroitOfDemande(Integer idAgentConnecte, DemandeDto demandeDto, List<DroitsAgent> listDroitAgent, boolean isAgent) {
 
 		// test 1
 		if (isAgent && demandeDto.getAgentWithServiceDto().getIdAgent().equals(idAgentConnecte)) {
-			demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat()
-					.equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
-					|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
-			demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(
-					RefEtatEnum.PROVISOIRE.getCodeEtat())
-					|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+			demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+			demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
 			demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
 			demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, false));
 
@@ -285,43 +266,28 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					Profil currentProfil = droitProfil.getProfil();
 
 					demandeDto.setAffichageBoutonModifier(demandeDto.isAffichageBoutonModifier()
-							|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto
-									.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) && currentProfil
+							|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) && currentProfil
 									.isModification()));
 
 					demandeDto.setAffichageBoutonSupprimer(demandeDto.isAffichageBoutonSupprimer()
-							|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto
-									.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) && currentProfil
+							|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) && currentProfil
 									.isSuppression()));
 
-					demandeDto.setAffichageBoutonImprimer(demandeDto.isAffichageBoutonImprimer()
-							|| (isAfficherBoutonImprimer(demandeDto) && currentProfil.isImpression()));
-					demandeDto.setAffichageBoutonAnnuler(demandeDto.isAffichageBoutonAnnuler()
-							|| (isAfficherBoutonAnnuler(demandeDto, currentProfil.isAnnuler()) && currentProfil
-									.isAnnuler()));
+					demandeDto.setAffichageBoutonImprimer(demandeDto.isAffichageBoutonImprimer() || (isAfficherBoutonImprimer(demandeDto) && currentProfil.isImpression()));
+					demandeDto.setAffichageBoutonAnnuler(demandeDto.isAffichageBoutonAnnuler() || (isAfficherBoutonAnnuler(demandeDto, currentProfil.isAnnuler()) && currentProfil.isAnnuler()));
 					demandeDto.setAffichageBoutonDupliquer(false);
 
 					demandeDto.setAffichageVisa(demandeDto.isAffichageVisa() || currentProfil.isViserVisu());
-					demandeDto
-							.setModifierVisa(demandeDto.isModifierVisa()
-									|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
-											|| demandeDto.getIdRefEtat().equals(
-													RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()) || demandeDto
-											.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())) && currentProfil
-												.isViserModif()));
+					demandeDto.setModifierVisa(demandeDto.isModifierVisa()
+							|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()) || demandeDto
+									.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())) && currentProfil.isViserModif()));
 
-					demandeDto.setAffichageApprobation(demandeDto.isAffichageApprobation()
-							|| currentProfil.isApprouverVisu());
+					demandeDto.setAffichageApprobation(demandeDto.isAffichageApprobation() || currentProfil.isApprouverVisu());
 					demandeDto
 							.setModifierApprobation(demandeDto.isModifierApprobation()
-									|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
-											|| demandeDto.getIdRefEtat().equals(
-													RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-											|| demandeDto.getIdRefEtat().equals(
-													RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-											|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()) || demandeDto
-											.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) && currentProfil
-												.isApprouverModif()));
+									|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+											|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()) || demandeDto
+											.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) && currentProfil.isApprouverModif()));
 				}
 			}
 		}
@@ -344,25 +310,21 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
 		// cf redmine #13378
 		if (demandeDto.getGroupeAbsence() != null) {
-			switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence()
-					.getIdRefGroupeAbsence())) {
+			switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
 				case REPOS_COMP:
 				case RECUP:
-					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
-							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
+					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
 						return true;
 					}
 					break;
 				case AS:
 				case CONGES_EXCEP:
-					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
-							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
+					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
 						return true;
 					}
 					break;
 				case CONGES_ANNUELS:
-					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
-							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
 							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
 						return true;
 					}
@@ -376,46 +338,38 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
-		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
 	}
 
 	@Override
-	public List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
-			Date dateDemande) {
+	public List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande) {
 		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
 		if (listeSansFiltre.size() == 0)
 			return listeDemandeDto;
 
-		
 		List<Integer> listAgentDto = new ArrayList<Integer>();
-		for(Demande d : listeSansFiltre) {
-			if(!listAgentDto.contains(d.getIdAgent())) {
+		for (Demande d : listeSansFiltre) {
+			if (!listAgentDto.contains(d.getIdAgent())) {
 				listAgentDto.add(d.getIdAgent());
 			}
-			if(!listAgentDto.contains(d.getLatestEtatDemande().getIdAgent())) {
+			if (!listAgentDto.contains(d.getLatestEtatDemande().getIdAgent())) {
 				listAgentDto.add(d.getLatestEtatDemande().getIdAgent());
 			}
 		}
-		
-		// dans un souci de performances, on n affichera toçujours le service de l agent a la date du jour
+
+		// dans un souci de performances, on n affichera toçujours le service de
+		// l agent a la date du jour
 		// ce qui permet de ne faire qu un seul appel a SIRH-WS
 		// et non plus un appel par demande (avec la date de la demande)
-		List<AgentWithServiceDto> listAgentsExistants = sirhWSConsumer.getListAgentsWithService(listAgentDto, 
-				helperService.getCurrentDate());
+		List<AgentWithServiceDto> listAgentsExistants = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate());
 
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
 				AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
 				if (agentOptimise != null) {
 					DemandeDto dto = new DemandeDto(d, agentOptimise);
-					dto.updateEtat(d.getLatestEtatDemande(), 
-							getAgentOfListAgentWithServiceDto(
-									listAgentsExistants, d
-									.getLatestEtatDemande().getIdAgent()), 
-								d.getType()
-							.getGroupe());
+					dto.updateEtat(d.getLatestEtatDemande(), getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getLatestEtatDemande().getIdAgent()), d.getType().getGroupe());
 					if (!listeDemandeDto.contains(dto)) {
 						listeDemandeDto.add(dto);
 					}
@@ -435,12 +389,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
 					if (agentOptimise != null) {
 						DemandeDto dto = new DemandeDto(d, agentOptimise);
-						dto.updateEtat(d.getLatestEtatDemande(), 
-								getAgentOfListAgentWithServiceDto(
-									listAgentsExistants, d
-									.getLatestEtatDemande().getIdAgent()), 
-								d.getType()
-								.getGroupe());
+						dto.updateEtat(d.getLatestEtatDemande(), getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getLatestEtatDemande().getIdAgent()), d.getType().getGroupe());
 						if (!listeDemandeDto.contains(dto)) {
 							listeDemandeDto.add(dto);
 						}
@@ -456,14 +405,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
 				if (agentOptimise != null) {
 					DemandeDto dto = new DemandeDto(d, agentOptimise);
-					dto.updateEtat(d.getLatestEtatDemande(), 
-							getAgentOfListAgentWithServiceDto(
-								listAgentsExistants, d
-								.getLatestEtatDemande().getIdAgent()), 
-							d.getType()
-							.getGroupe());
-					if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat()
-							.getCodeEtat()))) {
+					dto.updateEtat(d.getLatestEtatDemande(), getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getLatestEtatDemande().getIdAgent()), d.getType().getGroupe());
+					if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat().getCodeEtat()))) {
 						if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)
 							listeDemandeDto.add(dto);
 					} else {
@@ -476,13 +419,12 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		return listeDemandeDto;
 	}
-	
+
 	private AgentWithServiceDto getAgentOfListAgentWithServiceDto(List<AgentWithServiceDto> listAgents, Integer idAgent) {
-		
-		if(null != listAgents
-				&& null != idAgent) {
-			for(AgentWithServiceDto agent : listAgents) {
-				if(agent.getIdAgent().equals(idAgent)){
+
+		if (null != listAgents && null != idAgent) {
+			for (AgentWithServiceDto agent : listAgents) {
+				if (agent.getIdAgent().equals(idAgent)) {
 					return agent;
 				}
 			}
@@ -503,9 +445,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Demande demande) {
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel, convention coll
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
-				helperService.getCurrentDate());
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), helperService.getCurrentDate());
 
 		if (null != demande.getType().getTypeSaisi()) {
 			if (helperService.isFonctionnaire(carr) && !demande.getType().getTypeSaisi().isFonctionnaire()) {
@@ -518,8 +458,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				srm.getErrors().add(String.format(STATUT_AGENT_CONTRACTUEL, demande.getIdAgent()));
 				return srm;
 			}
-			if (helperService.isConventionCollective(carr)
-					&& !demande.getType().getTypeSaisi().isConventionCollective()) {
+			if (helperService.isConventionCollective(carr) && !demande.getType().getTypeSaisi().isConventionCollective()) {
 				logger.warn(String.format(STATUT_AGENT_CONV_COLL, demande.getIdAgent()));
 				srm.getErrors().add(String.format(STATUT_AGENT_CONV_COLL, demande.getIdAgent()));
 				return srm;
@@ -537,8 +476,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	@Override
-	public ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi,
-			RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel, ReturnMessageDto srm) {
+	public ReturnMessageDto checkSaisiNewTypeAbsence(RefTypeSaisi typeSaisi, RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel, ReturnMessageDto srm) {
 		logger.warn(String.format(SAISIE_TYPE_ABSENCE_NON_AUTORISEE));
 		srm.getErrors().add(String.format(SAISIE_TYPE_ABSENCE_NON_AUTORISEE));
 		return srm;
