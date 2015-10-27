@@ -1981,7 +1981,11 @@ public class AbsenceService implements IAbsenceService {
 			mois.setAgent(agDto);
 			mois.setDateModification(histo.getLastModification());
 			mois.setDateMois(histo.getDateMonday());
-			mois.setStatus("Pointage du " + sdf.format(histo.getDateDay()));
+			if(histo.getDateDay()==null){
+				mois.setStatus("Issu de la ventilation");
+			}else{
+				mois.setStatus("Pointage du " + sdf.format(histo.getDateDay()));
+			}
 			mois.setNbJours((double) histo.getMinutes());
 			result.add(mois);
 		}
