@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount;
@@ -31,7 +32,7 @@ public class AbsAsaAmicaleDataConsistencyRulesImpl extends AbsAsaDataConsistency
 			return srm;
 		}
 
-		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent());
+		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent(), soldeAsaAmicale.getDateDebut(), soldeAsaAmicale.getDateFin());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande
@@ -43,9 +44,9 @@ public class AbsAsaAmicaleDataConsistencyRulesImpl extends AbsAsaDataConsistency
 		return srm;
 	}
 
-	private int getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent) {
+	private int getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
 
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande, RefTypeAbsenceEnum.ASA_AMICALE.getValue());
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande, dateDebut, dateFin, RefTypeAbsenceEnum.ASA_AMICALE.getValue());
 
 		int somme = 0;
 
@@ -72,7 +73,8 @@ public class AbsAsaAmicaleDataConsistencyRulesImpl extends AbsAsaDataConsistency
 			return true;
 		}
 
-		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto.getAgentWithServiceDto().getIdAgent());
+		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto.getAgentWithServiceDto().getIdAgent(), soldeAsaAmicale.getDateDebut(),
+				soldeAsaAmicale.getDateFin());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande

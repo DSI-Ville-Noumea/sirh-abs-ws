@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service.rules.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class AbsAsaA53DataConsistencyRulesImpl extends AbsAsaDataConsistencyRulesImpl {
 
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,  boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, boolean isProvenanceSIRH) {
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		super.checkOrganisationSyndicale(srm, (DemandeAsa) demande);
@@ -28,8 +29,7 @@ public class AbsAsaA53DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 
 	public ReturnMessageDto checkDroitCompteurAsaA53(ReturnMessageDto srm, DemandeAsa demande) {
 
-		AgentAsaA53Count soldeAsaA53 = counterRepository.getOSCounterByDate(AgentAsaA53Count.class, demande
-				.getOrganisationSyndicale().getIdOrganisationSyndicale(), demande.getDateDebut());
+		AgentAsaA53Count soldeAsaA53 = counterRepository.getOSCounterByDate(AgentAsaA53Count.class, demande.getOrganisationSyndicale().getIdOrganisationSyndicale(), demande.getDateDebut());
 
 		if (null == soldeAsaA53) {
 			logger.warn(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
@@ -37,7 +37,7 @@ public class AbsAsaA53DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 			return srm;
 		}
 
-		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent());
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent(), soldeAsaA53.getDateDebut(), soldeAsaA53.getDateFin());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande
@@ -49,10 +49,9 @@ public class AbsAsaA53DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 		return srm;
 	}
 
-	private double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent) {
+	private double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
 
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande,
-				RefTypeAbsenceEnum.ASA_A53.getValue());
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande, dateDebut, dateFin, RefTypeAbsenceEnum.ASA_A53.getValue());
 
 		double somme = 0.0;
 
@@ -68,19 +67,18 @@ public class AbsAsaA53DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto, CheckCompteurAgentVo checkCompteurAgentVo) {
 
 		// on verifie d abord l etat de la demande
-		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur 
-		if(!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
+		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de
+		// depassement de compteur
+		if (!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
-		
-		AgentAsaA53Count soldeAsaA53 = counterRepository.getOSCounterByDate(AgentAsaA53Count.class, demandeDto
-				.getOrganisationSyndicale().getIdOrganisation(), demandeDto.getDateDebut());
+
+		AgentAsaA53Count soldeAsaA53 = counterRepository.getOSCounterByDate(AgentAsaA53Count.class, demandeDto.getOrganisationSyndicale().getIdOrganisation(), demandeDto.getDateDebut());
 
 		if (null == soldeAsaA53) {
 			return true;
 		}
 
-		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto
-				.getAgentWithServiceDto().getIdAgent());
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto.getAgentWithServiceDto().getIdAgent(), soldeAsaA53.getDateDebut(), soldeAsaA53.getDateFin());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande

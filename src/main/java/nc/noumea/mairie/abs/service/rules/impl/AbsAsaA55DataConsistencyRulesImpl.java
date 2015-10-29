@@ -17,16 +17,14 @@ import org.springframework.stereotype.Service;
 public class AbsAsaA55DataConsistencyRulesImpl extends AbsAsaDataConsistencyRulesImpl {
 
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
-			boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, boolean isProvenanceSIRH) {
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		checkDroitCompteurAsaA55(srm, demande);
 	}
 
 	public ReturnMessageDto checkDroitCompteurAsaA55(ReturnMessageDto srm, Demande demande) {
 
-		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class,
-				demande.getIdAgent(), demande.getDateDebut());
+		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, demande.getIdAgent(), demande.getDateDebut());
 
 		if (null == soldeAsaA55) {
 			logger.warn(String.format(AUCUN_DROITS_ASA_MSG, demande.getIdAgent()));
@@ -34,8 +32,7 @@ public class AbsAsaA55DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 			return srm;
 		}
 
-		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent(),
-				soldeAsaA55.getDateDebut(), soldeAsaA55.getDateFin());
+		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent(), soldeAsaA55.getDateDebut(), soldeAsaA55.getDateFin());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande
@@ -48,9 +45,7 @@ public class AbsAsaA55DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	}
 
 	private int getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
-
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByAgent(idAgent, idDemande, dateDebut, dateFin,
-				RefTypeAbsenceEnum.ASA_A55.getValue());
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande, dateDebut, dateFin, RefTypeAbsenceEnum.ASA_A55.getValue());
 
 		int somme = 0;
 
@@ -71,15 +66,13 @@ public class AbsAsaA55DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 		if (!super.checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
 
-		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, demandeDto
-				.getAgentWithServiceDto().getIdAgent(), demandeDto.getDateDebut());
+		AgentAsaA55Count soldeAsaA55 = counterRepository.getAgentCounterByDate(AgentAsaA55Count.class, demandeDto.getAgentWithServiceDto().getIdAgent(), demandeDto.getDateDebut());
 
 		if (null == soldeAsaA55) {
 			return true;
 		}
 
-		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto
-				.getAgentWithServiceDto().getIdAgent(), soldeAsaA55.getDateDebut(), soldeAsaA55.getDateFin());
+		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto.getAgentWithServiceDto().getIdAgent(), soldeAsaA55.getDateDebut(), soldeAsaA55.getDateFin());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande

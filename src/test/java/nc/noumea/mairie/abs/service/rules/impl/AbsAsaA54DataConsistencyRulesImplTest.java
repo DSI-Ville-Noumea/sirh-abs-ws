@@ -42,8 +42,7 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		AgentAsaA54Count soldeAsaA54 = null;
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA54);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(soldeAsaA54);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -67,8 +66,7 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		soldeAsaA54.setActif(false);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA54);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(soldeAsaA54);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -93,20 +91,16 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		soldeAsaA54.setActif(true);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA54);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(soldeAsaA54);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
+		Mockito.when(helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(10.0);
 
 		List<DemandeAsa> listDemandeAsa = new ArrayList<DemandeAsa>();
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
-				.thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -136,20 +130,16 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		soldeAsaA54.setActif(true);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA54);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(soldeAsaA54);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
+		Mockito.when(helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(10.0);
 
 		List<DemandeAsa> listDemandeAsa = new ArrayList<DemandeAsa>();
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
-				.thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -179,20 +169,16 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		soldeAsaA54.setActif(true);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA54);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(soldeAsaA54);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
+		Mockito.when(helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(10.0);
 
 		List<DemandeAsa> listDemandeAsa = new ArrayList<DemandeAsa>();
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
-				.thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -219,8 +205,7 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		AgentAsaA54Count soldeAsaA54 = null;
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA54);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(soldeAsaA54);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -245,20 +230,16 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		soldeAsaA54.setTotalJours(0.0);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA54);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(soldeAsaA54);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(10.0);
+		Mockito.when(helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(10.0);
 
 		List<DemandeAsa> listDemandeAsa = new ArrayList<DemandeAsa>();
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
-				.thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -288,20 +269,16 @@ public class AbsAsaA54DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 		soldeAsaA54.setTotalJours(3.0);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(
-				soldeAsaA54);
+		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, 9005138, dateDebut)).thenReturn(soldeAsaA54);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(
-				helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class)))
-				.thenReturn(1.0);
+		Mockito.when(helperService.calculNombreJoursArrondiDemiJournee(Mockito.isA(Date.class), Mockito.isA(Date.class))).thenReturn(1.0);
 
 		List<DemandeAsa> listDemandeAsa = new ArrayList<DemandeAsa>();
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
-				.thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaA54DataConsistencyRulesImpl impl = new AbsAsaA54DataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);

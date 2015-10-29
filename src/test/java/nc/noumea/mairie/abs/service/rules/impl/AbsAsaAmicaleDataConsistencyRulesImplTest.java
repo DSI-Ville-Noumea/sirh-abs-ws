@@ -100,7 +100,7 @@ public class AbsAsaAmicaleDataConsistencyRulesImplTest extends AbsAsaDataConsist
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaAmicaleDataConsistencyRulesImpl impl = new AbsAsaAmicaleDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -139,7 +139,7 @@ public class AbsAsaAmicaleDataConsistencyRulesImplTest extends AbsAsaDataConsist
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaAmicaleDataConsistencyRulesImpl impl = new AbsAsaAmicaleDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -178,7 +178,7 @@ public class AbsAsaAmicaleDataConsistencyRulesImplTest extends AbsAsaDataConsist
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaAmicaleDataConsistencyRulesImpl impl = new AbsAsaAmicaleDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -239,7 +239,7 @@ public class AbsAsaAmicaleDataConsistencyRulesImplTest extends AbsAsaDataConsist
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaAmicaleDataConsistencyRulesImpl impl = new AbsAsaAmicaleDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
@@ -278,7 +278,7 @@ public class AbsAsaAmicaleDataConsistencyRulesImplTest extends AbsAsaDataConsist
 		listDemandeAsa.addAll(Arrays.asList(new DemandeAsa(), new DemandeAsa()));
 
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(listDemandeAsa);
+		Mockito.when(asaRepository.getListDemandeAsaEnCours(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listDemandeAsa);
 
 		AbsAsaAmicaleDataConsistencyRulesImpl impl = new AbsAsaAmicaleDataConsistencyRulesImpl();
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);

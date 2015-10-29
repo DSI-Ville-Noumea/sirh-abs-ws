@@ -38,6 +38,8 @@ public class AsaRepositoryTest {
 	public void getListDemandeAsaEnCours_testEtatDemande() {
 
 		Date dateJour = new Date();
+		Date dateDebMois = new DateTime(2014, 05, 1, 0, 0, 0).toDate();
+		Date dateFinMois = new DateTime(2016, 05, 31, 23, 59, 59).toDate();
 
 		DemandeAsa dr1 = new DemandeAsa();
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
@@ -232,7 +234,7 @@ public class AsaRepositoryTest {
 		absEntityManager.persist(dr11);
 
 		// When
-		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, null, rta.getIdRefTypeAbsence());
+		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, null, dateDebMois,dateFinMois,rta.getIdRefTypeAbsence());
 
 		assertEquals(5, result.size());
 		
@@ -245,6 +247,8 @@ public class AsaRepositoryTest {
 	public void getListDemandeAsaEnCours_noResult_sameDemande() {
 
 		Date dateJour = new Date();
+		Date dateDebMois = new DateTime(2014, 05, 1, 0, 0, 0).toDate();
+		Date dateFinMois = new DateTime(2014, 05, 31, 23, 59, 59).toDate();
 
 		DemandeAsa dr1 = new DemandeAsa();
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
@@ -269,7 +273,7 @@ public class AsaRepositoryTest {
 		absEntityManager.persist(dr1);
 
 		// When
-		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, dr1.getIdDemande(),
+		List<DemandeAsa> result = repository.getListDemandeAsaEnCours(9005168, dr1.getIdDemande(), dateDebMois,dateFinMois,
 				rta.getIdRefTypeAbsence());
 
 		assertEquals(0, result.size());
@@ -283,6 +287,8 @@ public class AsaRepositoryTest {
 	public void getListDemandeAsaEnCours_testTypeDemande() {
 
 		Date dateJour = new Date();
+		Date dateDebMois = new DateTime(2014, 05, 1, 0, 0, 0).toDate();
+		Date dateFinMois = new DateTime(2016, 05, 31, 23, 59, 59).toDate();
 
 		DemandeAsa dr1 = new DemandeAsa();
 		List<EtatDemande> listEtatDemande = new ArrayList<EtatDemande>();
@@ -373,15 +379,15 @@ public class AsaRepositoryTest {
 		absEntityManager.persist(dr4);
 
 		// When
-		List<DemandeAsa> result_ASA_A48 = repository.getListDemandeAsaEnCours(9005168, null, rta.getIdRefTypeAbsence());
+		List<DemandeAsa> result_ASA_A48 = repository.getListDemandeAsaEnCours(9005168, null, dateDebMois,dateFinMois, rta.getIdRefTypeAbsence());
 		assertEquals(1, result_ASA_A48.size());
 
 		List<DemandeAsa> result_ASA_A54 = repository
-				.getListDemandeAsaEnCours(9005168, null, rta2.getIdRefTypeAbsence());
+				.getListDemandeAsaEnCours(9005168, null, dateDebMois,dateFinMois, rta2.getIdRefTypeAbsence());
 		assertEquals(1, result_ASA_A54.size());
 
 		List<DemandeAsa> result_ASA_A55 = repository
-				.getListDemandeAsaEnCours(9005168, null, rta3.getIdRefTypeAbsence());
+				.getListDemandeAsaEnCours(9005168, null, dateDebMois,dateFinMois, rta3.getIdRefTypeAbsence());
 		assertEquals(1, result_ASA_A55.size());
 		
 		absEntityManager.flush();
