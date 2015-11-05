@@ -6,7 +6,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;

@@ -41,7 +41,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-    
+    <!-- Utile a SWAGGER -->
     <filter>
 		<filter-name>CorsFilter</filter-name>
 	    <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>

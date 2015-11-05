@@ -27,7 +27,7 @@ public class SwaggerConfig {
         ApiInfo apiInfo = new ApiInfo(
             "Project SIRH-ABS-WS REST API",
             "Descritpion des WS Rest de SIRH-ABS-WS.",
-            "API TOS",
+            "",
             "",
             "",
             "",
