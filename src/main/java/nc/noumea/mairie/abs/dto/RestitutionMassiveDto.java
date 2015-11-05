@@ -6,8 +6,9 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 
 public class RestitutionMassiveDto {
 

@@ -10,8 +10,9 @@ import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 
 public class CompteurDto {
 
