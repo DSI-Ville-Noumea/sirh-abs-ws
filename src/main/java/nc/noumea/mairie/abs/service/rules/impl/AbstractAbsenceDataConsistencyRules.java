@@ -358,12 +358,34 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			}
 		}
 
-		// dans un souci de performances, on n affichera toçujours le service de
+		// dans un souci de performances, on n affichera toujours le service de
 		// l agent a la date du jour
 		// ce qui permet de ne faire qu un seul appel a SIRH-WS
 		// et non plus un appel par demande (avec la date de la demande)
 		List<AgentWithServiceDto> listAgentsExistants = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate());
 
+		// bug #19935 les agents n ayant plus d affectation (retraite par ex) ne seront pas retournes
+		if(listAgentDto.size() > listAgentsExistants.size()) {
+			List<Integer> listAgentSansAffectation = new ArrayList<Integer>();
+			List<Integer> listIdAgentAvecAffectation = new ArrayList<Integer>();
+			
+			for(AgentWithServiceDto agent : listAgentsExistants) {
+				listIdAgentAvecAffectation.add(agent.getIdAgent());
+			}
+			
+			for(Integer idAgent : listAgentDto) {
+				if(!listIdAgentAvecAffectation.contains(idAgent)) {
+					listAgentSansAffectation.add(idAgent);
+				}
+			}
+			
+			List<AgentWithServiceDto> listAgentsExistantsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation);
+			
+			if(null != listAgentsExistantsSansAffectation) {
+				listAgentsExistants.addAll(listAgentsExistantsSansAffectation);
+			}
+		}
+		
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
 				AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
