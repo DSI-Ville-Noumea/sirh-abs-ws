@@ -39,6 +39,9 @@ import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
+import nc.noumea.mairie.abs.repository.IRecuperationRepository;
+import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
+import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.counter.impl.CongesExcepCounterServiceImpl;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 
@@ -86,12 +89,29 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(0);
 
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absAsaA48DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA52DataConsistencyRulesImpl", absAsaA52DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA54DataConsistencyRulesImpl", absAsaA54DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA55DataConsistencyRulesImpl", absAsaA55DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		// When
 		Date dateJour = new Date();
@@ -252,6 +272,15 @@ public class SoldeServiceTest {
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
 
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
@@ -259,6 +288,14 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "asaRepository", asaRepository);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absAsaA48DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA52DataConsistencyRulesImpl", absAsaA52DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA54DataConsistencyRulesImpl", absAsaA54DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA55DataConsistencyRulesImpl", absAsaA55DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		// When
 		SoldeDto dto = service.getAgentSolde(idAgent, dateDeb, dateFin, null, dateJour);
@@ -402,6 +439,15 @@ public class SoldeServiceTest {
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
 
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
@@ -409,6 +455,14 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "asaRepository", asaRepository);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absAsaA48DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA52DataConsistencyRulesImpl", absAsaA52DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA54DataConsistencyRulesImpl", absAsaA54DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA55DataConsistencyRulesImpl", absAsaA55DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
@@ -494,12 +548,29 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
 
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absAsaA48DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA52DataConsistencyRulesImpl", absAsaA52DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA54DataConsistencyRulesImpl", absAsaA54DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA55DataConsistencyRulesImpl", absAsaA55DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		// When
 		Date dateJour = new Date();
@@ -581,12 +652,29 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
 
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absAsaA48DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA52DataConsistencyRulesImpl", absAsaA52DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA54DataConsistencyRulesImpl", absAsaA54DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA55DataConsistencyRulesImpl", absAsaA55DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		// When
 		Date dateJour = new Date();
@@ -668,12 +756,29 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
 
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absAsaA48DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA52DataConsistencyRulesImpl", absAsaA52DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA54DataConsistencyRulesImpl", absAsaA54DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA55DataConsistencyRulesImpl", absAsaA55DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		// When
 		Date dateJour = new Date();
@@ -741,10 +846,27 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
 
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absAsaA48DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA52DataConsistencyRulesImpl", absAsaA52DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA54DataConsistencyRulesImpl", absAsaA54DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA55DataConsistencyRulesImpl", absAsaA55DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 	}
 
 	@Test
@@ -1315,6 +1437,15 @@ public class SoldeServiceTest {
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
 		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
 
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
 		ReflectionTestUtils.setField(service, "absReposCompDataConsistencyRules", absDataConsistencyRules);
@@ -1322,6 +1453,14 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "asaRepository", asaRepository);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "absAsaA48DataConsistencyRulesImpl", absAsaA48DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA52DataConsistencyRulesImpl", absAsaA52DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA54DataConsistencyRulesImpl", absAsaA54DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaA55DataConsistencyRulesImpl", absAsaA55DataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		Date dateDeb = new DateTime(2013, 1, 1, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 31, 23, 59, 0).toDate();
