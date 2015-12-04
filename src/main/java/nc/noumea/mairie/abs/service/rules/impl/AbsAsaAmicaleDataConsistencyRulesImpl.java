@@ -32,7 +32,7 @@ public class AbsAsaAmicaleDataConsistencyRulesImpl extends AbsAsaDataConsistency
 			return srm;
 		}
 
-		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent(), soldeAsaAmicale.getDateDebut(), soldeAsaAmicale.getDateFin());
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent(), soldeAsaAmicale.getDateDebut(), soldeAsaAmicale.getDateFin());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande
@@ -44,15 +44,16 @@ public class AbsAsaAmicaleDataConsistencyRulesImpl extends AbsAsaDataConsistency
 		return srm;
 	}
 
-	private int getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
+	@Override
+	public double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
 
 		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande, dateDebut, dateFin, RefTypeAbsenceEnum.ASA_AMICALE.getValue());
 
-		int somme = 0;
+		double somme = 0.0;
 
 		if (null != listAsa) {
 			for (DemandeAsa asa : listAsa) {
-				somme += helperService.calculNombreMinutes(asa.getDateDebut(), asa.getDateFin());
+				somme += (double) helperService.calculNombreMinutes(asa.getDateDebut(), asa.getDateFin());
 			}
 		}
 		return somme;
@@ -73,7 +74,7 @@ public class AbsAsaAmicaleDataConsistencyRulesImpl extends AbsAsaDataConsistency
 			return true;
 		}
 
-		int sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto.getAgentWithServiceDto().getIdAgent(), soldeAsaAmicale.getDateDebut(),
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto.getAgentWithServiceDto().getIdAgent(), soldeAsaAmicale.getDateDebut(),
 				soldeAsaAmicale.getDateFin());
 
 		// on signale par un message d info que le compteur est epuise, mais on

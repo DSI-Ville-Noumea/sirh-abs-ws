@@ -9,24 +9,32 @@ public class SoldeDto {
 	private boolean samediOffert;
 	private Double soldeCongeAnnee;
 	private Double soldeCongeAnneePrec;
+	private Double dureeCongeNonValide;
 	private boolean afficheSoldeRecup;
 	private Double soldeRecup;
+	private Double dureeRecupNonValide;
 	private boolean afficheSoldeReposComp;
 	private Double soldeReposCompAnnee;
 	private Double soldeReposCompAnneePrec;
+	private Double dureeReposCompNonValide;
 	private boolean afficheSoldeAsaA48;
 	private Double soldeAsaA48;
+	private Double dureeAsaA48NonValide;
 	private boolean afficheSoldeAsaA54;
 	private Double soldeAsaA54;
+	private Double dureeAsaA54NonValide;
 	private boolean afficheSoldeAsaA55;
 	private Double soldeAsaA55;
+	private Double dureeAsaA55NonValide;
 	private List<SoldeMonthDto> listeSoldeAsaA55;
 	private boolean afficheSoldeAsaA52;
 	private Double soldeAsaA52;
+	private Double dureeAsaA52NonValide;
 	private OrganisationSyndicaleDto organisationA52;
 	private List<SoldeMonthDto> listeSoldeAsaA52;
 	private boolean afficheSoldeAsaAmicale;
 	private Double soldeAsaAmicale;
+	private Double dureeAsaAmicaleNonValide;
 
 	private boolean afficheSoldeCongesExcep;
 	private List<SoldeSpecifiqueDto> listeSoldeCongesExcep = new ArrayList<SoldeSpecifiqueDto>();
@@ -225,6 +233,70 @@ public class SoldeDto {
 
 	public void setSoldeAsaAmicale(Double soldeAsaAmicale) {
 		this.soldeAsaAmicale = soldeAsaAmicale;
+	}
+
+	public Double getDureeCongeNonValide() {
+		return dureeCongeNonValide;
+	}
+
+	public void setDureeCongeNonValide(Double dureeCongeNonValide) {
+		this.dureeCongeNonValide = dureeCongeNonValide;
+	}
+
+	public Double getDureeRecupNonValide() {
+		return dureeRecupNonValide;
+	}
+
+	public void setDureeRecupNonValide(Double dureeRecupNonValide) {
+		this.dureeRecupNonValide = dureeRecupNonValide;
+	}
+
+	public Double getDureeReposCompNonValide() {
+		return dureeReposCompNonValide;
+	}
+
+	public void setDureeReposCompNonValide(Double dureeReposCompNonValide) {
+		this.dureeReposCompNonValide = dureeReposCompNonValide;
+	}
+
+	public Double getDureeAsaA48NonValide() {
+		return dureeAsaA48NonValide;
+	}
+
+	public void setDureeAsaA48NonValide(Double dureeAsaA48NonValide) {
+		this.dureeAsaA48NonValide = dureeAsaA48NonValide;
+	}
+
+	public Double getDureeAsaA54NonValide() {
+		return dureeAsaA54NonValide;
+	}
+
+	public void setDureeAsaA54NonValide(Double dureeAsaA54NonValide) {
+		this.dureeAsaA54NonValide = dureeAsaA54NonValide;
+	}
+
+	public Double getDureeAsaA55NonValide() {
+		return dureeAsaA55NonValide;
+	}
+
+	public void setDureeAsaA55NonValide(Double dureeAsaA55NonValide) {
+		this.dureeAsaA55NonValide = dureeAsaA55NonValide;
+	}
+
+	public Double getDureeAsaA52NonValide() {
+		return dureeAsaA52NonValide;
+	}
+
+	public void setDureeAsaA52NonValide(Double dureeAsaA52NonValide) {
+		this.dureeAsaA52NonValide = dureeAsaA52NonValide;
+	}
+
+	public Double getDureeAsaAmicaleNonValide() {
+		return dureeAsaAmicaleNonValide;
+	}
+
+	public void setDureeAsaAmicaleNonValide(Double dureeAsaAmicaleNonValide) {
+		this.dureeAsaAmicaleNonValide = dureeAsaAmicaleNonValide;
 	}
 
 }

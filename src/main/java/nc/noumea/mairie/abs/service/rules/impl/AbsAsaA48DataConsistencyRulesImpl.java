@@ -45,7 +45,8 @@ public class AbsAsaA48DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 		return srm;
 	}
 
-	private double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
+	@Override
+	public double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
 
 		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaEnCours(idAgent, idDemande, dateDebut, dateFin, RefTypeAbsenceEnum.ASA_A48.getValue());
 

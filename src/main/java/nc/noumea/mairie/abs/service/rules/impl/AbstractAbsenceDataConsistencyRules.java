@@ -513,4 +513,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public void checkSamediOffertToujoursOk(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		// ne concerne que les conges annuels
 	}
+	
+	@Override
+	public double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
+		return 0.0;
+	}
 }
+

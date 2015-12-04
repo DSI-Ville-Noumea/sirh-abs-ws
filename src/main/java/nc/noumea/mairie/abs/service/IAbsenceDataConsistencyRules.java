@@ -53,4 +53,7 @@ public interface IAbsenceDataConsistencyRules {
 	ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande, CheckCompteurAgentVo checkCompteurAgentVo);
 
 	void checkSamediOffertToujoursOk(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande);
+
+	double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent,
+			Date dateDebut, Date dateFin);
 }
