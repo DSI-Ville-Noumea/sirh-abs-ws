@@ -65,9 +65,9 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		// REJETE
 		assertFalse(result10.isAffichageBoutonAnnuler());
 		// EN ATTENTE
-		assertTrue(result11.isAffichageBoutonAnnuler());
+		assertFalse(result11.isAffichageBoutonAnnuler());
 		// A VALIDER
-		assertTrue(result12.isAffichageBoutonAnnuler());
+		assertFalse(result12.isAffichageBoutonAnnuler());
 	}
 
 	@Test
@@ -530,9 +530,13 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
 		assertFalse(result);
 
+		demandeDto.setIdRefEtat(RefEtatEnum.A_VALIDER.getCodeEtat());
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		assertFalse(result);
+
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
-		assertTrue(result);
+		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
