@@ -832,8 +832,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
 
-		assertEquals(1, srm.getErrors().size());
-		assertEquals(srm.getErrors().get(0),
+		assertEquals(1, srm.getInfos().size());
+		assertEquals(srm.getInfos().get(0),
 				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
 	}
 
@@ -868,8 +868,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		srm = impl.checkMultipleCycle(srm, demande, idOperateur);
 
-		assertEquals(1, srm.getErrors().size());
-		assertEquals(srm.getErrors().get(0),
+		assertEquals(1, srm.getInfos().size());
+		assertEquals(srm.getInfos().get(0),
 				"Pour la base congé C, la durée du congé doit être un multiple de 5 jours.");
 	}
 

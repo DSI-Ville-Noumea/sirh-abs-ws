@@ -804,7 +804,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, new Date());
+		Double result = service.getDureeCongeAnnuel(demande, new Date(), false, null);
 
 		assertEquals(duree, result);
 	}
@@ -834,7 +834,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -870,7 +870,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -906,7 +906,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1079,7 +1079,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1109,7 +1109,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1139,7 +1139,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1169,7 +1169,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1199,7 +1199,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1235,7 +1235,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1257,7 +1257,7 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		HelperService service = new HelperService();
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1279,7 +1279,7 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		HelperService service = new HelperService();
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1301,7 +1301,7 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 
 		HelperService service = new HelperService();
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1323,7 +1323,7 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 
 		HelperService service = new HelperService();
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1345,7 +1345,7 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 
 		HelperService service = new HelperService();
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
 	}
@@ -1367,9 +1367,30 @@ public class HelperServiceTest {
 		demande.setDateDebut(dateDebut);
 
 		HelperService service = new HelperService();
-		Double result = service.getDureeCongeAnnuel(demande, dateReprise);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
+	}
+
+	@Test
+	public void getDureeCongeAnnuel_baseC_forceSaisieManuelle() {
+
+		Date dateDebut = new DateTime(2014, 12, 2, 0, 0, 0).toDate();
+		Date dateReprise = new DateTime(2014, 12, 8, 0, 0, 0).toDate();
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+		typeSaisiCongeAnnuel.setQuotaMultiple(5);
+		typeSaisiCongeAnnuel.setQuotaDecompte(3);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+
+		HelperService service = new HelperService();
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, true, 2.0);
+
+		assertEquals(new Double(2.0), result);
 	}
 
 	// #15248 cas de test concret en recette
@@ -1413,7 +1434,7 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
-		Double result = service.getDureeCongeAnnuel(demande, null);
+		Double result = service.getDureeCongeAnnuel(demande, null, false, null);
 
 		assertEquals(duree, result);
 	}

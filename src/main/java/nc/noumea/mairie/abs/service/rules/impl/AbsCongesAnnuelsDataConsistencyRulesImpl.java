@@ -18,6 +18,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,8 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 
 	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Votre solde congé est en dépassement de %s jours.";
 	public static final String COMPTEUR_INEXISTANT = "Le compteur de congés annuels n'existe pas.";
+	public static final String DUREE_SUPERIEURE_0 = "La durée de la demande doit être supérieure à 0.";
+	public static final String DUREE_SUPERIEURE_A = "La durée de la demande ne pas être supérieure à %s.";
 
 	@Autowired
 	protected ICongesAnnuelsRepository congesAnnuelsRepository;
@@ -37,9 +40,32 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		checkBaseHoraireAbsenceAgent(srm, demande.getIdAgent(), demande.getDateDebut());
 		checkDepassementDroitsAcquis(srm, demande, null);
 		checkChampMotifDemandeSaisi(srm, (DemandeCongesAnnuels) demande);
+		checkDuree(srm, (DemandeCongesAnnuels) demande);
 		checkMultipleCycle(srm, (DemandeCongesAnnuels) demande, idAgent);
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
+	}
+	
+	protected ReturnMessageDto checkDuree(ReturnMessageDto srm, DemandeCongesAnnuels demande) {
+		
+		if (demande.getTypeSaisiCongeAnnuel().getQuotaMultiple() != null
+				&& demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence().equals("C")) {
+			if(0 == demande.getDuree()) {
+				logger.warn(DUREE_SUPERIEURE_0);
+				srm.getErrors().add(DUREE_SUPERIEURE_0);
+			}
+			
+			Date dateReprise = new DateTime(demande.getDateFin()).plusDays(1).toDate();
+			Double dureeTheorique = helperService.getDureeCongeAnnuel(demande, dateReprise, false, null);
+			if(null == dureeTheorique
+					|| demande.getDuree() > dureeTheorique) {
+				logger.warn(String.format(DUREE_SUPERIEURE_A, dureeTheorique));
+				srm.getErrors().add(
+						String.format(DUREE_SUPERIEURE_A, dureeTheorique));
+			}
+		}
+		
+		return srm;
 	}
 
 	protected ReturnMessageDto checkMultipleCycle(ReturnMessageDto srm, DemandeCongesAnnuels demande, Integer idAgent) {
@@ -49,9 +75,9 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 				case "C":
 					nbJours = helperService.calculNombreJours(demande.getDateDebut(), demande.getDateFin());
 					if (nbJours % demande.getTypeSaisiCongeAnnuel().getQuotaMultiple() != 0) {
-						if ((accessRightsRepository.isOperateurOfAgent(idAgent, demande.getIdAgent()) || sirhWSConsumer
-								.isUtilisateurSIRH(idAgent).getErrors().size() == 0)
-								&& nbJours <= demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) {
+						if ((accessRightsRepository.isOperateurOfAgent(idAgent, demande.getIdAgent())
+								|| accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent()) 
+								|| sirhWSConsumer.isUtilisateurSIRH(idAgent).getErrors().size() == 0)) {
 							logger.warn(String.format(SAISIE_NON_MULTIPLE, demande.getTypeSaisiCongeAnnuel()
 									.getCodeBaseHoraireAbsence(), demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()));
 							srm.getInfos().add(
@@ -341,9 +367,11 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 
 				if (0.0 == nombreSamediOffert) {
 					((DemandeCongesAnnuels) demande).setNbSamediOffert(0.0);
-					((DemandeCongesAnnuels) demande).setDuree(helperService.getDureeCongeAnnuel(
-							(DemandeCongesAnnuels) demande, null) < 0 ? 0.0 : helperService.getDureeCongeAnnuel(
-							(DemandeCongesAnnuels) demande, null));
+					
+					Double duree = helperService.getDureeCongeAnnuel(
+							(DemandeCongesAnnuels) demande, null, false, null);
+					
+					((DemandeCongesAnnuels) demande).setDuree(null == duree || duree < 0 ? 0.0 : duree);
 					((DemandeCongesAnnuels) demande).setDureeAnneeN1(0.0);
 				}
 			}

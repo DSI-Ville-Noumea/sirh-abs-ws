@@ -427,7 +427,7 @@ public class HelperService {
 		return null;
 	}
 
-	public Double getDureeCongeAnnuel(DemandeCongesAnnuels demande, Date dateReprise) {
+	public Double getDureeCongeAnnuel(DemandeCongesAnnuels demande, Date dateReprise, boolean forcerSaisieManuelleDuree, Double dureeSaisieManuelle) {
 		Double duree = 0.0;
 		switch (demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence()) {
 			case "A":
@@ -466,6 +466,10 @@ public class HelperService {
 				break;
 
 			case "C":
+				
+				if(forcerSaisieManuelleDuree)
+					return dureeSaisieManuelle;
+				
 				duree = calculNombreJours(demande.getDateDebut(), dateReprise);
 				duree = Math.ceil((duree / demande.getTypeSaisiCongeAnnuel().getQuotaMultiple())
 						* demande.getTypeSaisiCongeAnnuel().getQuotaDecompte());

@@ -93,10 +93,10 @@ public class DemandeController {
 		demande.setDateFin(demandeDto.getDateFin());
 		demande.setTypeSaisiCongeAnnuel(typeCongeAnnuel);
 
-		Double duree = helperService.getDureeCongeAnnuel(demande, demandeDto.getDateReprise()) < 0 ? 0.0 : helperService.getDureeCongeAnnuel(demande, demandeDto.getDateReprise());
+		Double duree = helperService.getDureeCongeAnnuel(demande, demandeDto.getDateReprise(), false, null);
 
 		DemandeDto res = new DemandeDto();
-		res.setDuree(duree);
+		res.setDuree(null == duree || duree < 0 ? 0.0 : duree);
 		res.setSamediOffert(helperService.getNombreSamediOffert(demande) == 0.0 ? false : true);
 
 		return res;

@@ -20,6 +20,8 @@ import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.transformer.MSDateTransformer;
 
+import org.joda.time.DateTime;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -47,6 +49,7 @@ public class DemandeDto {
 	private boolean isDateFinAM;
 	private boolean isDateFinPM;
 	private Double duree;
+	private boolean forceSaisieManuelleDuree;
 	private boolean isSamediOffert;
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
@@ -230,6 +233,9 @@ public class DemandeDto {
 				this.totalJoursNew = ((DemandeCongesAnnuels) d).getTotalJoursNew();
 				this.totalJoursAnneeN1Old = ((DemandeCongesAnnuels) d).getTotalJoursAnneeN1Old();
 				this.totalJoursAnneeN1New = ((DemandeCongesAnnuels) d).getTotalJoursAnneeN1New();
+				
+				if(null != d.getDateFin()) 
+					this.dateReprise = new DateTime(d.getDateFin()).plusDays(1).toDate(); 
 				break;
 			default:
 				break;
@@ -750,6 +756,14 @@ public class DemandeDto {
 
 	public void setEtatDto(RefEtatDto etatDto) {
 		this.etatDto = etatDto;
+	}
+
+	public boolean isForceSaisieManuelleDuree() {
+		return forceSaisieManuelleDuree;
+	}
+
+	public void setForceSaisieManuelleDuree(boolean forceSaisieManuelleDuree) {
+		this.forceSaisieManuelleDuree = forceSaisieManuelleDuree;
 	}
 
 }
