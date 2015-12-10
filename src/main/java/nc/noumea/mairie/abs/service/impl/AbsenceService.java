@@ -327,7 +327,11 @@ public class AbsenceService implements IAbsenceService {
 		// du WS listeDemandesAgent
 		// donc inutile de recuperer les droits en bdd
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
-		if (null != idAgentConnecte && !idAgentConnecte.equals(idAgentConcerne)) {
+		if (null != idAgentConnecte 
+				&& null != idAgentConcerne
+				&& (1 < idAgentConcerne.size()
+						|| (1 == idAgentConcerne.size() 
+							&& !idAgentConnecte.equals(idAgentConcerne.get(0))))) {
 
 			// redmine #14201 : on cherche si l'agent est délégataire
 			List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte, null);
@@ -1146,7 +1150,8 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType, Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds) {
+	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType, Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds, 
+			String listIdRefEtat, String ongletDemande) {
 
 		if (null != idAgentRecherche && 0 != idAgentRecherche) {
 			agentIds = new ArrayList<Integer>();
@@ -1160,6 +1165,13 @@ public class AbsenceService implements IAbsenceService {
 			RefEtat etat = demandeRepository.getEntity(RefEtat.class, idRefEtat);
 			listEtats = new ArrayList<RefEtat>();
 			listEtats.add(etat);
+		} else if(null != listIdRefEtat
+				&& !"".equals(listIdRefEtat)) {
+			List<Integer> etatIds = new ArrayList<Integer>();
+			for (String id : listIdRefEtat.split(",")) {
+				etatIds.add(Integer.valueOf(id));
+			}
+			listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, etatIds);
 		}
 
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre, listEtats, null);

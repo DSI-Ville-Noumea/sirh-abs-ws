@@ -24,6 +24,7 @@ import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.ISuppressionService;
+import nc.noumea.mairie.abs.service.impl.FiltreService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -416,9 +417,46 @@ public class DemandeController {
 		if (aValider) {
 			result = absenceService.getListeDemandesSIRHAValider(fromDate, toDate, idRefEtat, idRefType, idAgentRecherche, idRefGroupeAbsence, agentIds);
 		} else {
-			result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType, idAgentRecherche, idRefGroupeAbsence, agentIds);
+			result = absenceService.getListeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType, idAgentRecherche, idRefGroupeAbsence, agentIds, null, null);
 		}
 
+		if (result.size() == 0)
+			throw new NoContentException();
+
+		return result;
+	}
+	
+	/**
+	 * Liste des demandes pour SIRH <br />
+	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/listeDemandesPlanningKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<DemandeDto> getListeDemandesAbsencePlanningKiosque(
+			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, 
+			@RequestParam(value = "etat", required = false) String listIdRefEtat,
+			@RequestParam(value = "type", required = false) Integer idRefType, 
+			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence, 
+			@RequestParam(value = "idAgents", required = false) String idAgents) {
+
+		logger.debug(
+				"entered GET [demandes/getListeDemandesAbsencePlanningKiosque] => getListeDemandesAbsencePlanningKiosque with parameters  from = {}, to = {},  "
+				+ "etat = {}, groupe = {}, type = {}, idAgentConcerne= {}, aValider= {} and idAgents = {}",
+				fromDate, toDate, listIdRefEtat, idRefGroupeAbsence, idRefType, idAgents);
+
+		List<Integer> agentIds = new ArrayList<Integer>();
+		if (idAgents != null) {
+			for (String id : idAgents.split(",")) {
+				if (!"".equals(id)) {
+					agentIds.add(Integer.valueOf(id));
+				}
+			}
+		}
+
+		List<DemandeDto> result = absenceService.getListeDemandesSIRH(fromDate, toDate, null, idRefType, null, idRefGroupeAbsence, agentIds, listIdRefEtat, FiltreService.ONGLET_PLANNING);
+		
 		if (result.size() == 0)
 			throw new NoContentException();
 

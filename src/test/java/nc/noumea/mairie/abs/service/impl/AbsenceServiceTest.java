@@ -5028,7 +5028,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
@@ -8587,7 +8587,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
@@ -10366,7 +10366,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null, null, null);
 
 		assertEquals(1, listResult.size());
 		assertTrue(listResult.get(0).isDepassementCompteur());
@@ -12883,7 +12883,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "agentService", agentService);
 
-		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null);
+		List<DemandeDto> listResult = service.getListeDemandesSIRH(null, null, null, null, null, null, null, null, null);
 
 		assertEquals(2, listResult.size());
 	}
