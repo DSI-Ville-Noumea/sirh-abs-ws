@@ -29,11 +29,11 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
-			boolean isProvenanceSIRH) {
+	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, boolean isProvenanceSIRH) {
 		checkStatutAgent(srm, demande.getIdAgent(), isProvenanceSIRH);
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-		checkDepassementDroitsAcquis(srm, demande, null);
+		if (srm.getErrors().size() == 0)
+			checkDepassementDroitsAcquis(srm, demande, null);
 
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 	}
@@ -42,8 +42,7 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 		if (!isProvenanceSIRH) {
 			// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 			// contractuel,convention coll
-			Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-					agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
+			Spcarr carr = sirhRepository.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
 			if (!(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
 				logger.warn(String.format(STATUT_AGENT, idAgent));
 				srm.getErrors().add(String.format(STATUT_AGENT, idAgent));
@@ -55,33 +54,28 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 
 	@Override
 	public ReturnMessageDto checkDepassementDroitsAcquis(ReturnMessageDto srm, Demande demande, CheckCompteurAgentVo checkCompteurAgentVo) {
-		
+
 		// on recupere le solde de l agent
 		Integer soldeReposCompNetN1 = 0;
 		Integer sommeDemandeEnCours = 0;
-		
-		if(null != checkCompteurAgentVo
-				&& null != checkCompteurAgentVo.getCompteurRecup()
-				&& null != checkCompteurAgentVo.getDureeDemandeEnCoursRecup()) {
+
+		if (null != checkCompteurAgentVo && null != checkCompteurAgentVo.getCompteurRecup() && null != checkCompteurAgentVo.getDureeDemandeEnCoursRecup()) {
 			soldeReposCompNetN1 = checkCompteurAgentVo.getCompteurReposComp();
 			sommeDemandeEnCours = checkCompteurAgentVo.getDureeDemandeEnCoursReposComp();
-		}else{
-			AgentReposCompCount soldeReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class,
-				demande.getIdAgent());
+		} else {
+			AgentReposCompCount soldeReposComp = counterRepository.getAgentCounter(AgentReposCompCount.class, demande.getIdAgent());
 
-			sommeDemandeEnCours = reposCompensateurRepository.getSommeDureeDemandeReposCompEnCoursSaisieouVisee(
-				demande.getIdAgent(), demande.getIdDemande());
-			
+			sommeDemandeEnCours = reposCompensateurRepository.getSommeDureeDemandeReposCompEnCoursSaisieouVisee(demande.getIdAgent(), demande.getIdDemande());
+
 			soldeReposCompNetN1 = soldeReposComp.getTotalMinutes() + soldeReposComp.getTotalMinutesAnneeN1();
-			
-			if(null != checkCompteurAgentVo) {
+
+			if (null != checkCompteurAgentVo) {
 				checkCompteurAgentVo.setCompteurReposComp(soldeReposCompNetN1);
 				checkCompteurAgentVo.setDureeDemandeEnCoursReposComp(sommeDemandeEnCours);
 			}
 		}
 
-		if (soldeReposCompNetN1 - sommeDemandeEnCours
-						- ((DemandeReposComp) demande).getDuree() < 0) {
+		if (soldeReposCompNetN1 - sommeDemandeEnCours - ((DemandeReposComp) demande).getDuree() < 0) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 			srm.getErrors().add(String.format(DEPASSEMENT_DROITS_ACQUIS_MSG, demande.getIdDemande()));
 		}
@@ -91,23 +85,18 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 
 	// #17483
 	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
-		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()))
-				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()))
-				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()))
-				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()))
+		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) || (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()))
+				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) || (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()))
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()));
 	}
 
 	@Override
-	public ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande,
-			List<RefEtatEnum> listEtatsAcceptes) {
+	public ReturnMessageDto checkEtatsDemandeAnnulee(ReturnMessageDto srm, Demande demande, List<RefEtatEnum> listEtatsAcceptes) {
 
 		List<RefEtatEnum> listEtats = new ArrayList<RefEtatEnum>();
 		listEtats.addAll(listEtatsAcceptes);
-		listEtats.addAll(Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE,
-				RefEtatEnum.APPROUVEE, RefEtatEnum.PRISE, RefEtatEnum.VALIDEE, RefEtatEnum.EN_ATTENTE,
+		listEtats.addAll(Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.PRISE, RefEtatEnum.VALIDEE, RefEtatEnum.EN_ATTENTE,
 				RefEtatEnum.A_VALIDER));
 		// dans le cas des CONGES ANNUELS, on peut tout annuler sauf
 		// saisie,provisoire,refuse,rejeté et annulé
