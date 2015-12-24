@@ -19,7 +19,7 @@ import javax.persistence.TemporalType;
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
 		@NamedQuery(name = "findAgentWeekRecupByIdAgentAndDateMonday", query = "select awr from AgentWeekRecup awr where awr.idAgent = :idAgent and awr.dateMonday = :dateMonday"),
-		@NamedQuery(name = "findAgentWeekRecupByIdAgent", query = "select awr from AgentWeekRecup awr where awr.idAgent = :idAgent") ,
+		@NamedQuery(name = "findAgentWeekRecupByIdAgent", query = "select awr from AgentWeekRecup awr where awr.idAgent = :idAgent order by awr.dateDay ") ,
 		@NamedQuery(name = "getWeekHistoRecupCountByIdAgentAndIdPointage", query = "select awr from AgentWeekRecup awr where awr.idAgent = :idAgent and awr.idPointage = :idPointage")
 })
 public class AgentWeekRecup extends BaseAgentWeekHisto {
