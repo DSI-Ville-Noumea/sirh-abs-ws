@@ -249,6 +249,59 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 	}
 
 	@Test
+	public void resetCompteurCongeAnnuel_compteurAnneeEnCoursNegatif() {
+
+		Integer idAgentReposCompCount = 1;
+
+		AgentCongeAnnuelCount arc = Mockito.spy(new AgentCongeAnnuelCount());
+		arc.setTotalJours(-10.0);
+		arc.setTotalJoursAnneeN1(0.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(counterRepository.getEntity(AgentCongeAnnuelCount.class, idAgentReposCompCount)).thenReturn(arc);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
+
+				String textLog = "Retrait de 0.0 jours sur la nouvelle année.";
+				assertEquals(textLog, obj.getText());
+
+				return true;
+			}
+		}).when(counterRepository).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				AgentCongeAnnuelCount obj = (AgentCongeAnnuelCount) args[0];
+
+				assertEquals(new Double(-10), new Double(obj.getTotalJours()));
+				assertEquals(new Double(0), new Double(obj.getTotalJoursAnneeN1()));
+
+				return true;
+			}
+		}).when(counterRepository).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2013, 4, 2, 8, 56, 12).toDate());
+
+		CongeAnnuelCounterServiceImpl service = new CongeAnnuelCounterServiceImpl();
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		ReturnMessageDto result = service.resetCompteurCongeAnnuel(idAgentReposCompCount);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(CongeAnnuelCounterServiceImpl.COMPTEUR_CA_NEGATIF, result.getErrors().get(0));
+
+		Mockito.verify(counterRepository, Mockito.never()).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.never()).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
+		assertEquals(arc.getTotalJoursAnneeN1(), new Double(0));
+		assertEquals(arc.getTotalJours(), new Double(-10));
+	}
+
+	@Test
 	public void majCompteurToAgent_compteurInexistant() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();

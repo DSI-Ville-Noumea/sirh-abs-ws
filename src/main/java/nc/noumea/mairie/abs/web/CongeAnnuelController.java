@@ -90,7 +90,8 @@ public class CongeAnnuelController {
 	}
 
 	/**
-	 * Remise a zero des compteurs de repos compensateur de l annee en cours <br />
+	 * Remise a zero des compteurs de conges annuels de l annee en cours <br />
+	 * Et report vers le compteur de l annee precedente
 	 * utile a SIRH-JOBS le 31/12
 	 */
 	@ResponseBody

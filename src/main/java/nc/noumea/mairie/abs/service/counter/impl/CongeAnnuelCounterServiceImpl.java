@@ -87,6 +87,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	protected static final String RESTITUTION_EXISTANTE = "Une restitution a déjà eu lieu pour ce même jour et un autre type.";
 	protected static final String COMPTEUR_CA_RESTITUTION_INEXISTANT = "Le compteur n'existe pas pour l'agent [%d].";
 	protected static final String AGENT_NON_HABILITE = "L'agent n'est pas habilité.";
+	protected static final String COMPTEUR_CA_NEGATIF = "Le compteur de l'année en cours est négatif.";
 
 	@Override
 	@Transactional(value = "absTransactionManager")
@@ -156,6 +157,13 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
 			srm.getErrors().add(String.format(COMPTEUR_INEXISTANT));
+			return srm;
+		}
+		
+		// #28724 compteur annee en cours negatif : ne rien faire
+		if(0 > arc.getTotalJours()) {
+			logger.warn(COMPTEUR_CA_NEGATIF);
+			srm.getErrors().add(String.format(COMPTEUR_CA_NEGATIF));
 			return srm;
 		}
 
