@@ -418,12 +418,17 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 			return srm;
 		}
 
+		// !!!!!!!!!!!!!!!! ON NE FAIT PLUS CETTE VERIF SUITE #20612
+		// !!!!!!!!!!!!!!!!!!!
+		// attention donc a ne pas donner les droits de mise à jour de compteurs
+		// aux opérateurs ou autre
 		// on verifie que le solde est positif
-		controlCompteurPositif(jours, arc.getTotalJours(), srm);
-		controlCompteurPositif(joursAnneeN1, arc.getTotalJoursAnneeN1(), srm);
-		if (!srm.getErrors().isEmpty()) {
-			return srm;
-		}
+		// controlCompteurPositif(jours, arc.getTotalJours(), srm);
+		// controlCompteurPositif(joursAnneeN1, arc.getTotalJoursAnneeN1(),
+		// srm);
+		// if (!srm.getErrors().isEmpty()) {
+		// return srm;
+		// }
 
 		String textLog = "";
 		if (null != compteurDto.getDureeAAjouter()) {
