@@ -11,8 +11,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.Audited;
+
 @Entity
 @Table(name = "ABS_AGENT_ASA_A55_COUNT")
+@Audited
+@AuditOverride(forClass = AgentCount.class)
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @PrimaryKeyJoinColumn(name = "ID_AGENT_COUNT")
 public class AgentAsaA55Count extends AgentCount {

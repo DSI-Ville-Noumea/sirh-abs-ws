@@ -14,8 +14,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.envers.Audited;
+
 @Entity
 @Table(name = "ABS_AGENT_COUNT")
+@Audited
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class AgentCount {

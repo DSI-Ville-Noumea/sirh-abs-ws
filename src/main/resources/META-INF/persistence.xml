@@ -51,6 +51,7 @@
       	<class>nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive</class>
       	<class>nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto</class>
       	<class>nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount</class>
+      	<class>nc.noumea.mairie.abs.domain.RevInfo</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
@@ -58,7 +59,9 @@
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.connection.charSet" value="UTF-8"/>
-<!--  			<property name="hibernate.show_sql" value="true" /> -->
+ 			<property name="hibernate.show_sql" value="true" />
+			<!-- Properties for Hibernate Envers -->
+		<property name="org.hibernate.envers.store_data_at_delete" value="true"/>
         </properties>
     </persistence-unit>
 	

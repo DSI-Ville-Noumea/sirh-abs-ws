@@ -13,8 +13,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
+
 @Entity
 @Table(name = "ABS_AGENT_ASA_A53_COUNT")
+@Audited
+@AuditOverride(forClass = AgentCount.class)
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @PrimaryKeyJoinColumn(name = "ID_AGENT_COUNT")
 public class AgentAsaA53Count extends AgentCount {
@@ -33,6 +39,7 @@ public class AgentAsaA53Count extends AgentCount {
 	
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_ORGANISATION_SYNDICALE")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private OrganisationSyndicale organisationSyndicale;
 
 	public Double getTotalJours() {

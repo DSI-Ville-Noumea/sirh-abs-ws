@@ -5,7 +5,7 @@
 	<groupId>nc.noumea.mairie</groupId>
 	<artifactId>sirh-abs-ws</artifactId>
 	<packaging>war</packaging>
-	<version>3.11</version>
+	<version>3.12</version>
 	<name>sirh-abs-ws</name>
 	<properties>
 		<aspectj.version>1.8.4</aspectj.version>
@@ -14,6 +14,7 @@
 		<slf4j.version>1.7.7</slf4j.version>
 		<!-- ne fonctionne pas en 4.1.4.RELEASE -->
 		<spring.version>4.0.6.RELEASE</spring.version>
+		<hibernate.version>4.3.5.Final</hibernate.version>
 	</properties>
 
 	<issueManagement>
@@ -132,12 +133,12 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.3.5.Final</version>
+			<version>${hibernate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.3.5.Final</version>
+			<version>${hibernate.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>cglib</groupId>
@@ -149,6 +150,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-envers</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
@@ -260,8 +268,6 @@
 		    <artifactId>springfox-swagger2</artifactId>
 		    <version>2.2.2</version>
 		</dependency>
-
-
 
 	</dependencies>
 	<build>
