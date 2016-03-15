@@ -21,8 +21,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
+
 @Entity
 @Table(name = "ABS_DROITS_AGENT")
+@Audited
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
 		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "select da from DroitsAgent da INNER JOIN FETCH da.droitDroitsAgent dda INNER JOIN FETCH dda.droit d INNER JOIN FETCH dda.droitProfil dp where d.idAgent = :idAgent and dp.idDroitProfil = :idDroitProfil "),

@@ -21,8 +21,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.envers.Audited;
+
 @Entity
 @Table(name = "ABS_DROIT")
+@Audited
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
 		@NamedQuery(name = "getAgentAccessRights", query = "select d from Droit d where d.idAgent = :idAgent"),

@@ -11,8 +11,11 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.envers.Audited;
+
 @Entity
 @Table(name = "ABS_DROIT_DROITS_AGENT") 
+@Audited
 @PersistenceUnit(unitName = "absPersistenceUnit")
 public class DroitDroitsAgent {
 	

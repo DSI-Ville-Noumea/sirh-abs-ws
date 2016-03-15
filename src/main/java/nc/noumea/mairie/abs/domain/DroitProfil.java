@@ -18,8 +18,12 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
+
 @Entity
 @Table(name = "ABS_DROIT_PROFIL") 
+@Audited
 @PersistenceUnit(unitName = "absPersistenceUnit")
 @NamedQueries({
 		@NamedQuery(name = "getInputterDroitProfilOfApprobateurByLibelle", query = "select dp from DroitProfil dp where dp.droitApprobateur.idAgent= :idAgentApprobateur and dp.droit.idAgent= :idAgent and dp.droit.idAgent!= :idAgentApprobateur and dp.profil.libelle= :libelle "),
@@ -40,6 +44,7 @@ public class DroitProfil {
 
 	@ManyToOne()
 	@JoinColumn(name = "ID_PROFIL", referencedColumnName = "ID_PROFIL")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private Profil profil;
 
 	@ManyToOne()
