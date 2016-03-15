@@ -11757,6 +11757,55 @@ public class AbsenceServiceTest {
 		Mockito.verify(sirhRepository, Mockito.times(3)).persistEntity(Mockito.isA(Spcc.class));
 		Mockito.verify(sirhRepository, Mockito.times(3)).persistEntity(Mockito.isA(Spmatr.class));
 	}
+	
+	// bug #29188
+	@Test
+	public void traiteIncidencePaie_Contractuel_UnMois_bug29188() {
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setGroupe(groupe);
+
+		Demande demande = new Demande();
+		demande.setDateDebut(new DateTime(2015, 12, 28, 0, 0, 0).toDate());
+		demande.setDateFin(new DateTime(2016, 1, 28, 23, 59, 59).toDate());
+		demande.setIdAgent(9004004);
+		demande.setType(type);
+
+		SpcarrId id = new SpcarrId(5138, 20140101);
+		Spcarr carr = new Spcarr();
+		carr.setId(id);
+		carr.setDateFin(0);
+		carr.setCdcate(4);
+
+		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.any(Date.class)))
+				.thenReturn(carr);
+
+		IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent())).thenReturn(5138);
+
+		HelperService helper = Mockito.mock(HelperService.class);
+		Mockito.when(helper.isContractuel(carr)).thenReturn(true);
+		Mockito.when(helper.isConventionCollective(carr)).thenReturn(false);
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "helperService", helper);
+
+		// When
+		result = service.traiteIncidencePaie(demande, result);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		Mockito.verify(sirhRepository, Mockito.times(32)).persistEntity(Mockito.isA(Spcc.class));
+		Mockito.verify(sirhRepository, Mockito.times(32)).persistEntity(Mockito.isA(Spmatr.class));
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test

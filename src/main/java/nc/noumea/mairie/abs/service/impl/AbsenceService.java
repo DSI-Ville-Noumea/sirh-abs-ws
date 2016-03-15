@@ -826,7 +826,8 @@ public class AbsenceService implements IAbsenceService {
 		// ///////////////////////////////
 		// si 1 seule journée de posée //
 		// ///////////////////////////////
-		if (dateTimeDebut.getDayOfMonth() == dateTimeFin.getDayOfMonth()) {
+		// bug #29188
+		if (dateTimeDebut.getDayOfYear() == dateTimeFin.getDayOfYear()) {
 			result = creeSpcc(result, demande, dateTimeDebut.toDate(), new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), isDemiJourneeForSpcc(dateTimeDebut.toDate(), dateTimeFin.toDate()));
 
 			if (!result.getErrors().isEmpty())
