@@ -1605,4 +1605,98 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		return result;
 	}
+	
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto dupliqueDroitsApprobateur(Integer fromApprobateur, Integer toApprobateur) {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		if(null == fromApprobateur
+				|| null == toApprobateur
+				|| fromApprobateur.equals(toApprobateur)) {
+			result.getErrors().add("L'agent dupliqué ou à dupliquer n'est pas correcte.");
+			return result;
+		}
+		
+		// on recupere les droits de l approbateur d origine
+		Droit droitApproSource = accessRightsRepository.getDroitByProfilAndAgent(ProfilEnum.APPROBATEUR.toString(), fromApprobateur);
+		
+		if(null == droitApproSource) {
+			result.getErrors().add("L'agent " + fromApprobateur + " n'est pas approbateur.");
+			return result;
+		}
+		
+		// on check si le nouvel approbateur n est pas deja approbateur
+		Droit droitApproDest = accessRightsRepository.getDroitByProfilAndAgent(ProfilEnum.APPROBATEUR.toString(), toApprobateur);
+		
+		if(null != droitApproDest) {
+			result.getErrors().add("L'agent " + toApprobateur + " est déjà approbateur.");
+			return result;
+		}
+		
+		droitApproDest = accessRightsRepository.getAgentAccessRights(toApprobateur);
+		
+		// on duplique l approbateur et ses agents affectes
+		if(null == droitApproDest){
+			droitApproDest = new Droit();
+			droitApproDest.setIdAgent(toApprobateur);
+		}
+		
+		droitApproDest.setDateModification(helperService.getCurrentDate());
+		
+		for(DroitProfil droitProfil : droitApproSource.getDroitProfils()) {
+			if(droitProfil.getProfil().getLibelle().equals(ProfilEnum.APPROBATEUR.toString())) {
+				DroitProfil newDroitProfil = new DroitProfil();
+				newDroitProfil.setProfil(droitProfil.getProfil());
+				newDroitProfil.setDroit(droitApproDest);
+				newDroitProfil.setDroitApprobateur(droitApproDest);
+				droitApproDest.getDroitProfils().add(newDroitProfil);
+				accessRightsRepository.persisEntity(droitApproDest);
+				
+				for(DroitDroitsAgent dda : droitProfil.getDroitDroitsAgent()) {
+					DroitDroitsAgent newDda = new DroitDroitsAgent();
+					newDda.setDroit(droitApproDest);
+					newDda.setDroitProfil(newDroitProfil);
+					newDda.setDroitsAgent(dda.getDroitsAgent());
+					newDroitProfil.getDroitDroitsAgent().add(newDda);
+					
+					accessRightsRepository.persisEntity(newDda);
+				}
+			}
+		}
+		
+		accessRightsRepository.persisEntity(droitApproDest);
+		
+		// on duplique ses operateurs, viseurs, delegataire et leurs agents
+		List<Droit> listDroitsSousApprobateur = accessRightsRepository.getDroitSousApprobateur(fromApprobateur);
+		if(null != listDroitsSousApprobateur) {
+			for(Droit droit : listDroitsSousApprobateur) {
+				for(DroitProfil droitProfil : droit.getDroitProfils()){
+					if(droitProfil.getDroitApprobateur().getIdDroit().equals(droitApproSource.getIdDroit())) {
+						
+						DroitProfil newDroitProfil = new DroitProfil();
+						newDroitProfil.setDroit(droit);
+						newDroitProfil.setDroitApprobateur(droitApproDest);
+						newDroitProfil.setProfil(droitProfil.getProfil());
+						accessRightsRepository.persisEntity(newDroitProfil);
+						
+						for(DroitDroitsAgent dda : droitProfil.getDroitDroitsAgent()) {
+							DroitDroitsAgent newDda = new DroitDroitsAgent();
+							newDda.setDroit(droit);
+							newDda.setDroitProfil(newDroitProfil);
+							newDda.setDroitsAgent(dda.getDroitsAgent());
+							newDroitProfil.getDroitDroitsAgent().add(newDda);
+							
+							accessRightsRepository.persisEntity(newDda);
+						}
+					}
+				}
+			}
+		}
+		
+		result.getInfos().add("Nouvel approbateur " + toApprobateur + " bien créé.");
+		
+		return result;
+	}
 }

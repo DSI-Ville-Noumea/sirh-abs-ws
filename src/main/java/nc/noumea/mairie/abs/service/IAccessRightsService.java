@@ -86,4 +86,7 @@ public interface IAccessRightsService {
 	List<EntiteDto> getAgentsServicesForOperateur(Integer idAgentOperateur, Date date);
 
 	List<Droit> getListApprobateursOfOperateur(Integer idAgentOperateur);
+
+	ReturnMessageDto dupliqueDroitsApprobateur(Integer fromApprobateur,
+			Integer toApprobateur);
 }
