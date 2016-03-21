@@ -743,19 +743,34 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		if (idServiceADS == null) {
+			// #29605 on optimise
+			List<Integer> listAgentDto = new ArrayList<Integer>();
 			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, dp.getIdDroitProfil())) {
-				AgentDto agDto = new AgentDto();
-				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-				if (null == ag) {
-					logger.warn("L'agent {} n'existe pas.", da.getIdAgent());
-					continue;
-				}
-				agDto.setIdAgent(da.getIdAgent());
-				agDto.setNom(ag.getDisplayNom());
-				agDto.setPrenom(ag.getDisplayPrenom());
-				result.add(agDto);
+				if (!listAgentDto.contains(da.getIdAgent()))
+					listAgentDto.add(da.getIdAgent());
 			}
-
+			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, new Date());
+			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, dp.getIdDroitProfil())) {
+				AgentWithServiceDto agDtoServ = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
+				if(null != agDtoServ) {
+					AgentDto agDto = new AgentDto();
+					agDto.setIdAgent(da.getIdAgent());
+					agDto.setNom(agDtoServ.getNom());
+					agDto.setPrenom(agDtoServ.getPrenom());
+					result.add(agDto);
+				}else{
+					AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+					if (null == ag) {
+						logger.warn("L'agent {} n'existe pas.", da.getIdAgent());
+						continue;
+					}
+					AgentDto agDto = new AgentDto();
+					agDto.setIdAgent(da.getIdAgent());
+					agDto.setNom(ag.getDisplayNom());
+					agDto.setPrenom(ag.getDisplayPrenom());
+					result.add(agDto);
+				}
+			}
 		} else {
 			// #18722 : pour chaque agent on va recuperer son
 			// service
@@ -770,14 +785,9 @@ public class AccessRightsService implements IAccessRightsService {
 				AgentWithServiceDto agDtoServ = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
 				if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceADS.toString())) {
 					AgentDto agDto = new AgentDto();
-					AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-					if (null == ag) {
-						logger.warn("L'agent {} n'existe pas.", da.getIdAgent());
-						continue;
-					}
 					agDto.setIdAgent(da.getIdAgent());
-					agDto.setNom(ag.getDisplayNom());
-					agDto.setPrenom(ag.getDisplayPrenom());
+					agDto.setNom(agDtoServ.getNom());
+					agDto.setPrenom(agDtoServ.getPrenom());
 					result.add(agDto);
 				}
 			}
