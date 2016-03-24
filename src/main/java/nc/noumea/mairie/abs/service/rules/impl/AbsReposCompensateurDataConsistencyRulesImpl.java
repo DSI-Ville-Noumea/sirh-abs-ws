@@ -43,7 +43,7 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 			// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 			// contractuel,convention coll
 			Spcarr carr = sirhRepository.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
-			if (!(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
+			if (carr != null && !(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
 				logger.warn(String.format(STATUT_AGENT, idAgent));
 				srm.getErrors().add(String.format(STATUT_AGENT, idAgent));
 			}
