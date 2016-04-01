@@ -1249,7 +1249,8 @@ public class AbsenceService implements IAbsenceService {
 
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		for (EtatDemande etat : dem.getEtatsDemande()) {
-			DemandeDto dto = new DemandeDto(dem, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(), helperService.getCurrentDate()));
+			// bug #30042
+			DemandeDto dto = new DemandeDto(dem, etat, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(), helperService.getCurrentDate()));
 			dto.updateEtat(etat, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(), helperService.getCurrentDate()), dem.getType().getGroupe());
 			result.add(dto);
 		}

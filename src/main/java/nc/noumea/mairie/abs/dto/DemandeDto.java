@@ -117,6 +117,16 @@ public class DemandeDto {
 			this.agentWithServiceDto.setIdAgent(d.getIdAgent());
 		}
 	}
+	// bug #30042
+	public DemandeDto(Demande d, EtatDemande etat, AgentWithServiceDto agentWithServiceDto) {
+		this(d);
+		if (agentWithServiceDto != null) {
+			this.agentWithServiceDto = agentWithServiceDto;
+		} else {
+			this.agentWithServiceDto = new AgentWithServiceDto();
+			this.agentWithServiceDto.setIdAgent(etat.getIdAgent());
+		}
+	}
 
 	public DemandeDto(Demande d, AgentGeneriqueDto agentDto) {
 		this(d);
