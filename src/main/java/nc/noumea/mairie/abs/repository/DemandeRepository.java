@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -235,12 +236,35 @@ public class DemandeRepository implements IDemandeRepository {
 		return result;
 	}
 
+	/**
+	 * #30120 
+	 * 
+	 */
 	@Override
 	public List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence) {
+		
+		List<Demande> listDemande = listeDemandesSIRHWithtouEtatDemandeFetch(
+				fromDate, toDate, idRefEtat, idRefType, listIdAgentRecherche, idRefGroupeAbsence);
+		
+		if(null == listDemande
+				|| listDemande.isEmpty()) {
+			return listDemande;
+		}
+		
+		List<Integer> listIdDemande = new ArrayList<Integer>();
+		for(Demande demande : listDemande) {
+			listIdDemande.add(demande.getIdDemande());
+		}
+		
+		return listeDemandesSIRHWithEtatDemandeFetch(fromDate, toDate, idRefEtat, idRefType, listIdAgentRecherche, idRefGroupeAbsence, listIdDemande);
+	}
+
+	private List<Demande> listeDemandesSIRHWithtouEtatDemandeFetch(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
+			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence) {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
+		sb.append("select d from Demande d ");
 		sb.append("where 1=1 ");
 		// date
 		if (fromDate != null && toDate == null) {
@@ -288,8 +312,73 @@ public class DemandeRepository implements IDemandeRepository {
 		if (idRefGroupeAbsence != null) {
 			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
 		}
-
+		query.setFirstResult(0);
 		query.setMaxResults(300);
+		return query.getResultList();
+	}
+	
+	private List<Demande> listeDemandesSIRHWithEtatDemandeFetch(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
+			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence, List<Integer> listIdDemande) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
+		sb.append("where 1=1 ");
+		// id demande recupere de la 1er requete
+		if(null != listIdDemande) {
+			sb.append("and d.idDemande in :listIdDemande ");
+		}
+		// date
+		if (fromDate != null && toDate == null) {
+			sb.append("and d.dateDebut >= :fromDate ");
+		} else if (fromDate == null && toDate != null) {
+			sb.append("and d.dateDebut <= :toDate ");
+		} else if (fromDate != null && toDate != null) {
+			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
+		}
+		// agent
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
+			sb.append("and d.idAgent in :idAgentRecherche ");
+		}
+		// type
+		if (idRefType != null) {
+			sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
+		}
+		// groupe
+		if (idRefGroupeAbsence != null) {
+			sb.append("and d.type.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");
+		}
+
+		sb.append("order by d.dateDebut desc ");
+
+		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
+
+		// date
+		if (fromDate != null && toDate == null) {
+			query.setParameter("fromDate", fromDate);
+		} else if (fromDate == null && toDate != null) {
+			query.setParameter("toDate", toDate);
+		} else if (fromDate != null && toDate != null) {
+			query.setParameter("fromDate", fromDate);
+			query.setParameter("toDate", toDate);
+		}
+		// agent
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
+			query.setParameter("idAgentRecherche", listIdAgentRecherche);
+		}
+		// type
+		if (idRefType != null) {
+			query.setParameter("idRefTypeAbsence", idRefType);
+		}
+		// groupe
+		if (idRefGroupeAbsence != null) {
+			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
+		}
+		if(null != listIdDemande) {
+			query.setParameter("listIdDemande", listIdDemande);
+		}
+		// ne fonctionne pas avec un inner join FETCH dans la requete
+		// query.setMaxResults(300);
+		
 		return query.getResultList();
 	}
 
