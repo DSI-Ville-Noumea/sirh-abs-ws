@@ -12,7 +12,6 @@ import nc.noumea.mairie.abs.domain.AgentJoursFeriesGarde;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentJoursFeriesGardeDto;
 import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
-import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.dto.JoursFeriesSaisiesGardeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -116,7 +115,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyList(), Mockito.any(Date.class))).thenReturn(
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyListOf(Integer.class), Mockito.any(Date.class), Mockito.anyBoolean())).thenReturn(
 				listAgentWithServiceDto);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
@@ -168,7 +167,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyList(), Mockito.any(Date.class))).thenReturn(
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyListOf(Integer.class), Mockito.any(Date.class), Mockito.anyBoolean())).thenReturn(
 				listAgentWithServiceDto);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
@@ -223,7 +222,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyList(), Mockito.any(Date.class))).thenReturn(
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyListOf(Integer.class), Mockito.any(Date.class), Mockito.anyBoolean())).thenReturn(
 				listAgentWithServiceDto);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();
@@ -293,7 +292,7 @@ public class SaisieJoursFeriesGardeServiceTest {
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.getListeJoursFeriesForSaisiDPM(dateDebut, dateFin)).thenReturn(listJoursDto);
-		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyList(), Mockito.any(Date.class))).thenReturn(
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Mockito.anyListOf(Integer.class), Mockito.any(Date.class), Mockito.anyBoolean())).thenReturn(
 				listAgentWithServiceDto);
 
 		List<AgentJoursFeriesGarde> listJoursGardeAgent = new ArrayList<AgentJoursFeriesGarde>();

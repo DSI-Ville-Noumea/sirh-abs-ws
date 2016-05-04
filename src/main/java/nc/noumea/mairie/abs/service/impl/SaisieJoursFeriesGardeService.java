@@ -61,7 +61,7 @@ public class SaisieJoursFeriesGardeService implements ISaisieJoursFeriesGardeSer
 		for (AgentDto ag : listAgentTemp) {
 			listIdsAgent.add(ag.getIdAgent());
 		}
-		List<AgentWithServiceDto> listAgentWithServiceDto = sirhWSConsumer.getListAgentsWithService(listIdsAgent, new Date());
+		List<AgentWithServiceDto> listAgentWithServiceDto = sirhWSConsumer.getListAgentsWithService(listIdsAgent, new Date(), false);
 		for(AgentWithServiceDto agentWithServiceDto : listAgentWithServiceDto) {
 			if (null != agentWithServiceDto 
 					&& null != agentWithServiceDto.getSigleDirection() 

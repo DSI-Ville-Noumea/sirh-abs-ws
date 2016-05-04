@@ -26,6 +26,7 @@ public class AdsWSConsumer extends BaseWsConsumer implements IAdsWSConsumer {
 	private static final String sirhAdsGetEntiteWithWildrenUrl = "/withChildren";
 	private static final String sirhAdsGetInfoSiservUrl = "api/entite/infoSiserv/";
 	private static final String sirhAdsGetWholeTreevUrl = "/api/arbre";
+	private static final String sirhAdsGetWholeTreeLightUrl = "/api/arbre/light";
 
 	@Override
 	public EntiteDto getEntiteWithChildrenByIdEntite(Integer idEntite) {
@@ -128,6 +129,23 @@ public class AdsWSConsumer extends BaseWsConsumer implements IAdsWSConsumer {
 	public EntiteDto getWholeTree() {
 
 		String url = String.format(adsWsBaseUrl + sirhAdsGetWholeTreevUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+		try {
+			return readResponse(EntiteDto.class, res, url);
+		} catch (Exception e) {
+			logger.error("L'application ADS ne repond pas." + e.getMessage());
+		}
+
+		return null;
+	}
+
+	@Override
+	public EntiteDto getWholeTreeLight() {
+
+		String url = String.format(adsWsBaseUrl + sirhAdsGetWholeTreeLightUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 

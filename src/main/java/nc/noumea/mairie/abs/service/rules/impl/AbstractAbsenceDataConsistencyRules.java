@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -345,6 +346,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 	@Override
 	public List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande) {
+		
 		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
 		if (listeSansFiltre.size() == 0)
 			return listeDemandeDto;
@@ -358,13 +360,13 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				listAgentDto.add(d.getLatestEtatDemande().getIdAgent());
 			}
 		}
-
+		
 		// dans un souci de performances, on n affichera toujours le service de
 		// l agent a la date du jour
 		// ce qui permet de ne faire qu un seul appel a SIRH-WS
 		// et non plus un appel par demande (avec la date de la demande)
-		List<AgentWithServiceDto> listAgentsExistants = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate());
-
+		List<AgentWithServiceDto> listAgentsExistants = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate(), false);
+		
 		// bug #19935 les agents n ayant plus d affectation (retraite par ex) ne seront pas retournes
 		if(listAgentDto.size() > listAgentsExistants.size()) {
 			List<Integer> listAgentSansAffectation = new ArrayList<Integer>();
@@ -380,7 +382,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				}
 			}
 			
-			List<AgentWithServiceDto> listAgentsExistantsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation);
+			List<AgentWithServiceDto> listAgentsExistantsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation, false);
 			
 			if(null != listAgentsExistantsSansAffectation) {
 				listAgentsExistants.addAll(listAgentsExistantsSansAffectation);
@@ -439,7 +441,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				}
 			}
 		}
-
+		
 		return listeDemandeDto;
 	}
 
@@ -518,6 +520,13 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
 		return 0.0;
+	}
+	
+	@Override
+	public HashMap<Integer, CheckCompteurAgentVo> checkDepassementCompteurForListAgentsOrDemandes(
+			List<DemandeDto> listDemande, 
+			HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo) {
+		return mapCheckCompteurAgentVo;
 	}
 }
 

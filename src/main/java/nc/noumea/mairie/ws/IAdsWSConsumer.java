@@ -14,4 +14,6 @@ public interface IAdsWSConsumer {
 
 	EntiteDto getEntiteByIdEntiteOptimiseWithWholeTree(Integer idEntite,
 			EntiteDto root);
+
+	EntiteDto getWholeTreeLight();
 }

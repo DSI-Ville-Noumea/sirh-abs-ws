@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 
 import javax.persistence.FlushModeType;
 
@@ -53,6 +54,7 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
+import nc.noumea.mairie.abs.repository.ICongesExceptionnelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
@@ -69,6 +71,7 @@ import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
+import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.domain.SpSold;
@@ -124,6 +127,14 @@ public class AbsenceService implements IAbsenceService {
 	private IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl;
 
 	@Autowired
+	@Qualifier("AbsCongesExcepDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absCongesExcepDataConsistencyRulesImpl;
+
+	@Autowired
+	@Qualifier("AbsAsaDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules absAsaDataConsistencyRulesImpl;
+
+	@Autowired
 	private HelperService helperService;
 
 	@Autowired
@@ -140,6 +151,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ICongesAnnuelsRepository congeAnnuelRepository;
+	
+	@Autowired
+	private ICongesExceptionnelsRepository congeExceptionnelRepository;
 
 	@Autowired
 	private IReposCompensateurRepository reposCompensateurRepository;
@@ -305,13 +319,12 @@ public class AbsenceService implements IAbsenceService {
 
 		// si date de debut et de fin nulles, alors on filtre sur 12 mois
 		// glissants
-
 		if (null == fromDate && null == toDate) {
 			fromDate = helperService.getCurrentDateMoinsUnAn();
 		}
 
 		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence);
-
+		
 		List<Integer> etatIds = new ArrayList<Integer>();
 		if (listIdRefEtat != null) {
 			for (String id : listIdRefEtat.split(",")) {
@@ -320,9 +333,9 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		List<RefEtat> listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, etatIds);
-
+		
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre, listEtats, dateDemande);
-
+		
 		// si idAgentConnecte == idAgentConcerne, alors nous sommes dans le cas
 		// du WS listeDemandesAgent
 		// donc inutile de recuperer les droits en bdd
@@ -345,60 +358,25 @@ public class AbsenceService implements IAbsenceService {
 
 			listDroitAgent.addAll(accessRightsRepository.getListOfAgentsForListDemandes(idsUserForAllDroits));
 		}
-
-		HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo = new HashMap<Integer, CheckCompteurAgentVo>();
-		List<Integer> listIdsAgentWithCA = new ArrayList<Integer>();
+		
+		List<DemandeDto> listDemandeDtoCA = new ArrayList<DemandeDto>();
 
 		for (DemandeDto demandeDto : listeDto) {
 			if (demandeDto.getGroupeAbsence().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
-				listIdsAgentWithCA.add(demandeDto.getAgentWithServiceDto().getIdAgent());
+				listDemandeDtoCA.add(demandeDto);
 			}
 		}
-
-		if (null != listIdsAgentWithCA && !listIdsAgentWithCA.isEmpty()) {
-			List<CheckCompteurAgentVo> listCheckCompteurAgentVo = congeAnnuelRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeOuAValiderForListAgent(listIdsAgentWithCA);
-			List<AgentCongeAnnuelCount> listAgentCongeAnnuelCount = counterRepository.getListAgentCongeAnnuelCountWithListAgents(listIdsAgentWithCA);
-
-			if (null != listAgentCongeAnnuelCount && !listAgentCongeAnnuelCount.isEmpty()) {
-				for (AgentCongeAnnuelCount agentCongeAnnuelCount : listAgentCongeAnnuelCount) {
-
-					CheckCompteurAgentVo vo = null;
-					for (CheckCompteurAgentVo voTmp : listCheckCompteurAgentVo) {
-						if (voTmp.getIdAgent().equals(agentCongeAnnuelCount.getIdAgent())) {
-							vo = voTmp;
-							break;
-						}
-					}
-
-					if (null == vo)
-						vo = new CheckCompteurAgentVo();
-
-					vo.setCompteurCongesAnnuels(agentCongeAnnuelCount.getTotalJours() + agentCongeAnnuelCount.getTotalJoursAnneeN1());
-					mapCheckCompteurAgentVo.put(agentCongeAnnuelCount.getIdAgent(), vo);
-				}
-			}
+		
+		HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo = null;
+		if (null != listDemandeDtoCA && !listDemandeDtoCA.isEmpty()) {
+			mapCheckCompteurAgentVo = absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementCompteurForListAgentsOrDemandes(listDemandeDtoCA, mapCheckCompteurAgentVo);
 		}
-
-		for (DemandeDto demandeDto : listeDto) {
-
-			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
-
-			CheckCompteurAgentVo checkCompteurAgentVo = mapCheckCompteurAgentVo.get(demandeDto.getAgentWithServiceDto().getIdAgent());
-			if (null == checkCompteurAgentVo)
-				checkCompteurAgentVo = new CheckCompteurAgentVo();
-
-			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto, listDroitAgent, isAgent);
-
-			demandeDto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto, checkCompteurAgentVo));
-
-			demandeDto.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(demandeDto));
-
-			if (mapCheckCompteurAgentVo.containsKey(demandeDto.getAgentWithServiceDto().getIdAgent()))
-				mapCheckCompteurAgentVo.remove(demandeDto.getAgentWithServiceDto().getIdAgent());
-
-			mapCheckCompteurAgentVo.put(demandeDto.getAgentWithServiceDto().getIdAgent(), checkCompteurAgentVo);
-		}
-
+		
+		// #30788 utilisation de multithread pour booster le traitement 
+		DemandeRecursiveTask multiTask = new DemandeRecursiveTask(mapCheckCompteurAgentVo, listeDto, idAgentConnecte, listDroitAgent);
+		ForkJoinPool pool = new ForkJoinPool();
+		listeDto = pool.invoke(multiTask);
+		
 		if (!FiltreService.ONGLET_EN_COURS.equals(ongletDemande) && !FiltreService.ONGLET_NON_PRISES.equals(ongletDemande)) {
 			// on recupere tous les idAgents
 			List<Integer> listIdAgents = new ArrayList<Integer>();
@@ -410,9 +388,9 @@ public class AbsenceService implements IAbsenceService {
 			// #15586
 			listeDto.addAll(getListRestitutionMassiveByIdAgent(listIdAgents.isEmpty() ? idAgentConcerne : listIdAgents, fromDate, toDate, idRefGroupeAbsence, etatIds));
 		}
-
+		
 		Collections.sort(listeDto, new DemandeDtoComparator());
-
+		
 		return listeDto;
 	}
 

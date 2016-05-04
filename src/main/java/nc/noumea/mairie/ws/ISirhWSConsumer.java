@@ -35,7 +35,8 @@ public interface ISirhWSConsumer {
 
 	EntiteDto getAgentDirection(Integer idAgent, Date date);
 
-	List<AgentWithServiceDto> getListAgentsWithService(List<Integer> listAgentDto, Date date);
+	List<AgentWithServiceDto> getListAgentsWithService(List<Integer> listAgentDto, Date date,
+			boolean withoutLibelleService);
 
 	List<JourDto> getListeJoursFeriesForSaisiDPM(Date dateDebut, Date dateFin);
 
@@ -43,5 +44,6 @@ public interface ISirhWSConsumer {
 
 	List<AgentWithServiceDto> getListAgentServiceWithParent(Integer idServiceADS, Date date);
 
-	List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listAgentSansAffectation);
+	List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listAgentSansAffectation, 
+			boolean withoutLibelleService);
 }

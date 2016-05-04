@@ -99,7 +99,7 @@ public class AccessRightsService implements IAccessRightsService {
 				listAgentDto.add(droitAg.getDroitsAgent().getIdAgent());
 			}
 
-			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, null);
+			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, null, false);
 
 			if (result.isMajSolde()) {
 				boolean contientAgentDPM = false;
@@ -156,7 +156,7 @@ public class AccessRightsService implements IAccessRightsService {
 			listAgentDto.add(da.getIdAgent());
 		}
 
-		List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate());
+		List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate(), false);
 
 		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
@@ -749,7 +749,7 @@ public class AccessRightsService implements IAccessRightsService {
 				if (!listAgentDto.contains(da.getIdAgent()))
 					listAgentDto.add(da.getIdAgent());
 			}
-			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, new Date());
+			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, new Date(), false);
 			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, dp.getIdDroitProfil())) {
 				AgentWithServiceDto agDtoServ = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
 				if(null != agDtoServ) {
@@ -779,7 +779,7 @@ public class AccessRightsService implements IAccessRightsService {
 				if (!listAgentDto.contains(da.getIdAgent()))
 					listAgentDto.add(da.getIdAgent());
 			}
-			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, new Date());
+			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, new Date(), false);
 
 			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, dp.getIdDroitProfil())) {
 				AgentWithServiceDto agDtoServ = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
@@ -1137,7 +1137,7 @@ public class AccessRightsService implements IAccessRightsService {
 		List<Integer> codeServices = new ArrayList<Integer>();
 
 		// #18709 optimiser les appels ADS
-		EntiteDto root = adsWsConsumer.getWholeTree();
+		EntiteDto root = adsWsConsumer.getWholeTreeLight();
 
 		// #18722 : pour chaque agent on va recuperer son
 		// service
@@ -1146,7 +1146,7 @@ public class AccessRightsService implements IAccessRightsService {
 			if (!listAgentDtoAppro.contains(da.getIdAgent()))
 				listAgentDtoAppro.add(da.getIdAgent());
 		}
-		List<AgentWithServiceDto> listAgentsApproServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoAppro, date);
+		List<AgentWithServiceDto> listAgentsApproServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoAppro, date, true);
 
 		// #19250
 		// pour chaque agent présent dans les droits, si il n'a pas de service
@@ -1161,7 +1161,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		List<AgentWithServiceDto> listAgentsoldAff = new ArrayList<AgentWithServiceDto>();
 		if (listAgentSansAffectation.size() > 0) {
-			List<AgentWithServiceDto> listAgentsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation);
+			List<AgentWithServiceDto> listAgentsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation, true);
 			for (AgentWithServiceDto t : listAgentsSansAffectation) {
 				if (!listAgentsApproServiceDto.contains(t)) {
 					listAgentsoldAff.add(t);
@@ -1204,7 +1204,7 @@ public class AccessRightsService implements IAccessRightsService {
 						if (!listAgentDtoDeleg.contains(da.getIdAgent()))
 							listAgentDtoDeleg.add(da.getIdAgent());
 					}
-					List<AgentWithServiceDto> listAgentsDelegServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoDeleg, date);
+					List<AgentWithServiceDto> listAgentsDelegServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoDeleg, date, true);
 
 					for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idApprobateurOfDelegataire)) {
 						AgentWithServiceDto agDto = getAgentOfListAgentWithServiceDto(listAgentsDelegServiceDto, da.getIdAgent());
@@ -1278,7 +1278,7 @@ public class AccessRightsService implements IAccessRightsService {
 				if (!listAgentDtoServ.contains(idAgentTemp))
 					listAgentDtoServ.add(idAgentTemp);
 			}
-			List<AgentWithServiceDto> listAgentsDelegServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoServ, new Date());
+			List<AgentWithServiceDto> listAgentsDelegServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoServ, new Date(), false);
 			// #19250
 			// pour chaque agent présent dans les droits, si il n'a pas de
 			// service alors on cherche sa derniere affectation
@@ -1291,7 +1291,7 @@ public class AccessRightsService implements IAccessRightsService {
 				}
 			}
 			if (listAgentSansAffectation.size() > 0) {
-				List<AgentWithServiceDto> listAgentsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation);
+				List<AgentWithServiceDto> listAgentsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation, false);
 				for (AgentWithServiceDto t : listAgentsSansAffectation) {
 					if (!listAgentsDelegServiceDto.contains(t)) {
 						listAgentsDelegServiceDto.add(t);
@@ -1582,7 +1582,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 			// #18722 : pour chaque agent on va recuperer son
 			// service
-			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, date);
+			List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, date, false);
 			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentOperateur, dp.getIdDroitProfil())) {
 
 				AgentWithServiceDto agDto = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());

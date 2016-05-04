@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
@@ -56,4 +57,8 @@ public interface IAbsenceDataConsistencyRules {
 
 	double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent,
 			Date dateDebut, Date dateFin);
+
+	HashMap<Integer, CheckCompteurAgentVo> checkDepassementCompteurForListAgentsOrDemandes(
+			List<DemandeDto> listDemande, 
+			HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo);
 }

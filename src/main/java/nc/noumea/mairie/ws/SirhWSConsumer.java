@@ -66,7 +66,10 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public List<AgentWithServiceDto> getListAgentsWithService(List<Integer> listAgentDto, Date date) {
+	public List<AgentWithServiceDto> getListAgentsWithService(List<Integer> listAgentDto, Date date,
+			boolean withoutLibelleService) {
+		// le boolean withoutLibelleService permet a SIRH-WS de ne pas appeler ADS inutilement
+		// car deja appeler dans ce projet
 
 		String url = String.format(sirhWsBaseUrl + sirhListAgentsWithServiceUrl);
 
@@ -77,6 +80,10 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		if (date != null) {
 			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 			parameters.put("date", sf.format(date));
+		}
+		
+		if(withoutLibelleService) {
+			parameters.put("withoutLibelleService", "true");
 		}
 
 		ClientResponse res = createAndFirePostRequest(parameters, url, json);
@@ -288,14 +295,20 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listAgentSansAffectation) {
+	public List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listAgentSansAffectation, 
+			boolean withoutLibelleService) {
+		// le boolean withoutLibelleService permet a SIRH-WS de ne pas appeler ADS inutilement
+		// car deja appeler dans ce projet
 
 		String url = String.format(sirhWsBaseUrl + sirhListAgentsWithServiceOldAffectationUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
+		
+		if(withoutLibelleService) {
+			parameters.put("withoutLibelleService", "true");
+		}
 
 		String json = new JSONSerializer().exclude("*.class").deepSerialize(listAgentSansAffectation);
-
 
 		ClientResponse res = createAndFirePostRequest(parameters, url, json);
 

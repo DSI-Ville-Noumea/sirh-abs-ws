@@ -3,6 +3,7 @@ package nc.noumea.mairie.abs.service.rules.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
@@ -376,5 +377,49 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 				}
 			}
 		}
+	}
+	
+	@Override
+	public HashMap<Integer, CheckCompteurAgentVo> checkDepassementCompteurForListAgentsOrDemandes(List<DemandeDto> listDemande, 
+			HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo) {
+		
+		if(null == listDemande
+				|| listDemande.isEmpty()) {
+			return mapCheckCompteurAgentVo;
+		}
+		
+		if(null == mapCheckCompteurAgentVo)
+			mapCheckCompteurAgentVo = new HashMap<Integer, CheckCompteurAgentVo>();
+		
+		List<Integer> listIdsAgentWithCA = new ArrayList<Integer>();
+		for(DemandeDto demandeDto : listDemande) {
+			listIdsAgentWithCA.add(demandeDto.getAgentWithServiceDto().getIdAgent());
+		}
+		
+		List<CheckCompteurAgentVo> listCheckCompteurAgentVo = congesAnnuelsRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeOuAValiderForListAgent(listIdsAgentWithCA);
+		List<AgentCongeAnnuelCount> listAgentCongeAnnuelCount = counterRepository.getListAgentCongeAnnuelCountWithListAgents(listIdsAgentWithCA);
+
+		if (null != listAgentCongeAnnuelCount && !listAgentCongeAnnuelCount.isEmpty()) {
+			for (AgentCongeAnnuelCount agentCongeAnnuelCount : listAgentCongeAnnuelCount) {
+
+				CheckCompteurAgentVo vo = mapCheckCompteurAgentVo.get(agentCongeAnnuelCount.getIdAgent());
+				
+				if (null == vo)
+					vo = new CheckCompteurAgentVo();
+				
+				for (CheckCompteurAgentVo voTmp : listCheckCompteurAgentVo) {
+					if (voTmp.getIdAgent().equals(agentCongeAnnuelCount.getIdAgent())) {
+						vo.setDureeDemandeEnCoursCongesAnnuels(voTmp.getDureeDemandeEnCoursCongesAnnuels());
+						vo.setIdAgent(voTmp.getIdAgent());
+						break;
+					}
+				}
+
+				vo.setCompteurCongesAnnuels(agentCongeAnnuelCount.getTotalJours() + agentCongeAnnuelCount.getTotalJoursAnneeN1());
+				mapCheckCompteurAgentVo.put(agentCongeAnnuelCount.getIdAgent(), vo);
+			}
+		}
+		
+		return mapCheckCompteurAgentVo;
 	}
 }

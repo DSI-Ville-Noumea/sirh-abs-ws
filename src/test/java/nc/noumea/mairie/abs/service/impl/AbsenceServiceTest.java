@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
 
 import javax.persistence.FlushModeType;
 
@@ -76,6 +77,7 @@ import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
+import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
 import nc.noumea.mairie.abs.service.rules.impl.AbsCongesAnnuelsDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
@@ -90,11 +92,17 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({AbsenceService.class})
 public class AbsenceServiceTest {
 
 	@Test
@@ -8744,7 +8752,7 @@ public class AbsenceServiceTest {
 	}
 
 	@Test
-	public void getListeDemandes_return1Liste_WithA54() {
+	public void getListeDemandes_return1Liste_WithA54() throws Exception {
 
 		List<Demande> listdemande = new ArrayList<Demande>();
 		Demande d = new Demande();
@@ -8805,7 +8813,14 @@ public class AbsenceServiceTest {
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
 				.thenReturn(null);
+		
+		DemandeRecursiveTask multiTask = PowerMockito.mock(DemandeRecursiveTask.class);
+		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList()).thenReturn(multiTask);
 
+		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
+		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
+		Mockito.when(pool.invoke(multiTask)).thenReturn(listdemandeDto);
+		
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
@@ -8825,7 +8840,7 @@ public class AbsenceServiceTest {
 	}
 
 	@Test
-	public void getListeDemandes_noResult() {
+	public void getListeDemandes_noResult() throws Exception {
 
 		List<Demande> listdemande = new ArrayList<Demande>();
 
@@ -8864,6 +8879,13 @@ public class AbsenceServiceTest {
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		Mockito.when(congeAnnuelRepository.getListRestitutionMassiveByIdAgent(Arrays.asList(9005138), null, null))
 				.thenReturn(null);
+		
+		DemandeRecursiveTask multiTask = PowerMockito.mock(DemandeRecursiveTask.class);
+		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList()).thenReturn(multiTask);
+
+		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
+		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
+		Mockito.when(pool.invoke(multiTask)).thenReturn(listdemandeDto);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
@@ -10374,7 +10396,7 @@ public class AbsenceServiceTest {
 	}
 
 	@Test
-	public void getListeDemandes_return1Liste_WithCongeAnnuel() {
+	public void getListeDemandes_return1Liste_WithCongeAnnuel() throws Exception {
 
 		List<Demande> listdemande = new ArrayList<Demande>();
 		Demande d = new Demande();
@@ -10438,7 +10460,30 @@ public class AbsenceServiceTest {
 				.thenReturn(null);
 		
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		
+		DemandeRecursiveTask multiTask = PowerMockito.mock(DemandeRecursiveTask.class);
+		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList()).thenReturn(multiTask);
 
+		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
+		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				DemandeDto demande = new DemandeDto();
+				demande.setDepassementCompteur(false);
+				demande.setDepassementMultiple(true);
+				
+				List<DemandeDto> list = new ArrayList<DemandeDto>();
+				list.add(demande);
+				
+				return list;
+			}
+		}).when(pool)
+		.invoke(multiTask);
+
+		AbsCongesAnnuelsDataConsistencyRulesImpl absCongesAnnuelsDataConsistencyRulesImpl = Mockito
+				.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
+		
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
@@ -10449,6 +10494,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
 		List<DemandeDto> listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null,
 				null, null, null, null, false);

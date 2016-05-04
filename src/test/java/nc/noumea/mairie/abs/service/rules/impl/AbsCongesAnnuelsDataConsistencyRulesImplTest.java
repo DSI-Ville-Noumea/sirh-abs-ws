@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
@@ -27,6 +28,7 @@ import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.service.impl.HelperService;
+import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -1373,5 +1375,82 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		assertEquals(demande.getDuree().doubleValue(), 10,0);
 		assertEquals(demande.getDureeAnneeN1().doubleValue(), 20,0);
 		assertEquals(demande.getNbSamediOffert().doubleValue(), 1,0);
+	}
+	
+	@Test
+	public void checkDepassementCompteurForListAgentsOrDemandes_aucuneDemande() {
+		
+		List<DemandeDto> listDemande = new ArrayList<DemandeDto>();
+		HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo = new HashMap<Integer, CheckCompteurAgentVo>();
+		
+		HashMap<Integer, CheckCompteurAgentVo> result = impl.checkDepassementCompteurForListAgentsOrDemandes(listDemande, mapCheckCompteurAgentVo);
+		
+		assertEquals(0, result.size());
+	}
+	
+	@Test
+	public void checkDepassementCompteurForListAgentsOrDemandes_return3Agents() {
+		
+		// 1er demande
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+		
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setAgentWithServiceDto(agentWithServiceDto);
+		
+		// 2e demande
+		AgentWithServiceDto agentWithServiceDto2 = new AgentWithServiceDto();
+		agentWithServiceDto2.setIdAgent(9005140);
+		
+		DemandeDto demandeDto2 = new DemandeDto();
+		demandeDto2.setAgentWithServiceDto(agentWithServiceDto2);
+		
+		// 3e demande
+		AgentWithServiceDto agentWithServiceDto3 = new AgentWithServiceDto();
+		agentWithServiceDto3.setIdAgent(9005142);
+		
+		DemandeDto demandeDto3 = new DemandeDto();
+		demandeDto3.setAgentWithServiceDto(agentWithServiceDto3);
+		
+		List<DemandeDto> listDemande = new ArrayList<DemandeDto>();
+		listDemande.add(demandeDto);
+		listDemande.add(demandeDto2);
+		listDemande.add(demandeDto3);
+		HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo = new HashMap<Integer, CheckCompteurAgentVo>();
+		
+		ICongesAnnuelsRepository congesAnnuelsRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		
+		// 1er compteur
+		AgentCongeAnnuelCount agentCongeAnnuelCount = new AgentCongeAnnuelCount();
+		agentCongeAnnuelCount.setIdAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
+		agentCongeAnnuelCount.setTotalJours(1.0);
+		agentCongeAnnuelCount.setTotalJoursAnneeN1(2.0);
+		
+		// 2e compteur
+		AgentCongeAnnuelCount agentCongeAnnuelCount2 = new AgentCongeAnnuelCount();
+		agentCongeAnnuelCount2.setIdAgent(demandeDto2.getAgentWithServiceDto().getIdAgent());
+		agentCongeAnnuelCount2.setTotalJours(1.0);
+		agentCongeAnnuelCount2.setTotalJoursAnneeN1(2.0);
+
+		// 3e compteur
+		AgentCongeAnnuelCount agentCongeAnnuelCount3 = new AgentCongeAnnuelCount();
+		agentCongeAnnuelCount3.setIdAgent(demandeDto3.getAgentWithServiceDto().getIdAgent());
+		agentCongeAnnuelCount3.setTotalJours(1.0);
+		agentCongeAnnuelCount3.setTotalJoursAnneeN1(2.0);
+		
+		List<AgentCongeAnnuelCount> listAgentCongeAnnuelCount = new ArrayList<AgentCongeAnnuelCount>();
+		listAgentCongeAnnuelCount.add(agentCongeAnnuelCount);
+		listAgentCongeAnnuelCount.add(agentCongeAnnuelCount2);
+		listAgentCongeAnnuelCount.add(agentCongeAnnuelCount3);
+		
+		Mockito.when(counterRepository.getListAgentCongeAnnuelCountWithListAgents(Mockito.anyListOf(Integer.class))).thenReturn(listAgentCongeAnnuelCount);
+
+		ReflectionTestUtils.setField(impl, "congesAnnuelsRepository", congesAnnuelsRepository);
+		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
+		
+		HashMap<Integer, CheckCompteurAgentVo> result = impl.checkDepassementCompteurForListAgentsOrDemandes(listDemande, mapCheckCompteurAgentVo);
+		
+		assertEquals(3, result.size());
 	}
 }

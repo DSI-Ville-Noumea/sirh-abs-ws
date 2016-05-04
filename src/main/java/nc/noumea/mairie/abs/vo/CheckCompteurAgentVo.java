@@ -1,6 +1,13 @@
 package nc.noumea.mairie.abs.vo;
 
-public class CheckCompteurAgentVo {
+import java.io.Serializable;
+
+public class CheckCompteurAgentVo implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7188700163106197792L;
 
 	private Integer idAgent;
 	
@@ -27,7 +34,6 @@ public class CheckCompteurAgentVo {
 	
 	private Double dureeDemandeEnCoursA55;
 	private Double compteurA55;
-	
 	
 	public Integer getIdAgent() {
 		return idAgent;
@@ -132,5 +138,82 @@ public class CheckCompteurAgentVo {
 	public void setCompteurA55(Double compteurA55) {
 		this.compteurA55 = compteurA55;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((compteurA48 == null) ? 0 : compteurA48.hashCode());
+		result = prime * result
+				+ ((compteurA52 == null) ? 0 : compteurA52.hashCode());
+		result = prime * result
+				+ ((compteurA53 == null) ? 0 : compteurA53.hashCode());
+		result = prime * result
+				+ ((compteurA54 == null) ? 0 : compteurA54.hashCode());
+		result = prime * result
+				+ ((compteurA55 == null) ? 0 : compteurA55.hashCode());
+		result = prime
+				* result
+				+ ((compteurCongesAnnuels == null) ? 0 : compteurCongesAnnuels
+						.hashCode());
+		result = prime * result
+				+ ((compteurRecup == null) ? 0 : compteurRecup.hashCode());
+		result = prime
+				* result
+				+ ((compteurReposComp == null) ? 0 : compteurReposComp
+						.hashCode());
+		result = prime
+				* result
+				+ ((dureeDemandeEnCoursA48 == null) ? 0
+						: dureeDemandeEnCoursA48.hashCode());
+		result = prime
+				* result
+				+ ((dureeDemandeEnCoursA52 == null) ? 0
+						: dureeDemandeEnCoursA52.hashCode());
+		result = prime
+				* result
+				+ ((dureeDemandeEnCoursA53 == null) ? 0
+						: dureeDemandeEnCoursA53.hashCode());
+		result = prime
+				* result
+				+ ((dureeDemandeEnCoursA54 == null) ? 0
+						: dureeDemandeEnCoursA54.hashCode());
+		result = prime
+				* result
+				+ ((dureeDemandeEnCoursA55 == null) ? 0
+						: dureeDemandeEnCoursA55.hashCode());
+		result = prime
+				* result
+				+ ((dureeDemandeEnCoursCongesAnnuels == null) ? 0
+						: dureeDemandeEnCoursCongesAnnuels.hashCode());
+		result = prime
+				* result
+				+ ((dureeDemandeEnCoursRecup == null) ? 0
+						: dureeDemandeEnCoursRecup.hashCode());
+		result = prime
+				* result
+				+ ((dureeDemandeEnCoursReposComp == null) ? 0
+						: dureeDemandeEnCoursReposComp.hashCode());
+		result = prime * result + ((idAgent == null) ? 0 : idAgent.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CheckCompteurAgentVo other = (CheckCompteurAgentVo) obj;
+		if (idAgent == null) {
+			if (other.idAgent != null)
+				return false;
+		} else if (!idAgent.equals(other.idAgent))
+			return false;
+		return true;
+	}
+
 }
