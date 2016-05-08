@@ -164,8 +164,10 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				Object[] args = invocation.getArguments();
 				AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
 
-				String textLog = "Retrait de -10.0 jours sur la nouvelle année.";
-				assertEquals(textLog, obj.getText());
+				String textLogRetrait = "Retrait de -10.0 jours sur la nouvelle année.";
+				String textLogAjout = "Ajout de 10.0 jours sur l'ancienne année.";
+				
+				assertTrue(textLogRetrait.equals(obj.getText()) || textLogAjout.equals(obj.getText()));
 
 				return true;
 			}
@@ -194,7 +196,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		assertEquals(0, result.getErrors().size());
 
-		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(2)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
 	}
 
@@ -214,8 +216,10 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 				Object[] args = invocation.getArguments();
 				AgentHistoAlimManuelle obj = (AgentHistoAlimManuelle) args[0];
 
-				String textLog = "Retrait de -10.0 jours sur la nouvelle année.";
-				assertEquals(textLog, obj.getText());
+				String textLogRetrait = "Retrait de -10.0 jours sur la nouvelle année.";
+				String textLogAjout = "Ajout de 10.0 jours sur l'ancienne année.";
+				
+				assertTrue(textLogRetrait.equals(obj.getText()) || textLogAjout.equals(obj.getText()));
 
 				return true;
 			}
@@ -244,7 +248,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		assertEquals(0, result.getErrors().size());
 
-		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(2)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentCongeAnnuelCount.class));
 	}
 

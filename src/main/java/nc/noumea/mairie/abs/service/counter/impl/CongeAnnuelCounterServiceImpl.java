@@ -171,25 +171,37 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		// l'année precedente
 		// et on remet le compteur de l'année à 0
 
-		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
-		histo.setIdAgent(arc.getIdAgent());
-		histo.setIdAgentConcerne(arc.getIdAgent());
-		histo.setDateModification(helperService.getCurrentDate());
-		histo.setMotifCompteur(null);
-		histo.setMotifTechnique(RESET_COMPTEUR_ANNEE_EN_COURS);
-		String textLog = "Retrait de " + (0 - arc.getTotalJours()) + " jours sur la nouvelle année.";
-		histo.setText(textLog);
-		histo.setCompteurAgent(arc);
+		AgentHistoAlimManuelle histoRetrait = new AgentHistoAlimManuelle();
+		histoRetrait.setIdAgent(arc.getIdAgent());
+		histoRetrait.setIdAgentConcerne(arc.getIdAgent());
+		histoRetrait.setDateModification(helperService.getCurrentDate());
+		histoRetrait.setMotifCompteur(null);
+		histoRetrait.setMotifTechnique(RESET_COMPTEUR_ANNEE_EN_COURS);
+		String textLogRetrait = "Retrait de " + (0 - arc.getTotalJours()) + " jours sur la nouvelle année.";
+		histoRetrait.setText(textLogRetrait);
+		histoRetrait.setCompteurAgent(arc);
 
 		RefTypeAbsence rta = new RefTypeAbsence();
 		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
-		histo.setType(rta);
+		histoRetrait.setType(rta);
+		
+		AgentHistoAlimManuelle histoAjout = new AgentHistoAlimManuelle();
+		histoAjout.setIdAgent(arc.getIdAgent());
+		histoAjout.setIdAgentConcerne(arc.getIdAgent());
+		histoAjout.setDateModification(helperService.getCurrentDate());
+		histoAjout.setMotifCompteur(null);
+		histoAjout.setMotifTechnique(RESET_COMPTEUR_ANNEE_EN_COURS);
+		String textLogAjout = "Ajout de " + arc.getTotalJours() + " jours sur l'ancienne année.";
+		histoAjout.setText(textLogAjout);
+		histoAjout.setCompteurAgent(arc);
+		histoAjout.setType(rta);
 
 		arc.setTotalJoursAnneeN1(arc.getTotalJoursAnneeN1() + arc.getTotalJours());
 		arc.setTotalJours(0.0);
 
 		counterRepository.persistEntity(arc);
-		counterRepository.persistEntity(histo);
+		counterRepository.persistEntity(histoRetrait);
+		counterRepository.persistEntity(histoAjout);
 
 		return srm;
 	}
