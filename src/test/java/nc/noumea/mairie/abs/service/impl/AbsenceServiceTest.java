@@ -1,9 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,6 +78,7 @@ import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
 import nc.noumea.mairie.abs.service.rules.impl.AbsCongesAnnuelsDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
+import nc.noumea.mairie.abs.web.AccessForbiddenException;
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.SpSorc;
 import nc.noumea.mairie.domain.Spcarr;
@@ -13122,6 +13120,86 @@ public class AbsenceServiceTest {
 				Arrays.asList(4));
 
 		assertEquals(0, listResult.size());
+	}
+	
+	@Test
+	public void getListDemandesCAToAddOrRemoveOnAgentCounter_forbidden() {
+		
+		Integer idAgent = 9005138;
+		Integer idAgentConcerne = 9005131;
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		rmd.getErrors().add("forbidden");
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(rmd);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		try {
+			service.getListDemandesCAToAddOrRemoveOnAgentCounter(idAgent, idAgentConcerne);
+		} catch(AccessForbiddenException e) {
+			assertNotNull(e);
+			return;
+		}
+
+		fail();
+	}
+	
+	@Test
+	public void getListDemandesCAToAddOrRemoveOnAgentCounter() {
+		
+		Integer idAgent = 9005138;
+		Integer idAgentConcerne = 9005131;
+		
+		EtatDemandeCongesAnnuels etatCA1 = new EtatDemandeCongesAnnuels();
+		etatCA1.setDemande(new Demande());
+		etatCA1.setDate(new DateTime(2015,7,1,0,0,0).toDate());
+		etatCA1.setDateDebut(new DateTime(2015,7,2,0,0,0).toDate());
+		etatCA1.setDateFin(new DateTime(2015,7,4,0,0,0).toDate());
+		etatCA1.setEtat(RefEtatEnum.APPROUVEE);
+		etatCA1.setNbSamediOffert(1.0);
+		etatCA1.setDuree(1.0);
+		etatCA1.setDureeAnneeN1(2.0);
+		etatCA1.setTotalJoursAnneeN1Old(2.0);
+		etatCA1.setTotalJoursOld(2.0);
+		etatCA1.setTotalJoursAnneeN1New(0.0);
+		etatCA1.setTotalJoursNew(1.0);
+		
+		EtatDemandeCongesAnnuels etatCA2 = new EtatDemandeCongesAnnuels();
+		etatCA2.setDemande(new Demande());
+		etatCA2.setDate(new DateTime(2015,7,1,0,0,0).toDate());
+		etatCA2.setDateDebut(new DateTime(2015,7,2,0,0,0).toDate());
+		etatCA2.setDateFin(new DateTime(2015,7,4,0,0,0).toDate());
+		etatCA2.setEtat(RefEtatEnum.VALIDEE);
+		etatCA2.setNbSamediOffert(0.0);
+		etatCA2.setDuree(3.0);
+		etatCA2.setDureeAnneeN1(4.0);
+		etatCA2.setTotalJoursAnneeN1Old(4.0);
+		etatCA2.setTotalJoursOld(10.0);
+		etatCA2.setTotalJoursAnneeN1New(0.0);
+		etatCA2.setTotalJoursNew(7.0);
+		
+		List<EtatDemandeCongesAnnuels> listEtatCA = new ArrayList<EtatDemandeCongesAnnuels>();
+		listEtatCA.add(etatCA1);
+		listEtatCA.add(etatCA2);
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		
+		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
+		Mockito.when(congeAnnuelRepository.getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent(idAgentConcerne))
+			.thenReturn(listEtatCA);
+				
+				
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
+		
+		List<DemandeDto> result = service.getListDemandesCAToAddOrRemoveOnAgentCounter(idAgent, idAgentConcerne);
+		
+		assertEquals(2, result.size());
 	}
 
 }

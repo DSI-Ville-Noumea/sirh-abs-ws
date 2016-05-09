@@ -340,6 +340,29 @@ public class DemandeDto {
 				break;
 		}
 	}
+	
+	public DemandeDto(EtatDemandeCongesAnnuels etatCA){
+		this();
+		this.idDemande = etatCA.getDemande().getIdDemande();
+		this.dateDebut = etatCA.getDateDebut();
+		this.dateFin = etatCA.getDateFin();
+		this.dateSaisie = etatCA.getDate();
+		Double dureeAnneeCongeAnnuel = etatCA.getDuree() == null ? 0 : etatCA.getDuree();
+		Double dureeAnneePrecCongeAnnuel = etatCA.getDureeAnneeN1() == null ? 0
+				: etatCA.getDureeAnneeN1();
+		this.duree = (double) (dureeAnneeCongeAnnuel + dureeAnneePrecCongeAnnuel);
+		this.idRefEtat = etatCA.getEtat().getCodeEtat();
+		this.isSamediOffert = etatCA.getNbSamediOffert() >= 1.0 ? true : false;
+		this.isDateDebutAM = etatCA.isDateDebutAM();
+		this.isDateDebutPM = etatCA.isDateDebutPM();
+		this.isDateFinAM = etatCA.isDateFinAM();
+		this.isDateFinPM = etatCA.isDateFinPM();
+		this.commentaire = etatCA.getCommentaire();
+		this.totalJoursOld = etatCA.getTotalJoursOld();
+		this.totalJoursNew = etatCA.getTotalJoursNew();
+		this.totalJoursAnneeN1Old = etatCA.getTotalJoursAnneeN1Old();
+		this.totalJoursAnneeN1New = etatCA.getTotalJoursAnneeN1New();
+	}
 
 	public Integer getIdDemande() {
 		return idDemande;

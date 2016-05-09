@@ -16,6 +16,7 @@ import nc.noumea.mairie.abs.domain.CongeAnnuelAlimAutoHisto;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
@@ -341,6 +342,27 @@ public class CongesAnnuelsRepository implements ICongesAnnuelsRepository {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public List<EtatDemandeCongesAnnuels> getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent(Integer idAgent) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select etat from EtatDemandeCongesAnnuels etat ");
+		sb.append("inner join etat.demande d ");
+		sb.append("where d.idAgent = :idAgent ");
+		sb.append("and etat.etat in ( :APPROUVE, :VALIDE, :ANNULE ) ");
+		sb.append("order by etat.idEtatDemande desc ");
+		
+		TypedQuery<EtatDemandeCongesAnnuels> query = absEntityManager.createQuery(sb.toString(),
+				EtatDemandeCongesAnnuels.class);
+
+		query.setParameter("idAgent", idAgent);
+		query.setParameter("APPROUVE", RefEtatEnum.APPROUVEE);
+		query.setParameter("VALIDE", RefEtatEnum.VALIDEE);
+		query.setParameter("ANNULE", RefEtatEnum.ANNULEE);
+
+		return query.getResultList();
 	}
 
 }

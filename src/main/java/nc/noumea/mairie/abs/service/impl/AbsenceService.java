@@ -74,6 +74,7 @@ import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
+import nc.noumea.mairie.abs.web.AccessForbiddenException;
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.SpSorc;
 import nc.noumea.mairie.domain.Spcarr;
@@ -2004,6 +2005,33 @@ public class AbsenceService implements IAbsenceService {
 			result.add(mois);
 		}
 
+		return result;
+	}
+	
+	/**
+	 * Retourne la liste des demandes au moment de leur etat soit Approuve, soit Valide, soit Annule :
+	 * cela permet de tracer les operations sur le compteur d un agent. 
+	 */
+	@Override
+	public List<DemandeDto> getListDemandesCAToAddOrRemoveOnAgentCounter(Integer idAgent, Integer idAgentConcerne) {
+		
+		// verification des droits SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			logger.warn(AGENT_NON_HABILITE);
+			throw new AccessForbiddenException();
+		}
+				
+		List<DemandeDto> result = new ArrayList<DemandeDto>();
+		
+		List<EtatDemandeCongesAnnuels> listEtatDemande = congeAnnuelRepository.getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent(idAgentConcerne);
+		
+		for(EtatDemandeCongesAnnuels etatCA : listEtatDemande) {
+			
+			DemandeDto demandeDto = new DemandeDto(etatCA);
+			result.add(demandeDto);
+		}
+		
 		return result;
 	}
 }

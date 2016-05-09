@@ -19,6 +19,7 @@ import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.EtatDemande;
+import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefAlimCongeAnnuelId;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -1323,5 +1324,98 @@ public class CongesAnnuelsRepositoryTest {
 		assertEquals(result.get(3).getIdAgent().intValue(), 9009999);
 		assertEquals(result.get(3).getJours(), new Double(0.5));
 		assertEquals(result.get(3).getRestitutionMassive().getDateRestitution(), new DateTime(2015, 1, 1, 0, 0, 0).toDate());
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent_testIdAgent() {
+		
+		DemandeCongesAnnuels d3 = new DemandeCongesAnnuels();
+		d3.setIdAgent(9005131);
+		d3.setDateDebut(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+		d3.setDateFin(new DateTime(2015, 1, 24, 0, 0, 0).toDate());
+		absEntityManager.persist(d3);
+		
+		EtatDemandeCongesAnnuels etatPris3 = new EtatDemandeCongesAnnuels();
+		etatPris3.setEtat(RefEtatEnum.VALIDEE);
+		etatPris3.setDemande(d3);
+		absEntityManager.persist(etatPris3);
+
+		DemandeCongesAnnuels d2 = new DemandeCongesAnnuels();
+		d2.setIdAgent(9003041);
+		d2.setDateDebut(new DateTime(2015, 1, 20, 0, 0, 0).toDate());
+		d2.setDateFin(new DateTime(2015, 1, 22, 0, 0, 0).toDate());
+		absEntityManager.persist(d2);
+		
+		EtatDemandeCongesAnnuels etatPris2 = new EtatDemandeCongesAnnuels();
+		etatPris2.setEtat(RefEtatEnum.APPROUVEE);
+		etatPris2.setDemande(d2);
+		absEntityManager.persist(etatPris2);
+		
+		List<EtatDemandeCongesAnnuels> result = repository.getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent(9005131);
+		
+		assertEquals(result.size(), 1);
+		assertEquals(result.get(0).getDemande().getIdAgent().intValue(), 9005131);
+		
+		result = repository.getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent(9003041);
+		
+		assertEquals(result.size(), 1);
+		assertEquals(result.get(0).getDemande().getIdAgent().intValue(), 9003041);
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent_testEtat() {
+		
+		// ///// 1er demande ///////
+		DemandeCongesAnnuels d3 = new DemandeCongesAnnuels();
+		d3.setIdAgent(9005131);
+		d3.setDateDebut(new DateTime(2015, 1, 23, 0, 0, 0).toDate());
+		d3.setDateFin(new DateTime(2015, 1, 24, 0, 0, 0).toDate());
+		absEntityManager.persist(d3);
+		
+		EtatDemandeCongesAnnuels etatPris3_2 = new EtatDemandeCongesAnnuels();
+		etatPris3_2.setEtat(RefEtatEnum.PRISE);
+		etatPris3_2.setDemande(d3);
+		etatPris3_2.setDate(new DateTime(2015,1,2,0,0,0).toDate());
+		absEntityManager.persist(etatPris3_2);
+		
+		EtatDemandeCongesAnnuels etatPris3 = new EtatDemandeCongesAnnuels();
+		etatPris3.setEtat(RefEtatEnum.VALIDEE);
+		etatPris3.setDate(new DateTime(2015,1,1,0,0,0).toDate());
+		etatPris3.setDemande(d3);
+		absEntityManager.persist(etatPris3);
+
+		// ///// 2e demande ///////
+		DemandeCongesAnnuels d2 = new DemandeCongesAnnuels();
+		d2.setIdAgent(9005131);
+		d2.setDateDebut(new DateTime(2015, 1, 20, 0, 0, 0).toDate());
+		d2.setDateFin(new DateTime(2015, 1, 22, 0, 0, 0).toDate());
+		absEntityManager.persist(d2);
+		
+		EtatDemandeCongesAnnuels etatPris2 = new EtatDemandeCongesAnnuels();
+		etatPris2.setEtat(RefEtatEnum.APPROUVEE);
+		etatPris2.setDate(new DateTime(2015,1,5,0,0,0).toDate());
+		etatPris2.setDemande(d2);
+		absEntityManager.persist(etatPris2);
+		
+		EtatDemandeCongesAnnuels etatPris2_2 = new EtatDemandeCongesAnnuels();
+		etatPris2_2.setEtat(RefEtatEnum.SAISIE);
+		etatPris2.setDate(new DateTime(2015,1,7,0,0,0).toDate());
+		etatPris2_2.setDemande(d2);
+		absEntityManager.persist(etatPris2_2);
+		
+		EtatDemandeCongesAnnuels etatPris2_3 = new EtatDemandeCongesAnnuels();
+		etatPris2_3.setEtat(RefEtatEnum.ANNULEE);
+		etatPris2.setDate(new DateTime(2015,1,9,0,0,0).toDate());
+		etatPris2_3.setDemande(d2);
+		absEntityManager.persist(etatPris2_3);
+		
+		List<EtatDemandeCongesAnnuels> result = repository.getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent(9005131);
+		
+		assertEquals(result.size(), 3);
+		assertEquals(result.get(0).getEtat(), RefEtatEnum.ANNULEE);
+		assertEquals(result.get(1).getEtat(), RefEtatEnum.APPROUVEE);
+		assertEquals(result.get(2).getEtat(), RefEtatEnum.VALIDEE);
 	}
 }

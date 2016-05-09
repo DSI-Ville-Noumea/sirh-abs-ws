@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
+import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
@@ -14,12 +15,14 @@ import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.EtatDemandeAsa;
+import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 public class DemandeDtoTest {
@@ -1071,5 +1074,46 @@ public class DemandeDtoTest {
 		assertFalse(result.isDateFinAM());
 		assertFalse(result.isDateFinPM());
 		assertFalse(result.isSamediOffert());
+	}
+	
+	@Test
+	public void ctor_EtatDemandeCongesAnnuels() {
+		
+		EtatDemandeCongesAnnuels etatCA = new EtatDemandeCongesAnnuels();
+		etatCA.setDemande(new Demande());
+		etatCA.setDate(new DateTime(2015,7,1,0,0,0).toDate());
+		etatCA.setDateDebut(new DateTime(2015,7,2,0,0,0).toDate());
+		etatCA.setDateFin(new DateTime(2015,7,4,0,0,0).toDate());
+		etatCA.setEtat(RefEtatEnum.APPROUVEE);
+		etatCA.setNbSamediOffert(1.0);
+		etatCA.setDuree(1.0);
+		etatCA.setDureeAnneeN1(2.0);
+		etatCA.setTotalJoursAnneeN1Old(2.0);
+		etatCA.setTotalJoursOld(2.0);
+		etatCA.setTotalJoursAnneeN1New(0.0);
+		etatCA.setTotalJoursNew(1.0);
+		etatCA.setCommentaire("commentaire jojo");
+		etatCA.setDateDebutAM(true);
+		etatCA.setDateDebutPM(false);
+		etatCA.setDateFinAM(true);
+		etatCA.setDateFinPM(false);
+		
+		DemandeDto result = new DemandeDto(etatCA);
+		
+		assertEquals(3, result.getDuree().intValue());
+		assertEquals(etatCA.getDemande().getIdDemande(), result.getIdDemande());
+		assertEquals(new DateTime(2015,7,1,0,0,0).toDate(), result.getDateSaisie());
+		assertEquals(new DateTime(2015,7,2,0,0,0).toDate(), result.getDateDebut());
+		assertEquals(new DateTime(2015,7,4,0,0,0).toDate(), result.getDateFin());
+		assertEquals(etatCA.getCommentaire(), result.getCommentaire());
+		assertTrue(result.isDateDebutAM());
+		assertFalse(result.isDateDebutPM());
+		assertTrue(result.isDateFinAM());
+		assertFalse(result.isDateFinPM());
+		assertTrue(result.isSamediOffert());
+		assertEquals(etatCA.getTotalJoursAnneeN1New(), result.getTotalJoursAnneeN1New());
+		assertEquals(etatCA.getTotalJoursAnneeN1Old(), result.getTotalJoursAnneeN1Old());
+		assertEquals(etatCA.getTotalJoursOld(), result.getTotalJoursOld());
+		assertEquals(etatCA.getTotalJoursNew(), result.getTotalJoursNew());
 	}
 }

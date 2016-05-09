@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefAlimCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
@@ -395,5 +396,26 @@ public class CongeAnnuelController {
 		ReturnMessageDto srm = absenceService.createRefAlimCongeAnnuelAnnee(anneeCreation);
 
 		return srm;
+	}
+	
+	/**
+	 * Retourne la liste des demandes avec l'etat ayant debite ou credite le compteur de CA de l agent <br />
+	 * utile a SIRH dans Agents > Absences > Historique Solde CA
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getListeDemandeCAWhichAddOrRemoveOnCounterAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<DemandeDto> getListeDemandeCAWhichAddOrRemoveOnCounterAgent(@RequestParam("idAgent") int idAgent,
+			@RequestParam("idAgentConcerne") int idAgentConcerne) {
+		
+		logger.debug(
+				"entered GET [congeannuel/getListeDemandeCAWhichAddOrRemoveOnCounterAgent] => getListeDemandeCAWhichAddOrRemoveOnCounterAgent with parameter idAgent = {} and idAgentConcerne = {}",
+				idAgent, idAgentConcerne);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		List<DemandeDto> result = absenceService
+				.getListDemandesCAToAddOrRemoveOnAgentCounter(convertedIdAgent, idAgentConcerne);
+
+		return result;
 	}
 }
