@@ -1373,6 +1373,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto verifAccessRightDemande(Integer idAgent, Integer idAgentOfDemande, ReturnMessageDto returnDto) {
 
 		// si l'agent est un operateur alors on verifie qu'il a bien les droits

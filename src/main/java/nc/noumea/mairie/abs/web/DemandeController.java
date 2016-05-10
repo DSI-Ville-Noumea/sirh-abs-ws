@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.web;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -12,10 +11,8 @@ import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
-import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
-import nc.noumea.mairie.abs.dto.EditionDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
@@ -38,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/demandes")
@@ -201,29 +197,6 @@ public class DemandeController {
 			throw new NoContentException();
 
 		return result;
-	}
-
-	/**
-	 * Retourne une demande au format XML pour le report
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/xml/getDemande", produces = "application/xml", method = RequestMethod.GET)
-	public ModelAndView getXmlDemande(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande) throws ParseException {
-
-		logger.debug("entered GET [demandes/xml/getDemande] => getXmlDemande with parameters idAgent = {}, idDemande = {}", idAgent, idDemande);
-		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-
-		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
-		if (agent == null || agent.getIdAgent() == null)
-			throw new NotFoundException();
-
-		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
-
-		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
-
-		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, approbateurDto);
-
-		return new ModelAndView("xmlView", "object", dtoFinal);
 	}
 
 	/**
@@ -425,7 +398,7 @@ public class DemandeController {
 
 		return result;
 	}
-	
+
 	/**
 	 * Liste des demandes pour SIRH <br />
 	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
@@ -433,18 +406,13 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesPlanningKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<DemandeDto> getListeDemandesAbsencePlanningKiosque(
-			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
-			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, 
-			@RequestParam(value = "etat", required = false) String listIdRefEtat,
-			@RequestParam(value = "type", required = false) Integer idRefType, 
-			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence, 
+	public List<DemandeDto> getListeDemandesAbsencePlanningKiosque(@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, @RequestParam(value = "etat", required = false) String listIdRefEtat,
+			@RequestParam(value = "type", required = false) Integer idRefType, @RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence,
 			@RequestParam(value = "idAgents", required = false) String idAgents) {
 
-		logger.debug(
-				"entered GET [demandes/getListeDemandesAbsencePlanningKiosque] => getListeDemandesAbsencePlanningKiosque with parameters  from = {}, to = {},  "
-				+ "etat = {}, groupe = {}, type = {}, idAgentConcerne= {}, aValider= {} and idAgents = {}",
-				fromDate, toDate, listIdRefEtat, idRefGroupeAbsence, idRefType, idAgents);
+		logger.debug("entered GET [demandes/getListeDemandesAbsencePlanningKiosque] => getListeDemandesAbsencePlanningKiosque with parameters  from = {}, to = {},  "
+				+ "etat = {}, groupe = {}, type = {}, idAgentConcerne= {}, aValider= {} and idAgents = {}", fromDate, toDate, listIdRefEtat, idRefGroupeAbsence, idRefType, idAgents);
 
 		List<Integer> agentIds = new ArrayList<Integer>();
 		if (idAgents != null) {
@@ -456,7 +424,7 @@ public class DemandeController {
 		}
 
 		List<DemandeDto> result = absenceService.getListeDemandesSIRH(fromDate, toDate, null, idRefType, null, idRefGroupeAbsence, agentIds, listIdRefEtat, FiltreService.ONGLET_PLANNING);
-		
+
 		if (result.size() == 0)
 			throw new NoContentException();
 

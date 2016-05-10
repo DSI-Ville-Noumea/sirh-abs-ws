@@ -53,15 +53,5 @@
 	<!-- -->
 	<Environment description="SIRH PTG WS url" name="SIRH_PTG_WS_URL"
 		type="java.lang.String" override="false" value="http://svi-tomcat0:8085/sirh-ptg-ws/" />
-
-
-	<!-- -->
-	<!-- BIRT -->
-	<!--  -->
-	<Environment name="REPORTING_BASE_URL" type="java.lang.String" description="BIRT report viewer base URL for SIRH reporting"
-		value="http://svi-tomcat0:8085/birt/" override="false" />
-		
-	<Environment name="REPORTING_SERVER_SIRH_ABS_REPORT_PATH" type="java.lang.String" description="SIRH reports path on Birt"
-		value="report/sirh-abs-reports/" override="false" />
 		
 </Context>

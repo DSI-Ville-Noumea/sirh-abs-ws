@@ -95,8 +95,4 @@
 
 	<bean class="java.lang.String" id="sirhPtgWsBaseUrl" />
 
-	<bean class="java.lang.String" id="reportingBaseUrl" />
-
-	<bean class="java.lang.String" id="reportServerPath" />
-
 </beans>

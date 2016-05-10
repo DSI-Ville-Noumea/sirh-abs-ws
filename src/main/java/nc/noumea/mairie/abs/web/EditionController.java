@@ -1,8 +1,17 @@
 package nc.noumea.mairie.abs.web;
 
+import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.EditionDemandeDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.abs.service.IReportingService;
+import nc.noumea.mairie.abs.service.ITitreDemandeReportingService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,23 +38,51 @@ public class EditionController {
 	private IAgentMatriculeConverterService converterService;
 
 	@Autowired
-	private IReportingService reportingService;
+	private ITitreDemandeReportingService titreDemandeReportingService;
+
+	@Autowired
+	private IAccessRightsService accessRightsService;
+
+	@Autowired
+	private IDemandeRepository demandeRepository;
+
+	@Autowired
+	private ISirhWSConsumer sirhWSConsumer;
+
+	@Autowired
+	private IAbsenceService absenceService;
 
 	@ResponseBody
 	@RequestMapping(value = "/downloadTitreDemande", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> downloadTitreDemande(@RequestParam("idAgent") int idAgent,
-			@RequestParam("idDemande") int idDemande) {
+	public ResponseEntity<byte[]> downloadTitreDemande(@RequestParam("idAgent") int idAgent, @RequestParam("idDemande") int idDemande) {
+		logger.debug("entered GET [edition/downloadTitreDemande] => downloadTitreDemande with parameters  idDemande = {}, idAgent = {}", idDemande, idAgent);
 
-		logger.debug(
-				"entered GET [edition/downloadTitreDemande] => downloadTitreDemande with parameters  idDemande = {}, idAgent = {}",
-				idDemande, idAgent);
+		ReturnMessageDto returnDto = new ReturnMessageDto();
+		// verification des droits
+		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
+		if (null == demande)
+			return new ResponseEntity<byte[]>(HttpStatus.NO_CONTENT);
 
-		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), returnDto);
+		if (!returnDto.getErrors().isEmpty())
+			return new ResponseEntity<byte[]>(HttpStatus.UNAUTHORIZED);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+		if (agent == null || agent.getIdAgent() == null)
+			return new ResponseEntity<byte[]>(HttpStatus.NO_CONTENT);
+
+		DemandeDto demandeDto = absenceService.getDemandeDto(idDemande);
+
+		AgentWithServiceDto approbateurDto = accessRightService.getApprobateurOfAgent(demandeDto.getAgentWithServiceDto().getIdAgent());
+
+		EditionDemandeDto dtoFinal = new EditionDemandeDto(demandeDto, approbateurDto);
 
 		byte[] responseData = null;
 
 		try {
-			responseData = reportingService.getDemandeReportAsByteArray(convertedIdAgent, idDemande);
+			responseData = titreDemandeReportingService.getTitreDemandeAsByteArray(dtoFinal);
 		} catch (AccessForbiddenException e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.UNAUTHORIZED);
