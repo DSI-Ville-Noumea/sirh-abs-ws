@@ -58,12 +58,13 @@ public class DemandeRecursiveTask extends RecursiveTask<List<DemandeDto>> {
 	}
 
 	public DemandeRecursiveTask(HashMap<Integer, CheckCompteurAgentVo> pMapCheckCompteurAgentVo, List<DemandeDto> pListDemandeDto,
-			Integer pIdAgentConnecte, List<DroitsAgent> pListDroitsAgent) {
+			Integer pIdAgentConnecte, List<DroitsAgent> pListDroitsAgent, boolean pIsAgent) {
 		this.listDemandeDto = pListDemandeDto;
 		this.mapCheckCompteurAgentVo = pMapCheckCompteurAgentVo;
 		this.idAgentConnecte = pIdAgentConnecte;
 		this.listDroitAgent = pListDroitsAgent;
 		this.results = new ArrayList<DemandeDto>();
+		this.isAgent = pIsAgent;
 		
 		dataConsistencyRulesFactory = (DataConsistencyRulesFactory) SpringContext.getApplicationContext().getBean("dataConsistencyRulesFactory");
 	}
@@ -101,7 +102,7 @@ public class DemandeRecursiveTask extends RecursiveTask<List<DemandeDto>> {
 			List<DemandeDto> listDemandeTask = listDemandeDto.subList(beginIndex, endIndex);
 			logger.debug(String.format(DECOUPE_TASK, listDemandeTask.size(), beginIndex, endIndex));
 			
-			DemandeRecursiveTask task = new DemandeRecursiveTask(mapCheckCompteurAgentVo, listDemandeTask, idAgentConnecte, listDroitAgent);
+			DemandeRecursiveTask task = new DemandeRecursiveTask(mapCheckCompteurAgentVo, listDemandeTask, idAgentConnecte, listDroitAgent, isAgent);
 			list.add(task);
 		}
 		

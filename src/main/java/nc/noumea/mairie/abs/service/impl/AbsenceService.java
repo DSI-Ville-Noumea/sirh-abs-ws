@@ -374,7 +374,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 		
 		// #30788 utilisation de multithread pour booster le traitement 
-		DemandeRecursiveTask multiTask = new DemandeRecursiveTask(mapCheckCompteurAgentVo, listeDto, idAgentConnecte, listDroitAgent);
+		DemandeRecursiveTask multiTask = new DemandeRecursiveTask(mapCheckCompteurAgentVo, listeDto, idAgentConnecte, listDroitAgent, isAgent);
 		ForkJoinPool pool = new ForkJoinPool();
 		listeDto = pool.invoke(multiTask);
 		

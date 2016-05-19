@@ -60,6 +60,7 @@
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.connection.charSet" value="UTF-8"/>
 <!--  			<property name="hibernate.show_sql" value="true" /> -->
+<!--  			<property name="hibernate.generate_statistics" value="true" /> -->
 			<!-- Properties for Hibernate Envers -->
 		<property name="org.hibernate.envers.store_data_at_delete" value="true"/>
         </properties>

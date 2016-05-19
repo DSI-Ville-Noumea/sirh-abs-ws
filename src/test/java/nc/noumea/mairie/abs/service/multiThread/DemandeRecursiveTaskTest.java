@@ -36,12 +36,13 @@ public class DemandeRecursiveTaskTest {
 		HashMap<Integer, CheckCompteurAgentVo> pMapCheckCompteurAgentVo = new HashMap<Integer, CheckCompteurAgentVo>();
 		Integer pIdAgentConnecte = 9005151;
 		List<DroitsAgent> pListDroitsAgent = new ArrayList<DroitsAgent>();
+		boolean pIsAgent = true;
 
 		ApplicationContext applicationContext = Mockito.mock(ApplicationContext.class);
 		PowerMockito.mockStatic(SpringContext.class);
 		PowerMockito.when(SpringContext.getApplicationContext()).thenReturn(applicationContext);
 
-		return new DemandeRecursiveTask(pMapCheckCompteurAgentVo, pListDemandeDto, pIdAgentConnecte, pListDroitsAgent);
+		return new DemandeRecursiveTask(pMapCheckCompteurAgentVo, pListDemandeDto, pIdAgentConnecte, pListDroitsAgent, pIsAgent);
 	}
 	
 	@Test
@@ -56,18 +57,19 @@ public class DemandeRecursiveTaskTest {
 		List<DemandeDto> pListDemandeDto = new ArrayList<DemandeDto>();
 		Integer pIdAgentConnecte = 9005151;
 		List<DroitsAgent> pListDroitsAgent = new ArrayList<DroitsAgent>();
+		boolean pIsAgent = true;
 
 		ApplicationContext applicationContext = Mockito.mock(ApplicationContext.class);
 		PowerMockito.mockStatic(SpringContext.class);
 		PowerMockito.when(SpringContext.getApplicationContext()).thenReturn(applicationContext);
 
-		DemandeRecursiveTask service = new DemandeRecursiveTask(pMapCheckCompteurAgentVo, null, pIdAgentConnecte, pListDroitsAgent);
+		DemandeRecursiveTask service = new DemandeRecursiveTask(pMapCheckCompteurAgentVo, null, pIdAgentConnecte, pListDroitsAgent, pIsAgent);
 		assertNull(service.parallelCheckDemandeDto());
 
-		service = new DemandeRecursiveTask(pMapCheckCompteurAgentVo, pListDemandeDto, null, pListDroitsAgent);
+		service = new DemandeRecursiveTask(pMapCheckCompteurAgentVo, pListDemandeDto, null, pListDroitsAgent, pIsAgent);
 		assertNull(service.parallelCheckDemandeDto());
 
-		service = new DemandeRecursiveTask(pMapCheckCompteurAgentVo, pListDemandeDto, pIdAgentConnecte, null);
+		service = new DemandeRecursiveTask(pMapCheckCompteurAgentVo, pListDemandeDto, pIdAgentConnecte, null, pIsAgent);
 		assertNull(service.parallelCheckDemandeDto());
 	}
 
@@ -107,7 +109,8 @@ public class DemandeRecursiveTaskTest {
 		DemandeRecursiveTask service = construct(listDemande);
 		
 		DemandeRecursiveTask task = PowerMockito.mock(DemandeRecursiveTask.class);
-		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList()).thenReturn(task);
+		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList(), Mockito.anyBoolean())
+			.thenReturn(task);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				

@@ -8813,7 +8813,8 @@ public class AbsenceServiceTest {
 				.thenReturn(null);
 		
 		DemandeRecursiveTask multiTask = PowerMockito.mock(DemandeRecursiveTask.class);
-		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList()).thenReturn(multiTask);
+		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList(), Mockito.anyBoolean())
+			.thenReturn(multiTask);
 
 		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
 		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
@@ -8879,7 +8880,8 @@ public class AbsenceServiceTest {
 				.thenReturn(null);
 		
 		DemandeRecursiveTask multiTask = PowerMockito.mock(DemandeRecursiveTask.class);
-		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList()).thenReturn(multiTask);
+		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList(), Mockito.anyBoolean())
+			.thenReturn(multiTask);
 
 		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
 		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
@@ -10460,7 +10462,8 @@ public class AbsenceServiceTest {
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		
 		DemandeRecursiveTask multiTask = PowerMockito.mock(DemandeRecursiveTask.class);
-		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList()).thenReturn(multiTask);
+		PowerMockito.whenNew(DemandeRecursiveTask.class).withArguments(Mockito.anyMap(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyList(), Mockito.anyBoolean())
+			.thenReturn(multiTask);
 
 		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
 		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
