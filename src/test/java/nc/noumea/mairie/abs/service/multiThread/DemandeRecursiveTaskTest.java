@@ -33,7 +33,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class DemandeRecursiveTaskTest {
 
 	private DemandeRecursiveTask construct(List<DemandeDto> pListDemandeDto) {
-		HashMap<Integer, CheckCompteurAgentVo> pMapCheckCompteurAgentVo = new HashMap<Integer, CheckCompteurAgentVo>();
+		HashMap<Integer, CheckCompteurAgentVo> pMapCheckCompteurAgentVo = null;
 		Integer pIdAgentConnecte = 9005151;
 		List<DroitsAgent> pListDroitsAgent = new ArrayList<DroitsAgent>();
 		boolean pIsAgent = true;

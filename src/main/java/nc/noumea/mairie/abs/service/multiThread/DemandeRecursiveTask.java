@@ -60,7 +60,7 @@ public class DemandeRecursiveTask extends RecursiveTask<List<DemandeDto>> {
 	public DemandeRecursiveTask(HashMap<Integer, CheckCompteurAgentVo> pMapCheckCompteurAgentVo, List<DemandeDto> pListDemandeDto,
 			Integer pIdAgentConnecte, List<DroitsAgent> pListDroitsAgent, boolean pIsAgent) {
 		this.listDemandeDto = pListDemandeDto;
-		this.mapCheckCompteurAgentVo = pMapCheckCompteurAgentVo;
+		this.mapCheckCompteurAgentVo = null != pMapCheckCompteurAgentVo ? pMapCheckCompteurAgentVo : new HashMap<Integer, CheckCompteurAgentVo>();
 		this.idAgentConnecte = pIdAgentConnecte;
 		this.listDroitAgent = pListDroitsAgent;
 		this.results = new ArrayList<DemandeDto>();
