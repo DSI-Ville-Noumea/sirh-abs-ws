@@ -558,24 +558,11 @@ public class HelperService {
 	protected Double getNombreJourSemaineWithoutFerie(Date dateDebut, Date dateFin, int jourDonne,
 			List<JourDto> listJoursFeries) {
 
-		int compteur = 0;
+		double compteur = 0;
 		// on calcule le nombre de vendredi
-		DateTime startDate = new DateTime(dateDebut).withHourOfDay(0).withMinuteOfHour(0); // on
-																							// met
-																							// les
-																							// heures
-																							// et
-																							// minutes
-																							// a
-																							// zero
-																							// afin
-																							// de
-																							// bien
-																							// comptabiliser
-																							// dans
-																							// la
-																							// boucle
-																							// while
+		DateTime startDate = new DateTime(dateDebut).withHourOfDay(0).withMinuteOfHour(0); 
+		// on met les heures et minutes a zero afin de bien comptabiliser dans la
+		// boucle while
 		DateTime endDate = new DateTime(dateFin);
 
 		DateTime thisDay = startDate.withDayOfWeek(jourDonne);
@@ -587,11 +574,17 @@ public class HelperService {
 		}
 		while (startDate.isBefore(endDate)) {
 			if (!isJourHoliday(listJoursFeries, startDate.toDate())) {
-				compteur++;
+				
+				if(startDate.getDayOfYear() == new DateTime(dateDebut).getDayOfYear()
+						&& HEURE_JOUR_DEBUT_PM == new DateTime(dateDebut).getHourOfDay()) {
+					compteur = compteur + 0.5;
+				}else{
+					compteur++;
+				}
 			}
 			startDate = startDate.plusWeeks(1);
 		}
-		return (double) compteur;
+		return compteur;
 	}
 
 	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande) {

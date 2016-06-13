@@ -26,6 +26,7 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -1172,6 +1173,77 @@ public class HelperServiceTest {
 		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
 
 		assertEquals(duree, result);
+	}
+
+	@Test
+	public void getDureeCongeAnnuel_AvecSamedi_baseA_bug31346() {
+		
+		Double duree = 1.0;
+
+		Date dateDebut = new DateTime(2016, 6, 18, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2016, 6, 20, 23, 59, 59).toDate();
+		Date dateReprise = null;
+
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("A");
+		typeSaisiCongeAnnuel.setDecompteSamedi(true);
+
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(demande.getIdAgent(), 2014, demande.getIdDemande())).thenReturn(1);
+
+		HelperService service = new HelperService();
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		Double result = service.getDureeCongeAnnuel(demande, dateReprise, false, null);
+
+		assertEquals(duree, result);
+	}
+	
+	@Test
+	public void getNombreJourSemaineWithoutFerie_bug31346() {
+		
+		Double duree = 0.5;
+
+		Date dateDebut = new DateTime(2016, 6, 18, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2016, 6, 20, 23, 59, 59).toDate();
+		
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+		
+		HelperService service = new HelperService();
+		
+		Double result = service.getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(),
+				DateTimeConstants.SATURDAY, new ArrayList<JourDto>());
+				
+		assertEquals(duree, result);	
+	}
+	
+	@Test
+	public void getNombreJourSemaineWithoutFerie_bug31346_test2() {
+		
+		Double duree = 1.0;
+
+		Date dateDebut = new DateTime(2016, 6, 17, 12, 0, 0).toDate();
+		Date dateFin = new DateTime(2016, 6, 20, 23, 59, 59).toDate();
+		
+		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
+		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateFin);
+		
+		HelperService service = new HelperService();
+		
+		Double result = service.getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(),
+				DateTimeConstants.SATURDAY, new ArrayList<JourDto>());
+				
+		assertEquals(duree, result);	
 	}
 
 	@Test
