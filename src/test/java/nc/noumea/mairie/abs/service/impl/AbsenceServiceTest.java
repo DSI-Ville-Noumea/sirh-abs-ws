@@ -12827,12 +12827,15 @@ public class AbsenceServiceTest {
 	public void getHistoAlimAutoRecup_ZeroResult() {
 		Integer idAgent = 9005138;
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		
 		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
 		Mockito.when(recuperationRepository.getListeAlimAutoRecupByAgent(idAgent)).thenReturn(
 				new ArrayList<AgentWeekRecup>());
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		List<MoisAlimAutoCongesAnnuelsDto> result = service.getHistoAlimAutoRecup(idAgent);
 
@@ -13203,6 +13206,60 @@ public class AbsenceServiceTest {
 		List<DemandeDto> result = service.getListDemandesCAToAddOrRemoveOnAgentCounter(idAgent, idAgentConcerne);
 		
 		assertEquals(2, result.size());
+	}
+	
+	@Test
+	public void getHistoAlimAutoRecup() {
+		
+		Integer convertedIdAgent = 9005138;
+		
+		AgentWeekRecup agentRecup = new AgentWeekRecup();
+		agentRecup.setDateDay(new DateTime(2016,6,20,10,0,0).toDate());
+		agentRecup.setDateMonday(null);
+		agentRecup.setIdAgent(convertedIdAgent);
+		agentRecup.setIdPointage(10);
+		agentRecup.setLastModification(new DateTime(2016,6,30,21,2,0).toDate());
+		agentRecup.setMinutes(50);
+		
+		AgentWeekRecup agentRecup2 = new AgentWeekRecup();
+		agentRecup2.setDateDay(null);
+		agentRecup2.setDateMonday(new DateTime(2016,6,10,0,0,0).toDate());
+		agentRecup2.setIdAgent(convertedIdAgent);
+		agentRecup2.setIdPointage(25);
+		agentRecup2.setLastModification(new DateTime(2016,6,28,10,5,0).toDate());
+		agentRecup2.setMinutes(95);
+		
+		List<AgentWeekRecup> listAgentRecup = new ArrayList<AgentWeekRecup>();
+		listAgentRecup.add(agentRecup);
+		listAgentRecup.add(agentRecup2);
+		
+		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
+		Mockito.when(recuperationRepository.getListeAlimAutoRecupByAgent(convertedIdAgent)).thenReturn(listAgentRecup);
+
+		AgentGeneriqueDto agentDto = new AgentGeneriqueDto();
+		agentDto.setIdAgent(convertedIdAgent);
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(convertedIdAgent)).thenReturn(agentDto);
+		
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		List<MoisAlimAutoCongesAnnuelsDto> result = service.getHistoAlimAutoRecup(convertedIdAgent);
+		
+		assertEquals(2, result.size());
+		assertNotNull(result.get(0).getAgent());
+		assertEquals(result.get(0).getDateModification(), agentRecup.getLastModification());
+		assertEquals(result.get(0).getDateMois(), agentRecup.getDateDay());
+		assertEquals(result.get(0).getNbJours().intValue(), agentRecup.getMinutes());
+		assertEquals(result.get(0).getStatus(), "Pointage du 20/06/2016 10:00:00");
+
+		assertNotNull(result.get(0).getAgent());
+		assertEquals(result.get(1).getDateModification(), agentRecup2.getLastModification());
+		assertEquals(result.get(1).getDateMois(), agentRecup2.getDateMonday());
+		assertEquals(result.get(1).getNbJours().intValue(), agentRecup2.getMinutes());
+		assertEquals(result.get(1).getStatus(), "Issu de la ventilation de la semaine du 10/06/2016");
 	}
 
 }

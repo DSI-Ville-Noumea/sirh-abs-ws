@@ -1963,23 +1963,32 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoRecup(Integer convertedIdAgent) {
+		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		SimpleDateFormat sdfddMMyyyy = new SimpleDateFormat("dd/MM/yyyy");
+		
+		AgentGeneriqueDto ag = sirhWSConsumer.getAgent(convertedIdAgent);
+		AgentDto agDto = null;
+		if (ag != null && ag.getIdAgent() != null) {
+			agDto = new AgentDto(ag);
+		}
+		
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
 		for (AgentWeekRecup histo : recuperationRepository.getListeAlimAutoRecupByAgent(convertedIdAgent)) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
-			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
-			AgentDto agDto = new AgentDto();
-			if (ag != null && ag.getIdAgent() != null) {
-				agDto = new AgentDto(ag);
-			}
+			
 			mois.setAgent(agDto);
 			mois.setDateModification(histo.getLastModification());
-			mois.setDateMois(histo.getDateMonday());
-			if(histo.getDateDay()==null){
-				mois.setStatus("Issu de la ventilation");
-			}else{
+			
+			if(null != histo.getDateMonday()) {
+				mois.setDateMois(histo.getDateMonday());
+				mois.setStatus("Issu de la ventilation de la semaine du " + sdfddMMyyyy.format(histo.getDateMonday()));
+			}
+			if(null != histo.getDateDay()) {
+				mois.setDateMois(histo.getDateDay());
 				mois.setStatus("Pointage du " + sdf.format(histo.getDateDay()));
 			}
+			
 			mois.setNbJours((double) histo.getMinutes());
 			result.add(mois);
 		}
