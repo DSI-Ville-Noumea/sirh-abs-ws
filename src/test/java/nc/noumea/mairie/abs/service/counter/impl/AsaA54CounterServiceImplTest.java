@@ -608,7 +608,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		result = service.majManuelleCompteurToListAgent(idAgent, liste, true);
 
 		assertEquals(1, result.getErrors().size());
-		assertEquals("Le compteur existe déjà.", result.getErrors().get(0).toString());
+		assertEquals("Le compteur existe déjà pour l'agent 9005151.", result.getErrors().get(0).toString());
 
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentAsaA54Count.class));
@@ -658,7 +658,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		result = service.majManuelleCompteurToListAgent(idAgent, liste, true);
 
 		assertEquals(1, result.getErrors().size());
-		assertEquals("Le compteur existe déjà.", result.getErrors().get(0).toString());
+		assertEquals("Le compteur existe déjà pour l'agent 9005151.", result.getErrors().get(0).toString());
 
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
 		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA54Count.class));

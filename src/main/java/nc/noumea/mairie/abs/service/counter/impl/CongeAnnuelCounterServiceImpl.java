@@ -107,8 +107,8 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 				AgentCongeAnnuelCount.class, idAgentConcerne);
 
 		if (arcExistant != null) {
-			logger.warn(COMPTEUR_EXISTANT);
-			result.getErrors().add(String.format(COMPTEUR_EXISTANT));
+			logger.warn(String.format(COMPTEUR_EXISTANT,""));
+			result.getErrors().add(String.format(COMPTEUR_EXISTANT,""));
 			return result;
 		} else {
 			AgentCongeAnnuelCount arc = new AgentCongeAnnuelCount();

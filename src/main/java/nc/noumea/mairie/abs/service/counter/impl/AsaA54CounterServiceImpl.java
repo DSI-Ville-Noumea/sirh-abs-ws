@@ -72,8 +72,8 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 			arc.setIdAgent(compteurDto.getIdAgent());
 		}else{
 			if(compteurExistantBloquant){
-				logger.warn(COMPTEUR_EXISTANT);
-				srm.getErrors().add(String.format(COMPTEUR_EXISTANT));
+				logger.warn(String.format(COMPTEUR_EXISTANT, "pour l'agent "+compteurDto.getIdAgent()));
+				srm.getErrors().add(String.format(COMPTEUR_EXISTANT, "pour l'agent "+compteurDto.getIdAgent()));
 				return srm;
 			}
 		}

@@ -95,7 +95,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		result = service.initCompteurCongeAnnuel(idAgent, idAgentConcerne);
 
 		assertEquals(1, result.getErrors().size());
-		assertEquals("Le compteur existe déjà.", result.getErrors().get(0).toString());
+		assertEquals("Le compteur existe déjà .", result.getErrors().get(0).toString());
 	}
 
 	@Test
