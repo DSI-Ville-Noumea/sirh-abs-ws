@@ -68,7 +68,7 @@ public class AsaA52Controller {
 
 		logger.debug("entered GET [asaA52/listeCompteurA52] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur(idOrganisationSyndicale);
+		List<CompteurDto> result = counterService.getListeCompteur(idOrganisationSyndicale, null);
 
 		if (result.size() == 0)
 			throw new NoContentException();

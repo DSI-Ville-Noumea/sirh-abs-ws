@@ -28,7 +28,7 @@ public interface ICounterService {
 
 	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
 
-	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale);
+	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee);
 
 	List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin);
 

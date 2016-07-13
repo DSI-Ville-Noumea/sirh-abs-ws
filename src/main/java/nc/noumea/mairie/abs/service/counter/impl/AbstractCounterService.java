@@ -229,7 +229,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public List<CompteurDto> getListeCompteur(Integer idOrganisation) {
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
 		return null;
 	}
 

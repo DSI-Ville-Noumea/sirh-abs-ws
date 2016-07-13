@@ -247,7 +247,7 @@ public class AsaAmicaleCounterServiceImplTest extends AsaCounterServiceImplTest 
 		AsaAmicaleCounterServiceImpl service = new AsaAmicaleCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		result = service.getListeCompteur(null);
+		result = service.getListeCompteur(null, null);
 
 		assertEquals(0, result.size());
 
@@ -270,7 +270,7 @@ public class AsaAmicaleCounterServiceImplTest extends AsaCounterServiceImplTest 
 		AsaAmicaleCounterServiceImpl service = new AsaAmicaleCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		result = service.getListeCompteur(null);
+		result = service.getListeCompteur(null, null);
 
 		assertEquals(1, result.size());
 		assertEquals(12 * 60, result.get(0).getDureeAAjouter().intValue());

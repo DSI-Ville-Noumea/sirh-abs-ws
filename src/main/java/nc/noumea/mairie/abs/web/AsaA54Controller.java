@@ -61,11 +61,11 @@ public class AsaA54Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurA54", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<CompteurDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur(@RequestParam(value = "annee", required = false) Integer annee) {
 
 		logger.debug("entered GET [asaA54/listeCompteurA54] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur(null);
+		List<CompteurDto> result = counterService.getListeCompteur(null, annee);
 
 		if (result.size() == 0)
 			throw new NoContentException();

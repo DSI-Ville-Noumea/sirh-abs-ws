@@ -119,7 +119,7 @@ public class AsaA52CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurDto> getListeCompteur(Integer idOrganisation) {
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
 		List<CompteurDto> result = new ArrayList<>();
 
 		List<AgentAsaA52Count> listeArc = counterRepository.getListCounterByOrganisation(AgentAsaA52Count.class,idOrganisation);

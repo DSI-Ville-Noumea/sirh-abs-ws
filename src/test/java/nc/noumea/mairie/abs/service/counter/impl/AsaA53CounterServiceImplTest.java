@@ -405,7 +405,7 @@ public class AsaA53CounterServiceImplTest extends AsaCounterServiceImplTest {
 		AsaA53CounterServiceImpl service = new AsaA53CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		result = service.getListeCompteur(null);
+		result = service.getListeCompteur(null, null);
 
 		assertEquals(0, result.size());
 
@@ -433,7 +433,7 @@ public class AsaA53CounterServiceImplTest extends AsaCounterServiceImplTest {
 		AsaA53CounterServiceImpl service = new AsaA53CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		result = service.getListeCompteur(null);
+		result = service.getListeCompteur(null, null);
 
 		assertEquals(1, result.size());
 		assertEquals(result.get(0).getDureeAAjouter().doubleValue(), 9, 5);

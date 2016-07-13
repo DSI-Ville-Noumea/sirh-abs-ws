@@ -46,6 +46,8 @@ public interface ICounterRepository {
 
 	<T> List<T> getListCounterByOrganisation(Class<T> T, Integer idOrganisation);
 
+	<T> List<T> getListCounterByAnnee(Class<T> T, Integer annee);
+
 	List<AgentCongeAnnuelCount> getListAgentCongeAnnuelCountWithListAgents(List<Integer> listIdsAgent);
 
 }

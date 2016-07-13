@@ -819,4 +819,51 @@ public class CounterRepositoryTest {
 		absEntityManager.flush();
 		absEntityManager.clear();
 	}
+	
+
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListCounterByAnnee_ReturnEmptyList() {
+
+		// When
+		List<AgentAsaA54Count> result = repository.getListCounterByAnnee(AgentAsaA54Count.class,2015);
+
+		// Then
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void getListCounterByAnnee_ReturnListCompteur() {
+
+		// Given
+		AgentAsaA54Count record = new AgentAsaA54Count();
+		record.setIdAgent(9001767);
+		record.setTotalJours(7.0);
+		record.setDateDebut(new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+		record.setDateFin(new DateTime(2014, 12, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record);
+		AgentAsaA54Count record2 = new AgentAsaA54Count();
+		record2.setIdAgent(9005138);
+		record2.setTotalJours(10.0);
+		record2.setDateDebut(new DateTime(2015, 1, 1, 0, 0, 0).toDate());
+		record2.setDateFin(new DateTime(2015, 12, 31, 0, 0, 0).toDate());
+		absEntityManager.persist(record2);
+
+		// When
+		List<AgentAsaA54Count> result = repository.getListCounterByAnnee(AgentAsaA54Count.class,2015);
+
+		// Then
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		assertEquals(record2.getTotalJours(), result.get(0).getTotalJours());
+		assertEquals(record2.getIdAgent(), result.get(0).getIdAgent());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
 }
