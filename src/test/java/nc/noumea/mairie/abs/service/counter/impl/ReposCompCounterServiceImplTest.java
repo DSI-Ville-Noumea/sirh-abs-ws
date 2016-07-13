@@ -84,7 +84,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		ReflectionTestUtils.setField(service, "absenceService", absenceService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(0, result.getErrors().size());
 
@@ -128,7 +128,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		ReflectionTestUtils.setField(service, "absenceService", absenceService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(0, result.getErrors().size());
 
@@ -168,7 +168,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
@@ -208,7 +208,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());
@@ -249,7 +249,7 @@ public class ReposCompCounterServiceImplTest extends AbstractCounterServiceTest 
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le solde du compteur de l'agent ne peut pas être négatif.", result.getErrors().get(0).toString());

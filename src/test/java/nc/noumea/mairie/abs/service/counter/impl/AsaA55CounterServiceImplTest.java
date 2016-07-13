@@ -61,7 +61,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.", result.getErrors().get(0)
@@ -103,7 +103,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
@@ -142,7 +142,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		boolean isAgentNotFoundException = false;
 		try {
-			service.majManuelleCompteurToAgent(idAgent, compteurDto);
+			service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 		} catch (AgentNotFoundException e) {
 			isAgentNotFoundException = true;
 		}
@@ -191,7 +191,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(0, result.getErrors().size());
 
@@ -237,7 +237,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(0, result.getErrors().size());
 

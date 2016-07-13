@@ -46,7 +46,7 @@ public class AsaA54Controller {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		ReturnMessageDto srm = counterService.majManuelleCompteurToAgent(convertedIdAgent, compteurDto);
+		ReturnMessageDto srm = counterService.majManuelleCompteurToAgent(convertedIdAgent, compteurDto, false);
 
 		if (!srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -71,5 +71,28 @@ public class AsaA54Controller {
 			throw new NoContentException();
 
 		return result;
+	}
+
+	/**
+	 * Modifie manuellement le compteur ASA A54 d un agent RequestBody : Format
+	 * du type timestamp : "/Date(1396306800000+1100)/"
+	 * Sert à SIRH pour dupliquer en boucle
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/addManualByList", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto addAsaA54ManuelForListAgent(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) List<CompteurDto> listeCompteurDto, HttpServletResponse response) {
+
+		logger.debug("entered POST [asaA54/addManualByList] => addAsaA54ManuelForListAgent with parameters idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		ReturnMessageDto srm = counterService.majManuelleCompteurToListAgent(convertedIdAgent, listeCompteurDto, true);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+
+		return srm;
 	}
 }

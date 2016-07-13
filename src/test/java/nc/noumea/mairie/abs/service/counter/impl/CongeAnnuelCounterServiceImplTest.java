@@ -740,7 +740,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 
 		boolean isAgentNotFoundException = false;
 		try {
-			service.majManuelleCompteurToAgent(idAgent, compteurDto);
+			service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 		} catch (AgentNotFoundException e) {
 			isAgentNotFoundException = true;
 		}
@@ -791,7 +791,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ReflectionTestUtils.setField(service, "absenceService", absenceService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(0, result.getErrors().size());
 
@@ -831,7 +831,7 @@ public class CongeAnnuelCounterServiceImplTest extends AbstractCounterServiceTes
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le compteur n'existe pas.", result.getErrors().get(0).toString());

@@ -237,7 +237,7 @@ public class ReposCompCounterServiceImpl extends AbstractCounterService {
 	 */
 	@Override
 	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
-			ReturnMessageDto srm, MotifCompteur motifCompteur) {
+			ReturnMessageDto srm, MotifCompteur motifCompteur, boolean compteurExistantBloquant) {
 
 		logger.info("Trying to update manually Repos Comp. counters for Agent {} ...", compteurDto.getIdAgent());
 

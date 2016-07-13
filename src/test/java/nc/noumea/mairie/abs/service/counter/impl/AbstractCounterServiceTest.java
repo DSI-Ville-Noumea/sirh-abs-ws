@@ -176,7 +176,7 @@ public class AbstractCounterServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.", result.getErrors().get(0)
@@ -209,7 +209,7 @@ public class AbstractCounterServiceTest {
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());

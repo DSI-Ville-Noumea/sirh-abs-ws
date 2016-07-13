@@ -18,7 +18,7 @@ public interface ICounterService {
 
 	ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto);
 
-	ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto);
+	ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,boolean compteurExistantBloquant);
 
 	ReturnMessageDto resetCompteurRCAnneePrecedente(Integer idAgentReposCompCount);
 
@@ -58,4 +58,6 @@ public interface ICounterService {
 	List<OrganisationSyndicaleDto> getlisteOrganisationSyndicaleA52();
 
 	List<AgentOrganisationSyndicaleDto> listeRepresentantA52(Integer idOrganisationSyndicale);
+
+	ReturnMessageDto majManuelleCompteurToListAgent(Integer idAgent, List<CompteurDto> listeCompteurDto, boolean compteurExistantBloquant);
 }

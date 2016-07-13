@@ -27,7 +27,7 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 	 */
 	@Override
 	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
-			ReturnMessageDto result, MotifCompteur motifCompteur) {
+			ReturnMessageDto result, MotifCompteur motifCompteur, boolean compteurExistantBloquant) {
 
 		logger.info("Trying to update manually ASA A55 counters for Agent {} ...", compteurDto.getIdAgent());
 

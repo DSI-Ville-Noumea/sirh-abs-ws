@@ -26,7 +26,7 @@ public class AsaAmicaleCounterServiceImpl extends AsaCounterServiceImpl {
 	 * mise a jour
 	 */
 	@Override
-	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto result, MotifCompteur motifCompteur) {
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto result, MotifCompteur motifCompteur, boolean compteurExistantBloquant) {
 
 		logger.info("Trying to update manually ASA Amicale counters for Agent {} ...", compteurDto.getIdAgent());
 

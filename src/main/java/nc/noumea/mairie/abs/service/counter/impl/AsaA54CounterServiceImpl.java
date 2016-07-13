@@ -26,16 +26,16 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 	 * mise a jour
 	 */
 	@Override
-	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto result, MotifCompteur motifCompteur) {
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto result, MotifCompteur motifCompteur,boolean compteurExistantBloquant) {
 
 		logger.info("Trying to update manually ASA A54 counters for Agent {} ...", compteurDto.getIdAgent());
 
 		Double nbJours = helperService.calculAlimManuelleCompteur(compteurDto);
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A54.getValue(), result, motifCompteur);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A54.getValue(), result, motifCompteur,compteurExistantBloquant);
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
+			throw new RuntimeException("An error occured while trying to update ASA A54 counters :", e);
 		}
 	}
 
@@ -52,7 +52,7 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws IllegalAccessException
 	 */
 	protected <T1, T2> ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto, Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm,
-			MotifCompteur motifCompteur) throws InstantiationException, IllegalAccessException {
+			MotifCompteur motifCompteur, boolean compteurExistantBloquant) throws InstantiationException, IllegalAccessException {
 
 		if (sirhWSConsumer.getAgent(compteurDto.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
@@ -70,6 +70,12 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 		if (arc == null) {
 			arc = new AgentAsaA54Count();
 			arc.setIdAgent(compteurDto.getIdAgent());
+		}else{
+			if(compteurExistantBloquant){
+				logger.warn(COMPTEUR_EXISTANT);
+				srm.getErrors().add(String.format(COMPTEUR_EXISTANT));
+				return srm;
+			}
 		}
 
 		String textLog = "";

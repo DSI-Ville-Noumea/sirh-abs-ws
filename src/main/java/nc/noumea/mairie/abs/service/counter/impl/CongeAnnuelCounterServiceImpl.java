@@ -370,7 +370,7 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 	 */
 	@Override
 	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
-			ReturnMessageDto srm, MotifCompteur motifCompteur) {
+			ReturnMessageDto srm, MotifCompteur motifCompteur, boolean compteurExistantBloquant) {
 
 		logger.info("Trying to update manually conge annuel counters for Agent {} ...", compteurDto.getIdAgent());
 

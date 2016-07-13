@@ -61,7 +61,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.", result.getErrors().get(0)
@@ -108,7 +108,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
@@ -151,7 +151,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		boolean isAgentNotFoundException = false;
 		try {
-			service.majManuelleCompteurToAgent(idAgent, compteurDto);
+			service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 		} catch (AgentNotFoundException e) {
 			isAgentNotFoundException = true;
 		}
@@ -200,7 +200,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(0, result.getErrors().size());
 
@@ -246,7 +246,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
-		result = service.majManuelleCompteurToAgent(idAgent, compteurDto);
+		result = service.majManuelleCompteurToAgent(idAgent, compteurDto, false);
 
 		assertEquals(0, result.getErrors().size());
 
@@ -432,6 +432,326 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.verify(rr, Mockito.times(1)).persistEntity(Mockito.isA(AgentCount.class));
 	}
 
+	
+	@Test
+	public void majManuelleCompteurAsaA54ToListAgent_NonHabilite() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		result.getErrors().add("L'agent 9005138 n'existe pas dans l'AD.");
+		Integer idAgent = 9005138;
+		List<CompteurDto> liste = new ArrayList<>();
+		CompteurDto compteurDto = new CompteurDto();
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDateDebut(new DateTime(2013, 4, 2, 0, 0, 0).toDate());
+		liste.add(compteurDto);
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+
+		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+
+		result = service.majManuelleCompteurToListAgent(idAgent, liste, true);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.", result.getErrors().get(0)
+				.toString());
+	}
+
+	@Test
+	public void majManuelleCompteurAsaA54ToListAgent_UtilisateurSIRHHabilite_MotifCompteurInexistant() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		List<CompteurDto> liste = new ArrayList<>();
+		CompteurDto compteurDto = new CompteurDto();
+		MotifCompteurDto motifCompteurDto = new MotifCompteurDto();
+		motifCompteurDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifCompteurDto);
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeAAjouter(10.0);
+		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		liste.add(compteurDto);
+
+		AgentAsaA54Count arc = new AgentAsaA54Count();
+		arc.setTotalJours(15.0);
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(
+				counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, compteurDto.getIdAgent(),
+						compteurDto.getDateDebut())).thenReturn(arc);
+		Mockito.when(
+				counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(null);
+
+		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+
+		result = service.majManuelleCompteurToListAgent(idAgent, liste, true);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le motif n'existe pas.", result.getErrors().get(0).toString());
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA54Count.class));
+	}
+
+	@Test
+	public void majManuelleCompteurAsaA54ToListAgent_agentInexistant() {
+		
+		super.service = new AsaA48CounterServiceImpl();
+		super.majManuelleCompteurToAgent_prepareData();
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		Integer idAgent = 9005138;
+		List<CompteurDto> liste = new ArrayList<>();
+		CompteurDto compteurDto = new CompteurDto();
+			compteurDto.setIdAgent(9005151);
+			compteurDto.setDureeAAjouter(10.0);
+			compteurDto.setDateDebut(new DateTime(2013, 4, 2, 0, 0, 0).toDate());
+			MotifCompteurDto motifDto = new MotifCompteurDto();
+			motifDto.setIdMotifCompteur(1);
+			compteurDto.setMotifCompteurDto(motifDto);
+		liste.add(compteurDto);
+
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(null);
+
+		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+
+		boolean isAgentNotFoundException = false;
+		try {
+			service.majManuelleCompteurToListAgent(idAgent, liste, true);
+		} catch (AgentNotFoundException e) {
+			isAgentNotFoundException = true;
+		}
+
+		assertTrue(isAgentNotFoundException);
+	}
+
+
+	@Test
+	public void majManuelleCompteurAsaA54ToListAgent_1KO_avecCompteurExistant_1OKavecCompteurInexistant() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		List<CompteurDto> liste = new ArrayList<>();
+		CompteurDto compteurDto2 = new CompteurDto();
+		compteurDto2.setIdAgent(9005158);
+		compteurDto2.setDureeAAjouter(10.0);
+		compteurDto2.setMotifCompteurDto(motifDto);
+		compteurDto2.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto2.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		CompteurDto compteurDto1 = new CompteurDto();
+		compteurDto1.setIdAgent(9005151);
+		compteurDto1.setDureeAAjouter(10.0);
+		compteurDto1.setMotifCompteurDto(motifDto);
+		compteurDto1.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto1.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		liste.add(compteurDto1);
+		liste.add(compteurDto2);
+
+		AgentAsaA54Count arc = new AgentAsaA54Count();
+		arc.setTotalJours(15.0);
+
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto1)).thenReturn(-10.0);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto2)).thenReturn(-10.0);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(
+				counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, compteurDto1.getIdAgent(),
+						compteurDto1.getDateDebut())).thenReturn(arc);
+		Mockito.when(
+				counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, compteurDto2.getIdAgent(),
+						compteurDto2.getDateDebut())).thenReturn(null);
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto1.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
+				new MotifCompteur());
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto2.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
+				new MotifCompteur());
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto1.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+		Mockito.when(wsMock.getAgent(compteurDto2.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+
+		result = service.majManuelleCompteurToListAgent(idAgent, liste, true);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le compteur existe déjà.", result.getErrors().get(0).toString());
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentAsaA54Count.class));
+	}
+	
+
+	@Test
+	public void majManuelleCompteurAsaA54ToListAgent_KO_avecCompteurExistant() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		List<CompteurDto> liste = new ArrayList<>();
+		CompteurDto compteurDto = new CompteurDto();
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeAAjouter(10.0);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
+		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		liste.add(compteurDto);
+
+		AgentAsaA54Count arc = new AgentAsaA54Count();
+		arc.setTotalJours(15.0);
+
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(
+				counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, compteurDto.getIdAgent(),
+						compteurDto.getDateDebut())).thenReturn(arc);
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
+				new MotifCompteur());
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+
+		result = service.majManuelleCompteurToListAgent(idAgent, liste, true);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le compteur existe déjà.", result.getErrors().get(0).toString());
+
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(0)).persistEntity(Mockito.isA(AgentAsaA54Count.class));
+	}
+
+	@Test
+	public void majManuelleCompteurAsaA54ToListAgent_OK_avecCompteurInexistant() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		List<CompteurDto> liste = new ArrayList<>();
+		CompteurDto compteurDto = new CompteurDto();
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeAAjouter(10.0);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
+		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		liste.add(compteurDto);
+
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(-10.0);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(
+				counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, compteurDto.getIdAgent(),
+						compteurDto.getDateDebut())).thenReturn(null);
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
+				new MotifCompteur());
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+
+		result = service.majManuelleCompteurToListAgent(idAgent, liste, true);
+
+		assertEquals(0, result.getErrors().size());
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentAsaA54Count.class));
+	}
+
+	@Test
+	public void majManuelleCompteurAsaA54ToListAgent_OK_sansCompteurExistant() {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		Integer idAgent = 9005138;
+		List<CompteurDto> liste = new ArrayList<>();
+		CompteurDto compteurDto = new CompteurDto();
+		compteurDto.setIdAgent(9005151);
+		compteurDto.setDureeAAjouter(10.0);
+		liste.add(compteurDto);
+		MotifCompteurDto motifDto = new MotifCompteurDto();
+		motifDto.setIdMotifCompteur(1);
+		compteurDto.setMotifCompteurDto(motifDto);
+		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
+		compteurDto.setDateDebut(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculAlimManuelleCompteur(compteurDto)).thenReturn(10.0);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
+
+		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
+		Mockito.when(
+				counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, compteurDto.getIdAgent(),
+						compteurDto.getDateDebut())).thenReturn(null);
+		Mockito.when(counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur())).thenReturn(
+				new MotifCompteur());
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.isUtilisateurSIRH(idAgent)).thenReturn(result);
+		Mockito.when(wsMock.getAgent(compteurDto.getIdAgent())).thenReturn(new AgentGeneriqueDto());
+
+		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+
+		result = service.majManuelleCompteurToListAgent(idAgent, liste, true);
+
+		assertEquals(0, result.getErrors().size());
+
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentAsaA54Count.class));
+	}
 	
 
 }

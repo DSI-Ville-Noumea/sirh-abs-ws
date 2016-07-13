@@ -106,7 +106,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto) {
+	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,boolean compteurExistantBloquant) {
 
 		logger.info("Trying to update manually counters for Agent {} ...", compteurDto.getIdAgent());
 
@@ -139,13 +139,13 @@ public abstract class AbstractCounterService implements ICounterService {
 			return result;
 		}
 
-		majManuelleCompteurToAgent(idAgent, compteurDto, result, motifCompteur);
+		majManuelleCompteurToAgent(idAgent, compteurDto, result, motifCompteur,compteurExistantBloquant);
 
 		return result;
 	}
 
 	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
-			ReturnMessageDto result, MotifCompteur motifCompteur) {
+			ReturnMessageDto result, MotifCompteur motifCompteur,boolean compteurExistantBloquant) {
 
 		logger.debug(TYPE_COMPTEUR_INEXISTANT);
 		result.getErrors().add(String.format(TYPE_COMPTEUR_INEXISTANT));
@@ -304,5 +304,53 @@ public abstract class AbstractCounterService implements ICounterService {
 	@Override
 	public List<AgentOrganisationSyndicaleDto> listeRepresentantA52(Integer idOrganisationSyndicale) {
 		return null;
+	}
+
+
+	/**
+	 * appeler depuis SIRH pour mettre à jour en masse les compteurs des elections
+	 * mise a jour
+	 */
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto majManuelleCompteurToListAgent(Integer idAgent, List<CompteurDto> listeCompteurDto, boolean compteurExistantBloquant) {
+		ReturnMessageDto resultGlobal = new ReturnMessageDto();
+		// tester si agent est un utilisateur SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			logger.warn(OPERATEUR_INEXISTANT);
+			resultGlobal.getErrors().add(String.format(OPERATEUR_INEXISTANT));
+			return resultGlobal;						
+		}
+		
+		for(CompteurDto compteurDto : listeCompteurDto){
+			ReturnMessageDto result = new ReturnMessageDto();
+			logger.info("Trying to update manually counters for Agent {} ...", compteurDto.getIdAgent());			
+
+			controlSaisieAlimManuelleCompteur(compteurDto, result);
+
+			MotifCompteur motifCompteur = null;
+			if (compteurDto.getMotifCompteurDto() != null) {
+				motifCompteur = counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto()
+						.getIdMotifCompteur());
+			}
+			if (null == motifCompteur) {
+				logger.warn(MOTIF_COMPTEUR_INEXISTANT);
+				result.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
+			}
+
+			if (!result.getErrors().isEmpty()) {
+				resultGlobal.getErrors().addAll(result.getErrors());
+				continue;
+			}
+
+			ReturnMessageDto resMAJ = majManuelleCompteurToAgent(idAgent, compteurDto, new ReturnMessageDto(), motifCompteur,compteurExistantBloquant);
+
+			if (!resMAJ.getErrors().isEmpty()) {
+				resultGlobal.getErrors().addAll(resMAJ.getErrors());
+			}
+		}
+
+		return resultGlobal;
 	}
 }

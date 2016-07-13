@@ -28,7 +28,7 @@ public class RecupCounterServiceImpl extends AbstractCounterService {
 	 */
 	@Override
 	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
-			ReturnMessageDto result, MotifCompteur motifCompteur) {
+			ReturnMessageDto result, MotifCompteur motifCompteur, boolean compteurExistantBloquant) {
 
 		logger.info("Trying to update manually recuperation counters for Agent {} ...", compteurDto.getIdAgent());
 
