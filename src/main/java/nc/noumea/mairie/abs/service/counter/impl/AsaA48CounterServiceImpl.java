@@ -99,8 +99,7 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	@Transactional(readOnly = true)
 	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
 		List<CompteurDto> result = new ArrayList<>();
-
-		List<AgentAsaA48Count> listeArc = counterRepository.getListCounter(AgentAsaA48Count.class);
+		List<AgentAsaA48Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA48Count.class, annee);
 		for (AgentAsaA48Count arc : listeArc) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
 			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);

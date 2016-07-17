@@ -61,15 +61,38 @@ public class AsaA48Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurA48", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<CompteurDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur(@RequestParam(value = "annee", required = false) Integer annee) {
 
 		logger.debug("entered GET [asaA48/listeCompteurA48] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur(null, null);
+		List<CompteurDto> result = counterService.getListeCompteur(null, annee);
 
 		if (result.size() == 0)
 			throw new NoContentException();
 
 		return result;
+	}
+
+	/**
+	 * Modifie manuellement le compteur ASA A54 d un agent RequestBody : Format
+	 * du type timestamp : "/Date(1396306800000+1100)/"
+	 * Sert à SIRH pour dupliquer en boucle
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/addManualByList", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto addAsaA48ManuelForListAgent(@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) List<CompteurDto> listeCompteurDto, HttpServletResponse response) {
+
+		logger.debug("entered POST [asaA48/addManualByList] => addAsaA48ManuelForListAgent with parameters idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		ReturnMessageDto srm = counterService.majManuelleCompteurToListAgent(convertedIdAgent, listeCompteurDto, true);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+
+		return srm;
 	}
 }
