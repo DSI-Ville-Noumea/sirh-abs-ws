@@ -15,6 +15,17 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.staticmock.MockStaticEntityMethods;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Transactional;
+
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitProfil;
@@ -33,21 +44,9 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.AccessRightsRepository;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
-import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.staticmock.MockStaticEntityMethods;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 @MockStaticEntityMethods
 public class AccessRightsServiceTest {
@@ -1251,7 +1250,6 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.OPERATEUR.toString())).thenReturn(new Profil());
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.VISEUR.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 
 		final Date d = new Date();
 
@@ -1272,7 +1270,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
@@ -1353,7 +1350,6 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.OPERATEUR.toString())).thenReturn(new Profil());
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.VISEUR.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 
 		final Date d = new Date();
 
@@ -1378,7 +1374,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
@@ -1580,7 +1575,6 @@ public class AccessRightsServiceTest {
 
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.DELEGATAIRE.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 
 		final Date d = new Date();
 
@@ -1601,7 +1595,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// /////////// When //////////////
@@ -1753,7 +1746,6 @@ public class AccessRightsServiceTest {
 
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.OPERATEUR.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 
 		final Date d = new Date();
 
@@ -1774,7 +1766,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
@@ -3399,7 +3390,6 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.OPERATEUR.toString())).thenReturn(new Profil());
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.VISEUR.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 
 		final Date d = new Date();
 
@@ -3420,7 +3410,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
@@ -3491,7 +3480,6 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.OPERATEUR.toString())).thenReturn(new Profil());
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.VISEUR.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 
 		final Date d = new Date();
 
@@ -3512,7 +3500,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
@@ -3676,7 +3663,6 @@ public class AccessRightsServiceTest {
 
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.VISEUR.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 
 		final Date d = new Date();
 
@@ -3697,7 +3683,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
@@ -4532,7 +4517,6 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.OPERATEUR.toString())).thenReturn(new Profil());
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.VISEUR.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 
 		final Date d = new Date();
 
@@ -4553,7 +4537,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
@@ -4716,8 +4699,6 @@ public class AccessRightsServiceTest {
 
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.DELEGATAIRE.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
-
 		final Date d = new Date();
 
 		Mockito.doAnswer(new Answer<Object>() {
@@ -4737,7 +4718,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// /////////// When //////////////
@@ -4813,7 +4793,6 @@ public class AccessRightsServiceTest {
 
 		Mockito.when(arRepo.getProfilByName(ProfilEnum.DELEGATAIRE.toString())).thenReturn(new Profil());
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
 
 		final Date d = new Date();
 
@@ -4837,7 +4816,6 @@ public class AccessRightsServiceTest {
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 

@@ -8,6 +8,12 @@ import java.util.Set;
 
 import javax.persistence.NoResultException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import nc.noumea.mairie.abs.domain.Droit;
 import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitProfil;
@@ -26,18 +32,11 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.StatutEntiteEnum;
 import nc.noumea.mairie.abs.dto.ViseursDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
-import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentService;
 import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
 import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AccessRightsService implements IAccessRightsService {
@@ -52,9 +51,6 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
-
-	@Autowired
-	private ISirhRepository sirhRepository;
 
 	@Autowired
 	private IAgentService agentService;

@@ -11,6 +11,14 @@ import java.util.concurrent.ForkJoinPool;
 
 import javax.persistence.FlushModeType;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.AgentWeekCongeAnnuel;
@@ -54,7 +62,6 @@ import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
-import nc.noumea.mairie.abs.repository.ICongesExceptionnelsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
@@ -84,14 +91,6 @@ import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.sirh.comparator.DemandeDtoComparator;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AbsenceService implements IAbsenceService {
@@ -152,9 +151,6 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private ICongesAnnuelsRepository congeAnnuelRepository;
-	
-	@Autowired
-	private ICongesExceptionnelsRepository congeExceptionnelRepository;
 
 	@Autowired
 	private IReposCompensateurRepository reposCompensateurRepository;

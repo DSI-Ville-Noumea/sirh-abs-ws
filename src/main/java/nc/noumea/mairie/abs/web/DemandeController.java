@@ -7,6 +7,17 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentDto;
@@ -19,22 +30,10 @@ import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.service.IAbsenceService;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.ISuppressionService;
 import nc.noumea.mairie.abs.service.impl.FiltreService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/demandes")
@@ -59,9 +58,6 @@ public class DemandeController {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
-
-	@Autowired
-	private ISoldeService soldeService;
 
 	@Autowired
 	private IFiltreRepository filtreRepository;

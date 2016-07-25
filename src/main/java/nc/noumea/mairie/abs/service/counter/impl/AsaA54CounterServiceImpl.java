@@ -226,8 +226,8 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 				for (AgentA54OrganisationSyndicale agTest : listeAgentOrganisationSyndicale) {
 					if (agTest.getOrganisationSyndicale().getIdOrganisationSyndicale() != idOrganisationSyndicale) {
 						// si pas la bonne organisation
-						logger.warn(AGENT_OS_EXISTANT, agTest.getIdAgent());
-						srm.getErrors().add(String.format(AGENT_OS_EXISTANT, agTest.getIdAgent()));
+						logger.warn(AGENT_OS_EXISTANT, ag.getIdAgent());
+						srm.getErrors().add(String.format(AGENT_OS_EXISTANT, ag.getIdAgent()));
 						continue;
 					}
 				}
@@ -241,6 +241,16 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 				logger.info("Updated AgentA54OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA54AgentOrganisationSyndicale());
 				continue;
 			} else {
+				// verifier si pas deja actif dans une autre organisation
+				List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(ag.getIdAgent());
+				for (AgentA54OrganisationSyndicale agTest : listeAgentOrganisationSyndicale) {
+					if (agTest.getOrganisationSyndicale().getIdOrganisationSyndicale() != idOrganisationSyndicale) {
+						// si pas la bonne organisation
+						logger.warn(AGENT_OS_EXISTANT, ag.getIdAgent());
+						srm.getErrors().add(String.format(AGENT_OS_EXISTANT, ag.getIdAgent()));
+						continue;
+					}
+				}
 				agentOrganisationSyndicale = new AgentA54OrganisationSyndicale();
 				agentOrganisationSyndicale.setIdAgent(ag.getIdAgent());
 				agentOrganisationSyndicale.setOrganisationSyndicale(organisationSyndicale);
