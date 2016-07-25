@@ -26,27 +26,33 @@ public class OrganisationSyndicale {
 	@Id
 	@Column(name = "ID_ORGANISATION_SYNDICALE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idOrganisationSyndicale;
+	private Integer								idOrganisationSyndicale;
 
 	@NotNull
 	@Column(name = "LIBELLE", columnDefinition = "NVARCHAR2")
-	private String libelle;
+	private String								libelle;
 
 	@NotNull
 	@Column(name = "SIGLE", columnDefinition = "NVARCHAR2")
-	private String sigle;
+	private String								sigle;
 
 	@NotNull
 	@Column(name = "ACTIF", nullable = false)
 	@Type(type = "boolean")
-	private boolean actif;
+	private boolean								actif;
 
 	@OneToMany(mappedBy = "organisationSyndicale", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<AgentOrganisationSyndicale> agents = new ArrayList<AgentOrganisationSyndicale>();
+	private List<AgentOrganisationSyndicale>	agents		= new ArrayList<>();
+
+	@OneToMany(mappedBy = "organisationSyndicale", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<AgentA54OrganisationSyndicale>	agentsA54	= new ArrayList<>();
+
+	@OneToMany(mappedBy = "organisationSyndicale", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<AgentA48OrganisationSyndicale>	agentsA48	= new ArrayList<>();
 
 	@Version
 	@Column(name = "version")
-	private Integer version;
+	private Integer								version;
 
 	public Integer getIdOrganisationSyndicale() {
 		return idOrganisationSyndicale;
@@ -94,6 +100,22 @@ public class OrganisationSyndicale {
 
 	public void setAgents(List<AgentOrganisationSyndicale> agents) {
 		this.agents = agents;
+	}
+
+	public List<AgentA54OrganisationSyndicale> getAgentsA54() {
+		return agentsA54;
+	}
+
+	public void setAgentsA54(List<AgentA54OrganisationSyndicale> agentsA54) {
+		this.agentsA54 = agentsA54;
+	}
+
+	public List<AgentA48OrganisationSyndicale> getAgentsA48() {
+		return agentsA48;
+	}
+
+	public void setAgentsA48(List<AgentA48OrganisationSyndicale> agentsA48) {
+		this.agentsA48 = agentsA48;
 	}
 
 }

@@ -245,8 +245,8 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 
 		// on supprime les autres
 		for (AgentA48OrganisationSyndicale agToDelete : droitsToDelete) {
-			if (null != organisationSyndicale.getAgents() && organisationSyndicale.getAgents().contains(agToDelete)) {
-				organisationSyndicale.getAgents().remove(agToDelete);
+			if (null != organisationSyndicale.getAgentsA48() && organisationSyndicale.getAgentsA48().contains(agToDelete)) {
+				organisationSyndicale.getAgentsA48().remove(agToDelete);
 				logger.info("Deleted AgentA48OrganisationSyndicale id {}.", agToDelete.getIdA48AgentOrganisationSyndicale());
 			}
 		}
