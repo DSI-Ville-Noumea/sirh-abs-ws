@@ -4,19 +4,22 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import nc.noumea.mairie.abs.domain.AgentA48OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
+import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("AsaA48CounterServiceImpl")
 public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
@@ -26,16 +29,15 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	 * mise a jour
 	 */
 	@Override
-	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
-			ReturnMessageDto result, MotifCompteur motifCompteur, boolean compteurExistantBloquant) {
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto result,
+			MotifCompteur motifCompteur, boolean compteurExistantBloquant) {
 
 		logger.info("Trying to update manually ASA A48 counters for Agent {} ...", compteurDto.getIdAgent());
 
 		Double nbJours = helperService.calculAlimManuelleCompteur(compteurDto);
 
 		try {
-			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A48.getValue(),
-					result, motifCompteur);
+			return majManuelleCompteurToAgent(idAgent, compteurDto, nbJours, RefTypeAbsenceEnum.ASA_A48.getValue(), result, motifCompteur);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
@@ -53,9 +55,8 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto,
-			Double nbJours, Integer idRefTypeAbsence, ReturnMessageDto srm, MotifCompteur motifCompteur)
-			throws InstantiationException, IllegalAccessException {
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgentOperateur, CompteurDto compteurDto, Double nbJours, Integer idRefTypeAbsence,
+			ReturnMessageDto srm, MotifCompteur motifCompteur) throws InstantiationException, IllegalAccessException {
 
 		if (sirhWSConsumer.getAgent(compteurDto.getIdAgent()) == null) {
 			logger.error("There is no Agent [{}]. Impossible to update its counters.", compteurDto.getIdAgent());
@@ -66,11 +67,10 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 		cal.setTime(compteurDto.getDateDebut());
 		int annee = cal.get(Calendar.YEAR);
 
-		logger.info("updating counters for Agent [{}] with {} nbJours for Year {}...", compteurDto.getIdAgent(),
-				nbJours, annee);
+		logger.info("updating counters for Agent [{}] with {} nbJours for Year {}...", compteurDto.getIdAgent(), nbJours, annee);
 
-		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounterByDate(AgentAsaA48Count.class,
-				compteurDto.getIdAgent(), compteurDto.getDateDebut());
+		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, compteurDto.getIdAgent(),
+				compteurDto.getDateDebut());
 
 		if (arc == null) {
 			arc = new AgentAsaA48Count();
@@ -89,8 +89,7 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 		arc.setActif(compteurDto.isActif());
 
 		counterRepository.persistEntity(arc);
-		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc,
-				idRefTypeAbsence);
+		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
 
 		return srm;
 	}
@@ -112,13 +111,11 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande,
-			DemandeEtatChangeDto demandeEtatChangeDto) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
 
 		logger.info("Trying to update recuperation counters for Agent [{}] ...", demande.getIdAgent());
 
-		Double jours = calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(),
-				demande.getDateFin());
+		Double jours = calculJoursAlimAutoCompteur(demandeEtatChangeDto, demande, demande.getDateDebut(), demande.getDateFin());
 		if (0.0 != jours) {
 			try {
 				srm = majCompteurToAgent((DemandeAsa) demande, jours, srm);
@@ -157,8 +154,8 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 
 		// #174004 : on cherche le bon compteur par rapport à la date de debut
 		// de la demande
-		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounterByDate(AgentAsaA48Count.class,
-				demande.getIdAgent(), demande.getDateDebut());
+		AgentAsaA48Count arc = (AgentAsaA48Count) counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, demande.getIdAgent(),
+				demande.getDateDebut());
 
 		if (arc == null) {
 			logger.warn(COMPTEUR_INEXISTANT);
@@ -184,5 +181,89 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 		counterRepository.persistEntity(arc);
 
 		return srm;
+	}
+
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto saveRepresentantA48(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto) {
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		// on verifie l'existante de l'OS
+		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class, idOrganisationSyndicale);
+		if (null == organisationSyndicale) {
+			logger.warn(OS_INEXISTANT);
+			srm.getErrors().add(String.format(OS_INEXISTANT));
+			return srm;
+		} else if (!organisationSyndicale.isActif()) {
+			logger.warn(OS_INACTIVE);
+			srm.getErrors().add(String.format(OS_INACTIVE));
+			return srm;
+		}
+
+		List<AgentA48OrganisationSyndicale> listeDepart = OSRepository.getListeAgentA48Organisation(idOrganisationSyndicale);
+		List<AgentA48OrganisationSyndicale> droitsToDelete = new ArrayList<AgentA48OrganisationSyndicale>(listeDepart);
+		for (AgentOrganisationSyndicaleDto ag : listeAgentDto) {
+			AgentA48OrganisationSyndicale agentOrganisationSyndicale = null;
+			for (AgentA48OrganisationSyndicale agOrga : listeDepart) {
+				if (agOrga.getIdAgent().equals(ag.getIdAgent())) {
+					agentOrganisationSyndicale = agOrga;
+					break;
+				}
+			}
+
+			if (agentOrganisationSyndicale != null) {
+				// verifier si pas deja actif dans une autre organisation
+				List<AgentA48OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA48Organisation(ag.getIdAgent());
+				for (AgentA48OrganisationSyndicale agTest : listeAgentOrganisationSyndicale) {
+					if (agTest.getOrganisationSyndicale().getIdOrganisationSyndicale() != idOrganisationSyndicale) {
+						// si pas la bonne organisation
+						logger.warn(AGENT_OS_EXISTANT, agTest.getIdAgent());
+						srm.getErrors().add(String.format(AGENT_OS_EXISTANT, agTest.getIdAgent()));
+						continue;
+					}
+				}
+				droitsToDelete.remove(agentOrganisationSyndicale);
+				agentOrganisationSyndicale.setIdAgent(ag.getIdAgent());
+				agentOrganisationSyndicale.setOrganisationSyndicale(organisationSyndicale);
+
+				// insert nouvelle ligne Agent Organisation syndicale
+				counterRepository.persistEntity(agentOrganisationSyndicale);
+
+				logger.info("Updated AgentA48OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA48AgentOrganisationSyndicale());
+				continue;
+			} else {
+				agentOrganisationSyndicale = new AgentA48OrganisationSyndicale();
+				agentOrganisationSyndicale.setIdAgent(ag.getIdAgent());
+				agentOrganisationSyndicale.setOrganisationSyndicale(organisationSyndicale);
+
+				// insert nouvelle ligne Agent Organisation syndicale
+				counterRepository.persistEntity(agentOrganisationSyndicale);
+
+				logger.info("Added AgentA48OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA48AgentOrganisationSyndicale());
+			}
+		}
+
+		// on supprime les autres
+		for (AgentA48OrganisationSyndicale agToDelete : droitsToDelete) {
+			if (null != organisationSyndicale.getAgents() && organisationSyndicale.getAgents().contains(agToDelete)) {
+				organisationSyndicale.getAgents().remove(agToDelete);
+				logger.info("Deleted AgentA48OrganisationSyndicale id {}.", agToDelete.getIdA48AgentOrganisationSyndicale());
+			}
+		}
+
+		return srm;
+	}
+
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public List<AgentOrganisationSyndicaleDto> listeRepresentantA48(Integer idOrganisationSyndicale) {
+		List<AgentOrganisationSyndicaleDto> result = new ArrayList<>();
+
+		List<AgentA48OrganisationSyndicale> listeOrg = OSRepository.getListeAgentA48Organisation(idOrganisationSyndicale);
+		for (AgentA48OrganisationSyndicale ag : listeOrg) {
+			AgentOrganisationSyndicaleDto dto = new AgentOrganisationSyndicaleDto(ag);
+			result.add(dto);
+		}
+		return result;
 	}
 }

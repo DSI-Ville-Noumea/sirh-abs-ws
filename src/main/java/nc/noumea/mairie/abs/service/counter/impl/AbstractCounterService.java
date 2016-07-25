@@ -30,44 +30,44 @@ import org.springframework.transaction.annotation.Transactional;
 
 public abstract class AbstractCounterService implements ICounterService {
 
-	protected Logger logger = LoggerFactory.getLogger(AbstractCounterService.class);
+	protected Logger					logger							= LoggerFactory.getLogger(AbstractCounterService.class);
 
 	@Autowired
-	protected ISirhWSConsumer sirhWSConsumer;
+	protected ISirhWSConsumer			sirhWSConsumer;
 
 	@Autowired
-	protected ICounterRepository counterRepository;
+	protected ICounterRepository		counterRepository;
 
 	@Autowired
-	protected ISirhRepository sirhRepository;
+	protected ISirhRepository			sirhRepository;
 
 	@Autowired
-	protected HelperService helperService;
+	protected HelperService				helperService;
 
 	@Autowired
-	protected IAccessRightsRepository accessRightsRepository;
+	protected IAccessRightsRepository	accessRightsRepository;
 
-	protected static final String MOTIF_COMPTEUR_INEXISTANT = "Le motif n'existe pas.";
-	protected static final String SOLDE_COMPTEUR_NEGATIF = "Le solde du compteur de l'agent ne peut pas être négatif.";
-	protected static final String SOLDE_COMPTEUR_NEGATIF_AUTORISE = "Le solde du compteur de l'agent est négatif.";
-	protected static final String OPERATEUR_INEXISTANT = "Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.";
-	protected static final String DUREE_A_SAISIR = "La durée à ajouter ou retrancher n'est pas saisie.";
-	protected static final String ERREUR_DUREE_SAISIE = "Un seul des champs Durée à ajouter ou Durée à retrancher doit être saisi.";
-	protected static final String COMPTEUR_INEXISTANT = "Le compteur n'existe pas.";
-	protected static final String COMPTEUR_EXISTANT = "Le compteur existe déjà %s.";
-	protected static final String COMPTEUR_EXISTANT_DATE = "Un compteur pour l'organisation syndicale [%s] existe déjà sur ces dates.";
-	protected static final String TYPE_COMPTEUR_INEXISTANT = "Le type de compteur n'existe pas.";
-	protected static final String OS_INEXISTANT = "L'organisation syndicale n'existe pas.";
-	protected static final String OS_INACTIVE = "L'organisation syndicale n'est pas active.";
-	protected static final String AGENT_OS_EXISTANT = "L'agent [%d] fait déja partie d'une autre organisation syndicale.";
+	protected static final String		MOTIF_COMPTEUR_INEXISTANT		= "Le motif n'existe pas.";
+	protected static final String		SOLDE_COMPTEUR_NEGATIF			= "Le solde du compteur de l'agent ne peut pas être négatif.";
+	protected static final String		SOLDE_COMPTEUR_NEGATIF_AUTORISE	= "Le solde du compteur de l'agent est négatif.";
+	protected static final String		OPERATEUR_INEXISTANT			= "Vous n'êtes pas habilité à mettre à jour le compteur de cet agent.";
+	protected static final String		DUREE_A_SAISIR					= "La durée à ajouter ou retrancher n'est pas saisie.";
+	protected static final String		ERREUR_DUREE_SAISIE				= "Un seul des champs Durée à ajouter ou Durée à retrancher doit être saisi.";
+	protected static final String		COMPTEUR_INEXISTANT				= "Le compteur n'existe pas.";
+	protected static final String		COMPTEUR_EXISTANT				= "Le compteur existe déjà %s.";
+	protected static final String		COMPTEUR_EXISTANT_DATE			= "Un compteur pour l'organisation syndicale [%s] existe déjà sur ces dates.";
+	protected static final String		TYPE_COMPTEUR_INEXISTANT		= "Le type de compteur n'existe pas.";
+	protected static final String		OS_INEXISTANT					= "L'organisation syndicale n'existe pas.";
+	protected static final String		OS_INACTIVE						= "L'organisation syndicale n'est pas active.";
+	protected static final String		AGENT_OS_EXISTANT				= "L'agent [%d] fait déja partie d'une autre organisation syndicale.";
 
-	protected static final String RESET_COMPTEUR_ANNEE_PRECEDENTE = "Remise à 0 du compteur Année précédente";
-	protected static final String INITIATE_COMPTEUR = "Initialisation du compteur";
-	protected static final String RESET_COMPTEUR_ANNEE_EN_COURS = "Remise à 0 du compteur de l'année en cours";
+	protected static final String		RESET_COMPTEUR_ANNEE_PRECEDENTE	= "Remise à 0 du compteur Année précédente";
+	protected static final String		INITIATE_COMPTEUR				= "Initialisation du compteur";
+	protected static final String		RESET_COMPTEUR_ANNEE_EN_COURS	= "Remise à 0 du compteur de l'année en cours";
 
-	protected static final String ERROR_TECHNIQUE = "Erreur technique : ICounterService défaut d'implémentation";
+	protected static final String		ERROR_TECHNIQUE					= "Erreur technique : ICounterService défaut d'implémentation";
 
-	protected static final String AGENT_NON_HABILITE = "L'agent n'est pas habilité à saisir une demande.";
+	protected static final String		AGENT_NON_HABILITE				= "L'agent n'est pas habilité à saisir une demande.";
 
 	/**
 	 * appeler par PTG exclusivement l historique utilise a pour seul but de
@@ -85,8 +85,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	 * pointages #16761
 	 */
 	@Override
-	public int addToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage,
-			Integer idPointageParent) {
+	public int addToAgentForPTG(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent) {
 		return 0;
 	}
 
@@ -94,8 +93,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	 * appeler depuis ABSENCE l historique ABS_AGENT_WEEK_... n est pas utilise
 	 */
 	@Override
-	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande,
-			DemandeEtatChangeDto demandeEtatChangeDto) {
+	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm, Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
 		// pas de maj de compteur, ex : ASA A49 et A50
 		return srm;
 	}
@@ -106,7 +104,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,boolean compteurExistantBloquant) {
+	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, boolean compteurExistantBloquant) {
 
 		logger.info("Trying to update manually counters for Agent {} ...", compteurDto.getIdAgent());
 
@@ -127,8 +125,7 @@ public abstract class AbstractCounterService implements ICounterService {
 
 		MotifCompteur motifCompteur = null;
 		if (compteurDto.getMotifCompteurDto() != null) {
-			motifCompteur = counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto()
-					.getIdMotifCompteur());
+			motifCompteur = counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur());
 		}
 		if (null == motifCompteur) {
 			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
@@ -139,13 +136,13 @@ public abstract class AbstractCounterService implements ICounterService {
 			return result;
 		}
 
-		majManuelleCompteurToAgent(idAgent, compteurDto, result, motifCompteur,compteurExistantBloquant);
+		majManuelleCompteurToAgent(idAgent, compteurDto, result, motifCompteur, compteurExistantBloquant);
 
 		return result;
 	}
 
-	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto,
-			ReturnMessageDto result, MotifCompteur motifCompteur,boolean compteurExistantBloquant) {
+	protected ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, ReturnMessageDto result,
+			MotifCompteur motifCompteur, boolean compteurExistantBloquant) {
 
 		logger.debug(TYPE_COMPTEUR_INEXISTANT);
 		result.getErrors().add(String.format(TYPE_COMPTEUR_INEXISTANT));
@@ -177,8 +174,8 @@ public abstract class AbstractCounterService implements ICounterService {
 		}
 	}
 
-	protected void majAgentHistoAlimManuelle(Integer idAgentOperateur, Integer idAgentConcerne,
-			MotifCompteur motifCompteur, String textLog, AgentCount compteurAgent, Integer idRefTypeAbsence) {
+	protected void majAgentHistoAlimManuelle(Integer idAgentOperateur, Integer idAgentConcerne, MotifCompteur motifCompteur, String textLog,
+			AgentCount compteurAgent, Integer idRefTypeAbsence) {
 
 		AgentHistoAlimManuelle histo = new AgentHistoAlimManuelle();
 		histo.setIdAgent(idAgentOperateur);
@@ -252,8 +249,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public ReturnMessageDto saveRepresentantA52(Integer idOrganisationSyndicale,
-			List<AgentOrganisationSyndicaleDto> listeAgentDto) {
+	public ReturnMessageDto saveRepresentantA52(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto) {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 
@@ -306,10 +302,9 @@ public abstract class AbstractCounterService implements ICounterService {
 		return null;
 	}
 
-
 	/**
-	 * appeler depuis SIRH pour mettre à jour en masse les compteurs des elections
-	 * mise a jour
+	 * appeler depuis SIRH pour mettre à jour en masse les compteurs des
+	 * elections mise a jour
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
@@ -320,19 +315,18 @@ public abstract class AbstractCounterService implements ICounterService {
 		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
 			logger.warn(OPERATEUR_INEXISTANT);
 			resultGlobal.getErrors().add(String.format(OPERATEUR_INEXISTANT));
-			return resultGlobal;						
+			return resultGlobal;
 		}
-		
-		for(CompteurDto compteurDto : listeCompteurDto){
+
+		for (CompteurDto compteurDto : listeCompteurDto) {
 			ReturnMessageDto result = new ReturnMessageDto();
-			logger.info("Trying to update manually counters for Agent {} ...", compteurDto.getIdAgent());			
+			logger.info("Trying to update manually counters for Agent {} ...", compteurDto.getIdAgent());
 
 			controlSaisieAlimManuelleCompteur(compteurDto, result);
 
 			MotifCompteur motifCompteur = null;
 			if (compteurDto.getMotifCompteurDto() != null) {
-				motifCompteur = counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto()
-						.getIdMotifCompteur());
+				motifCompteur = counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur());
 			}
 			if (null == motifCompteur) {
 				logger.warn(MOTIF_COMPTEUR_INEXISTANT);
@@ -344,7 +338,8 @@ public abstract class AbstractCounterService implements ICounterService {
 				continue;
 			}
 
-			ReturnMessageDto resMAJ = majManuelleCompteurToAgent(idAgent, compteurDto, new ReturnMessageDto(), motifCompteur,compteurExistantBloquant);
+			ReturnMessageDto resMAJ = majManuelleCompteurToAgent(idAgent, compteurDto, new ReturnMessageDto(), motifCompteur,
+					compteurExistantBloquant);
 
 			if (!resMAJ.getErrors().isEmpty()) {
 				resultGlobal.getErrors().addAll(resMAJ.getErrors());
@@ -352,5 +347,31 @@ public abstract class AbstractCounterService implements ICounterService {
 		}
 
 		return resultGlobal;
+	}
+
+	@Override
+	public List<AgentOrganisationSyndicaleDto> listeRepresentantA54(Integer idOrganisationSyndicale) {
+		return null;
+	}
+
+	@Override
+	public ReturnMessageDto saveRepresentantA54(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto) {
+		ReturnMessageDto srm = new ReturnMessageDto();
+		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
+
+		return srm;
+	}
+
+	@Override
+	public List<AgentOrganisationSyndicaleDto> listeRepresentantA48(Integer idOrganisationSyndicale) {
+		return null;
+	}
+
+	@Override
+	public ReturnMessageDto saveRepresentantA48(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto) {
+		ReturnMessageDto srm = new ReturnMessageDto();
+		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
+
+		return srm;
 	}
 }

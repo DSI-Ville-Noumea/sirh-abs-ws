@@ -60,4 +60,12 @@ public interface ICounterService {
 	List<AgentOrganisationSyndicaleDto> listeRepresentantA52(Integer idOrganisationSyndicale);
 
 	ReturnMessageDto majManuelleCompteurToListAgent(Integer idAgent, List<CompteurDto> listeCompteurDto, boolean compteurExistantBloquant);
+
+	List<AgentOrganisationSyndicaleDto> listeRepresentantA54(Integer idOrganisationSyndicale);
+
+	ReturnMessageDto saveRepresentantA54(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto);
+
+	List<AgentOrganisationSyndicaleDto> listeRepresentantA48(Integer idOrganisationSyndicale);
+
+	ReturnMessageDto saveRepresentantA48(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto);
 }

@@ -52,6 +52,8 @@
       	<class>nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto</class>
       	<class>nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount</class>
       	<class>nc.noumea.mairie.abs.domain.RevInfo</class>
+      	<class>nc.noumea.mairie.abs.domain.AgentA54OrganisationSyndicale</class>
+      	<class>nc.noumea.mairie.abs.domain.AgentA48OrganisationSyndicale</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

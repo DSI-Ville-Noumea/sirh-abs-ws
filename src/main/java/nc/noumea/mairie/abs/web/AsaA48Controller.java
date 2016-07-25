@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -92,6 +93,45 @@ public class AsaA48Controller {
 		if (!srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 		}
+
+		return srm;
+	}
+
+
+	/**
+	 * Liste des représentants ASA A48 ResponseBody : Format du type timestamp :
+	 * "/Date(1396306800000+1100)/"
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/listeRepresentantA48", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<AgentOrganisationSyndicaleDto> listeRepresentantA54(
+			@RequestParam("idOrganisationSyndicale") Integer idOrganisationSyndicale) {
+
+		logger.debug("entered GET [asaA48/listeRepresentantA48] => listeRepresentantA54 ");
+
+		List<AgentOrganisationSyndicaleDto> result = counterService.listeRepresentantA48(idOrganisationSyndicale);
+
+		if (result.size() == 0)
+			throw new NoContentException();
+
+		return result;
+	}
+
+	/**
+	 * Modifie les representants ASA A48 d une organisation
+	 * syndicale
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/saveRepresentant", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto saveRepresentantA48(@RequestParam("idOrganisationSyndicale") int idOrganisationSyndicale,
+			@RequestBody(required = true) List<AgentOrganisationSyndicaleDto> listeAgentDto,
+			HttpServletResponse response) {
+
+		logger.debug(
+				"entered POST [asaA48/saveRepresentant] => saveRepresentantA48 with parameters idOrganisationSyndicale = {}",
+				idOrganisationSyndicale);
+
+		ReturnMessageDto srm = counterService.saveRepresentantA48(idOrganisationSyndicale, listeAgentDto);
 
 		return srm;
 	}

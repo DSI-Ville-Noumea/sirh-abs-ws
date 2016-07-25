@@ -6,10 +6,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Repository;
+
+import nc.noumea.mairie.abs.domain.AgentA48OrganisationSyndicale;
+import nc.noumea.mairie.abs.domain.AgentA54OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
-
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRepository {
@@ -30,23 +32,22 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 	// #14737 tri par ordre alpha
 	@Override
 	public List<OrganisationSyndicale> findAllOrganisation() {
-		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o order by o.sigle", OrganisationSyndicale.class)
-				.getResultList();
+		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o order by o.sigle", OrganisationSyndicale.class).getResultList();
 	}
 
 	// #14737 tri par ordre alpha
 	@Override
 	public List<OrganisationSyndicale> findAllOrganisationActives() {
-		return absEntityManager.createQuery("SELECT o FROM OrganisationSyndicale o where o.actif = true order by o.sigle",
-				OrganisationSyndicale.class).getResultList();
+		return absEntityManager
+				.createQuery("SELECT o FROM OrganisationSyndicale o where o.actif = true order by o.sigle", OrganisationSyndicale.class)
+				.getResultList();
 	}
 
 	@Override
 	public List<AgentOrganisationSyndicale> getListeAgentOrganisation(Integer idOrganisationSyndicale) {
-		TypedQuery<AgentOrganisationSyndicale> query = absEntityManager
-				.createQuery(
-						"SELECT o FROM AgentOrganisationSyndicale o where o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale",
-						AgentOrganisationSyndicale.class);
+		TypedQuery<AgentOrganisationSyndicale> query = absEntityManager.createQuery(
+				"SELECT o FROM AgentOrganisationSyndicale o where o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale",
+				AgentOrganisationSyndicale.class);
 		query.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
 
 		return query.getResultList();
@@ -54,9 +55,8 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 
 	@Override
 	public List<AgentOrganisationSyndicale> getAgentOrganisation(Integer idAgent) {
-		TypedQuery<AgentOrganisationSyndicale> query = absEntityManager.createQuery(
-				"SELECT o FROM AgentOrganisationSyndicale o where o.idAgent = :idAgent",
-				AgentOrganisationSyndicale.class);
+		TypedQuery<AgentOrganisationSyndicale> query = absEntityManager
+				.createQuery("SELECT o FROM AgentOrganisationSyndicale o where o.idAgent = :idAgent", AgentOrganisationSyndicale.class);
 		query.setParameter("idAgent", idAgent);
 
 		return query.getResultList();
@@ -65,10 +65,9 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 
 	@Override
 	public AgentOrganisationSyndicale getAgentOrganisation(Integer idAgent, Integer idOrganisationSyndicale) {
-		TypedQuery<AgentOrganisationSyndicale> query = absEntityManager
-				.createQuery(
-						"SELECT o FROM AgentOrganisationSyndicale o where o.idAgent = :idAgent and o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale ",
-						AgentOrganisationSyndicale.class);
+		TypedQuery<AgentOrganisationSyndicale> query = absEntityManager.createQuery(
+				"SELECT o FROM AgentOrganisationSyndicale o where o.idAgent = :idAgent and o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale ",
+				AgentOrganisationSyndicale.class);
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
 		try {
@@ -81,8 +80,7 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 	@Override
 	public List<AgentOrganisationSyndicale> getAgentOrganisationActif(Integer idAgent) {
 		TypedQuery<AgentOrganisationSyndicale> query = absEntityManager.createQuery(
-				"SELECT o FROM AgentOrganisationSyndicale o where o.idAgent = :idAgent and o.actif = true",
-				AgentOrganisationSyndicale.class);
+				"SELECT o FROM AgentOrganisationSyndicale o where o.idAgent = :idAgent and o.actif = true", AgentOrganisationSyndicale.class);
 		query.setParameter("idAgent", idAgent);
 
 		return query.getResultList();
@@ -95,8 +93,45 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 		sb.append("select distinct(h.organisationSyndicale) from AgentAsaA52Count h ");
 
 		TypedQuery<OrganisationSyndicale> q = absEntityManager.createQuery(sb.toString(), OrganisationSyndicale.class);
-		
 
 		return q.getResultList();
+	}
+
+	@Override
+	public List<AgentA54OrganisationSyndicale> getListeAgentA54Organisation(Integer idOrganisationSyndicale) {
+		TypedQuery<AgentA54OrganisationSyndicale> query = absEntityManager.createQuery(
+				"SELECT o FROM AgentA54OrganisationSyndicale o where o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale",
+				AgentA54OrganisationSyndicale.class);
+		query.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
+
+		return query.getResultList();
+	}
+
+	@Override
+	public List<AgentA48OrganisationSyndicale> getListeAgentA48Organisation(Integer idOrganisationSyndicale) {
+		TypedQuery<AgentA48OrganisationSyndicale> query = absEntityManager.createQuery(
+				"SELECT o FROM AgentA48OrganisationSyndicale o where o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale",
+				AgentA48OrganisationSyndicale.class);
+		query.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
+
+		return query.getResultList();
+	}
+
+	@Override
+	public List<AgentA54OrganisationSyndicale> getAgentA54Organisation(Integer idAgent) {
+		TypedQuery<AgentA54OrganisationSyndicale> query = absEntityManager
+				.createQuery("SELECT o FROM AgentA54OrganisationSyndicale o where o.idAgent = :idAgent", AgentA54OrganisationSyndicale.class);
+		query.setParameter("idAgent", idAgent);
+
+		return query.getResultList();
+	}
+
+	@Override
+	public List<AgentA48OrganisationSyndicale> getAgentA48Organisation(Integer idAgent) {
+		TypedQuery<AgentA48OrganisationSyndicale> query = absEntityManager
+				.createQuery("SELECT o FROM AgentA48OrganisationSyndicale o where o.idAgent = :idAgent", AgentA48OrganisationSyndicale.class);
+		query.setParameter("idAgent", idAgent);
+
+		return query.getResultList();
 	}
 }
