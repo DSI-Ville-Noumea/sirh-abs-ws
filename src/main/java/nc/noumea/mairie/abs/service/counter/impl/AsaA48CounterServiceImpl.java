@@ -212,7 +212,7 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 			}
 
 			if (agentOrganisationSyndicale != null) {
-				// verifier si pas deja actif dans une autre organisation
+				// verifier si pas deja dans une autre organisation
 				List<AgentA48OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA48Organisation(ag.getIdAgent());
 				for (AgentA48OrganisationSyndicale agTest : listeAgentOrganisationSyndicale) {
 					if (agTest.getOrganisationSyndicale().getIdOrganisationSyndicale() != idOrganisationSyndicale) {
@@ -233,24 +233,28 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 				logger.info("Updated AgentA48OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA48AgentOrganisationSyndicale());
 				continue;
 			} else {
-				// verifier si pas deja actif dans une autre organisation
+				// verifier si pas deja dans une autre organisation
+				boolean err = false;
 				List<AgentA48OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA48Organisation(ag.getIdAgent());
 				for (AgentA48OrganisationSyndicale agTest : listeAgentOrganisationSyndicale) {
 					if (agTest.getOrganisationSyndicale().getIdOrganisationSyndicale() != idOrganisationSyndicale) {
 						// si pas la bonne organisation
 						logger.warn(AGENT_OS_EXISTANT, ag.getIdAgent());
 						srm.getErrors().add(String.format(AGENT_OS_EXISTANT, ag.getIdAgent()));
+						err = true;
 						continue;
 					}
 				}
-				agentOrganisationSyndicale = new AgentA48OrganisationSyndicale();
-				agentOrganisationSyndicale.setIdAgent(ag.getIdAgent());
-				agentOrganisationSyndicale.setOrganisationSyndicale(organisationSyndicale);
+				if (!err) {
+					agentOrganisationSyndicale = new AgentA48OrganisationSyndicale();
+					agentOrganisationSyndicale.setIdAgent(ag.getIdAgent());
+					agentOrganisationSyndicale.setOrganisationSyndicale(organisationSyndicale);
 
-				// insert nouvelle ligne Agent Organisation syndicale
-				counterRepository.persistEntity(agentOrganisationSyndicale);
+					// insert nouvelle ligne Agent Organisation syndicale
+					counterRepository.persistEntity(agentOrganisationSyndicale);
 
-				logger.info("Added AgentA48OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA48AgentOrganisationSyndicale());
+					logger.info("Added AgentA48OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA48AgentOrganisationSyndicale());
+				}
 			}
 		}
 
