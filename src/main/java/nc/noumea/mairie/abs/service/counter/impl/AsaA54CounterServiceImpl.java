@@ -110,7 +110,10 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 		List<AgentAsaA54Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, annee);
 		for (AgentAsaA54Count arc : listeArc) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
-			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
+			// on regarde si il y a une saisie OS
+			List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(arc.getIdAgent());
+			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null,
+					listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null : listeAgentOrganisationSyndicale.get(0));
 			result.add(dto);
 		}
 		return result;

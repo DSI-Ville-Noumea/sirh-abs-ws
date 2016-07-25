@@ -101,7 +101,10 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 		List<AgentAsaA48Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA48Count.class, annee);
 		for (AgentAsaA48Count arc : listeArc) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
-			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
+			// on regarde si il y a une saisie OS
+			List<AgentA48OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA48Organisation(arc.getIdAgent());
+			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null,
+					listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null : listeAgentOrganisationSyndicale.get(0));
 			result.add(dto);
 		}
 		return result;

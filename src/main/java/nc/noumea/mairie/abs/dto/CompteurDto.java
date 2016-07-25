@@ -2,6 +2,11 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import nc.noumea.mairie.abs.domain.AgentA48OrganisationSyndicale;
+import nc.noumea.mairie.abs.domain.AgentA54OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA53Count;
@@ -10,36 +15,32 @@ import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-
 public class CompteurDto {
 
-	private Integer idCompteur;
+	private Integer						idCompteur;
 
-	private Integer idAgent;
+	private Integer						idAgent;
 
-	private Double dureeAAjouter;
+	private Double						dureeAAjouter;
 
-	private Double dureeARetrancher;
+	private Double						dureeARetrancher;
 
-	private MotifCompteurDto motifCompteurDto;
+	private MotifCompteurDto			motifCompteurDto;
 
-	private boolean isAnneePrecedente;
-
-	@JsonSerialize(using = JsonDateSerializer.class)
-	@JsonDeserialize(using = JsonDateDeserializer.class)
-	private Date dateDebut;
+	private boolean						isAnneePrecedente;
 
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
-	private Date dateFin;
+	private Date						dateDebut;
 
-	private OrganisationSyndicaleDto organisationSyndicaleDto;
-	
-	//#18726 
-	private boolean actif;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
+	private Date						dateFin;
+
+	private OrganisationSyndicaleDto	organisationSyndicaleDto;
+
+	// #18726
+	private boolean						actif;
 
 	public Integer getIdAgent() {
 		return idAgent;
@@ -89,12 +90,14 @@ public class CompteurDto {
 		this.dateFin = dateFin;
 	}
 
-	public CompteurDto(AgentAsaA48Count arc, AgentHistoAlimManuelle histo) {
+	public CompteurDto(AgentAsaA48Count arc, AgentHistoAlimManuelle histo, AgentA48OrganisationSyndicale agentOrga) {
 		this.idCompteur = arc.getIdAgentCount();
 		this.idAgent = arc.getIdAgent();
 		this.dureeAAjouter = arc.getTotalJours();
 		this.dateDebut = arc.getDateDebut();
 		this.dateFin = arc.getDateFin();
+		if (null != agentOrga)
+			this.organisationSyndicaleDto = new OrganisationSyndicaleDto(agentOrga.getOrganisationSyndicale());
 		if (histo != null && histo.getMotifCompteur() != null) {
 			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
 			this.motifCompteurDto = dto;
@@ -130,12 +133,14 @@ public class CompteurDto {
 		}
 	}
 
-	public CompteurDto(AgentAsaA54Count arc, AgentHistoAlimManuelle histo) {
+	public CompteurDto(AgentAsaA54Count arc, AgentHistoAlimManuelle histo, AgentA54OrganisationSyndicale agentOrga) {
 		this.idCompteur = arc.getIdAgentCount();
 		this.idAgent = arc.getIdAgent();
 		this.dureeAAjouter = arc.getTotalJours();
 		this.dateDebut = arc.getDateDebut();
 		this.dateFin = arc.getDateFin();
+		if (null != agentOrga)
+			this.organisationSyndicaleDto = new OrganisationSyndicaleDto(agentOrga.getOrganisationSyndicale());
 		if (histo != null && histo.getMotifCompteur() != null) {
 			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
 			this.motifCompteurDto = dto;

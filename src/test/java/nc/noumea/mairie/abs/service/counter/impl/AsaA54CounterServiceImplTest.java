@@ -8,6 +8,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import nc.noumea.mairie.abs.domain.AgentA54OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentCount;
@@ -28,11 +33,6 @@ import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 
@@ -278,15 +278,20 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		List<CompteurDto> result = new ArrayList<CompteurDto>();
 		AgentAsaA54Count e = new AgentAsaA54Count();
+		e.setIdAgent(9005138);
 		e.setTotalJours(12.0);
 		List<AgentAsaA54Count> list = new ArrayList<AgentAsaA54Count>();
 		list.add(e);
+
+		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(OSRepository.getAgentA54Organisation(e.getIdAgent())).thenReturn(null);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, null)).thenReturn(list);
 
 		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 
 		result = service.getListeCompteur(null, null);
 
@@ -302,15 +307,20 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		List<CompteurDto> result = new ArrayList<CompteurDto>();
 		AgentAsaA54Count e = new AgentAsaA54Count();
+		e.setIdAgent(9005138);
 		e.setTotalJours(12.0);
 		List<AgentAsaA54Count> list = new ArrayList<AgentAsaA54Count>();
 		list.add(e);
+
+		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
+		Mockito.when(OSRepository.getAgentA54Organisation(e.getIdAgent())).thenReturn(null);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, 2015)).thenReturn(list);
 
 		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
+		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 
 		result = service.getListeCompteur(null, 2015);
 
