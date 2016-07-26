@@ -52,6 +52,10 @@ public class Droit {
 	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY)
 	private Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 
+	@NotNull
+	@Column(name = "ID_AGENT_MODIFICATION")
+	private Integer idAgentModification;
+
 	@Version
     @Column(name = "version")
 	private Integer version;
@@ -102,5 +106,13 @@ public class Droit {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public Integer getIdAgentModification() {
+		return idAgentModification;
+	}
+
+	public void setIdAgentModification(Integer idAgentModification) {
+		this.idAgentModification = idAgentModification;
 	}
 }

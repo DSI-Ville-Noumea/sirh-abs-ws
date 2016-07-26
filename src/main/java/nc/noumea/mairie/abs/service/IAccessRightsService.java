@@ -23,9 +23,9 @@ public interface IAccessRightsService {
 
 	List<ApprobateurDto> getApprobateurs(Integer idAgent, Integer idServiceADS);
 
-	ReturnMessageDto setApprobateur(AgentWithServiceDto dto);
+	ReturnMessageDto setApprobateur(AgentWithServiceDto dto, Integer idAgentConnecte);
 
-	ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto);
+	ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto, Integer idAgentConnecte);
 
 	InputterDto getDelegator(int idAgent);
 
@@ -33,11 +33,11 @@ public interface IAccessRightsService {
 
 	ViseursDto getViseurs(int idAgent);
 
-	ReturnMessageDto setInputter(Integer idAgentAppro, InputterDto dto);
+	ReturnMessageDto setInputter(Integer idAgentAppro, InputterDto dto, Integer idAgentConnecte);
 
-	ReturnMessageDto setViseurs(Integer idAgentAppro, ViseursDto dto);
+	ReturnMessageDto setViseurs(Integer idAgentAppro, ViseursDto dto, Integer idAgentConnecte);
 
-	ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents);
+	ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents, Integer idAgentConnecte);
 
 	AgentWithServiceDto getApprobateurOfAgent(Integer convertedIdAgent);
 
@@ -51,7 +51,7 @@ public interface IAccessRightsService {
 
 	List<Integer> getIdApprobateurOfDelegataire(Integer idAgentConnecte, Integer idAgentConcerne);
 
-	ReturnMessageDto setDelegataire(Integer idAgentAppro, InputterDto inputterDto, ReturnMessageDto returnDto);
+	ReturnMessageDto setDelegataire(Integer idAgentAppro, InputterDto inputterDto, ReturnMessageDto returnDto, Integer idAgentConnecte);
 
 	ActeursDto getListeActeurs(Integer idAgent);
 
@@ -59,19 +59,20 @@ public interface IAccessRightsService {
 
 	List<AgentDto> getAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentViseur, Integer idServiceADS);
 
-	ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents);
+	ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents,
+			Integer idAgentConnecte);
 
 	List<AgentDto> getAgentsToApproveOrInputByAgent(Integer idAgentApprobateur, Integer idAgent, Integer idServiceADS);
 
-	ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents);
+	ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents, Integer idAgentConnecte);
 
-	ReturnMessageDto setOperateur(Integer idAgentAppro, AgentDto operateurDto);
+	ReturnMessageDto setOperateur(Integer idAgentAppro, AgentDto operateurDto, Integer idAgentConnecte);
 
-	ReturnMessageDto deleteOperateur(Integer idAgentAppro, AgentDto operateurDto);
+	ReturnMessageDto deleteOperateur(Integer idAgentAppro, AgentDto operateurDto,Integer idAgentConnecte);
 
-	ReturnMessageDto deleteViseur(Integer idAgentAppro, AgentDto viseurDto);
+	ReturnMessageDto deleteViseur(Integer idAgentAppro, AgentDto viseurDto,Integer idAgentConnecte);
 
-	ReturnMessageDto setViseur(Integer idAgentAppro, AgentDto viseurDto);
+	ReturnMessageDto setViseur(Integer idAgentAppro, AgentDto viseurDto, Integer idAgentConnecte);
 
 	AgentGeneriqueDto findAgent(Integer idAgent);
 
@@ -87,6 +88,5 @@ public interface IAccessRightsService {
 
 	List<Droit> getListApprobateursOfOperateur(Integer idAgentOperateur);
 
-	ReturnMessageDto dupliqueDroitsApprobateur(Integer fromApprobateur,
-			Integer toApprobateur);
+	ReturnMessageDto dupliqueDroitsApprobateur(Integer fromApprobateur, Integer toApprobateur, Integer idAgentConnecte);
 }

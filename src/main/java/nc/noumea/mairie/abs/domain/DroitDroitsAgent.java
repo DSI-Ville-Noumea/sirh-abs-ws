@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
@@ -36,6 +37,10 @@ public class DroitDroitsAgent {
 	@ManyToOne()
 	@JoinColumn(name = "ID_DROIT_PROFIL", referencedColumnName = "ID_DROIT_PROFIL")
 	private DroitProfil droitProfil;
+
+	@NotNull
+	@Column(name = "ID_AGENT_MODIFICATION")
+	private Integer idAgentModification;
 	
 	@Version
     @Column(name = "version")
@@ -79,6 +84,14 @@ public class DroitDroitsAgent {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public Integer getIdAgentModification() {
+		return idAgentModification;
+	}
+
+	public void setIdAgentModification(Integer idAgentModification) {
+		this.idAgentModification = idAgentModification;
 	}
 	
 	

@@ -34,16 +34,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/droits")
 public class AccessRightsController {
 
-	private Logger logger = LoggerFactory.getLogger(AccessRightsController.class);
+	private Logger							logger	= LoggerFactory.getLogger(AccessRightsController.class);
 
 	@Autowired
-	private IAccessRightsService accessRightService;
+	private IAccessRightsService			accessRightService;
 
 	@Autowired
-	private IAgentMatriculeConverterService converterService;
+	private IAgentMatriculeConverterService	converterService;
 
 	@Autowired
-	private ISirhWSConsumer sirhWSConsumer;
+	private ISirhWSConsumer					sirhWSConsumer;
 
 	/**
 	 * Retourne les droits d un agent
@@ -68,9 +68,11 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<ApprobateurDto> listApprobateurs(@RequestParam(value = "idAgent", required = false) Integer idAgent, @RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
+	public List<ApprobateurDto> listApprobateurs(@RequestParam(value = "idAgent", required = false) Integer idAgent,
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
-		logger.debug("entered GET [droits/approbateurs] => listApprobateurs with parameter idAgent = {} and idServiceADS = {} --> for SIRH ", idAgent, idServiceADS);
+		logger.debug("entered GET [droits/approbateurs] => listApprobateurs with parameter idAgent = {} and idServiceADS = {} --> for SIRH ", idAgent,
+				idServiceADS);
 
 		return accessRightService.getApprobateurs(idAgent, idServiceADS);
 	}
@@ -80,12 +82,12 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setApprobateur(@RequestBody AgentWithServiceDto agDtos) {
+	public ReturnMessageDto setApprobateur(@RequestBody AgentWithServiceDto agDtos, @RequestParam("idAgentConnecte") Integer idAgentConnecte) {
 		logger.debug("entered POST [droits/approbateurs] => setApprobateur --> for SIRH ");
 
 		ReturnMessageDto agentErreur = new ReturnMessageDto();
 		try {
-			agentErreur = accessRightService.setApprobateur(agDtos);
+			agentErreur = accessRightService.setApprobateur(agDtos, idAgentConnecte);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			throw new ConflictException(e.getMessage());
@@ -99,12 +101,12 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "deleteApprobateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto deleteApprobateur(@RequestBody AgentWithServiceDto agDtos) {
+	public ReturnMessageDto deleteApprobateur(@RequestBody AgentWithServiceDto agDtos, @RequestParam("idAgentConnecte") Integer idAgentConnecte) {
 		logger.debug("entered POST [droits/deleteApprobateurs] => deleteApprobateur --> for SIRH ");
 
 		ReturnMessageDto agentErreur = new ReturnMessageDto();
 		try {
-			agentErreur = accessRightService.deleteApprobateur(agDtos);
+			agentErreur = accessRightService.deleteApprobateur(agDtos, idAgentConnecte);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			throw new ConflictException(e.getMessage());
@@ -134,7 +136,8 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "inputter", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setInputter(@RequestParam("idAgent") Integer idAgent, @RequestBody InputterDto inputterDto, HttpServletResponse response) {
+	public ReturnMessageDto setInputter(@RequestParam("idAgentConnecte") Integer idAgentConnecte, @RequestParam("idAgent") Integer idAgent,
+			@RequestBody InputterDto inputterDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/inputter] => setInputter with parameter idAgent = {}", idAgent);
 
@@ -143,7 +146,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		ReturnMessageDto result = accessRightService.setInputter(convertedIdAgent, inputterDto);
+		ReturnMessageDto result = accessRightService.setInputter(convertedIdAgent, inputterDto, idAgentConnecte);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -157,7 +160,8 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "operateurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto, HttpServletResponse response) {
+	public ReturnMessageDto setOperateur(@RequestParam("idAgentConnecte") Integer idAgentConnecte, @RequestParam("idAgent") Integer idAgent,
+			@RequestBody AgentDto agentDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/operateur] => setOperateur with parameter idAgent = {}", idAgent);
 
@@ -166,7 +170,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		ReturnMessageDto result = accessRightService.setOperateur(convertedIdAgent, agentDto);
+		ReturnMessageDto result = accessRightService.setOperateur(convertedIdAgent, agentDto, idAgentConnecte);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -180,7 +184,8 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "deleteOperateurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto deleteOperateur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto, HttpServletResponse response) {
+	public ReturnMessageDto deleteOperateur(@RequestParam("idAgentConnecte") Integer idAgentConnecte, @RequestParam("idAgent") Integer idAgent,
+			@RequestBody AgentDto agentDto, HttpServletResponse response) {
 
 		logger.debug("entered DELETE [droits/operateur] => deleteOperateur with parameter idAgent = {}", idAgent);
 
@@ -189,7 +194,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		ReturnMessageDto result = accessRightService.deleteOperateur(convertedIdAgent, agentDto);
+		ReturnMessageDto result = accessRightService.deleteOperateur(convertedIdAgent, agentDto, idAgentConnecte);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -218,7 +223,8 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "viseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setViseurs(@RequestParam("idAgent") Integer idAgent, @RequestBody ViseursDto viseursDto, HttpServletResponse response) {
+	public ReturnMessageDto setViseurs(@RequestParam("idAgentConnecte") Integer idAgentConnecte, @RequestParam("idAgent") Integer idAgent,
+			@RequestBody ViseursDto viseursDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/viseur] => setViseurs with parameter idAgent = {}", idAgent);
 
@@ -227,7 +233,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		ReturnMessageDto result = accessRightService.setViseurs(convertedIdAgent, viseursDto);
+		ReturnMessageDto result = accessRightService.setViseurs(convertedIdAgent, viseursDto, idAgentConnecte);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -241,7 +247,8 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "viseurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto, HttpServletResponse response) {
+	public ReturnMessageDto setViseur(@RequestParam("idAgentConnecte") Integer idAgentConnecte, @RequestParam("idAgent") Integer idAgent,
+			@RequestBody AgentDto agentDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/viseurSIRH] => setViseur with parameter idAgent = {}", idAgent);
 
@@ -250,7 +257,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		ReturnMessageDto result = accessRightService.setViseur(convertedIdAgent, agentDto);
+		ReturnMessageDto result = accessRightService.setViseur(convertedIdAgent, agentDto, idAgentConnecte);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -264,7 +271,8 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "deleteViseurSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto deleteViseur(@RequestParam("idAgent") Integer idAgent, @RequestBody AgentDto agentDto, HttpServletResponse response) {
+	public ReturnMessageDto deleteViseur(@RequestParam("idAgentConnecte") Integer idAgentConnecte, @RequestParam("idAgent") Integer idAgent,
+			@RequestBody AgentDto agentDto, HttpServletResponse response) {
 
 		logger.debug("entered DELETE [droits/viseur] => deleteViseur with parameter idAgent = {}", idAgent);
 
@@ -273,7 +281,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		ReturnMessageDto result = accessRightService.deleteViseur(convertedIdAgent, agentDto);
+		ReturnMessageDto result = accessRightService.deleteViseur(convertedIdAgent, agentDto, idAgentConnecte);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -308,7 +316,8 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsApprouves", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setApprovedAgents(@RequestParam("idAgent") Integer idAgent, @RequestBody List<AgentDto> agDtos, HttpServletResponse response) {
+	public ReturnMessageDto setApprovedAgents(@RequestParam("idAgentConnecte") Integer idAgentConnecte, @RequestParam("idAgent") Integer idAgent,
+			@RequestBody List<AgentDto> agDtos, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/agentsApprouves] => setApprovedAgents with parameter idAgent = {}", idAgent);
 
@@ -317,7 +326,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		ReturnMessageDto result = accessRightService.setAgentsToApprove(convertedIdAgent, agDtos);
+		ReturnMessageDto result = accessRightService.setAgentsToApprove(convertedIdAgent, agDtos, idAgentConnecte);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -330,9 +339,11 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<AgentDto> getInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "idOperateur") Integer idOperateur) {
+	public List<AgentDto> getInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent,
+			@RequestParam(value = "idOperateur") Integer idOperateur) {
 
-		logger.debug("entered GET [droits/agentsSaisisByOperateur] => getInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {} ", idAgent, idOperateur);
+		logger.debug("entered GET [droits/agentsSaisisByOperateur] => getInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {} ",
+				idAgent, idOperateur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -356,7 +367,8 @@ public class AccessRightsController {
 	@RequestMapping(value = "agentsSaisisByViseur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<AgentDto> getInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "idViseur") Integer idViseur) {
 
-		logger.debug("entered GET [droits/agentsSaisisByViseur] => getInputAgentsByViseur with parameter idAgent = {} and idViseur = {} ", idAgent, idViseur);
+		logger.debug("entered GET [droits/agentsSaisisByViseur] => getInputAgentsByViseur with parameter idAgent = {} and idViseur = {} ", idAgent,
+				idViseur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -378,10 +390,12 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setInputAgentsByOperateur(@RequestParam("idAgent") Integer idAgent, @RequestParam("idOperateur") Integer idOperateur, @RequestBody List<AgentDto> agentsApprouves,
+	public ReturnMessageDto setInputAgentsByOperateur(@RequestParam("idAgentConnecte") Integer idAgentConnecte,
+			@RequestParam("idAgent") Integer idAgent, @RequestParam("idOperateur") Integer idOperateur, @RequestBody List<AgentDto> agentsApprouves,
 			HttpServletResponse response) {
 
-		logger.debug("entered POST [droits/agentsSaisisByOperateur] => setInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {}", idAgent, idOperateur);
+		logger.debug("entered POST [droits/agentsSaisisByOperateur] => setInputAgentsByOperateur with parameter idAgent = {} and idOperateur = {}",
+				idAgent, idOperateur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -394,7 +408,8 @@ public class AccessRightsController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		ReturnMessageDto result = accessRightService.setAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur, agentsApprouves);
+		ReturnMessageDto result = accessRightService.setAgentsToInputByOperateur(convertedIdAgent, convertedIdOperateur, agentsApprouves,
+				idAgentConnecte);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -407,10 +422,11 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisisByViseur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setInputAgentsByViseur(@RequestParam("idAgent") Integer idAgent, @RequestParam("idViseur") Integer idViseur, @RequestBody List<AgentDto> agentsApprouves,
-			HttpServletResponse response) {
+	public ReturnMessageDto setInputAgentsByViseur(@RequestParam("idAgentConnecte") Integer idAgentConnecte, @RequestParam("idAgent") Integer idAgent,
+			@RequestParam("idViseur") Integer idViseur, @RequestBody List<AgentDto> agentsApprouves, HttpServletResponse response) {
 
-		logger.debug("entered POST [droits/agentsSaisisByViseur] => setInputAgentsByViseur with parameter idAgent = {} and idViseur = {}", idAgent, idViseur);
+		logger.debug("entered POST [droits/agentsSaisisByViseur] => setInputAgentsByViseur with parameter idAgent = {} and idViseur = {}", idAgent,
+				idViseur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -423,7 +439,7 @@ public class AccessRightsController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		ReturnMessageDto result = accessRightService.setAgentsToInputByViseur(convertedIdAgent, convertedIdViseur, agentsApprouves);
+		ReturnMessageDto result = accessRightService.setAgentsToInputByViseur(convertedIdAgent, convertedIdViseur, agentsApprouves, idAgentConnecte);
 
 		if (result.getErrors().size() != 0)
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -436,7 +452,8 @@ public class AccessRightsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "delegataire", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setDelegataire(@RequestParam("idAgent") Integer idAgent, @RequestBody InputterDto inputterDto, HttpServletResponse response) {
+	public ReturnMessageDto setDelegataire(@RequestParam("idAgentConnecte") Integer idAgentConnecte, @RequestParam("idAgent") Integer idAgent,
+			@RequestBody InputterDto inputterDto, HttpServletResponse response) {
 
 		logger.debug("entered POST [droits/delegataire] => setDelegataire with parameter idAgent = {}", idAgent);
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -448,7 +465,7 @@ public class AccessRightsController {
 			return result;
 		}
 
-		result = accessRightService.setDelegataire(convertedIdAgent, inputterDto, result);
+		result = accessRightService.setDelegataire(convertedIdAgent, inputterDto, result, idAgentConnecte);
 
 		return result;
 	}
@@ -521,7 +538,7 @@ public class AccessRightsController {
 		else
 			return new ResponseEntity<String>(HttpStatus.CONFLICT);
 	}
-	
+
 	/**
 	 * duplique un approbateur vers un nouvel approbateur --> UTILE à SIRH
 	 */
@@ -530,9 +547,10 @@ public class AccessRightsController {
 	public ReturnMessageDto dupliqueDroitsApprobateur(@RequestParam("idAgentConnecte") Integer idAgentConnecte,
 			@RequestParam("idAgentSource") Integer idAgentSource, @RequestParam("idAgentDest") Integer idAgentDest, HttpServletResponse response) {
 
-		logger.debug("entered POST [droits/dupliqueDroitsApprobateur] => dupliqueDroitsApprobateur with parameter idAgentConnecte = {} and idAgentSource = {} and idAgentDest = {}", 
+		logger.debug(
+				"entered POST [droits/dupliqueDroitsApprobateur] => dupliqueDroitsApprobateur with parameter idAgentConnecte = {} and idAgentSource = {} and idAgentDest = {}",
 				idAgentConnecte, idAgentSource, idAgentDest);
-		
+
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		// on verifie que l agent ait les droits
@@ -544,9 +562,9 @@ public class AccessRightsController {
 		int convertedIdAgentSource = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentSource);
 		int convertedIdAgentDest = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentDest);
 
-		result = accessRightService.dupliqueDroitsApprobateur(convertedIdAgentSource, convertedIdAgentDest);
+		result = accessRightService.dupliqueDroitsApprobateur(convertedIdAgentSource, convertedIdAgentDest, idAgentConnecte);
 
 		return result;
 	}
-	
+
 }

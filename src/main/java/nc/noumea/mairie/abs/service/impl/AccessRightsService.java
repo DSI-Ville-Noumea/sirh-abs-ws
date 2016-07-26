@@ -206,7 +206,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setApprobateur(AgentWithServiceDto dto) {
+	public ReturnMessageDto setApprobateur(AgentWithServiceDto dto,Integer idAgentConnecte) {
 		ReturnMessageDto res = new ReturnMessageDto();
 
 		Droit d = accessRightsRepository.getDroitByProfilAndAgent(ProfilEnum.APPROBATEUR.toString(), dto.getIdAgent());
@@ -220,8 +220,10 @@ public class AccessRightsService implements IAccessRightsService {
 			dp.setDroit(d);
 			dp.setDroitApprobateur(d);
 			dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.APPROBATEUR.toString()));
+			dp.setIdAgentModification(idAgentConnecte);
 			d.getDroitProfils().add(dp);
 			d.setDateModification(helperService.getCurrentDate());
+			d.setIdAgentModification(idAgentConnecte);
 			d.setIdAgent(dto.getIdAgent());
 			accessRightsRepository.persisEntity(d);
 		}
@@ -232,26 +234,27 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto) {
+	public ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto,Integer idAgentConnecte) {
 		ReturnMessageDto res = new ReturnMessageDto();
 		Droit d = accessRightsRepository.getDroitByProfilAndAgent(ProfilEnum.APPROBATEUR.toString(), dto.getIdAgent());
 
 		if (d != null) {
 			// on supprime tous les inputters (et sous agents) de l'approbateur
-			setInputter(d.getIdAgent(), new InputterDto());
+			setInputter(d.getIdAgent(), new InputterDto(),idAgentConnecte);
 
-			setViseurs(d.getIdAgent(), new ViseursDto());
+			setViseurs(d.getIdAgent(), new ViseursDto(),idAgentConnecte);
 			// enfin on supprime l'approbateur
 			// First, we remove all the agents this approbateur was approving
 			// this will also delete all the agents its operateurs were filling
 			// in for
 			for (DroitDroitsAgent agentSaisiToDelete : d.getDroitDroitsAgent()) {
 				// accessRightsRepository.clear();
+				agentSaisiToDelete.setIdAgentModification(idAgentConnecte);
 				accessRightsRepository.removeEntity(agentSaisiToDelete);
 			}
 			for (DroitProfil dp : d.getDroitProfils()) {
 				if (dp.getProfil().getLibelle().equals(ProfilEnum.APPROBATEUR.toString())) {
-					deleteDroitProfil(dp);
+					deleteDroitProfil(dp,idAgentConnecte);
 					break;
 				}
 			}
@@ -374,7 +377,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setInputter(Integer idAgentAppro, InputterDto dto) {
+	public ReturnMessageDto setInputter(Integer idAgentAppro, InputterDto dto,Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentAppro);
@@ -388,12 +391,12 @@ public class AccessRightsService implements IAccessRightsService {
 
 		// /////////////////// DELEGATAIRE /////////////////////////////////////
 		// on traite le delegataire
-		traiteDelegataire(dto, delegataire, droitApprobateur, result);
+		traiteDelegataire(dto, delegataire, droitApprobateur, result,idAgentConnecte);
 		// //////////////////// FIN DELEGATAIRE ///////////////////////////////
 
 		// ////////////////////// OPERATEURS //////////////////////////////////
 		// on traite les operateurs
-		traiteOperateurs(dto, originalOperateurs, idAgentAppro, droitApprobateur, result);
+		traiteOperateurs(dto, originalOperateurs, idAgentAppro, droitApprobateur, result,idAgentConnecte);
 		// //////////////////// FIN OPERATEURS /////////////////////////
 
 		return result;
@@ -402,7 +405,7 @@ public class AccessRightsService implements IAccessRightsService {
 	// #15713 special pour SIRH : one shot
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setOperateur(Integer idAgentAppro, AgentDto operateurDto) {
+	public ReturnMessageDto setOperateur(Integer idAgentAppro, AgentDto operateurDto,Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentAppro);
@@ -414,7 +417,7 @@ public class AccessRightsService implements IAccessRightsService {
 			return result;
 		}
 
-		creeOperateur(droitApprobateur, operateurDto, result);
+		creeOperateur(droitApprobateur, operateurDto, result,idAgentConnecte);
 
 		return result;
 	}
@@ -422,7 +425,7 @@ public class AccessRightsService implements IAccessRightsService {
 	// #15713 special pour SIRH : one shot
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto deleteOperateur(Integer idAgentAppro, AgentDto operateurDto) {
+	public ReturnMessageDto deleteOperateur(Integer idAgentAppro, AgentDto operateurDto,Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -434,7 +437,7 @@ public class AccessRightsService implements IAccessRightsService {
 			return result;
 		}
 
-		deleteDroitProfil(droitProfilOperateur);
+		deleteDroitProfil(droitProfilOperateur,idAgentConnecte);
 
 		return result;
 	}
@@ -442,7 +445,7 @@ public class AccessRightsService implements IAccessRightsService {
 	// #15713 special pour SIRH : one shot
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setViseur(Integer idAgentAppro, AgentDto viseurDto) {
+	public ReturnMessageDto setViseur(Integer idAgentAppro, AgentDto viseurDto,Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentAppro);
@@ -454,7 +457,7 @@ public class AccessRightsService implements IAccessRightsService {
 			return result;
 		}
 
-		creeViseur(droitApprobateur, viseurDto, result);
+		creeViseur(droitApprobateur, viseurDto, result,idAgentConnecte);
 
 		return result;
 	}
@@ -462,7 +465,7 @@ public class AccessRightsService implements IAccessRightsService {
 	// #15713 special pour SIRH : one shot
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto deleteViseur(Integer idAgentAppro, AgentDto viseurDto) {
+	public ReturnMessageDto deleteViseur(Integer idAgentAppro, AgentDto viseurDto,Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -474,12 +477,12 @@ public class AccessRightsService implements IAccessRightsService {
 			return result;
 		}
 
-		deleteDroitProfil(droitProfilViseur);
+		deleteDroitProfil(droitProfilViseur,idAgentConnecte);
 
 		return result;
 	}
 
-	private void traiteViseurs(ViseursDto dto, ArrayList<Droit> originalViseurs, Integer idAgentAppro, Droit droitApprobateur, ReturnMessageDto result) {
+	private void traiteViseurs(ViseursDto dto, ArrayList<Droit> originalViseurs, Integer idAgentAppro, Droit droitApprobateur, ReturnMessageDto result,Integer idAgentConnecte) {
 
 		for (AgentDto viseurDto : dto.getViseurs()) {
 
@@ -498,7 +501,7 @@ public class AccessRightsService implements IAccessRightsService {
 			if (newViseur != null)
 				continue;
 
-			creeViseur(droitApprobateur, viseurDto, result);
+			creeViseur(droitApprobateur, viseurDto, result,idAgentConnecte);
 		}
 
 		// on supprime les viseurs en trop
@@ -514,11 +517,11 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 		}
 		for (DroitProfil dp : dpASupp) {
-			deleteDroitProfil(dp);
+			deleteDroitProfil(dp,idAgentConnecte);
 		}
 	}
 
-	private void creeViseur(Droit droitApprobateur, AgentDto viseurDto, ReturnMessageDto result) {
+	private void creeViseur(Droit droitApprobateur, AgentDto viseurDto, ReturnMessageDto result,Integer idAgentConnecte) {
 
 		AgentGeneriqueDto ag = sirhWSConsumer.getAgent(viseurDto.getIdAgent());
 		// on verifie que l idAgent existe
@@ -540,16 +543,18 @@ public class AccessRightsService implements IAccessRightsService {
 
 		DroitProfil dp = new DroitProfil();
 		newViseur.setDateModification(helperService.getCurrentDate());
+		newViseur.setIdAgentModification(idAgentConnecte);
 		dp.setDroit(newViseur);
 		dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.VISEUR.toString()));
 		dp.setDroitApprobateur(droitApprobateur);
+		dp.setIdAgentModification(idAgentConnecte);
 		newViseur.getDroitProfils().add(dp);
 
 		if (newViseur.getIdDroit() == null)
 			accessRightsRepository.persisEntity(newViseur);
 	}
 
-	private void traiteOperateurs(InputterDto dto, ArrayList<Droit> originalOperateurs, Integer idAgentAppro, Droit droitApprobateur, ReturnMessageDto result) {
+	private void traiteOperateurs(InputterDto dto, ArrayList<Droit> originalOperateurs, Integer idAgentAppro, Droit droitApprobateur, ReturnMessageDto result,Integer idAgentConnecte) {
 
 		for (AgentDto operateurDto : dto.getOperateurs()) {
 
@@ -568,7 +573,7 @@ public class AccessRightsService implements IAccessRightsService {
 			if (newOperateur != null)
 				continue;
 
-			creeOperateur(droitApprobateur, operateurDto, result);
+			creeOperateur(droitApprobateur, operateurDto, result,idAgentConnecte);
 		}
 
 		// on supprime les operateurs en trop
@@ -584,11 +589,11 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 		}
 		for (DroitProfil dp : dpASupp) {
-			deleteDroitProfil(dp);
+			deleteDroitProfil(dp,idAgentConnecte);
 		}
 	}
 
-	private void creeOperateur(Droit droitApprobateur, AgentDto operateurDto, ReturnMessageDto result) {
+	private void creeOperateur(Droit droitApprobateur, AgentDto operateurDto, ReturnMessageDto result,Integer idAgentConnecte) {
 
 		AgentGeneriqueDto ag = sirhWSConsumer.getAgent(operateurDto.getIdAgent());
 		// on verifie que l idAgent existe
@@ -611,23 +616,25 @@ public class AccessRightsService implements IAccessRightsService {
 
 		DroitProfil dp = new DroitProfil();
 		newOperateur.setDateModification(helperService.getCurrentDate());
+		newOperateur.setIdAgentModification(idAgentConnecte);
 		dp.setDroit(newOperateur);
 		dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.OPERATEUR.toString()));
 		dp.setDroitApprobateur(droitApprobateur);
+		dp.setIdAgentModification(idAgentConnecte);
 		newOperateur.getDroitProfils().add(dp);
 
 		if (newOperateur.getIdDroit() == null)
 			accessRightsRepository.persisEntity(newOperateur);
 	}
 
-	private void traiteDelegataire(InputterDto dto, DroitProfil delegataire, Droit droitApprobateur, ReturnMessageDto result) {
+	private void traiteDelegataire(InputterDto dto, DroitProfil delegataire, Droit droitApprobateur, ReturnMessageDto result,Integer idAgentConnecte) {
 
 		// Si le nouveau délégataire est null
 		if (dto.getDelegataire() == null) {
 
 			// Si un délégataire existant, on le supprime
 			if (delegataire != null)
-				deleteDroitProfil(delegataire);
+				deleteDroitProfil(delegataire,idAgentConnecte);
 			return;
 		}
 
@@ -661,7 +668,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		// on supprime d abord le delegataire precedent
 		if (delegataire != null) {
-			deleteDroitProfil(delegataire);
+			deleteDroitProfil(delegataire,idAgentConnecte);
 		}
 
 		// on regarde si le droit existe deja pour cette personne
@@ -673,8 +680,10 @@ public class AccessRightsService implements IAccessRightsService {
 
 		DroitProfil dp = new DroitProfil();
 		d.setDateModification(helperService.getCurrentDate());
+		d.setIdAgentModification(idAgentConnecte);
 		dp.setDroit(d);
 		dp.setProfil(accessRightsRepository.getProfilByName(ProfilEnum.DELEGATAIRE.toString()));
+		dp.setIdAgentModification(idAgentConnecte);
 		dp.setDroitApprobateur(droitApprobateur);
 		d.getDroitProfils().add(dp);
 
@@ -792,21 +801,23 @@ public class AccessRightsService implements IAccessRightsService {
 		return result;
 	}
 
-	private void deleteDroitProfil(DroitProfil droitProfil) {
+	private void deleteDroitProfil(DroitProfil droitProfil,Integer idAgentConnecte) {
 
 		// on supprime les droits agent associes au droit profil
 		for (DroitDroitsAgent agToDelete : droitProfil.getDroitDroitsAgent()) {
-			deleteDroitDroitsAgent(agToDelete);
+			deleteDroitDroitsAgent(agToDelete,idAgentConnecte);
 		}
 
 		// on supprime le profil
 		Droit droit = droitProfil.getDroit();
 		droit.getDroitProfils().remove(droitProfil);
+		droitProfil.setIdAgentModification(idAgentConnecte);
 		accessRightsRepository.removeEntity(droitProfil);
 
 		// on verifie que l agent n a pas d autre profil, si non on supprime son
 		// droit
 		if (droit.getDroitProfils().size() == 0) {
+			droit.setIdAgentModification(idAgentConnecte);
 			accessRightsRepository.removeEntity(droit);
 		}
 	}
@@ -817,8 +828,8 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents) {
-		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.OPERATEUR);
+	public ReturnMessageDto setAgentsToInputByOperateur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents,Integer idAgentConnecte) {
+		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.OPERATEUR,idAgentConnecte);
 	}
 
 	/**
@@ -827,11 +838,11 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents) {
-		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.VISEUR);
+	public ReturnMessageDto setAgentsToInputByViseur(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents,Integer idAgentConnecte) {
+		return setAgentsToInput(idAgentApprobateur, idAgentOperateur, agents, ProfilEnum.VISEUR,idAgentConnecte);
 	}
 
-	protected ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur, List<AgentDto> agents, ProfilEnum profil) {
+	protected ReturnMessageDto setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateurOrViseur, List<AgentDto> agents, ProfilEnum profil,Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -892,6 +903,7 @@ public class AccessRightsService implements IAccessRightsService {
 				if (!droitProfilOperateurOrViseur.getDroitDroitsAgent().contains(ddaInAppro)) {
 					DroitDroitsAgent dda = new DroitDroitsAgent();
 					dda.setDroit(droitProfilOperateurOrViseur.getDroit());
+					dda.setIdAgentModification(idAgentConnecte);
 					dda.setDroitsAgent(ddaInAppro.getDroitsAgent());
 					dda.setDroitProfil(droitProfilOperateurOrViseur);
 
@@ -912,14 +924,14 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		for (DroitDroitsAgent agToUnlink : agentsToUnlink) {
-			deleteDroitDroitsAgent(agToUnlink);
+			deleteDroitDroitsAgent(agToUnlink,idAgentConnecte);
 		}
 		return result;
 	}
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents) {
+	public ReturnMessageDto setAgentsToApprove(Integer idAgentApprobateur, List<AgentDto> agents,Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -958,9 +970,11 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 
 			newDroitAgent.setDateModification(helperService.getCurrentDate());
+			newDroitAgent.setIdAgentModification(idAgentConnecte);
 
 			existingAgent = new DroitDroitsAgent();
 			existingAgent.setDroit(droitProfilApprobateur.getDroit());
+			existingAgent.setIdAgentModification(idAgentConnecte);
 			existingAgent.setDroitProfil(droitProfilApprobateur);
 			existingAgent.setDroitsAgent(newDroitAgent);
 
@@ -988,7 +1002,7 @@ public class AccessRightsService implements IAccessRightsService {
 						for (DroitDroitsAgent droitDroitsAgentOperateurToDelete : droitProfilOperateur.getDroitDroitsAgent()) {
 							for (DroitDroitsAgent agToDelete : agentsToDelete) {
 								if (droitDroitsAgentOperateurToDelete.getDroitsAgent().getIdAgent().equals(agToDelete.getDroitsAgent().getIdAgent())) {
-									deleteDroitDroitsAgent(droitDroitsAgentOperateurToDelete);
+									deleteDroitDroitsAgent(droitDroitsAgentOperateurToDelete,idAgentConnecte);
 								}
 							}
 						}
@@ -1009,7 +1023,7 @@ public class AccessRightsService implements IAccessRightsService {
 						for (DroitDroitsAgent droitDroitsAgentViseurToDelete : droitProfilViseur.getDroitDroitsAgent()) {
 							for (DroitDroitsAgent agToDelete : agentsToDelete) {
 								if (droitDroitsAgentViseurToDelete.getDroitsAgent().getIdAgent().equals(agToDelete.getDroitsAgent().getIdAgent())) {
-									deleteDroitDroitsAgent(droitDroitsAgentViseurToDelete);
+									deleteDroitDroitsAgent(droitDroitsAgentViseurToDelete,idAgentConnecte);
 								}
 							}
 						}
@@ -1019,22 +1033,24 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		for (DroitDroitsAgent agToDelete : agentsToDelete) {
-			deleteDroitDroitsAgent(agToDelete);
+			deleteDroitDroitsAgent(agToDelete,idAgentConnecte);
 
 		}
 
 		return result;
 	}
 
-	private void deleteDroitDroitsAgent(DroitDroitsAgent agToDelete) {
+	private void deleteDroitDroitsAgent(DroitDroitsAgent agToDelete,Integer idAgentConnecte) {
 
 		DroitsAgent droitAgent = agToDelete.getDroitsAgent();
 		droitAgent.getDroitDroitsAgent().remove(agToDelete);
+		agToDelete.setIdAgentModification(idAgentConnecte);
 		accessRightsRepository.removeEntity(agToDelete);
 
 		// on verifie que l agent n a pas d autre droits, si non on supprime
 		// son droit
 		if (droitAgent.getDroitDroitsAgent().size() == 0) {
+			droitAgent.setIdAgentModification(idAgentConnecte);
 			accessRightsRepository.removeEntity(droitAgent);
 		}
 	}
@@ -1069,7 +1085,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setViseurs(Integer idAgentAppro, ViseursDto dto) {
+	public ReturnMessageDto setViseurs(Integer idAgentAppro, ViseursDto dto,Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentAppro);
@@ -1082,7 +1098,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		// ////////////////////// VISEURS //////////////////////////////////
 		// on traite les viseurs
-		traiteViseurs(dto, originalViseurs, idAgentAppro, droitApprobateur, result);
+		traiteViseurs(dto, originalViseurs, idAgentAppro, droitApprobateur, result,idAgentConnecte);
 		// //////////////////// FIN VISEURS //////////////////////////////////
 
 		return result;
@@ -1441,7 +1457,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto setDelegataire(Integer idAgentAppro, InputterDto inputterDto, ReturnMessageDto result) {
+	public ReturnMessageDto setDelegataire(Integer idAgentAppro, InputterDto inputterDto, ReturnMessageDto result,Integer idAgentConnecte) {
 		Droit droitApprobateur = accessRightsRepository.getAgentAccessRights(idAgentAppro);
 
 		// on recupere la liste des
@@ -1452,7 +1468,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		// /////////////////// DELEGATAIRE /////////////////////////////////////
 		// on traite le delegataire
-		traiteDelegataire(inputterDto, delegataire, droitApprobateur, result);
+		traiteDelegataire(inputterDto, delegataire, droitApprobateur, result,idAgentConnecte);
 		// //////////////////// FIN DELEGATAIRE ///////////////////////////////
 		return result;
 	}
@@ -1615,7 +1631,7 @@ public class AccessRightsService implements IAccessRightsService {
 	
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto dupliqueDroitsApprobateur(Integer fromApprobateur, Integer toApprobateur) {
+	public ReturnMessageDto dupliqueDroitsApprobateur(Integer fromApprobateur, Integer toApprobateur,Integer idAgentConnecte) {
 		
 		ReturnMessageDto result = new ReturnMessageDto();
 		
@@ -1651,11 +1667,13 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		
 		droitApproDest.setDateModification(helperService.getCurrentDate());
+		droitApproDest.setIdAgentModification(idAgentConnecte);
 		
 		for(DroitProfil droitProfil : droitApproSource.getDroitProfils()) {
 			if(droitProfil.getProfil().getLibelle().equals(ProfilEnum.APPROBATEUR.toString())) {
 				DroitProfil newDroitProfil = new DroitProfil();
 				newDroitProfil.setProfil(droitProfil.getProfil());
+				newDroitProfil.setIdAgentModification(idAgentConnecte);
 				newDroitProfil.setDroit(droitApproDest);
 				newDroitProfil.setDroitApprobateur(droitApproDest);
 				droitApproDest.getDroitProfils().add(newDroitProfil);
@@ -1666,6 +1684,7 @@ public class AccessRightsService implements IAccessRightsService {
 					newDda.setDroit(droitApproDest);
 					newDda.setDroitProfil(newDroitProfil);
 					newDda.setDroitsAgent(dda.getDroitsAgent());
+					newDda.setIdAgentModification(idAgentConnecte);
 					newDroitProfil.getDroitDroitsAgent().add(newDda);
 					
 					accessRightsRepository.persisEntity(newDda);
@@ -1686,11 +1705,13 @@ public class AccessRightsService implements IAccessRightsService {
 						newDroitProfil.setDroit(droit);
 						newDroitProfil.setDroitApprobateur(droitApproDest);
 						newDroitProfil.setProfil(droitProfil.getProfil());
+						newDroitProfil.setIdAgentModification(idAgentConnecte);
 						accessRightsRepository.persisEntity(newDroitProfil);
 						
 						for(DroitDroitsAgent dda : droitProfil.getDroitDroitsAgent()) {
 							DroitDroitsAgent newDda = new DroitDroitsAgent();
 							newDda.setDroit(droit);
+							newDda.setIdAgentModification(idAgentConnecte);
 							newDda.setDroitProfil(newDroitProfil);
 							newDda.setDroitsAgent(dda.getDroitsAgent());
 							newDroitProfil.getDroitDroitsAgent().add(newDda);

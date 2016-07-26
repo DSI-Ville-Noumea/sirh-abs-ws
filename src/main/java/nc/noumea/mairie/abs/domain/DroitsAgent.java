@@ -51,6 +51,10 @@ public class DroitsAgent {
 	@OneToMany(mappedBy = "droitsAgent", fetch = FetchType.LAZY, orphanRemoval = true, cascade = { CascadeType.ALL, CascadeType.REMOVE })
 	private Set<DroitDroitsAgent> droitDroitsAgent = new HashSet<DroitDroitsAgent>();
 
+	@NotNull
+	@Column(name = "ID_AGENT_MODIFICATION")
+	private Integer idAgentModification;
+
 	@Version
 	@Column(name = "version")
 	private Integer version;
@@ -93,6 +97,14 @@ public class DroitsAgent {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public Integer getIdAgentModification() {
+		return idAgentModification;
+	}
+
+	public void setIdAgentModification(Integer idAgentModification) {
+		this.idAgentModification = idAgentModification;
 	}
 
 }

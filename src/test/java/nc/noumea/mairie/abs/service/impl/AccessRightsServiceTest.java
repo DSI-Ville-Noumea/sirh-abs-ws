@@ -397,7 +397,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto res = service.setApprobateur(agentDto);
+		ReturnMessageDto res = service.setApprobateur(agentDto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
@@ -435,7 +435,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto res = service.setApprobateur(agentDto);
+		ReturnMessageDto res = service.setApprobateur(agentDto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
@@ -465,7 +465,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		ReturnMessageDto res = service.setApprobateur(agentDto);
+		ReturnMessageDto res = service.setApprobateur(agentDto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
@@ -500,7 +500,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto res = service.setApprobateur(agentDto);
+		ReturnMessageDto res = service.setApprobateur(agentDto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
@@ -536,7 +536,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		ReturnMessageDto res = service.deleteApprobateur(new AgentWithServiceDto());
+		ReturnMessageDto res = service.deleteApprobateur(new AgentWithServiceDto(),9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
@@ -581,7 +581,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto res = service.deleteApprobateur(agentDto);
+		ReturnMessageDto res = service.deleteApprobateur(agentDto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(Droit.class));
@@ -937,7 +937,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// Then
 		assertEquals(2, msgDto.getErrors().size());
@@ -994,7 +994,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// Then
 		assertEquals(0, msgDto.getErrors().size());
@@ -1066,7 +1066,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(4)).persisEntity(Mockito.isA(Droit.class));
@@ -1182,7 +1182,7 @@ public class AccessRightsServiceTest {
 
 		// ///////////////////////// TESTS ////////////////////////
 		// When
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(2)).persisEntity(Mockito.isA(Droit.class));
@@ -1273,7 +1273,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(Droit.class));
@@ -1378,7 +1378,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
@@ -1515,7 +1515,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// /////////// When //////////////
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// ///////////// Then //////////////
 		assertEquals(0, msgDto.getErrors().size());
@@ -1598,7 +1598,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// /////////// When //////////////
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// ///////////// Then //////////////
 		assertEquals(0, msgDto.getErrors().size());
@@ -1684,7 +1684,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// /////////// When //////////////
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// ///////////// Then //////////////
 		assertEquals(0, msgDto.getErrors().size());
@@ -1769,7 +1769,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto msgDto = service.setInputter(9005138, dto);
+		ReturnMessageDto msgDto = service.setInputter(9005138, dto,9005138);
 
 		// Then
 		assertEquals(0, msgDto.getErrors().size());
@@ -1796,7 +1796,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR);
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR,9005138);
 
 		// Then
 		assertEquals(1, msgDto.getErrors().size());
@@ -1830,7 +1830,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.VISEUR);
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.VISEUR,9005138);
 
 		// Then
 		assertEquals(1, msgDto.getErrors().size());
@@ -1921,7 +1921,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR);
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR,9005138);
 
 		// //////////// THEN ///////////////
 		assertEquals(0, msgDto.getErrors().size());
@@ -1989,7 +1989,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR);
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
@@ -2089,7 +2089,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR);
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(2)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
@@ -2194,7 +2194,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR);
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(2)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
@@ -2289,7 +2289,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR);
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.never()).persisEntity(Mockito.isA(DroitDroitsAgent.class));
@@ -2383,7 +2383,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR);
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
@@ -2473,7 +2473,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR);
+		ReturnMessageDto msgDto = service.setAgentsToInput(idAgentApprobateur, idAgentOperateurOrViseur, agents, ProfilEnum.OPERATEUR,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
@@ -2542,7 +2542,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
+		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(DroitsAgent.class));
@@ -2622,7 +2622,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
+		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(DroitsAgent.class));
@@ -2692,7 +2692,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
+		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitsAgent.class));
@@ -2762,7 +2762,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
+		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
@@ -2873,7 +2873,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
+		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
@@ -2983,7 +2983,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// /////////// WHEN /////////////
-		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto);
+		ReturnMessageDto msgDto = service.setAgentsToApprove(idAgentApprobateur, agsDto,9005138);
 
 		// //////////// THEN ///////////////
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
@@ -3156,7 +3156,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		ReturnMessageDto msgDto = service.setViseurs(9005138, dto);
+		ReturnMessageDto msgDto = service.setViseurs(9005138, dto,9005138);
 
 		// Then
 		assertEquals(1, msgDto.getErrors().size());
@@ -3202,7 +3202,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto msgDto = service.setViseurs(9005138, dto);
+		ReturnMessageDto msgDto = service.setViseurs(9005138, dto,9005138);
 
 		// Then
 		assertEquals(0, msgDto.getErrors().size());
@@ -3261,7 +3261,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto msgDto = service.setViseurs(9005138, dto);
+		ReturnMessageDto msgDto = service.setViseurs(9005138, dto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(2)).persisEntity(Mockito.isA(Droit.class));
@@ -3344,7 +3344,7 @@ public class AccessRightsServiceTest {
 
 		// ///////////////////////// TESTS ////////////////////////
 		// When
-		ReturnMessageDto msgDto = service.setViseurs(9005138, dto);
+		ReturnMessageDto msgDto = service.setViseurs(9005138, dto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
@@ -3413,7 +3413,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto msgDto = service.setViseurs(9005138, dto);
+		ReturnMessageDto msgDto = service.setViseurs(9005138, dto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(Droit.class));
@@ -3503,7 +3503,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto msgDto = service.setViseurs(9005138, dto);
+		ReturnMessageDto msgDto = service.setViseurs(9005138, dto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
@@ -3607,7 +3607,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// /////////// When //////////////
-		ReturnMessageDto msgDto = service.setViseurs(9005138, dto);
+		ReturnMessageDto msgDto = service.setViseurs(9005138, dto,9005138);
 
 		// ///////////// Then //////////////
 		assertEquals(0, msgDto.getErrors().size());
@@ -3686,7 +3686,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		ReturnMessageDto msgDto = service.setViseurs(9005138, dto);
+		ReturnMessageDto msgDto = service.setViseurs(9005138, dto,9005138);
 
 		// Then
 		assertEquals(0, msgDto.getErrors().size());
@@ -4224,7 +4224,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		msgDto = service.setDelegataire(9005138, dto, msgDto);
+		msgDto = service.setDelegataire(9005138, dto, msgDto,9005138);
 
 		// Then
 		assertEquals(1, msgDto.getErrors().size());
@@ -4281,7 +4281,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		msgDto = service.setDelegataire(9005138, dto, msgDto);
+		msgDto = service.setDelegataire(9005138, dto, msgDto,9005138);
 
 		// Then
 		assertEquals(0, msgDto.getErrors().size());
@@ -4354,7 +4354,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		msgDto = service.setDelegataire(9005138, dto, msgDto);
+		msgDto = service.setDelegataire(9005138, dto, msgDto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
@@ -4451,7 +4451,7 @@ public class AccessRightsServiceTest {
 
 		// ///////////////////////// TESTS ////////////////////////
 		// When
-		msgDto = service.setDelegataire(9005138, dto, msgDto);
+		msgDto = service.setDelegataire(9005138, dto, msgDto,9005138);
 
 		// Then
 		assertEquals(0, msgDto.getErrors().size());
@@ -4540,7 +4540,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
-		msgDto = service.setDelegataire(9005138, dto, msgDto);
+		msgDto = service.setDelegataire(9005138, dto, msgDto,9005138);
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.isA(Droit.class));
@@ -4638,7 +4638,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// /////////// When //////////////
-		msgDto = service.setDelegataire(9005138, dto, msgDto);
+		msgDto = service.setDelegataire(9005138, dto, msgDto,9005138);
 
 		// ///////////// Then //////////////
 		assertEquals(0, msgDto.getErrors().size());
@@ -4721,7 +4721,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// /////////// When //////////////
-		msgDto = service.setDelegataire(9005138, dto, msgDto);
+		msgDto = service.setDelegataire(9005138, dto, msgDto,9005138);
 
 		// ///////////// Then //////////////
 		assertEquals(0, msgDto.getErrors().size());
@@ -4820,7 +4820,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// /////////// When //////////////
-		msgDto = service.setDelegataire(9005138, dto, msgDto);
+		msgDto = service.setDelegataire(9005138, dto, msgDto,9005138);
 
 		// ///////////// Then //////////////
 		assertEquals(0, msgDto.getErrors().size());
@@ -4910,7 +4910,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// /////////// When //////////////
-		msgDto = service.setDelegataire(9005138, dto, msgDto);
+		msgDto = service.setDelegataire(9005138, dto, msgDto,9005138);
 
 		// ///////////// Then //////////////
 		assertEquals(0, msgDto.getErrors().size());
@@ -5234,7 +5234,7 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		ReturnMessageDto result = service.setOperateur(idAgentAppro, operateurDto);
+		ReturnMessageDto result = service.setOperateur(idAgentAppro, operateurDto,9005138);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent [9005138] est déjà opérateur de l'approbateur [9002990].", result.getErrors().get(0).toString());
@@ -5264,7 +5264,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		ReturnMessageDto result = service.setOperateur(idAgentAppro, operateurDto);
+		ReturnMessageDto result = service.setOperateur(idAgentAppro, operateurDto,9005138);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent opérateur [9005138] n'existe pas.", result.getErrors().get(0).toString());
@@ -5300,7 +5300,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		ReturnMessageDto result = service.setOperateur(idAgentAppro, operateurDto);
+		ReturnMessageDto result = service.setOperateur(idAgentAppro, operateurDto,9005138);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(accessRightsRepository, Mockito.times(1)).persisEntity(droitOperateur);
@@ -5335,7 +5335,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		ReturnMessageDto result = service.setOperateur(idAgentAppro, operateurDto);
+		ReturnMessageDto result = service.setOperateur(idAgentAppro, operateurDto,9005138);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(accessRightsRepository, Mockito.never()).persisEntity(droitOperateur);
@@ -5360,7 +5360,7 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		ReturnMessageDto result = service.setViseur(idAgentAppro, viseurDto);
+		ReturnMessageDto result = service.setViseur(idAgentAppro, viseurDto,9005138);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent [9005138] est déjà viseur de l'approbateur [9002990].", result.getErrors().get(0).toString());
@@ -5390,7 +5390,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
-		ReturnMessageDto result = service.setViseur(idAgentAppro, viseurDto);
+		ReturnMessageDto result = service.setViseur(idAgentAppro, viseurDto,9005138);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent viseur [9005138] n'existe pas.", result.getErrors().get(0).toString());
@@ -5426,7 +5426,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		ReturnMessageDto result = service.setViseur(idAgentAppro, viseurDto);
+		ReturnMessageDto result = service.setViseur(idAgentAppro, viseurDto,9005138);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(accessRightsRepository, Mockito.times(1)).persisEntity(droitOperateur);
@@ -5461,7 +5461,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		ReturnMessageDto result = service.setViseur(idAgentAppro, viseurDto);
+		ReturnMessageDto result = service.setViseur(idAgentAppro, viseurDto,9005138);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(accessRightsRepository, Mockito.never()).persisEntity(droitOperateur);
@@ -5483,7 +5483,7 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		ReturnMessageDto result = service.deleteOperateur(idAgentAppro, operateurDto);
+		ReturnMessageDto result = service.deleteOperateur(idAgentAppro, operateurDto,9005138);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent [9005138] n'est pas opérateur de l'approbateur [9002990].", result.getErrors().get(0).toString());
@@ -5515,7 +5515,7 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		ReturnMessageDto result = service.deleteOperateur(idAgentAppro, operateurDto);
+		ReturnMessageDto result = service.deleteOperateur(idAgentAppro, operateurDto,9005138);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(accessRightsRepository, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
@@ -5549,7 +5549,7 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		ReturnMessageDto result = service.deleteOperateur(idAgentAppro, operateurDto);
+		ReturnMessageDto result = service.deleteOperateur(idAgentAppro, operateurDto,9005138);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(accessRightsRepository, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
@@ -5570,7 +5570,7 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		ReturnMessageDto result = service.deleteViseur(idAgentAppro, viseurDto);
+		ReturnMessageDto result = service.deleteViseur(idAgentAppro, viseurDto,9005138);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals("L'agent [9005138] n'est pas viseur de l'approbateur [9002990].", result.getErrors().get(0).toString());
@@ -5602,7 +5602,7 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		ReturnMessageDto result = service.deleteViseur(idAgentAppro, viseurDto);
+		ReturnMessageDto result = service.deleteViseur(idAgentAppro, viseurDto,9005138);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(accessRightsRepository, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
@@ -5636,7 +5636,7 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 
-		ReturnMessageDto result = service.deleteViseur(idAgentAppro, viseurDto);
+		ReturnMessageDto result = service.deleteViseur(idAgentAppro, viseurDto,9005138);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(accessRightsRepository, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
@@ -5841,18 +5841,18 @@ public class AccessRightsServiceTest {
 		Integer idAgentDest = 9005138;
 		
 		AccessRightsService service = new AccessRightsService();
-		ReturnMessageDto result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest);
+		ReturnMessageDto result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest,9005138);
 		
 		assertEquals("L'agent dupliqué ou à dupliquer n'est pas correcte.", result.getErrors().get(0));
 		
 		idAgentSource = 9005138;
 		idAgentDest = null;
-		result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest);
+		result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest,9005138);
 		assertEquals("L'agent dupliqué ou à dupliquer n'est pas correcte.", result.getErrors().get(0));
 		
 		idAgentSource = 9005138;
 		idAgentDest = 9005138;
-		result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest);
+		result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest,9005138);
 		assertEquals("L'agent dupliqué ou à dupliquer n'est pas correcte.", result.getErrors().get(0));
 	}
 	
@@ -5869,7 +5869,7 @@ public class AccessRightsServiceTest {
 		
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		
-		ReturnMessageDto result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest);
+		ReturnMessageDto result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest,9005138);
 		
 		assertEquals("L'agent 9005660 n'est pas approbateur.", result.getErrors().get(0));
 	}
@@ -5890,7 +5890,7 @@ public class AccessRightsServiceTest {
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		
-		ReturnMessageDto result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest);
+		ReturnMessageDto result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest,9005138);
 		
 		assertEquals("L'agent 9005138 est déjà approbateur.", result.getErrors().get(0));
 	}
@@ -5992,7 +5992,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		
-		ReturnMessageDto result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest);
+		ReturnMessageDto result = service.dupliqueDroitsApprobateur(idAgentSource, idAgentDest,9005138);
 		
 		Mockito.verify(accessRightsRepository, Mockito.times(2)).persisEntity(Mockito.isA(Droit.class));
 		Mockito.verify(accessRightsRepository, Mockito.times(2)).persisEntity(Mockito.isA(DroitDroitsAgent.class));
