@@ -5,7 +5,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
@@ -16,40 +23,34 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 @Service
 public class HelperService {
 
 	@Autowired
-	private ISirhWSConsumer sirhWSConsumer;
+	private ISirhWSConsumer		sirhWSConsumer;
 
 	@Autowired
-	private IDemandeRepository demandeRepository;
+	private IDemandeRepository	demandeRepository;
 
-	private static int HEURE_JOUR_DEBUT_AM = 0;
-	private static int HEURE_JOUR_FIN_AM = 11;
-	private static int HEURE_JOUR_DEBUT_PM = 12;
-	private static int HEURE_JOUR_FIN_PM = 23;
-	private static int MINUTES_JOUR_FIN = 59;
-	private static int MINUTES_JOUR_DEBUT = 0;
-	private static int SECONDS_DEBUT = 0;
-	private static int SECONDS_FIN = 59;
-	private static int MILLISECONDS = 0;
+	private static int			HEURE_JOUR_DEBUT_AM						= 0;
+	private static int			HEURE_JOUR_FIN_AM						= 11;
+	private static int			HEURE_JOUR_DEBUT_PM						= 12;
+	private static int			HEURE_JOUR_FIN_PM						= 23;
+	private static int			MINUTES_JOUR_FIN						= 59;
+	private static int			MINUTES_JOUR_DEBUT						= 0;
+	private static int			SECONDS_DEBUT							= 0;
+	private static int			SECONDS_FIN								= 59;
+	private static int			MILLISECONDS							= 0;
 
-	private final static long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
-	private final static long MILLISECONDS_PER_MINUTES = 1000 * 60;
+	private final static long	MILLISECONDS_PER_DAY					= 1000 * 60 * 60 * 24;
+	private final static long	MILLISECONDS_PER_MINUTES				= 1000 * 60;
 
-	public static String UNITE_DECOMPTE_AN = "an";
-	public static String UNITE_DECOMPTE_MOIS = "mois";
-	public static String UNITE_DECOMPTE_JOURS = "jours";
-	public static String UNITE_DECOMPTE_MINUTES = "minutes";
+	public static String		UNITE_DECOMPTE_AN						= "an";
+	public static String		UNITE_DECOMPTE_MOIS						= "mois";
+	public static String		UNITE_DECOMPTE_JOURS					= "jours";
+	public static String		UNITE_DECOMPTE_MINUTES					= "minutes";
 
-	private static int NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT = 1;
+	private static int			NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT	= 1;
 
 	public Date getCurrentDate() {
 		return new Date();
@@ -59,8 +60,7 @@ public class HelperService {
 		return new LocalDate(dateMonday).getDayOfWeek() == DateTimeConstants.MONDAY;
 	}
 
-	public Date getDateFin(RefTypeSaisi typeSaisi, Date dateFin, Date dateDeb, Double duree, boolean dateFinAM,
-			boolean dateFinPM) {
+	public Date getDateFin(RefTypeSaisi typeSaisi, Date dateFin, Date dateDeb, Double duree, boolean dateFinAM, boolean dateFinPM) {
 
 		if (typeSaisi.isCalendarDateFin() && typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin()) {
 			return dateFin;
@@ -90,8 +90,7 @@ public class HelperService {
 			if (typeSaisi.getUniteDecompte() != null && typeSaisi.getUniteDecompte().equals(UNITE_DECOMPTE_MINUTES)) {
 				DateTime recupDateFin = new DateTime(dateDeb);
 				String durEntier = duree.toString().substring(0, duree.toString().indexOf("."));
-				String durDecimal = duree.toString().substring(duree.toString().indexOf(".") + 1,
-						duree.toString().length());
+				String durDecimal = duree.toString().substring(duree.toString().indexOf(".") + 1, duree.toString().length());
 				Double heure = new Double(durEntier) * 60;
 				Double minute = durDecimal.substring(0, 1).equals("0") ? new Double(durDecimal)
 						: durDecimal.length() == 1 ? 10.0 * new Double(durDecimal) : new Double(durDecimal);
@@ -111,8 +110,7 @@ public class HelperService {
 			cal.set(Calendar.MILLISECOND, MILLISECONDS);
 			return cal.getTime();
 		}
-		if (!typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin()
-				&& !typeSaisi.isDuree()) {
+		if (!typeSaisi.isCalendarDateFin() && !typeSaisi.isCalendarHeureFin() && !typeSaisi.isChkDateFin() && !typeSaisi.isDuree()) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(dateDeb);
 			cal.set(Calendar.HOUR_OF_DAY, HEURE_JOUR_FIN_PM);
@@ -169,8 +167,20 @@ public class HelperService {
 		if (typeSaisi.isCalendarDateFin()) {
 			if (UNITE_DECOMPTE_JOURS.equals(typeSaisi.getUniteDecompte())) {
 				Double dureeCalculee = calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
-				List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin);
-				dureeCalculee -= calculJoursNonComptesDimancheFerieChome(dateDebut, dateFin, listJoursFeries);
+				// #30248 : pour CCSP ou congé unique on ne decompte pas les
+				// jours fériés/dimanche...
+				if (typeSaisi.getType() == null) {
+					List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin);
+					dureeCalculee -= calculJoursNonComptesDimancheFerieChome(dateDebut, dateFin, listJoursFeries);
+				} else {
+					if (!String.valueOf(RefTypeAbsenceEnum.CE_CONGE_UNIQUE.getValue()).equals(typeSaisi.getType().getIdRefTypeAbsence().toString())
+							&& !String.valueOf(RefTypeAbsenceEnum.CE_CONGE_UNIQUE_CCSP.getValue())
+									.equals(typeSaisi.getType().getIdRefTypeAbsence().toString())) {
+						List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin);
+						dureeCalculee -= calculJoursNonComptesDimancheFerieChome(dateDebut, dateFin, listJoursFeries);
+					}
+				}
+
 				return dureeCalculee;
 			}
 			if (UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
@@ -181,8 +191,7 @@ public class HelperService {
 		if (!typeSaisi.isCalendarDateFin() && typeSaisi.isDuree()) {
 			if (UNITE_DECOMPTE_MINUTES.equals(typeSaisi.getUniteDecompte())) {
 				String durEntier = duree.toString().substring(0, duree.toString().indexOf("."));
-				String durDecimal = duree.toString().substring(duree.toString().indexOf(".") + 1,
-						duree.toString().length());
+				String durDecimal = duree.toString().substring(duree.toString().indexOf(".") + 1, duree.toString().length());
 				Double heure = new Double(durEntier) * 60;
 				Double minute = durDecimal.length() == 1 ? new Double(durDecimal) * 10 : new Double(durDecimal);
 
@@ -347,8 +356,7 @@ public class HelperService {
 		return null;
 	}
 
-	public Date getDateDebutCongeAnnuel(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut,
-			boolean dateDebutAM, boolean dateDebutPM) {
+	public Date getDateDebutCongeAnnuel(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateDebut, boolean dateDebutAM, boolean dateDebutPM) {
 
 		if (refTypeSaisiCongeAnnuel.isChkDateDebut()) {
 			if (dateDebutAM && !dateDebutPM) {
@@ -382,8 +390,8 @@ public class HelperService {
 		return null;
 	}
 
-	public Date getDateFinCongeAnnuel(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateFin, Date dateDebut,
-			boolean dateFinAM, boolean dateFinPM, Date dateReprise) {
+	public Date getDateFinCongeAnnuel(RefTypeSaisiCongeAnnuel refTypeSaisiCongeAnnuel, Date dateFin, Date dateDebut, boolean dateFinAM,
+			boolean dateFinPM, Date dateReprise) {
 
 		if (refTypeSaisiCongeAnnuel.isCalendarDateFin() && !refTypeSaisiCongeAnnuel.isChkDateFin()) {
 			Calendar cal = Calendar.getInstance();
@@ -433,21 +441,17 @@ public class HelperService {
 			case "A":
 			case "D":
 
-				List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(),
-						demande.getDateFin());
+				List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
 
 				duree = calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())
-						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin(),
-								listJoursFeries)
-						- getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(),
-								DateTimeConstants.SATURDAY, listJoursFeries) // on
+						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin(), listJoursFeries)
+						- getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY, listJoursFeries) // on
 						// retire
 						// le
 						// nombre
 						// de
 						// samedi
-						+ getNombreSamediDecompte(demande, listJoursFeries)
-						- getNombreSamediOffert(demande, listJoursFeries); // puis
+						+ getNombreSamediDecompte(demande, listJoursFeries) - getNombreSamediOffert(demande, listJoursFeries); // puis
 				// on
 				// calcule
 				// le
@@ -466,13 +470,13 @@ public class HelperService {
 				break;
 
 			case "C":
-				
-				if(forcerSaisieManuelleDuree)
+
+				if (forcerSaisieManuelleDuree)
 					return dureeSaisieManuelle;
-				
+
 				duree = calculNombreJours(demande.getDateDebut(), dateReprise);
-				duree = Math.ceil((duree / demande.getTypeSaisiCongeAnnuel().getQuotaMultiple())
-						* demande.getTypeSaisiCongeAnnuel().getQuotaDecompte());
+				duree = Math
+						.ceil((duree / demande.getTypeSaisiCongeAnnuel().getQuotaMultiple()) * demande.getTypeSaisiCongeAnnuel().getQuotaDecompte());
 				if (duree < demande.getTypeSaisiCongeAnnuel().getQuotaDecompte()) {
 					duree = calculNombreJours(demande.getDateDebut(), dateReprise);
 				} else if (duree > demande.getTypeSaisiCongeAnnuel().getQuotaDecompte()
@@ -555,13 +559,13 @@ public class HelperService {
 		return (double) compteur;
 	}
 
-	protected Double getNombreJourSemaineWithoutFerie(Date dateDebut, Date dateFin, int jourDonne,
-			List<JourDto> listJoursFeries) {
+	protected Double getNombreJourSemaineWithoutFerie(Date dateDebut, Date dateFin, int jourDonne, List<JourDto> listJoursFeries) {
 
 		double compteur = 0;
 		// on calcule le nombre de vendredi
-		DateTime startDate = new DateTime(dateDebut).withHourOfDay(0).withMinuteOfHour(0); 
-		// on met les heures et minutes a zero afin de bien comptabiliser dans la
+		DateTime startDate = new DateTime(dateDebut).withHourOfDay(0).withMinuteOfHour(0);
+		// on met les heures et minutes a zero afin de bien comptabiliser dans
+		// la
 		// boucle while
 		DateTime endDate = new DateTime(dateFin);
 
@@ -574,11 +578,11 @@ public class HelperService {
 		}
 		while (startDate.isBefore(endDate)) {
 			if (!isJourHoliday(listJoursFeries, startDate.toDate())) {
-				
-				if(startDate.getDayOfYear() == new DateTime(dateDebut).getDayOfYear()
+
+				if (startDate.getDayOfYear() == new DateTime(dateDebut).getDayOfYear()
 						&& HEURE_JOUR_DEBUT_PM == new DateTime(dateDebut).getHourOfDay()) {
 					compteur = compteur + 0.5;
-				}else{
+				} else {
 					compteur++;
 				}
 			}
@@ -588,8 +592,7 @@ public class HelperService {
 	}
 
 	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande) {
-		List<JourDto> listJoursFeries = sirhWSConsumer
-				.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
+		List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
 		return getNombreSamediDecompte(demande, listJoursFeries);
 	}
 
@@ -600,11 +603,26 @@ public class HelperService {
 		if (demande.getTypeSaisiCongeAnnuel() != null && demande.getTypeSaisiCongeAnnuel().isDecompteSamedi()) {
 
 			// on calcule le nombre de vendredi
-			DateTime startDate = new DateTime(demande.getDateDebut()).withHourOfDay(0).withMinuteOfHour(0)
-					.withSecondOfMinute(0); // on met les heures et minutes a
-											// zero afin de bien comptabiliser
-											// le nombre de vendredi dans la
-											// boucle while
+			DateTime startDate = new DateTime(demande.getDateDebut()).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0); // on
+																																	// met
+																																	// les
+																																	// heures
+																																	// et
+																																	// minutes
+																																	// a
+																																	// zero
+																																	// afin
+																																	// de
+																																	// bien
+																																	// comptabiliser
+																																	// le
+																																	// nombre
+																																	// de
+																																	// vendredi
+																																	// dans
+																																	// la
+																																	// boucle
+																																	// while
 			DateTime endDate = new DateTime(demande.getDateFin());
 
 			// on boucle sur tous les jours de la periode
@@ -623,8 +641,7 @@ public class HelperService {
 				}
 
 				// si vendredi et non ferie
-				if (startDate.getDayOfWeek() == DateTimeConstants.FRIDAY
-						&& !isJourHoliday(listJoursFeries, startDate.toDate())) {
+				if (startDate.getDayOfWeek() == DateTimeConstants.FRIDAY && !isJourHoliday(listJoursFeries, startDate.toDate())) {
 					// est ce que samedi non chome
 					if (!isJourHoliday(listJoursFeries, startDate.plusDays(1).toDate())) {
 						compteur += 1;
@@ -637,8 +654,7 @@ public class HelperService {
 			// cas ou le 1er jour est un vendredi
 			// on gere le cas ou l agent a pose l apres-midi
 			DateTime dateDebut = new DateTime(demande.getDateDebut());
-			if (dateDebut.getDayOfWeek() == DateTimeConstants.FRIDAY
-					&& !isJourHoliday(listJoursFeries, dateDebut.plusDays(1).toDate())) {
+			if (dateDebut.getDayOfWeek() == DateTimeConstants.FRIDAY && !isJourHoliday(listJoursFeries, dateDebut.plusDays(1).toDate())) {
 				if (dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
 					compteur -= 0.5; // si commence l apres-midi, on ne decompte
 										// qu un demi-samedi
@@ -658,8 +674,7 @@ public class HelperService {
 			// cas ou le dernier jour est un vendredi
 			// on gere le cas ou l agent a pose que le matin ou que l apres-midi
 			DateTime dateFin = new DateTime(demande.getDateFin());
-			if (dateFin.getDayOfWeek() == DateTimeConstants.FRIDAY
-					&& !isJourHoliday(listJoursFeries, dateFin.plusDays(1).toDate())) {
+			if (dateFin.getDayOfWeek() == DateTimeConstants.FRIDAY && !isJourHoliday(listJoursFeries, dateFin.plusDays(1).toDate())) {
 				if (dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
 					compteur -= 1; // si la personne revient travailler le
 									// vendredi apres-midi, on ne decompte pas
@@ -668,8 +683,7 @@ public class HelperService {
 				// cas ou le dernier jour est un jeudi ET vendredi ferie
 			} else if (dateFin.getDayOfWeek() == DateTimeConstants.THURSDAY) {
 				// et vendredi ferie et samedi non chome
-				if (isJourHoliday(listJoursFeries, dateFin.plusDays(1).toDate())
-						&& !isJourHoliday(listJoursFeries, dateFin.plusDays(2).toDate())) {
+				if (isJourHoliday(listJoursFeries, dateFin.plusDays(1).toDate()) && !isJourHoliday(listJoursFeries, dateFin.plusDays(2).toDate())) {
 					if (dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
 						compteur -= 1; // si la personne revient travailler le
 										// jeudi apres-midi, on ne decompte pas
@@ -695,8 +709,7 @@ public class HelperService {
 	}
 
 	public Double getNombreSamediOffert(DemandeCongesAnnuels demande) {
-		List<JourDto> listJoursFeries = sirhWSConsumer
-				.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
+		List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
 		return getNombreSamediOffert(demande, listJoursFeries);
 	}
 
