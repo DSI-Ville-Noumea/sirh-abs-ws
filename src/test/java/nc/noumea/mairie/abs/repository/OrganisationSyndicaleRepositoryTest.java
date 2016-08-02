@@ -202,66 +202,6 @@ public class OrganisationSyndicaleRepositoryTest {
 
 	@Test
 	@Transactional("absTransactionManager")
-	public void getListeAgentA54Organisation() {
-		// Given
-		OrganisationSyndicale orga = new OrganisationSyndicale();
-		orga.setIdOrganisationSyndicale(1);
-		orga.setActif(true);
-		absEntityManager.persist(orga);
-		AgentA54OrganisationSyndicale org1 = new AgentA54OrganisationSyndicale();
-		org1.setIdAgent(9005138);
-		org1.setOrganisationSyndicale(orga);
-		absEntityManager.persist(org1);
-		AgentA54OrganisationSyndicale org2 = new AgentA54OrganisationSyndicale();
-		org2.setIdAgent(9005139);
-		org2.setOrganisationSyndicale(orga);
-		absEntityManager.persist(org2);
-
-		// When
-		List<AgentA54OrganisationSyndicale> result = repository.getListeAgentA54Organisation(orga.getIdOrganisationSyndicale());
-
-		// Then
-		assertEquals(2, result.size());
-		assertEquals(org1.getIdAgent(), result.get(0).getIdAgent());
-		assertEquals(org1.getOrganisationSyndicale().getIdOrganisationSyndicale(),
-				result.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale());
-
-		absEntityManager.flush();
-		absEntityManager.clear();
-	}
-
-	@Test
-	@Transactional("absTransactionManager")
-	public void getListeAgentA48Organisation() {
-		// Given
-		OrganisationSyndicale orga = new OrganisationSyndicale();
-		orga.setIdOrganisationSyndicale(1);
-		orga.setActif(true);
-		absEntityManager.persist(orga);
-		AgentA48OrganisationSyndicale org1 = new AgentA48OrganisationSyndicale();
-		org1.setIdAgent(9005138);
-		org1.setOrganisationSyndicale(orga);
-		absEntityManager.persist(org1);
-		AgentA48OrganisationSyndicale org2 = new AgentA48OrganisationSyndicale();
-		org2.setIdAgent(9005139);
-		org2.setOrganisationSyndicale(orga);
-		absEntityManager.persist(org2);
-
-		// When
-		List<AgentA48OrganisationSyndicale> result = repository.getListeAgentA48Organisation(orga.getIdOrganisationSyndicale());
-
-		// Then
-		assertEquals(2, result.size());
-		assertEquals(org1.getIdAgent(), result.get(0).getIdAgent());
-		assertEquals(org1.getOrganisationSyndicale().getIdOrganisationSyndicale(),
-				result.get(0).getOrganisationSyndicale().getIdOrganisationSyndicale());
-
-		absEntityManager.flush();
-		absEntityManager.clear();
-	}
-
-	@Test
-	@Transactional("absTransactionManager")
 	public void getAgentA54Organisation() {
 		// Given
 		OrganisationSyndicale orga = new OrganisationSyndicale();

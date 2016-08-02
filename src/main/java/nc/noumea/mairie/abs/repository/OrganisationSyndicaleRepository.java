@@ -98,26 +98,6 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 	}
 
 	@Override
-	public List<AgentA54OrganisationSyndicale> getListeAgentA54Organisation(Integer idOrganisationSyndicale) {
-		TypedQuery<AgentA54OrganisationSyndicale> query = absEntityManager.createQuery(
-				"SELECT o FROM AgentA54OrganisationSyndicale o where o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale",
-				AgentA54OrganisationSyndicale.class);
-		query.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
-
-		return query.getResultList();
-	}
-
-	@Override
-	public List<AgentA48OrganisationSyndicale> getListeAgentA48Organisation(Integer idOrganisationSyndicale) {
-		TypedQuery<AgentA48OrganisationSyndicale> query = absEntityManager.createQuery(
-				"SELECT o FROM AgentA48OrganisationSyndicale o where o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale",
-				AgentA48OrganisationSyndicale.class);
-		query.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
-
-		return query.getResultList();
-	}
-
-	@Override
 	public List<AgentA54OrganisationSyndicale> getAgentA54Organisation(Integer idAgent) {
 		TypedQuery<AgentA54OrganisationSyndicale> query = absEntityManager
 				.createQuery("SELECT o FROM AgentA54OrganisationSyndicale o where o.idAgent = :idAgent", AgentA54OrganisationSyndicale.class);

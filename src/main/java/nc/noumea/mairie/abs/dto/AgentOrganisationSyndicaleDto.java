@@ -1,6 +1,5 @@
 package nc.noumea.mairie.abs.dto;
 
-import nc.noumea.mairie.abs.domain.AgentA48OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentA54OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 
@@ -19,10 +18,6 @@ public class AgentOrganisationSyndicaleDto {
 	}
 
 	public AgentOrganisationSyndicaleDto(AgentA54OrganisationSyndicale ag) {
-		this.idAgent = ag.getIdAgent();
-	}
-
-	public AgentOrganisationSyndicaleDto(AgentA48OrganisationSyndicale ag) {
 		this.idAgent = ag.getIdAgent();
 	}
 

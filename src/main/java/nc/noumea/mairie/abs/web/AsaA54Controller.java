@@ -4,12 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
-import nc.noumea.mairie.abs.dto.CompteurDto;
-import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.abs.service.ICounterService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +15,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.service.ICounterService;
+
 @Controller
 @RequestMapping("/asaA54")
 public class AsaA54Controller {
 
-	private Logger logger = LoggerFactory.getLogger(AsaA54Controller.class);
+	private Logger							logger	= LoggerFactory.getLogger(AsaA54Controller.class);
 
 	@Autowired
 	@Qualifier("AsaA54CounterServiceImpl")
-	private ICounterService counterService;
+	private ICounterService					counterService;
 
 	@Autowired
-	private IAgentMatriculeConverterService converterService;
+	private IAgentMatriculeConverterService	converterService;
 
 	/**
 	 * Modifie manuellement le compteur ASA A54 d un agent RequestBody : Format
@@ -40,8 +39,8 @@ public class AsaA54Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addManual", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto addAsaA54ManuelForAgent(@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) CompteurDto compteurDto, HttpServletResponse response) {
+	public ReturnMessageDto addAsaA54ManuelForAgent(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) CompteurDto compteurDto,
+			HttpServletResponse response) {
 
 		logger.debug("entered POST [asaA54/addManual] => addAsaA54ManuelForAgent with parameters idAgent = {}", idAgent);
 
@@ -62,11 +61,12 @@ public class AsaA54Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurA54", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<CompteurDto> getListeCompteur(@RequestParam(value = "annee", required = false) Integer annee) {
+	public List<CompteurDto> getListeCompteur(@RequestParam(value = "annee", required = false) Integer annee,
+			@RequestParam(value = "idOrganisation", required = false) Integer idOrganisation) {
 
 		logger.debug("entered GET [asaA54/listeCompteurA54] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur(null, annee);
+		List<CompteurDto> result = counterService.getListeCompteur(idOrganisation, annee);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -76,8 +76,8 @@ public class AsaA54Controller {
 
 	/**
 	 * Modifie manuellement le compteur ASA A54 d un agent RequestBody : Format
-	 * du type timestamp : "/Date(1396306800000+1100)/"
-	 * Sert à SIRH pour dupliquer en boucle
+	 * du type timestamp : "/Date(1396306800000+1100)/" Sert à SIRH pour
+	 * dupliquer en boucle
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/addManualByList", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
@@ -97,41 +97,18 @@ public class AsaA54Controller {
 		return srm;
 	}
 
-
 	/**
-	 * Liste des représentants ASA A54 ResponseBody : Format du type timestamp :
-	 * "/Date(1396306800000+1100)/"
+	 * Modifie les representants ASA A54 d une organisation syndicale
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/listeRepresentantA54", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<AgentOrganisationSyndicaleDto> listeRepresentantA54(
-			@RequestParam("idOrganisationSyndicale") Integer idOrganisationSyndicale) {
-
-		logger.debug("entered GET [asaA54/listeRepresentantA54] => listeRepresentantA54 ");
-
-		List<AgentOrganisationSyndicaleDto> result = counterService.listeRepresentantA54(idOrganisationSyndicale);
-
-		if (result.size() == 0)
-			throw new NoContentException();
-
-		return result;
-	}
-
-	/**
-	 * Modifie les representants ASA A54 d une organisation
-	 * syndicale
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/saveRepresentant", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@RequestMapping(value = "/saveRepresentant", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public ReturnMessageDto saveRepresentantA54(@RequestParam("idOrganisationSyndicale") int idOrganisationSyndicale,
-			@RequestBody(required = true) List<AgentOrganisationSyndicaleDto> listeAgentDto,
-			HttpServletResponse response) {
+			@RequestParam("idAgent") int idAgent) {
 
-		logger.debug(
-				"entered POST [asaA54/saveRepresentant] => saveRepresentantA54 with parameters idOrganisationSyndicale = {}",
+		logger.debug("entered GET [asaA54/saveRepresentant] => saveRepresentantA54 with parameters idOrganisationSyndicale = {}",
 				idOrganisationSyndicale);
 
-		ReturnMessageDto srm = counterService.saveRepresentantA54(idOrganisationSyndicale, listeAgentDto);
+		ReturnMessageDto srm = counterService.saveRepresentantA54(idOrganisationSyndicale, idAgent);
 
 		return srm;
 	}

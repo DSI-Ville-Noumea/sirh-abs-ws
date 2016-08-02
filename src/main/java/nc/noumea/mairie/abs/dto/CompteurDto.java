@@ -105,6 +105,21 @@ public class CompteurDto {
 		this.actif = arc.isActif();
 	}
 
+	public CompteurDto(AgentAsaA54Count arc, AgentHistoAlimManuelle histo, AgentA54OrganisationSyndicale agentOrga) {
+		this.idCompteur = arc.getIdAgentCount();
+		this.idAgent = arc.getIdAgent();
+		this.dureeAAjouter = arc.getTotalJours();
+		this.dateDebut = arc.getDateDebut();
+		this.dateFin = arc.getDateFin();
+		if (null != agentOrga)
+			this.organisationSyndicaleDto = new OrganisationSyndicaleDto(agentOrga.getOrganisationSyndicale());
+		if (histo != null && histo.getMotifCompteur() != null) {
+			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
+			this.motifCompteurDto = dto;
+		}
+		this.actif = arc.isActif();
+	}
+
 	public CompteurDto(AgentAsaA53Count arc, AgentHistoAlimManuelle histo) {
 		this.idCompteur = arc.getIdAgentCount();
 		this.idAgent = arc.getIdAgent();
@@ -131,21 +146,6 @@ public class CompteurDto {
 			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
 			this.motifCompteurDto = dto;
 		}
-	}
-
-	public CompteurDto(AgentAsaA54Count arc, AgentHistoAlimManuelle histo, AgentA54OrganisationSyndicale agentOrga) {
-		this.idCompteur = arc.getIdAgentCount();
-		this.idAgent = arc.getIdAgent();
-		this.dureeAAjouter = arc.getTotalJours();
-		this.dateDebut = arc.getDateDebut();
-		this.dateFin = arc.getDateFin();
-		if (null != agentOrga)
-			this.organisationSyndicaleDto = new OrganisationSyndicaleDto(agentOrga.getOrganisationSyndicale());
-		if (histo != null && histo.getMotifCompteur() != null) {
-			MotifCompteurDto dto = new MotifCompteurDto(histo.getMotifCompteur());
-			this.motifCompteurDto = dto;
-		}
-		this.actif = arc.isActif();
 	}
 
 	public CompteurDto(AgentAsaA55Count arc, AgentHistoAlimManuelle histo) {

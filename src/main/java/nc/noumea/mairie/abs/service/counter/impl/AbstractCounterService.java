@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -22,11 +27,6 @@ import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 public abstract class AbstractCounterService implements ICounterService {
 
@@ -350,12 +350,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public List<AgentOrganisationSyndicaleDto> listeRepresentantA54(Integer idOrganisationSyndicale) {
-		return null;
-	}
-
-	@Override
-	public ReturnMessageDto saveRepresentantA54(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto) {
+	public ReturnMessageDto saveRepresentantA54(Integer idOrganisationSyndicale, Integer idAgent) {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 
@@ -363,12 +358,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public List<AgentOrganisationSyndicaleDto> listeRepresentantA48(Integer idOrganisationSyndicale) {
-		return null;
-	}
-
-	@Override
-	public ReturnMessageDto saveRepresentantA48(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto) {
+	public ReturnMessageDto saveRepresentantA48(Integer idOrganisationSyndicale, Integer idAgent) {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 

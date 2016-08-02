@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,6 @@ import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -106,15 +106,30 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 	@Transactional(readOnly = true)
 	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
 		List<CompteurDto> result = new ArrayList<>();
-
-		List<AgentAsaA54Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, annee);
-		for (AgentAsaA54Count arc : listeArc) {
-			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
-			// on regarde si il y a une saisie OS
-			List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(arc.getIdAgent());
-			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null,
-					listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null : listeAgentOrganisationSyndicale.get(0));
-			result.add(dto);
+		if (idOrganisation == null) {
+			List<AgentAsaA54Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, annee);
+			for (AgentAsaA54Count arc : listeArc) {
+				List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
+				// on regarde si il y a une saisie OS
+				List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(arc.getIdAgent());
+				CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null,
+						listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null
+								: listeAgentOrganisationSyndicale.get(0));
+				result.add(dto);
+			}
+		} else {
+			OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class, idOrganisation);
+			for (AgentA54OrganisationSyndicale agOrga : organisationSyndicale.getAgentsA54()) {
+				AgentAsaA54Count compteurAg = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, agOrga.getIdAgent(),
+						new DateTime(annee, 1, 1, 0, 0, 0).toDate());
+				List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(compteurAg.getIdAgent(), compteurAg);
+				// on regarde si il y a une saisie OS
+				List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(compteurAg.getIdAgent());
+				CompteurDto dto = new CompteurDto(compteurAg, list.size() > 0 ? list.get(0) : null,
+						listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null
+								: listeAgentOrganisationSyndicale.get(0));
+				result.add(dto);
+			}
 		}
 		return result;
 	}
@@ -197,100 +212,62 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto saveRepresentantA54(Integer idOrganisationSyndicale, List<AgentOrganisationSyndicaleDto> listeAgentDto) {
+	public ReturnMessageDto saveRepresentantA54(Integer idOrganisationSyndicale, Integer idAgent) {
 		ReturnMessageDto srm = new ReturnMessageDto();
-
-		// on verifie l'existante de l'OS
-		OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class, idOrganisationSyndicale);
-		if (null == organisationSyndicale) {
-			logger.warn(OS_INEXISTANT);
-			srm.getErrors().add(String.format(OS_INEXISTANT));
-			return srm;
-		} else if (!organisationSyndicale.isActif()) {
-			logger.warn(OS_INACTIVE);
-			srm.getErrors().add(String.format(OS_INACTIVE));
-			return srm;
-		}
-
-		List<AgentA54OrganisationSyndicale> listeDepart = OSRepository.getListeAgentA54Organisation(idOrganisationSyndicale);
-		List<AgentA54OrganisationSyndicale> droitsToDelete = new ArrayList<AgentA54OrganisationSyndicale>(listeDepart);
-		for (AgentOrganisationSyndicaleDto ag : listeAgentDto) {
+		if (idOrganisationSyndicale == 0) {
+			// on est dans le cas d'une suppression
+			List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(idAgent);
 			AgentA54OrganisationSyndicale agentOrganisationSyndicale = null;
-			for (AgentA54OrganisationSyndicale agOrga : listeDepart) {
-				if (agOrga.getIdAgent().equals(ag.getIdAgent())) {
-					agentOrganisationSyndicale = agOrga;
-					break;
-				}
+			if (listeAgentOrganisationSyndicale.size() == 1) {
+				agentOrganisationSyndicale = listeAgentOrganisationSyndicale.get(0);
+				OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class,
+						agentOrganisationSyndicale.getOrganisationSyndicale().getIdOrganisationSyndicale());
+				organisationSyndicale.getAgentsA54().remove(agentOrganisationSyndicale);
+				logger.info("Deleted AgentA54OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA54AgentOrganisationSyndicale());
+
+			} else if (listeAgentOrganisationSyndicale.size() > 1) {
+				// si pas la bonne organisation
+				logger.warn(AGENT_OS_EXISTANT, idAgent);
+				srm.getErrors().add(String.format(AGENT_OS_EXISTANT, idAgent));
+				return srm;
+			}
+			return srm;
+		} else {
+			// on verifie l'existante de l'OS
+			OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class, idOrganisationSyndicale);
+			if (null == organisationSyndicale) {
+				logger.warn(OS_INEXISTANT);
+				srm.getErrors().add(String.format(OS_INEXISTANT));
+				return srm;
+			} else if (!organisationSyndicale.isActif()) {
+				logger.warn(OS_INACTIVE);
+				srm.getErrors().add(String.format(OS_INACTIVE));
+				return srm;
 			}
 
-			if (agentOrganisationSyndicale != null) {
-				// verifier si pas deja dans une autre organisation
-				List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(ag.getIdAgent());
-				for (AgentA54OrganisationSyndicale agTest : listeAgentOrganisationSyndicale) {
-					if (agTest.getOrganisationSyndicale().getIdOrganisationSyndicale() != idOrganisationSyndicale) {
-						// si pas la bonne organisation
-						logger.warn(AGENT_OS_EXISTANT, ag.getIdAgent());
-						srm.getErrors().add(String.format(AGENT_OS_EXISTANT, ag.getIdAgent()));
-						continue;
-					}
-				}
-				droitsToDelete.remove(agentOrganisationSyndicale);
-				agentOrganisationSyndicale.setIdAgent(ag.getIdAgent());
-				agentOrganisationSyndicale.setOrganisationSyndicale(organisationSyndicale);
-
-				// insert nouvelle ligne Agent Organisation syndicale
-				counterRepository.persistEntity(agentOrganisationSyndicale);
-
-				logger.info("Updated AgentA54OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA54AgentOrganisationSyndicale());
-				continue;
+			// verifier si pas deja dans une autre organisation
+			List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(idAgent);
+			AgentA54OrganisationSyndicale agentOrganisationSyndicale = null;
+			if (listeAgentOrganisationSyndicale.size() == 0) {
+				agentOrganisationSyndicale = new AgentA54OrganisationSyndicale();
+			} else if (listeAgentOrganisationSyndicale.size() == 1) {
+				agentOrganisationSyndicale = listeAgentOrganisationSyndicale.get(0);
 			} else {
-				// verifier si pas deja dans une autre organisation
-				boolean err = false;
-				List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(ag.getIdAgent());
-				for (AgentA54OrganisationSyndicale agTest : listeAgentOrganisationSyndicale) {
-					if (agTest.getOrganisationSyndicale().getIdOrganisationSyndicale() != idOrganisationSyndicale) {
-						// si pas la bonne organisation
-						logger.warn(AGENT_OS_EXISTANT, ag.getIdAgent());
-						srm.getErrors().add(String.format(AGENT_OS_EXISTANT, ag.getIdAgent()));
-						err = true;
-						continue;
-					}
-				}
-				if (!err) {
-					agentOrganisationSyndicale = new AgentA54OrganisationSyndicale();
-					agentOrganisationSyndicale.setIdAgent(ag.getIdAgent());
-					agentOrganisationSyndicale.setOrganisationSyndicale(organisationSyndicale);
-
-					// insert nouvelle ligne Agent Organisation syndicale
-					counterRepository.persistEntity(agentOrganisationSyndicale);
-
-					logger.info("Added AgentA54OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA54AgentOrganisationSyndicale());
-				}
+				// si pas la bonne organisation
+				logger.warn(AGENT_OS_EXISTANT, idAgent);
+				srm.getErrors().add(String.format(AGENT_OS_EXISTANT, idAgent));
+				return srm;
 			}
-		}
 
-		// on supprime les autres
-		for (AgentA54OrganisationSyndicale agToDelete : droitsToDelete) {
-			if (null != organisationSyndicale.getAgentsA54() && organisationSyndicale.getAgentsA54().contains(agToDelete)) {
-				organisationSyndicale.getAgentsA54().remove(agToDelete);
-				logger.info("Deleted AgentA54OrganisationSyndicale id {}.", agToDelete.getIdA54AgentOrganisationSyndicale());
-			}
-		}
+			agentOrganisationSyndicale.setIdAgent(idAgent);
+			agentOrganisationSyndicale.setOrganisationSyndicale(organisationSyndicale);
 
-		return srm;
+			// insert nouvelle ligne Agent Organisation syndicale
+			counterRepository.persistEntity(agentOrganisationSyndicale);
+
+			logger.info("Updated AgentA54OrganisationSyndicale id {}.", agentOrganisationSyndicale.getIdA54AgentOrganisationSyndicale());
+
+			return srm;
+		}
 	}
-
-	@Override
-	@Transactional(value = "absTransactionManager")
-	public List<AgentOrganisationSyndicaleDto> listeRepresentantA54(Integer idOrganisationSyndicale) {
-		List<AgentOrganisationSyndicaleDto> result = new ArrayList<>();
-
-		List<AgentA54OrganisationSyndicale> listeOrg = OSRepository.getListeAgentA54Organisation(idOrganisationSyndicale);
-		for (AgentA54OrganisationSyndicale ag : listeOrg) {
-			AgentOrganisationSyndicaleDto dto = new AgentOrganisationSyndicaleDto(ag);
-			result.add(dto);
-		}
-		return result;
-	}
-
 }

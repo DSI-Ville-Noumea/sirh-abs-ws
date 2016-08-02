@@ -27,10 +27,6 @@ public interface IOrganisationSyndicaleRepository {
 
 	List<OrganisationSyndicale> getListOSCounterForA52();
 
-	List<AgentA54OrganisationSyndicale> getListeAgentA54Organisation(Integer idOrganisationSyndicale);
-
-	List<AgentA48OrganisationSyndicale> getListeAgentA48Organisation(Integer idOrganisationSyndicale);
-
 	List<AgentA54OrganisationSyndicale> getAgentA54Organisation(Integer idAgent);
 
 	List<AgentA48OrganisationSyndicale> getAgentA48Organisation(Integer idAgent);
