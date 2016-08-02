@@ -1705,6 +1705,79 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public ReturnMessageDto checkAbsences(Integer convertedIdAgent, Date fromDate, Date toDate) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		// on cherche toutes les demandes de tout type de l'agent
+		// entre les dates
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate, toDate, null);
+		for (Demande demande : listeDemande) {
+			
+			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+			switch(RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {	
+				case AS:
+					// si la demande est dans un bon etat
+					if (RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat()) || RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+						String msg = String.format(ASA_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"), agent.getNomUsage() + " " + agent.getPrenomUsage());
+						result.getErrors().add(msg);
+					} else {
+						result.getInfos().add(
+								String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "absence syndicale", agent.getNomUsage() + " " + agent.getPrenomUsage()));
+					}
+					break;
+				case CONGES_ANNUELS:
+					// si la demande est dans un bon etat
+					if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat()) || RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat())
+							|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+						String msg = String.format(CONGE_ANNUEL_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"), agent.getNomUsage() + " " + agent.getPrenomUsage());
+						result.getErrors().add(msg);
+					} else {
+						result.getInfos().add(
+								String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "congé annuel", agent.getNomUsage() + " " + agent.getPrenomUsage()));
+					}
+					break;
+				case CONGES_EXCEP:
+					// si la demande est dans un bon etat
+					if (RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat()) || RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+						String msg = String.format(CONGE_EXCEP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"), agent.getNomUsage() + " " + agent.getPrenomUsage());
+						result.getErrors().add(msg);
+					} else {
+						result.getInfos().add(
+								String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "congé exceptionnel", agent.getNomUsage() + " " + agent.getPrenomUsage()));
+					}
+					break;
+				case RECUP:
+					// si la demande est dans un bon etat
+					if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat()) || RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+						String msg = String.format(RECUP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"), agent.getNomUsage() + " " + agent.getPrenomUsage());
+						result.getErrors().add(msg);
+					} else {
+						result.getInfos().add(
+								String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "récupération", agent.getNomUsage() + " " + agent.getPrenomUsage()));
+					}
+					break;
+				case REPOS_COMP:
+					// si la demande est dans un bon etat
+					if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat()) || RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+						String msg = String.format(REPOS_COMP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"), agent.getNomUsage() + " " + agent.getPrenomUsage());
+						result.getErrors().add(msg);
+					} else {
+						result.getInfos()
+								.add(String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "repos compensateur",
+										agent.getNomUsage() + " " + agent.getPrenomUsage()));
+					}
+					break;
+				case NOT_EXIST:
+					break;
+				default:
+					break;
+			}
+		}
+
+		return result;
+	}
+
+	@Override
 	public List<MoisAlimAutoCongesAnnuelsDto> getListeMoisAlimAutoCongeAnnuel() {
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
 		for (Date d : congeAnnuelRepository.getListeMoisAlimAutoCongeAnnuel()) {

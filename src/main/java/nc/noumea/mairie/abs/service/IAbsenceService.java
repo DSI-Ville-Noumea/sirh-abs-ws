@@ -69,4 +69,6 @@ public interface IAbsenceService {
 	List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoReposComp(Integer convertedIdAgent);
 
 	List<DemandeDto> getListDemandesCAToAddOrRemoveOnAgentCounter(Integer idAgent, Integer idAgentConcerne);
+
+	ReturnMessageDto checkAbsences(Integer convertedIdAgent, Date fromDate, Date toDate);
 }

@@ -10904,6 +10904,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.RECUP.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -10923,6 +10926,12 @@ public class AbsenceServiceTest {
 		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en récupération sur cette période.", result
 				.getErrors().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en récupération sur cette période.", result
+				.getErrors().get(0));
 	}
 
 	@Test
@@ -10950,6 +10959,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.RECUP.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeRecup.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -10970,6 +10982,13 @@ public class AbsenceServiceTest {
 				"01/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals(
+				"01/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'récupération' pour l'agent nomUsage prenomUsage.",
+				result.getInfos().get(0));
 	}
 
 	@Test
@@ -10997,6 +11016,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -11016,6 +11038,12 @@ public class AbsenceServiceTest {
 		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en repos compensateur sur cette période.",
 				result.getErrors().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en repos compensateur sur cette période.",
+				result.getErrors().get(0));
 	}
 
 	@Test
@@ -11043,6 +11071,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -11063,6 +11094,13 @@ public class AbsenceServiceTest {
 				"05/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals(
+				"05/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'repos compensateur' pour l'agent nomUsage prenomUsage.",
+				result.getInfos().get(0));
 	}
 
 	@Test
@@ -11089,6 +11127,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.AS.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -11108,6 +11149,12 @@ public class AbsenceServiceTest {
 		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en absence syndicale sur cette période.",
 				result.getErrors().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en absence syndicale sur cette période.",
+				result.getErrors().get(0));
 	}
 
 	@Test
@@ -11135,6 +11182,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.AS.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeAsa.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -11155,6 +11205,13 @@ public class AbsenceServiceTest {
 				"02/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals(
+				"02/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'absence syndicale' pour l'agent nomUsage prenomUsage.",
+				result.getInfos().get(0));
 	}
 
 	@Test
@@ -11181,6 +11238,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesExceptionnels.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -11200,6 +11260,12 @@ public class AbsenceServiceTest {
 		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en congé exceptionnel sur cette période.",
 				result.getErrors().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en congé exceptionnel sur cette période.",
+				result.getErrors().get(0));
 	}
 
 	@Test
@@ -11227,6 +11293,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesExceptionnels.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -11247,6 +11316,13 @@ public class AbsenceServiceTest {
 				"04/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals(
+				"04/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé exceptionnel' pour l'agent nomUsage prenomUsage.",
+				result.getInfos().get(0));
 	}
 
 	@Test
@@ -11273,6 +11349,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesAnnuels.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -11292,6 +11371,12 @@ public class AbsenceServiceTest {
 		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en congé annuel sur cette période.", result
 				.getErrors().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("01/01/2014 00:00 : L'agent nomUsage prenomUsage est en congé annuel sur cette période.", result
+				.getErrors().get(0));
 	}
 
 	@Test
@@ -11319,6 +11404,9 @@ public class AbsenceServiceTest {
 		Mockito.when(
 				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
 						RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())).thenReturn(listdemande);
+		Mockito.when(
+				demandeRepository.listeDemandesAgentVerification(idAgent, dateDebut, dateFin,
+						null)).thenReturn(listdemande);
 		Mockito.when(demandeRepository.getEntity(DemandeCongesAnnuels.class, d.getIdDemande())).thenReturn(d);
 
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
@@ -11339,6 +11427,13 @@ public class AbsenceServiceTest {
 				"03/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel' pour l'agent nomUsage prenomUsage.",
 				result.getInfos().get(0));
 
+		result = service.checkAbsences(idAgent, dateDebut, dateFin);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals(
+				"03/01/2014 : Soyez vigilant, vous avez pointé sur une absence de type 'congé annuel' pour l'agent nomUsage prenomUsage.",
+				result.getInfos().get(0));
 	}
 
 	@Test
