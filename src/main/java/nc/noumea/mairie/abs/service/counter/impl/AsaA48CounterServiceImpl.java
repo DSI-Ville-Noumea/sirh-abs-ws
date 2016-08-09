@@ -110,8 +110,8 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 				result.add(dto);
 			}
 		} else {
-			OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class, idOrganisation);
-			for (AgentA48OrganisationSyndicale agOrga : organisationSyndicale.getAgentsA48()) {
+			List<AgentA48OrganisationSyndicale> listAg = OSRepository.getAgentA48OrganisationByOS(idOrganisation);
+			for (AgentA48OrganisationSyndicale agOrga : listAg) {
 				AgentAsaA48Count compteurAg = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, agOrga.getIdAgent(),
 						new DateTime(annee, 1, 1, 0, 0, 0).toDate());
 				List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(compteurAg.getIdAgent(), compteurAg);
@@ -120,7 +120,7 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 				CompteurDto dto = new CompteurDto(compteurAg, list.size() > 0 ? list.get(0) : null,
 						listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null
 								: listeAgentOrganisationSyndicale.get(0));
-				result.add(dto);
+					result.add(dto);
 			}
 		}
 		return result;

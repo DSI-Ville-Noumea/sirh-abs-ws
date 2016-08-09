@@ -118,8 +118,8 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 				result.add(dto);
 			}
 		} else {
-			OrganisationSyndicale organisationSyndicale = OSRepository.getEntity(OrganisationSyndicale.class, idOrganisation);
-			for (AgentA54OrganisationSyndicale agOrga : organisationSyndicale.getAgentsA54()) {
+			List<AgentA54OrganisationSyndicale> listAg = OSRepository.getAgentA54OrganisationByOS(idOrganisation);
+			for (AgentA54OrganisationSyndicale agOrga : listAg) {
 				AgentAsaA54Count compteurAg = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, agOrga.getIdAgent(),
 						new DateTime(annee, 1, 1, 0, 0, 0).toDate());
 				List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(compteurAg.getIdAgent(), compteurAg);

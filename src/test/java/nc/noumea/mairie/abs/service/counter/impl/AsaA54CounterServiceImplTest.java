@@ -351,7 +351,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(OSRepository.getAgentA54Organisation(e.getIdAgent())).thenReturn(null);
-		Mockito.when(OSRepository.getEntity(OrganisationSyndicale.class, 1)).thenReturn(orga);
+		Mockito.when(OSRepository.getAgentA54OrganisationByOS(1)).thenReturn(orga.getAgentsA54());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, agOrga.getIdAgent(), new DateTime(2015, 1, 1, 0, 0, 0).toDate()))
