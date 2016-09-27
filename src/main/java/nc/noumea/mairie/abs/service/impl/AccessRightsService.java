@@ -453,7 +453,7 @@ public class AccessRightsService implements IAccessRightsService {
 		// on verifie que l agent n est pas deja operateur de l approbateur
 		if (accessRightsRepository.isUserViseurOfApprobateur(idAgentAppro, viseurDto.getIdAgent())) {
 			logger.debug("L'agent {} est déjà viseur de l'approbateur {}.", viseurDto.getIdAgent(), idAgentAppro);
-			result.getErrors().add(String.format("L'agent [%d] est déjà viseur de l'approbateur [%d].", viseurDto.getIdAgent(), idAgentAppro));
+			result.getInfos().add(String.format("L'agent [%d] est déjà viseur de l'approbateur [%d].", viseurDto.getIdAgent(), idAgentAppro));
 			return result;
 		}
 

@@ -5362,8 +5362,9 @@ public class AccessRightsServiceTest {
 
 		ReturnMessageDto result = service.setViseur(idAgentAppro, viseurDto,9005138);
 
-		assertEquals(1, result.getErrors().size());
-		assertEquals("L'agent [9005138] est déjà viseur de l'approbateur [9002990].", result.getErrors().get(0).toString());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("L'agent [9005138] est déjà viseur de l'approbateur [9002990].", result.getInfos().get(0).toString());
 		Mockito.verify(accessRightsRepository, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
 		Mockito.verify(accessRightsRepository, Mockito.never()).persisEntity(Mockito.isA(DroitProfil.class));
 		Mockito.verify(accessRightsRepository, Mockito.never()).removeEntity(Mockito.isA(Droit.class));
