@@ -1,19 +1,18 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import java.awt.Color;
-
-import com.lowagie.text.Font;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Font;
 
 public class CellVo {
 
-	private String text;
-	private boolean isBold;
-	private Integer colspan;
-	private Color backgroundColor;
-	private Integer horizontalAlign;
-	private boolean isBorder;
+	private String		text;
+	private boolean		isBold;
+	private Integer		colspan;
+	private BaseColor	backgroundColor;
+	private Integer		horizontalAlign;
+	private boolean		isBorder;
 
-	private Font font;
+	private Font		font;
 
 	/**
 	 * @param text
@@ -102,7 +101,7 @@ public class CellVo {
 	 * @see Par defaut : - text non gras (normal) - colspan = 1 - aligne a
 	 *      gauche - avec bordure
 	 */
-	public CellVo(String text, Color backgroundColor) {
+	public CellVo(String text, BaseColor backgroundColor) {
 		this(text, false, 1, backgroundColor, null);
 	}
 
@@ -118,7 +117,7 @@ public class CellVo {
 	 *            couleur en fond
 	 * @see Par defaut : - aligne a gauche - avec bordure
 	 */
-	public CellVo(String text, boolean isBold, Integer colspan, Color backgroundColor) {
+	public CellVo(String text, boolean isBold, Integer colspan, BaseColor backgroundColor) {
 		this(text, isBold, colspan, backgroundColor, null);
 	}
 
@@ -136,7 +135,7 @@ public class CellVo {
 	 *            alignement horizontal du text
 	 * @see Par defaut : - avec bordure
 	 */
-	public CellVo(String text, boolean isBold, Integer colspan, Color backgroundColor, Integer horizontalAlign) {
+	public CellVo(String text, boolean isBold, Integer colspan, BaseColor backgroundColor, Integer horizontalAlign) {
 		this(text, isBold, colspan, backgroundColor, horizontalAlign, true);
 	}
 
@@ -155,7 +154,7 @@ public class CellVo {
 	 * @param isBorder
 	 *            bordure ou non d une case d un tableau
 	 */
-	public CellVo(String text, boolean isBold, Integer colspan, Color backgroundColor, Integer horizontalAlign, boolean isBorder) {
+	public CellVo(String text, boolean isBold, Integer colspan, BaseColor backgroundColor, Integer horizontalAlign, boolean isBorder) {
 		super();
 		this.text = text;
 		this.isBold = isBold;
@@ -180,7 +179,7 @@ public class CellVo {
 	 * @param isBorder
 	 *            bordure ou non d une case d un tableau
 	 */
-	public CellVo(String text, boolean isBold, Integer colspan, Color backgroundColor, Integer horizontalAlign, boolean isBorder, Font font) {
+	public CellVo(String text, boolean isBold, Integer colspan, BaseColor backgroundColor, Integer horizontalAlign, boolean isBorder, Font font) {
 		super();
 		this.text = text;
 		this.isBold = isBold;
@@ -215,11 +214,11 @@ public class CellVo {
 		this.colspan = colspan;
 	}
 
-	public Color getBackgroundColor() {
+	public BaseColor getBackgroundColor() {
 		return backgroundColor;
 	}
 
-	public void setBackgroundColor(Color backgroundColor) {
+	public void setBackgroundColor(BaseColor backgroundColor) {
 		this.backgroundColor = backgroundColor;
 	}
 
