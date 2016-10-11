@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
@@ -24,32 +28,28 @@ import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 @Service
 public class FiltreService implements IFiltreService {
 
 	@Autowired
-	private IFiltreRepository filtreRepository;
+	private IFiltreRepository				filtreRepository;
 
 	@Autowired
-	private ISirhRepository sirhRepository;
+	private ISirhRepository					sirhRepository;
 
 	@Autowired
-	private HelperService helperService;
+	private HelperService					helperService;
 
 	@Autowired
-	private ISirhWSConsumer sirhWSConsumer;
+	private ISirhWSConsumer					sirhWSConsumer;
 
 	@Autowired
-	private IAgentMatriculeConverterService agentMatriculeService;
+	private IAgentMatriculeConverterService	agentMatriculeService;
 
-	public static final String ONGLET_NON_PRISES = "NON_PRISES";
-	public static final String ONGLET_EN_COURS = "EN_COURS";
-	public static final String ONGLET_TOUTES = "TOUTES";
-	public static final String ONGLET_PLANNING = "PLANNING";
+	public static final String				ONGLET_NON_PRISES	= "NON_PRISES";
+	public static final String				ONGLET_EN_COURS		= "EN_COURS";
+	public static final String				ONGLET_TOUTES		= "TOUTES";
+	public static final String				ONGLET_PLANNING		= "PLANNING";
 
 	@Override
 	@Transactional(readOnly = true)
@@ -73,9 +73,8 @@ public class FiltreService implements IFiltreService {
 
 		Spcarr carr = null;
 		if (null != idAgentConcerne) {
-			carr = sirhRepository
-					.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgentConcerne),
-							helperService.getCurrentDate());
+			carr = sirhRepository.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgentConcerne),
+					helperService.getCurrentDate());
 		}
 
 		for (RefTypeAbsence type : refTypeAbs) {
@@ -140,7 +139,7 @@ public class FiltreService implements IFiltreService {
 					etats = filtreRepository.findAllRefEtats();
 				}
 				break;
-				// #12159
+			// #12159
 			case ONGLET_PLANNING:
 				if (lisIdRefEtat != null && lisIdRefEtat.size() != 0) {
 					for (Integer idEtat : lisIdRefEtat) {
@@ -244,8 +243,7 @@ public class FiltreService implements IFiltreService {
 
 		RefTypeSaisiCongeAnnuel typeSaisieCongeAnnuel = null;
 		for (RefTypeAbsence type : refTypeAbs) {
-			if (idAgent != null
-					&& type.getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
+			if (idAgent != null && type.getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
 				// on cherche le code base horaire absence de l'agent
 				RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(idAgent, new Date());
 				// #15000 si pas d'affectation active alors on cherche la
@@ -268,15 +266,8 @@ public class FiltreService implements IFiltreService {
 	@Override
 	public List<RefTypeAbsenceDto> getRefTypesAbsenceCompteurKiosque() {
 		List<RefTypeAbsenceDto> result = new ArrayList<RefTypeAbsenceDto>();
-		List<RefTypeAbsence> listeRecup = filtreRepository
-				.findAllRefTypeAbsencesWithGroup(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		List<RefTypeAbsence> listeRecup = filtreRepository.findAllRefTypeAbsencesWithGroup(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 		for (RefTypeAbsence r : listeRecup) {
-			RefTypeAbsenceDto dtoRecup = new RefTypeAbsenceDto(r);
-			result.add(dtoRecup);
-		}
-		List<RefTypeAbsence> listeReposComp = filtreRepository
-				.findAllRefTypeAbsencesWithGroup(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
-		for (RefTypeAbsence r : listeReposComp) {
 			RefTypeAbsenceDto dtoRecup = new RefTypeAbsenceDto(r);
 			result.add(dtoRecup);
 		}
