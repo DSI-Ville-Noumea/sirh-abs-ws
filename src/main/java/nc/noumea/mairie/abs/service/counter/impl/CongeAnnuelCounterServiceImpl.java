@@ -239,20 +239,20 @@ public class CongeAnnuelCounterServiceImpl extends AbstractCounterService {
 		// si on approuve, le compteur decremente
 		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
 				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
-			if (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
+			// #34284 : bug sur decompte jours dans les compteurs
+			if (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)
+					|| demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE)) {
+				//si on approuve 2 fois, on ne va pas debiter 2 fois
 				return jours;
-			} else if (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.REFUSEE)) {
-				jours = ((DemandeCongesAnnuels) demande).getDuree()
-						+ ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
 			} else {
-				jours = 0 - ((DemandeCongesAnnuels) demande).getDuree()
-						- ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
+				jours = 0 - ((DemandeCongesAnnuels) demande).getDuree() - ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
 			}
 		}
 		// si on passe de Approuve a Refuse, le compteur incremente
-		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat()) || demandeEtatChangeDto
-				.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat()))
-				&& demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)) {
+		if ((demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
+				|| demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat()))
+				&& (demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.APPROUVEE)
+						|| demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE))) {
 			jours = ((DemandeCongesAnnuels) demande).getDuree() + ((DemandeCongesAnnuels) demande).getDureeAnneeN1();
 		}
 		// si on passe de Approuve a Annulé ou de Validée à annulé, le compteur
