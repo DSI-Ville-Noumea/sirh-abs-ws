@@ -6,6 +6,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
@@ -39,70 +47,62 @@ import nc.noumea.mairie.abs.service.ISoldeService;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 import nc.noumea.mairie.sirh.comparator.HistoriqueSoldeDtoComparator;
 
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 @Service
 public class SoldeService implements ISoldeService {
 
-	private Logger logger = LoggerFactory.getLogger(SoldeService.class);
+	private Logger											logger	= LoggerFactory.getLogger(SoldeService.class);
 
 	@Autowired
-	private ICounterRepository counterRepository;
+	private ICounterRepository								counterRepository;
 
 	@Autowired
-	private IDemandeRepository demandeRepository;
+	private IDemandeRepository								demandeRepository;
 
 	@Autowired
-	private IOrganisationSyndicaleRepository organisationSyndicaleRepository;
+	private IOrganisationSyndicaleRepository				organisationSyndicaleRepository;
 
 	@Autowired
 	@Qualifier("AbsReposCompensateurDataConsistencyRulesImpl")
-	private AbsReposCompensateurDataConsistencyRulesImpl absReposCompDataConsistencyRules;
+	private AbsReposCompensateurDataConsistencyRulesImpl	absReposCompDataConsistencyRules;
 
 	@Autowired
 	@Qualifier("AbsAsaA48DataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absAsaA48DataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules					absAsaA48DataConsistencyRulesImpl;
 
 	@Autowired
 	@Qualifier("AbsAsaA52DataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absAsaA52DataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules					absAsaA52DataConsistencyRulesImpl;
 
 	@Autowired
 	@Qualifier("AbsAsaA54DataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules					absAsaA54DataConsistencyRulesImpl;
 
 	@Autowired
 	@Qualifier("AbsAsaA55DataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules					absAsaA55DataConsistencyRulesImpl;
 
 	@Autowired
 	@Qualifier("AbsAsaAmicaleDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules					absAsaAmicaleDataConsistencyRulesImpl;
 
 	@Autowired
 	@Qualifier("CongesExcepCounterServiceImpl")
-	private ICounterService congesExcepCounterServiceImpl;
+	private ICounterService									congesExcepCounterServiceImpl;
 
 	@Autowired
-	protected ISirhRepository sirhRepository;
+	protected ISirhRepository								sirhRepository;
 
 	@Autowired
-	private ICongesAnnuelsRepository congeAnnuelRepository;
-	
-	@Autowired 
-	private IRecuperationRepository recuperationRepository;
-	
-	@Autowired
-	private IReposCompensateurRepository reposCompensateurRepository;
+	private ICongesAnnuelsRepository						congeAnnuelRepository;
 
 	@Autowired
-	protected IAsaRepository asaRepository;
+	private IRecuperationRepository							recuperationRepository;
+
+	@Autowired
+	private IReposCompensateurRepository					reposCompensateurRepository;
+
+	@Autowired
+	protected IAsaRepository								asaRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -167,10 +167,11 @@ public class SoldeService implements ISoldeService {
 		if (soldeAsaAmicale != null && soldeAsaAmicale.isActif()) {
 			dto.setAfficheSoldeAsaAmicale(soldeAsaAmicale == null ? false : true);
 			dto.setSoldeAsaAmicale(soldeAsaAmicale == null ? 0.0 : soldeAsaAmicale.getTotalMinutes());
-			
-			double dureeAsaAmicaleNonValide = absAsaAmicaleDataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaAmicale.getDateDebut(), soldeAsaAmicale.getDateFin());
+
+			double dureeAsaAmicaleNonValide = absAsaAmicaleDataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent,
+					soldeAsaAmicale.getDateDebut(), soldeAsaAmicale.getDateFin());
 			dto.setDureeAsaAmicaleNonValide(dureeAsaAmicaleNonValide);
-			
+
 		} else {
 			dto.setAfficheSoldeAsaAmicale(false);
 			dto.setSoldeAsaAmicale(0.0);
@@ -185,7 +186,7 @@ public class SoldeService implements ISoldeService {
 		dto.setSoldeCongeAnnee(soldeConge == null ? 0 : soldeConge.getTotalJours());
 		dto.setSoldeCongeAnneePrec(soldeConge == null ? 0 : soldeConge.getTotalJoursAnneeN1());
 		dto.setSamediOffert(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, new DateTime(new Date()).getYear(), null) == 0 ? false : true);
-		
+
 		Double dureeCongeNonValide = congeAnnuelRepository.getSommeDureeDemandeCongeAnnuelEnCoursSaisieouViseeouAValider(idAgent, null);
 		dto.setDureeCongeNonValide(dureeCongeNonValide);
 	}
@@ -196,7 +197,7 @@ public class SoldeService implements ISoldeService {
 		Integer solde = soldeRecup == null ? 0 : soldeRecup.getTotalMinutes();
 		dto.setAfficheSoldeRecup(true);
 		dto.setSoldeRecup((double) (solde));
-		
+
 		Integer dureeRecupNonValide = recuperationRepository.getSommeDureeDemandeRecupEnCoursSaisieouVisee(idAgent, null);
 		dto.setDureeRecupNonValide(null == dureeRecupNonValide ? 0.0 : (double) dureeRecupNonValide);
 	}
@@ -208,7 +209,7 @@ public class SoldeService implements ISoldeService {
 		dto.setAfficheSoldeReposComp(msg.getErrors().isEmpty() ? true : false);
 		dto.setSoldeReposCompAnnee((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutes()));
 		dto.setSoldeReposCompAnneePrec((double) (soldeReposComp == null ? 0 : soldeReposComp.getTotalMinutesAnneeN1()));
-		
+
 		Integer dureeReposCompNonValide = reposCompensateurRepository.getSommeDureeDemandeReposCompEnCoursSaisieouVisee(idAgent, null);
 		dto.setDureeReposCompNonValide(null == dureeReposCompNonValide ? 0.0 : (double) dureeReposCompNonValide);
 	}
@@ -220,8 +221,9 @@ public class SoldeService implements ISoldeService {
 		if (soldeAsaA48 != null && soldeAsaA48.isActif()) {
 			dto.setAfficheSoldeAsaA48(soldeAsaA48 == null ? false : true);
 			dto.setSoldeAsaA48(soldeAsaA48 == null ? 0 : soldeAsaA48.getTotalJours());
-			
-			double dureeAsaA48NonValide = absAsaA48DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaA48.getDateDebut(), soldeAsaA48.getDateFin());
+
+			double dureeAsaA48NonValide = absAsaA48DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaA48.getDateDebut(),
+					soldeAsaA48.getDateFin());
 			dto.setDureeAsaA48NonValide(dureeAsaA48NonValide);
 		} else {
 			dto.setAfficheSoldeAsaA48(false);
@@ -237,8 +239,9 @@ public class SoldeService implements ISoldeService {
 		if (soldeAsaA54 != null && soldeAsaA54.isActif()) {
 			dto.setAfficheSoldeAsaA54(soldeAsaA54 == null ? false : true);
 			dto.setSoldeAsaA54(soldeAsaA54 == null ? 0 : soldeAsaA54.getTotalJours());
-			
-			double dureeAsaA54NonValide = absAsaA54DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaA54.getDateDebut(), soldeAsaA54.getDateFin());
+
+			double dureeAsaA54NonValide = absAsaA54DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaA54.getDateDebut(),
+					soldeAsaA54.getDateFin());
 			dto.setDureeAsaA54NonValide(dureeAsaA54NonValide);
 		} else {
 			dto.setAfficheSoldeAsaA54(false);
@@ -254,8 +257,9 @@ public class SoldeService implements ISoldeService {
 		dto.setAfficheSoldeAsaA55(soldeAsaA55 == null ? false : true);
 		if (soldeAsaA55 != null) {
 			dto.setSoldeAsaA55((double) soldeAsaA55.getTotalMinutes());
-			
-			double dureeAsaA55NonValide = absAsaA55DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaA55.getDateDebut(), soldeAsaA55.getDateFin());
+
+			double dureeAsaA55NonValide = absAsaA55DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaA55.getDateDebut(),
+					soldeAsaA55.getDateFin());
 			dto.setDureeAsaA55NonValide(dureeAsaA55NonValide);
 		} else {
 			dto.setSoldeAsaA55((double) 0);
@@ -308,7 +312,11 @@ public class SoldeService implements ISoldeService {
 			}
 			dto.setListeSoldeAsaA52(listDto);
 			
-			double dureeAsaA52NonValide = absAsaA52DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin());
+			//#35721 : erreur si soldeAsaA52 est null
+			double dureeAsaA52NonValide = 0.0;
+			if(soldeAsaA52!=null){
+				 dureeAsaA52NonValide = absAsaA52DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin());
+			}
 			dto.setDureeAsaA52NonValide(dureeAsaA52NonValide);
 		}
 	}
