@@ -440,28 +440,16 @@ public class HelperService {
 		switch (demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence()) {
 			case "A":
 			case "D":
+			case "S":
 
 				List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
 
 				duree = calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin())
 						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin(), listJoursFeries)
-						- getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY, listJoursFeries) // on
-						// retire
-						// le
-						// nombre
-						// de
-						// samedi
-						+ getNombreSamediDecompte(demande, listJoursFeries) - getNombreSamediOffert(demande, listJoursFeries); // puis
-				// on
-				// calcule
-				// le
-				// nombre
-				// de
-				// samedi
-				// decompte
-				// selon
-				// les
-				// RG
+						- getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY, listJoursFeries)
+						// on retire le nombre de samedi
+						+ getNombreSamediDecompte(demande, listJoursFeries) - getNombreSamediOffert(demande, listJoursFeries);
+				// puis on calcule le nombre de samedi decompte selon les RG
 				break;
 
 			case "E":
@@ -603,26 +591,8 @@ public class HelperService {
 		if (demande.getTypeSaisiCongeAnnuel() != null && demande.getTypeSaisiCongeAnnuel().isDecompteSamedi()) {
 
 			// on calcule le nombre de vendredi
-			DateTime startDate = new DateTime(demande.getDateDebut()).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0); // on
-																																	// met
-																																	// les
-																																	// heures
-																																	// et
-																																	// minutes
-																																	// a
-																																	// zero
-																																	// afin
-																																	// de
-																																	// bien
-																																	// comptabiliser
-																																	// le
-																																	// nombre
-																																	// de
-																																	// vendredi
-																																	// dans
-																																	// la
-																																	// boucle
-																																	// while
+			DateTime startDate = new DateTime(demande.getDateDebut()).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0); 
+			// on met les heures et minutes a zero afin de bien comptabiliser le nombre de vendredi dans la boucle while
 			DateTime endDate = new DateTime(demande.getDateFin());
 
 			// on boucle sur tous les jours de la periode

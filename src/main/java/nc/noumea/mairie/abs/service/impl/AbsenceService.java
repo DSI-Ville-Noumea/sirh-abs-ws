@@ -1935,8 +1935,8 @@ public class AbsenceService implements IAbsenceService {
 			if (null != dtoBase && null != dtoBase.getIdRefTypeSaisiCongeAnnuel()) {
 				RefTypeSaisiCongeAnnuel typeConge = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
 						dtoBase.getIdRefTypeSaisiCongeAnnuel());
-				if (null == typeConge || null == typeConge.getCodeBaseHoraireAbsence()
-						|| (!"A".equals(typeConge.getCodeBaseHoraireAbsence().trim()) && !"D".equals(typeConge.getCodeBaseHoraireAbsence().trim()))) {
+				if (null == typeConge || null == typeConge.getCodeBaseHoraireAbsence() || (!"A".equals(typeConge.getCodeBaseHoraireAbsence().trim())
+						&& !"D".equals(typeConge.getCodeBaseHoraireAbsence().trim()) && !"S".equals(typeConge.getCodeBaseHoraireAbsence().trim()))) {
 					logger.debug(String.format(MAUVAIS_BASE_CA, idAgent));
 				} else {
 					if (!result.contains(idAgent))
