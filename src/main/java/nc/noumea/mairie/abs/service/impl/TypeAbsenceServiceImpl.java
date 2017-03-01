@@ -109,11 +109,16 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			result.getErrors().add(TYPE_GROUPE_INEXISTANT);
 			return result;
 		}
+		// #37350 : on check que le libellé n'est pas null
+		if (typeAbsenceDto.getLibelle() == null || typeAbsenceDto.getLibelle().trim().equals("")) {
+			logger.debug("Le libellé est obligatoire.");
+			result.getErrors().add("Le libellé est obligatoire.");
+			return result;
+		}
+
+		typeAbsence.setLabel(typeAbsenceDto.getLibelle());
 
 		if (null != typeAbsenceDto.getTypeSaisiDto()) {
-
-			//#37350 : on ne modifie le label que dans le cas du congés exceptionnel
-			typeAbsence.setLabel(typeAbsenceDto.getLibelle());
 
 			RefTypeSaisiDto typeSaisiDto = typeAbsenceDto.getTypeSaisiDto();
 
