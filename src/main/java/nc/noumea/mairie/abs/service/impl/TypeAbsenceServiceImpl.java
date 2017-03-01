@@ -110,9 +110,10 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			return result;
 		}
 
-		typeAbsence.setLabel(typeAbsenceDto.getLibelle());
-
 		if (null != typeAbsenceDto.getTypeSaisiDto()) {
+
+			//#37350 : on ne modifie le label que dans le cas du congés exceptionnel
+			typeAbsence.setLabel(typeAbsenceDto.getLibelle());
 
 			RefTypeSaisiDto typeSaisiDto = typeAbsenceDto.getTypeSaisiDto();
 
