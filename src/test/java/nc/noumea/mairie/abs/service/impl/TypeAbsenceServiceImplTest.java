@@ -123,6 +123,7 @@ public class TypeAbsenceServiceImplTest {
 
 		RefTypeAbsenceDto typeAbsenceDto = new RefTypeAbsenceDto();
 		typeAbsenceDto.setIdRefTypeAbsence(1);
+		typeAbsenceDto.setLibelle("lib1");
 		typeAbsenceDto.setGroupeAbsence(groupeAbsence);
 		typeAbsenceDto.setTypeSaisiCongeAnnuelDto(new RefTypeSaisiCongeAnnuelDto());
 
@@ -216,6 +217,7 @@ public class TypeAbsenceServiceImplTest {
 
 		RefTypeAbsenceDto typeAbsenceDto = new RefTypeAbsenceDto();
 		typeAbsenceDto.setIdRefTypeAbsence(1);
+		typeAbsenceDto.setLibelle("Libl");
 		typeAbsenceDto.setGroupeAbsence(groupeDto);
 		typeAbsenceDto.setTypeSaisiDto(typeSaisiDto);
 
@@ -261,6 +263,7 @@ public class TypeAbsenceServiceImplTest {
 
 		RefTypeAbsenceDto typeAbsenceDto = new RefTypeAbsenceDto();
 		typeAbsenceDto.setIdRefTypeAbsence(1);
+		typeAbsenceDto.setLibelle("Libl");
 		typeAbsenceDto.setGroupeAbsence(groupeDto);
 		typeAbsenceDto.setTypeSaisiDto(typeSaisiDto);
 
@@ -324,6 +327,7 @@ public class TypeAbsenceServiceImplTest {
 
 		RefTypeAbsenceDto typeAbsenceDto = new RefTypeAbsenceDto();
 		typeAbsenceDto.setGroupeAbsence(groupeDto);
+		typeAbsenceDto.setLibelle("Libl");
 		typeAbsenceDto.setTypeSaisiDto(typeSaisiDto);
 
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
