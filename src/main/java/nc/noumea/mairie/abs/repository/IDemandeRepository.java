@@ -46,4 +46,7 @@ public interface IDemandeRepository {
 	List<Demande> listeDemandesForListAgent(Integer idAgentConnecte,
 			List<Integer> idAgentConcerne, Date fromDate, Date toDate,
 			Integer idRefType, Integer idRefGroupeAbsence);
+
+	List<Demande> getListDemandeRejetDRHStatutVeille(List<Integer> listeTypes);
+
 }

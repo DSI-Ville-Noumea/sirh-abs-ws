@@ -491,4 +491,19 @@ public class DemandeController {
 		return result;
 	}
 
+	/**
+	 * Utile à SIRH-JOBS pour l'envoi de mail des demandes "REJET_DRH de la
+	 * veille
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/listDemandeRejetDRHStatutVeille", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<DemandeDto> getListDemandeRejetDRHStatutVeille() {
+
+		logger.debug("entered GET [demandes/listDemandeRejetDRHStatutVeille] => getListDemandeRejetDRHStatutVeille ");
+
+		List<DemandeDto> result = absenceService.getListDemandeRejetDRHStatutVeille();
+
+		return result;
+	}
+
 }

@@ -71,4 +71,6 @@ public interface IAbsenceService {
 	List<DemandeDto> getListDemandesCAToAddOrRemoveOnAgentCounter(Integer idAgent, Integer idAgentConcerne);
 
 	ReturnMessageDto checkAbsences(Integer convertedIdAgent, Date fromDate, Date toDate);
+
+	List<DemandeDto> getListDemandeRejetDRHStatutVeille();
 }

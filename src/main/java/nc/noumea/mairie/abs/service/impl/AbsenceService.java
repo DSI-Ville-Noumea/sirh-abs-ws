@@ -2216,4 +2216,28 @@ public class AbsenceService implements IAbsenceService {
 
 		return result;
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<DemandeDto> getListDemandeRejetDRHStatutVeille() {
+
+		List<DemandeDto> result = new ArrayList<DemandeDto>();
+
+		List<Integer> listeTypes = new ArrayList<Integer>();
+		listeTypes.add(RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		listeTypes.add(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		listeTypes.add(RefTypeGroupeAbsenceEnum.AS.getValue());
+		listeTypes.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+		listeTypes.add(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+
+		List<Demande> listDemandeRejetVeille = demandeRepository.getListDemandeRejetDRHStatutVeille(listeTypes);
+
+		for (Demande dem : listDemandeRejetVeille) {
+
+			DemandeDto demandeDto = new DemandeDto(dem,sirhWSConsumer.getAgentService(dem.getIdAgent(), helperService.getCurrentDate()));
+			result.add(demandeDto);
+		}
+
+		return result;
+	}
 }

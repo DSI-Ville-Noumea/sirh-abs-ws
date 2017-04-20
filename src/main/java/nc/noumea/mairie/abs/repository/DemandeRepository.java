@@ -579,4 +579,28 @@ public class DemandeRepository implements IDemandeRepository {
 
 		return query.getResultList();
 	}
+
+	@Override
+	public List<Demande> getListDemandeRejetDRHStatutVeille(List<Integer> listeTypesGroupe) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
+		sb.append("where d.type.groupe.idRefGroupeAbsence in ( :TYPE ) ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
+		sb.append("and ed.etat in ( :REJET_DRH ) ");
+		sb.append("and ed.date between :dateHistoMatin and :dateHistoSoir ");
+		
+		TypedQuery<Demande> q = absEntityManager.createQuery(sb.toString(), Demande.class);
+		q.setParameter("TYPE", listeTypesGroupe);
+		q.setParameter("REJET_DRH", RefEtatEnum.REJETE);
+
+		DateTime hierMatin = new DateTime(new Date());
+		DateTime hierSoir = new DateTime(new Date());
+		hierMatin = hierMatin.minusDays(1).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(1);
+		hierSoir = hierSoir.minusDays(1).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+		q.setParameter("dateHistoMatin", hierMatin.toDate());
+		q.setParameter("dateHistoSoir", hierSoir.toDate());
+		
+		return q.getResultList();
+	}
 }
