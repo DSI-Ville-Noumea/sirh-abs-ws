@@ -29,25 +29,11 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, 
 			boolean isProvenanceSIRH) {
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-		checkChampMotifDemandeSaisi(srm, (DemandeCongesExceptionnels) demande);
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		checkMessageAlerteDepassementDroit(srm, (DemandeCongesExceptionnels) demande);
 	}
 
-	protected ReturnMessageDto checkChampMotifDemandeSaisi(ReturnMessageDto srm, DemandeCongesExceptionnels demande) {
-
-		if (null != demande.getType().getTypeSaisi()) {
-			if ((null == demande.getCommentaire() || "".equals(demande.getCommentaire().trim()))
-					&& demande.getType().getTypeSaisi().isMotif()) {
-				logger.warn(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
-				srm.getErrors().add(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
-			}
-		}
-
-		return srm;
-	}
-
-	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
+	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur, boolean isFromSIRH) {
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()))
@@ -71,16 +57,16 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 	@Override
 	public DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto) {
 
-		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
+		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true, true));
 		demandeDto.setAffichageValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()));
-		demandeDto.setModifierValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()));
-		demandeDto.setAffichageEnAttente(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
-		demandeDto.setAffichageBoutonDupliquer(true);
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
+		demandeDto.setAffichageBoutonRejeter(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
+		demandeDto.setAffichageEnAttente(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
+		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()));
 
 		return demandeDto;
 	}
@@ -233,5 +219,14 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 					.add(String.format("Les radio boutons Matin/Après-midi doivent être sélectionnés ensemble."));
 
 		return srm;
+	}
+
+	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+		// cf redmine #13378
+		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()) 
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
+			return true;
+		}
+		return false;
 	}
 }

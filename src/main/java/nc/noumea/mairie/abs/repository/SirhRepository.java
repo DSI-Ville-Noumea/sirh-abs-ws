@@ -8,14 +8,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Repository;
+
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.SpSorc;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcc;
 import nc.noumea.mairie.domain.Spmatr;
-
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class SirhRepository implements ISirhRepository {
@@ -55,6 +55,23 @@ public class SirhRepository implements ISirhRepository {
 		Spadmn adm = qSpadmn.getSingleResult();
 
 		return adm;
+	}
+
+	@Override
+	public List<Spadmn> getPA50OfAgent(Integer nomatr, Date dateDerniereEmbauche) {
+		
+		TypedQuery<Spadmn> qSpadmn = sirhEntityManager.createNamedQuery("getPA50OfAgent", Spadmn.class);
+		qSpadmn.setParameter("nomatr", nomatr);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		int dateFormatMairie = Integer.valueOf(sdf.format(dateDerniereEmbauche));
+		qSpadmn.setParameter("dateFormatMairie", dateFormatMairie);
+
+		if (qSpadmn.getResultList().isEmpty()) {
+			return null;
+		}
+
+		return qSpadmn.getResultList();
 	}
 
 	@Override

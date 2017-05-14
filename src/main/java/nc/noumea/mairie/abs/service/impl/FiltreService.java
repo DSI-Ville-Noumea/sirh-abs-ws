@@ -1,9 +1,15 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,15 +17,21 @@ import org.springframework.transaction.annotation.Transactional;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAccidentTravail;
+import nc.noumea.mairie.abs.domain.RefTypeGenerique;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeMaladiePro;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
+import nc.noumea.mairie.abs.domain.RefTypeSiegeLesion;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
@@ -30,6 +42,8 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 @Service
 public class FiltreService implements IFiltreService {
+	
+	private Logger logger = LoggerFactory.getLogger(FiltreService.class);
 
 	@Autowired
 	private IFiltreRepository				filtreRepository;
@@ -203,6 +217,21 @@ public class FiltreService implements IFiltreService {
 	}
 
 	@Override
+	public List<RefGroupeAbsenceDto> getRefGroupeAbsenceForAgent(Integer idRefGroupeAbsence) {
+
+		List<RefGroupeAbsenceDto> resultTmp = getRefGroupeAbsence(idRefGroupeAbsence);
+		List<RefGroupeAbsenceDto> resultDto = new ArrayList<RefGroupeAbsenceDto>();
+		
+		for(RefGroupeAbsenceDto dto : resultTmp) {
+			if(!dto.getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.MALADIES.getValue())) {
+				resultDto.add(dto);
+			}
+		}
+		
+		return resultDto;
+	}
+
+	@Override
 	@Transactional(readOnly = true)
 	public List<UnitePeriodeQuotaDto> getUnitePeriodeQuota() {
 
@@ -285,5 +314,178 @@ public class FiltreService implements IFiltreService {
 
 		}
 		return res;
+	}
+
+	@Override
+	public List<RefTypeDto> getAllRefTypeAccidentTravail() {
+		
+		List<RefTypeDto> res = new ArrayList<RefTypeDto>();
+		List<RefTypeAccidentTravail> refType = filtreRepository.findAllRefTypeAccidentTravail();
+
+		for (RefTypeAccidentTravail type : refType) {
+			RefTypeDto dto = new RefTypeDto(type);
+			res.add(dto);
+		}
+		
+		return res;
+	}
+
+	@Override
+	public List<RefTypeDto> getAllRefTypeSiegeLesion() {
+		
+		List<RefTypeDto> res = new ArrayList<RefTypeDto>();
+		List<RefTypeSiegeLesion> refType = filtreRepository.findAllRefTypeSiegeLesion();
+
+		for (RefTypeSiegeLesion type : refType) {
+			RefTypeDto dto = new RefTypeDto(type);
+			res.add(dto);
+		}
+		
+		return res;
+	}
+
+	@Override
+	public List<RefTypeDto> getAllRefTypeMaladiePro() {
+		
+		List<RefTypeDto> res = new ArrayList<RefTypeDto>();
+		List<RefTypeMaladiePro> refType = filtreRepository.findAllRefTypeMaladiePro();
+
+		for (RefTypeMaladiePro type : refType) {
+			RefTypeDto dto = new RefTypeDto(type);
+			res.add(dto);
+		}
+		
+		return res;
+	}
+	
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public <T extends RefTypeGenerique> ReturnMessageDto setTypeGenerique(Integer idAgentConnecte, final Class<? extends RefTypeGenerique> T, RefTypeDto dto) {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		// verification des droits SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			logger.warn("L'agent n'est pas habilité.");
+			result.getErrors().add(String.format("L'agent n'est pas habilité."));
+			return result;
+		}
+		
+		RefTypeGenerique object = getTypeGenerique(T, dto, result);
+		
+		if(!result.getErrors().isEmpty())
+			return result;
+		
+		try {
+			if(null == object) {
+					object = T.newInstance();
+			}
+		} catch (InstantiationException | IllegalAccessException e) {
+			logger.debug("Cannot instantiate new Object in setTypeGenerique()");
+		}
+		
+		object.setLibelle(dto.getLibelle());
+		
+		try {
+			Method m = T.getMethod("setCode", String.class);
+			m.invoke(object, dto.getCode());
+		} catch (NoSuchMethodException | SecurityException e) {
+			logger.debug(e.getMessage());
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			logger.debug(e.getMessage());
+		}
+		
+		filtreRepository.persist(object);
+		
+		result.getInfos().add("Enregistrement effectué.");
+		
+		return result;
+	}
+	
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto setTypeMaladiePro(Integer idAgentConnecte, RefTypeDto dto) {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		// verification des droits SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			logger.warn("L'agent n'est pas habilité.");
+			result.getErrors().add(String.format("L'agent n'est pas habilité."));
+			return result;
+		}
+		
+		RefTypeMaladiePro object = getTypeGenerique(RefTypeMaladiePro.class, dto, result);
+		
+		if(!result.getErrors().isEmpty())
+			return result;
+		
+//		try {
+//			if(null == object) {
+//					object = new RefTypeMaladiePro();
+//			}
+//		} catch (InstantiationException | IllegalAccessException e) {
+//			logger.debug("Cannot instantiate new Object in setTypeGenerique()");
+//		}
+		
+		object.setCode(dto.getCode());
+		object.setLibelle(dto.getLibelle());
+		
+		filtreRepository.persist(object);
+		
+		result.getInfos().add("Enregistrement effectué.");
+		
+		return result;
+	}
+	
+	private <T> T getTypeGenerique(Class<T> T, RefTypeDto dto, ReturnMessageDto result) {
+		
+		if(null == dto) {
+			result.getErrors().add("Merci de renseigner les informations nécessaires.");
+			return null;
+		}
+		
+		T obj = null;
+		
+		if(null != dto.getIdRefType()) {
+			obj = filtreRepository.findObject(T, dto.getIdRefType());
+			if(null == obj) {
+				result.getErrors().add("Le type n'existe pas.");
+				return null;
+			}
+		}
+		
+		return obj; 
+	}
+	
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public <T extends RefTypeGenerique> ReturnMessageDto deleteTypeGenerique(Integer idAgentConnecte, Class<? extends RefTypeGenerique> T, RefTypeDto dto) {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		// verification des droits SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			logger.warn("L'agent n'est pas habilité.");
+			result.getErrors().add(String.format("L'agent n'est pas habilité."));
+			return result;
+		}
+		
+		RefTypeGenerique object = getTypeGenerique(T, dto, result);
+		
+		if(!result.getErrors().isEmpty())
+			return result;
+		
+		try {
+			filtreRepository.remove(object);
+		} catch(ConstraintViolationException e) {
+			result.getErrors().add(String.format("Le type ne peut pas être supprimé, car il est utilisé par une ou plusieurs demandes de maladie."));
+			return result;
+		}
+		
+		result.getInfos().add("Suppression effectué.");
+		
+		return result;
 	}
 }

@@ -11,8 +11,6 @@ public interface ITypeAbsenceRepository {
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
 
-	void removeEntity(Object obj);
-
 	List<RefTypeAbsence> getListeTypAbsence(Integer idRefGroupeAbsence);
 
 	List<RefTypeSaisiCongeAnnuel> getListeTypeSaisiCongeAnnuel();

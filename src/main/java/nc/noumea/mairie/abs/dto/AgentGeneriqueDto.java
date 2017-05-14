@@ -1,5 +1,7 @@
 package nc.noumea.mairie.abs.dto;
 
+import java.util.Date;
+
 
 public class AgentGeneriqueDto {
 
@@ -10,6 +12,8 @@ public class AgentGeneriqueDto {
 	private String nomUsage;
 	private String prenom;
 	private String prenomUsage;
+	// #20097 utile au calcul des droits des maladies
+	private Date dateDerniereEmbauche;
 
 	public String getDisplayPrenom() {
 		return getPrenomUsage();
@@ -73,6 +77,14 @@ public class AgentGeneriqueDto {
 
 	public void setPrenomUsage(String prenomUsage) {
 		this.prenomUsage = prenomUsage;
+	}
+
+	public Date getDateDerniereEmbauche() {
+		return dateDerniereEmbauche;
+	}
+
+	public void setDateDerniereEmbauche(Date dateDerniereEmbauche) {
+		this.dateDerniereEmbauche = dateDerniereEmbauche;
 	}
 
 }

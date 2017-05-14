@@ -1,12 +1,15 @@
 package nc.noumea.mairie.abs.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
+import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
@@ -15,6 +18,7 @@ import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.EtatDemandeCongesExceptionnels;
 import nc.noumea.mairie.abs.domain.EtatDemandeRecup;
 import nc.noumea.mairie.abs.domain.EtatDemandeReposComp;
+import nc.noumea.mairie.abs.domain.PieceJointe;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
@@ -68,15 +72,13 @@ public class DemandeDto {
 	private boolean isAffichageBoutonSupprimer;
 	private boolean isAffichageBoutonImprimer;
 	private boolean isAffichageBoutonAnnuler;
-	private boolean isAffichageVisa;
-	private boolean isAffichageApprobation;
 	private boolean isAffichageValidation;
+	private boolean isAffichageBoutonRejeter;
 	private boolean isAffichageEnAttente;
 	private boolean isAffichageBoutonDupliquer;
 	// permet de viser ou approuver
 	private boolean isModifierVisa;
 	private boolean isModifierApprobation;
-	private boolean isModifierValidation;
 	// valeur du visa et approbation de la demande
 	private Boolean isValeurVisa = null;
 	private Boolean isValeurApprobation = null;
@@ -84,10 +86,12 @@ public class DemandeDto {
 	// depassement de droits
 	private boolean isDepassementCompteur;
 	private boolean isDepassementMultiple;
+	private boolean isDepassementITT;
 
 	private OrganisationSyndicaleDto organisationSyndicale;
 
 	private String commentaire;
+	private String commentaireDRH;
 
 	private RefTypeSaisiDto typeSaisi;
 	private RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuel;
@@ -104,12 +108,46 @@ public class DemandeDto {
 	
 	// #15586 restitution massive
 	private boolean affichageBoutonHistorique = true;
+	
+	// Maladies
+	private Double nombreITT;
+	private String prescripteur;
+	private String nomEnfant;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
+	private Date dateDeclaration;
+	private boolean prolongation;
+	private RefTypeDto typeAccidentTravail;
+	private RefTypeDto typeSiegeLesion;
+	private RefTypeDto typeMaladiePro;
+	private DemandeDto accidentTravailReference;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
+	private Date dateTransmissionCafat;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
+	private Date dateDecisionCafat;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
+	private Date dateCommissionAptitude;
+	private Double tauxCafat;
+	private Boolean avisCommissionAptitude;
+	
+	// pieces jointes
+	private List<PieceJointeDto> piecesJointes;
+	
+	// provient ou non de HSCT : les PJ doivent etre traitees differemment
+	private boolean isFromHSCT;
+	
+	// #32238 : Controle médical
+	private ControleMedicalDto controleMedical;
 
 	public DemandeDto() {
+		piecesJointes = new ArrayList<PieceJointeDto>();
 	}
 
-	public DemandeDto(Demande d, AgentWithServiceDto agentWithServiceDto) {
-		this(d);
+	public DemandeDto(Demande d, AgentWithServiceDto agentWithServiceDto, boolean isFromSIRH) {
+		this(d, isFromSIRH);
 		if (agentWithServiceDto != null) {
 			this.agentWithServiceDto = agentWithServiceDto;
 		} else {
@@ -118,8 +156,8 @@ public class DemandeDto {
 		}
 	}
 	// bug #30042
-	public DemandeDto(Demande d, EtatDemande etat, AgentWithServiceDto agentWithServiceDto) {
-		this(d);
+	public DemandeDto(Demande d, EtatDemande etat, AgentWithServiceDto agentWithServiceDto, boolean isFromSIRH) {
+		this(d, isFromSIRH);
 		if (agentWithServiceDto != null) {
 			this.agentWithServiceDto = agentWithServiceDto;
 		} else {
@@ -128,8 +166,8 @@ public class DemandeDto {
 		}
 	}
 
-	public DemandeDto(Demande d, AgentGeneriqueDto agentDto) {
-		this(d);
+	public DemandeDto(Demande d, AgentGeneriqueDto agentDto, boolean isFromSIRH) {
+		this(d, isFromSIRH);
 		if (agentDto != null) {
 			this.agentWithServiceDto =  new AgentWithServiceDto(agentDto);
 		} else {
@@ -138,8 +176,8 @@ public class DemandeDto {
 		}
 	}
 
-	public DemandeDto(Demande d) {
-		super();
+	public DemandeDto(Demande d, boolean isFromSIRH) {
+		this();
 		AgentWithServiceDto agentDto = new AgentWithServiceDto();
 		agentDto.setIdAgent(d.getIdAgent());
 		this.agentWithServiceDto = agentDto;
@@ -153,6 +191,8 @@ public class DemandeDto {
 		this.dateFin = d.getDateFin();
 		this.dateDemande = d.getLatestEtatDemande().getDate();
 		this.motif = d.getLatestEtatDemande().getMotif();
+		this.commentaire = d.getCommentaire();
+		this.commentaireDRH = d.getCommentaireDRH();
 		if (null != d.getType() && null != d.getType().getTypeSaisi())
 			this.typeSaisi = new RefTypeSaisiDto(d.getType().getTypeSaisi());
 
@@ -225,7 +265,6 @@ public class DemandeDto {
 				this.isDateDebutPM = ((DemandeCongesExceptionnels) d).isDateDebutPM();
 				this.isDateFinAM = ((DemandeCongesExceptionnels) d).isDateFinAM();
 				this.isDateFinPM = ((DemandeCongesExceptionnels) d).isDateFinPM();
-				this.commentaire = ((DemandeCongesExceptionnels) d).getCommentaire();
 				break;
 			case CONGES_ANNUELS:
 				Double dureeAnneeCongeAnnuel = ((DemandeCongesAnnuels) d).getDuree() == null ? 0
@@ -238,7 +277,6 @@ public class DemandeDto {
 				this.isDateDebutPM = ((DemandeCongesAnnuels) d).isDateDebutPM();
 				this.isDateFinAM = ((DemandeCongesAnnuels) d).isDateFinAM();
 				this.isDateFinPM = ((DemandeCongesAnnuels) d).isDateFinPM();
-				this.commentaire = ((DemandeCongesAnnuels) d).getCommentaire();
 				this.totalJoursOld = ((DemandeCongesAnnuels) d).getTotalJoursOld();
 				this.totalJoursNew = ((DemandeCongesAnnuels) d).getTotalJoursNew();
 				this.totalJoursAnneeN1Old = ((DemandeCongesAnnuels) d).getTotalJoursAnneeN1Old();
@@ -247,8 +285,54 @@ public class DemandeDto {
 				if(null != d.getDateFin()) 
 					this.dateReprise = new DateTime(d.getDateFin()).plusDays(1).toDate(); 
 				break;
+			case MALADIES:
+				Double duree = ((DemandeMaladies) d).getDuree() == null ? 0
+						: ((DemandeMaladies) d).getDuree();
+				this.duree = (double) duree;
+				// #32371 maladie enfant - saisie possible à la demi-journée
+				this.isDateDebutAM = ((DemandeMaladies) d).isDateDebutAM();
+				this.isDateDebutPM = ((DemandeMaladies) d).isDateDebutPM();
+				this.isDateFinAM = ((DemandeMaladies) d).isDateFinAM();
+				this.isDateFinPM = ((DemandeMaladies) d).isDateFinPM();
+				this.nombreITT = ((DemandeMaladies) d).getNombreITT();
+				this.prescripteur = ((DemandeMaladies) d).getPrescripteur();
+				this.nomEnfant = ((DemandeMaladies) d).getNomEnfant();
+				this.dateDeclaration = ((DemandeMaladies) d).getDateDeclaration();
+				this.prolongation = ((DemandeMaladies) d).isProlongation();
+				
+				if(null != ((DemandeMaladies) d).getTypeAccidentTravail()) 
+					this.typeAccidentTravail = new RefTypeDto(((DemandeMaladies) d).getTypeAccidentTravail());
+				
+				if(null != ((DemandeMaladies) d).getTypeSiegeLesion()) 
+					this.typeSiegeLesion = new RefTypeDto(((DemandeMaladies) d).getTypeSiegeLesion());
+				
+				if(null != ((DemandeMaladies) d).getTypeMaladiePro()) 
+					this.typeMaladiePro = new RefTypeDto(((DemandeMaladies) d).getTypeMaladiePro());
+				
+				if(null != ((DemandeMaladies) d).getAccidentTravailReference())
+					this.accidentTravailReference = new DemandeDto(((DemandeMaladies) d).getAccidentTravailReference(), isFromSIRH);
+				
+				this.dateTransmissionCafat = ((DemandeMaladies) d).getDateTransmissionCafat();
+				this.dateDecisionCafat = ((DemandeMaladies) d).getDateDecisionCafat();
+				this.dateCommissionAptitude = ((DemandeMaladies) d).getDateCommissionAptitude();
+				this.tauxCafat = ((DemandeMaladies) d).getTauxCafat();
+				this.avisCommissionAptitude = ((DemandeMaladies) d).isAvisCommissionAptitude();
+				this.controleMedical = new ControleMedicalDto(d.getControleMedical());
+				
+				break;
 			default:
 				break;
+		}
+		
+		if(null != d.getPiecesJointes()
+				&& !d.getPiecesJointes().isEmpty()) {
+			for(PieceJointe pj : d.getPiecesJointes()) {
+				if(isFromSIRH
+						|| pj.isVisibleKiosque()) {
+					PieceJointeDto pjDto = new PieceJointeDto(pj);
+					this.getPiecesJointes().add(pjDto);
+				}
+			}
 		}
 	}
 
@@ -293,6 +377,7 @@ public class DemandeDto {
 		agentEtat = agentDto;
 		dateDebut = etat.getDateDebut();
 		dateFin = etat.getDateFin();
+		commentaire = etat.getCommentaire();
 
 		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(groupe.getIdRefGroupeAbsence())) {
 			case REPOS_COMP:
@@ -321,7 +406,6 @@ public class DemandeDto {
 				this.isDateDebutPM = ((EtatDemandeCongesExceptionnels) etat).isDateDebutPM();
 				this.isDateFinAM = ((EtatDemandeCongesExceptionnels) etat).isDateFinAM();
 				this.isDateFinPM = ((EtatDemandeCongesExceptionnels) etat).isDateFinPM();
-				this.commentaire = ((EtatDemandeCongesExceptionnels) etat).getCommentaire();
 				break;
 			case CONGES_ANNUELS:
 				Double dureeAnneeCongeAnnuel = ((EtatDemandeCongesAnnuels) etat).getDuree() == null ? 0
@@ -334,7 +418,6 @@ public class DemandeDto {
 				this.isDateDebutPM = ((EtatDemandeCongesAnnuels) etat).isDateDebutPM();
 				this.isDateFinAM = ((EtatDemandeCongesAnnuels) etat).isDateFinAM();
 				this.isDateFinPM = ((EtatDemandeCongesAnnuels) etat).isDateFinPM();
-				this.commentaire = ((EtatDemandeCongesAnnuels) etat).getCommentaire();
 				break;
 			default:
 				break;
@@ -439,22 +522,6 @@ public class DemandeDto {
 
 	public void setAffichageBoutonImprimer(boolean isAffichageBoutonImprimer) {
 		this.isAffichageBoutonImprimer = isAffichageBoutonImprimer;
-	}
-
-	public boolean isAffichageVisa() {
-		return isAffichageVisa;
-	}
-
-	public void setAffichageVisa(boolean isAffichageVisa) {
-		this.isAffichageVisa = isAffichageVisa;
-	}
-
-	public boolean isAffichageApprobation() {
-		return isAffichageApprobation;
-	}
-
-	public void setAffichageApprobation(boolean isAffichageApprobation) {
-		this.isAffichageApprobation = isAffichageApprobation;
 	}
 
 	public boolean isAffichageBoutonAnnuler() {
@@ -591,14 +658,6 @@ public class DemandeDto {
 
 	public void setAffichageValidation(boolean isAffichageValidation) {
 		this.isAffichageValidation = isAffichageValidation;
-	}
-
-	public boolean isModifierValidation() {
-		return isModifierValidation;
-	}
-
-	public void setModifierValidation(boolean isModifierValidation) {
-		this.isModifierValidation = isModifierValidation;
 	}
 
 	public Boolean getValeurValidation() {
@@ -799,4 +858,164 @@ public class DemandeDto {
 		this.forceSaisieManuelleDuree = forceSaisieManuelleDuree;
 	}
 
+	public Double getNombreITT() {
+		return nombreITT;
+	}
+
+	public void setNombreITT(Double nombreITT) {
+		this.nombreITT = nombreITT;
+	}
+
+	public String getPrescripteur() {
+		return prescripteur;
+	}
+
+	public void setPrescripteur(String prescripteur) {
+		this.prescripteur = prescripteur;
+	}
+
+	public String getNomEnfant() {
+		return nomEnfant;
+	}
+
+	public void setNomEnfant(String nomEnfant) {
+		this.nomEnfant = nomEnfant;
+	}
+
+	public Date getDateDeclaration() {
+		return dateDeclaration;
+	}
+
+	public void setDateDeclaration(Date dateDeclaration) {
+		this.dateDeclaration = dateDeclaration;
+	}
+
+	public boolean isProlongation() {
+		return prolongation;
+	}
+
+	public void setProlongation(boolean prolongation) {
+		this.prolongation = prolongation;
+	}
+
+	public RefTypeDto getTypeAccidentTravail() {
+		return typeAccidentTravail;
+	}
+
+	public void setTypeAccidentTravail(RefTypeDto typeAccidentTravail) {
+		this.typeAccidentTravail = typeAccidentTravail;
+	}
+
+	public RefTypeDto getTypeSiegeLesion() {
+		return typeSiegeLesion;
+	}
+
+	public void setTypeSiegeLesion(RefTypeDto typeSiegeLesion) {
+		this.typeSiegeLesion = typeSiegeLesion;
+	}
+
+	public RefTypeDto getTypeMaladiePro() {
+		return typeMaladiePro;
+	}
+
+	public void setTypeMaladiePro(RefTypeDto typeMaladiePro) {
+		this.typeMaladiePro = typeMaladiePro;
+	}
+
+	public DemandeDto getAccidentTravailReference() {
+		return accidentTravailReference;
+	}
+
+	public void setAccidentTravailReference(DemandeDto accidentTravailReference) {
+		this.accidentTravailReference = accidentTravailReference;
+	}
+
+	public boolean isAffichageBoutonRejeter() {
+		return isAffichageBoutonRejeter;
+	}
+
+	public void setAffichageBoutonRejeter(boolean isAffichageBoutonRejeter) {
+		this.isAffichageBoutonRejeter = isAffichageBoutonRejeter;
+	}
+
+	public Date getDateTransmissionCafat() {
+		return dateTransmissionCafat;
+	}
+
+	public void setDateTransmissionCafat(Date dateTransmissionCafat) {
+		this.dateTransmissionCafat = dateTransmissionCafat;
+	}
+
+	public Date getDateDecisionCafat() {
+		return dateDecisionCafat;
+	}
+
+	public void setDateDecisionCafat(Date dateDecisionCafat) {
+		this.dateDecisionCafat = dateDecisionCafat;
+	}
+
+	public Date getDateCommissionAptitude() {
+		return dateCommissionAptitude;
+	}
+
+	public void setDateCommissionAptitude(Date dateCommissionAptitude) {
+		this.dateCommissionAptitude = dateCommissionAptitude;
+	}
+
+	public Double getTauxCafat() {
+		return tauxCafat;
+	}
+
+	public void setTauxCafat(Double tauxCafat) {
+		this.tauxCafat = tauxCafat;
+	}
+
+	public Boolean getAvisCommissionAptitude() {
+		return avisCommissionAptitude;
+	}
+
+	public void setAvisCommissionAptitude(Boolean avisCommissionAptitude) {
+		this.avisCommissionAptitude = avisCommissionAptitude;
+	}
+
+	public List<PieceJointeDto> getPiecesJointes() {
+		return piecesJointes;
+	}
+
+	public void setPiecesJointes(List<PieceJointeDto> piecesJointes) {
+		this.piecesJointes = piecesJointes;
+	}
+
+	public boolean isFromHSCT() {
+		return isFromHSCT;
+	}
+
+	public void setFromHSCT(boolean isFromHSCT) {
+		this.isFromHSCT = isFromHSCT;
+	}
+
+	public boolean isDepassementITT() {
+		return isDepassementITT;
+	}
+
+	public void setDepassementITT(boolean isDepassementITT) {
+		this.isDepassementITT = isDepassementITT;
+	}
+
+	public String getCommentaireDRH() {
+		return commentaireDRH;
+	}
+
+	public void setCommentaireDRH(String commentaireDRH) {
+		this.commentaireDRH = commentaireDRH;
+	}
+
+	public ControleMedicalDto getControleMedical() {
+		return controleMedical;
+	}
+
+	public void setControleMedical(ControleMedicalDto controleMedical) {
+		this.controleMedical = controleMedical;
+	}
+	
 }

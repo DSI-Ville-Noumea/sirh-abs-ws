@@ -40,7 +40,6 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 		checkBaseHoraireAbsenceAgent(srm, demande.getIdAgent(), demande.getDateDebut());
 		checkDepassementDroitsAcquis(srm, demande, null);
-		checkChampMotifDemandeSaisi(srm, (DemandeCongesAnnuels) demande);
 		checkDuree(srm, (DemandeCongesAnnuels) demande);
 		checkMultipleCycle(srm, (DemandeCongesAnnuels) demande, idAgent);
 
@@ -120,18 +119,6 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 
 				default:
 					break;
-			}
-		}
-
-		return srm;
-	}
-
-	protected ReturnMessageDto checkChampMotifDemandeSaisi(ReturnMessageDto srm, DemandeCongesAnnuels demande) {
-
-		if (demande.getTypeSaisiCongeAnnuel().getCodeBaseHoraireAbsence().equals("C")) {
-			if (null == demande.getCommentaire() || "".equals(demande.getCommentaire().trim())) {
-				logger.warn(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
-				srm.getErrors().add(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
 			}
 		}
 
@@ -272,7 +259,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		return false;
 	}
 
-	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
+	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur, boolean isFromSIRH) {
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()))
@@ -298,18 +285,22 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 
 	@Override
 	public DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto) {
-
-		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
-		demandeDto.setAffichageValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+                
+		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true, true));
+		demandeDto.setAffichageValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()));
-		demandeDto.setModifierValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()));
+		demandeDto.setAffichageBoutonRejeter(demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()));
 		demandeDto.setAffichageEnAttente(demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
-		demandeDto.setAffichageBoutonDupliquer(true);
+		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()));
 
 		return demandeDto;
 	}
@@ -377,6 +368,16 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 				}
 			}
 		}
+	}
+
+	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+		// cf redmine #13378
+		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()) 
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
+			return true;
+		}
+		return false;
 	}
 	
 	@Override

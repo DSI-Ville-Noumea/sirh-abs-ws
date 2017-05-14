@@ -410,7 +410,7 @@ public class TypeAbsenceServiceImplTest {
 	}
 
 	@Test
-	public void deleteTypeAbsence_UserNonHabilite() {
+	public void inactiveTypeAbsence_UserNonHabilite() {
 
 		ReturnMessageDto isSirhDto = new ReturnMessageDto();
 		isSirhDto.getErrors().add("erreur");
@@ -424,14 +424,14 @@ public class TypeAbsenceServiceImplTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 
-		ReturnMessageDto result = service.deleteTypeAbsence(9005138, 1);
+		ReturnMessageDto result = service.inactiveTypeAbsence(9005138, 1);
 
-		Mockito.verify(typeAbsenceRepository, Mockito.times(0)).removeEntity(Mockito.isA(RefTypeAbsence.class));
+		Mockito.verify(typeAbsenceRepository, Mockito.times(0)).persistEntity(Mockito.isA(RefTypeAbsence.class));
 		assertEquals(result.getErrors().get(0), TypeAbsenceServiceImpl.AGENT_NON_HABILITE);
 	}
 
 	@Test
-	public void deleteTypeAbsence_TypeAbsenceInexistant() {
+	public void inactiveTypeAbsence_TypeAbsenceInexistant() {
 
 		Integer idTypeDemande = 1;
 
@@ -445,14 +445,14 @@ public class TypeAbsenceServiceImplTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 
-		ReturnMessageDto result = service.deleteTypeAbsence(9005138, idTypeDemande);
+		ReturnMessageDto result = service.inactiveTypeAbsence(9005138, idTypeDemande);
 
-		Mockito.verify(typeAbsenceRepository, Mockito.times(0)).removeEntity(Mockito.isA(RefTypeAbsence.class));
+		Mockito.verify(typeAbsenceRepository, Mockito.times(0)).persistEntity(Mockito.isA(RefTypeAbsence.class));
 		assertEquals(result.getErrors().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_INEXISTANT);
 	}
 
 	@Test
-	public void deleteTypeAbsence_OK() {
+	public void inactiveTypeAbsence_OK() {
 
 		Integer idTypeDemande = 1;
 
@@ -467,10 +467,10 @@ public class TypeAbsenceServiceImplTest {
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 
-		ReturnMessageDto result = service.deleteTypeAbsence(9005138, idTypeDemande);
+		ReturnMessageDto result = service.inactiveTypeAbsence(9005138, idTypeDemande);
 
-		Mockito.verify(typeAbsenceRepository, Mockito.times(1)).removeEntity(Mockito.isA(RefTypeAbsence.class));
-		assertEquals(result.getInfos().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_SUPPRIME);
+		Mockito.verify(typeAbsenceRepository, Mockito.times(1)).persistEntity(Mockito.isA(RefTypeAbsence.class));
+		assertEquals(result.getInfos().get(0), TypeAbsenceServiceImpl.TYPE_ABSENCE_INACTIVE);
 	}
 
 	@Test

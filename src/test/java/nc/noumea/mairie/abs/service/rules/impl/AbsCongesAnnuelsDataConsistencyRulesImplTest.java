@@ -214,6 +214,56 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 	}
 
 	@Test
+	public void filtreDroitOfDemandeSIRH() {
+		
+		super.impl = new AbsCongesAnnuelsDataConsistencyRulesImpl();
+		super.filtreDroitOfDemandeSIRH();
+
+		// SAISIE
+		assertTrue(result2.isAffichageValidation());
+		
+		// APPROUVEE
+		assertFalse(result3.isAffichageValidation());
+		assertFalse(result3.isAffichageEnAttente());
+		
+		// REFUSEE
+		assertTrue(result4.isAffichageValidation());
+		
+		// VISEE FAVORABLE
+		assertTrue(result5.isAffichageValidation());
+		
+		// VISEE DEFAVORABLE
+		assertTrue(result6.isAffichageValidation());
+
+		// PRISE
+		assertTrue(result7.isAffichageBoutonAnnuler());
+		assertFalse(result7.isAffichageValidation());
+		assertFalse(result7.isAffichageEnAttente());
+		
+		// ANNULEE
+		assertTrue(result8.isAffichageBoutonDupliquer());
+
+		// VALIDEE
+		assertTrue(result9.isAffichageBoutonAnnuler());
+		assertFalse(result9.isAffichageValidation());
+		assertFalse(result9.isAffichageEnAttente());
+
+		// REJETEE
+		assertFalse(result10.isAffichageValidation());
+		assertFalse(result10.isAffichageEnAttente());
+
+		// EN ATTENTE
+		assertTrue(result11.isAffichageBoutonAnnuler());
+		assertTrue(result11.isAffichageValidation());
+		assertFalse(result11.isAffichageEnAttente());
+
+		// A VALIDER
+		assertTrue(result12.isAffichageBoutonAnnuler());
+		assertTrue(result12.isAffichageValidation());
+		assertTrue(result12.isAffichageEnAttente());
+	}
+
+	@Test
 	public void checkSaisiNewTypeAbsence() {
 		RefTypeSaisiCongeAnnuel typeSaisi = new RefTypeSaisiCongeAnnuel();
 
@@ -337,7 +387,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		demande.setCommentaire("commentaire");
 		demande.setType(type);
 
-		srm = impl.checkChampMotifDemandeSaisi(srm, demande);
+		srm = impl.checkChampMotif(srm, demande);
 
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -351,13 +401,15 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
 		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+		typeSaisiCongeAnnuel.setMotif(true);
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
 		demande.setCommentaire(null);
 		demande.setType(type);
+		type.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
 
-		srm = impl.checkChampMotifDemandeSaisi(srm, demande);
+		srm = impl.checkChampMotif(srm, demande);
 
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(srm.getErrors().get(0), AbsCongesAnnuelsDataConsistencyRulesImpl.CHAMP_COMMENTAIRE_OBLIGATOIRE);
@@ -372,13 +424,15 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 
 		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
 		typeSaisiCongeAnnuel.setCodeBaseHoraireAbsence("C");
+		typeSaisiCongeAnnuel.setMotif(true);
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
 		demande.setCommentaire("");
 		demande.setType(type);
+		type.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
 
-		srm = impl.checkChampMotifDemandeSaisi(srm, demande);
+		srm = impl.checkChampMotif(srm, demande);
 
 		assertEquals(1, srm.getErrors().size());
 		assertEquals(srm.getErrors().get(0), AbsCongesAnnuelsDataConsistencyRulesImpl.CHAMP_COMMENTAIRE_OBLIGATOIRE);
@@ -1069,51 +1123,51 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 
-		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.A_VALIDER.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 	}
 
@@ -1123,52 +1177,52 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 
-		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.A_VALIDER.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
-		assertTrue(result);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
+		assertFalse(result);
 	}
 
 	@Test
@@ -1375,6 +1429,35 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		assertEquals(demande.getDuree().doubleValue(), 10,0);
 		assertEquals(demande.getDureeAnneeN1().doubleValue(), 20,0);
 		assertEquals(demande.getNbSamediOffert().doubleValue(), 1,0);
+	}
+
+	protected void checkBoutonImprimer_filtreDroitOfListeDemandesByDemande() {
+
+		// Then
+		// PROVISOIRE
+		assertFalse(result1.isAffichageBoutonImprimer());
+		// SAISIE
+		assertFalse(result2.isAffichageBoutonImprimer());
+		// APPROUVEE
+		assertTrue(result3.isAffichageBoutonImprimer());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonImprimer());
+		// VISEE_FAVORABLE
+		assertFalse(result5.isAffichageBoutonImprimer());
+		// VISEE_DEFAVORABLE
+		assertFalse(result6.isAffichageBoutonImprimer());
+		// PRISE
+		assertTrue(result7.isAffichageBoutonImprimer());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonImprimer());
+		// VALIDEE
+		assertTrue(result9.isAffichageBoutonImprimer());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonImprimer());
+		// EN ATTENTE
+		assertFalse(result11.isAffichageBoutonImprimer());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonImprimer());
 	}
 	
 	@Test

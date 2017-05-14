@@ -22,6 +22,7 @@ import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.ControleMedicalDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
@@ -39,45 +40,47 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 @RequestMapping("/demandes")
 public class DemandeController {
 
-	private Logger logger = LoggerFactory.getLogger(DemandeController.class);
+	private Logger							logger	= LoggerFactory.getLogger(DemandeController.class);
 
 	@Autowired
-	private IAbsenceService absenceService;
+	private IAbsenceService					absenceService;
 
 	@Autowired
-	private ISuppressionService suppressionService;
+	private ISuppressionService				suppressionService;
 
 	@Autowired
-	private IAgentMatriculeConverterService converterService;
+	private IAgentMatriculeConverterService	converterService;
 
 	@Autowired
-	private IAccessRightsService accessRightService;
+	private IAccessRightsService			accessRightService;
 
 	@Autowired
-	private HelperService helperService;
+	private HelperService					helperService;
 
 	@Autowired
-	private ISirhWSConsumer sirhWSConsumer;
+	private ISirhWSConsumer					sirhWSConsumer;
 
 	@Autowired
-	private IFiltreRepository filtreRepository;
+	private IFiltreRepository				filtreRepository;
 
 	/**
-	 * Creation/modification d'une demande : SI idDemande IS NULL ALORS creation
-	 * SINON modification <br />
+	 * Creation/modification d'une demande : SI idDemande IS NULL ALORS creation SINON modification <br />
 	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/dureeDemandeCongeAnnuel", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public DemandeDto getDureeDemandeAbsenceCongeAnnuel(@RequestBody(required = true) DemandeDto demandeDto, HttpServletResponse response) {
 
-		logger.debug("entered POST [demandes/dureeDemandeCongeAnnuel] => getDureeDemandeAbsenceCongeAnnuel for Kiosque with parameters  demandeDto={} ", demandeDto.getDtoToString(demandeDto));
+		logger.debug("entered POST [demandes/dureeDemandeCongeAnnuel] => getDureeDemandeAbsenceCongeAnnuel for Kiosque with parameters  demandeDto={} ",
+				demandeDto.getDtoToString(demandeDto));
 
-		RefTypeSaisiCongeAnnuel typeCongeAnnuel = filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class, demandeDto.getTypeSaisiCongeAnnuel().getIdRefTypeSaisiCongeAnnuel());
+		RefTypeSaisiCongeAnnuel typeCongeAnnuel = filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+				demandeDto.getTypeSaisiCongeAnnuel().getIdRefTypeSaisiCongeAnnuel());
 
-		demandeDto.setDateDebut(helperService.getDateDebutCongeAnnuel(typeCongeAnnuel, demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
-		demandeDto.setDateFin(helperService.getDateFinCongeAnnuel(typeCongeAnnuel, demandeDto.getDateFin(), demandeDto.getDateDebut(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM(),
-				demandeDto.getDateReprise()));
+		demandeDto.setDateDebut(
+				helperService.getDateDebutCongeAnnuel(typeCongeAnnuel, demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+		demandeDto.setDateFin(helperService.getDateFinCongeAnnuel(typeCongeAnnuel, demandeDto.getDateFin(), demandeDto.getDateDebut(), demandeDto.isDateFinAM(),
+				demandeDto.isDateFinPM(), demandeDto.getDateReprise()));
 
 		DemandeCongesAnnuels demande = new DemandeCongesAnnuels();
 		demande.setIdDemande(demandeDto.getIdDemande());
@@ -96,15 +99,16 @@ public class DemandeController {
 	}
 
 	/**
-	 * Creation/modification d'une demande : SI idDemande IS NULL ALORS creation
-	 * SINON modification <br />
+	 * Creation/modification d'une demande : SI idDemande IS NULL ALORS creation SINON modification <br />
 	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setDemandeAbsence(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) DemandeDto demandeDto, HttpServletResponse response) {
+	public ReturnMessageDto setDemandeAbsence(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) DemandeDto demandeDto,
+			HttpServletResponse response) {
 
-		logger.debug("entered POST [demandes/demande] => setDemandeAbsence for Kiosque with parameters idAgent = {} and demandeDto={} ", idAgent, demandeDto.getDtoToString(demandeDto));
+		logger.debug("entered POST [demandes/demande] => setDemandeAbsence for Kiosque with parameters idAgent = {} and demandeDto={} ", idAgent,
+				demandeDto.getDtoToString(demandeDto));
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		ReturnMessageDto srm = null;
@@ -122,8 +126,7 @@ public class DemandeController {
 
 	/**
 	 * Recuperation d une demande <br />
-	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
-	 * ATTENTION UTILISE DANS SIRH-JOBS
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/" ATTENTION UTILISE DANS SIRH-JOBS
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/demande", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -170,11 +173,13 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<DemandeDto> getListeDemandesAbsenceAgent(@RequestParam("idAgent") int idAgent, @RequestParam(value = "ongletDemande", required = true) String ongletDemande,
+	public List<DemandeDto> getListeDemandesAbsenceAgent(@RequestParam("idAgent") int idAgent,
+			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
-			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDemande, @RequestParam(value = "etat", required = false) String listIdRefEtat,
-			@RequestParam(value = "type", required = false) Integer idRefType, @RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence) {
+			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDemande,
+			@RequestParam(value = "etat", required = false) String listIdRefEtat, @RequestParam(value = "type", required = false) Integer idRefType,
+			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence) {
 
 		logger.debug(
 				"entered GET [demandes/listeDemandesAgent] => getListeDemandesAbsenceAgent with parameters idAgent = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, groupe = {} and type = {}",
@@ -186,8 +191,8 @@ public class DemandeController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, Arrays.asList(convertedIdAgent), ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType,
-				idRefGroupeAbsence, true);
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, Arrays.asList(convertedIdAgent), ongletDemande, fromDate, toDate,
+				dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence, true);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -202,12 +207,15 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<DemandeDto> getListeDemandesAbsence(@RequestParam("idAgent") int idAgent, @RequestParam(value = "ongletDemande", required = true) String ongletDemande,
+	public List<DemandeDto> getListeDemandesAbsence(@RequestParam("idAgent") int idAgent,
+			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
-			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDemande, @RequestParam(value = "etat", required = false) String listIdRefEtat,
-			@RequestParam(value = "type", required = false) Integer idRefType, @RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence,
-			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche, @RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
+			@RequestParam(value = "dateDemande", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date dateDemande,
+			@RequestParam(value = "etat", required = false) String listIdRefEtat, @RequestParam(value = "type", required = false) Integer idRefType,
+			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence,
+			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche,
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
 		logger.debug(
 				"entered GET [demandes/listeDemandes] => getListeDemandesAbsence with parameters idInputter = {}, ongletDemande = {}, from = {}, to = {}, dateDemande = {}, etat = {}, type = {}, groupe = {}, idAgentConcerne = {} and idServiceADS = {}",
@@ -246,8 +254,8 @@ public class DemandeController {
 
 		}
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, listAgents.size() == 0 ? null : listAgents, ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType,
-				idRefGroupeAbsence, false);
+		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, listAgents.size() == 0 ? null : listAgents, ongletDemande, fromDate, toDate,
+				dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence, false);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -256,13 +264,13 @@ public class DemandeController {
 	}
 
 	/**
-	 * changer l etat d une demande depuis le kiosque pour le VISA et
-	 * l'APPROBATION et l'ANNULATION <br />
+	 * changer l etat d une demande depuis le kiosque pour le VISA et l'APPROBATION et l'ANNULATION <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/changerEtats", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setAbsencesEtat(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) DemandeEtatChangeDto dto, HttpServletResponse response) {
+	public ReturnMessageDto setAbsencesEtat(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) DemandeEtatChangeDto dto,
+			HttpServletResponse response) {
 
 		logger.debug("entered POST [demandes/changerEtats] => setAbsencesEtat with parameters idAgent = {}", idAgent);
 
@@ -320,7 +328,8 @@ public class DemandeController {
 	@RequestMapping(value = "/supprimerDemandeProvisoire", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto supprimerAbsenceProvisoire(@RequestParam("idDemande") Integer idDemande, HttpServletResponse response) {
 
-		logger.debug("entered POST [demandes/supprimerDemandeProvisoire] => supprimerAbsenceProvisoire for SIRH-JOBS with parameters idDemande = {}", idDemande);
+		logger.debug("entered POST [demandes/supprimerDemandeProvisoire] => supprimerAbsenceProvisoire for SIRH-JOBS with parameters idDemande = {}",
+				idDemande);
 
 		ReturnMessageDto result = suppressionService.supprimerDemandeEtatProvisoire(idDemande);
 
@@ -331,17 +340,21 @@ public class DemandeController {
 	}
 
 	/**
-	 * Saisie et modification d une demande d absence depuis SIRH : SI idDemande
-	 * IS NULL ALORS creation SINON modification <br />
+	 * Saisie et modification d une demande d absence depuis SIRH : SI idDemande IS NULL ALORS creation SINON modification <br />
 	 * RequestBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/demandeSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setDemandeAbsenceSIRH(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) DemandeDto demandeDto, HttpServletResponse response) {
+	public ReturnMessageDto setDemandeAbsenceSIRH(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) DemandeDto demandeDto,
+			HttpServletResponse response) {
 
 		logger.debug("entered POST [demandes/demandeSIRH] => setDemandeAbsenceSIRH for SIRH with parameters idAgent = {}", idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		// DemandeDto demandeDto = new JSONDeserializer<DemandeDto>()
+		// .use(Date.class, new MSDateTransformer())
+		// .deserializeInto(json, new DemandeDto());
 
 		ReturnMessageDto result = null;
 		try {
@@ -364,8 +377,9 @@ public class DemandeController {
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<DemandeDto> getListeDemandesAbsenceSIRH(@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
-			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, @RequestParam(value = "etat", required = false) Integer idRefEtat,
-			@RequestParam(value = "type", required = false) Integer idRefType, @RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
+			@RequestParam(value = "etat", required = false) Integer idRefEtat, @RequestParam(value = "type", required = false) Integer idRefType,
+			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche,
 			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence, @RequestParam(value = "aValider", required = true) boolean aValider,
 			@RequestParam(value = "idAgents", required = false) String idAgents) {
 
@@ -402,13 +416,16 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesPlanningKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<DemandeDto> getListeDemandesAbsencePlanningKiosque(@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
-			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, @RequestParam(value = "etat", required = false) String listIdRefEtat,
-			@RequestParam(value = "type", required = false) Integer idRefType, @RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence,
-			@RequestParam(value = "idAgents", required = false) String idAgents) {
+	public List<DemandeDto> getListeDemandesAbsencePlanningKiosque(
+			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
+			@RequestParam(value = "etat", required = false) String listIdRefEtat, @RequestParam(value = "type", required = false) Integer idRefType,
+			@RequestParam(value = "groupe", required = false) Integer idRefGroupeAbsence, @RequestParam(value = "idAgents", required = false) String idAgents) {
 
-		logger.debug("entered GET [demandes/getListeDemandesAbsencePlanningKiosque] => getListeDemandesAbsencePlanningKiosque with parameters  from = {}, to = {},  "
-				+ "etat = {}, groupe = {}, type = {}, idAgentConcerne= {}, aValider= {} and idAgents = {}", fromDate, toDate, listIdRefEtat, idRefGroupeAbsence, idRefType, idAgents);
+		logger.debug(
+				"entered GET [demandes/getListeDemandesAbsencePlanningKiosque] => getListeDemandesAbsencePlanningKiosque with parameters  from = {}, to = {},  "
+						+ "etat = {}, groupe = {}, type = {}, idAgentConcerne= {}, aValider= {} and idAgents = {}",
+				fromDate, toDate, listIdRefEtat, idRefGroupeAbsence, idRefType, idAgents);
 
 		List<Integer> agentIds = new ArrayList<Integer>();
 		if (idAgents != null) {
@@ -419,7 +436,8 @@ public class DemandeController {
 			}
 		}
 
-		List<DemandeDto> result = absenceService.getListeDemandesSIRH(fromDate, toDate, null, idRefType, null, idRefGroupeAbsence, agentIds, listIdRefEtat, FiltreService.ONGLET_PLANNING);
+		List<DemandeDto> result = absenceService.getListeDemandesSIRH(fromDate, toDate, null, idRefType, null, idRefGroupeAbsence, agentIds, listIdRefEtat,
+				FiltreService.ONGLET_PLANNING);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -451,7 +469,8 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/changerEtatsSIRH", produces = "application/json; charset=utf-8", method = RequestMethod.POST)
-	public ReturnMessageDto setAbsencesEtatSIRH(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) List<DemandeEtatChangeDto> dto, HttpServletResponse response) {
+	public ReturnMessageDto setAbsencesEtatSIRH(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) List<DemandeEtatChangeDto> dto,
+			HttpServletResponse response) {
 
 		logger.debug("entered POST [demandes/changerEtatsSIRH] => setAbsencesEtatSIRH with parameters idAgent = {}", idAgent);
 
@@ -471,14 +490,12 @@ public class DemandeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/checkAbsences", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public ReturnMessageDto checkAbsences(
-			@RequestParam("idAgent") int idAgent,
+	public ReturnMessageDto checkAbsences(@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "dateDebut", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm") Date fromDate,
 			@RequestParam(value = "dateFin", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm") Date toDate) {
 
-		logger.debug(
-				"entered GET [demandes/checkAbsences] => checkAbsences with parameters idAgent = {}, dateDebut = {}, dateFin = {}",
-				idAgent, fromDate, toDate);
+		logger.debug("entered GET [demandes/checkAbsences] => checkAbsences with parameters idAgent = {}, dateDebut = {}, dateFin = {}", idAgent, fromDate,
+				toDate);
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -502,6 +519,84 @@ public class DemandeController {
 		logger.debug("entered GET [demandes/listDemandeRejetDRHStatutVeille] => getListDemandeRejetDRHStatutVeille ");
 
 		List<DemandeDto> result = absenceService.getListDemandeRejetDRHStatutVeille();
+
+		return result;
+	}
+
+	/**
+	 * ajout d'une pièce jointe a une demande depuis SIRH quelque soit son etat
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/addPieceJointeSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto addPieceJointeSIRH(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) DemandeDto demandeDto,
+			HttpServletResponse response) {
+
+		logger.debug("entered POST [demandes/addPieceJointeSIRH] => addPieceJointeSIRH for SIRH with parameters idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		ReturnMessageDto result = null;
+		try {
+			result = absenceService.addPieceJointeSIRH(convertedIdAgent, demandeDto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
+
+		if (result != null && result.getErrors().size() != 0)
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+
+		return result;
+	}
+
+	/**
+	 * sauvegarde du commentaire DRH sur une demande depuis SIRH
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/saveCommentaireDRH", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto saveCommentaireDRH(@RequestParam("idDemande") Integer idDemande, @RequestBody String commentaire, HttpServletResponse response) {
+
+		logger.debug("entered POST [demandes/saveCommentaireDRH] => saveCommentaireDRH for SIRH with parameters idDemande = {}", idDemande);
+
+		ReturnMessageDto result = null;
+		try {
+			result = absenceService.saveCommentaireDRH(idDemande, commentaire == null || commentaire.trim().equals("") ? null : commentaire);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
+
+		return result;
+	}
+
+	/**
+	 * sauvegarde d'une demande de contrôle médical.
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/persistDemandeControleMedical", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto persistDemandeControleMedical(@RequestBody ControleMedicalDto dto, HttpServletResponse response) {
+
+		logger.debug("entered POST [demandes/persistDemandeControleMedical] => persistDemandeControleMedical for Kiosque and SIRH.");
+
+		ReturnMessageDto result = null;
+		try {
+			result = absenceService.persistDemandeControleMedical(dto);
+		} catch (ReturnMessageDtoException e) {
+			result = e.getErreur();
+		}
+
+		return result;
+	}
+
+	/**
+	 * Utile à SIRH-JOBS pour l'envoi de mail des demandes "REJET_DRH de la
+	 * veille
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getDemandeControleMedical", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public ControleMedicalDto getDemandeControleMedical(@RequestParam("idDemandeMaladie") int idDemandeMaladie) {
+
+		logger.debug("entered GET [demandes/getDemandeControleMedical] => getDemandeControleMedical ");
+
+		ControleMedicalDto result = absenceService.getDemandeControleMedical(idDemandeMaladie);
 
 		return result;
 	}

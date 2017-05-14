@@ -3,6 +3,8 @@ package nc.noumea.mairie.abs.service;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.ControleMedical;
+import nc.noumea.mairie.abs.dto.ControleMedicalDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
@@ -16,9 +18,8 @@ public interface IAbsenceService {
 
 	DemandeDto getDemandeDto(Integer idDemande);
 
-	List<DemandeDto> getListeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne, String ongletDemande,
-			Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat, Integer idRefType,
-			Integer idRefGroupeAbsence, boolean isAgent);
+	List<DemandeDto> getListeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne, String ongletDemande, Date fromDate, Date toDate,
+			Date dateDemande, String listIdRefEtat, Integer idRefType, Integer idRefGroupeAbsence, boolean isAgent);
 
 	ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);
 
@@ -26,11 +27,11 @@ public interface IAbsenceService {
 
 	ReturnMessageDto saveDemandeSIRH(Integer idAgent, DemandeDto demandeDto);
 
-	List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds, String listIdRefEtat, String ongletDemande);
+	List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType, Integer idAgentRecherche,
+			Integer idRefGroupeAbsence, List<Integer> agentIds, String listIdRefEtat, String ongletDemande);
 
-	List<DemandeDto> getListeDemandesSIRHAValider(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds);
+	List<DemandeDto> getListeDemandesSIRHAValider(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType, Integer idAgentRecherche,
+			Integer idRefGroupeAbsence, List<Integer> agentIds);
 
 	List<DemandeDto> getDemandesArchives(Integer idDemande);
 
@@ -68,9 +69,21 @@ public interface IAbsenceService {
 
 	List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoReposComp(Integer convertedIdAgent);
 
-	List<DemandeDto> getListDemandesCAToAddOrRemoveOnAgentCounter(Integer idAgent, Integer idAgentConcerne);
+	ReturnMessageDto checkMaladies(Integer convertedIdAgent, Date fromDate, Date toDate);
 
 	ReturnMessageDto checkAbsences(Integer convertedIdAgent, Date fromDate, Date toDate);
 
+	ReturnMessageDto addPieceJointeSIRH(Integer idAgent, DemandeDto demandeDto);
+
+	List<DemandeDto> getListDemandesCAToAddOrRemoveOnAgentCounter(Integer idAgent, Integer idAgentConcerne);
+
+	ReturnMessageDto saveCommentaireDRH(Integer idDemande, String commentaire);
+
 	List<DemandeDto> getListDemandeRejetDRHStatutVeille();
+
+	ReturnMessageDto persistDemandeControleMedical(ControleMedicalDto dto);
+
+	ControleMedical mapControleMedicalDtoToControleMedical(ControleMedicalDto dto);
+
+	ControleMedicalDto getDemandeControleMedical(Integer idDemandeMaladie);
 }

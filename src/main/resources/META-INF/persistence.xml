@@ -54,6 +54,14 @@
       	<class>nc.noumea.mairie.abs.domain.RevInfo</class>
       	<class>nc.noumea.mairie.abs.domain.AgentA54OrganisationSyndicale</class>
       	<class>nc.noumea.mairie.abs.domain.AgentA48OrganisationSyndicale</class>
+      	<class>nc.noumea.mairie.abs.domain.DemandeMaladies</class>
+      	<class>nc.noumea.mairie.abs.domain.EtatDemandeMaladies</class>
+      	<class>nc.noumea.mairie.abs.domain.RefTypeAccidentTravail</class>
+      	<class>nc.noumea.mairie.abs.domain.RefTypeMaladiePro</class>
+      	<class>nc.noumea.mairie.abs.domain.RefTypeSiegeLesion</class>
+      	<class>nc.noumea.mairie.abs.domain.PieceJointe</class>
+      	<class>nc.noumea.mairie.abs.domain.RefDroitsMaladies</class>
+      	<class>nc.noumea.mairie.abs.domain.ControleMedical</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

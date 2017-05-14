@@ -4,13 +4,18 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeMaladies;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
+import nc.noumea.mairie.abs.vo.CalculDroitsMaladiesVo;
 
 public interface ICounterService {
 
@@ -64,4 +69,12 @@ public interface ICounterService {
 	ReturnMessageDto saveRepresentantA54(Integer idOrganisationSyndicale, Integer idAgent);
 
 	ReturnMessageDto saveRepresentantA48(Integer idOrganisationSyndicale, Integer idAgent);
+
+	SoldeMaladiesDto getSoldeByAgent(Integer idAgent, Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto);
+
+	CalculDroitsMaladiesVo calculDroitsMaladiesForDemandeMaladies(Integer idAgent, DemandeDto demandeMaladie);
+
+	Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies);
+
+	List<DemandeMaladies> getHistoriqueMaladiesWithDroits(Integer idAgent, Date date);
 }

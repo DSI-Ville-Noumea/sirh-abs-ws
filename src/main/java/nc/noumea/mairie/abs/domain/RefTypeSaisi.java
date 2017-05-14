@@ -133,6 +133,50 @@ public class RefTypeSaisi {
 	@JoinColumn(name = "ID_REF_UNITE_PERIODE_QUOTA")
 	private RefUnitePeriodeQuota refUnitePeriodeQuota;
 
+	@NotNull
+	@Column(name = "PRESCRIPTEUR", nullable = false)
+	@Type(type = "boolean")
+	private boolean prescripteur;
+
+	@NotNull
+	@Column(name = "DATE_DECLARATION", nullable = false)
+	@Type(type = "boolean")
+	private boolean dateDeclaration;
+
+	@NotNull
+	@Column(name = "PROLONGATION", nullable = false)
+	@Type(type = "boolean")
+	private boolean prolongation;
+
+	@NotNull
+	@Column(name = "NOM_ENFANT", nullable = false)
+	@Type(type = "boolean")
+	private boolean nomEnfant;
+
+	@NotNull
+	@Column(name = "NOMBRE_ITT", nullable = false)
+	@Type(type = "boolean")
+	private boolean nombreITT;
+
+	@NotNull
+	@Column(name = "SIEGE_LESION", nullable = false)
+	@Type(type = "boolean")
+	private boolean siegeLesion;
+
+	@NotNull
+	@Column(name = "AT_REFERENCE", nullable = false)
+	@Type(type = "boolean")
+	private boolean atReference;
+
+	@NotNull
+	@Column(name = "NATURE_MALADIE_PRO", nullable = false)
+	@Type(type = "boolean")
+	private boolean maladiePro;
+	
+	@Column(name = "INFOS_PIECE_JOINTE", nullable = true)
+	private String infosPieceJointe;
+	
+
 	public Integer getIdRefTypeAbsence() {
 		return idRefTypeAbsence;
 	}
@@ -315,6 +359,78 @@ public class RefTypeSaisi {
 
 	public void setMotif(boolean motif) {
 		this.motif = motif;
+	}
+
+	public boolean isPrescripteur() {
+		return prescripteur;
+	}
+
+	public void setPrescripteur(boolean prescripteur) {
+		this.prescripteur = prescripteur;
+	}
+
+	public boolean isDateDeclaration() {
+		return dateDeclaration;
+	}
+
+	public void setDateDeclaration(boolean dateDeclaration) {
+		this.dateDeclaration = dateDeclaration;
+	}
+
+	public boolean isProlongation() {
+		return prolongation;
+	}
+
+	public void setProlongation(boolean prolongation) {
+		this.prolongation = prolongation;
+	}
+
+	public boolean isNomEnfant() {
+		return nomEnfant;
+	}
+
+	public void setNomEnfant(boolean nomEnfant) {
+		this.nomEnfant = nomEnfant;
+	}
+
+	public boolean isNombreITT() {
+		return nombreITT;
+	}
+
+	public void setNombreITT(boolean nombreITT) {
+		this.nombreITT = nombreITT;
+	}
+
+	public boolean isSiegeLesion() {
+		return siegeLesion;
+	}
+
+	public void setSiegeLesion(boolean siegeLesion) {
+		this.siegeLesion = siegeLesion;
+	}
+
+	public boolean isAtReference() {
+		return atReference;
+	}
+
+	public void setAtReference(boolean atReference) {
+		this.atReference = atReference;
+	}
+
+	public boolean isMaladiePro() {
+		return maladiePro;
+	}
+
+	public void setMaladiePro(boolean maladiePro) {
+		this.maladiePro = maladiePro;
+	}
+
+	public String getInfosPieceJointe() {
+		return infosPieceJointe;
+	}
+
+	public void setInfosPieceJointe(String infosPieceJointe) {
+		this.infosPieceJointe = infosPieceJointe;
 	}
 	
 }

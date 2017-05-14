@@ -13,7 +13,7 @@ public interface ITypeAbsenceService {
 
 	ReturnMessageDto setTypAbsence(Integer idAgent, RefTypeAbsenceDto typeAbsenceDto);
 
-	ReturnMessageDto deleteTypeAbsence(Integer idAgent, Integer idRefTypeAbsence);
+	ReturnMessageDto inactiveTypeAbsence(Integer idAgent, Integer idRefTypeAbsence);
 
 	RefTypeAbsenceDto getTypeAbsenceByBaseHoraire(Integer idBaseHoraireAbsence);
 }

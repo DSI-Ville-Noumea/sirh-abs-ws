@@ -13,6 +13,7 @@ public class RefTypeSaisiDto {
 	private boolean chkDateFin;
 	private boolean duree;
 	private boolean pieceJointe;
+	private String infosPieceJointe;
 	
 	private boolean fonctionnaire;
 	private boolean contractuel;
@@ -27,6 +28,16 @@ public class RefTypeSaisiDto {
 	private Integer quotaMax;
 	private UnitePeriodeQuotaDto unitePeriodeQuotaDto;
 	private String uniteDecompte;
+	
+	// MALADIES
+	private boolean prescripteur;
+	private boolean dateDeclaration;
+	private boolean prolongation;
+	private boolean nomEnfant;
+	private boolean nombreITT;
+	private boolean siegeLesion;
+	private boolean atReference;
+	private boolean maladiePro;
 	
 	public RefTypeSaisiDto() {
 	}
@@ -44,6 +55,7 @@ public class RefTypeSaisiDto {
 		this.chkDateFin = typeSaisi.isChkDateFin();
 		this.duree = typeSaisi.isDuree();
 		this.pieceJointe = typeSaisi.isPieceJointe();
+		this.infosPieceJointe = typeSaisi.getInfosPieceJointe();
 		
 		this.fonctionnaire = typeSaisi.isFonctionnaire();
 		this.contractuel = typeSaisi.isContractuel();
@@ -61,6 +73,16 @@ public class RefTypeSaisiDto {
 		if(null != typeSaisi.getRefUnitePeriodeQuota()) {
 			this.unitePeriodeQuotaDto = new UnitePeriodeQuotaDto(typeSaisi.getRefUnitePeriodeQuota());
 		}
+		
+		// MALADIES
+		this.prescripteur = typeSaisi.isPrescripteur();
+		this.dateDeclaration = typeSaisi.isDateDeclaration();
+		this.prolongation = typeSaisi.isProlongation();
+		this.nomEnfant = typeSaisi.isNomEnfant();
+		this.nombreITT = typeSaisi.isNombreITT();
+		this.siegeLesion = typeSaisi.isSiegeLesion();
+		this.atReference = typeSaisi.isAtReference();
+		this.maladiePro = typeSaisi.isMaladiePro();
 	}
 
 	public Integer getIdRefTypeDemande() {
@@ -133,6 +155,14 @@ public class RefTypeSaisiDto {
 
 	public void setPieceJointe(boolean pieceJointe) {
 		this.pieceJointe = pieceJointe;
+	}
+
+	public String getInfosPieceJointe() {
+		return infosPieceJointe;
+	}
+
+	public void setInfosPieceJointe(String infosPieceJointe) {
+		this.infosPieceJointe = infosPieceJointe;
 	}
 
 	public boolean isFonctionnaire() {
@@ -238,6 +268,69 @@ public class RefTypeSaisiDto {
 	public void setMotif(boolean motif) {
 		this.motif = motif;
 	}
-	
+
+	public boolean isPrescripteur() {
+		return prescripteur;
+	}
+
+	public void setPrescripteur(boolean prescripteur) {
+		this.prescripteur = prescripteur;
+	}
+
+	public boolean isDateDeclaration() {
+		return dateDeclaration;
+	}
+
+	public void setDateDeclaration(boolean dateDeclaration) {
+		this.dateDeclaration = dateDeclaration;
+	}
+
+	public boolean isProlongation() {
+		return prolongation;
+	}
+
+	public void setProlongation(boolean prolongation) {
+		this.prolongation = prolongation;
+	}
+
+	public boolean isNomEnfant() {
+		return nomEnfant;
+	}
+
+	public void setNomEnfant(boolean nomEnfant) {
+		this.nomEnfant = nomEnfant;
+	}
+
+	public boolean isNombreITT() {
+		return nombreITT;
+	}
+
+	public void setNombreITT(boolean nombreITT) {
+		this.nombreITT = nombreITT;
+	}
+
+	public boolean isSiegeLesion() {
+		return siegeLesion;
+	}
+
+	public void setSiegeLesion(boolean siegeLesion) {
+		this.siegeLesion = siegeLesion;
+	}
+
+	public boolean isAtReference() {
+		return atReference;
+	}
+
+	public void setAtReference(boolean atReference) {
+		this.atReference = atReference;
+	}
+
+	public boolean isMaladiePro() {
+		return maladiePro;
+	}
+
+	public void setMaladiePro(boolean maladiePro) {
+		this.maladiePro = maladiePro;
+	}
 	
 }

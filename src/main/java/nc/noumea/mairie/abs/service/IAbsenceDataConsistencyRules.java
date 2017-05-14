@@ -35,7 +35,7 @@ public interface IAbsenceDataConsistencyRules {
 	ReturnMessageDto verifDemandeExiste(Demande demande, ReturnMessageDto returnDto);
 
 	List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats,
-			Date dateDemande);
+			Date dateDemande, boolean isFromSIRH);
 
 	boolean checkDepassementCompteurAgent(DemandeDto demandeDto, CheckCompteurAgentVo checkCompteurAgentVo);
 
@@ -61,4 +61,6 @@ public interface IAbsenceDataConsistencyRules {
 	HashMap<Integer, CheckCompteurAgentVo> checkDepassementCompteurForListAgentsOrDemandes(
 			List<DemandeDto> listDemande, 
 			HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo);
+
+	boolean checkDepassementITT(DemandeDto dto);
 }

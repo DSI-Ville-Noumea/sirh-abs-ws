@@ -46,9 +46,6 @@ public class EtatDemandeCongesAnnuels extends EtatDemande {
 	@Column(name = "NB_SAMEDI_OFFERT", columnDefinition = "numeric")
 	private Double nbSamediOffert;
 
-	@Column(name = "COMMENTAIRE")
-	private String commentaire;
-
 	@OneToOne(fetch = FetchType.EAGER, optional = true, orphanRemoval = false)
 	@JoinColumn(name = "ID_REF_TYPE_SAISI_CONGE_ANNUEL")
 	private RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel;
@@ -107,14 +104,6 @@ public class EtatDemandeCongesAnnuels extends EtatDemande {
 
 	public void setDateFinPM(boolean dateFinPM) {
 		this.dateFinPM = dateFinPM;
-	}
-
-	public String getCommentaire() {
-		return commentaire;
-	}
-
-	public void setCommentaire(String commentaire) {
-		this.commentaire = commentaire;
 	}
 
 	public RefTypeSaisiCongeAnnuel getTypeSaisiCongeAnnuel() {

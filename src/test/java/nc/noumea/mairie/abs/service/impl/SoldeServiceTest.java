@@ -26,13 +26,16 @@ import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassive;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
+import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
+import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.IAsaRepository;
 import nc.noumea.mairie.abs.repository.ICongesAnnuelsRepository;
@@ -42,7 +45,9 @@ import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
 import nc.noumea.mairie.abs.service.IAbsenceDataConsistencyRules;
+import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.counter.impl.CongesExcepCounterServiceImpl;
+import nc.noumea.mairie.abs.service.counter.impl.MaladieCounterServiceImpl;
 import nc.noumea.mairie.abs.service.rules.impl.AbsReposCompensateurDataConsistencyRulesImpl;
 
 import org.joda.time.DateTime;
@@ -58,6 +63,7 @@ public class SoldeServiceTest {
 	public void getAgentSolde_ZeroSolde() {
 
 		// Given
+		Date dateJour = new Date();
 		Integer idAgent = 9008765;
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
@@ -97,6 +103,16 @@ public class SoldeServiceTest {
 		IAbsenceDataConsistencyRules absAsaA54DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		IAbsenceDataConsistencyRules absAsaA55DataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		IAbsenceDataConsistencyRules absAsaAmicaleDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+
+		SoldeMaladiesDto soldeMaladies = new SoldeMaladiesDto();
+		soldeMaladies.setDroitsPleinSalaire(90);
+		soldeMaladies.setDroitsDemiSalaire(75);
+		soldeMaladies.setTotalPris(20);
+		soldeMaladies.setRapPleinSalaire(80);
+		soldeMaladies.setRapDemiSalaire(50);
+		
+		MaladieCounterServiceImpl maladieCounterServiceImpl = Mockito.mock(MaladieCounterServiceImpl.class);
+		Mockito.when(maladieCounterServiceImpl.getSoldeByAgent(Mockito.anyInt(), Mockito.any(Date.class), (AgentGeneriqueDto)Mockito.any())).thenReturn(soldeMaladies);
 		
 		SoldeService service = new SoldeService();
 		ReflectionTestUtils.setField(service, "counterRepository", cr);
@@ -104,6 +120,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "maladieCounterServiceImpl", maladieCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
 		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
@@ -114,7 +131,6 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		// When
-		Date dateJour = new Date();
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null, dateJour);
 
 		assertEquals("0.0", dto.getSoldeCongeAnnee().toString());
@@ -134,6 +150,11 @@ public class SoldeServiceTest {
 		assertFalse(dto.isAfficheSoldeAsaA55());
 		assertFalse(dto.isAfficheSoldeAsaA52());
 		assertFalse(dto.isAfficheSoldeCongesExcep());
+		assertEquals(soldeMaladies.getDroitsPleinSalaire(), dto.getSoldeMaladies().getDroitsPleinSalaire());
+		assertEquals(soldeMaladies.getDroitsDemiSalaire(), dto.getSoldeMaladies().getDroitsDemiSalaire());
+		assertEquals(soldeMaladies.getRapPleinSalaire(), dto.getSoldeMaladies().getRapPleinSalaire());
+		assertEquals(soldeMaladies.getRapDemiSalaire(), dto.getSoldeMaladies().getRapDemiSalaire());
+		assertEquals(soldeMaladies.getTotalPris(), dto.getSoldeMaladies().getTotalPris());
 	}
 
 	@Test
@@ -270,7 +291,19 @@ public class SoldeServiceTest {
 
 		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
+		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(
+				Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt()))
+				.thenReturn(listAsa);
+
+		SoldeMaladiesDto soldeMaladies = new SoldeMaladiesDto();
+		soldeMaladies.setDroitsPleinSalaire(90);
+		soldeMaladies.setDroitsDemiSalaire(75);
+		soldeMaladies.setTotalPris(20);
+		soldeMaladies.setRapPleinSalaire(80);
+		soldeMaladies.setRapDemiSalaire(50);
+		
+		MaladieCounterServiceImpl maladieCounterServiceImpl = Mockito.mock(MaladieCounterServiceImpl.class);
+		Mockito.when(maladieCounterServiceImpl.getSoldeByAgent(Mockito.anyInt(), Mockito.any(Date.class), (AgentGeneriqueDto)Mockito.any())).thenReturn(soldeMaladies);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
@@ -288,6 +321,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "asaRepository", asaRepository);
+		ReflectionTestUtils.setField(service, "maladieCounterServiceImpl", maladieCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
 		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
@@ -322,6 +356,11 @@ public class SoldeServiceTest {
 		assertEquals(2, dto.getListeSoldeAsaA52().size());
 		assertEquals(2, dto.getListeSoldeCongesExcep().size());
 		assertTrue(dto.isAfficheSoldeCongesExcep());
+		assertEquals(soldeMaladies.getDroitsPleinSalaire(), dto.getSoldeMaladies().getDroitsPleinSalaire());
+		assertEquals(soldeMaladies.getDroitsDemiSalaire(), dto.getSoldeMaladies().getDroitsDemiSalaire());
+		assertEquals(soldeMaladies.getRapPleinSalaire(), dto.getSoldeMaladies().getRapPleinSalaire());
+		assertEquals(soldeMaladies.getRapDemiSalaire(), dto.getSoldeMaladies().getRapDemiSalaire());
+		assertEquals(soldeMaladies.getTotalPris(), dto.getSoldeMaladies().getTotalPris());
 	}
 
 	@Test
@@ -437,7 +476,19 @@ public class SoldeServiceTest {
 
 		List<DemandeAsa> listAsa = new ArrayList<DemandeAsa>();
 		IAsaRepository asaRepository = Mockito.mock(IAsaRepository.class);
-		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt())).thenReturn(listAsa);
+		Mockito.when(asaRepository.getListDemandeAsaPourMoisByOS(
+				Mockito.anyInt(), (Integer) Mockito.any(), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.anyInt()))
+				.thenReturn(listAsa);
+
+		SoldeMaladiesDto soldeMaladies = new SoldeMaladiesDto();
+		soldeMaladies.setDroitsPleinSalaire(90);
+		soldeMaladies.setDroitsDemiSalaire(75);
+		soldeMaladies.setTotalPris(20);
+		soldeMaladies.setRapPleinSalaire(80);
+		soldeMaladies.setRapDemiSalaire(50);
+		
+		MaladieCounterServiceImpl maladieCounterServiceImpl = Mockito.mock(MaladieCounterServiceImpl.class);
+		Mockito.when(maladieCounterServiceImpl.getSoldeByAgent(Mockito.anyInt(), Mockito.any(Date.class), (AgentGeneriqueDto)Mockito.any())).thenReturn(soldeMaladies);
 
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
@@ -455,6 +506,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "asaRepository", asaRepository);
+		ReflectionTestUtils.setField(service, "maladieCounterServiceImpl", maladieCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
 		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
@@ -488,6 +540,11 @@ public class SoldeServiceTest {
 		assertEquals(12 * 60, dto.getSoldeAsaA52().intValue());
 		assertTrue(dto.isAfficheSoldeAsaA52());
 		assertEquals(2, dto.getListeSoldeAsaA52().size());
+		assertEquals(soldeMaladies.getDroitsPleinSalaire(), dto.getSoldeMaladies().getDroitsPleinSalaire());
+		assertEquals(soldeMaladies.getDroitsDemiSalaire(), dto.getSoldeMaladies().getDroitsDemiSalaire());
+		assertEquals(soldeMaladies.getRapPleinSalaire(), dto.getSoldeMaladies().getRapPleinSalaire());
+		assertEquals(soldeMaladies.getRapDemiSalaire(), dto.getSoldeMaladies().getRapDemiSalaire());
+		assertEquals(soldeMaladies.getTotalPris(), dto.getSoldeMaladies().getTotalPris());
 	}
 
 	@Test
@@ -548,6 +605,18 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
 
+		Date dateJour = new Date();
+
+		SoldeMaladiesDto soldeMaladies = new SoldeMaladiesDto();
+		soldeMaladies.setDroitsPleinSalaire(90);
+		soldeMaladies.setDroitsDemiSalaire(75);
+		soldeMaladies.setTotalPris(20);
+		soldeMaladies.setRapPleinSalaire(80);
+		soldeMaladies.setRapDemiSalaire(50);
+		
+		MaladieCounterServiceImpl maladieCounterServiceImpl = Mockito.mock(MaladieCounterServiceImpl.class);
+		Mockito.when(maladieCounterServiceImpl.getSoldeByAgent(Mockito.anyInt(), Mockito.any(Date.class), (AgentGeneriqueDto)Mockito.any())).thenReturn(soldeMaladies);
+
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
 		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
@@ -563,6 +632,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "maladieCounterServiceImpl", maladieCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
 		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
@@ -573,7 +643,6 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		// When
-		Date dateJour = new Date();
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null, dateJour);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
@@ -592,6 +661,11 @@ public class SoldeServiceTest {
 		assertEquals(0, dto.getSoldeAsaA52().intValue());
 		assertFalse(dto.isAfficheSoldeAsaA52());
 		assertEquals(0, dto.getListeSoldeAsaA52().size());
+		assertEquals(soldeMaladies.getDroitsPleinSalaire(), dto.getSoldeMaladies().getDroitsPleinSalaire());
+		assertEquals(soldeMaladies.getDroitsDemiSalaire(), dto.getSoldeMaladies().getDroitsDemiSalaire());
+		assertEquals(soldeMaladies.getRapPleinSalaire(), dto.getSoldeMaladies().getRapPleinSalaire());
+		assertEquals(soldeMaladies.getRapDemiSalaire(), dto.getSoldeMaladies().getRapDemiSalaire());
+		assertEquals(soldeMaladies.getTotalPris(), dto.getSoldeMaladies().getTotalPris());
 	}
 
 	@Test
@@ -652,6 +726,18 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
 
+		SoldeMaladiesDto soldeMaladies = new SoldeMaladiesDto();
+		soldeMaladies.setDroitsPleinSalaire(90);
+		soldeMaladies.setDroitsDemiSalaire(75);
+		soldeMaladies.setTotalPris(20);
+		soldeMaladies.setRapPleinSalaire(80);
+		soldeMaladies.setRapDemiSalaire(50);
+
+		Date dateJour = new Date();
+		
+		MaladieCounterServiceImpl maladieCounterServiceImpl = Mockito.mock(MaladieCounterServiceImpl.class);
+		Mockito.when(maladieCounterServiceImpl.getSoldeByAgent(Mockito.anyInt(), Mockito.any(Date.class), (AgentGeneriqueDto)Mockito.any())).thenReturn(soldeMaladies);
+
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
 		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
@@ -667,6 +753,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "maladieCounterServiceImpl", maladieCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
 		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
@@ -677,7 +764,6 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		// When
-		Date dateJour = new Date();
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null, dateJour);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
@@ -696,6 +782,11 @@ public class SoldeServiceTest {
 		assertEquals(0, dto.getSoldeAsaA52().intValue());
 		assertFalse(dto.isAfficheSoldeAsaA52());
 		assertEquals(0, dto.getListeSoldeAsaA52().size());
+		assertEquals(soldeMaladies.getDroitsPleinSalaire(), dto.getSoldeMaladies().getDroitsPleinSalaire());
+		assertEquals(soldeMaladies.getDroitsDemiSalaire(), dto.getSoldeMaladies().getDroitsDemiSalaire());
+		assertEquals(soldeMaladies.getRapPleinSalaire(), dto.getSoldeMaladies().getRapPleinSalaire());
+		assertEquals(soldeMaladies.getRapDemiSalaire(), dto.getSoldeMaladies().getRapDemiSalaire());
+		assertEquals(soldeMaladies.getTotalPris(), dto.getSoldeMaladies().getTotalPris());
 	}
 
 	@Test
@@ -756,6 +847,18 @@ public class SoldeServiceTest {
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
 		Mockito.when(demandeRepository.getNombreSamediOffertSurAnnee(idAgent, 2015, null)).thenReturn(1);
 
+		SoldeMaladiesDto soldeMaladies = new SoldeMaladiesDto();
+		soldeMaladies.setDroitsPleinSalaire(90);
+		soldeMaladies.setDroitsDemiSalaire(75);
+		soldeMaladies.setTotalPris(20);
+		soldeMaladies.setRapPleinSalaire(80);
+		soldeMaladies.setRapDemiSalaire(50);
+
+		Date dateJour = new Date();
+		
+		MaladieCounterServiceImpl maladieCounterServiceImpl = Mockito.mock(MaladieCounterServiceImpl.class);
+		Mockito.when(maladieCounterServiceImpl.getSoldeByAgent(Mockito.anyInt(), Mockito.any(Date.class), (AgentGeneriqueDto)Mockito.any())).thenReturn(soldeMaladies);
+
 		ICongesAnnuelsRepository congeAnnuelRepository = Mockito.mock(ICongesAnnuelsRepository.class);
 		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
 		IRecuperationRepository recuperationRepository = Mockito.mock(IRecuperationRepository.class);
@@ -771,6 +874,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "congesExcepCounterServiceImpl", congesExcepCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "maladieCounterServiceImpl", maladieCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
 		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
@@ -781,7 +885,6 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "absAsaAmicaleDataConsistencyRulesImpl", absAsaAmicaleDataConsistencyRulesImpl);
 
 		// When
-		Date dateJour = new Date();
 		SoldeDto dto = service.getAgentSolde(idAgent, null, null, null, dateJour);
 
 		assertEquals("72.0", dto.getSoldeRecup().toString());
@@ -800,6 +903,11 @@ public class SoldeServiceTest {
 		assertEquals(0, dto.getSoldeAsaA52().intValue());
 		assertFalse(dto.isAfficheSoldeAsaA52());
 		assertEquals(0, dto.getListeSoldeAsaA52().size());
+		assertEquals(soldeMaladies.getDroitsPleinSalaire(), dto.getSoldeMaladies().getDroitsPleinSalaire());
+		assertEquals(soldeMaladies.getDroitsDemiSalaire(), dto.getSoldeMaladies().getDroitsDemiSalaire());
+		assertEquals(soldeMaladies.getRapPleinSalaire(), dto.getSoldeMaladies().getRapPleinSalaire());
+		assertEquals(soldeMaladies.getRapDemiSalaire(), dto.getSoldeMaladies().getRapDemiSalaire());
+		assertEquals(soldeMaladies.getTotalPris(), dto.getSoldeMaladies().getTotalPris());
 	}
 
 	private void prepareDataTest(SoldeService service, Integer idAgent) {
@@ -1114,6 +1222,74 @@ public class SoldeServiceTest {
 	}
 
 	@Test
+	public void getHistoriqueSoldeAgent_return1Liste_Maladies() {
+		
+		// Given
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setLabel("Maladie Convalescence");
+		
+		DemandeMaladies demande = new DemandeMaladies();
+		demande.setDuree(10.0);
+		demande.setDateDebut(new Date());
+		demande.setDateFin(new Date());
+		demande.setType(type);
+		demande.setTotalPris(1);
+		demande.setNombreJoursCoupeDemiSalaire(2);
+		demande.setNombreJoursCoupePleinSalaire(3);
+		demande.setNombreJoursResteAPrendreDemiSalaire(4);
+		demande.setNombreJoursResteAPrendrePleinSalaire(5);
+
+		RefTypeAbsence type2 = new RefTypeAbsence();
+		type2.setLabel("Maladie Convalescence");
+		
+		DemandeMaladies demande2 = new DemandeMaladies();
+		demande2.setDuree(11.0);
+		demande2.setDateDebut(new Date());
+		demande2.setDateFin(new Date());
+		demande2.setType(type2);
+		demande2.setTotalPris(6);
+		demande2.setNombreJoursCoupeDemiSalaire(7);
+		demande2.setNombreJoursCoupePleinSalaire(8);
+		demande2.setNombreJoursResteAPrendreDemiSalaire(9);
+		demande2.setNombreJoursResteAPrendrePleinSalaire(10);
+		
+		List<DemandeMaladies> listMaladies = new ArrayList<DemandeMaladies>();
+		listMaladies.add(demande);
+		listMaladies.add(demande2);
+
+		ICounterService maladieCounterServiceImpl = Mockito.mock(ICounterService.class);
+		Mockito.when(maladieCounterServiceImpl.getHistoriqueMaladiesWithDroits(9005138, new DateTime(2014, 1, 24, 0, 0, 0).toDate()))
+			.thenReturn(listMaladies);
+
+		SoldeService service = new SoldeService();
+		ReflectionTestUtils.setField(service, "maladieCounterServiceImpl", maladieCounterServiceImpl);
+
+		List<HistoriqueSoldeDto> listResult = service.getHistoriqueSoldeAgent(
+				9005138, RefTypeAbsenceEnum.MALADIE.getValue(), new DateTime(2014, 1, 24, 0, 0, 0).toDate(), null, false);
+
+		assertEquals(2, listResult.size());
+		assertEquals(listResult.get(0).getDateDebut(), demande.getDateDebut());
+		assertEquals(listResult.get(0).getDateFin(), demande.getDateFin());
+		assertEquals(listResult.get(0).getTypeAbsence(), demande.getType().getLabel());
+		assertEquals(listResult.get(0).getDuree(), demande.getDuree());
+		assertEquals(listResult.get(0).getTotalPris(), demande.getTotalPris());
+		assertEquals(listResult.get(0).getNombreJoursCoupeDemiSalaire(), demande.getNombreJoursCoupeDemiSalaire());
+		assertEquals(listResult.get(0).getNombreJoursCoupePleinSalaire(), demande.getNombreJoursCoupePleinSalaire());
+		assertEquals(listResult.get(0).getNombreJoursResteAPrendreDemiSalaire(), demande.getNombreJoursResteAPrendreDemiSalaire());
+		assertEquals(listResult.get(0).getNombreJoursResteAPrendrePleinSalaire(), demande.getNombreJoursResteAPrendrePleinSalaire());
+		
+		assertEquals(listResult.get(1).getDateDebut(), demande2.getDateDebut());
+		assertEquals(listResult.get(1).getDateFin(), demande2.getDateFin());
+		assertEquals(listResult.get(1).getTypeAbsence(), demande2.getType().getLabel());
+		assertEquals(listResult.get(1).getDuree(), demande2.getDuree());
+		assertEquals(listResult.get(1).getTotalPris(), demande2.getTotalPris());
+		assertEquals(listResult.get(1).getNombreJoursCoupeDemiSalaire(), demande2.getNombreJoursCoupeDemiSalaire());
+		assertEquals(listResult.get(1).getNombreJoursCoupePleinSalaire(), demande2.getNombreJoursCoupePleinSalaire());
+		assertEquals(listResult.get(1).getNombreJoursResteAPrendreDemiSalaire(), demande2.getNombreJoursResteAPrendreDemiSalaire());
+		assertEquals(listResult.get(1).getNombreJoursResteAPrendrePleinSalaire(), demande2.getNombreJoursResteAPrendrePleinSalaire());
+	}
+
+	@Test
 	public void getHistoriqueSoldeAgent_return1Liste_CongeAnnuel_WithRestitutionMassive() {
 		// Given
 
@@ -1424,6 +1600,16 @@ public class SoldeServiceTest {
 
 		List<SoldeSpecifiqueDto> listeSoldeSpecifiqueDto = new ArrayList<SoldeSpecifiqueDto>();
 
+		SoldeMaladiesDto soldeMaladies = new SoldeMaladiesDto();
+		soldeMaladies.setDroitsPleinSalaire(90);
+		soldeMaladies.setDroitsDemiSalaire(75);
+		soldeMaladies.setTotalPris(20);
+		soldeMaladies.setRapPleinSalaire(80);
+		soldeMaladies.setRapDemiSalaire(50);
+		
+		MaladieCounterServiceImpl maladieCounterServiceImpl = Mockito.mock(MaladieCounterServiceImpl.class);
+		Mockito.when(maladieCounterServiceImpl.getSoldeByAgent(Mockito.anyInt(), Mockito.any(Date.class), (AgentGeneriqueDto)Mockito.any())).thenReturn(soldeMaladies);
+
 		CongesExcepCounterServiceImpl congesExcepCounterServiceImpl = Mockito.mock(CongesExcepCounterServiceImpl.class);
 		Mockito.when(congesExcepCounterServiceImpl.getListAgentCounterByDate(idAgent, null, null)).thenReturn(listeSoldeSpecifiqueDto);
 
@@ -1453,6 +1639,7 @@ public class SoldeServiceTest {
 		ReflectionTestUtils.setField(service, "organisationSyndicaleRepository", organisationSyndicaleRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "asaRepository", asaRepository);
+		ReflectionTestUtils.setField(service, "maladieCounterServiceImpl", maladieCounterServiceImpl);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
 		ReflectionTestUtils.setField(service, "recuperationRepository", recuperationRepository);
@@ -1488,5 +1675,10 @@ public class SoldeServiceTest {
 		assertEquals(12 * 60, dto.getSoldeAsaA52().intValue());
 		assertTrue(dto.isAfficheSoldeAsaA52());
 		assertEquals(2, dto.getListeSoldeAsaA52().size());
+		assertEquals(soldeMaladies.getDroitsPleinSalaire(), dto.getSoldeMaladies().getDroitsPleinSalaire());
+		assertEquals(soldeMaladies.getDroitsDemiSalaire(), dto.getSoldeMaladies().getDroitsDemiSalaire());
+		assertEquals(soldeMaladies.getRapPleinSalaire(), dto.getSoldeMaladies().getRapPleinSalaire());
+		assertEquals(soldeMaladies.getRapDemiSalaire(), dto.getSoldeMaladies().getRapDemiSalaire());
+		assertEquals(soldeMaladies.getTotalPris(), dto.getSoldeMaladies().getTotalPris());
 	}
 }

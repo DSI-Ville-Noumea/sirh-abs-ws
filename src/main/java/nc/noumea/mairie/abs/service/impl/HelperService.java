@@ -284,6 +284,15 @@ public class HelperService {
 		return new DateTime(year, month, minDay, 0, 0, 0).toDate();
 	}
 
+	public Date getDateFinAnneeForOneDate(Date dateDemande, int nombreAnnees) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateDemande);
+		int minDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+		int month = calendar.getActualMaximum(Calendar.MONTH) + 1;
+		int year = calendar.get(Calendar.YEAR) + (nombreAnnees - 1);
+		return new DateTime(year, month, minDay, 23, 59, 59).toDate();
+	}
+
 	public Date getDateDebutJourneeForOneDate(Date dateDemande, int nombreJours) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(dateDemande);

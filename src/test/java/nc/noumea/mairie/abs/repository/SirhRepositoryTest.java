@@ -1,10 +1,23 @@
 package nc.noumea.mairie.abs.repository;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.domain.Spadmn;
@@ -14,24 +27,15 @@ import nc.noumea.mairie.domain.SpcarrId;
 import nc.noumea.mairie.domain.Spcc;
 import nc.noumea.mairie.domain.SpccId;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/spring/applicationContext-test.xml" })
 public class SirhRepositoryTest {
 
 	@Autowired
-	SirhRepository repository;
+	SirhRepository			repository;
 
 	@PersistenceContext(unitName = "sirhPersistenceUnit")
-	private EntityManager sirhEntityManager;
+	private EntityManager	sirhEntityManager;
 
 	@Test
 	@Transactional("sirhTransactionManager")
@@ -156,7 +160,7 @@ public class SirhRepositoryTest {
 		agent.setPrenom("prenom");
 		agent.setPrenomUsage("prenom");
 
-		Spcc result = repository.getSpcc(5199, new DateTime(2013,9,1,0,0,0).toDate(), 1);
+		Spcc result = repository.getSpcc(5199, new DateTime(2013, 9, 1, 0, 0, 0).toDate(), 1);
 
 		assertNull(result);
 
@@ -183,7 +187,7 @@ public class SirhRepositoryTest {
 		agent.setPrenom("prenom");
 		agent.setPrenomUsage("prenom");
 
-		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,11,0,0,0).toDate(), 1);
+		Spcc result = repository.getSpcc(5138, new DateTime(2013, 9, 11, 0, 0, 0).toDate(), 1);
 
 		assertNull(result);
 
@@ -210,7 +214,7 @@ public class SirhRepositoryTest {
 		agent.setPrenom("prenom");
 		agent.setPrenomUsage("prenom");
 
-		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,1,0,0,0).toDate(), 2);
+		Spcc result = repository.getSpcc(5138, new DateTime(2013, 9, 1, 0, 0, 0).toDate(), 2);
 
 		assertNull(result);
 
@@ -237,7 +241,7 @@ public class SirhRepositoryTest {
 		agent.setPrenom("prenom");
 		agent.setPrenomUsage("prenom");
 
-		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,1,0,0,0).toDate(), 1);
+		Spcc result = repository.getSpcc(5138, new DateTime(2013, 9, 1, 0, 0, 0).toDate(), 1);
 
 		assertNotNull(result);
 
@@ -264,7 +268,7 @@ public class SirhRepositoryTest {
 		agent.setPrenom("prenom");
 		agent.setPrenomUsage("prenom");
 
-		Spcc result = repository.getSpcc(5199, new DateTime(2013,9,1,0,0,0).toDate());
+		Spcc result = repository.getSpcc(5199, new DateTime(2013, 9, 1, 0, 0, 0).toDate());
 
 		assertNull(result);
 
@@ -291,7 +295,7 @@ public class SirhRepositoryTest {
 		agent.setPrenom("prenom");
 		agent.setPrenomUsage("prenom");
 
-		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,11,0,0,0).toDate());
+		Spcc result = repository.getSpcc(5138, new DateTime(2013, 9, 11, 0, 0, 0).toDate());
 
 		assertNull(result);
 
@@ -318,11 +322,84 @@ public class SirhRepositoryTest {
 		agent.setPrenom("prenom");
 		agent.setPrenomUsage("prenom");
 
-		Spcc result = repository.getSpcc(5138, new DateTime(2013,9,1,0,0,0).toDate());
+		Spcc result = repository.getSpcc(5138, new DateTime(2013, 9, 1, 0, 0, 0).toDate());
 
 		assertNotNull(result);
 
 		sirhEntityManager.flush();
 		sirhEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	@Rollback
+	public void getPA50OfAgent_1result() {
+
+		SpadmnId id = new SpadmnId();
+		id.setDatdeb(20130901);
+		id.setNomatr(5138);
+		Spadmn adm = new Spadmn();
+		adm.setId(id);
+		adm.setCdpadm("50");
+		adm.setDatfin(20130930);
+
+		sirhEntityManager.persist(adm);
+
+		List<Spadmn> result = repository.getPA50OfAgent(id.getNomatr(), new DateTime(2013, 9, 1, 0, 0, 0).toDate());
+		assertEquals(1, result.size());
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	@Rollback
+	public void getPA50OfAgent_1result_1old_1between_1notPA50() {
+
+		SpadmnId id = new SpadmnId();
+		id.setDatdeb(20100101);
+		id.setNomatr(5138);
+		Spadmn adm = new Spadmn();
+		adm.setId(id);
+		adm.setCdpadm("50");
+		adm.setDatfin(20110930);
+		sirhEntityManager.persist(adm);
+
+		SpadmnId id2 = new SpadmnId();
+		id2.setDatdeb(20111001);
+		id2.setNomatr(5138);
+		Spadmn adm2 = new Spadmn();
+		adm2.setId(id2);
+		adm2.setCdpadm("50");
+		adm2.setDatfin(20131231);
+		sirhEntityManager.persist(adm2);
+
+		SpadmnId id3 = new SpadmnId();
+		id3.setDatdeb(20140101);
+		id3.setNomatr(5138);
+		Spadmn adm3 = new Spadmn();
+		adm3.setId(id3);
+		adm3.setCdpadm("1");
+		adm3.setDatfin(0);
+		sirhEntityManager.persist(adm3);
+
+		List<Spadmn> result = repository.getPA50OfAgent(id.getNomatr(), new DateTime(2013, 9, 1, 0, 0, 0).toDate());
+		assertEquals(1, result.size());
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	@Rollback
+	public void getPA50OfAgent_badAgent() {
+
+		SpadmnId id2 = new SpadmnId();
+		id2.setDatdeb(20111001);
+		id2.setNomatr(5138);
+		Spadmn adm2 = new Spadmn();
+		adm2.setId(id2);
+		adm2.setCdpadm("50");
+		adm2.setDatfin(20131231);
+		sirhEntityManager.persist(adm2);
+
+		List<Spadmn> result = repository.getPA50OfAgent(id2.getNomatr() + 1, new DateTime(2013, 9, 1, 0, 0, 0).toDate());
+		assertNull(result);
 	}
 }

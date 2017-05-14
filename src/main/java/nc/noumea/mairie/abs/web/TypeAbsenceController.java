@@ -77,15 +77,15 @@ public class TypeAbsenceController {
 	 * suppression d un type d absence
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/deleteTypeAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public ReturnMessageDto deleteTypeAbsence(@RequestParam("idAgent") int idAgent,
+	@RequestMapping(value = "/inactiveTypeAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public ReturnMessageDto inactiveTypeAbsence(@RequestParam("idAgent") int idAgent,
 			@RequestParam("idRefTypeAbsence") int idRefTypeAbsence, HttpServletResponse response) {
 
-		logger.debug("entered POST [typeAbsence/deleteTypeAbsence] => deleteTypeAbsence");
+		logger.debug("entered POST [typeAbsence/inactiveTypeAbsence] => inactiveTypeAbsence");
 
 		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		ReturnMessageDto srm = typeAbsenceService.deleteTypeAbsence(convertedIdAgent, idRefTypeAbsence);
+		ReturnMessageDto srm = typeAbsenceService.inactiveTypeAbsence(convertedIdAgent, idRefTypeAbsence);
 
 		if (!srm.getErrors().isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_CONFLICT);

@@ -246,7 +246,7 @@ public class AsaRepositoryTest {
 	@Transactional("absTransactionManager")
 	public void getListDemandeAsaEnCours_noResult_sameDemande() {
 
-		Date dateJour = new Date();
+		Date dateJour = new DateTime(2014, 05, 1, 0, 0, 0).toDate();
 		Date dateDebMois = new DateTime(2014, 05, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2014, 05, 31, 23, 59, 59).toDate();
 
@@ -285,7 +285,7 @@ public class AsaRepositoryTest {
 	@Test
 	@Transactional("absTransactionManager")
 	public void getListDemandeAsaEnCours_testTypeDemande() {
-
+		
 		Date dateJour = new DateTime(2015, 05, 1, 0, 0, 0).toDate();
 		Date dateDebMois = new DateTime(2014, 05, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2016, 05, 31, 23, 59, 59).toDate();

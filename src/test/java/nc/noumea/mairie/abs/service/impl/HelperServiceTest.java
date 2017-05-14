@@ -35,7 +35,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class HelperServiceTest {
 
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	SimpleDateFormat	sdf	= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Test
 	public void getCurrentDate() {
@@ -387,6 +387,18 @@ public class HelperServiceTest {
 		Double result = service.calculNombreJoursArrondiDemiJournee(calDebut.getTime(), calFin.getTime());
 
 		assertEquals(result.intValue(), 8);
+	}
+
+	@Test
+	public void calculNombreJourEntre2Dates_3jours() {
+
+		Date dateDebut = new DateTime(2015, 1, 18, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2015, 1, 20, 23, 59, 59).toDate();
+
+		HelperService service = new HelperService();
+		Double result = service.calculNombreJoursArrondiDemiJournee(dateDebut, dateFin);
+
+		assertEquals(result.intValue(), 3);
 	}
 
 	@Test
@@ -763,6 +775,16 @@ public class HelperServiceTest {
 		Date result = service.getDateDebutAnneeForOneDate(dateDemande, 1);
 
 		assertEquals(result, new DateTime(2014, 1, 1, 0, 0, 0).toDate());
+	}
+
+	@Test
+	public void getDateFinAnneeForOneDate_returnLastDAy() {
+		Date dateDemande = new DateTime(2014, 05, 13, 12, 30, 0).toDate();
+
+		HelperService service = new HelperService();
+		Date result = service.getDateFinAnneeForOneDate(dateDemande, 1);
+
+		assertEquals(result, new DateTime(2014, 12, 31, 23, 59, 59).toDate());
 	}
 
 	@Test
@@ -2305,5 +2327,38 @@ public class HelperServiceTest {
 		String result = service.getHeureMinuteToString(150);
 
 		assertEquals(result, "2h30m");
+	}
+
+	@Test
+	public void calculNombreJours_Zero() {
+		Date dateDeb = new DateTime(2010, 01, 01, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2010, 01, 01, 0, 0, 0).toDate();
+
+		HelperService service = new HelperService();
+		double result = service.calculNombreJours(dateDeb, dateFin);
+
+		assertEquals((int) result, 0);
+	}
+
+	@Test
+	public void calculNombreJours_DeuxBis() {
+		Date dateDeb = new DateTime(2016, 7, 06, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2016, 07, 07, 23, 59, 59).toDate();
+
+		HelperService service = new HelperService();
+		double result = service.calculNombreJours(dateDeb, dateFin);
+
+		assertEquals((int) result, 2);
+	}
+
+	@Test
+	public void calculNombreJours_Deux() {
+		Date dateDeb = new DateTime(2010, 01, 01, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2010, 01, 03, 0, 0, 0).toDate();
+
+		HelperService service = new HelperService();
+		double result = service.calculNombreJours(dateDeb, dateFin);
+
+		assertEquals((int) result, 2);
 	}
 }

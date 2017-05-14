@@ -12,20 +12,25 @@ import org.springframework.transaction.annotation.Transactional;
 import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.MotifCompteur;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.AgentOrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
+import nc.noumea.mairie.abs.vo.CalculDroitsMaladiesVo;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 public abstract class AbstractCounterService implements ICounterService {
@@ -363,5 +368,26 @@ public abstract class AbstractCounterService implements ICounterService {
 		srm.getErrors().add(String.format(ERROR_TECHNIQUE));
 
 		return srm;
+	}
+
+@Override
+	public SoldeMaladiesDto getSoldeByAgent(Integer idAgent, Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto) {
+		return null;
+
+	}
+
+	@Override
+	public CalculDroitsMaladiesVo calculDroitsMaladiesForDemandeMaladies(Integer idAgent, DemandeDto demandeMaladie) {
+		return null;
+	}
+
+	@Override
+	public Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies) {
+		return null;
+	}
+	
+	@Override
+	public List<DemandeMaladies> getHistoriqueMaladiesWithDroits(Integer idAgent, Date date) {
+		return null;
 	}
 }

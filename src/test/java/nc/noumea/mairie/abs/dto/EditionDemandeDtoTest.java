@@ -55,7 +55,7 @@ public class EditionDemandeDtoTest {
 		d.setTotalMinutesAnneeN1Old(16);
 		d.setTotalMinutesAnneeN1New(17);
 
-		DemandeDto demandeDto = new DemandeDto(d, agDto);
+		DemandeDto demandeDto = new DemandeDto(d, agDto, false);
 		demandeDto.updateEtat(d.getLatestEtatDemande(), new AgentWithServiceDto(), d.getType().getGroupe());
 
 		AgentGeneriqueDto agAppro = new AgentGeneriqueDto();

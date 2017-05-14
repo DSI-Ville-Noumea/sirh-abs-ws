@@ -14,18 +14,24 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeAccidentTravail;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeMaladiePro;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSiegeLesion;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -53,7 +59,7 @@ public class FiltreServiceTest {
 		RefTypeAbsence CONGE_ANNUEL = new RefTypeAbsence();
 		CONGE_ANNUEL.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue());
 		RefTypeAbsence MALADIES = new RefTypeAbsence();
-		MALADIES.setIdRefTypeAbsence(RefTypeAbsenceEnum.MALADIES.getValue());
+		MALADIES.setIdRefTypeAbsence(RefTypeAbsenceEnum.MALADIE.getValue());
 		RefTypeAbsence RECUP = new RefTypeAbsence();
 		RECUP.setIdRefTypeAbsence(RefTypeAbsenceEnum.RECUP.getValue());
 		RefTypeAbsence REPOS_COMP = new RefTypeAbsence();
@@ -1227,5 +1233,279 @@ public class FiltreServiceTest {
 		List<RefTypeAbsenceDto> result = service.getRefTypesAbsenceSaisieKiosque(1, null);
 
 		assertEquals(3, result.size());
+	}
+	
+	@Test
+	public void getAllRefTypeAccidentTravail() {
+		
+		RefTypeAccidentTravail at = new RefTypeAccidentTravail();
+		at.setIdRefAccidentTravail(11);
+		at.setLibelle("libelle at 1");
+		
+		RefTypeAccidentTravail at2 = new RefTypeAccidentTravail();
+		at2.setIdRefAccidentTravail(12);
+		at2.setLibelle("libelle at 2");
+		
+		List<RefTypeAccidentTravail> listAT = new ArrayList<RefTypeAccidentTravail>();
+		listAT.add(at);
+		listAT.add(at2);
+		
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefTypeAccidentTravail()).thenReturn(listAT);
+				
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		
+		List<RefTypeDto> result = service.getAllRefTypeAccidentTravail();
+		
+		assertEquals(result.get(0).getIdRefType(), at.getIdRefAccidentTravail());
+		assertEquals(result.get(0).getLibelle(), at.getLibelle());
+		assertEquals(result.get(1).getIdRefType(), at2.getIdRefAccidentTravail());
+		assertEquals(result.get(1).getLibelle(), at2.getLibelle());
+	}
+	
+	@Test
+	public void getAllRefTypeSiegeLesion() {
+		
+		RefTypeSiegeLesion sl = new RefTypeSiegeLesion();
+		sl.setIdRefSiegeLesion(11);
+		sl.setLibelle("libelle sl 1");
+		
+		RefTypeSiegeLesion sl2 = new RefTypeSiegeLesion();
+		sl2.setIdRefSiegeLesion(12);
+		sl2.setLibelle("libelle sl 2");
+		
+		List<RefTypeSiegeLesion> listSL = new ArrayList<RefTypeSiegeLesion>();
+		listSL.add(sl);
+		listSL.add(sl2);
+		
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefTypeSiegeLesion()).thenReturn(listSL);
+				
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		
+		List<RefTypeDto> result = service.getAllRefTypeSiegeLesion();
+		
+		assertEquals(result.get(0).getIdRefType(), sl.getIdRefSiegeLesion());
+		assertEquals(result.get(0).getLibelle(), sl.getLibelle());
+		assertEquals(result.get(1).getIdRefType(), sl2.getIdRefSiegeLesion());
+		assertEquals(result.get(1).getLibelle(), sl2.getLibelle());
+	}
+	
+	@Test
+	public void getAllRefTypeMaladiePro() {
+		
+		RefTypeMaladiePro mp = new RefTypeMaladiePro();
+		mp.setIdRefMaladiePro(11);
+		mp.setLibelle("libelle mp 1");
+		
+		RefTypeMaladiePro mp2 = new RefTypeMaladiePro();
+		mp2.setIdRefMaladiePro(12);
+		mp2.setLibelle("libelle mp 2");
+		
+		List<RefTypeMaladiePro> listMP = new ArrayList<RefTypeMaladiePro>();
+		listMP.add(mp);
+		listMP.add(mp2);
+		
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findAllRefTypeMaladiePro()).thenReturn(listMP);
+				
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		
+		List<RefTypeDto> result = service.getAllRefTypeMaladiePro();
+		
+		assertEquals(result.get(0).getIdRefType(), mp.getIdRefMaladiePro());
+		assertEquals(result.get(0).getLibelle(), mp.getLibelle());
+		assertEquals(result.get(1).getIdRefType(), mp2.getIdRefMaladiePro());
+		assertEquals(result.get(1).getLibelle(), mp2.getLibelle());
+	}
+	
+	@Test
+	public void setTypeGenerique_AT_NotUserSIRH() {
+		
+		Integer idAgent = 9005138;
+		
+		RefTypeDto dto = null;
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		
+		ReturnMessageDto resultSIRH =  new ReturnMessageDto();
+		resultSIRH.getErrors().add("error user SIRH");
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(resultSIRH);
+		
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		ReturnMessageDto result = service.setTypeGenerique(idAgent, RefTypeAccidentTravail.class, dto);
+		
+		assertEquals(result.getErrors().get(0), "L'agent n'est pas habilité.");
+	}
+	
+	@Test
+	public void setTypeGenerique_AT_null() {
+		
+		Integer idAgent = 9005138;
+		
+		RefTypeDto dto = null;
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		ReturnMessageDto result = service.setTypeGenerique(idAgent, RefTypeAccidentTravail.class, dto);
+		
+		assertEquals(result.getErrors().get(0), "Merci de renseigner les informations nécessaires.");
+	}
+	
+	@Test
+	public void setTypeGenerique_AT_notExist() {
+		
+		Integer idAgent = 9005138;
+		
+		RefTypeDto dto = new RefTypeDto();
+		dto.setIdRefType(1);
+		dto.setLibelle("libelle");
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findObject(RefTypeAccidentTravail.class, dto.getIdRefType())).thenReturn(null);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		ReturnMessageDto result = service.setTypeGenerique(idAgent, RefTypeAccidentTravail.class, dto);
+		
+		assertEquals(result.getErrors().get(0), "Le type n'existe pas.");
+	}
+	
+	@Test
+	public void setTypeGenerique_AT_modify() {
+		
+		Integer idAgent = 9005138;
+		
+		RefTypeDto dto = new RefTypeDto();
+		dto.setIdRefType(1);
+		dto.setLibelle("libelle");
+
+		RefTypeAccidentTravail at = Mockito.spy(new RefTypeAccidentTravail());
+		at.setIdRefAccidentTravail(1);
+		at.setLibelle("");
+		
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findObject(RefTypeAccidentTravail.class, dto.getIdRefType())).thenReturn(at);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		ReturnMessageDto result = service.setTypeGenerique(idAgent, RefTypeAccidentTravail.class, dto);
+		
+		assertEquals(result.getErrors().size(), 0);
+		assertEquals(result.getInfos().get(0), "Enregistrement effectué.");
+		Mockito.verify(filtreRepository, Mockito.times(1)).persist(at);
+		assertEquals(at.getLibelle(), dto.getLibelle());
+	}
+	
+	@Test
+	public void setTypeGenerique_AT_create() {
+		
+		Integer idAgent = 9005138;
+		
+		RefTypeDto dto = new RefTypeDto();
+		dto.setIdRefType(null);
+		dto.setLibelle("libelle");
+		
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		ReturnMessageDto result = service.setTypeGenerique(idAgent, RefTypeAccidentTravail.class, dto);
+		
+		assertEquals(result.getErrors().size(), 0);
+		assertEquals(result.getInfos().get(0), "Enregistrement effectué.");
+		Mockito.verify(filtreRepository, Mockito.times(1)).persist(Mockito.isA(RefTypeAccidentTravail.class));
+	}
+	
+	@Test
+	public void setTypeGenerique_MaladiePro_modify() {
+		
+		Integer idAgent = 9005138;
+		
+		RefTypeDto dto = new RefTypeDto();
+		dto.setIdRefType(1);
+		dto.setLibelle("libelle");
+
+		RefTypeMaladiePro mp = Mockito.spy(new RefTypeMaladiePro());
+		mp.setIdRefMaladiePro(1);
+		mp.setLibelle("");
+		
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findObject(RefTypeMaladiePro.class, dto.getIdRefType())).thenReturn(mp);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		ReturnMessageDto result = service.setTypeGenerique(idAgent, RefTypeMaladiePro.class, dto);
+		
+		assertEquals(result.getErrors().size(), 0);
+		assertEquals(result.getInfos().get(0), "Enregistrement effectué.");
+		Mockito.verify(filtreRepository, Mockito.times(1)).persist(mp);
+		assertEquals(mp.getLibelle(), dto.getLibelle());
+	}
+	
+	@Test
+	public void setTypeGenerique_SiegeLesion_modify() {
+		
+		Integer idAgent = 9005138;
+		
+		RefTypeDto dto = new RefTypeDto();
+		dto.setIdRefType(1);
+		dto.setLibelle("libelle");
+
+		RefTypeSiegeLesion sl = Mockito.spy(new RefTypeSiegeLesion());
+		sl.setIdRefSiegeLesion(1);
+		sl.setLibelle("");
+		
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		Mockito.when(filtreRepository.findObject(RefTypeSiegeLesion.class, dto.getIdRefType())).thenReturn(sl);
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		
+		FiltreService service = new FiltreService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
+		ReturnMessageDto result = service.setTypeGenerique(idAgent, RefTypeSiegeLesion.class, dto);
+		
+		assertEquals(result.getErrors().size(), 0);
+		assertEquals(result.getInfos().get(0), "Enregistrement effectué.");
+		Mockito.verify(filtreRepository, Mockito.times(1)).persist(sl);
+		assertEquals(sl.getLibelle(), dto.getLibelle());
 	}
 }

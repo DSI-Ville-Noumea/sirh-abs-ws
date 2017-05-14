@@ -34,6 +34,16 @@ public class RefTypeSaisiDtoTest {
 			typeSaisi.setSaisieKiosque(false);
 			typeSaisi.setUniteDecompte("uniteDecompte");
 			
+			// MALADIES
+			typeSaisi.setPrescripteur(true);
+			typeSaisi.setDateDeclaration(false);
+			typeSaisi.setProlongation(true);
+			typeSaisi.setNomEnfant(false);
+			typeSaisi.setNombreITT(true);
+			typeSaisi.setSiegeLesion(false);
+			typeSaisi.setAtReference(true);
+			typeSaisi.setMaladiePro(false);
+			
 		RefUnitePeriodeQuota refUnitePeriodeQuota = new RefUnitePeriodeQuota();
 		
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
@@ -70,7 +80,13 @@ public class RefTypeSaisiDtoTest {
 		assertEquals(typeSaisi.isSaisieKiosque(), result.isSaisieKiosque());
 		assertEquals(typeSaisi.getUniteDecompte(), result.getUniteDecompte());
 		assertEquals(typeSaisi.getRefUnitePeriodeQuota().getIdRefUnitePeriodeQuota(), result.getUnitePeriodeQuotaDto().getIdRefUnitePeriodeQuota());
+		assertEquals(typeSaisi.isPrescripteur(), result.isPrescripteur());
+		assertEquals(typeSaisi.isDateDeclaration(), result.isDateDeclaration());
+		assertEquals(typeSaisi.isProlongation(), result.isProlongation());
+		assertEquals(typeSaisi.isNomEnfant(), result.isNomEnfant());
+		assertEquals(typeSaisi.isNombreITT(), result.isNombreITT());
+		assertEquals(typeSaisi.isSiegeLesion(), result.isSiegeLesion());
+		assertEquals(typeSaisi.isAtReference(), result.isAtReference());
+		assertEquals(typeSaisi.isMaladiePro(), result.isMaladiePro());
 	}
-	
-	
 }

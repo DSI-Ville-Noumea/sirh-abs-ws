@@ -32,7 +32,7 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 	}
 
-	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
+	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur, boolean isFromSIRH) {
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()))
@@ -44,16 +44,16 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 	@Override
 	public DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto) {
 
-		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
+		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true, true));
 		demandeDto.setAffichageValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()));
-		demandeDto.setModifierValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()));
-		demandeDto.setAffichageEnAttente(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
-		demandeDto.setAffichageBoutonDupliquer(true);
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
+		demandeDto.setAffichageBoutonRejeter(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
+		demandeDto.setAffichageEnAttente(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
+		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()));
 
 		return demandeDto;
 	}
@@ -91,6 +91,15 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 		}
 
 		return true;
+	}
+
+	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+		// cf redmine #13378
+		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()) 
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
+			return true;
+		}
+		return false;
 	}
 
 }

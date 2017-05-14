@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.SpSorc;
@@ -28,4 +29,6 @@ public interface ISirhRepository {
 	SpSorc getSpsorc(Integer idAgent);
 
 	Spcc getSpcc(Integer nomatr, Date asOfDate);
+
+	List<Spadmn> getPA50OfAgent(Integer nomatr, Date dateDerniereEmbauche);
 }

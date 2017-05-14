@@ -57,6 +57,20 @@ public class Demande {
 	@OrderBy("idEtatDemande desc")
 	private List<EtatDemande> etatsDemande = new ArrayList<EtatDemande>();
 
+	@OneToMany(mappedBy = "demande", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<PieceJointe> piecesJointes = new ArrayList<PieceJointe>();
+
+	@Column(name = "COMMENTAIRE")
+	private String commentaire;
+
+	@Column(name = "COMMENTAIRE_DRH")
+	private String commentaireDRH;
+	
+    @OneToOne
+    @Transient
+    @JoinColumn(referencedColumnName = "id_abs_controle_medical")
+    protected ControleMedical controleMedical;
+
 	@Transient
 	public EtatDemande getLatestEtatDemande() {
 		if (!etatsDemande.isEmpty()) {
@@ -146,5 +160,38 @@ public class Demande {
 	public void setEtatsDemande(List<EtatDemande> etatsDemande) {
 		this.etatsDemande = etatsDemande;
 	}
+
+	public List<PieceJointe> getPiecesJointes() {
+		return piecesJointes;
+	}
+
+	public void setPiecesJointes(List<PieceJointe> piecesJointes) {
+		this.piecesJointes = piecesJointes;
+	}
+
+	public String getCommentaire() {
+		return commentaire;
+	}
+
+	public void setCommentaire(String commentaire) {
+		this.commentaire = commentaire;
+	}
+
+	public String getCommentaireDRH() {
+		return commentaireDRH;
+	}
+
+	public void setCommentaireDRH(String commentaireDRH) {
+		this.commentaireDRH = commentaireDRH;
+	}
+
+	public ControleMedical getControleMedical() {
+		return controleMedical;
+	}
+
+	public void setControleMedical(ControleMedical controleMedical) {
+		this.controleMedical = controleMedical;
+	}
+
 
 }

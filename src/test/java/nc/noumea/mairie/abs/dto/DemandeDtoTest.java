@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.EtatDemandeAsa;
+import nc.noumea.mairie.abs.domain.PieceJointe;
 import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
@@ -61,7 +62,7 @@ public class DemandeDtoTest {
 		d.getEtatsDemande().add(etatDemande);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 		result.updateEtat(etatDemande, agentEtat, d.getType().getGroupe());
 
 		// Then
@@ -137,7 +138,7 @@ public class DemandeDtoTest {
 		d.setDuree(10.0);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -212,7 +213,7 @@ public class DemandeDtoTest {
 		d.setDuree(10);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -288,7 +289,7 @@ public class DemandeDtoTest {
 		d.setDureeAnneeN1(10);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -380,7 +381,7 @@ public class DemandeDtoTest {
 		d.setDuree(10.0);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -468,7 +469,7 @@ public class DemandeDtoTest {
 		d.setDuree(10.0);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -556,7 +557,7 @@ public class DemandeDtoTest {
 		d.setDuree(10.0);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -644,7 +645,7 @@ public class DemandeDtoTest {
 		d.setDuree(10.0);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -732,7 +733,7 @@ public class DemandeDtoTest {
 		d.setDuree(10.0);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -820,7 +821,7 @@ public class DemandeDtoTest {
 		d.setDuree(10.0);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -896,7 +897,7 @@ public class DemandeDtoTest {
 		d.setType(type);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -972,7 +973,7 @@ public class DemandeDtoTest {
 		d.setNbSamediOffert(1.0);
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -1052,7 +1053,7 @@ public class DemandeDtoTest {
 		;
 
 		// When
-		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag));
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
 
 		// Then
 		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
@@ -1074,6 +1075,76 @@ public class DemandeDtoTest {
 		assertFalse(result.isDateFinAM());
 		assertFalse(result.isDateFinPM());
 		assertFalse(result.isSamediOffert());
+	}
+	
+	@Test
+	public void ctor_DemandeDto_withPJ(){
+
+		// Given
+		Date dateDemande = new Date();
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setNomUsage("RAYNAUD");
+		ag.setPrenomUsage("Nicolas");
+		ag.setIdAgent(9006765);
+
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.AS.getValue());
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setIdRefTypeAbsence(RefTypeAbsenceEnum.ASA_A48.getValue());
+		type.setGroupe(groupe);
+
+		EtatDemandeAsa etatDemande = new EtatDemandeAsa();
+		etatDemande.setEtat(RefEtatEnum.APPROUVEE);
+		etatDemande.setDate(dateDemande);
+		etatDemande.setIdAgent(9005131);
+		etatDemande.setDateFin(dateDemande);
+		AgentWithServiceDto agentEtat = new AgentWithServiceDto();
+		agentEtat.setIdAgent(9005131);
+
+		DemandeAsa d = new DemandeAsa();
+		d.setDateFin(dateDemande);
+		d.setIdDemande(1);
+		d.setIdAgent(ag.getIdAgent());
+		d.setType(type);
+		d.getEtatsDemande().add(etatDemande);
+		
+		PieceJointe pj = new PieceJointe();
+		pj.setTitre("titrePJ");
+		pj.setVisibleKiosque(false);
+		
+		d.getPiecesJointes().add(pj);
+
+		// When
+		DemandeDto result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
+		result.updateEtat(etatDemande, agentEtat, d.getType().getGroupe());
+
+		// Then
+
+		assertEquals("RAYNAUD", result.getAgentWithServiceDto().getNom());
+		assertEquals("Nicolas", result.getAgentWithServiceDto().getPrenom());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+
+		assertNull(result.getDuree());
+		assertEquals(9006765, (int) result.getAgentWithServiceDto().getIdAgent());
+		assertEquals(1, (int) result.getIdDemande());
+		assertEquals(7, (int) result.getIdTypeDemande());
+		assertEquals(4, (int) result.getIdRefEtat());
+		assertEquals(dateDemande, result.getDateSaisie());
+		assertEquals(dateDemande, result.getDateFin());
+		assertEquals(9005131, (int) result.getAgentEtat().getIdAgent());
+		
+		assertEquals(0, result.getPiecesJointes().size());
+		
+		result = new DemandeDto(d, new AgentWithServiceDto(ag), true);
+		
+		assertEquals(1, result.getPiecesJointes().size());
+
+		pj.setVisibleKiosque(true);
+		result = new DemandeDto(d, new AgentWithServiceDto(ag), false);
+		
+		assertEquals(1, result.getPiecesJointes().size());
 	}
 	
 	@Test

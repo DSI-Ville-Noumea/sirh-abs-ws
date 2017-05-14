@@ -36,7 +36,7 @@ public interface IDemandeRepository {
 	List<Demande> listeDemandesAgentVerification(Integer idAgentConcerne, Date fromDate, Date toDate,
 			Integer idRefGroupeAbsence);
 
-	List<Demande> listeDemandesASAAndCongesExcepSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdRefGroupe,Integer idRefTypeFamille,
+	List<Demande> listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdRefGroupe,Integer idRefTypeFamille,
 			List<Integer> listIdAgentRecherche);
 
 	List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche);

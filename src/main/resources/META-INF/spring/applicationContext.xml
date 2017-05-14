@@ -104,5 +104,24 @@
 	<jee:jndi-lookup id="adsWsBaseUrl" jndi-name="ADS_WS_URL" expected-type="java.lang.String"/>
 
 	<jee:jndi-lookup id="sirhPtgWsBaseUrl" jndi-name="SIRH_PTG_WS_URL" expected-type="java.lang.String"/>
+
+	<!-- ALFRESCO -->
+	<jee:jndi-lookup id="alfrescoUrl" jndi-name="ALFRESCO_URL" expected-type="java.lang.String"/>
+
+	<jee:jndi-lookup id="alfrescoLogin" jndi-name="ALFRESCO_LOGIN" expected-type="java.lang.String"/>
+
+	<jee:jndi-lookup id="alfrescoPassword" jndi-name="ALFRESCO_PASSWORD" expected-type="java.lang.String"/>
+	<!-- FIN ALFRESCO -->
+	
+	
+
+	<!-- Spring mail -->
+	<jee:jndi-lookup id="mailSession" jndi-name="mail/MailServer" resource-ref="true" />
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="session" ref="mailSession" />
+	</bean>
+
+	<!-- Type environnement pour envoie de mail -->
+	<jee:jndi-lookup id="typeEnvironnement" jndi-name="TYPE_ENV" expected-type="java.lang.String" />
 	
 </beans>

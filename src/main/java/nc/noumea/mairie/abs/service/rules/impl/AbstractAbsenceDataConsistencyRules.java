@@ -10,6 +10,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.joda.time.Interval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DroitDroitsAgent;
 import nc.noumea.mairie.abs.domain.DroitProfil;
@@ -17,7 +22,6 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
-import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
@@ -26,6 +30,7 @@ import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
+import nc.noumea.mairie.abs.repository.IControleMedicalRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
@@ -39,11 +44,6 @@ import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.IPtgWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.Interval;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDataConsistencyRules {
 
@@ -65,47 +65,52 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	protected IDemandeRepository demandeRepository;
 
 	@Autowired
-	protected IAccessRightsRepository accessRightsRepository;
+	protected IControleMedicalRepository		controleMedicalRepository;
 
 	@Autowired
-	protected ISirhWSConsumer sirhWSConsumer;
+	protected IAccessRightsRepository			accessRightsRepository;
 
 	@Autowired
-	protected IPtgWsConsumer ptgWSConsumer;
+	protected ISirhWSConsumer					sirhWSConsumer;
 
 	@Autowired
-	protected IAgentService agentService;
+	protected IPtgWsConsumer					ptgWSConsumer;
 
 	@Autowired
-	protected IAgentMatriculeConverterService agentMatriculeService;
+	protected IAgentService						agentService;
+
+	@Autowired
+	protected IAgentMatriculeConverterService	agentMatriculeService;
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
-	private EntityManager absEntityManager;
+	private EntityManager						absEntityManager;
 
-	public static final String ETAT_NON_AUTORISE_MSG = "La modification de la demande de l'agent [%d] du [%s] n'est autorisée que si l'état est à [%s].";
-	public static final String DEPASSEMENT_DROITS_ACQUIS_MSG = "Le dépassement des droits acquis n'est pas autorisé.";
-	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
-	public static final String DEMANDE_DEJA_COUVERTE_MSG = "La demande ne peut être couverte totalement ou partiellement par une autre absence.";
-	public static final String DEMANDE_MAUVAISE_DATE_MSG = "La date de fin ne peut pas être inférieure à la date de début.";
-	public static final String MOTIF_OBLIGATOIRE = "Le motif est obligatoire.";
-	public static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
-	public static final String STATUT_AGENT = "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
-	public static final String STATUT_AGENT_FONCTIONNAIRE = "Ce type de demande ne peut pas être saisi par les fonctionnaires.";
-	public static final String STATUT_AGENT_CONTRACTUEL = "Ce type de demande ne peut pas être saisi par les contractuels.";
-	public static final String STATUT_AGENT_CONV_COLL = "Ce type de demande ne peut pas être saisi par les conventions collectives.";
-	public static final String SAISIE_KIOSQUE_NON_AUTORISEE = "Ce type de demande n'est pas géré depuis le Kiosque RH.";
-	public static final String SAISIE_TYPE_ABSENCE_NON_AUTORISEE = "La saisie de nouveau type d'absence pour ce groupe d'absence n'est pas autorisée.";
-	public static final String BASE_HORAIRE_AGENT = "L'agent [%d] n'a pas de base congé défini. Merci de contacter votre référent RH.";
-	public static final String CHAMP_COMMENTAIRE_OBLIGATOIRE = "Le champ Commentaire est obligatoire.";
-	public static final String SAISIE_NON_MULTIPLE = "Pour la base congé %s, la durée du congé doit être un multiple de %d jours.";
-	public static final String STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL = "Ce type de demande ne peut pas être saisi par les adjoints, conseillers municipaux et le maire.";
+	public static final String					ETAT_NON_AUTORISE_MSG					= "La modification de la demande de l'agent [%d] du [%s] n'est autorisée que si l'état est à [%s].";
+	public static final String					DEPASSEMENT_DROITS_ACQUIS_MSG			= "Le dépassement des droits acquis n'est pas autorisé.";
+	public static final String					INACTIVITE_MSG							= "L'agent n'est pas en activité sur cette période.";
+	public static final String					DEMANDE_DEJA_COUVERTE_MSG				= "La demande ne peut être couverte totalement ou partiellement par une autre absence.";
+	public static final String					DEMANDE_MAUVAISE_DATE_MSG				= "La date de fin ne peut pas être inférieure à la date de début.";
+	public static final String					MOTIF_OBLIGATOIRE						= "Le motif est obligatoire.";
+	public static final String					DEMANDE_INEXISTANTE						= "La demande n'existe pas.";
+	public static final String					STATUT_AGENT							= "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
+	public static final String					STATUT_AGENT_FONCTIONNAIRE				= "Ce type de demande ne peut pas être saisi par les fonctionnaires.";
+	public static final String					STATUT_AGENT_CONTRACTUEL				= "Ce type de demande ne peut pas être saisi par les contractuels.";
+	public static final String					STATUT_AGENT_CONV_COLL					= "Ce type de demande ne peut pas être saisi par les conventions collectives.";
+	public static final String					SAISIE_KIOSQUE_NON_AUTORISEE			= "Ce type de demande n'est pas géré depuis le Kiosque RH.";
+	public static final String					SAISIE_TYPE_ABSENCE_NON_AUTORISEE		= "La saisie de nouveau type d'absence pour ce groupe d'absence n'est pas autorisée.";
+	public static final String					BASE_HORAIRE_AGENT						= "L'agent [%d] n'a pas de base congé défini. Merci de contacter votre référent RH.";
+	public static final String					CHAMP_COMMENTAIRE_OBLIGATOIRE			= "Le champ Commentaire est obligatoire.";
+	public static final String					SAISIE_NON_MULTIPLE						= "Pour la base congé %s, la durée du congé doit être un multiple de %d jours.";
+	public static final String					STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL	= "Ce type de demande ne peut pas être saisi par les adjoints, conseillers municipaux et le maire.";
+	public static final String					NB_JOURS_ITT_INCOHERENT					= "Le nombre de jours d'ITT est incohérent avec la date de début/fin de la demande.";
+	public static final String					DEMANDE_DATE_FUTUR_MSG					= "La date de début ne peut pas être dans le futur.";
 
-	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
+	public static final List<String>			ACTIVITE_CODES							= Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62",
+			"63", "64", "65", "66");
 
 	/**
-	 * Processes the data consistency of a set of Pointages being input by a
-	 * user. It will check the different business rules in order to make sure
-	 * they're consistent
+	 * Processes the data consistency of a set of Pointages being input by a user. It will check the different business rules in order to make sure they're
+	 * consistent
 	 */
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, boolean isProvenanceSIRH) {
@@ -116,7 +121,28 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		checkAgentInactivity(srm, demande.getIdAgent(), demande.getDateDebut());
 		checkStatutAgent(srm, demande);
 		checkNoPointages(srm, demande);
+		checkChampMotif(srm, demande);
 
+	}
+
+	protected ReturnMessageDto checkChampMotif(ReturnMessageDto srm, Demande demande) {
+		if (null != demande.getType().getTypeSaisiCongeAnnuel()) {
+
+			if ((null == demande.getCommentaire() || "".equals(demande.getCommentaire().trim())) && demande.getType().getTypeSaisiCongeAnnuel().isMotif()) {
+				logger.warn(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
+				srm.getErrors().add(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
+				return srm;
+			}
+		}
+
+		if (null != demande.getType().getTypeSaisi()) {
+			if ((null == demande.getCommentaire() || "".equals(demande.getCommentaire().trim())) && demande.getType().getTypeSaisi().isMotif()) {
+				logger.warn(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
+				srm.getErrors().add(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
+				return srm;
+			}
+		}
+		return srm;
 	}
 
 	private void checkNoPointages(ReturnMessageDto srm, Demande demande) {
@@ -152,7 +178,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 			if ((null == demande.getIdDemande() || (null != demande.getIdDemande() && !demandeExistante.getIdDemande().equals(demande.getIdDemande())))
 					&& null != demandeExistante.getLatestEtatDemande() && !RefEtatEnum.REFUSEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
-					&& !RefEtatEnum.PROVISOIRE.equals(demandeExistante.getLatestEtatDemande().getEtat()) && !RefEtatEnum.ANNULEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
+					&& !RefEtatEnum.PROVISOIRE.equals(demandeExistante.getLatestEtatDemande().getEtat())
+					&& !RefEtatEnum.ANNULEE.equals(demandeExistante.getLatestEtatDemande().getEtat())
 					&& !RefEtatEnum.REJETE.equals(demandeExistante.getLatestEtatDemande().getEtat())) {
 
 				Interval intervalDemandeExistante = new Interval(demandeExistante.getDateDebut().getTime(), demandeExistante.getDateFin().getTime());
@@ -236,8 +263,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		if (null != demande.getLatestEtatDemande() && !listEtatsAcceptes.contains(demande.getLatestEtatDemande().getEtat())) {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			logger.warn(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdAgent(), sdf.format(demande.getDateDebut()), RefEtatEnum.listToString(listEtatsAcceptes)));
-			srm.getErrors().add(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdAgent(), sdf.format(demande.getDateDebut()), RefEtatEnum.listToString(listEtatsAcceptes)));
+			logger.warn(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdAgent(), sdf.format(demande.getDateDebut()),
+					RefEtatEnum.listToString(listEtatsAcceptes)));
+			srm.getErrors().add(String.format(ETAT_NON_AUTORISE_MSG, demande.getIdAgent(), sdf.format(demande.getDateDebut()),
+					RefEtatEnum.listToString(listEtatsAcceptes)));
 		}
 
 		return srm;
@@ -248,10 +277,10 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 
 		// test 1
 		if (isAgent && demandeDto.getAgentWithServiceDto().getIdAgent().equals(idAgentConnecte)) {
-			demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
-			demandeDto.setAffichageBoutonSupprimer(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()));
+			demandeDto.setAffichageBoutonModifier(isAfficherBoutonModifier(demandeDto, true, null));
+			demandeDto.setAffichageBoutonSupprimer(isAfficherBoutonSupprimer(demandeDto, true, null));
 			demandeDto.setAffichageBoutonImprimer(isAfficherBoutonImprimer(demandeDto));
-			demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, false));
+			demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, false, false));
 
 			return demandeDto;
 		}
@@ -266,29 +295,25 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					DroitProfil droitProfil = dda.getDroitProfil();
 					Profil currentProfil = droitProfil.getProfil();
 
-					demandeDto.setAffichageBoutonModifier(demandeDto.isAffichageBoutonModifier()
-							|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) && currentProfil
-									.isModification()));
+					demandeDto.setAffichageBoutonModifier(isAfficherBoutonModifier(demandeDto, false, currentProfil));
 
-					demandeDto.setAffichageBoutonSupprimer(demandeDto.isAffichageBoutonSupprimer()
-							|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) && currentProfil
-									.isSuppression()));
+					demandeDto.setAffichageBoutonSupprimer(isAfficherBoutonSupprimer(demandeDto, false, currentProfil));
 
-					demandeDto.setAffichageBoutonImprimer(demandeDto.isAffichageBoutonImprimer() || (isAfficherBoutonImprimer(demandeDto) && currentProfil.isImpression()));
-					demandeDto.setAffichageBoutonAnnuler(demandeDto.isAffichageBoutonAnnuler() || (isAfficherBoutonAnnuler(demandeDto, currentProfil.isAnnuler()) && currentProfil.isAnnuler()));
+					demandeDto.setAffichageBoutonImprimer(
+							demandeDto.isAffichageBoutonImprimer() || (isAfficherBoutonImprimer(demandeDto) && currentProfil.isImpression()));
+					demandeDto.setAffichageBoutonAnnuler(demandeDto.isAffichageBoutonAnnuler()
+							|| (isAfficherBoutonAnnuler(demandeDto, currentProfil.isAnnuler(), false) && currentProfil.isAnnuler()));
 					demandeDto.setAffichageBoutonDupliquer(false);
 
-					demandeDto.setAffichageVisa(demandeDto.isAffichageVisa() || currentProfil.isViserVisu());
-					demandeDto.setModifierVisa(demandeDto.isModifierVisa()
-							|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()) || demandeDto
-									.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())) && currentProfil.isViserModif()));
+					demandeDto.setModifierVisa(demandeDto.isModifierVisa() || ((demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())) && currentProfil.isViserModif()));
 
-					demandeDto.setAffichageApprobation(demandeDto.isAffichageApprobation() || currentProfil.isApprouverVisu());
-					demandeDto
-							.setModifierApprobation(demandeDto.isModifierApprobation()
-									|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
-											|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()) || demandeDto
-											.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) && currentProfil.isApprouverModif()));
+					demandeDto.setModifierApprobation(demandeDto.isModifierApprobation() || ((demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
+							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())) && currentProfil.isApprouverModif()));
 				}
 			}
 		}
@@ -299,54 +324,68 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	@Override
 	public DemandeDto filtreDroitOfDemandeSIRH(DemandeDto demandeDto) {
 
-		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true));
+		demandeDto.setAffichageBoutonAnnuler(isAfficherBoutonAnnuler(demandeDto, true, true));
 		demandeDto.setAffichageValidation(false);
-		demandeDto.setModifierValidation(false);
+		demandeDto.setAffichageBoutonRejeter(false);
 		demandeDto.setAffichageEnAttente(false);
-		demandeDto.setAffichageBoutonDupliquer(true);
+		demandeDto.setAffichageBoutonDupliquer(false);
 
 		return demandeDto;
 	}
 
 	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
 		// cf redmine #13378
-		if (demandeDto.getGroupeAbsence() != null) {
-			switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
-				case REPOS_COMP:
-				case RECUP:
-					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
-						return true;
-					}
-					break;
-				case AS:
-				case CONGES_EXCEP:
-					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
-						return true;
-					}
-					break;
-				case CONGES_ANNUELS:
-					if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())
-							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
-						return true;
-					}
-					break;
-				default:
-					break;
-			}
-		}
 		return false;
-
 	}
 
-	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
-		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()) 
+	/**
+	 * 
+	 * @param demandeDto DemandeDto
+	 * @param isOperateur boolean
+	 * @param isFromSIRH boolean AJOUTE pour les maladies #30028
+	 * @return boolean
+	 */
+	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur, boolean isFromSIRH) {
+		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()));
 	}
 
+	protected boolean isAfficherBoutonModifier(DemandeDto demandeDto, boolean isAgentLuiMeme, Profil currentProfil) {
+
+		if (isAgentLuiMeme && (demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()))) {
+			return true;
+		}
+
+		if (!isAgentLuiMeme) {
+			if (demandeDto.isAffichageBoutonModifier() || ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
+					|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) && (null != currentProfil && currentProfil.isModification())))
+				return true;
+		}
+
+		return false;
+	}
+
+	protected boolean isAfficherBoutonSupprimer(DemandeDto demandeDto, boolean isAgentLuiMeme, Profil currentProfil) {
+
+		if (isAgentLuiMeme && (demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()))) {
+			return true;
+		}
+
+		if (!isAgentLuiMeme) {
+			if (demandeDto.isAffichageBoutonSupprimer() || ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
+					|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())) && (null != currentProfil && currentProfil.isSuppression())))
+				return true;
+		}
+
+		return false;
+	}
+
 	@Override
-	public List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande) {
-		
+	public List<DemandeDto> filtreDateAndEtatDemandeFromList(List<Demande> listeSansFiltre, List<RefEtat> etats, Date dateDemande, boolean isFromSIRH) {
+
 		List<DemandeDto> listeDemandeDto = new ArrayList<DemandeDto>();
 		if (listeSansFiltre.size() == 0)
 			return listeDemandeDto;
@@ -360,41 +399,44 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				listAgentDto.add(d.getLatestEtatDemande().getIdAgent());
 			}
 		}
-		
+
 		// dans un souci de performances, on n affichera toujours le service de
 		// l agent a la date du jour
 		// ce qui permet de ne faire qu un seul appel a SIRH-WS
 		// et non plus un appel par demande (avec la date de la demande)
 		List<AgentWithServiceDto> listAgentsExistants = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate(), false);
-		
+
 		// bug #19935 les agents n ayant plus d affectation (retraite par ex) ne seront pas retournes
-		if(listAgentDto.size() > listAgentsExistants.size()) {
+		if (listAgentDto.size() > listAgentsExistants.size()) {
 			List<Integer> listAgentSansAffectation = new ArrayList<Integer>();
 			List<Integer> listIdAgentAvecAffectation = new ArrayList<Integer>();
-			
-			for(AgentWithServiceDto agent : listAgentsExistants) {
+
+			for (AgentWithServiceDto agent : listAgentsExistants) {
 				listIdAgentAvecAffectation.add(agent.getIdAgent());
 			}
-			
-			for(Integer idAgent : listAgentDto) {
-				if(!listIdAgentAvecAffectation.contains(idAgent)) {
+
+			for (Integer idAgent : listAgentDto) {
+				if (!listIdAgentAvecAffectation.contains(idAgent)) {
 					listAgentSansAffectation.add(idAgent);
 				}
 			}
-			
-			List<AgentWithServiceDto> listAgentsExistantsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation, false);
-			
-			if(null != listAgentsExistantsSansAffectation) {
+
+			List<AgentWithServiceDto> listAgentsExistantsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation,
+					false);
+
+			if (null != listAgentsExistantsSansAffectation) {
 				listAgentsExistants.addAll(listAgentsExistantsSansAffectation);
 			}
 		}
-		
+
 		if (dateDemande == null && etats == null) {
 			for (Demande d : listeSansFiltre) {
 				AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
+				d.setControleMedical(controleMedicalRepository.findByDemandeId(d.getIdDemande()));
 				if (agentOptimise != null) {
-					DemandeDto dto = new DemandeDto(d, agentOptimise);
-					dto.updateEtat(d.getLatestEtatDemande(), getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getLatestEtatDemande().getIdAgent()), d.getType().getGroupe());
+					DemandeDto dto = new DemandeDto(d, agentOptimise, isFromSIRH);
+					dto.updateEtat(d.getLatestEtatDemande(), getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getLatestEtatDemande().getIdAgent()),
+							d.getType().getGroupe());
 					if (!listeDemandeDto.contains(dto)) {
 						listeDemandeDto.add(dto);
 					}
@@ -413,8 +455,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				if (dateEtatSDF.equals(dateDemandeSDF)) {
 					AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
 					if (agentOptimise != null) {
-						DemandeDto dto = new DemandeDto(d, agentOptimise);
-						dto.updateEtat(d.getLatestEtatDemande(), getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getLatestEtatDemande().getIdAgent()), d.getType().getGroupe());
+						DemandeDto dto = new DemandeDto(d, agentOptimise, isFromSIRH);
+						dto.updateEtat(d.getLatestEtatDemande(), getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getLatestEtatDemande().getIdAgent()),
+								d.getType().getGroupe());
 						if (!listeDemandeDto.contains(dto)) {
 							listeDemandeDto.add(dto);
 						}
@@ -429,8 +472,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 			for (Demande d : listeSansFiltre) {
 				AgentWithServiceDto agentOptimise = getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getIdAgent());
 				if (agentOptimise != null) {
-					DemandeDto dto = new DemandeDto(d, agentOptimise);
-					dto.updateEtat(d.getLatestEtatDemande(), getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getLatestEtatDemande().getIdAgent()), d.getType().getGroupe());
+					DemandeDto dto = new DemandeDto(d, agentOptimise, isFromSIRH);
+					dto.updateEtat(d.getLatestEtatDemande(), getAgentOfListAgentWithServiceDto(listAgentsExistants, d.getLatestEtatDemande().getIdAgent()),
+							d.getType().getGroupe());
 					if (etats.contains(absEntityManager.find(RefEtat.class, d.getLatestEtatDemande().getEtat().getCodeEtat()))) {
 						if (!listeDemandeDto.contains(dto) && !isfiltreDateDemande)
 							listeDemandeDto.add(dto);
@@ -441,7 +485,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				}
 			}
 		}
-		
+
 		return listeDemandeDto;
 	}
 
@@ -467,10 +511,16 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 		return false;
 	}
 
+	@Override
+	public boolean checkDepassementITT(DemandeDto demandeDto) {
+		return false;
+	}
+
 	public ReturnMessageDto checkStatutAgent(ReturnMessageDto srm, Demande demande) {
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel, convention coll
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), helperService.getCurrentDate());
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+				helperService.getCurrentDate());
 
 		if (null != demande.getType().getTypeSaisi()) {
 			if (helperService.isFonctionnaire(carr) && !demande.getType().getTypeSaisi().isFonctionnaire()) {
@@ -516,17 +566,15 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public void checkSamediOffertToujoursOk(DemandeEtatChangeDto demandeEtatChangeDto, Demande demande) {
 		// ne concerne que les conges annuels
 	}
-	
+
 	@Override
 	public double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
 		return 0.0;
 	}
-	
+
 	@Override
-	public HashMap<Integer, CheckCompteurAgentVo> checkDepassementCompteurForListAgentsOrDemandes(
-			List<DemandeDto> listDemande, 
+	public HashMap<Integer, CheckCompteurAgentVo> checkDepassementCompteurForListAgentsOrDemandes(List<DemandeDto> listDemande,
 			HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo) {
 		return mapCheckCompteurAgentVo;
 	}
 }
-

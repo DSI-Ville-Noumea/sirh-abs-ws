@@ -37,6 +37,7 @@ import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
+import nc.noumea.mairie.abs.repository.IControleMedicalRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.ISirhRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -559,7 +560,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	public void filtreDateAndEtatDemandeFromList_WrongParam() {
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(new ArrayList<Demande>(), null, new Date());
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(new ArrayList<Demande>(), null, new Date(), false);
 
 		// Then
 		assertEquals(0, result.size());
@@ -644,7 +645,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatPris), new Date());
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatPris), new Date(), false);
 		// Then
 		assertEquals(0, result.size());
 	}
@@ -725,7 +726,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire, etatSaisie), new LocalDate(2014, 1, 8).toDate());
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire, etatSaisie), new LocalDate(2014, 1, 8).toDate(), false);
 
 		// Then
 		assertEquals(1, result.size());
@@ -810,7 +811,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire), new Date());
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire), new Date(), false);
 
 		// Then
 		assertEquals(1, result.size());
@@ -896,7 +897,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire), null);
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatProvisoire), null, false);
 
 		// Then
 		assertEquals(1, result.size());
@@ -978,12 +979,15 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		listAgentsExistants.add(ag);
 		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d.getIdAgent()), date, false)).thenReturn(listAgentsExistants);
 
+		IControleMedicalRepository controleMedicalRepository = Mockito.mock(IControleMedicalRepository.class);
+
 		ReflectionTestUtils.setField(impl, "absEntityManager", emMock);
 		ReflectionTestUtils.setField(impl, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
+		ReflectionTestUtils.setField(impl, "controleMedicalRepository", controleMedicalRepository);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, null, null);
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, null, null, false);
 
 		// Then
 		assertEquals(2, result.size());
@@ -1194,7 +1198,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatVISEE_F, etatSaisie, etatVISEE_D, etatApprouve), null);
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatVISEE_F, etatSaisie, etatVISEE_D, etatApprouve), null, false);
 
 		// Then
 		assertEquals(4, result.size());
@@ -1290,7 +1294,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatRefusee), dateEtat);
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatRefusee), dateEtat, false);
 
 		// Then
 		assertEquals(1, result.size());
@@ -1377,7 +1381,7 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
 		// When
-		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatSaisie), new Date());
+		List<DemandeDto> result = impl.filtreDateAndEtatDemandeFromList(listeDemande, Arrays.asList(etatSaisie), new Date(), false);
 
 		// Then
 		assertEquals(1, result.size());
@@ -1390,6 +1394,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 	@Test
 	public void filtreDroitOfDemandeSIRH() {
 
+		AgentWithServiceDto agDto12 = new AgentWithServiceDto();
+		agDto12.setIdAgent(9005141);
 		AgentWithServiceDto agDto11 = new AgentWithServiceDto();
 		agDto11.setIdAgent(9005140);
 		AgentWithServiceDto agDto10 = new AgentWithServiceDto();
@@ -1447,6 +1453,9 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		DemandeDto demandeDtoEnAttente = new DemandeDto();
 		demandeDtoEnAttente.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
 		demandeDtoEnAttente.setAgentWithServiceDto(agDto11);
+		DemandeDto demandeDtoAValider = new DemandeDto();
+		demandeDtoAValider.setIdRefEtat(RefEtatEnum.A_VALIDER.getCodeEtat());
+		demandeDtoAValider.setAgentWithServiceDto(agDto12);
 
 		// When
 		result1 = impl.filtreDroitOfDemandeSIRH(demandeDtoProvisoire);
@@ -1460,53 +1469,42 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		result9 = impl.filtreDroitOfDemandeSIRH(demandeDtoValidee);
 		result10 = impl.filtreDroitOfDemandeSIRH(demandeDtoRejetee);
 		result11 = impl.filtreDroitOfDemandeSIRH(demandeDtoEnAttente);
+		result12 = impl.filtreDroitOfDemandeSIRH(demandeDtoAValider);
 
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
 		assertEquals(9005130, result1.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result1.isAffichageApprobation());
-		assertFalse(result1.isAffichageBoutonAnnuler());
 		assertFalse(result1.isAffichageBoutonImprimer());
 		assertFalse(result1.isAffichageBoutonModifier());
 		assertFalse(result1.isAffichageBoutonSupprimer());
-		assertTrue(result1.isAffichageBoutonDupliquer());
-		assertFalse(result1.isAffichageVisa());
+		assertFalse(result1.isAffichageBoutonDupliquer());
 		assertFalse(result1.isModifierApprobation());
 		assertFalse(result1.isModifierVisa());
 		assertNull(result1.getValeurApprobation());
 		assertNull(result1.getValeurVisa());
 		assertFalse(result1.isAffichageValidation());
-		assertFalse(result1.isModifierValidation());
 		assertNull(result1.getValeurValidation());
 		assertFalse(result1.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result2.getIdRefEtat().intValue());
 		assertEquals(9005131, result2.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result2.isAffichageApprobation());
-		assertFalse(result2.isAffichageBoutonAnnuler());
 		assertFalse(result2.isAffichageBoutonImprimer());
 		assertFalse(result2.isAffichageBoutonModifier());
 		assertFalse(result2.isAffichageBoutonSupprimer());
-		assertTrue(result2.isAffichageBoutonDupliquer());
-		assertFalse(result2.isAffichageVisa());
+		assertFalse(result2.isAffichageBoutonDupliquer());
 		assertFalse(result2.isModifierApprobation());
 		assertFalse(result2.isModifierVisa());
 		assertNull(result2.getValeurApprobation());
 		assertNull(result2.getValeurVisa());
-		assertFalse(result2.isAffichageValidation());
-		assertFalse(result2.isModifierValidation());
 		assertNull(result2.getValeurValidation());
 		assertFalse(result2.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result3.getIdRefEtat().intValue());
 		assertEquals(9005132, result3.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result3.isAffichageApprobation());
-		assertTrue(result3.isAffichageBoutonAnnuler());
 		assertFalse(result3.isAffichageBoutonImprimer());
 		assertFalse(result3.isAffichageBoutonModifier());
 		assertFalse(result3.isAffichageBoutonSupprimer());
-		assertTrue(result3.isAffichageBoutonDupliquer());
-		assertFalse(result3.isAffichageVisa());
+		assertFalse(result3.isAffichageBoutonDupliquer());
 		assertFalse(result3.isModifierApprobation());
 		assertFalse(result3.isModifierVisa());
 		assertNull(result3.getValeurApprobation());
@@ -1515,133 +1513,115 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result4.getIdRefEtat().intValue());
 		assertEquals(9005133, result4.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result4.isAffichageApprobation());
-		assertFalse(result4.isAffichageBoutonAnnuler());
 		assertFalse(result4.isAffichageBoutonImprimer());
 		assertFalse(result4.isAffichageBoutonModifier());
 		assertFalse(result4.isAffichageBoutonSupprimer());
-		assertTrue(result4.isAffichageBoutonDupliquer());
-		assertFalse(result4.isAffichageVisa());
+		assertFalse(result4.isAffichageBoutonDupliquer());
 		assertFalse(result4.isModifierApprobation());
 		assertFalse(result4.isModifierVisa());
 		assertNull(result4.getValeurApprobation());
 		assertNull(result4.getValeurVisa());
-		assertFalse(result4.isAffichageValidation());
-		assertFalse(result4.isModifierValidation());
 		assertNull(result4.getValeurValidation());
 		assertFalse(result4.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result5.getIdRefEtat().intValue());
 		assertEquals(9005134, result5.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result5.isAffichageApprobation());
-		assertTrue(result5.isAffichageBoutonAnnuler());
 		assertFalse(result5.isAffichageBoutonImprimer());
 		assertFalse(result5.isAffichageBoutonModifier());
 		assertFalse(result5.isAffichageBoutonSupprimer());
-		assertTrue(result5.isAffichageBoutonDupliquer());
-		assertFalse(result5.isAffichageVisa());
+		assertFalse(result5.isAffichageBoutonDupliquer());
 		assertFalse(result5.isModifierApprobation());
 		assertFalse(result5.isModifierVisa());
 		assertNull(result5.getValeurApprobation());
 		assertNull(result5.getValeurVisa());
-		assertFalse(result5.isAffichageValidation());
-		assertFalse(result5.isModifierValidation());
 		assertNull(result5.getValeurValidation());
 		assertFalse(result5.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result6.getIdRefEtat().intValue());
 		assertEquals(9005135, result6.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result6.isAffichageApprobation());
 		assertFalse(result6.isAffichageBoutonImprimer());
 		assertFalse(result6.isAffichageBoutonModifier());
 		assertFalse(result6.isAffichageBoutonSupprimer());
-		assertTrue(result6.isAffichageBoutonDupliquer());
-		assertFalse(result6.isAffichageVisa());
+		assertFalse(result6.isAffichageBoutonDupliquer());
 		assertFalse(result6.isModifierApprobation());
 		assertFalse(result6.isModifierVisa());
 		assertNull(result6.getValeurApprobation());
 		assertNull(result6.getValeurVisa());
-		assertFalse(result6.isModifierValidation());
 		assertNull(result6.getValeurValidation());
 		assertFalse(result6.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result7.getIdRefEtat().intValue());
 		assertEquals(9005136, result7.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result7.isAffichageApprobation());
 		assertFalse(result7.isAffichageBoutonImprimer());
 		assertFalse(result7.isAffichageBoutonModifier());
 		assertFalse(result7.isAffichageBoutonSupprimer());
-		assertTrue(result7.isAffichageBoutonDupliquer());
-		assertFalse(result7.isAffichageVisa());
+		assertFalse(result7.isAffichageBoutonDupliquer());
 		assertFalse(result7.isModifierApprobation());
 		assertFalse(result7.isModifierVisa());
 		assertNull(result7.getValeurApprobation());
 		assertNull(result7.getValeurVisa());
-		assertFalse(result7.isModifierValidation());
 		assertNull(result7.getValeurValidation());
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result8.getIdRefEtat().intValue());
 		assertEquals(9005137, result8.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result8.isAffichageApprobation());
-		assertFalse(result8.isAffichageBoutonAnnuler());
 		assertFalse(result8.isAffichageBoutonImprimer());
 		assertFalse(result8.isAffichageBoutonModifier());
 		assertFalse(result8.isAffichageBoutonSupprimer());
-		assertTrue(result8.isAffichageBoutonDupliquer());
-		assertFalse(result8.isAffichageVisa());
 		assertFalse(result8.isModifierApprobation());
 		assertFalse(result8.isModifierVisa());
 		assertNull(result8.getValeurApprobation());
 		assertNull(result8.getValeurVisa());
 		assertFalse(result8.isAffichageValidation());
-		assertFalse(result8.isModifierValidation());
 		assertNull(result8.getValeurValidation());
 		assertFalse(result8.isAffichageEnAttente());
 
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
 		assertEquals(9005138, result9.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result9.isAffichageApprobation());
 		assertFalse(result9.isAffichageBoutonImprimer());
 		assertFalse(result9.isAffichageBoutonModifier());
 		assertFalse(result9.isAffichageBoutonSupprimer());
-		assertTrue(result9.isAffichageBoutonDupliquer());
-		assertFalse(result9.isAffichageVisa());
+		assertFalse(result9.isAffichageBoutonDupliquer());
 		assertFalse(result9.isModifierApprobation());
 		assertFalse(result9.isModifierVisa());
 		assertNull(result9.getValeurApprobation());
 		assertNull(result9.getValeurVisa());
-		assertFalse(result9.isModifierValidation());
 		assertNull(result9.getValeurValidation());
 
 		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
 		assertEquals(9005139, result10.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result10.isAffichageApprobation());
-		assertFalse(result10.isAffichageBoutonAnnuler());
 		assertFalse(result10.isAffichageBoutonImprimer());
 		assertFalse(result10.isAffichageBoutonModifier());
 		assertFalse(result10.isAffichageBoutonSupprimer());
-		assertTrue(result10.isAffichageBoutonDupliquer());
-		assertFalse(result10.isAffichageVisa());
+		assertFalse(result10.isAffichageBoutonDupliquer());
 		assertFalse(result10.isModifierApprobation());
 		assertFalse(result10.isModifierVisa());
 		assertNull(result10.getValeurApprobation());
 		assertNull(result10.getValeurVisa());
-		assertFalse(result10.isModifierValidation());
 		assertNull(result10.getValeurValidation());
 
 		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
 		assertEquals(9005140, result11.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result11.isAffichageApprobation());
 		assertFalse(result11.isAffichageBoutonImprimer());
 		assertFalse(result11.isAffichageBoutonModifier());
 		assertFalse(result11.isAffichageBoutonSupprimer());
-		assertTrue(result11.isAffichageBoutonDupliquer());
-		assertFalse(result11.isAffichageVisa());
+		assertFalse(result11.isAffichageBoutonDupliquer());
 		assertFalse(result11.isModifierApprobation());
 		assertFalse(result11.isModifierVisa());
 		assertNull(result11.getValeurApprobation());
 		assertNull(result11.getValeurVisa());
 		assertNull(result11.getValeurValidation());
+
+		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
+		assertEquals(9005141, result12.getAgentWithServiceDto().getIdAgent().intValue());
+		assertFalse(result12.isAffichageBoutonImprimer());
+		assertFalse(result12.isAffichageBoutonModifier());
+		assertFalse(result12.isAffichageBoutonSupprimer());
+		assertFalse(result12.isAffichageBoutonDupliquer());
+		assertFalse(result12.isModifierApprobation());
+		assertFalse(result12.isModifierVisa());
+		assertNull(result12.getValeurApprobation());
+		assertNull(result12.getValeurVisa());
+		assertNull(result12.getValeurValidation());
 	}
 
 	@Test
@@ -1650,47 +1630,47 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 
-		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, true);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, true, false);
 		assertFalse(result);
 	}
 
@@ -1700,47 +1680,47 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat());
 
-		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		boolean result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertTrue(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.VALIDEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.EN_ATTENTE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.SAISIE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REFUSEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 
 		demandeDto.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
-		result = impl.isAfficherBoutonAnnuler(demandeDto, false);
+		result = impl.isAfficherBoutonAnnuler(demandeDto, false, false);
 		assertFalse(result);
 	}
 
@@ -1806,138 +1786,107 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
-		assertFalse(result1.isAffichageApprobation());
-		assertTrue(result1.isAffichageBoutonModifier());
-		assertTrue(result1.isAffichageBoutonSupprimer());
 		assertFalse(result1.isAffichageBoutonDupliquer());
-		assertFalse(result1.isAffichageVisa());
 		assertFalse(result1.isModifierApprobation());
 		assertFalse(result1.isModifierVisa());
 		assertNull(result1.getValeurApprobation());
 		assertNull(result1.getValeurVisa());
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result2.getIdRefEtat().intValue());
-		assertFalse(result2.isAffichageApprobation());
-		assertTrue(result2.isAffichageBoutonModifier());
-		assertTrue(result2.isAffichageBoutonSupprimer());
 		assertFalse(result2.isAffichageBoutonDupliquer());
-		assertFalse(result2.isAffichageVisa());
 		assertFalse(result2.isModifierApprobation());
 		assertFalse(result2.isModifierVisa());
 		assertNull(result2.getValeurApprobation());
 		assertNull(result2.getValeurVisa());
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result3.getIdRefEtat().intValue());
-		assertFalse(result3.isAffichageApprobation());
-		assertFalse(result3.isAffichageBoutonModifier());
 		assertFalse(result3.isAffichageBoutonSupprimer());
 		assertFalse(result3.isAffichageBoutonDupliquer());
-		assertFalse(result3.isAffichageVisa());
 		assertFalse(result3.isModifierApprobation());
 		assertFalse(result3.isModifierVisa());
 		assertNull(result3.getValeurApprobation());
 		assertNull(result3.getValeurVisa());
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result4.getIdRefEtat().intValue());
-		assertFalse(result4.isAffichageApprobation());
-		assertFalse(result4.isAffichageBoutonModifier());
 		assertFalse(result4.isAffichageBoutonSupprimer());
 		assertFalse(result4.isAffichageBoutonDupliquer());
-		assertFalse(result4.isAffichageVisa());
 		assertFalse(result4.isModifierApprobation());
 		assertFalse(result4.isModifierVisa());
 		assertNull(result4.getValeurApprobation());
 		assertNull(result4.getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result5.getIdRefEtat().intValue());
-		assertFalse(result5.isAffichageApprobation());
-		assertFalse(result5.isAffichageBoutonModifier());
 		assertFalse(result5.isAffichageBoutonSupprimer());
 		assertFalse(result5.isAffichageBoutonDupliquer());
-		assertFalse(result5.isAffichageVisa());
 		assertFalse(result5.isModifierApprobation());
 		assertFalse(result5.isModifierVisa());
 		assertNull(result5.getValeurApprobation());
 		assertNull(result5.getValeurVisa());
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result6.getIdRefEtat().intValue());
-		assertFalse(result6.isAffichageApprobation());
-		assertFalse(result6.isAffichageBoutonModifier());
 		assertFalse(result6.isAffichageBoutonSupprimer());
 		assertFalse(result6.isAffichageBoutonDupliquer());
-		assertFalse(result6.isAffichageVisa());
 		assertFalse(result6.isModifierApprobation());
 		assertFalse(result6.isModifierVisa());
 		assertNull(result6.getValeurApprobation());
 		assertNull(result6.getValeurVisa());
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result7.getIdRefEtat().intValue());
-		assertFalse(result7.isAffichageApprobation());
-		assertFalse(result7.isAffichageBoutonModifier());
 		assertFalse(result7.isAffichageBoutonSupprimer());
 		assertFalse(result7.isAffichageBoutonDupliquer());
-		assertFalse(result7.isAffichageVisa());
 		assertFalse(result7.isModifierApprobation());
 		assertFalse(result7.isModifierVisa());
 		assertNull(result7.getValeurApprobation());
 		assertNull(result7.getValeurVisa());
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result8.getIdRefEtat().intValue());
-		assertFalse(result8.isAffichageApprobation());
-		assertFalse(result8.isAffichageBoutonModifier());
 		assertFalse(result8.isAffichageBoutonSupprimer());
 		assertFalse(result8.isAffichageBoutonDupliquer());
-		assertFalse(result8.isAffichageVisa());
 		assertFalse(result8.isModifierApprobation());
 		assertFalse(result8.isModifierVisa());
 		assertNull(result8.getValeurApprobation());
 		assertNull(result8.getValeurVisa());
 
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
-		assertFalse(result9.isAffichageApprobation());
-		assertFalse(result9.isAffichageBoutonModifier());
 		assertFalse(result9.isAffichageBoutonSupprimer());
 		assertFalse(result9.isAffichageBoutonDupliquer());
-		assertFalse(result9.isAffichageVisa());
 		assertFalse(result9.isModifierApprobation());
 		assertFalse(result9.isModifierVisa());
 		assertNull(result9.getValeurApprobation());
 		assertNull(result9.getValeurVisa());
 
 		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
-		assertFalse(result10.isAffichageApprobation());
-		assertFalse(result10.isAffichageBoutonModifier());
 		assertFalse(result10.isAffichageBoutonSupprimer());
 		assertFalse(result10.isAffichageBoutonDupliquer());
-		assertFalse(result10.isAffichageVisa());
 		assertFalse(result10.isModifierApprobation());
 		assertFalse(result10.isModifierVisa());
 		assertNull(result10.getValeurApprobation());
 		assertNull(result10.getValeurVisa());
 
 		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
-		assertFalse(result11.isAffichageApprobation());
-		assertFalse(result11.isAffichageBoutonModifier());
 		assertFalse(result11.isAffichageBoutonSupprimer());
 		assertFalse(result11.isAffichageBoutonDupliquer());
-		assertFalse(result11.isAffichageVisa());
 		assertFalse(result11.isModifierApprobation());
 		assertFalse(result11.isModifierVisa());
 		assertNull(result11.getValeurApprobation());
 		assertNull(result11.getValeurVisa());
 
 		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
-		assertFalse(result12.isAffichageApprobation());
-		assertFalse(result12.isAffichageBoutonModifier());
 		assertFalse(result12.isAffichageBoutonSupprimer());
 		assertFalse(result12.isAffichageBoutonDupliquer());
-		assertFalse(result12.isAffichageVisa());
 		assertFalse(result12.isModifierApprobation());
 		assertFalse(result12.isModifierVisa());
 		assertNull(result12.getValeurApprobation());
 		assertNull(result12.getValeurVisa());
 
 		checkBoutonImprimer_filtreDroitOfListeDemandesByDemande();
+		checkBoutonModifier_filtreDroitOfListeDemandesByDemande_demandeOfAgent();
+		checkBoutonSupprimer_ForAgent();
+	}
+	
+	protected void checkBoutonSupprimer_ForAgent() {
+		assertTrue(result1.isAffichageBoutonSupprimer());
+		assertTrue(result2.isAffichageBoutonSupprimer());
 	}
 
 	@Test
@@ -2094,11 +2043,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
 		assertEquals(9005130, result1.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result1.isAffichageApprobation());
-		assertTrue(result1.isAffichageBoutonModifier());
 		assertTrue(result1.isAffichageBoutonSupprimer());
 		assertFalse(result1.isAffichageBoutonDupliquer());
-		assertFalse(result1.isAffichageVisa());
 		assertFalse(result1.isModifierApprobation());
 		assertFalse(result1.isModifierVisa());
 		assertNull(result1.getValeurApprobation());
@@ -2106,11 +2052,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result2.getIdRefEtat().intValue());
 		assertEquals(9005131, result2.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result2.isAffichageApprobation());
-		assertTrue(result2.isAffichageBoutonModifier());
 		assertTrue(result2.isAffichageBoutonSupprimer());
 		assertFalse(result2.isAffichageBoutonDupliquer());
-		assertFalse(result2.isAffichageVisa());
 		assertFalse(result2.isModifierApprobation());
 		assertFalse(result2.isModifierVisa());
 		assertNull(result2.getValeurApprobation());
@@ -2118,11 +2061,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result3.getIdRefEtat().intValue());
 		assertEquals(9005132, result3.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result3.isAffichageApprobation());
-		assertFalse(result3.isAffichageBoutonModifier());
 		assertFalse(result3.isAffichageBoutonSupprimer());
 		assertFalse(result3.isAffichageBoutonDupliquer());
-		assertFalse(result3.isAffichageVisa());
 		assertFalse(result3.isModifierApprobation());
 		assertFalse(result3.isModifierVisa());
 		assertNull(result3.getValeurApprobation());
@@ -2130,11 +2070,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result4.getIdRefEtat().intValue());
 		assertEquals(9005133, result4.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result4.isAffichageApprobation());
-		assertFalse(result4.isAffichageBoutonModifier());
 		assertFalse(result4.isAffichageBoutonSupprimer());
 		assertFalse(result4.isAffichageBoutonDupliquer());
-		assertFalse(result4.isAffichageVisa());
 		assertFalse(result4.isModifierApprobation());
 		assertFalse(result4.isModifierVisa());
 		assertNull(result4.getValeurApprobation());
@@ -2142,11 +2079,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result5.getIdRefEtat().intValue());
 		assertEquals(9005134, result5.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result5.isAffichageApprobation());
-		assertFalse(result5.isAffichageBoutonModifier());
 		assertFalse(result5.isAffichageBoutonSupprimer());
 		assertFalse(result5.isAffichageBoutonDupliquer());
-		assertFalse(result5.isAffichageVisa());
 		assertFalse(result5.isModifierApprobation());
 		assertFalse(result5.isModifierVisa());
 		assertNull(result5.getValeurApprobation());
@@ -2154,11 +2088,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result6.getIdRefEtat().intValue());
 		assertEquals(9005135, result6.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result6.isAffichageApprobation());
-		assertFalse(result6.isAffichageBoutonModifier());
 		assertFalse(result6.isAffichageBoutonSupprimer());
 		assertFalse(result6.isAffichageBoutonDupliquer());
-		assertFalse(result6.isAffichageVisa());
 		assertFalse(result6.isModifierApprobation());
 		assertFalse(result6.isModifierVisa());
 		assertNull(result6.getValeurApprobation());
@@ -2166,11 +2097,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result7.getIdRefEtat().intValue());
 		assertEquals(9005136, result7.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result7.isAffichageApprobation());
-		assertFalse(result7.isAffichageBoutonModifier());
 		assertFalse(result7.isAffichageBoutonSupprimer());
 		assertFalse(result7.isAffichageBoutonDupliquer());
-		assertFalse(result7.isAffichageVisa());
 		assertFalse(result7.isModifierApprobation());
 		assertFalse(result7.isModifierVisa());
 		assertNull(result7.getValeurApprobation());
@@ -2178,61 +2106,47 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result8.getIdRefEtat().intValue());
 		assertEquals(9005137, result8.getAgentWithServiceDto().getIdAgent().intValue());
-		assertFalse(result8.isAffichageApprobation());
-		assertFalse(result8.isAffichageBoutonModifier());
 		assertFalse(result8.isAffichageBoutonSupprimer());
 		assertFalse(result8.isAffichageBoutonDupliquer());
-		assertFalse(result8.isAffichageVisa());
 		assertFalse(result8.isModifierApprobation());
 		assertFalse(result8.isModifierVisa());
 		assertNull(result8.getValeurApprobation());
 		assertNull(result8.getValeurVisa());
 
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
-		assertFalse(result9.isAffichageApprobation());
-		assertFalse(result9.isAffichageBoutonModifier());
 		assertFalse(result9.isAffichageBoutonSupprimer());
 		assertFalse(result9.isAffichageBoutonDupliquer());
-		assertFalse(result9.isAffichageVisa());
 		assertFalse(result9.isModifierApprobation());
 		assertFalse(result9.isModifierVisa());
 		assertNull(result9.getValeurApprobation());
 		assertNull(result9.getValeurVisa());
 
 		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
-		assertFalse(result10.isAffichageApprobation());
-		assertFalse(result10.isAffichageBoutonModifier());
 		assertFalse(result10.isAffichageBoutonSupprimer());
 		assertFalse(result10.isAffichageBoutonDupliquer());
-		assertFalse(result10.isAffichageVisa());
 		assertFalse(result10.isModifierApprobation());
 		assertFalse(result10.isModifierVisa());
 		assertNull(result10.getValeurApprobation());
 		assertNull(result10.getValeurVisa());
 
 		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
-		assertFalse(result11.isAffichageApprobation());
-		assertFalse(result11.isAffichageBoutonModifier());
 		assertFalse(result11.isAffichageBoutonSupprimer());
 		assertFalse(result11.isAffichageBoutonDupliquer());
-		assertFalse(result11.isAffichageVisa());
 		assertFalse(result11.isModifierApprobation());
 		assertFalse(result11.isModifierVisa());
 		assertNull(result11.getValeurApprobation());
 		assertNull(result11.getValeurVisa());
 
 		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
-		assertFalse(result12.isAffichageApprobation());
-		assertFalse(result12.isAffichageBoutonModifier());
-		assertFalse(result12.isAffichageBoutonSupprimer());
 		assertFalse(result12.isAffichageBoutonDupliquer());
-		assertFalse(result12.isAffichageVisa());
 		assertFalse(result12.isModifierApprobation());
 		assertFalse(result12.isModifierVisa());
 		assertNull(result12.getValeurApprobation());
 		assertNull(result12.getValeurVisa());
 
 		checkBoutonImprimer_filtreDroitOfListeDemandesByDemande();
+		checkBoutonModifier_filtreDroitOfListeDemandesByDemande_operateur();
+		checkBoutonSupprimer();
 	}
 
 	@Test
@@ -2373,29 +2287,27 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		ReflectionTestUtils.setField(impl, "accessRightsRepository", accessRightsRepository);
 
 		// When
-		DemandeDto result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent, false);
-		DemandeDto result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent, false);
-		DemandeDto result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent, false);
-		DemandeDto result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent, false);
-		DemandeDto result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent, false);
-		DemandeDto result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent, false);
-		DemandeDto result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent, false);
-		DemandeDto result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent, false);
-		DemandeDto result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent, false);
-		DemandeDto result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent, false);
-		DemandeDto result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent, false);
-		DemandeDto result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent, false);
+		result1 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoProvisoire, listDroitAgent, false);
+		result2 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoSaisie, listDroitAgent, false);
+		result3 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoApprouve, listDroitAgent, false);
+		result4 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRefusee, listDroitAgent, false);
+		result5 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_F, listDroitAgent, false);
+		result6 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoVisee_D, listDroitAgent, false);
+		result7 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoPrise, listDroitAgent, false);
+		result8 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAnnulee, listDroitAgent, false);
+		result9 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoValidee, listDroitAgent, false);
+		result10 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoRejete, listDroitAgent, false);
+		result11 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoEnAttente, listDroitAgent, false);
+		result12 = impl.filtreDroitOfDemande(idAgentConnecte, demandeDtoAValider, listDroitAgent, false);
 
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
 		assertEquals(9005130, result1.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result1.isAffichageApprobation());
 		assertFalse(result1.isAffichageBoutonAnnuler());
 		assertFalse(result1.isAffichageBoutonImprimer());
 		assertFalse(result1.isAffichageBoutonModifier());
 		assertFalse(result1.isAffichageBoutonSupprimer());
 		assertFalse(result1.isAffichageBoutonDupliquer());
-		assertTrue(result1.isAffichageVisa());
 		assertFalse(result1.isModifierApprobation());
 		assertFalse(result1.isModifierVisa());
 		assertNull(result1.getValeurApprobation());
@@ -2403,13 +2315,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result2.getIdRefEtat().intValue());
 		assertEquals(9005131, result2.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result2.isAffichageApprobation());
 		assertFalse(result2.isAffichageBoutonAnnuler());
 		assertFalse(result2.isAffichageBoutonImprimer());
 		assertFalse(result2.isAffichageBoutonModifier());
 		assertFalse(result2.isAffichageBoutonSupprimer());
 		assertFalse(result2.isAffichageBoutonDupliquer());
-		assertTrue(result2.isAffichageVisa());
 		assertFalse(result2.isModifierApprobation());
 		assertTrue(result2.isModifierVisa());
 		assertNull(result2.getValeurApprobation());
@@ -2417,13 +2327,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result3.getIdRefEtat().intValue());
 		assertEquals(9005132, result3.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result3.isAffichageApprobation());
 		assertFalse(result3.isAffichageBoutonAnnuler());
 		assertFalse(result3.isAffichageBoutonImprimer());
 		assertFalse(result3.isAffichageBoutonModifier());
 		assertFalse(result3.isAffichageBoutonSupprimer());
 		assertFalse(result3.isAffichageBoutonDupliquer());
-		assertTrue(result3.isAffichageVisa());
 		assertFalse(result3.isModifierApprobation());
 		assertFalse(result3.isModifierVisa());
 		assertNull(result3.getValeurApprobation());
@@ -2431,13 +2339,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result4.getIdRefEtat().intValue());
 		assertEquals(9005133, result4.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result4.isAffichageApprobation());
 		assertFalse(result4.isAffichageBoutonAnnuler());
 		assertFalse(result4.isAffichageBoutonImprimer());
 		assertFalse(result4.isAffichageBoutonModifier());
 		assertFalse(result4.isAffichageBoutonSupprimer());
 		assertFalse(result4.isAffichageBoutonDupliquer());
-		assertTrue(result4.isAffichageVisa());
 		assertFalse(result4.isModifierApprobation());
 		assertFalse(result4.isModifierVisa());
 		assertNull(result4.getValeurApprobation());
@@ -2445,13 +2351,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result5.getIdRefEtat().intValue());
 		assertEquals(9005134, result5.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result5.isAffichageApprobation());
 		assertFalse(result5.isAffichageBoutonAnnuler());
 		assertFalse(result5.isAffichageBoutonImprimer());
 		assertFalse(result5.isAffichageBoutonModifier());
 		assertFalse(result5.isAffichageBoutonSupprimer());
 		assertFalse(result5.isAffichageBoutonDupliquer());
-		assertTrue(result5.isAffichageVisa());
 		assertFalse(result5.isModifierApprobation());
 		assertTrue(result5.isModifierVisa());
 		assertNull(result5.getValeurApprobation());
@@ -2459,13 +2363,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result6.getIdRefEtat().intValue());
 		assertEquals(9005135, result6.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result6.isAffichageApprobation());
 		assertFalse(result6.isAffichageBoutonAnnuler());
 		assertFalse(result6.isAffichageBoutonImprimer());
 		assertFalse(result6.isAffichageBoutonModifier());
 		assertFalse(result6.isAffichageBoutonSupprimer());
 		assertFalse(result6.isAffichageBoutonDupliquer());
-		assertTrue(result6.isAffichageVisa());
 		assertFalse(result6.isModifierApprobation());
 		assertTrue(result6.isModifierVisa());
 		assertNull(result6.getValeurApprobation());
@@ -2473,13 +2375,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result7.getIdRefEtat().intValue());
 		assertEquals(9005136, result7.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result7.isAffichageApprobation());
 		assertFalse(result7.isAffichageBoutonAnnuler());
 		assertFalse(result7.isAffichageBoutonImprimer());
 		assertFalse(result7.isAffichageBoutonModifier());
 		assertFalse(result7.isAffichageBoutonSupprimer());
 		assertFalse(result7.isAffichageBoutonDupliquer());
-		assertTrue(result7.isAffichageVisa());
 		assertFalse(result7.isModifierApprobation());
 		assertFalse(result7.isModifierVisa());
 		assertNull(result7.getValeurApprobation());
@@ -2487,13 +2387,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result8.getIdRefEtat().intValue());
 		assertEquals(9005137, result8.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result8.isAffichageApprobation());
 		assertFalse(result8.isAffichageBoutonAnnuler());
 		assertFalse(result8.isAffichageBoutonImprimer());
 		assertFalse(result8.isAffichageBoutonModifier());
 		assertFalse(result8.isAffichageBoutonSupprimer());
 		assertFalse(result8.isAffichageBoutonDupliquer());
-		assertTrue(result8.isAffichageVisa());
 		assertFalse(result8.isModifierApprobation());
 		assertFalse(result8.isModifierVisa());
 		assertNull(result8.getValeurApprobation());
@@ -2501,13 +2399,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
 		assertEquals(9005138, result9.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result9.isAffichageApprobation());
 		assertFalse(result9.isAffichageBoutonAnnuler());
 		assertFalse(result9.isAffichageBoutonImprimer());
 		assertFalse(result9.isAffichageBoutonModifier());
 		assertFalse(result9.isAffichageBoutonSupprimer());
 		assertFalse(result9.isAffichageBoutonDupliquer());
-		assertTrue(result9.isAffichageVisa());
 		assertFalse(result9.isModifierApprobation());
 		assertFalse(result9.isModifierVisa());
 		assertNull(result9.getValeurApprobation());
@@ -2515,13 +2411,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
 		assertEquals(9005139, result10.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result10.isAffichageApprobation());
 		assertFalse(result10.isAffichageBoutonAnnuler());
 		assertFalse(result10.isAffichageBoutonImprimer());
 		assertFalse(result10.isAffichageBoutonModifier());
 		assertFalse(result10.isAffichageBoutonSupprimer());
 		assertFalse(result10.isAffichageBoutonDupliquer());
-		assertTrue(result10.isAffichageVisa());
 		assertFalse(result10.isModifierApprobation());
 		assertFalse(result10.isModifierVisa());
 		assertNull(result10.getValeurApprobation());
@@ -2529,13 +2423,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
 		assertEquals(9005140, result11.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result11.isAffichageApprobation());
 		assertFalse(result11.isAffichageBoutonAnnuler());
 		assertFalse(result11.isAffichageBoutonImprimer());
 		assertFalse(result11.isAffichageBoutonModifier());
 		assertFalse(result11.isAffichageBoutonSupprimer());
 		assertFalse(result11.isAffichageBoutonDupliquer());
-		assertTrue(result11.isAffichageVisa());
 		assertFalse(result11.isModifierApprobation());
 		assertFalse(result11.isModifierVisa());
 		assertNull(result11.getValeurApprobation());
@@ -2543,13 +2435,11 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
 		assertEquals(9005141, result12.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result12.isAffichageApprobation());
 		assertFalse(result12.isAffichageBoutonAnnuler());
 		assertFalse(result12.isAffichageBoutonImprimer());
 		assertFalse(result12.isAffichageBoutonModifier());
 		assertFalse(result12.isAffichageBoutonSupprimer());
 		assertFalse(result12.isAffichageBoutonDupliquer());
-		assertTrue(result12.isAffichageVisa());
 		assertFalse(result12.isModifierApprobation());
 		assertFalse(result12.isModifierVisa());
 		assertNull(result12.getValeurApprobation());
@@ -2710,11 +2600,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
 		assertEquals(9005130, result1.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result1.isAffichageApprobation());
-		assertTrue(result1.isAffichageBoutonModifier());
 		assertTrue(result1.isAffichageBoutonSupprimer());
 		assertFalse(result1.isAffichageBoutonDupliquer());
-		assertTrue(result1.isAffichageVisa());
 		assertFalse(result1.isModifierApprobation());
 		assertFalse(result1.isModifierVisa());
 		assertNull(result1.getValeurApprobation());
@@ -2722,11 +2609,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result2.getIdRefEtat().intValue());
 		assertEquals(9005131, result2.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result2.isAffichageApprobation());
-		assertTrue(result2.isAffichageBoutonModifier());
 		assertTrue(result2.isAffichageBoutonSupprimer());
 		assertFalse(result2.isAffichageBoutonDupliquer());
-		assertTrue(result2.isAffichageVisa());
 		assertTrue(result2.isModifierApprobation());
 		assertFalse(result2.isModifierVisa());
 		assertNull(result2.getValeurApprobation());
@@ -2734,11 +2618,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result3.getIdRefEtat().intValue());
 		assertEquals(9005132, result3.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result3.isAffichageApprobation());
-		assertFalse(result3.isAffichageBoutonModifier());
 		assertFalse(result3.isAffichageBoutonSupprimer());
 		assertFalse(result3.isAffichageBoutonDupliquer());
-		assertTrue(result3.isAffichageVisa());
 		assertTrue(result3.isModifierApprobation());
 		assertFalse(result3.isModifierVisa());
 		assertNull(result3.getValeurApprobation());
@@ -2746,11 +2627,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result4.getIdRefEtat().intValue());
 		assertEquals(9005133, result4.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result4.isAffichageApprobation());
-		assertFalse(result4.isAffichageBoutonModifier());
 		assertFalse(result4.isAffichageBoutonSupprimer());
 		assertFalse(result4.isAffichageBoutonDupliquer());
-		assertTrue(result4.isAffichageVisa());
 		assertTrue(result4.isModifierApprobation());
 		assertFalse(result4.isModifierVisa());
 		assertNull(result4.getValeurApprobation());
@@ -2758,11 +2636,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result5.getIdRefEtat().intValue());
 		assertEquals(9005134, result5.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result5.isAffichageApprobation());
-		assertFalse(result5.isAffichageBoutonModifier());
 		assertFalse(result5.isAffichageBoutonSupprimer());
 		assertFalse(result5.isAffichageBoutonDupliquer());
-		assertTrue(result5.isAffichageVisa());
 		assertTrue(result5.isModifierApprobation());
 		assertFalse(result5.isModifierVisa());
 		assertNull(result5.getValeurApprobation());
@@ -2770,11 +2645,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result6.getIdRefEtat().intValue());
 		assertEquals(9005135, result6.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result6.isAffichageApprobation());
-		assertFalse(result6.isAffichageBoutonModifier());
 		assertFalse(result6.isAffichageBoutonSupprimer());
 		assertFalse(result6.isAffichageBoutonDupliquer());
-		assertTrue(result6.isAffichageVisa());
 		assertTrue(result6.isModifierApprobation());
 		assertFalse(result6.isModifierVisa());
 		assertNull(result6.getValeurApprobation());
@@ -2782,11 +2654,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result7.getIdRefEtat().intValue());
 		assertEquals(9005136, result7.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result7.isAffichageApprobation());
-		assertFalse(result7.isAffichageBoutonModifier());
 		assertFalse(result7.isAffichageBoutonSupprimer());
 		assertFalse(result7.isAffichageBoutonDupliquer());
-		assertTrue(result7.isAffichageVisa());
 		assertFalse(result7.isModifierApprobation());
 		assertFalse(result7.isModifierVisa());
 		assertNull(result7.getValeurApprobation());
@@ -2794,11 +2663,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result8.getIdRefEtat().intValue());
 		assertEquals(9005137, result8.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result8.isAffichageApprobation());
-		assertFalse(result8.isAffichageBoutonModifier());
 		assertFalse(result8.isAffichageBoutonSupprimer());
 		assertFalse(result8.isAffichageBoutonDupliquer());
-		assertTrue(result8.isAffichageVisa());
 		assertFalse(result8.isModifierApprobation());
 		assertFalse(result8.isModifierVisa());
 		assertNull(result8.getValeurApprobation());
@@ -2806,11 +2672,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
 		assertEquals(9005138, result9.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result9.isAffichageApprobation());
-		assertFalse(result9.isAffichageBoutonModifier());
 		assertFalse(result9.isAffichageBoutonSupprimer());
 		assertFalse(result9.isAffichageBoutonDupliquer());
-		assertTrue(result9.isAffichageVisa());
 		assertFalse(result9.isModifierApprobation());
 		assertFalse(result9.isModifierVisa());
 		assertNull(result9.getValeurApprobation());
@@ -2818,11 +2681,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
 		assertEquals(9005139, result10.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result10.isAffichageApprobation());
-		assertFalse(result10.isAffichageBoutonModifier());
 		assertFalse(result10.isAffichageBoutonSupprimer());
 		assertFalse(result10.isAffichageBoutonDupliquer());
-		assertTrue(result10.isAffichageVisa());
 		assertFalse(result10.isModifierApprobation());
 		assertFalse(result10.isModifierVisa());
 		assertNull(result10.getValeurApprobation());
@@ -2830,11 +2690,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
 		assertEquals(9005140, result11.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result11.isAffichageApprobation());
-		assertFalse(result11.isAffichageBoutonModifier());
 		assertFalse(result11.isAffichageBoutonSupprimer());
 		assertFalse(result11.isAffichageBoutonDupliquer());
-		assertTrue(result11.isAffichageVisa());
 		assertFalse(result11.isModifierApprobation());
 		assertFalse(result11.isModifierVisa());
 		assertNull(result11.getValeurApprobation());
@@ -2842,17 +2699,15 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
 		assertEquals(9005141, result12.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result12.isAffichageApprobation());
-		assertFalse(result12.isAffichageBoutonModifier());
-		assertFalse(result12.isAffichageBoutonSupprimer());
 		assertFalse(result12.isAffichageBoutonDupliquer());
-		assertTrue(result12.isAffichageVisa());
 		assertFalse(result12.isModifierApprobation());
 		assertFalse(result12.isModifierVisa());
 		assertNull(result12.getValeurApprobation());
 		assertNull(result12.getValeurVisa());
 
 		checkBoutonImprimer_filtreDroitOfListeDemandesByDemande();
+		checkBoutonModifier_filtreDroitOfListeDemandesByDemande_approbateur();
+		checkBoutonSupprimer();
 	}
 
 	@Test
@@ -3009,11 +2864,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
 		assertEquals(9005130, result1.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result1.isAffichageApprobation());
-		assertTrue(result1.isAffichageBoutonModifier());
 		assertTrue(result1.isAffichageBoutonSupprimer());
 		assertFalse(result1.isAffichageBoutonDupliquer());
-		assertTrue(result1.isAffichageVisa());
 		assertFalse(result1.isModifierApprobation());
 		assertFalse(result1.isModifierVisa());
 		assertNull(result1.getValeurApprobation());
@@ -3021,11 +2873,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result2.getIdRefEtat().intValue());
 		assertEquals(9005131, result2.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result2.isAffichageApprobation());
-		assertTrue(result2.isAffichageBoutonModifier());
 		assertTrue(result2.isAffichageBoutonSupprimer());
 		assertFalse(result2.isAffichageBoutonDupliquer());
-		assertTrue(result2.isAffichageVisa());
 		assertTrue(result2.isModifierApprobation());
 		assertFalse(result2.isModifierVisa());
 		assertNull(result2.getValeurApprobation());
@@ -3033,11 +2882,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result3.getIdRefEtat().intValue());
 		assertEquals(9005132, result3.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result3.isAffichageApprobation());
-		assertFalse(result3.isAffichageBoutonModifier());
 		assertFalse(result3.isAffichageBoutonSupprimer());
 		assertFalse(result3.isAffichageBoutonDupliquer());
-		assertTrue(result3.isAffichageVisa());
 		assertTrue(result3.isModifierApprobation());
 		assertFalse(result3.isModifierVisa());
 		assertNull(result3.getValeurApprobation());
@@ -3045,11 +2891,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result4.getIdRefEtat().intValue());
 		assertEquals(9005133, result4.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result4.isAffichageApprobation());
-		assertFalse(result4.isAffichageBoutonModifier());
 		assertFalse(result4.isAffichageBoutonSupprimer());
 		assertFalse(result4.isAffichageBoutonDupliquer());
-		assertTrue(result4.isAffichageVisa());
 		assertTrue(result4.isModifierApprobation());
 		assertFalse(result4.isModifierVisa());
 		assertNull(result4.getValeurApprobation());
@@ -3057,11 +2900,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result5.getIdRefEtat().intValue());
 		assertEquals(9005134, result5.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result5.isAffichageApprobation());
-		assertFalse(result5.isAffichageBoutonModifier());
 		assertFalse(result5.isAffichageBoutonSupprimer());
 		assertFalse(result5.isAffichageBoutonDupliquer());
-		assertTrue(result5.isAffichageVisa());
 		assertTrue(result5.isModifierApprobation());
 		assertFalse(result5.isModifierVisa());
 		assertNull(result5.getValeurApprobation());
@@ -3069,11 +2909,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result6.getIdRefEtat().intValue());
 		assertEquals(9005135, result6.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result6.isAffichageApprobation());
-		assertFalse(result6.isAffichageBoutonModifier());
 		assertFalse(result6.isAffichageBoutonSupprimer());
 		assertFalse(result6.isAffichageBoutonDupliquer());
-		assertTrue(result6.isAffichageVisa());
 		assertTrue(result6.isModifierApprobation());
 		assertFalse(result6.isModifierVisa());
 		assertNull(result6.getValeurApprobation());
@@ -3081,11 +2918,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result7.getIdRefEtat().intValue());
 		assertEquals(9005136, result7.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result7.isAffichageApprobation());
-		assertFalse(result7.isAffichageBoutonModifier());
 		assertFalse(result7.isAffichageBoutonSupprimer());
 		assertFalse(result7.isAffichageBoutonDupliquer());
-		assertTrue(result7.isAffichageVisa());
 		assertFalse(result7.isModifierApprobation());
 		assertFalse(result7.isModifierVisa());
 		assertNull(result7.getValeurApprobation());
@@ -3093,11 +2927,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result8.getIdRefEtat().intValue());
 		assertEquals(9005137, result8.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result8.isAffichageApprobation());
-		assertFalse(result8.isAffichageBoutonModifier());
 		assertFalse(result8.isAffichageBoutonSupprimer());
 		assertFalse(result8.isAffichageBoutonDupliquer());
-		assertTrue(result8.isAffichageVisa());
 		assertFalse(result8.isModifierApprobation());
 		assertFalse(result8.isModifierVisa());
 		assertNull(result8.getValeurApprobation());
@@ -3105,11 +2936,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
 		assertEquals(9005138, result9.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result9.isAffichageApprobation());
-		assertFalse(result9.isAffichageBoutonModifier());
 		assertFalse(result9.isAffichageBoutonSupprimer());
 		assertFalse(result9.isAffichageBoutonDupliquer());
-		assertTrue(result9.isAffichageVisa());
 		assertFalse(result9.isModifierApprobation());
 		assertFalse(result9.isModifierVisa());
 		assertNull(result9.getValeurApprobation());
@@ -3117,11 +2945,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
 		assertEquals(9005139, result10.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result10.isAffichageApprobation());
-		assertFalse(result10.isAffichageBoutonModifier());
 		assertFalse(result10.isAffichageBoutonSupprimer());
 		assertFalse(result10.isAffichageBoutonDupliquer());
-		assertTrue(result10.isAffichageVisa());
 		assertFalse(result10.isModifierApprobation());
 		assertFalse(result10.isModifierVisa());
 		assertNull(result10.getValeurApprobation());
@@ -3129,11 +2954,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
 		assertEquals(9005140, result11.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result11.isAffichageApprobation());
-		assertFalse(result11.isAffichageBoutonModifier());
 		assertFalse(result11.isAffichageBoutonSupprimer());
 		assertFalse(result11.isAffichageBoutonDupliquer());
-		assertTrue(result11.isAffichageVisa());
 		assertFalse(result11.isModifierApprobation());
 		assertFalse(result11.isModifierVisa());
 		assertNull(result11.getValeurApprobation());
@@ -3141,17 +2963,15 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
 		assertEquals(9005141, result12.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result12.isAffichageApprobation());
-		assertFalse(result12.isAffichageBoutonModifier());
-		assertFalse(result12.isAffichageBoutonSupprimer());
 		assertFalse(result12.isAffichageBoutonDupliquer());
-		assertTrue(result12.isAffichageVisa());
 		assertFalse(result12.isModifierApprobation());
 		assertFalse(result12.isModifierVisa());
 		assertNull(result12.getValeurApprobation());
 		assertNull(result12.getValeurVisa());
 
 		checkBoutonImprimer_filtreDroitOfListeDemandesByDemande();
+		checkBoutonModifier_filtreDroitOfListeDemandesByDemande_delegataire();
+		checkBoutonSupprimer();
 	}
 
 	@Test
@@ -3333,11 +3153,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// Then
 		assertEquals(RefEtatEnum.PROVISOIRE.getCodeEtat(), result1.getIdRefEtat().intValue());
 		assertEquals(9005130, result1.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result1.isAffichageApprobation());
-		assertTrue(result1.isAffichageBoutonModifier());
 		assertTrue(result1.isAffichageBoutonSupprimer());
 		assertFalse(result1.isAffichageBoutonDupliquer());
-		assertTrue(result1.isAffichageVisa());
 		assertFalse(result1.isModifierApprobation());
 		assertFalse(result1.isModifierVisa());
 		assertNull(result1.getValeurApprobation());
@@ -3345,11 +3162,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.SAISIE.getCodeEtat(), result2.getIdRefEtat().intValue());
 		assertEquals(9005131, result2.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result2.isAffichageApprobation());
-		assertTrue(result2.isAffichageBoutonModifier());
 		assertTrue(result2.isAffichageBoutonSupprimer());
 		assertFalse(result2.isAffichageBoutonDupliquer());
-		assertTrue(result2.isAffichageVisa());
 		assertTrue(result2.isModifierApprobation());
 		assertFalse(result2.isModifierVisa());
 		assertNull(result2.getValeurApprobation());
@@ -3357,11 +3171,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.APPROUVEE.getCodeEtat(), result3.getIdRefEtat().intValue());
 		assertEquals(9005132, result3.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result3.isAffichageApprobation());
-		assertFalse(result3.isAffichageBoutonModifier());
 		assertFalse(result3.isAffichageBoutonSupprimer());
 		assertFalse(result3.isAffichageBoutonDupliquer());
-		assertTrue(result3.isAffichageVisa());
 		assertTrue(result3.isModifierApprobation());
 		assertFalse(result3.isModifierVisa());
 		assertNull(result3.getValeurApprobation());
@@ -3369,11 +3180,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.REFUSEE.getCodeEtat(), result4.getIdRefEtat().intValue());
 		assertEquals(9005133, result4.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result4.isAffichageApprobation());
-		assertFalse(result4.isAffichageBoutonModifier());
 		assertFalse(result4.isAffichageBoutonSupprimer());
 		assertFalse(result4.isAffichageBoutonDupliquer());
-		assertTrue(result4.isAffichageVisa());
 		assertTrue(result4.isModifierApprobation());
 		assertFalse(result4.isModifierVisa());
 		assertNull(result4.getValeurApprobation());
@@ -3381,11 +3189,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat(), result5.getIdRefEtat().intValue());
 		assertEquals(9005134, result5.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result5.isAffichageApprobation());
-		assertFalse(result5.isAffichageBoutonModifier());
 		assertFalse(result5.isAffichageBoutonSupprimer());
 		assertFalse(result5.isAffichageBoutonDupliquer());
-		assertTrue(result5.isAffichageVisa());
 		assertTrue(result5.isModifierApprobation());
 		assertFalse(result5.isModifierVisa());
 		assertNull(result5.getValeurApprobation());
@@ -3393,11 +3198,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat(), result6.getIdRefEtat().intValue());
 		assertEquals(9005135, result6.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result6.isAffichageApprobation());
-		assertFalse(result6.isAffichageBoutonModifier());
 		assertFalse(result6.isAffichageBoutonSupprimer());
 		assertFalse(result6.isAffichageBoutonDupliquer());
-		assertTrue(result6.isAffichageVisa());
 		assertTrue(result6.isModifierApprobation());
 		assertFalse(result6.isModifierVisa());
 		assertNull(result6.getValeurApprobation());
@@ -3405,11 +3207,8 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.PRISE.getCodeEtat(), result7.getIdRefEtat().intValue());
 		assertEquals(9005136, result7.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result7.isAffichageApprobation());
-		assertFalse(result7.isAffichageBoutonModifier());
 		assertFalse(result7.isAffichageBoutonSupprimer());
 		assertFalse(result7.isAffichageBoutonDupliquer());
-		assertTrue(result7.isAffichageVisa());
 		assertFalse(result7.isModifierApprobation());
 		assertFalse(result7.isModifierVisa());
 		assertNull(result7.getValeurApprobation());
@@ -3417,90 +3216,47 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(RefEtatEnum.ANNULEE.getCodeEtat(), result8.getIdRefEtat().intValue());
 		assertEquals(9005137, result8.getAgentWithServiceDto().getIdAgent().intValue());
-		assertTrue(result8.isAffichageApprobation());
-		assertFalse(result8.isAffichageBoutonModifier());
 		assertFalse(result8.isAffichageBoutonSupprimer());
 		assertFalse(result8.isAffichageBoutonDupliquer());
-		assertTrue(result8.isAffichageVisa());
 		assertFalse(result8.isModifierApprobation());
 		assertFalse(result8.isModifierVisa());
 		assertNull(result8.getValeurApprobation());
 		assertNull(result8.getValeurVisa());
 
 		assertEquals(RefEtatEnum.VALIDEE.getCodeEtat(), result9.getIdRefEtat().intValue());
-		assertTrue(result9.isAffichageApprobation());
-		assertFalse(result9.isAffichageBoutonModifier());
 		assertFalse(result9.isAffichageBoutonSupprimer());
 		assertFalse(result9.isAffichageBoutonDupliquer());
-		assertTrue(result9.isAffichageVisa());
 		assertFalse(result9.isModifierApprobation());
 		assertFalse(result9.isModifierVisa());
 		assertNull(result9.getValeurApprobation());
 		assertNull(result9.getValeurVisa());
 
 		assertEquals(RefEtatEnum.REJETE.getCodeEtat(), result10.getIdRefEtat().intValue());
-		assertTrue(result10.isAffichageApprobation());
-		assertFalse(result10.isAffichageBoutonModifier());
 		assertFalse(result10.isAffichageBoutonSupprimer());
 		assertFalse(result10.isAffichageBoutonDupliquer());
-		assertTrue(result10.isAffichageVisa());
 		assertFalse(result10.isModifierApprobation());
 		assertFalse(result10.isModifierVisa());
 		assertNull(result10.getValeurApprobation());
 		assertNull(result10.getValeurVisa());
 
 		assertEquals(RefEtatEnum.EN_ATTENTE.getCodeEtat(), result11.getIdRefEtat().intValue());
-		assertTrue(result11.isAffichageApprobation());
-		assertFalse(result11.isAffichageBoutonModifier());
 		assertFalse(result11.isAffichageBoutonSupprimer());
 		assertFalse(result11.isAffichageBoutonDupliquer());
-		assertTrue(result11.isAffichageVisa());
 		assertFalse(result11.isModifierApprobation());
 		assertFalse(result11.isModifierVisa());
 		assertNull(result11.getValeurApprobation());
 		assertNull(result11.getValeurVisa());
 
 		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
-		assertTrue(result12.isAffichageApprobation());
-		assertFalse(result12.isAffichageBoutonModifier());
-		assertFalse(result12.isAffichageBoutonSupprimer());
 		assertFalse(result12.isAffichageBoutonDupliquer());
-		assertTrue(result12.isAffichageVisa());
 		assertFalse(result12.isModifierApprobation());
 		assertFalse(result12.isModifierVisa());
 		assertNull(result12.getValeurApprobation());
 		assertNull(result12.getValeurVisa());
-
+		
 		checkBoutonImprimer_filtreDroitOfListeDemandesByDemande();
-	}
-
-	protected void checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_DemandeOfAgent() {
-
-		// Then
-		// PROVISOIRE
-		assertFalse(result1.isAffichageBoutonAnnuler());
-		// SAISIE
-		assertFalse(result2.isAffichageBoutonAnnuler());
-		// APPROUVEE
-		assertTrue(result3.isAffichageBoutonAnnuler());
-		// REFUSEE
-		assertFalse(result4.isAffichageBoutonAnnuler());
-		// VISEE_FAVORABLE
-		assertTrue(result5.isAffichageBoutonAnnuler());
-		// VISEE_DEFAVORABLE
-		assertTrue(result6.isAffichageBoutonAnnuler());
-		// PRISE
-		assertFalse(result7.isAffichageBoutonAnnuler());
-		// ANNULEE
-		assertFalse(result8.isAffichageBoutonAnnuler());
-		// VALIDEE
-		assertFalse(result9.isAffichageBoutonAnnuler());
-		// REJETE
-		assertFalse(result10.isAffichageBoutonAnnuler());
-		// EN ATTENTE
-		assertFalse(result11.isAffichageBoutonAnnuler());
-		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
+		checkBoutonModifier_filtreDroitOfListeDemandesByDemande_approbateur();
+		checkBoutonSupprimer();
 	}
 
 	protected void checkBoutonImprimer_filtreDroitOfListeDemandesByDemande() {
@@ -3531,92 +3287,10 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		// A VALIDER
 		assertFalse(result12.isAffichageBoutonImprimer());
 	}
-
-	protected void checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_Operateur() {
-
-		// Then
-		// PROVISOIRE
-		assertFalse(result1.isAffichageBoutonAnnuler());
-		// SAISIE
-		assertFalse(result2.isAffichageBoutonAnnuler());
-		// APPROUVEE
-		assertTrue(result3.isAffichageBoutonAnnuler());
-		// REFUSEE
-		assertFalse(result4.isAffichageBoutonAnnuler());
-		// VISEE_FAVORABLE
-		assertTrue(result5.isAffichageBoutonAnnuler());
-		// VISEE_DEFAVORABLE
-		assertTrue(result6.isAffichageBoutonAnnuler());
-		// PRISE
-		assertFalse(result7.isAffichageBoutonAnnuler());
-		// ANNULEE
-		assertFalse(result8.isAffichageBoutonAnnuler());
-		// VALIDEE
-		assertFalse(result9.isAffichageBoutonAnnuler());
-		// REJETE
-		assertFalse(result10.isAffichageBoutonAnnuler());
-		// EN ATTENTE
-		assertFalse(result11.isAffichageBoutonAnnuler());
+	
+	protected void checkBoutonSupprimer() {
 		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
-	}
-
-	protected void checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_Approbateur() {
-
-		// Then
-		// PROVISOIRE
-		assertFalse(result1.isAffichageBoutonAnnuler());
-		// SAISIE
-		assertFalse(result2.isAffichageBoutonAnnuler());
-		// APPROUVEE
-		assertTrue(result3.isAffichageBoutonAnnuler());
-		// REFUSEE
-		assertFalse(result4.isAffichageBoutonAnnuler());
-		// VISEE_FAVORABLE
-		assertTrue(result5.isAffichageBoutonAnnuler());
-		// VISEE_DEFAVORABLE
-		assertTrue(result6.isAffichageBoutonAnnuler());
-		// PRISE
-		assertFalse(result7.isAffichageBoutonAnnuler());
-		// ANNULEE
-		assertFalse(result8.isAffichageBoutonAnnuler());
-		// VALIDEE
-		assertFalse(result9.isAffichageBoutonAnnuler());
-		// REJETE
-		assertFalse(result10.isAffichageBoutonAnnuler());
-		// EN ATTENTE
-		assertFalse(result11.isAffichageBoutonAnnuler());
-		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
-	}
-
-	protected void checkBoutonAnnuler_filtreDroitOfListeDemandesByDemande_Delegataire() {
-
-		// Then
-		// PROVISOIRE
-		assertFalse(result1.isAffichageBoutonAnnuler());
-		// SAISIE
-		assertFalse(result2.isAffichageBoutonAnnuler());
-		// APPROUVEE
-		assertTrue(result3.isAffichageBoutonAnnuler());
-		// REFUSEE
-		assertFalse(result4.isAffichageBoutonAnnuler());
-		// VISEE_FAVORABLE
-		assertTrue(result5.isAffichageBoutonAnnuler());
-		// VISEE_DEFAVORABLE
-		assertTrue(result6.isAffichageBoutonAnnuler());
-		// PRISE
-		assertFalse(result7.isAffichageBoutonAnnuler());
-		// ANNULEE
-		assertFalse(result8.isAffichageBoutonAnnuler());
-		// VALIDEE
-		assertFalse(result9.isAffichageBoutonAnnuler());
-		// REJETE
-		assertFalse(result10.isAffichageBoutonAnnuler());
-		// EN ATTENTE
-		assertFalse(result11.isAffichageBoutonAnnuler());
-		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
+		assertFalse(result12.isAffichageBoutonSupprimer());
 	}
 
 	@Test
@@ -4062,5 +3736,117 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 
 		assertEquals(srm.getErrors().size(), 1);
 		assertEquals(srm.getErrors().get(0), AbstractAbsenceDataConsistencyRules.STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL);
+	}
+
+	protected void checkBoutonModifier_filtreDroitOfListeDemandesByDemande_delegataire() {
+		// Then
+		// PROVISOIRE
+		assertTrue(result1.isAffichageBoutonModifier());
+		// SAISIE
+		assertTrue(result2.isAffichageBoutonModifier());
+		// APPROUVEE
+		assertFalse(result3.isAffichageBoutonModifier());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonModifier());
+		// VISEE_FAVORABLE
+		assertFalse(result5.isAffichageBoutonModifier());
+		// VISEE_DEFAVORABLE
+		assertFalse(result6.isAffichageBoutonModifier());
+		// PRISE
+		assertFalse(result7.isAffichageBoutonModifier());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonModifier());
+		// VALIDEE
+		assertFalse(result9.isAffichageBoutonModifier());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonModifier());
+		// EN ATTENTE
+		assertFalse(result11.isAffichageBoutonModifier());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonModifier());
+	}
+
+	protected void checkBoutonModifier_filtreDroitOfListeDemandesByDemande_demandeOfAgent() {
+		// Then
+		// PROVISOIRE
+		assertTrue(result1.isAffichageBoutonModifier());
+		// SAISIE
+		assertTrue(result2.isAffichageBoutonModifier());
+		// APPROUVEE
+		assertFalse(result3.isAffichageBoutonModifier());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonModifier());
+		// VISEE_FAVORABLE
+		assertFalse(result5.isAffichageBoutonModifier());
+		// VISEE_DEFAVORABLE
+		assertFalse(result6.isAffichageBoutonModifier());
+		// PRISE
+		assertFalse(result7.isAffichageBoutonModifier());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonModifier());
+		// VALIDEE
+		assertFalse(result9.isAffichageBoutonModifier());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonModifier());
+		// EN ATTENTE
+		assertFalse(result11.isAffichageBoutonModifier());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonModifier());
+	}
+
+	protected void checkBoutonModifier_filtreDroitOfListeDemandesByDemande_approbateur() {
+		// Then
+		// PROVISOIRE
+		assertTrue(result1.isAffichageBoutonModifier());
+		// SAISIE
+		assertTrue(result2.isAffichageBoutonModifier());
+		// APPROUVEE
+		assertFalse(result3.isAffichageBoutonModifier());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonModifier());
+		// VISEE_FAVORABLE
+		assertFalse(result5.isAffichageBoutonModifier());
+		// VISEE_DEFAVORABLE
+		assertFalse(result6.isAffichageBoutonModifier());
+		// PRISE
+		assertFalse(result7.isAffichageBoutonModifier());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonModifier());
+		// VALIDEE
+		assertFalse(result9.isAffichageBoutonModifier());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonModifier());
+		// EN ATTENTE
+		assertFalse(result11.isAffichageBoutonModifier());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonModifier());
+	}
+
+	protected void checkBoutonModifier_filtreDroitOfListeDemandesByDemande_operateur() {
+		// Then
+		// PROVISOIRE
+		assertTrue(result1.isAffichageBoutonModifier());
+		// SAISIE
+		assertTrue(result2.isAffichageBoutonModifier());
+		// APPROUVEE
+		assertFalse(result3.isAffichageBoutonModifier());
+		// REFUSEE
+		assertFalse(result4.isAffichageBoutonModifier());
+		// VISEE_FAVORABLE
+		assertFalse(result5.isAffichageBoutonModifier());
+		// VISEE_DEFAVORABLE
+		assertFalse(result6.isAffichageBoutonModifier());
+		// PRISE
+		assertFalse(result7.isAffichageBoutonModifier());
+		// ANNULEE
+		assertFalse(result8.isAffichageBoutonModifier());
+		// VALIDEE
+		assertFalse(result9.isAffichageBoutonModifier());
+		// REJETE
+		assertFalse(result10.isAffichageBoutonModifier());
+		// EN ATTENTE
+		assertFalse(result11.isAffichageBoutonModifier());
+		// A VALIDER
+		assertFalse(result12.isAffichageBoutonModifier());
 	}
 }

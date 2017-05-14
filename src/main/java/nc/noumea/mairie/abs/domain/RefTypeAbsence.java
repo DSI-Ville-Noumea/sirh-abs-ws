@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "ABS_REF_TYPE_ABSENCE")
@@ -35,7 +38,12 @@ public class RefTypeAbsence {
 
 	@OneToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
-	private RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel;
+	private RefTypeSaisiCongeAnnuel	typeSaisiCongeAnnuel;
+
+	@NotNull
+	@Column(name = "IS_ACTIF", nullable = false)
+	@Type(type = "boolean")
+	private boolean					actif;
 
 	public Integer getIdRefTypeAbsence() {
 		return idRefTypeAbsence;
@@ -75,6 +83,14 @@ public class RefTypeAbsence {
 
 	public void setTypeSaisiCongeAnnuel(RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel) {
 		this.typeSaisiCongeAnnuel = typeSaisiCongeAnnuel;
+	}
+
+	public boolean isActif() {
+		return actif;
+	}
+
+	public void setActif(boolean actif) {
+		this.actif = actif;
 	}
 
 }

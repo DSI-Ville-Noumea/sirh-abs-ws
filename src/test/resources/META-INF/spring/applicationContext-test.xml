@@ -95,4 +95,17 @@
 
 	<bean class="java.lang.String" id="sirhPtgWsBaseUrl" />
 
+	<!-- ALFRESCO -->
+	<bean class="java.lang.String" id="alfrescoUrl" />
+
+	<bean class="java.lang.String" id="alfrescoLogin" />
+
+	<bean class="java.lang.String" id="alfrescoPassword" />
+	<!-- ALFRESCO -->
+	
+	
+
+    <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender"/>
+	<bean class="java.lang.String" id="typeEnvironnement" />
+	
 </beans>

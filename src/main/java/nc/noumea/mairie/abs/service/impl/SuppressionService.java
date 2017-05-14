@@ -1,11 +1,13 @@
 package nc.noumea.mairie.abs.service.impl;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeAsa;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeCongesExceptionnels;
+import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.DemandeRecup;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
@@ -17,6 +19,7 @@ import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.ISuppressionService;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.service.rules.impl.DefaultAbsenceDataConsistencyRulesImpl;
+import nc.noumea.mairie.alfresco.cmis.IAlfrescoCMISService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +40,9 @@ public class SuppressionService implements ISuppressionService {
 
 	@Autowired
 	private DataConsistencyRulesFactory dataConsistencyRulesFactory;
+
+	@Autowired
+	private IAlfrescoCMISService alfrescoCMISService;
 
 	@Override
 	@Transactional(value = "absTransactionManager")
@@ -108,6 +114,9 @@ public class SuppressionService implements ISuppressionService {
 			case CONGES_ANNUELS:
 				demande = getDemande(DemandeCongesAnnuels.class, idDemande);
 				break;
+			case MALADIES:
+				demande = getDemande(DemandeMaladies.class, idDemande);
+				break;
 			default:
 				returnDto.getErrors().add(
 						String.format("Le type [%d] de la demande n'est pas reconnu.", demande.getType()
@@ -127,9 +136,22 @@ public class SuppressionService implements ISuppressionService {
 			return returnDto;
 
 		// verifier l etat de la demande
+		List<RefEtatEnum> listEtatAccepte = new ArrayList<RefEtatEnum>();
+		listEtatAccepte.add(RefEtatEnum.PROVISOIRE);
+		listEtatAccepte.add(RefEtatEnum.SAISIE);
+		// #19711
+		if(demande.getType().getGroupe().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.MALADIES.getValue())) {
+			listEtatAccepte.add(RefEtatEnum.A_VALIDER);
+		}
+		
 		returnDto = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(returnDto, demande,
-				Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+				listEtatAccepte);
 
+		if (0 < returnDto.getErrors().size()) {
+			return returnDto;
+		}
+		
+		returnDto = alfrescoCMISService.removeAllDocument(returnDto, demande);
 		if (0 < returnDto.getErrors().size()) {
 			return returnDto;
 		}

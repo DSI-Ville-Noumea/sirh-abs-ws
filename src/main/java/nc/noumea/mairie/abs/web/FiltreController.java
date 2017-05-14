@@ -4,13 +4,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import nc.noumea.mairie.abs.domain.Droit;
+import nc.noumea.mairie.abs.domain.RefTypeAccidentTravail;
+import nc.noumea.mairie.abs.domain.RefTypeMaladiePro;
+import nc.noumea.mairie.abs.domain.RefTypeSiegeLesion;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.abs.dto.RefTypeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.UnitePeriodeQuotaDto;
 import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -20,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -188,6 +196,20 @@ public class FiltreController {
 	 * Retourne les groupes d absence
 	 */
 	@ResponseBody
+	@RequestMapping(value = "/getGroupesAbsenceForAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefGroupeAbsenceDto> getGroupesAbsenceForAgent(@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence) {
+
+		logger.debug("entered GET [filtres/getGroupesAbsenceForAgent] => getGroupesAbsenceForAgent");
+
+		List<RefGroupeAbsenceDto> groupes = filtresService.getRefGroupeAbsenceForAgent(idRefGroupeAbsence);
+
+		return groupes;
+	}
+
+	/**
+	 * Retourne les groupes d absence
+	 */
+	@ResponseBody
 	@RequestMapping(value = "/getUnitePeriodeQuota", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<UnitePeriodeQuotaDto> getUnitePeriodeQuota() {
 
@@ -241,5 +263,181 @@ public class FiltreController {
 		List<RefTypeAbsenceDto> types = filtresService.getAllRefTypesAbsence();
 
 		return types;
+	}
+
+	/**
+	 * Liste de tous les types d accident de travail
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getAllTypeAccidentTravail", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefTypeDto> getAllTypeAccidentTravail() {
+
+		logger.debug("entered GET [filtres/getAllTypeAccidentTravail] => getAllTypeAccidentTravail");
+
+		return filtresService.getAllRefTypeAccidentTravail();
+	}
+
+	/**
+	 * Liste de tous les types de siege de lesion
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getAllTypeSiegeLesion", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefTypeDto> getAllTypeSiegeLesion() {
+
+		logger.debug("entered GET [filtres/getAllTypeSiegeLesion] => getAllTypeSiegeLesion");
+
+		return filtresService.getAllRefTypeSiegeLesion();
+	}
+
+	/**
+	 * Liste de tous les types de maladie pro
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getAllTypeMaladiePro", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefTypeDto> getAllTypeMaladiePro() {
+
+		logger.debug("entered GET [filtres/getAllTypeMaladiePro] => getAllTypeMaladiePro");
+
+		return filtresService.getAllRefTypeMaladiePro();
+	}
+
+	/**
+	 * Saisie/modification d un type d accident de travail
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/setTypeAccidentTravail", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setTypeAccidentTravail(@RequestParam(value = "idAgent", required = true) Integer idAgent, 
+			@RequestBody(required = true) RefTypeDto typeDto, 
+			HttpServletResponse response) {
+
+		logger.debug("entered POST [filtres/setTypeAccidentTravail] => setTypeAccidentTravail");
+
+		ReturnMessageDto srm = filtresService.setTypeGenerique(idAgent, RefTypeAccidentTravail.class, typeDto);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+		
+		return srm;
+	}
+
+	/**
+	 * Saisie/modification d un type de siege lesion
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/setTypeSiegeLesion", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setTypeSiegeLesion(@RequestParam(value = "idAgent", required = true) Integer idAgent, 
+			@RequestBody(required = true) RefTypeDto typeDto, 
+			HttpServletResponse response) {
+
+		logger.debug("entered POST [filtres/setTypeSiegeLesion] => setTypeSiegeLesion");
+
+		ReturnMessageDto srm = filtresService.setTypeGenerique(idAgent, RefTypeSiegeLesion.class, typeDto);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+		
+		return srm;
+	}
+
+	/**
+	 * Saisie/modification d un type de maladie pro
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/setTypeMaladiePro", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto setTypeMaladiePro(@RequestParam(value = "idAgent", required = true) Integer idAgent, 
+			@RequestBody(required = true) RefTypeDto typeDto, 
+			HttpServletResponse response) {
+
+		logger.debug("entered POST [filtres/setTypeMaladiePro] => setTypeMaladiePro");
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		ReturnMessageDto srm = filtresService.setTypeGenerique(convertedIdAgent, RefTypeMaladiePro.class, typeDto);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+		
+		return srm;
+	}
+	
+	/**
+	 * Supprime un type d'accident de travail
+	 * 
+	 * @param idAgent Integer Agent connecte
+	 * @param typeDto RefTypeDto L accident de travail a supprimer
+	 * @param response HttpServletResponse
+	 * @return ReturnMessageDto
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/deleteTypeAccidentTravail", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto deleteTypeAccidentTravail(@RequestParam(value = "idAgent", required = true) Integer idAgent,
+			@RequestBody(required = true) RefTypeDto typeDto, HttpServletResponse response) {
+
+		logger.debug("entered POST [filtres/deleteTypeAccidentTravail] => deleteTypeAccidentTravail");
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		ReturnMessageDto srm = filtresService.deleteTypeGenerique(convertedIdAgent, RefTypeAccidentTravail.class, typeDto);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+		
+		return srm;
+	}
+
+	/**
+	 * Supprime un type de siège de lesion
+	 * 
+	 * @param idAgent Integer Agent connecte
+	 * @param typeDto RefTypeDto Le siege lesion a supprimer
+	 * @param response HttpServletResponse
+	 * @return ReturnMessageDto
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/deleteTypeSiegeLesion", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto deleteTypeSiegeLesion(@RequestParam(value = "idAgent", required = true) Integer idAgent,
+			@RequestBody(required = true) RefTypeDto typeDto, HttpServletResponse response) {
+
+		logger.debug("entered POST [filtres/deleteTypeSiegeLesion] => deleteTypeSiegeLesion");
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		ReturnMessageDto srm = filtresService.deleteTypeGenerique(convertedIdAgent, RefTypeSiegeLesion.class, typeDto);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+		
+		return srm;
+	}
+
+	/**
+	 * Supprime un type de maladie pro
+	 * 
+	 * @param idAgent Integer Agent connecte
+	 * @param typeDto RefTypeDto La maladie pro a supprimer
+	 * @param response HttpServletResponse
+	 * @return ReturnMessageDto
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/deleteTypeMaladiePro", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto deleteTypeMaladiePro(@RequestParam(value = "idAgent", required = true) Integer idAgent,
+			@RequestBody(required = true) RefTypeDto typeDto, HttpServletResponse response) {
+
+		logger.debug("entered POST [filtres/deleteTypeMaladiePro] => deleteTypeMaladiePro");
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		ReturnMessageDto srm = filtresService.deleteTypeGenerique(convertedIdAgent, RefTypeMaladiePro.class, typeDto);
+
+		if (!srm.getErrors().isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+		}
+		
+		return srm;
 	}
 }

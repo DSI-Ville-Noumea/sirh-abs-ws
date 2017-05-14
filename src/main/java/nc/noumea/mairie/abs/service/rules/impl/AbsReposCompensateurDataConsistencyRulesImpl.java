@@ -84,7 +84,7 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 	}
 
 	// #17483
-	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur) {
+	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur, boolean isFromSIRH) {
 		return demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) || (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()))
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat())) || (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()))
@@ -101,5 +101,13 @@ public class AbsReposCompensateurDataConsistencyRulesImpl extends AbstractAbsenc
 		// dans le cas des CONGES ANNUELS, on peut tout annuler sauf
 		// saisie,provisoire,refuse,rejeté et annulé
 		return super.checkEtatsDemandeAnnulee(srm, demande, listEtats);
+	}
+
+	protected boolean isAfficherBoutonImprimer(DemandeDto demandeDto) {
+		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()) 
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())) {
+			return true;
+		}
+		return false;
 	}
 }

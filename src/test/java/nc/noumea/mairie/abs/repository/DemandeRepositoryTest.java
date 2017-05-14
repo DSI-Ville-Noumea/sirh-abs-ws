@@ -744,7 +744,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.clear();
 	}
 
-	// @Test
+//	 @Test
 	@Transactional("absTransactionManager")
 	public void getListViseursDemandesSaisiesJourDonne() {
 
@@ -1686,7 +1686,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, null, null, null);
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, null, null, null);
 
 		// Then
 		assertEquals(0, result.size());
@@ -1836,7 +1836,7 @@ public class DemandeRepositoryTest {
 		listGroupe.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 
 		// When
-		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, listGroupe, null, null);
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, listGroupe, null, null);
 
 		// Then
 		assertEquals(1, result.size());
@@ -2029,7 +2029,7 @@ public class DemandeRepositoryTest {
 		listGroupe.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 
 		// When
-		List<Demande> result = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, listGroupe, null,
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, listGroupe, null,
 				Arrays.asList(9005138, 9005139, 9005131));
 
 		// Then
@@ -2038,7 +2038,7 @@ public class DemandeRepositoryTest {
 		assertEquals("9005138", ((DemandeAsa) result.get(1)).getIdAgent().toString());
 
 		// When
-		List<Demande> result2 = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, listGroupe, null,
+		List<Demande> result2 = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, listGroupe, null,
 				Arrays.asList(9005139, 9005131));
 
 		// Then
@@ -2046,7 +2046,7 @@ public class DemandeRepositoryTest {
 		assertEquals("9005139", ((DemandeAsa) result2.get(0)).getIdAgent().toString());
 
 		// When
-		List<Demande> result3 = repository.listeDemandesASAAndCongesExcepSIRHAValider(null, null, listGroupe, null,
+		List<Demande> result3 = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, listGroupe, null,
 				Arrays.asList(9005138, 9005139));
 
 		// Then
@@ -2483,7 +2483,8 @@ public class DemandeRepositoryTest {
 					RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 
 			// Then
-			if (i == RefEtatEnum.VISEE_FAVORABLE.getCodeEtat() || i == RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()
+			if (i == RefEtatEnum.SAISIE.getCodeEtat() ||
+					i == RefEtatEnum.VISEE_FAVORABLE.getCodeEtat() || i == RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()
 					|| i == RefEtatEnum.APPROUVEE.getCodeEtat() || i == RefEtatEnum.A_VALIDER.getCodeEtat()
 					|| i == RefEtatEnum.EN_ATTENTE.getCodeEtat() || i == RefEtatEnum.PRISE.getCodeEtat()
 					|| i == RefEtatEnum.VALIDEE.getCodeEtat()) {

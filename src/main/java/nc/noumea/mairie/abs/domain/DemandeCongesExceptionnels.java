@@ -32,9 +32,6 @@ public class DemandeCongesExceptionnels extends Demande {
 	@NotNull
 	@Column(name = "DATE_FIN_PM")
 	private boolean dateFinPM;
-	
-	@Column(name = "COMMENTAIRE")
-	private String commentaire;
 
 	public Double getDuree() {
 		return duree;
@@ -74,14 +71,6 @@ public class DemandeCongesExceptionnels extends Demande {
 
 	public void setDateFinPM(boolean dateFinPM) {
 		this.dateFinPM = dateFinPM;
-	}
-
-	public String getCommentaire() {
-		return commentaire;
-	}
-
-	public void setCommentaire(String commentaire) {
-		this.commentaire = commentaire;
 	}
 	
 	

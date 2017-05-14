@@ -5,7 +5,7 @@
 	<groupId>nc.noumea.mairie</groupId>
 	<artifactId>sirh-abs-ws</artifactId>
 	<packaging>war</packaging>
-	<version>3.26</version>
+	<version>4.0</version>
 	<name>sirh-abs-ws</name>
 	<properties>
 		<aspectj.version>1.8.4</aspectj.version>
@@ -15,7 +15,9 @@
 		<!-- ne fonctionne pas en 4.1.4.RELEASE -->
 		<spring.version>4.0.6.RELEASE</spring.version>
 		<hibernate.version>4.3.5.Final</hibernate.version>
+	    <chemistry.version>0.13.0</chemistry.version>
 		<itext.version>5.5.10</itext.version>
+		<mail.version>1.5.6</mail.version>
 	</properties>
 
 	<issueManagement>
@@ -38,6 +40,15 @@
 			<id>spring-maven-milestone</id>
 			<name>Spring Maven Milestone Repository</name>
 			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+	    <repository>
+	         <id>maven.alfresco.com</id>
+	         <name>Alfresco Maven Repository</name>
+	         <url>http://maven.alfresco.com/nexus/content/groups/public/</url>
+	    </repository>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 
@@ -137,6 +148,24 @@
 			<artifactId>spring-context</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<!-- Mail -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>${mail.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- fin MAIL -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
@@ -293,6 +322,13 @@
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
 			<version>2.6.0</version>
+		</dependency>
+
+		<!-- CMIS ALfresco Client -->
+		<dependency>
+			<groupId>com.github.DSI-Ville-Noumea</groupId>
+			<artifactId>sirh-alfresco-cmis-common</artifactId>
+			<version>1.2.4</version>
 		</dependency>
 
 	</dependencies>

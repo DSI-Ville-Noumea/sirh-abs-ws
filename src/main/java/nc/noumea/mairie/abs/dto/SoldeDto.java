@@ -1,10 +1,16 @@
 package nc.noumea.mairie.abs.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SoldeDto {
+public class SoldeDto implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8418095032279758875L;
+	
 	private boolean afficheSoldeConge;
 	private boolean samediOffert;
 	private Double soldeCongeAnnee;
@@ -38,6 +44,10 @@ public class SoldeDto {
 
 	private boolean afficheSoldeCongesExcep;
 	private List<SoldeSpecifiqueDto> listeSoldeCongesExcep = new ArrayList<SoldeSpecifiqueDto>();
+	
+	// maladies
+	private boolean afficheSoldeMaladies;
+	private SoldeMaladiesDto soldeMaladies;
 
 	public SoldeDto() {
 		listeSoldeAsaA55 = new ArrayList<SoldeMonthDto>();
@@ -299,4 +309,20 @@ public class SoldeDto {
 		this.dureeAsaAmicaleNonValide = dureeAsaAmicaleNonValide;
 	}
 
+	public SoldeMaladiesDto getSoldeMaladies() {
+		return soldeMaladies;
+	}
+
+	public void setSoldeMaladies(SoldeMaladiesDto soldeMaladies) {
+		this.soldeMaladies = soldeMaladies;
+	}
+
+	public boolean isAfficheSoldeMaladies() {
+		return afficheSoldeMaladies;
+	}
+
+	public void setAfficheSoldeMaladies(boolean afficheSoldeMaladies) {
+		this.afficheSoldeMaladies = afficheSoldeMaladies;
+	}
+	
 }

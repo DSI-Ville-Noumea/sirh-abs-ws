@@ -36,7 +36,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 
 	public static final String TYPE_ABSENCE_CREE = "Le type d'absence est bien créé.";
 	public static final String TYPE_ABSENCE_MODIFIE = "Le type d'absence est bien modifié.";
-	public static final String TYPE_ABSENCE_SUPPRIME = "Le type d'absence est supprimé.";
+	public static final String TYPE_ABSENCE_INACTIVE = "Le type d'absence est inactivé.";
 	public static final String AGENT_NON_HABILITE = "L'agent n'est pas habilité pour cette opération.";
 
 	@Autowired
@@ -91,6 +91,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 
 		if (null == typeAbsence) {
 			typeAbsence = new RefTypeAbsence();
+			typeAbsence.setActif(true);
 		}
 
 		if (null != typeAbsenceDto.getGroupeAbsence()
@@ -142,6 +143,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			typeSaisi.setInfosComplementaires(typeSaisiDto.getInfosComplementaires());
 			typeSaisi.setMessageAlerte(typeSaisiDto.getMessageAlerte());
 			typeSaisi.setPieceJointe(typeSaisiDto.isPieceJointe());
+			typeSaisi.setInfosPieceJointe(typeSaisiDto.getInfosPieceJointe());
 			typeSaisi.setQuotaMax(typeSaisiDto.getQuotaMax());
 			typeSaisi.setSaisieKiosque(typeSaisiDto.isSaisieKiosque());
 			typeSaisi.setUniteDecompte(typeSaisiDto.getUniteDecompte());
@@ -163,6 +165,17 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			} else {
 				typeSaisi.setRefUnitePeriodeQuota(null);
 			}
+			
+			// MALADIES
+			typeSaisi.setPrescripteur(typeSaisiDto.isPrescripteur());
+			typeSaisi.setDateDeclaration(typeSaisiDto.isDateDeclaration());
+			typeSaisi.setProlongation(typeSaisiDto.isProlongation());
+			typeSaisi.setNomEnfant(typeSaisiDto.isNomEnfant());
+			typeSaisi.setNombreITT(typeSaisiDto.isNombreITT());
+			typeSaisi.setSiegeLesion(typeSaisiDto.isSiegeLesion());
+			typeSaisi.setAtReference(typeSaisiDto.isAtReference());
+			typeSaisi.setMaladiePro(typeSaisiDto.isMaladiePro());
+			
 			typeAbsence.setTypeSaisi(typeSaisi);
 		}
 		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
@@ -204,7 +217,7 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto deleteTypeAbsence(Integer idAgent, Integer idRefTypeAbsence) {
+	public ReturnMessageDto inactiveTypeAbsence(Integer idAgent, Integer idRefTypeAbsence) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -223,10 +236,11 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			result.getErrors().add(TYPE_ABSENCE_INEXISTANT);
 			return result;
 		}
-		// suppression
-		typeAbsenceRepository.removeEntity(typeAbsence);
+		// inactivation
+		typeAbsence.setActif(false);
+		typeAbsenceRepository.persistEntity(typeAbsence);
 
-		result.getInfos().add(String.format(TYPE_ABSENCE_SUPPRIME));
+		result.getInfos().add(String.format(TYPE_ABSENCE_INACTIVE));
 
 		return result;
 	}

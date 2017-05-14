@@ -28,17 +28,12 @@ public class TypeAbsenceRepository implements ITypeAbsenceRepository {
 	}
 
 	@Override
-	public void removeEntity(Object obj) {
-		absEntityManager.remove(obj);
-	}
-
-	@Override
 	public List<RefTypeAbsence> getListeTypAbsence(Integer idRefGroupeAbsence) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select a from RefTypeAbsence a ");
 		sb.append("left outer join a.typeSaisi d ");
 		sb.append("inner join a.groupe g ");
-		sb.append("where 1=1 ");
+		sb.append("where a.actif = true ");
 
 		if (idRefGroupeAbsence != null) {
 			sb.append("and a.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");

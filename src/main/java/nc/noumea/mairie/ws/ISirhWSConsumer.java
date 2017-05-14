@@ -8,6 +8,7 @@ import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
 import nc.noumea.mairie.abs.dto.EntiteDto;
 import nc.noumea.mairie.abs.dto.InfosAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.JourDto;
+import nc.noumea.mairie.abs.dto.LightUser;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
@@ -46,4 +47,8 @@ public interface ISirhWSConsumer {
 
 	List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listAgentSansAffectation, 
 			boolean withoutLibelleService);
+
+	boolean isPeriodeEssai(Integer idAgent, Date date);
+
+	List<LightUser> getEmailDestinataire();
 }

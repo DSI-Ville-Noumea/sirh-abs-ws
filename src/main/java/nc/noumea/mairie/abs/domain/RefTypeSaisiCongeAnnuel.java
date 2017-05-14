@@ -74,6 +74,19 @@ public class RefTypeSaisiCongeAnnuel {
 	@Column(name = "CONSECUTIF", nullable = false)
 	@Type(type = "boolean")
 	private boolean consecutif;
+	
+	@NotNull
+	@Column(name = "PIECE_JOINTE", nullable = false)
+	@Type(type = "boolean")
+	private boolean pieceJointe;
+
+	@NotNull
+	@Column(name = "MOTIF", nullable = false)
+	@Type(type = "boolean")
+	private boolean motif;
+	
+	@Column(name = "INFOS_COMPL")
+	private String infosComplementaires;
 
 	public Integer getIdRefTypeSaisiCongeAnnuel() {
 		return idRefTypeSaisiCongeAnnuel;
@@ -177,6 +190,30 @@ public class RefTypeSaisiCongeAnnuel {
 
 	public void setQuotaDecompte(Integer quotaDecompte) {
 		this.quotaDecompte = quotaDecompte;
+	}
+
+	public boolean isPieceJointe() {
+		return pieceJointe;
+	}
+
+	public void setPieceJointe(boolean pieceJointe) {
+		this.pieceJointe = pieceJointe;
+	}
+
+	public boolean isMotif() {
+		return motif;
+	}
+
+	public void setMotif(boolean motif) {
+		this.motif = motif;
+	}
+
+	public String getInfosComplementaires() {
+		return infosComplementaires;
+	}
+
+	public void setInfosComplementaires(String infosComplementaires) {
+		this.infosComplementaires = infosComplementaires;
 	}
 
 }

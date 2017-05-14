@@ -53,5 +53,34 @@
 	<!-- -->
 	<Environment description="SIRH PTG WS url" name="SIRH_PTG_WS_URL"
 		type="java.lang.String" override="false" value="http://svi-tomcat0:8085/sirh-ptg-ws/" />
+
 		
+	<!--  -->
+	<!-- ALFRESCO -->
+	<!--  -->
+	<!-- ATTENTION : bien mettre le "/" apres le port -->
+	<Environment name="ALFRESCO_URL" type="java.lang.String" description="Alfresco endpoint url" 
+		value="http://svi-alfresco.site-mairie.noumea.nc:8080/" override="false" />
+		
+	<Environment name="ALFRESCO_LOGIN" type="java.lang.String" description="Login to Alfresco" 
+		value="***REMOVED***" override="false" />
+		
+	<Environment name="ALFRESCO_PASSWORD" type="java.lang.String" description="Password to Alfresco" 
+		value="***REMOVED***" override="false" />
+
+	<!-- -->
+	<!-- AUTRE PARAM -->
+	<!-- -->
+	<Environment
+		description="parametre pour afficher dans le titre de l'appli si on est en prod ou en recette (DEV ou PROD)"
+		name="TYPE_ENV" override="false" value="DEV" type="java.lang.String" />
+		
+		
+	<!-- -->
+	<!-- Mail Server conf -->
+	<!-- -->
+	<Resource name="mail/MailServer" auth="Container" type="javax.mail.Session"
+		mail.debug="false" mail.user="SIRH EAEs" mail.from="noreply@ville-noumea.nc"
+		mail.transport.protocol="smtp" mail.smtp.host="smtp" mail.smtp.auth="false"
+		mail.smtp.port="25" mail.smtp.starttls.enable="false" description="Global E-Mail Resource" />
 </Context>

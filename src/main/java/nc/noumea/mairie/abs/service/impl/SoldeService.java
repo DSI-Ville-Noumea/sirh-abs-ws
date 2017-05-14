@@ -26,11 +26,13 @@ import nc.noumea.mairie.abs.domain.AgentOrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentRecupCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.CongeAnnuelRestitutionMassiveHisto;
+import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
+import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.dto.SoldeMonthDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.IAsaRepository;
@@ -90,7 +92,11 @@ public class SoldeService implements ISoldeService {
 	private ICounterService									congesExcepCounterServiceImpl;
 
 	@Autowired
-	protected ISirhRepository								sirhRepository;
+	@Qualifier("MaladieCounterServiceImpl")
+	private ICounterService maladieCounterServiceImpl;
+
+	@Autowired
+	protected ISirhRepository sirhRepository;
 
 	@Autowired
 	private ICongesAnnuelsRepository						congeAnnuelRepository;
@@ -123,6 +129,7 @@ public class SoldeService implements ISoldeService {
 			getSoldeAsaAmicale(idAgent, dto, dateDeb, dateFin, dateJour);
 			getSoldeAsaA52(idAgent, dto, dateDeb, dateFin, dateJour);
 			getSoldeCongesExcep(idAgent, dto, dateDeb, dateFin);
+			getSoldeMaladies(idAgent, dto);
 		} else {
 			switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(typeDemande)) {
 				case CONGE_ANNUEL:
@@ -149,8 +156,8 @@ public class SoldeService implements ISoldeService {
 				case ASA_AMICALE:
 					getSoldeAsaAmicale(idAgent, dto, dateDeb, dateFin, dateJour);
 					break;
-				case MALADIES:
-					// TODO
+				case MALADIE:
+					getSoldeMaladies(idAgent, dto);
 					break;
 				default:
 					break;
@@ -330,6 +337,13 @@ public class SoldeService implements ISoldeService {
 		}
 	}
 
+	private void getSoldeMaladies(Integer idAgent, SoldeDto dto) {
+		// on traite les maladies
+		SoldeMaladiesDto soldeMaladies = maladieCounterServiceImpl.getSoldeByAgent(idAgent, new Date(), null);
+		dto.setSoldeMaladies(soldeMaladies);
+		dto.setAfficheSoldeMaladies(true);
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<HistoriqueSoldeDto> getHistoriqueSoldeAgent(Integer idAgent, Integer codeRefTypeAbsence, Date dateDeb, Date dateFin, boolean isSirh) {
@@ -338,6 +352,7 @@ public class SoldeService implements ISoldeService {
 
 		List<AgentCount> listAgentCount = new ArrayList<AgentCount>();
 		List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassive = new ArrayList<CongeAnnuelRestitutionMassiveHisto>();
+		List<HistoriqueSoldeDto> result = new ArrayList<HistoriqueSoldeDto>();
 		// on recupere le compteur correspondant
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(codeRefTypeAbsence)) {
 			case CONGE_ANNUEL:
@@ -379,13 +394,24 @@ public class SoldeService implements ISoldeService {
 				if (countAmicale != null)
 					listAgentCount.add(countAmicale);
 				break;
-			case MALADIES:
-				// TODO
+			// meme compteur pour ces 5 types maladies
+			case MALADIE:
+			case MALADIE_ENFANT_MALADE:
+			case MALADIE_CONVALESCENCE:
+			case MALADIE_EVASAN:
+			case MALADIE_HOSPITALISATION:
+				List<DemandeMaladies> listDemandeMaladies = maladieCounterServiceImpl.getHistoriqueMaladiesWithDroits(idAgent, dateDeb);
+				if (listDemandeMaladies != null){
+					for(DemandeMaladies maladie : listDemandeMaladies) {
+						HistoriqueSoldeDto dto = new HistoriqueSoldeDto(maladie);
+						result.add(dto);
+					}
+				}
 				break;
 			default:
 				break;
 		}
-		List<HistoriqueSoldeDto> result = new ArrayList<HistoriqueSoldeDto>();
+		
 		for (AgentCount agentCount : listAgentCount) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(idAgent, agentCount);
 			for (AgentHistoAlimManuelle aha : list) {

@@ -34,6 +34,7 @@ public class TypeAbsenceRepositoryTest {
 	public void getListeTypAbsence_1Result() {
 
 		RefTypeAbsence rta = new RefTypeAbsence();
+		rta.setActif(true);
 
 		RefTypeSaisi typeSaisi = new RefTypeSaisi();
 		typeSaisi.setDescription("description");
@@ -90,12 +91,14 @@ public class TypeAbsenceRepositoryTest {
 		rta.setLabel("label");
 		rta.setGroupe(groupe);
 		rta.setTypeSaisi(typeSaisi);
+		rta.setActif(true);
 
 		absEntityManager.persist(groupe);
 		absEntityManager.persist(rta);
 		absEntityManager.persist(typeSaisi);
 
 		RefTypeAbsence rta2 = new RefTypeAbsence();
+		rta2.setActif(true);
 
 		RefTypeSaisi typeSaisi2 = new RefTypeSaisi();
 		typeSaisi2.setDescription("description 2");

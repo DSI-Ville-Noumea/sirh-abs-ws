@@ -58,6 +58,9 @@ public class EtatDemande {
 	@Column(name = "MOTIF", columnDefinition = "text")
 	private String motif;
 
+	@Column(name = "COMMENTAIRE")
+	private String commentaire;
+
 	public Integer getIdEtatDemande() {
 		return idEtatDemande;
 	}
@@ -120,6 +123,14 @@ public class EtatDemande {
 
 	public void setDateFin(Date dateFin) {
 		this.dateFin = dateFin;
+	}
+
+	public String getCommentaire() {
+		return commentaire;
+	}
+
+	public void setCommentaire(String commentaire) {
+		this.commentaire = commentaire;
 	}
 
 }

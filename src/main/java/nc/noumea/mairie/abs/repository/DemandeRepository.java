@@ -383,7 +383,7 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public List<Demande> listeDemandesASAAndCongesExcepSIRHAValider(Date fromDate, Date toDate,
+	public List<Demande> listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(Date fromDate, Date toDate,
 			List<Integer> listIdRefGroupe, Integer idRefTypeFamille, List<Integer> listIdAgentRecherche) {
 		// pour le moment la DRH ne doit valider que les congés excep, congé
 		// annuel et les ASA
@@ -535,7 +535,7 @@ public class DemandeRepository implements IDemandeRepository {
 		
 		sb.append("and((:fromDate between  d.dateDebut and d.dateFin or :toDate between d.dateDebut and d.dateFin) or (d.dateDebut between :fromDate and :toDate or d.dateFin between :fromDate and :toDate))");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 where d2.idAgent = :idAgentConcerne group by ed2.demande ) ");
-		sb.append("and ed.etat in ( :VISEE_FAVORABLE, :VISEE_DEFAVORABLE, :APPROUVEE, :A_VALIDER, :EN_ATTENTE, :PRISE, :VALIDEE ) ");
+		sb.append("and ed.etat in ( :SAISI, :VISEE_FAVORABLE, :VISEE_DEFAVORABLE, :APPROUVEE, :A_VALIDER, :EN_ATTENTE, :PRISE, :VALIDEE ) ");
 		sb.append("order by d.idDemande desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
@@ -547,6 +547,8 @@ public class DemandeRepository implements IDemandeRepository {
 		
 		query.setParameter("fromDate", fromDate);
 		query.setParameter("toDate", toDate);
+		// #31896
+		query.setParameter("SAISI", RefEtatEnum.SAISIE);
 		query.setParameter("VISEE_FAVORABLE", RefEtatEnum.VISEE_FAVORABLE);
 		query.setParameter("VISEE_DEFAVORABLE", RefEtatEnum.VISEE_DEFAVORABLE);
 		query.setParameter("APPROUVEE", RefEtatEnum.APPROUVEE);

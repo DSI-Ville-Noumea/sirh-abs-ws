@@ -59,6 +59,12 @@ public class CounterServiceFactory {
 	@Qualifier("CongeAnnuelCounterServiceImpl")
 	private ICounterService congesAnnuelsCounterServiceImpl;
 
+	@Autowired
+	@Qualifier("MaladieCounterServiceImpl")
+	private ICounterService maladieCounterServiceImpl;
+	
+	
+
 	// Méthode permettant de récupérer les Factory
 	public ICounterService getFactory(int groupe, int type) {
 
@@ -67,6 +73,8 @@ public class CounterServiceFactory {
 				return reposCompCounterServiceImpl;
 			case RECUP:
 				return recupCounterServiceImpl;
+			case MALADIES:
+				return maladieCounterServiceImpl;
 			case AS:
 				return getFactoryAsa(type);
 			case CONGES_EXCEP:

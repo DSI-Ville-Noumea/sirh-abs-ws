@@ -132,6 +132,7 @@ public class DemandeRecursiveTask extends RecursiveTask<List<DemandeDto>> {
 			demandeDto = absenceDataConsistencyRulesImpl.filtreDroitOfDemande(idAgentConnecte, demandeDto, listDroitAgent, isAgent);
 			demandeDto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(demandeDto, checkCompteurAgentVo));
 			demandeDto.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(demandeDto));
+			demandeDto.setDepassementITT(absenceDataConsistencyRulesImpl.checkDepassementITT(demandeDto));
 
 			if (mapCheckCompteurAgentVo.containsKey(demandeDto.getAgentWithServiceDto().getIdAgent()))
 				mapCheckCompteurAgentVo.remove(demandeDto.getAgentWithServiceDto().getIdAgent());

@@ -188,6 +188,35 @@ public class FiltreRepositoryTest {
 		RefTypeAbsence org1 = new RefTypeAbsence();
 		org1.setLabel("lib1");
 		org1.setGroupe(groupe);
+		org1.setActif(true);
+		absEntityManager.persist(org1);
+		RefTypeAbsence org2 = new RefTypeAbsence();
+		org2.setLabel("lib2");
+		org2.setGroupe(groupe);
+		org2.setActif(true);
+		absEntityManager.persist(org2);
+
+		// When
+		List<RefTypeAbsence> result = repository.findAllRefTypeAbsences();
+
+		// Then
+		assertEquals(2, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void findAllRefTypeAbsences_NoActif() {
+		// Given
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(1);
+		groupe.setCode("A");
+		absEntityManager.persist(groupe);
+		RefTypeAbsence org1 = new RefTypeAbsence();
+		org1.setLabel("lib1");
+		org1.setGroupe(groupe);
 		absEntityManager.persist(org1);
 		RefTypeAbsence org2 = new RefTypeAbsence();
 		org2.setLabel("lib2");
@@ -198,7 +227,7 @@ public class FiltreRepositoryTest {
 		List<RefTypeAbsence> result = repository.findAllRefTypeAbsences();
 
 		// Then
-		assertEquals(2, result.size());
+		assertEquals(0, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
@@ -406,6 +435,7 @@ public class FiltreRepositoryTest {
 		groupeRecup.setLibelle("recup");
 		absEntityManager.persist(groupeRecup);
 		RefTypeAbsence rupq = new RefTypeAbsence();
+		rupq.setActif(true);
 		rupq.setGroupe(groupeRecup);
 		absEntityManager.persist(rupq);
 
@@ -415,12 +445,43 @@ public class FiltreRepositoryTest {
 		absEntityManager.persist(groupeAsa);
 		RefTypeAbsence rupq2 = new RefTypeAbsence();
 		rupq2.setGroupe(groupeAsa);
+		rupq2.setActif(true);
 		absEntityManager.persist(rupq2);
 
 		List<RefTypeAbsence> result = repository.findAllRefTypeAbsencesWithGroup(1);
 
 		assertEquals(1, result.size());
 		assertEquals("asa", result.get(0).getGroupe().getLibelle());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("absTransactionManager")
+	public void findAllRefTypeAbsencesWithGroup_NoActif() {
+
+		RefGroupeAbsence groupeRecup = new RefGroupeAbsence();
+		groupeRecup.setIdRefGroupeAbsence(2);
+		groupeRecup.setLibelle("recup");
+		absEntityManager.persist(groupeRecup);
+		RefTypeAbsence rupq = new RefTypeAbsence();
+		rupq.setActif(true);
+		rupq.setGroupe(groupeRecup);
+		absEntityManager.persist(rupq);
+
+		RefGroupeAbsence groupeAsa = new RefGroupeAbsence();
+		groupeAsa.setIdRefGroupeAbsence(1);
+		groupeAsa.setLibelle("asa");
+		absEntityManager.persist(groupeAsa);
+		RefTypeAbsence rupq2 = new RefTypeAbsence();
+		rupq2.setGroupe(groupeAsa);
+		rupq2.setActif(false);
+		absEntityManager.persist(rupq2);
+
+		List<RefTypeAbsence> result = repository.findAllRefTypeAbsencesWithGroup(1);
+
+		assertEquals(0, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();
