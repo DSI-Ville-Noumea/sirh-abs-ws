@@ -52,6 +52,21 @@ public class TypeAbsenceRepository implements ITypeAbsenceRepository {
 	}
 
 	@Override
+	public List<RefTypeAbsence> getListeAllTypeAbsence() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select a from RefTypeAbsence a ");
+		sb.append("left outer join a.typeSaisi d ");
+		sb.append("inner join a.groupe g ");
+		sb.append("order by g.code, a.label ");
+
+		TypedQuery<RefTypeAbsence> query = null;
+
+		query = absEntityManager.createQuery(sb.toString(), RefTypeAbsence.class);
+
+		return query.getResultList();
+	}
+
+	@Override
 	public List<RefTypeSaisiCongeAnnuel> getListeTypeSaisiCongeAnnuel() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select a from RefTypeSaisiCongeAnnuel a ");

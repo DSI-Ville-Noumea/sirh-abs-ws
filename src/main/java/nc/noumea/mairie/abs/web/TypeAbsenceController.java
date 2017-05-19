@@ -53,6 +53,18 @@ public class TypeAbsenceController {
 	}
 
 	/**
+	 * Retourne la complète des types d'absence, avec les absences désactivées, pour affichage dans l'historique (#39247)
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getListeAllTypeAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefTypeAbsenceDto> getListeAllTypeAbsence() {
+
+		logger.debug("entered GET [typeAbsence/getListeAllTypeAbsence] => getListeAllTypeAbsence");
+
+		return typeAbsenceService.getListeAllTypeAbsence();
+	}
+
+	/**
 	 * Saisie/modification d un type d absence
 	 */
 	@ResponseBody

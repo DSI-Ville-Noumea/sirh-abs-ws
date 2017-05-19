@@ -13,5 +13,7 @@ public interface ITypeAbsenceRepository {
 
 	List<RefTypeAbsence> getListeTypAbsence(Integer idRefGroupeAbsence);
 
+	List<RefTypeAbsence> getListeAllTypeAbsence();
+
 	List<RefTypeSaisiCongeAnnuel> getListeTypeSaisiCongeAnnuel();
 }

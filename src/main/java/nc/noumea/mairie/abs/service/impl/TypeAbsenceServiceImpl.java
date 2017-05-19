@@ -65,6 +65,22 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public List<RefTypeAbsenceDto> getListeAllTypeAbsence() {
+
+		List<RefTypeAbsence> listTypeAbsence = typeAbsenceRepository.getListeAllTypeAbsence();
+
+		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
+		if (listTypeAbsence != null) {
+			for (RefTypeAbsence typeAbsence : listTypeAbsence) {
+				RefTypeAbsenceDto dto = new RefTypeAbsenceDto(typeAbsence, typeAbsence.getTypeSaisi(), null);
+				res.add(dto);
+			}
+		}
+		return res;
+	}
+
+	@Override
 	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto setTypAbsence(Integer idAgent, RefTypeAbsenceDto typeAbsenceDto) {
 
