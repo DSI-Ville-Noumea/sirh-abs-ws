@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SoldeEnfantMaladeDto;
 import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.repository.IMaladiesRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
@@ -52,6 +54,31 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		dto.setRapDemiSalaire(vo.getNombreJoursResteAPrendreDemiSalaire());
 		dto.setRapPleinSalaire(vo.getNombreJoursResteAPrendrePleinSalaire());
 		dto.setTotalPris(vo.getTotalPris());
+
+		return dto;
+	}
+
+	@Override
+	public SoldeEnfantMaladeDto getSoldeEnfantMalade(Integer idAgent) {
+
+		logger.info("MaladieCounterServiceImpl getSoldeEnfantMalade pour l'agent : " + idAgent);
+
+		SoldeEnfantMaladeDto dto = new SoldeEnfantMaladeDto();
+		
+		// Le solde des enfants malades se calcul sur une année civile.
+		// On prend la date du jour comme date de fin, et le 1e Janvier de l'année comme date de début.
+		Calendar c = Calendar.getInstance();
+		c.setTime(helperService.getCurrentDate());
+		Date today = c.getTime();
+		c.set(Calendar.MONTH, 0);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		Date firstDayOfYear = c.getTime();
+		
+		List<DemandeMaladies> listMaladiesEnfantSurAnneeCivile = maladiesRepository.getListEnfantMaladeAnneeCivileByAgent(idAgent, firstDayOfYear, today);
+		Integer totalPris = getNombeJourMaladies(idAgent, firstDayOfYear, today, listMaladiesEnfantSurAnneeCivile);
+		
+		dto.setTotalPris(totalPris);
+		dto.setTotalRestant(SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE - totalPris);
 
 		return dto;
 	}
@@ -144,12 +171,8 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		}
 
 		// d. droits restant en PS
-		// Integer nombreJoursRestantPS =
-		// droitsMaladies.getNombreJoursPleinSalaire() >
-		// nombreJoursMaladiesPrisEnPS
-		// ? droitsMaladies.getNombreJoursPleinSalaire() -
-		// nombreJoursMaladiesPrisEnPS
-		// : 0;
+		// Integer nombreJoursRestantPS = droitsMaladies.getNombreJoursPleinSalaire() > nombreJoursMaladiesPrisEnPS
+		// ? droitsMaladies.getNombreJoursPleinSalaire() - nombreJoursMaladiesPrisEnPS : 0;
 
 		// e. recalculer le nombre de jours coupes en DS
 		Integer nombreJoursCoupesDS = 0;

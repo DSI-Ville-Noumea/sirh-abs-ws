@@ -50,8 +50,22 @@ public enum RefTypeAbsenceEnum {
 				return CE_CONGE_UNIQUE;
 			case 45:
 				return CE_CONGE_UNIQUE_CCSP;
+			case 71:
+				return MALADIE_HOSPITALISATION;
+			case 72:
+				return MALADIE_CONVALESCENCE;
+			case 73:
+				return MALADIE_EVASAN;
+			case 74:
+				return MALADIE_ENFANT_MALADE;
+			case 77:
+				return MALADIE_AT;
+			case 78:
+				return MALADIE_AT_RECHUTE;
 			case 81:
 				return MALADIE;
+			case 80:
+				return ENFANT_MALADE;
 			default:
 				return null;
 		}

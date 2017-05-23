@@ -32,6 +32,7 @@ import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.SoldeDto;
+import nc.noumea.mairie.abs.dto.SoldeEnfantMaladeDto;
 import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.dto.SoldeMonthDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
@@ -158,6 +159,9 @@ public class SoldeService implements ISoldeService {
 					break;
 				case MALADIE:
 					getSoldeMaladies(idAgent, dto);
+					break;
+				case ENFANT_MALADE:
+					getSoldeEnfantMalade(idAgent, dto);
 					break;
 				default:
 					break;
@@ -342,6 +346,13 @@ public class SoldeService implements ISoldeService {
 		SoldeMaladiesDto soldeMaladies = maladieCounterServiceImpl.getSoldeByAgent(idAgent, new Date(), null);
 		dto.setSoldeMaladies(soldeMaladies);
 		dto.setAfficheSoldeMaladies(true);
+	}
+
+	private void getSoldeEnfantMalade(Integer idAgent, SoldeDto dto) {
+		// on traite les enfants malades
+		SoldeEnfantMaladeDto soldeEnfantMalade = maladieCounterServiceImpl.getSoldeEnfantMalade(idAgent);
+		dto.setSoldeEnfantMalade(soldeEnfantMalade);
+		dto.setAfficheSoldeEnfantMalade(true);
 	}
 
 	@Override

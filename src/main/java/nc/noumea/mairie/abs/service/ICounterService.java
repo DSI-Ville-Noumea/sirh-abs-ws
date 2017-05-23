@@ -13,6 +13,7 @@ import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SoldeEnfantMaladeDto;
 import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.vo.CalculDroitsMaladiesVo;
@@ -71,6 +72,8 @@ public interface ICounterService {
 	ReturnMessageDto saveRepresentantA48(Integer idOrganisationSyndicale, Integer idAgent);
 
 	SoldeMaladiesDto getSoldeByAgent(Integer idAgent, Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto);
+
+	SoldeEnfantMaladeDto getSoldeEnfantMalade(Integer idAgent);
 
 	CalculDroitsMaladiesVo calculDroitsMaladiesForDemandeMaladies(Integer idAgent, DemandeDto demandeMaladie);
 

@@ -14,6 +14,7 @@ import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SoldeEnfantMaladeDto;
 import nc.noumea.mairie.abs.repository.IMaladiesRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.vo.CalculDroitsMaladiesVo;
@@ -161,7 +162,7 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 			Integer duree = maladieCounterServiceImpl.getNombeJourMaladies(demandeDto.getAgentWithServiceDto().getIdAgent(),
 					helperService.getDateDebutAnneeForOneDate(demandeDto.getDateDebut(), 1),
 					helperService.getDateFinAnneeForOneDate(demandeDto.getDateDebut(), 1), listMaladiesEnfantSurAnneeCivile);
-			if (duree > 3) {
+			if (duree > SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE) {
 				return true;
 			}
 		}

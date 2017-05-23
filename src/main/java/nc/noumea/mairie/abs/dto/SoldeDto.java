@@ -48,6 +48,10 @@ public class SoldeDto implements Serializable {
 	// maladies
 	private boolean afficheSoldeMaladies;
 	private SoldeMaladiesDto soldeMaladies;
+	
+	// Enfants malades
+	private boolean afficheSoldeEnfantMalade;
+	private SoldeEnfantMaladeDto soldeEnfantMalade;
 
 	public SoldeDto() {
 		listeSoldeAsaA55 = new ArrayList<SoldeMonthDto>();
@@ -324,5 +328,20 @@ public class SoldeDto implements Serializable {
 	public void setAfficheSoldeMaladies(boolean afficheSoldeMaladies) {
 		this.afficheSoldeMaladies = afficheSoldeMaladies;
 	}
-	
+
+	public boolean isAfficheSoldeEnfantMalade() {
+		return afficheSoldeEnfantMalade;
+	}
+
+	public void setAfficheSoldeEnfantMalade(boolean afficheSoldeEnfantMalade) {
+		this.afficheSoldeEnfantMalade = afficheSoldeEnfantMalade;
+	}
+
+	public SoldeEnfantMaladeDto getSoldeEnfantMalade() {
+		return soldeEnfantMalade;
+	}
+
+	public void setSoldeEnfantMalade(SoldeEnfantMaladeDto soldeEnfantMalade) {
+		this.soldeEnfantMalade = soldeEnfantMalade;
+	}
 }
