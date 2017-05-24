@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.DemandeMaladies;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 
 public interface IDemandeRepository {
 
@@ -48,5 +50,7 @@ public interface IDemandeRepository {
 			Integer idRefType, Integer idRefGroupeAbsence);
 
 	List<Demande> getListDemandeRejetDRHStatutVeille(List<Integer> listeTypes);
+
+	boolean initialDemandeForProlongationExists(DemandeDto demande);
 
 }

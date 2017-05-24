@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1233,7 +1234,6 @@ public class AbsenceService implements IAbsenceService {
 					break;
 			}
 		}
-
 		Demande demande = null;
 		Date dateJour = new Date();
 
@@ -1838,7 +1838,12 @@ public class AbsenceService implements IAbsenceService {
 				demandeMaladie.setDateCommissionAptitude(demandeDto.getDateCommissionAptitude());
 				demandeMaladie.setAvisCommissionAptitude(demandeDto.getAvisCommissionAptitude());
 				demandeMaladie.setTauxCafat(demandeDto.getTauxCafat());
-
+				
+				// #39417 : Si c'est une prolongation, on va vérifier qu'il y a bien une maladie existatne qui précède cette demande.
+				if (demandeDto.isProlongation()) {
+					if (!demandeRepository.initialDemandeForProlongationExists(demandeDto))
+						returnDto.getErrors().add(String.format("Aucune demande de maladie ne précède cette prolongation."));
+				}
 				break;
 			default:
 				returnDto.getErrors()

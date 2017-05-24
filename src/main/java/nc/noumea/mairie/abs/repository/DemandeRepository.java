@@ -12,9 +12,13 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
@@ -604,5 +608,34 @@ public class DemandeRepository implements IDemandeRepository {
 		q.setParameter("dateHistoSoir", hierSoir.toDate());
 		
 		return q.getResultList();
+	}
+	
+	@Override
+	public boolean initialDemandeForProlongationExists(DemandeDto demande) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
+		sb.append("where d.type.idRefTypeAbsence = :TYPE_MALADIE ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
+		sb.append("and ed.etat in ( :A_VALIDER, :APPROUVEE, :EN_ATTENTE, :PRISE, :SAISIE, :VALIDEE) ");
+		sb.append("and d.dateFin = :dateFin ");
+		sb.append("and d.idAgent = :idAgent ");
+		
+		TypedQuery<Demande> q = absEntityManager.createQuery(sb.toString(), Demande.class);
+		
+		// Liste des états possible : #39417
+		q.setParameter("TYPE_MALADIE", RefTypeAbsenceEnum.MALADIE.getValue());
+		q.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER);
+		q.setParameter("APPROUVEE", RefEtatEnum.APPROUVEE);
+		q.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
+		q.setParameter("PRISE", RefEtatEnum.PRISE);
+		q.setParameter("SAISIE", RefEtatEnum.SAISIE);
+		q.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
+
+		DateTime veilleProlongation = new DateTime(demande.getDateDebut());
+		veilleProlongation = veilleProlongation.minusDays(1).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+		q.setParameter("dateFin", veilleProlongation.toDate());
+		q.setParameter("idAgent", demande.getAgentWithServiceDto().getIdAgent());
+		
+		return q.getResultList().isEmpty() ? false : true;
 	}
 }
