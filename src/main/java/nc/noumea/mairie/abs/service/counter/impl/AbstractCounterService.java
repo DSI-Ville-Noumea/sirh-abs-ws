@@ -23,6 +23,7 @@ import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.OrganisationSyndicaleDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.abs.dto.SoldeEnfantMaladeDto;
 import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.dto.SoldeSpecifiqueDto;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -82,6 +83,14 @@ public abstract class AbstractCounterService implements ICounterService {
 	@Override
 	public int addToAgentForPTG(Integer idAgent, Date dateMonday, Integer minutes) {
 		return 0;
+	}
+	
+	/**
+	 * Appelé par les maladies, pour savoir si le solde a été dépassé.
+	 */
+	@Override
+	public SoldeEnfantMaladeDto getSoldeEnfantMalade(Integer idAgent) {
+		return null;
 	}
 
 	/**

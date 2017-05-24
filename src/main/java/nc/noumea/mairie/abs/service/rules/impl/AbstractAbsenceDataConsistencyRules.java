@@ -93,9 +93,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String					MOTIF_OBLIGATOIRE						= "Le motif est obligatoire.";
 	public static final String					DEMANDE_INEXISTANTE						= "La demande n'existe pas.";
 	public static final String					STATUT_AGENT							= "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
-	public static final String					STATUT_AGENT_FONCTIONNAIRE				= "Ce type de demande ne peut pas être saisi par les fonctionnaires.";
-	public static final String					STATUT_AGENT_CONTRACTUEL				= "Ce type de demande ne peut pas être saisi par les contractuels.";
-	public static final String					STATUT_AGENT_CONV_COLL					= "Ce type de demande ne peut pas être saisi par les conventions collectives.";
+	public static final String					STATUT_AGENT_FONCTIONNAIRE				= "Ce type de demande ne peut pas être saisi pour les fonctionnaires.";
+	public static final String					STATUT_AGENT_CONTRACTUEL				= "Ce type de demande ne peut pas être saisi pour les contractuels.";
+	public static final String					STATUT_AGENT_CONV_COLL					= "Ce type de demande ne peut pas être saisi pour les conventions collectives.";
 	public static final String					SAISIE_KIOSQUE_NON_AUTORISEE			= "Ce type de demande n'est pas géré depuis le Kiosque RH.";
 	public static final String					SAISIE_TYPE_ABSENCE_NON_AUTORISEE		= "La saisie de nouveau type d'absence pour ce groupe d'absence n'est pas autorisée.";
 	public static final String					BASE_HORAIRE_AGENT						= "L'agent [%d] n'a pas de base congé défini. Merci de contacter votre référent RH.";
