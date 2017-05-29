@@ -1,6 +1,7 @@
 package nc.noumea.mairie.alfresco.cmis;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.PieceJointe;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
@@ -82,15 +84,15 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 			return returnDto;
 		}
 		
-		if(isFromKiosqueRH
-				&& ((null != demande.getType().getTypeSaisi()
-					&& demande.getType().getTypeSaisi().isPieceJointe())
-				|| (null != demande.getType().getTypeSaisiCongeAnnuel()
-					&& demande.getType().getTypeSaisiCongeAnnuel().isPieceJointe()))
-				&& (null == demandeDto.getPiecesJointes()
-						|| demandeDto.getPiecesJointes().isEmpty())
-				&& (null == demande.getPiecesJointes()
-						|| demande.getPiecesJointes().isEmpty())) {
+		boolean pieceJointeObligatoire = 
+				demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue()) ? 
+						(null != demande.getType().getTypeSaisiCongeAnnuel() && demande.getType().getTypeSaisiCongeAnnuel().isPieceJointe())
+						: (null != demande.getType().getTypeSaisi() && demande.getType().getTypeSaisi().isPieceJointe());
+		
+		if(isFromKiosqueRH && pieceJointeObligatoire
+				&& (null == demandeDto.getPiecesJointes() || demandeDto.getPiecesJointes().isEmpty())
+				&& (null == demande.getPiecesJointes() || demande.getPiecesJointes().isEmpty())
+				) {
 			logger.debug(ERROR_PJ_ABSENTE);
 			returnDto.getErrors().add(ERROR_PJ_ABSENTE);
 			return returnDto;
@@ -176,10 +178,6 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 				properties.put(PropertyIds.NAME, name);
 				properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
 				properties.put(PropertyIds.DESCRIPTION, getDescriptionOfAbsence(demande));
-	//			properties.put(PropertyIds.CREATED_BY, "chata73");
-	//			properties.put("mairie:idAgentAspect", demandeDto.getAgentWithServiceDto().getIdAgent());
-		//		properties.put("cm:categories", "workspace://SpacesStore/7bf57b41-ff08-468b-8530-1539c5db42aa");
-		//		properties.put("cm:taggable","workspace://SpacesStore/da255892-661c-44d7-ace6-fab9c7f6192a");
 				
 				
 				ByteArrayInputStream stream = new ByteArrayInputStream(pjDto.getbFile());
