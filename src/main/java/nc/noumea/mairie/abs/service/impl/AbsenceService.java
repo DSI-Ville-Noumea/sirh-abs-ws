@@ -1281,7 +1281,7 @@ public class AbsenceService implements IAbsenceService {
 			demandeRepository.clear();
 			throw new ReturnMessageDtoException(returnDto);
 		}
-
+		
 		try {
 			// #31759
 			sendEmailInformation(demande, returnDto);
@@ -1856,6 +1856,7 @@ public class AbsenceService implements IAbsenceService {
 		etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, returnDto, demandeDto.getGroupeAbsence().getIdRefGroupeAbsence());
 		etatDemande.setDate(dateJour);
 		etatDemande.setIdAgent(idAgent);
+		etatDemande.setCommentaire(demandeDto.getCommentaire());
 		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeDto.getIdRefEtat()));
 		demande.addEtatDemande(etatDemande);
 
