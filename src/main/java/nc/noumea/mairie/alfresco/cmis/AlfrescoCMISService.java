@@ -85,9 +85,12 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 		}
 		
 		boolean pieceJointeObligatoire = 
-				demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue()) ? 
-						(null != demande.getType().getTypeSaisiCongeAnnuel() && demande.getType().getTypeSaisiCongeAnnuel().isPieceJointe())
-						: (null != demande.getType().getTypeSaisi() && demande.getType().getTypeSaisi().isPieceJointe());
+				(demande.getType().getIdRefTypeAbsence() != null &&
+				demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.CONGE_ANNUEL.getValue()))
+				? 
+				(null != demande.getType().getTypeSaisiCongeAnnuel() && demande.getType().getTypeSaisiCongeAnnuel().isPieceJointe())
+				: 
+				(null != demande.getType().getTypeSaisi() && demande.getType().getTypeSaisi().isPieceJointe());
 		
 		if(isFromKiosqueRH && pieceJointeObligatoire
 				&& (null == demandeDto.getPiecesJointes() || demandeDto.getPiecesJointes().isEmpty())

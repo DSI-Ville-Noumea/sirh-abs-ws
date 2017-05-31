@@ -12902,7 +12902,7 @@ public class AbsenceServiceTest {
 		IAlfrescoCMISService alfrescoCMISService = Mockito.mock(IAlfrescoCMISService.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgent(Mockito.anyInt())).thenReturn(null);
+		Mockito.when(sirhWSConsumer.getAgent(Mockito.anyInt())).thenReturn(new AgentGeneriqueDto());
 		Mockito.when(sirhWSConsumer.getEmailDestinataire()).thenReturn(listDest);
 
 		JavaMailSender mailSender = Mockito.mock(JavaMailSender.class);

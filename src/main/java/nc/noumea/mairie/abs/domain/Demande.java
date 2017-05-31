@@ -96,6 +96,7 @@ public class Demande {
 		this.dateDebut = demande.getDateDebut();
 		this.dateFin = demande.getDateFin();
 		this.etatsDemande = demande.getEtatsDemande();
+		this.commentaire = demande.getCommentaire();
 	}
 
 	@Transient

@@ -228,6 +228,8 @@ public class AbsenceService implements IAbsenceService {
 		Date dateJour = new Date();
 
 		demande = mappingDemandeSpecifique(demandeDto, demande, idAgent, dateJour, returnDto);
+		
+		boolean isCreation = demande.getIdDemande() == null;
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
@@ -238,18 +240,6 @@ public class AbsenceService implements IAbsenceService {
 				.getFactory(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
 
 		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, false);
-
-		if (returnDto.getErrors().size() != 0) {
-			demandeRepository.clear();
-			throw new ReturnMessageDtoException(returnDto);
-		}
-
-		try {
-			// #31759
-			sendEmailInformation(demande, returnDto);
-		} catch (Exception e) {
-			returnDto.getErrors().add("Envoi de mail impossible, merci de contacter votre gestionnaire RH");
-		}
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
@@ -267,6 +257,20 @@ public class AbsenceService implements IAbsenceService {
 		demandeRepository.flush();
 		demandeRepository.clear();
 
+		if (isCreation) {
+			try {
+				// #31759
+				sendEmailInformation(demande, returnDto);
+			} catch (Exception e) {
+				returnDto.getErrors().add("Envoi de mail impossible, merci de contacter votre gestionnaire RH");
+			}
+		}
+
+		if (returnDto.getErrors().size() != 0) {
+			demandeRepository.clear();
+			throw new ReturnMessageDtoException(returnDto);
+		}
+
 		if (null == demandeDto.getIdDemande()) {
 			returnDto.getInfos().add(String.format("La demande a bien été créée."));
 		} else {
@@ -279,8 +283,8 @@ public class AbsenceService implements IAbsenceService {
 	private void sendEmailInformation(Demande demande, ReturnMessageDto returnDto) {
 		// #31759 : si AT ou rechute AT, alors il faut envoyer un mail à la DRH (groupe destinataires parametrer dans SIRH)
 		// que si la demande est nouvelle
-		if (demande.getIdDemande() == null && demande.getType() != null && (demande.getType().getIdRefTypeAbsence() == RefTypeAbsenceEnum.MALADIE_AT.getValue()
-				|| demande.getType().getIdRefTypeAbsence() == RefTypeAbsenceEnum.MALADIE_AT_RECHUTE.getValue())) {
+		if (demande.getType() != null && (demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT.getValue())
+				|| demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT_RECHUTE.getValue()))) {
 
 			final DemandeMaladies dem = (DemandeMaladies) demande;
 			final String type;
@@ -291,16 +295,24 @@ public class AbsenceService implements IAbsenceService {
 			}
 			final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			String nomOpe = null;
+			String nomAgent = null;
 			try {
 				AgentGeneriqueDto operateur = sirhWSConsumer.getAgent(dem.getLatestEtatDemande().getIdAgent());
 				nomOpe = operateur.getDisplayNom() + " " + operateur.getDisplayPrenom();
 			} catch (Exception e) {
 				// on a pas d'operateur
 			}
+			try {
+				AgentGeneriqueDto agent = sirhWSConsumer.getAgent(dem.getIdAgent());
+				nomAgent = agent.getDisplayNom() + " " + agent.getDisplayPrenom();
+			} catch (Exception e) {
+				returnDto.getErrors().add("Aucun agent associé à ce matricule n'a été trouvé.");
+				return;
+			}
 
 			StringBuilder text = new StringBuilder();
 			text.append("URGENT <br> ");
-			text.append("Un " + type + "  vient d'être déclaré(e) pour l'agent " + dem.getIdAgent() + "<br>");
+			text.append("Un " + type + "  vient d'être déclaré(e) pour l'agent " + nomAgent + " (" + dem.getIdAgent()  + ") <br>");
 			text.append("Opérateur : " + (nomOpe == null ? "NC" : nomOpe) + "<br>");
 			text.append("Date de déclaration : " + (dem.getDateDeclaration() == null ? "NC" : sdf.format(dem.getDateDeclaration())) + "<br>");
 			text.append("Prescripteur : " + (dem.getPrescripteur() == null ? "NC" : dem.getPrescripteur()) + "<br>");
@@ -1238,6 +1250,8 @@ public class AbsenceService implements IAbsenceService {
 		Date dateJour = new Date();
 
 		demande = mappingDemandeSpecifique(demandeDto, demande, idAgent, dateJour, returnDto);
+		
+		boolean isCreation = demande.getIdDemande() == null;
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
@@ -1281,13 +1295,6 @@ public class AbsenceService implements IAbsenceService {
 			demandeRepository.clear();
 			throw new ReturnMessageDtoException(returnDto);
 		}
-		
-		try {
-			// #31759
-			sendEmailInformation(demande, returnDto);
-		} catch (Exception e) {
-			returnDto.getErrors().add("Envoi de mail impossible, merci de contacter votre gestionnaire RH");
-		}
 
 		try {
 			// #31761
@@ -1311,6 +1318,20 @@ public class AbsenceService implements IAbsenceService {
 		demandeRepository.persistEntity(demande);
 		demandeRepository.flush();
 		demandeRepository.clear();
+		
+		if (isCreation) {
+			try {
+				// #31759
+				sendEmailInformation(demande, returnDto);
+			} catch (Exception e) {
+				returnDto.getErrors().add("Envoi de mail impossible, merci de contacter votre gestionnaire RH");
+			}
+		}
+
+		if (returnDto.getErrors().size() != 0) {
+			demandeRepository.clear();
+			throw new ReturnMessageDtoException(returnDto);
+		}
 
 		if (null == demandeDto.getIdDemande()) {
 			returnDto.getInfos().add(String.format("La demande a bien été créée."));
