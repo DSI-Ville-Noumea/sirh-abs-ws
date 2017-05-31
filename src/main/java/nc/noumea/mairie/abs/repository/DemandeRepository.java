@@ -624,8 +624,6 @@ public class DemandeRepository implements IDemandeRepository {
 		
 		// Liste des états possible : #39417
 		q.setParameter("TYPE_MALADIE", RefTypeAbsenceEnum.MALADIE.getValue());
-		q.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER);
-		q.setParameter("APPROUVEE", RefEtatEnum.APPROUVEE);
 		q.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
 		q.setParameter("PRISE", RefEtatEnum.PRISE);
 		q.setParameter("SAISIE", RefEtatEnum.SAISIE);
