@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
 
 import nc.noumea.mairie.abs.domain.AgentCongeAnnuelCount;
 import nc.noumea.mairie.abs.domain.AgentReposCompCount;
@@ -599,7 +602,7 @@ public class AbsenceService implements IAbsenceService {
 			if (!result.getErrors().isEmpty())
 				return result;
 
-			return setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result);
+			return setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result, false);
 		}
 
 		return result;
@@ -706,7 +709,7 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 
-	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result) {
+	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result, boolean isFromSIRH) {
 
 		// redmine #12994 : bloque ce job si une paye est en cours pour les
 		// congés annuels
@@ -717,8 +720,14 @@ public class AbsenceService implements IAbsenceService {
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
 					.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 
-			result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande,
-					Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.A_VALIDER));
+			List<RefEtatEnum> etatsAutorises = Lists.newArrayList();
+			etatsAutorises.addAll(Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.A_VALIDER));
+			
+			// #39326 : On peut supprimer les demandes de maladies à l'état 'prise'.
+			if (isFromSIRH)
+				etatsAutorises.add(RefEtatEnum.PRISE);
+			
+			result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande, etatsAutorises);
 
 			result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
@@ -1582,7 +1591,7 @@ public class AbsenceService implements IAbsenceService {
 			}
 
 			if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
-				setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result);
+				setDemandeEtatAnnule(idAgent, demandeEtatChangeDto, demande, result, true);
 				continue;
 			}
 		}

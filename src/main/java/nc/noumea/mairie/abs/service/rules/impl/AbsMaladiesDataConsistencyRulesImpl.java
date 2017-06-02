@@ -106,7 +106,7 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 
 	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur, boolean isFromSIRH) {
 		return (isFromSIRH && (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(
-				RefEtatEnum.REJETE.getCodeEtat())));
+				RefEtatEnum.REJETE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())));
 	}
 
 	@Override
