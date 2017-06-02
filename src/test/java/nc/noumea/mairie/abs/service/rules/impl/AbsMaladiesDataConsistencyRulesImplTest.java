@@ -601,7 +601,7 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 		assertFalse(result6.isAffichageValidation());
 
 		// PRISE
-		assertFalse(result7.isAffichageBoutonAnnuler());
+		assertTrue(result7.isAffichageBoutonAnnuler());
 		assertFalse(result7.isAffichageValidation());
 		assertFalse(result7.isAffichageEnAttente());
 
