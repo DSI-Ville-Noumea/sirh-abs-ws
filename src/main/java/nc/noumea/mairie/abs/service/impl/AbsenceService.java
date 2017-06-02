@@ -1888,6 +1888,7 @@ public class AbsenceService implements IAbsenceService {
 			etatDemandeAValider = mappingEtatDemandeSpecifique(etatDemande, demande, returnDto, demandeDto.getGroupeAbsence().getIdRefGroupeAbsence());
 			etatDemandeAValider.setDate(dateJour);
 			etatDemandeAValider.setIdAgent(idAgent);
+			etatDemandeAValider.setCommentaire(demandeDto.getCommentaire());
 			etatDemandeAValider.setEtat(RefEtatEnum.A_VALIDER);
 			demande.addEtatDemande(etatDemandeAValider);
 		}
