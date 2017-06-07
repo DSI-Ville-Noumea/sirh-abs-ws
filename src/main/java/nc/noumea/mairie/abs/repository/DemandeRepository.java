@@ -616,7 +616,7 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
 		sb.append("where d.type.idRefTypeAbsence = :TYPE_MALADIE ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
-		sb.append("and ed.etat in ( :A_VALIDER, :APPROUVEE, :EN_ATTENTE, :PRISE, :SAISIE, :VALIDEE) ");
+		sb.append("and ed.etat in ( :EN_ATTENTE, :PRISE, :SAISIE, :VALIDEE) ");
 		sb.append("and d.dateFin = :dateFin ");
 		sb.append("and d.idAgent = :idAgent ");
 		

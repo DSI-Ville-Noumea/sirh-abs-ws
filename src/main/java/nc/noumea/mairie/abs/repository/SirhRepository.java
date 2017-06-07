@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import nc.noumea.mairie.domain.SpSold;
 import nc.noumea.mairie.domain.SpSorc;
@@ -58,6 +59,7 @@ public class SirhRepository implements ISirhRepository {
 	}
 
 	@Override
+	@Transactional(value = "chainedTransactionManager")
 	public List<Spadmn> getPA50OfAgent(Integer nomatr, Date dateDerniereEmbauche) {
 		
 		TypedQuery<Spadmn> qSpadmn = sirhEntityManager.createNamedQuery("getPA50OfAgent", Spadmn.class);
