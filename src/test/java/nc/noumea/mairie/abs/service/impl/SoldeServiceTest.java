@@ -1224,14 +1224,16 @@ public class SoldeServiceTest {
 	@Test
 	public void getHistoriqueSoldeAgent_return1Liste_Maladies() {
 		
+		Date currentDay = new Date();
+		
 		// Given
 		RefTypeAbsence type = new RefTypeAbsence();
 		type.setLabel("Maladie Convalescence");
 		
 		DemandeMaladies demande = new DemandeMaladies();
 		demande.setDuree(10.0);
-		demande.setDateDebut(new Date());
-		demande.setDateFin(new Date());
+		demande.setDateDebut(currentDay);
+		demande.setDateFin(currentDay);
 		demande.setType(type);
 		demande.setTotalPris(1);
 		demande.setNombreJoursCoupeDemiSalaire(2);
@@ -1244,8 +1246,8 @@ public class SoldeServiceTest {
 		
 		DemandeMaladies demande2 = new DemandeMaladies();
 		demande2.setDuree(11.0);
-		demande2.setDateDebut(new Date());
-		demande2.setDateFin(new Date());
+		demande2.setDateDebut(currentDay);
+		demande2.setDateFin(currentDay);
 		demande2.setType(type2);
 		demande2.setTotalPris(6);
 		demande2.setNombreJoursCoupeDemiSalaire(7);
