@@ -1268,7 +1268,6 @@ public class SoldeServiceTest {
 				9005138, RefTypeAbsenceEnum.MALADIE.getValue(), new DateTime(2014, 1, 24, 0, 0, 0).toDate(), null, false);
 
 		assertEquals(2, listResult.size());
-		assertEquals(listResult.get(0).getDateDebut().getTime(), demande.getDateDebut().getTime());
 		assertEquals(listResult.get(0).getDateDebut(), demande.getDateDebut());
 		assertEquals(listResult.get(0).getDateFin(), demande.getDateFin());
 		assertEquals(listResult.get(0).getTypeAbsence(), demande.getType().getLabel());
@@ -1279,7 +1278,6 @@ public class SoldeServiceTest {
 		assertEquals(listResult.get(0).getNombreJoursResteAPrendreDemiSalaire(), demande.getNombreJoursResteAPrendreDemiSalaire());
 		assertEquals(listResult.get(0).getNombreJoursResteAPrendrePleinSalaire(), demande.getNombreJoursResteAPrendrePleinSalaire());
 
-		assertEquals(listResult.get(1).getDateDebut().getTime(), demande2.getDateDebut().getTime());
 		assertEquals(listResult.get(1).getDateDebut(), demande2.getDateDebut());
 		assertEquals(listResult.get(1).getDateFin(), demande2.getDateFin());
 		assertEquals(listResult.get(1).getTypeAbsence(), demande2.getType().getLabel());
