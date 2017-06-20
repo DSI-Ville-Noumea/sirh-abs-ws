@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.abs.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.AuthorizedPAForMaladieEnum;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.Profil;
@@ -19,7 +21,9 @@ import nc.noumea.mairie.abs.repository.IMaladiesRepository;
 import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.vo.CalculDroitsMaladiesVo;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
+import nc.noumea.mairie.domain.Spadmn;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -47,31 +51,47 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 
 		checkEtatsDemandeAcceptes(srm, demande, listEtatsAcceptes);
 		checkATReferencePourTypeRechute(srm, (DemandeMaladies) demande);
-		// #31607 : on verifie la cohérence date debut/date fin ave le nombre de
-		// jours ITT
+		// #31607 : on verifie la cohérence date debut/date fin ave le nombre de jours ITT
 		checkNombreJoursITT(srm, (DemandeMaladies) demande);
-		// #31605 : on ne permet pas de date dans le futur sauf si c'est une prolongation
+		// #31605 puis #39427 : on ne permet aucune date dans le futur
 		checkDateFutur(srm, (DemandeMaladies) demande);
 
-		// un agent peut avoir fait des heures supp le matin et avoir un AT à
-		// 12h
-		// on ne check pas sa PA, car il peut avoir une PA AT le meme jour qu un
-		// AT
-		if (demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT.getValue())
-				|| demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT_RECHUTE.getValue())) {
+		
+		Integer idTypeRef = demande.getType().getIdRefTypeAbsence();
+		// un agent peut avoir fait des heures supp le matin et avoir un AT à 12h
+		// on ne check pas sa PA, car il peut avoir une PA AT le meme jour qu un AT
+		
+		// La demande #39402 augment le périmètre à 4 autres maladies : Congé longue durée, congée longue maladie, maladie professionnelle et hospitalisation.
+		if (idTypeRef.equals(RefTypeAbsenceEnum.MALADIE_AT.getValue())
+				|| idTypeRef.equals(RefTypeAbsenceEnum.MALADIE_AT_RECHUTE.getValue())
+				|| idTypeRef.equals(RefTypeAbsenceEnum.MALADIE.getValue())
+				|| idTypeRef.equals(RefTypeAbsenceEnum.MALADIE_PROFESSIONNELLE.getValue())
+				|| idTypeRef.equals(RefTypeAbsenceEnum.MALADIE_HOSPITALISATION.getValue()))
+		{
 			checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 			checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
 			if (srm.getErrors().size() == 0)
 				checkDemandeDejaSaisieSurMemePeriode(srm, demande);
 			checkStatutAgent(srm, demande);
+			// #39402 : On vérifie que sa PA se situe parmi celles autorisées.
+			checkPAAgentForMaladie(srm, demande);
 			super.checkChampMotif(srm, demande);
-		} else {
+		// #39320 : Pour les enfants malades, on affiche une alerte si le solde est dépassé
+		} else if (idTypeRef.equals(RefTypeAbsenceEnum.ENFANT_MALADE.getValue())) {
+			super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
+			DemandeDto dto = new DemandeDto(demande, false);
+			if (checkDepassementCompteurAgent(dto, null)) {
+				logger.warn(DEPASSEMENT_QUOTA_ENFANT_MALADE);
+				srm.getInfos().add(DEPASSEMENT_QUOTA_ENFANT_MALADE);
+			}
+		}
+		else {
 			super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		}
 	}
 
 	protected ReturnMessageDto checkDateFutur(ReturnMessageDto srm, DemandeMaladies demande) {
-		if (demande.getDateDebut() != null && demande.getDateDebut().compareTo(new Date()) > 0 && !demande.isProlongation()) {
+		if (demande.getDateDebut() != null && demande.getDateDebut().compareTo(new Date()) > 0) {
 			logger.warn(DEMANDE_DATE_FUTUR_MSG);
 			srm.getErrors().add(DEMANDE_DATE_FUTUR_MSG);
 		}
@@ -83,12 +103,14 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 		if (null != demande.getType().getTypeSaisi() && demande.getType().getTypeSaisi().isNombreITT() && demande.getDateDebut() != null
 				&& demande.getDateFin() != null && demande.getNombreITT() != null) {
 			double nbJour = helperService.calculNombreJours(demande.getDateDebut(), demande.getDateFin());
-			if (nbJour != demande.getNombreITT()) {
+			if (nbJour > demande.getNombreITT()) {
 				logger.info(NB_JOURS_ITT_INCOHERENT);
 				srm.getInfos().add(NB_JOURS_ITT_INCOHERENT);
+			} else if (nbJour < demande.getNombreITT()) {
+				logger.info(NB_JOURS_ITT_TROP_ELEVE);
+				srm.getErrors().add(NB_JOURS_ITT_TROP_ELEVE);
 			}
 		}
-
 		return srm;
 	}
 
@@ -134,8 +156,7 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto, CheckCompteurAgentVo checkCompteurAgentVo) {
 
 		// on verifie d abord l etat de la demande
-		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de
-		// depassement de compteur
+		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur
 		if (!checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
 
@@ -144,8 +165,8 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 
 	protected boolean checkEtatDemandePourDepassementCompteurAgent(DemandeDto demandeDto) {
 
-		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+		if (demandeDto.getIdDemande() != null && (demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat())
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()))) {
 			return false;
 		}
 
@@ -162,8 +183,14 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 			Integer duree = maladieCounterServiceImpl.getNombeJourMaladies(demandeDto.getAgentWithServiceDto().getIdAgent(),
 					helperService.getDateDebutAnneeForOneDate(demandeDto.getDateDebut(), 1),
 					helperService.getDateFinAnneeForOneDate(demandeDto.getDateDebut(), 1), listMaladiesEnfantSurAnneeCivile);
-			if (duree > SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE) {
-				return true;
+			// #39320 : Pour une demande créée, si elle dépasse le quota, on en informe l'utilisateur.
+			if (demandeDto.getIdDemande() == null) {
+				if (demandeDto.getDuree() + duree > SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE)
+					return true;
+			}
+			else {
+				if (duree > SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE)
+					return true;
 			}
 		}
 
@@ -188,6 +215,23 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 		return false;
 	}
 
+	public ReturnMessageDto checkPAAgentForMaladie(ReturnMessageDto srm, Demande demande) {
+		// on recherche sa PA actuelle
+		Spadmn pa = sirhRepository.getAgentCurrentPosition(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+				helperService.getCurrentDate());
+		
+		if (pa != null) {
+			for (AuthorizedPAForMaladieEnum authorizedPA : Arrays.asList(AuthorizedPAForMaladieEnum.values())) {
+				if (authorizedPA.getCode().equals(pa.getCdpadm()))
+					return srm;
+			}
+		}
+
+		logger.warn(String.format(INACTIVITE_MSG));
+		srm.getErrors().add(String.format(INACTIVITE_MSG));
+		return srm;
+	}
+
 	protected boolean isAfficherBoutonModifier(DemandeDto demandeDto, boolean isAgentLuiMeme, Profil currentProfil) {
 
 		if (isAgentLuiMeme) {
@@ -207,17 +251,22 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 
 	protected boolean isAfficherBoutonSupprimer(DemandeDto demandeDto, boolean isAgentLuiMeme, Profil currentProfil) {
 
-		if (isAgentLuiMeme) {
+		if (isAgentLuiMeme)
 			return false;
-		}
 
-		if (!isAgentLuiMeme) {
-			if (demandeDto.isAffichageBoutonSupprimer()
-					|| ((demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
-							|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(
-							RefEtatEnum.A_VALIDER.getCodeEtat())) && currentProfil.isSuppression()))
-				return true;
-		}
+		boolean etatOkPourSuppression = demandeDto.getGroupeAbsence() != null && demandeDto.getGroupeAbsence().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.MALADIES.getValue()) ? 
+				// #39690 : Un approbateur ne peut supprimer une demande de maladie à l'état "En attente de validation par la DRH"
+				(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
+						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()))
+				:
+				// Pour les autres absences, on ne touche pas au controle précédent.
+				(demandeDto.getIdRefEtat().equals(RefEtatEnum.PROVISOIRE.getCodeEtat())
+						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
+						|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
+		
+				
+		if (demandeDto.isAffichageBoutonSupprimer() || (etatOkPourSuppression && currentProfil.isSuppression()))
+			return true;
 
 		return false;
 	}
