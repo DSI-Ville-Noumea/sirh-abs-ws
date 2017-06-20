@@ -187,6 +187,8 @@ public class DemandeDto {
 		if (null != d.getType().getGroupe()) {
 			this.groupeAbsence = new RefGroupeAbsenceDto(d.getType().getGroupe());
 		}
+		if (d.getLatestEtatDemande().getEtat() != null)
+			this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
 		this.dateDebut = d.getDateDebut();
 		this.dateFin = d.getDateFin();
 		this.dateDemande = d.getLatestEtatDemande().getDate();

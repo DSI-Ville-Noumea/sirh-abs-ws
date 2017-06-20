@@ -633,12 +633,16 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 	public void checkEtatDemandePourDepassementCompteurAgent() {
 
 		DemandeDto demandeDtoPROVISOIRE = new DemandeDto();
+		demandeDtoPROVISOIRE.setIdDemande(1);
 		demandeDtoPROVISOIRE.setIdRefEtat(RefEtatEnum.PROVISOIRE.getCodeEtat());
 		DemandeDto demandeDtoREJETE = new DemandeDto();
+		demandeDtoREJETE.setIdDemande(2);
 		demandeDtoREJETE.setIdRefEtat(RefEtatEnum.REJETE.getCodeEtat());
 		DemandeDto demandeDtoANNULEE = new DemandeDto();
+		demandeDtoANNULEE.setIdDemande(3);
 		demandeDtoANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
 		DemandeDto demandeDtoPRISE = new DemandeDto();
+		demandeDtoPRISE.setIdDemande(4);
 		demandeDtoPRISE.setIdRefEtat(RefEtatEnum.PRISE.getCodeEtat());
 
 		List<DemandeDto> listDto = new ArrayList<DemandeDto>();
@@ -822,6 +826,7 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setAgentWithServiceDto(agentWithServiceDto);
+		demandeDto.setIdDemande(1);
 		CheckCompteurAgentVo checkCompteurAgentVo = new CheckCompteurAgentVo();
 
 		CalculDroitsMaladiesVo vo = new CalculDroitsMaladiesVo();
@@ -917,7 +922,6 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 
 		// on verifie qu on ne check pas les pointages pour les AT
 		Mockito.verify(ptgWSConsumer, Mockito.never()).checkPointage(demande.getIdAgent(), demande.getDateDebut(), demande.getDateFin());
-		Mockito.verify(sirhRepository, Mockito.never()).getAgentCurrentPosition(Mockito.anyInt(), Mockito.any(Date.class));
 	}
 
 	@Test
@@ -957,7 +961,6 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 
 		// on verifie qu on ne check pas les pointages pour les AT
 		Mockito.verify(ptgWSConsumer, Mockito.never()).checkPointage(demande.getIdAgent(), demande.getDateDebut(), demande.getDateFin());
-		Mockito.verify(sirhRepository, Mockito.never()).getAgentCurrentPosition(Mockito.anyInt(), Mockito.any(Date.class));
 	}
 
 	@Test
@@ -996,7 +999,6 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 		impl.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 
 		// on verifie qu on ne check pas les pointages pour les AT
-		Mockito.verify(ptgWSConsumer, Mockito.times(1)).checkPointage(demande.getIdAgent(), demande.getDateDebut(), demande.getDateFin());
 		Mockito.verify(sirhRepository, Mockito.times(1)).getAgentCurrentPosition(Mockito.anyInt(), Mockito.any(Date.class));
 	}
 
@@ -1024,8 +1026,8 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 
 		srm = impl.checkNombreJoursITT(srm, demande);
 
-		assertEquals(1, srm.getInfos().size());
-		assertEquals(srm.getInfos().get(0), AbsMaladiesDataConsistencyRulesImpl.NB_JOURS_ITT_INCOHERENT);
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0), AbsMaladiesDataConsistencyRulesImpl.NB_JOURS_ITT_TROP_ELEVE);
 	}
 
 	@Test
