@@ -5010,6 +5010,16 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absDataConsistencyRules).checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class), Mockito.isA(List.class));
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(absDataConsistencyRules).processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+				Mockito.isA(DemandeAsa.class), Mockito.anyBoolean());
+		
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -5031,11 +5041,11 @@ public class AbsenceServiceTest {
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		// ReflectionTestUtils.setField(service, "counterService", counterService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
-		// ReflectionTestUtils.setField(service, "counterService",
-		// counterService);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
@@ -5077,6 +5087,13 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absDataConsistencyRules).checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class), Mockito.isA(List.class));
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(absDataConsistencyRules).processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+				Mockito.isA(DemandeAsa.class), Mockito.anyBoolean());
 
 		ReturnMessageDto message = new ReturnMessageDto();
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
@@ -5095,11 +5112,15 @@ public class AbsenceServiceTest {
 		Mockito.when(counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence()))
 				.thenReturn(counterService);
 
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
@@ -5143,6 +5164,13 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absDataConsistencyRules).checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class), Mockito.isA(List.class));
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(absDataConsistencyRules).processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+				Mockito.isA(DemandeAsa.class), Mockito.anyBoolean());
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -5160,11 +5188,15 @@ public class AbsenceServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(srm);
 
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
@@ -5208,6 +5240,13 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absDataConsistencyRules).checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class), Mockito.isA(List.class));
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(absDataConsistencyRules).processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+				Mockito.isA(DemandeAsa.class), Mockito.anyBoolean());
 
 		ICounterService counterService = Mockito.mock(ICounterService.class);
 		Mockito.doAnswer(new Answer<Object>() {
@@ -5225,11 +5264,15 @@ public class AbsenceServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(srm);
 
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
@@ -7359,6 +7402,13 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(absDataConsistencyRules).checkEtatsDemandeAcceptes(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class), Mockito.isA(List.class));
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(absDataConsistencyRules).processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+				Mockito.isA(DemandeAsa.class), Mockito.anyBoolean());
 
 		ReturnMessageDto message = new ReturnMessageDto();
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
@@ -7377,11 +7427,15 @@ public class AbsenceServiceTest {
 		Mockito.when(counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence()))
 				.thenReturn(counterService);
 
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 
@@ -7432,6 +7486,13 @@ public class AbsenceServiceTest {
 				return result;
 			}
 		}).when(counterService).majCompteurToAgent(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Demande.class), Mockito.isA(DemandeEtatChangeDto.class));
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(absDataConsistencyRules).processDataConsistencyDemande(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Integer.class),
+				Mockito.isA(DemandeAsa.class), Mockito.anyBoolean());
 
 		CounterServiceFactory counterServiceFactory = Mockito.mock(CounterServiceFactory.class);
 		Mockito.when(counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence()))
@@ -7441,11 +7502,15 @@ public class AbsenceServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgent)).thenReturn(messageAgent);
 
+		DataConsistencyRulesFactory dataConsistencyRulesFactory = Mockito.mock(DataConsistencyRulesFactory.class);
+		Mockito.when(dataConsistencyRulesFactory.getFactory(Mockito.anyInt(), Mockito.anyInt())).thenReturn(absDataConsistencyRules);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "counterServiceFactory", counterServiceFactory);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 
 		result = service.setDemandeEtatSIRH(idAgent, Arrays.asList(dto));
 

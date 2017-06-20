@@ -104,6 +104,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String					STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL	= "Ce type de demande ne peut pas être saisi par les adjoints, conseillers municipaux et le maire.";
 	public static final String					NB_JOURS_ITT_INCOHERENT					= "Le nombre de jours d'ITT est incohérent avec la date de début/fin de la demande.";
 	public static final String					DEMANDE_DATE_FUTUR_MSG					= "La date de début ne peut pas être dans le futur.";
+	public static final String					NB_JOURS_ITT_TROP_ELEVE					= "Vous ne pouvez renseigner un nombre de jours d'ITT dépassant la période couverte par l'absence.";
+	public static final String					DEPASSEMENT_QUOTA_ENFANT_MALADE						= "Le quota de maladie 'Enfant malade' est dépassé pour cet agent.";
+	public static final String					DEPASSEMENT_QUOTA_ENFANT_MALADE_COMMENTAIRE			= "Merci d'ajouter un commentaire à cette demande.";
 
 	public static final List<String>			ACTIVITE_CODES							= Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62",
 			"63", "64", "65", "66");
