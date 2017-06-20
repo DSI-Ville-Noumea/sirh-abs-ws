@@ -5,7 +5,7 @@
 	<groupId>nc.noumea.mairie</groupId>
 	<artifactId>sirh-abs-ws</artifactId>
 	<packaging>war</packaging>
-	<version>4.02</version>
+	<version>4.04</version>
 	<name>sirh-abs-ws</name>
 	<properties>
 		<aspectj.version>1.8.4</aspectj.version>
@@ -510,7 +510,7 @@
 						<fileSet>
 							<directory>target</directory>
 							<includes>
-								<include>ROOT##${project.artifactId}-${project.version}.war</include>
+								<include>sirh-abs-ws##${project.version}.war</include>
 							</includes>
 						</fileSet>
 					</fileSets>

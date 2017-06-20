@@ -145,6 +145,10 @@ public class AbsenceService implements IAbsenceService {
 	private IAbsenceDataConsistencyRules		absenceDataConsistencyRulesImpl;
 
 	@Autowired
+	@Qualifier("AbsMaladiesDataConsistencyRulesImpl")
+	private IAbsenceDataConsistencyRules		absMaladiesDataConsistencyRulesImpl;
+
+	@Autowired
 	@Qualifier("AbsCongesAnnuelsDataConsistencyRulesImpl")
 	private IAbsenceDataConsistencyRules		absCongesAnnuelsDataConsistencyRulesImpl;
 
@@ -1619,8 +1623,12 @@ public class AbsenceService implements IAbsenceService {
 			return;
 		}
 
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
+				.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+
 		// #12664
 		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, isProvenanceSIRH);
+
 
 		if (0 < result.getErrors().size()) {
 			return;
