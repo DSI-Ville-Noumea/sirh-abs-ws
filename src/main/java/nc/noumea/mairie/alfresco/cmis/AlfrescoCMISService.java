@@ -237,6 +237,120 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 		
 		return returnDto;
 	}
+
+	@Override
+	public ReturnMessageDto uploadDocumentWithBuffer(Integer idAgent, InputStream inputStream, Demande demande,	ReturnMessageDto returnDto, String typeFile) {
+		
+		if(null == RefTypeGroupeAbsenceEnum.getPathAlfrescoByType(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
+			return returnDto;
+		}
+		
+		// si pas de fichier, pas d upload
+		if(null == inputStream) {
+			return returnDto;
+		}
+		
+		Session session = null;
+		try {
+			session = createSession.getSession(alfrescoUrl, alfrescoLogin, alfrescoPassword);
+		} catch(CmisConnectionException e) {
+			logger.debug("Erreur de connexion a Alfresco CMIS : " + e.getMessage());
+			returnDto.getErrors().add("Erreur de connexion à Alfresco CMIS");
+			return returnDto;
+		}
+		
+		AgentGeneriqueDto agentDto = sirhWsConsumer.getAgent(demande.getIdAgent());
+		String nom = "";
+		String prenom = "";
+		if(null != agentDto) {
+    		nom = agentDto.getDisplayNom();
+    		prenom = agentDto.getDisplayPrenom();
+		}
+		
+		// on cherche le repertoire distant 
+	    CmisObject object = null;
+	    try {
+	    	object = session.getObjectByPath(CmisUtils.getPathAbsence(
+	    			demande.getIdAgent(), nom, prenom, demande.getType().getGroupe().getIdRefGroupeAbsence(), false));
+	    } catch(CmisUnauthorizedException e) {
+	    	logger.debug("Probleme d autorisation Alfresco CMIS : " + e.getMessage());
+			returnDto.getErrors().add("Erreur Alfresco CMIS : non autorisé");
+			return returnDto;
+	    } catch(CmisObjectNotFoundException e) {
+	    	logger.debug("Le dossier agent n'existe pas sous Alfresco : " + e.getMessage());
+			returnDto.getErrors().add("Impossible d'ajouter une pièce jointe : répertoire distant non trouvé.");
+			return returnDto;
+	    }
+	    
+	    if(null == object) {
+	    	returnDto.getErrors().add(CmisUtils.ERROR_PATH);
+	    	return returnDto;
+	    }
+	    
+	    Folder folder = (Folder) object;
+	    int maxItemsPerPage = 5;
+	    OperationContext operationContext = session.createOperationContext();
+	    operationContext.setMaxItemsPerPage(maxItemsPerPage);
+
+	    Document doc = null;
+	    boolean isCreated = false;
+	    while(!isCreated) {
+	    	
+	    	String name = CmisUtils.getPatternAbsence(demande.getType().getGroupe().getCode(), nom, prenom, demande.getDateDebut(), 1);
+		    
+	    	// properties 
+			Map<String, Object> properties = new HashMap<String, Object>();
+			properties.put(PropertyIds.NAME, name);
+			properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+			properties.put(PropertyIds.DESCRIPTION, getDescriptionOfAbsence(demande));
+			
+			ContentStream contentStream = new ContentStreamImpl(name, null, typeFile, inputStream);
+		    
+			// create a major version
+		    try {
+		    	doc = folder.createDocument(properties, contentStream, VersioningState.MAJOR);
+		    	isCreated = true;
+		    } catch(CmisContentAlreadyExistsException e) {
+		    	logger.debug(e.getMessage());
+		    }
+	    }
+		
+		if(null == doc) {
+			returnDto.getErrors().add(CmisUtils.ERROR_UPLOAD);
+			return returnDto;
+		}
+		
+		if(null != doc.getProperty("cmis:secondaryObjectTypeIds")) {
+			List<Object> aspects = doc.getProperty("cmis:secondaryObjectTypeIds").getValues();
+			if (!aspects.contains("P:mairie:customDocumentAspect")) {
+				aspects.add("P:mairie:customDocumentAspect");
+				HashMap<String, Object> props = new HashMap<String, Object>();
+				props.put("cmis:secondaryObjectTypeIds", aspects);
+				doc.updateProperties(props);
+				logger.debug("Added aspect");
+			} else {
+				logger.debug("Doc already had aspect");
+			}
+		}
+	 
+		HashMap<String, Object> props = new HashMap<String, Object>();
+		props.put("mairie:idAgentOwner", demande.getIdAgent());
+		props.put("mairie:idAgentCreateur", 9004445);
+		props.put("mairie:commentaire", "test");
+		doc.updateProperties(props);
+		
+		PieceJointe pj = new PieceJointe();
+		pj.setNodeRefAlfresco(doc.getProperty("alfcmis:nodeRef").getFirstValue().toString());
+		pj.setTitre(doc.getName());
+		pj.setDemande(demande);
+		pj.setDateModification(new Date());
+		pj.setVisibleKiosque(true);
+		pj.setVisibleSirh(true);
+		
+		demande.getPiecesJointes().add(pj);
+		
+		return returnDto;
+	}
 	
 	private String getDescriptionOfAbsence(Demande demande) {
 		String description = "";

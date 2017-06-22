@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -88,4 +89,6 @@ public interface IAbsenceService {
 	ControleMedicalDto getDemandeControleMedical(Integer idDemandeMaladie);
 
 	Integer saveDemandeWithoutPJ(Integer idAgent, DemandeDto demandeDto) throws Exception;
+	
+	ReturnMessageDto savePieceJointesWithStream(InputStream stream, Integer idAgent, Integer demandeDto);
 }

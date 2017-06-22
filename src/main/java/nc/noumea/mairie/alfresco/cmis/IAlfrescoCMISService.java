@@ -1,5 +1,7 @@
 package nc.noumea.mairie.alfresco.cmis;
 
+import java.io.InputStream;
+
 import org.apache.chemistry.opencmis.client.api.Session;
 
 import nc.noumea.mairie.abs.domain.Demande;
@@ -15,5 +17,7 @@ public interface IAlfrescoCMISService {
 
 	ReturnMessageDto removeAllDocument(ReturnMessageDto returnDto,
 			Demande demande);
+	
+	ReturnMessageDto uploadDocumentWithBuffer(Integer idAgent, InputStream inputStream, Demande demande,	ReturnMessageDto returnDto, String typeFile);
 
 }

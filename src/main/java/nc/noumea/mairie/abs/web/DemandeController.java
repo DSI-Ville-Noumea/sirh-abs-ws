@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartRequest;
 
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
@@ -641,21 +642,14 @@ public class DemandeController {
 	@RequestMapping(value = "/savePieceJointesWithStream", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto savePieceJointesWithStream(@RequestParam("idAgent") int idAgent, 
 			@RequestParam("idDemande") int idDemande,
-			@FormDataParam("fileInputStream") FormDataMultiPart files2,
-			@FormDataParam("fileInputStream") FormDataBodyPart files3,
-			@FormDataParam("fileInputStream") ArrayList<FormDataBodyPart> files4,
-			//@FormDataParam("fileInputStream") InputStream[] files4,
-			MultipartHttpServletRequest request,
-			HttpServletRequest request2,
+			@FormDataParam("fileInputStream") InputStream files,
 			HttpServletResponse response) {
 
 		logger.debug("entered GET [demandes/getDemandeControleMedical] => getDemandeControleMedical ");
-		
-		return new ReturnMessageDto();
 
-		/*ControleMedicalDto result = absenceService.getDemandeControleMedical(idDemandeMaladie);
+		ReturnMessageDto returnMessage = absenceService.savePieceJointesWithStream(files, idAgent, idDemande);
 
-		return result;*/
+		return returnMessage;
 	}
 	/* =============================
 	 * The code above is not stable. 

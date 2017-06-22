@@ -302,6 +302,22 @@ public class AbsenceService implements IAbsenceService {
 			throw new Exception("La demande n'a pas été sauvegardée.");
 		return demande.getIdDemande();
 	}
+	
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto savePieceJointesWithStream(InputStream stream, Integer idAgent, Integer idDemande) {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
+		if (demande == null) {
+			result.getErrors().add("La demande n'a pas pu être trouvé.");
+		}
+		
+		result = alfrescoCMISService.uploadDocumentWithBuffer(idAgent, stream, demande, result, "pdf");
+				
+		return result;
+	}
 
 	private void sendEmailInformation(Demande demande, ReturnMessageDto returnDto) {
 		// #31759 : si AT ou rechute AT, alors il faut envoyer un mail à la DRH (groupe destinataires parametrer dans SIRH)
