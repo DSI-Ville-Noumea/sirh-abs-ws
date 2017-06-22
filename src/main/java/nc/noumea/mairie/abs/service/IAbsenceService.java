@@ -86,4 +86,6 @@ public interface IAbsenceService {
 	ControleMedical mapControleMedicalDtoToControleMedical(ControleMedicalDto dto);
 
 	ControleMedicalDto getDemandeControleMedical(Integer idDemandeMaladie);
+
+	Integer saveDemandeWithoutPJ(Integer idAgent, DemandeDto demandeDto) throws Exception;
 }

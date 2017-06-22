@@ -223,47 +223,12 @@ public class AbsenceService implements IAbsenceService {
 	@Transactional(value = "absTransactionManager")
 	public ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto) {
 
-		demandeRepository.setFlushMode(FlushModeType.COMMIT);
 		ReturnMessageDto returnDto = new ReturnMessageDto();
-
-		// verification des droits
-		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getAgentWithServiceDto().getIdAgent(), returnDto);
-		if (!returnDto.getErrors().isEmpty())
-			throw new ReturnMessageDtoException(returnDto);
-
-		Demande demande = null;
-		Date dateJour = new Date();
-
-		demande = mappingDemandeSpecifique(demandeDto, demande, idAgent, dateJour, returnDto);
+		
+		Demande demande = persistDemande(idAgent, demandeDto, returnDto);
 		
 		boolean isCreation = demande.getIdDemande() == null;
-
-		if (returnDto.getErrors().size() != 0) {
-			demandeRepository.clear();
-			throw new ReturnMessageDtoException(returnDto);
-		}
-
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
-				.getFactory(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
-
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, false);
-
-		if (returnDto.getErrors().size() != 0) {
-			demandeRepository.clear();
-			throw new ReturnMessageDtoException(returnDto);
-		}
-
-		alfrescoCMISService.uploadDocument(idAgent, demandeDto, demande, returnDto, true, false);
-
-		if (returnDto.getErrors().size() != 0) {
-			demandeRepository.clear();
-			throw new ReturnMessageDtoException(returnDto);
-		}
-
-		demandeRepository.persistEntity(demande);
-		demandeRepository.flush();
-		demandeRepository.clear();
-
+		
 		if (isCreation) {
 			try {
 				// #31759
@@ -285,6 +250,57 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		return returnDto;
+	}
+
+	@Transactional(value = "absTransactionManager")
+	public Demande persistDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto) {
+
+		demandeRepository.setFlushMode(FlushModeType.COMMIT);
+
+		returnDto = returnDto != null ? returnDto : new ReturnMessageDto();
+		
+		// verification des droits
+		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getAgentWithServiceDto().getIdAgent(), returnDto);
+		if (!returnDto.getErrors().isEmpty())
+			throw new ReturnMessageDtoException(returnDto);
+
+		Demande demande = null;
+		Date dateJour = new Date();
+
+		demande = mappingDemandeSpecifique(demandeDto, demande, idAgent, dateJour, returnDto);
+
+		if (returnDto.getErrors().size() != 0) {
+			demandeRepository.clear();
+			throw new ReturnMessageDtoException(returnDto);
+		}
+
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
+				.getFactory(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
+
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, false);
+
+		if (returnDto.getErrors().size() != 0) {
+			demandeRepository.clear();
+			returnDto.getErrors().add("erreur : ");
+			return null;
+			//throw new ReturnMessageDtoException(returnDto);
+		}
+
+		demandeRepository.persistEntity(demande);
+		demandeRepository.flush();
+		demandeRepository.clear();
+		
+		return demande;
+		
+	}
+	
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public Integer saveDemandeWithoutPJ(Integer idAgent, DemandeDto demandeDto) throws Exception {
+		Demande demande = persistDemande(idAgent, demandeDto, null);
+		if (demande == null || demande.getIdDemande() == null)
+			throw new Exception("La demande n'a pas été sauvegardée.");
+		return demande.getIdDemande();
 	}
 
 	private void sendEmailInformation(Demande demande, ReturnMessageDto returnDto) {

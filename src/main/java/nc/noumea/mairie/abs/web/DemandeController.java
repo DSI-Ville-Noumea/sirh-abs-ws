@@ -1,11 +1,15 @@
 package nc.noumea.mairie.abs.web;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +20,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.FormDataParam;
 
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
@@ -600,5 +611,56 @@ public class DemandeController {
 
 		return result;
 	}
+	
+	
+
+	/* =============================
+	 * The code below is not stable. 
+	 * In test for #37756 
+	 * =============================
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/saveDemandeWithoutPJ", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public String saveDemandeWithoutPJ(@RequestParam("idAgent") int idAgent, @RequestBody(required = true) DemandeDto dto,
+			HttpServletResponse response) throws Exception {
+
+		logger.debug("entered POST [demandes/demande] => setDemandeAbsence for Kiosque with parameters idAgent = {} and demandeDto={} ", idAgent,
+				dto.getDtoToString(dto));
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		Integer returnId = null;
+		
+		returnId = absenceService.saveDemandeWithoutPJ(convertedIdAgent, dto);
+		
+		return returnId.toString();
+	}
+	
+
+	@ResponseBody
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@RequestMapping(value = "/savePieceJointesWithStream", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto savePieceJointesWithStream(@RequestParam("idAgent") int idAgent, 
+			@RequestParam("idDemande") int idDemande,
+			@FormDataParam("fileInputStream") FormDataMultiPart files2,
+			@FormDataParam("fileInputStream") FormDataBodyPart files3,
+			@FormDataParam("fileInputStream") ArrayList<FormDataBodyPart> files4,
+			//@FormDataParam("fileInputStream") InputStream[] files4,
+			MultipartHttpServletRequest request,
+			HttpServletRequest request2,
+			HttpServletResponse response) {
+
+		logger.debug("entered GET [demandes/getDemandeControleMedical] => getDemandeControleMedical ");
+		
+		return new ReturnMessageDto();
+
+		/*ControleMedicalDto result = absenceService.getDemandeControleMedical(idDemandeMaladie);
+
+		return result;*/
+	}
+	/* =============================
+	 * The code above is not stable. 
+	 * In test for #37756 
+	 * =============================
+	 */
 
 }
