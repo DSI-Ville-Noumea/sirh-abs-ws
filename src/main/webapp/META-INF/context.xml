@@ -17,7 +17,7 @@
 	<!--  -->	
 	<Resource name="jdbc/ABS_WS_DS1" auth="Container" type="javax.sql.DataSource"
 		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1"
-		maxWait="10000" initialSize="1" username="abs_adm" password="***REMOVED***"
+		maxWait="10000" initialSize="1" username="abs_adm" password="changemi"
 		driverClassName="org.postgresql.Driver" url="jdbc:postgresql://localhost:5432/sirh"
 		poolPreparedStatements="true" />
 
@@ -28,7 +28,7 @@
 		timeBetweenEvictionRunsMillis="30000" maxActive="300" maxIdle="30"
 		maxWait="30000" initialSize="10" removeAbandonedTimeout="500"
 		removeAbandoned="true" logAbandoned="true" minEvictableIdleTimeMillis="30000"
-		jmxEnabled="true" username="opensirh" password="***REMOVED***"
+		jmxEnabled="true" username="opensirh" password="XHUZJ9BBQY"
 		driverClassName="com.ibm.as400.access.AS400JDBCDriver" url="jdbc:as400://robinnw;naming=system;libraries=MAIRIE,SYSIBM;" />
 		
 		
@@ -63,10 +63,10 @@
 		value="http://svi-alfresco.site-mairie.noumea.nc:8080/" override="false" />
 		
 	<Environment name="ALFRESCO_LOGIN" type="java.lang.String" description="Login to Alfresco" 
-		value="***REMOVED***" override="false" />
+		value="adminSIRH" override="false" />
 		
 	<Environment name="ALFRESCO_PASSWORD" type="java.lang.String" description="Password to Alfresco" 
-		value="***REMOVED***" override="false" />
+		value="adminSIRH" override="false" />
 
 	<!-- -->
 	<!-- AUTRE PARAM -->
