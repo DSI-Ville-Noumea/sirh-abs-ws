@@ -1,7 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;

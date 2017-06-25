@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,9 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartRequest;
 
+import com.sun.jersey.multipart.BodyPart;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.FormDataParam;
@@ -637,20 +638,42 @@ public class DemandeController {
 	}
 	
 
-	@ResponseBody
+	/*@ResponseBody
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@RequestMapping(value = "/savePieceJointesWithStream", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto savePieceJointesWithStream(@RequestParam("idAgent") int idAgent, 
 			@RequestParam("idDemande") int idDemande,
 			@FormDataParam("fileInputStream") InputStream files,
+			FormDataMultiPart formParams,
 			HttpServletResponse response) {
 
 		logger.debug("entered GET [demandes/getDemandeControleMedical] => getDemandeControleMedical ");
+		
+		List<FormDataBodyPart> bodyParts = formParams.getFields("files");
+		Map<String, List<FormDataBodyPart>> fieldsByName = formParams.getFields();
 
 		ReturnMessageDto returnMessage = absenceService.savePieceJointesWithStream(files, idAgent, idDemande);
 
 		return returnMessage;
+	}*/
+	
+
+	@ResponseBody
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@RequestMapping(value = "/savePieceJointesWithStream", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto savePieceJointesWithStream(@FormDataParam("file") ArrayList<InputStream> array, @FormDataParam("file") ArrayList<FormDataBodyPart> list, FormDataMultiPart multiPart) {
+
+		logger.debug("entered GET [demandes/getDemandeControleMedical] => getDemandeControleMedical ");
+		
+		/*List<FormDataBodyPart> bodyParts = formParams.getFields("files");
+		Map<String, List<FormDataBodyPart>> fieldsByName = formParams.getFields();*/
+
+		//ReturnMessageDto returnMessage = absenceService.savePieceJointesWithStream(null, 9004445, 150647);
+
+		//return returnMessage;
+		return new ReturnMessageDto();
 	}
+	
 	/* =============================
 	 * The code above is not stable. 
 	 * In test for #37756 

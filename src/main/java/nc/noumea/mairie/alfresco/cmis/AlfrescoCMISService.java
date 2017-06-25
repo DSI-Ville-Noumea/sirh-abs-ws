@@ -11,16 +11,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.PieceJointe;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
-import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
-import nc.noumea.mairie.abs.dto.DemandeDto;
-import nc.noumea.mairie.abs.dto.PieceJointeDto;
-import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.ws.ISirhWSConsumer;
-
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -39,6 +29,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.PieceJointe;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.PieceJointeDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 @Service
 public class AlfrescoCMISService implements IAlfrescoCMISService {
