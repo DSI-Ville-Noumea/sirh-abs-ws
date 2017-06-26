@@ -86,4 +86,6 @@ public interface IAbsenceService {
 	ControleMedical mapControleMedicalDtoToControleMedical(ControleMedicalDto dto);
 
 	ControleMedicalDto getDemandeControleMedical(Integer idDemandeMaladie);
+
+	List<DemandeDto> getListeATReferenceForAgent(Integer idAgent);
 }
