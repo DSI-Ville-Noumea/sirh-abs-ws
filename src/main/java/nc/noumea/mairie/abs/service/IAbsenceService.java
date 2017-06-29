@@ -11,11 +11,12 @@ import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefAlimCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
 public interface IAbsenceService {
 
-	ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto);
+	ReturnMessageDemandeDto saveDemande(Integer idAgent, DemandeDto demandeDto);
 
 	DemandeDto getDemandeDto(Integer idDemande);
 
@@ -87,8 +88,6 @@ public interface IAbsenceService {
 	ControleMedical mapControleMedicalDtoToControleMedical(ControleMedicalDto dto);
 
 	ControleMedicalDto getDemandeControleMedical(Integer idDemandeMaladie);
-
-	Integer saveDemandeWithoutPJ(Integer idAgent, DemandeDto demandeDto) throws Exception;
 	
-	ReturnMessageDto savePieceJointesWithStream(InputStream stream, Integer idAgent, Integer demandeDto);
+	ReturnMessageDto savePieceJointesWithStream(InputStream stream, Integer idAgent, Integer idAgentOperateur, Integer idDemande, String typeFile);
 }

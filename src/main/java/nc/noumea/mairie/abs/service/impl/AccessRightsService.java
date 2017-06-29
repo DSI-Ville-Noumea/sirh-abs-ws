@@ -67,7 +67,7 @@ public class AccessRightsService implements IAccessRightsService {
 			Droit da = accessRightsRepository.getAgentAccessRights(idAgent);
 
 			if (null == da) {
-				logger.debug("Aucun droit trouvé pour l'agent {}" + idAgent);
+				logger.debug("Aucun droit trouvé pour l'agent {}", idAgent);
 				return result;
 			}
 

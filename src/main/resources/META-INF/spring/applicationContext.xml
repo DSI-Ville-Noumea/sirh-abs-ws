@@ -62,10 +62,7 @@
 		<property name="entityManagerFactory" ref="absEntityManagerFactory" />
 		<qualifier value="absTransactionManager"/>
 	</bean>
-	
-	<bean id="multipartResolver"
-    	class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-	</bean>
+
 	<bean
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
 		id="absEntityManagerFactory">

@@ -67,9 +67,6 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 	@Autowired
 	private CreateSession createSession;
 	
-	@Autowired
-	private CmisService cmisService;
-	
 	@PostConstruct
 	public void init() {
 		AlfrescoCMISService.staticAlfrescoUrl = alfrescoUrl;
@@ -238,8 +235,10 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 		return returnDto;
 	}
 
+	//TODO reduire la taille de cette methode
 	@Override
-	public ReturnMessageDto uploadDocumentWithBuffer(Integer idAgent, InputStream inputStream, Demande demande,	ReturnMessageDto returnDto, String typeFile) {
+	public ReturnMessageDto uploadDocumentWithBuffer(Integer idAgent, Integer idAgentOperateur, InputStream inputStream, 
+			Demande demande, ReturnMessageDto returnDto, String typeFile) {
 		
 		if(null == RefTypeGroupeAbsenceEnum.getPathAlfrescoByType(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
 			return returnDto;
@@ -294,10 +293,27 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 
 	    Document doc = null;
 	    boolean isCreated = false;
-	    while(!isCreated) {
+	    int incrementDoc = 1;
+	    
+	    //TODO sortir ce bout de code en fonction
+	    // creation du nom de fichier
+	    boolean nameOk = false;
+		String name = null;
+	    whileNameOk:while(!nameOk) {
 	    	
-	    	String name = CmisUtils.getPatternAbsence(demande.getType().getGroupe().getCode(), nom, prenom, demande.getDateDebut(), 1);
-		    
+	    	name = CmisUtils.getPatternAbsence(demande.getType().getGroupe().getCode(), nom, prenom, demande.getDateDebut(), incrementDoc);
+		    for(PieceJointe pj : demande.getPiecesJointes()) {
+		    	if(name.equals(pj.getTitre())) {
+		    		incrementDoc++;
+		    		continue whileNameOk;
+		    	}
+		    }
+
+	    	nameOk= true;
+	    }
+	    
+	    
+	    while(!isCreated) {
 	    	// properties 
 			Map<String, Object> properties = new HashMap<String, Object>();
 			properties.put(PropertyIds.NAME, name);
@@ -312,6 +328,8 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 		    	isCreated = true;
 		    } catch(CmisContentAlreadyExistsException e) {
 		    	logger.debug(e.getMessage());
+		    	incrementDoc++;
+		    	name = CmisUtils.getPatternAbsence(demande.getType().getGroupe().getCode(), nom, prenom, demande.getDateDebut(), incrementDoc);
 		    }
 	    }
 		
@@ -335,8 +353,7 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 	 
 		HashMap<String, Object> props = new HashMap<String, Object>();
 		props.put("mairie:idAgentOwner", demande.getIdAgent());
-		props.put("mairie:idAgentCreateur", 9004445);
-		props.put("mairie:commentaire", "test");
+		props.put("mairie:idAgentCreateur", idAgentOperateur);
 		doc.updateProperties(props);
 		
 		PieceJointe pj = new PieceJointe();
@@ -364,6 +381,20 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 		
 		return description;
 	}
+
+	@Override
+	public ReturnMessageDto removeDocument(ReturnMessageDto returnDto, Demande demande, DemandeDto demandeDto) {
+		Session session = null;
+		try {
+			session = createSession.getSession(alfrescoUrl, alfrescoLogin, alfrescoPassword);
+		} catch(CmisConnectionException e) {
+			logger.debug("Erreur de connexion a Alfresco CMIS : " + e.getMessage());
+			returnDto.getErrors().add("Erreur de connexion à Alfresco CMIS");
+			return returnDto;
+		}
+		
+		return removeDocument(session, returnDto, demande, demandeDto);
+	}
 	
 	@Override
 	public ReturnMessageDto removeDocument(Session session, ReturnMessageDto returnDto, Demande demande, DemandeDto demandeDto) {
@@ -379,7 +410,8 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 				// si oui on fait rien
 				if(null != demandeDto.getPiecesJointes()) {
 					for(PieceJointeDto pjDto : demandeDto.getPiecesJointes()) {
-						if(pjDto.getIdPieceJointe().equals(pj.getIdPieceJointe())) {
+						if(pjDto.getIdPieceJointe() == null ||  // #37756 dans le cas d une nouvelle piece jointe, celle ci est creee apres par un nouvel appel de WS demandes/savePieceJointesWithStream
+								pjDto.getIdPieceJointe().equals(pj.getIdPieceJointe())) {
 							isExistInDto = true;
 							break;
 						}
