@@ -299,6 +299,10 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 	    // creation du nom de fichier
 	    boolean nameOk = false;
 		String name = null;
+		
+		// Attention : Si deux demandes sont posées le même jour (matin / après-midi), le nom des pièces jointes sera le même. 
+		// On va perdre le stream, et les pièces jointes ne seront pas sauvegardées correctement.
+		// TODO : MAJ cmisUtils pour chercher si un fichier portant ce nom existe déjà.
 	    whileNameOk:while(!nameOk) {
 	    	
 	    	name = CmisUtils.getPatternAbsence(demande.getType().getGroupe().getCode(), nom, prenom, demande.getDateDebut(), incrementDoc);
@@ -399,19 +403,18 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 	@Override
 	public ReturnMessageDto removeDocument(Session session, ReturnMessageDto returnDto, Demande demande, DemandeDto demandeDto) {
 		
-		if(null != demande.getPiecesJointes()) {
+		if (null != demande.getPiecesJointes()) {
 			
 			List<PieceJointe> listPJToDelete = new ArrayList<PieceJointe>(); 
 			
-			for(PieceJointe pj : demande.getPiecesJointes()) {
+			for (PieceJointe pj : demande.getPiecesJointes()) {
 				
 				boolean isExistInDto = false;
-				// la pj est elle encore presente dans le DTO
-				// si oui on fait rien
-				if(null != demandeDto.getPiecesJointes()) {
-					for(PieceJointeDto pjDto : demandeDto.getPiecesJointes()) {
-						if(pjDto.getIdPieceJointe() == null ||  // #37756 dans le cas d une nouvelle piece jointe, celle ci est creee apres par un nouvel appel de WS demandes/savePieceJointesWithStream
-								pjDto.getIdPieceJointe().equals(pj.getIdPieceJointe())) {
+				// Si la pj est encore presente dans le DTO, on fait rien
+				if (null != demandeDto.getPiecesJointes()) {
+					for (PieceJointeDto pjDto : demandeDto.getPiecesJointes()) {
+						// #37756 dans le cas d une nouvelle piece jointe, celle ci est creee apres par un nouvel appel de WS demandes/savePieceJointesWithStream
+						if (pjDto.getIdPieceJointe() != null && pjDto.getIdPieceJointe().equals(pj.getIdPieceJointe())) {
 							isExistInDto = true;
 							break;
 						}
