@@ -11,16 +11,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.PieceJointe;
-import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
-import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
-import nc.noumea.mairie.abs.dto.DemandeDto;
-import nc.noumea.mairie.abs.dto.PieceJointeDto;
-import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.ws.ISirhWSConsumer;
-
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -39,6 +29,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.PieceJointe;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.PieceJointeDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 @Service
 public class AlfrescoCMISService implements IAlfrescoCMISService {
@@ -66,9 +66,6 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 	
 	@Autowired
 	private CreateSession createSession;
-	
-	@Autowired
-	private CmisService cmisService;
 	
 	@PostConstruct
 	public void init() {
@@ -237,6 +234,144 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 		
 		return returnDto;
 	}
+
+	//TODO reduire la taille de cette methode
+	@Override
+	public ReturnMessageDto uploadDocumentWithBuffer(Integer idAgent, Integer idAgentOperateur, InputStream inputStream, 
+			Demande demande, ReturnMessageDto returnDto, String typeFile) {
+		
+		if(null == RefTypeGroupeAbsenceEnum.getPathAlfrescoByType(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
+			return returnDto;
+		}
+		
+		// si pas de fichier, pas d upload
+		if(null == inputStream) {
+			return returnDto;
+		}
+		
+		Session session = null;
+		try {
+			session = createSession.getSession(alfrescoUrl, alfrescoLogin, alfrescoPassword);
+		} catch(CmisConnectionException e) {
+			logger.debug("Erreur de connexion a Alfresco CMIS : " + e.getMessage());
+			returnDto.getErrors().add("Erreur de connexion à Alfresco CMIS");
+			return returnDto;
+		}
+		
+		AgentGeneriqueDto agentDto = sirhWsConsumer.getAgent(demande.getIdAgent());
+		String nom = "";
+		String prenom = "";
+		if(null != agentDto) {
+    		nom = agentDto.getDisplayNom();
+    		prenom = agentDto.getDisplayPrenom();
+		}
+		
+		// on cherche le repertoire distant 
+	    CmisObject object = null;
+	    try {
+	    	object = session.getObjectByPath(CmisUtils.getPathAbsence(
+	    			demande.getIdAgent(), nom, prenom, demande.getType().getGroupe().getIdRefGroupeAbsence(), false));
+	    } catch(CmisUnauthorizedException e) {
+	    	logger.debug("Probleme d autorisation Alfresco CMIS : " + e.getMessage());
+			returnDto.getErrors().add("Erreur Alfresco CMIS : non autorisé");
+			return returnDto;
+	    } catch(CmisObjectNotFoundException e) {
+	    	logger.debug("Le dossier agent n'existe pas sous Alfresco : " + e.getMessage());
+			returnDto.getErrors().add("Impossible d'ajouter une pièce jointe : répertoire distant non trouvé.");
+			return returnDto;
+	    }
+	    
+	    if(null == object) {
+	    	returnDto.getErrors().add(CmisUtils.ERROR_PATH);
+	    	return returnDto;
+	    }
+	    
+	    Folder folder = (Folder) object;
+	    int maxItemsPerPage = 5;
+	    OperationContext operationContext = session.createOperationContext();
+	    operationContext.setMaxItemsPerPage(maxItemsPerPage);
+
+	    Document doc = null;
+	    boolean isCreated = false;
+	    int incrementDoc = 1;
+	    
+	    //TODO sortir ce bout de code en fonction
+	    // creation du nom de fichier
+	    boolean nameOk = false;
+		String name = null;
+		
+		// Attention : Si deux demandes sont posées le même jour (matin / après-midi), le nom des pièces jointes sera le même. 
+		// On va perdre le stream, et les pièces jointes ne seront pas sauvegardées correctement.
+		// TODO : MAJ cmisUtils pour chercher si un fichier portant ce nom existe déjà.
+	    whileNameOk:while(!nameOk) {
+	    	
+	    	name = CmisUtils.getPatternAbsence(demande.getType().getGroupe().getCode(), nom, prenom, demande.getDateDebut(), incrementDoc);
+		    for(PieceJointe pj : demande.getPiecesJointes()) {
+		    	if(name.equals(pj.getTitre())) {
+		    		incrementDoc++;
+		    		continue whileNameOk;
+		    	}
+		    }
+
+	    	nameOk= true;
+	    }
+	    
+	    
+	    while(!isCreated) {
+	    	// properties 
+			Map<String, Object> properties = new HashMap<String, Object>();
+			properties.put(PropertyIds.NAME, name);
+			properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+			properties.put(PropertyIds.DESCRIPTION, getDescriptionOfAbsence(demande));
+			
+			ContentStream contentStream = new ContentStreamImpl(name, null, typeFile, inputStream);
+		    
+			// create a major version
+		    try {
+		    	doc = folder.createDocument(properties, contentStream, VersioningState.MAJOR);
+		    	isCreated = true;
+		    } catch(CmisContentAlreadyExistsException e) {
+		    	logger.debug(e.getMessage());
+		    	incrementDoc++;
+		    	name = CmisUtils.getPatternAbsence(demande.getType().getGroupe().getCode(), nom, prenom, demande.getDateDebut(), incrementDoc);
+		    }
+	    }
+		
+		if(null == doc) {
+			returnDto.getErrors().add(CmisUtils.ERROR_UPLOAD);
+			return returnDto;
+		}
+		
+		if(null != doc.getProperty("cmis:secondaryObjectTypeIds")) {
+			List<Object> aspects = doc.getProperty("cmis:secondaryObjectTypeIds").getValues();
+			if (!aspects.contains("P:mairie:customDocumentAspect")) {
+				aspects.add("P:mairie:customDocumentAspect");
+				HashMap<String, Object> props = new HashMap<String, Object>();
+				props.put("cmis:secondaryObjectTypeIds", aspects);
+				doc.updateProperties(props);
+				logger.debug("Added aspect");
+			} else {
+				logger.debug("Doc already had aspect");
+			}
+		}
+	 
+		HashMap<String, Object> props = new HashMap<String, Object>();
+		props.put("mairie:idAgentOwner", demande.getIdAgent());
+		props.put("mairie:idAgentCreateur", idAgentOperateur);
+		doc.updateProperties(props);
+		
+		PieceJointe pj = new PieceJointe();
+		pj.setNodeRefAlfresco(doc.getProperty("alfcmis:nodeRef").getFirstValue().toString());
+		pj.setTitre(doc.getName());
+		pj.setDemande(demande);
+		pj.setDateModification(new Date());
+		pj.setVisibleKiosque(true);
+		pj.setVisibleSirh(true);
+		
+		demande.getPiecesJointes().add(pj);
+		
+		return returnDto;
+	}
 	
 	private String getDescriptionOfAbsence(Demande demande) {
 		String description = "";
@@ -250,22 +385,36 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 		
 		return description;
 	}
+
+	@Override
+	public ReturnMessageDto removeDocument(ReturnMessageDto returnDto, Demande demande, DemandeDto demandeDto) {
+		Session session = null;
+		try {
+			session = createSession.getSession(alfrescoUrl, alfrescoLogin, alfrescoPassword);
+		} catch(CmisConnectionException e) {
+			logger.debug("Erreur de connexion a Alfresco CMIS : " + e.getMessage());
+			returnDto.getErrors().add("Erreur de connexion à Alfresco CMIS");
+			return returnDto;
+		}
+		
+		return removeDocument(session, returnDto, demande, demandeDto);
+	}
 	
 	@Override
 	public ReturnMessageDto removeDocument(Session session, ReturnMessageDto returnDto, Demande demande, DemandeDto demandeDto) {
 		
-		if(null != demande.getPiecesJointes()) {
+		if (null != demande.getPiecesJointes()) {
 			
 			List<PieceJointe> listPJToDelete = new ArrayList<PieceJointe>(); 
 			
-			for(PieceJointe pj : demande.getPiecesJointes()) {
+			for (PieceJointe pj : demande.getPiecesJointes()) {
 				
 				boolean isExistInDto = false;
-				// la pj est elle encore presente dans le DTO
-				// si oui on fait rien
-				if(null != demandeDto.getPiecesJointes()) {
-					for(PieceJointeDto pjDto : demandeDto.getPiecesJointes()) {
-						if(pjDto.getIdPieceJointe().equals(pj.getIdPieceJointe())) {
+				// Si la pj est encore presente dans le DTO, on fait rien
+				if (null != demandeDto.getPiecesJointes()) {
+					for (PieceJointeDto pjDto : demandeDto.getPiecesJointes()) {
+						// #37756 dans le cas d une nouvelle piece jointe, celle ci est creee apres par un nouvel appel de WS demandes/savePieceJointesWithStream
+						if (pjDto.getIdPieceJointe() != null && pjDto.getIdPieceJointe().equals(pj.getIdPieceJointe())) {
 							isExistInDto = true;
 							break;
 						}

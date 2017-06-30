@@ -62,6 +62,7 @@
 		<property name="entityManagerFactory" ref="absEntityManagerFactory" />
 		<qualifier value="absTransactionManager"/>
 	</bean>
+
 	<bean
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
 		id="absEntityManagerFactory">

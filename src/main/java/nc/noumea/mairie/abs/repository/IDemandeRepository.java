@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 
 public interface IDemandeRepository {

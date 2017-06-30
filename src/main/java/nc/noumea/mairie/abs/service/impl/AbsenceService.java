@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,6 +71,7 @@ import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefAlimCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -109,158 +111,123 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 @Service
 public class AbsenceService implements IAbsenceService {
 
-	private Logger								logger						= LoggerFactory.getLogger(AbsenceService.class);
+	private Logger logger = LoggerFactory.getLogger(AbsenceService.class);
 
 	@Autowired
-	private IDemandeRepository					demandeRepository;
+	private IDemandeRepository demandeRepository;
 
 	@Autowired
-	private IControleMedicalRepository			controleMedicalRepository;
+	private IControleMedicalRepository controleMedicalRepository;
 
 	@Autowired
-	private IFiltreRepository					filtreRepository;
+	private IFiltreRepository filtreRepository;
 
 	@Autowired
-	private IAccessRightsRepository				accessRightsRepository;
+	private IAccessRightsRepository accessRightsRepository;
 
 	@Autowired
-	private IAccessRightsService				accessRightsService;
+	private IAccessRightsService accessRightsService;
 
 	@Autowired
-	private ISirhRepository						sirhRepository;
+	private ISirhRepository sirhRepository;
 
 	@Autowired
-	private IFiltreService						filtresService;
+	private IFiltreService filtresService;
 
 	@Autowired
-	private DataConsistencyRulesFactory			dataConsistencyRulesFactory;
+	private DataConsistencyRulesFactory dataConsistencyRulesFactory;
 
 	@Autowired
-	private JavaMailSender						mailSender;
+	private JavaMailSender mailSender;
 
 	@Autowired
 	@Qualifier("DefaultAbsenceDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules		absenceDataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl;
 
 	@Autowired
 	@Qualifier("AbsMaladiesDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules		absMaladiesDataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules absMaladiesDataConsistencyRulesImpl;
 
 	@Autowired
 	@Qualifier("AbsCongesAnnuelsDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules		absCongesAnnuelsDataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules absCongesAnnuelsDataConsistencyRulesImpl;
 
 	@Autowired
 	@Qualifier("AbsCongesExcepDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules		absCongesExcepDataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules absCongesExcepDataConsistencyRulesImpl;
 
 	@Autowired
 	@Qualifier("AbsAsaDataConsistencyRulesImpl")
-	private IAbsenceDataConsistencyRules		absAsaDataConsistencyRulesImpl;
+	private IAbsenceDataConsistencyRules absAsaDataConsistencyRulesImpl;
 
 	@Autowired
-	private HelperService						helperService;
+	private HelperService helperService;
 
 	@Autowired
-	private IAgentMatriculeConverterService		agentMatriculeService;
+	private IAgentMatriculeConverterService agentMatriculeService;
 
 	@Autowired
-	private CounterServiceFactory				counterServiceFactory;
+	private CounterServiceFactory counterServiceFactory;
 
 	@Autowired
-	private ISirhWSConsumer						sirhWSConsumer;
+	private ISirhWSConsumer sirhWSConsumer;
 
 	@Autowired
-	private IOrganisationSyndicaleRepository	OSRepository;
+	private IOrganisationSyndicaleRepository OSRepository;
 
 	@Autowired
-	private ICongesAnnuelsRepository			congeAnnuelRepository;
+	private ICongesAnnuelsRepository congeAnnuelRepository;
 
 	@Autowired
-	private IReposCompensateurRepository		reposCompensateurRepository;
+	private IReposCompensateurRepository reposCompensateurRepository;
 
 	@Autowired
-	private IRecuperationRepository				recuperationRepository;
+	private IRecuperationRepository recuperationRepository;
 
 	@Autowired
-	private ITypeAbsenceRepository				typeAbsenceRepository;
+	private ITypeAbsenceRepository typeAbsenceRepository;
 
 	@Autowired
-	private ICounterRepository					counterRepository;
+	private ICounterRepository counterRepository;
 
 	@Autowired
-	private IAgentService						agentService;
+	private IAgentService agentService;
 
 	@Autowired
-	private IAlfrescoCMISService				alfrescoCMISService;
+	private IAlfrescoCMISService alfrescoCMISService;
 
 	@Autowired
 	@Qualifier("typeEnvironnement")
-	private String								typeEnvironnement;
+	private String typeEnvironnement;
 
-	private static final String					ETAT_DEMANDE_INCHANGE		= "L'état de la demande est inchangé.";
-	private static final String					DEMANDE_INEXISTANTE			= "La demande n'existe pas.";
-	private static final String					ETAT_DEMANDE_INCORRECT		= "L'état de la demande envoyée n'est pas correct.";
-	protected static final String				BASE_CA_NON_TROUVEE			= "Base congé non trouvée pour l'agent [%d].";
-	protected static final String				MAUVAIS_BASE_CA				= "Mauvaise base congé pour l'agent [%d].";
-	public static final String					AGENT_NON_HABILITE			= "L'agent n'est pas habilité pour cette opération.";
-	protected static final String				COMPTEUR_INEXISTANT_SPSOLD	= "Le compteur de congé annuel n'existe pas.";
-	protected static final String				COMPTEUR_INEXISTANT_SPSORC	= "Le compteur de repos compensateur n'existe pas.";
-	public static final String					STATUT_AGENT				= "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
+	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
+	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
+	private static final String ETAT_DEMANDE_INCORRECT = "L'état de la demande envoyée n'est pas correct.";
+	protected static final String BASE_CA_NON_TROUVEE = "Base congé non trouvée pour l'agent [%d].";
+	protected static final String MAUVAIS_BASE_CA = "Mauvaise base congé pour l'agent [%d].";
+	public static final String AGENT_NON_HABILITE = "L'agent n'est pas habilité pour cette opération.";
+	protected static final String COMPTEUR_INEXISTANT_SPSOLD = "Le compteur de congé annuel n'existe pas.";
+	protected static final String COMPTEUR_INEXISTANT_SPSORC = "Le compteur de repos compensateur n'existe pas.";
+	public static final String STATUT_AGENT = "L'agent [%d] ne peut pas avoir de repos compensateur. Les repos compensateurs sont pour les contractuels ou les conventions collectives.";
 
 	// POUR LES MESSAGE A ENVOYE AU PROJET SIRH-PTG-WS
-	public static final String					AVERT_MESSAGE_ABS			= "%s : Soyez vigilant, vous avez pointé sur une absence de type '%s' pour l'agent %s.";
-	public static final String					RECUP_MSG					= "%s : L'agent %s est en récupération sur cette période.";
-	public static final String					REPOS_COMP_MSG				= "%s : L'agent %s est en repos compensateur sur cette période.";
-	public static final String					ASA_MSG						= "%s : L'agent %s est en absence syndicale sur cette période.";
-	public static final String					CONGE_EXCEP_MSG				= "%s : L'agent %s est en congé exceptionnel sur cette période.";
-	public static final String					CONGE_ANNUEL_MSG			= "%s : L'agent %s est en congé annuel sur cette période.";
-	public static final String					MALADIE_MSG					= "%s : L'agent %s est en maladie sur cette période.";
+	public static final String AVERT_MESSAGE_ABS = "%s : Soyez vigilant, vous avez pointé sur une absence de type '%s' pour l'agent %s.";
+	public static final String RECUP_MSG = "%s : L'agent %s est en récupération sur cette période.";
+	public static final String REPOS_COMP_MSG = "%s : L'agent %s est en repos compensateur sur cette période.";
+	public static final String ASA_MSG = "%s : L'agent %s est en absence syndicale sur cette période.";
+	public static final String CONGE_EXCEP_MSG = "%s : L'agent %s est en congé exceptionnel sur cette période.";
+	public static final String CONGE_ANNUEL_MSG = "%s : L'agent %s est en congé annuel sur cette période.";
+	public static final String MALADIE_MSG = "%s : L'agent %s est en maladie sur cette période.";
 
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public ReturnMessageDto saveDemande(Integer idAgent, DemandeDto demandeDto) {
+	public ReturnMessageDemandeDto saveDemande(Integer idAgent, DemandeDto demandeDto) {
 
-		demandeRepository.setFlushMode(FlushModeType.COMMIT);
-		ReturnMessageDto returnDto = new ReturnMessageDto();
+		ReturnMessageDemandeDto returnDto = new ReturnMessageDemandeDto();
 
-		// verification des droits
-		returnDto = accessRightsService.verifAccessRightDemande(idAgent, demandeDto.getAgentWithServiceDto().getIdAgent(), returnDto);
-		if (!returnDto.getErrors().isEmpty())
-			throw new ReturnMessageDtoException(returnDto);
+		Demande demande = persistDemande(idAgent, demandeDto, returnDto);
 
-		Demande demande = null;
-		Date dateJour = new Date();
-
-		demande = mappingDemandeSpecifique(demandeDto, demande, idAgent, dateJour, returnDto);
-		
 		boolean isCreation = demande.getIdDemande() == null;
-
-		if (returnDto.getErrors().size() != 0) {
-			demandeRepository.clear();
-			throw new ReturnMessageDtoException(returnDto);
-		}
-
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
-				.getFactory(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
-
-		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, false);
-
-		if (returnDto.getErrors().size() != 0) {
-			demandeRepository.clear();
-			throw new ReturnMessageDtoException(returnDto);
-		}
-
-		alfrescoCMISService.uploadDocument(idAgent, demandeDto, demande, returnDto, true, false);
-
-		if (returnDto.getErrors().size() != 0) {
-			demandeRepository.clear();
-			throw new ReturnMessageDtoException(returnDto);
-		}
-
-		demandeRepository.persistEntity(demande);
-		demandeRepository.flush();
-		demandeRepository.clear();
 
 		if (isCreation) {
 			try {
@@ -282,14 +249,87 @@ public class AbsenceService implements IAbsenceService {
 			returnDto.getInfos().add(String.format("La demande a bien été modifiée."));
 		}
 
+		returnDto.setIdDemande(demande.getIdDemande());
+
 		return returnDto;
 	}
 
+	@Transactional(value = "absTransactionManager")
+	public Demande persistDemande(Integer idAgent, DemandeDto demandeDto, ReturnMessageDto returnDto) {
+
+		demandeRepository.setFlushMode(FlushModeType.COMMIT);
+
+		returnDto = returnDto != null ? returnDto : new ReturnMessageDto();
+
+		// verification des droits
+		returnDto = accessRightsService.verifAccessRightDemande(idAgent,
+				demandeDto.getAgentWithServiceDto().getIdAgent(), returnDto);
+		if (!returnDto.getErrors().isEmpty())
+			throw new ReturnMessageDtoException(returnDto);
+
+		Demande demande = null;
+		Date dateJour = new Date();
+
+		demande = mappingDemandeSpecifique(demandeDto, demande, idAgent, dateJour, returnDto);
+
+		if (returnDto.getErrors().size() != 0) {
+			demandeRepository.clear();
+			throw new ReturnMessageDtoException(returnDto);
+		}
+
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
+				.getFactory(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence(), demandeDto.getIdTypeDemande());
+
+		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(returnDto, idAgent, demande, false);
+
+		if (returnDto.getErrors().size() != 0) {
+			demandeRepository.clear();
+			throw new ReturnMessageDtoException(returnDto);
+		}
+
+		alfrescoCMISService.removeDocument(returnDto, demande, demandeDto);
+
+		if (returnDto.getErrors().size() != 0) {
+			demandeRepository.clear();
+			throw new ReturnMessageDtoException(returnDto);
+		}
+
+		demandeRepository.persistEntity(demande);
+		demandeRepository.flush();
+		demandeRepository.clear();
+
+		return demande;
+	}
+
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto savePieceJointesWithStream(InputStream stream, Integer idAgent, Integer idAgentOperateur,
+			Integer idDemande, String typeFile) {
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		// recuperation de la piece jointe
+		Demande demande = demandeRepository.getEntity(Demande.class, idDemande);
+
+		// verification des droits
+		result = accessRightsService.verifAccessRightDemande(idAgent, demande.getIdAgent(), result);
+
+		if (!result.getErrors().isEmpty())
+			throw new ReturnMessageDtoException(result);
+
+		result = alfrescoCMISService.uploadDocumentWithBuffer(idAgent, idAgentOperateur, stream, demande, result,
+				typeFile);
+
+		return result;
+	}
+
 	private void sendEmailInformation(Demande demande, ReturnMessageDto returnDto) {
-		// #31759 : si AT ou rechute AT, alors il faut envoyer un mail à la DRH (groupe destinataires parametrer dans SIRH)
+		// #31759 : si AT ou rechute AT, alors il faut envoyer un mail à la DRH
+		// (groupe destinataires parametrer dans SIRH)
 		// que si la demande est nouvelle
-		if (demande.getType() != null && (demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT.getValue())
-				|| demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT_RECHUTE.getValue()))) {
+		if (demande.getType() != null
+				&& (demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT.getValue()) || demande
+						.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT_RECHUTE.getValue()))) {
 
 			final DemandeMaladies dem = (DemandeMaladies) demande;
 			final String type;
@@ -317,13 +357,17 @@ public class AbsenceService implements IAbsenceService {
 
 			StringBuilder text = new StringBuilder();
 			text.append("URGENT <br> ");
-			text.append("Un " + type + "  vient d'être déclaré(e) pour l'agent " + nomAgent + " (" + dem.getIdAgent()  + ") <br>");
+			text.append("Un " + type + "  vient d'être déclaré(e) pour l'agent " + nomAgent + " (" + dem.getIdAgent()
+					+ ") <br>");
 			text.append("Opérateur : " + (nomOpe == null ? "NC" : nomOpe) + "<br>");
-			text.append("Date de déclaration : " + (dem.getDateDeclaration() == null ? "NC" : sdf.format(dem.getDateDeclaration())) + "<br>");
+			text.append("Date de déclaration : "
+					+ (dem.getDateDeclaration() == null ? "NC" : sdf.format(dem.getDateDeclaration())) + "<br>");
 			text.append("Prescripteur : " + (dem.getPrescripteur() == null ? "NC" : dem.getPrescripteur()) + "<br>");
-			text.append("Siège des lésions : " + (dem.getTypeSiegeLesion() == null ? "NC" : dem.getTypeSiegeLesion().getLibelle()) + "<br>");
+			text.append("Siège des lésions : "
+					+ (dem.getTypeSiegeLesion() == null ? "NC" : dem.getTypeSiegeLesion().getLibelle()) + "<br>");
 			text.append("Nombre ITT : " + (dem.getNombreITT() == null ? "NC" : dem.getNombreITT()) + "<br>");
-			text.append("Date de début : " + (dem.getDateDebut() == null ? "NC" : sdf.format(dem.getDateDebut())) + "<br>");
+			text.append(
+					"Date de début : " + (dem.getDateDebut() == null ? "NC" : sdf.format(dem.getDateDebut())) + "<br>");
 			text.append("Date de fin : " + (dem.getDateFin() == null ? "NC" : sdf.format(dem.getDateFin())) + "<br>");
 			text.append("Commentaire : " + dem.getCommentaire() + "<br><br>");
 
@@ -357,74 +401,87 @@ public class AbsenceService implements IAbsenceService {
 			return demandeDto;
 		}
 
-		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
-			case REPOS_COMP:
+		switch (RefTypeGroupeAbsenceEnum
+				.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
+		case REPOS_COMP:
 
-				DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, idDemande);
-				if (null == demandeReposComp) {
-					return demandeDto;
-				}
-
-				demandeDto = new DemandeDto(demandeReposComp, sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
-				demandeDto.updateEtat(demandeReposComp.getLatestEtatDemande(),
-						sirhWSConsumer.getAgentService(demandeReposComp.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()),
-						demandeReposComp.getType().getGroupe());
-				break;
-			case RECUP:
-
-				DemandeRecup demandeRecup = demandeRepository.getEntity(DemandeRecup.class, idDemande);
-				if (null == demandeRecup) {
-					return demandeDto;
-				}
-
-				demandeDto = new DemandeDto(demandeRecup, sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
-				demandeDto.updateEtat(demandeRecup.getLatestEtatDemande(),
-						sirhWSConsumer.getAgentService(demandeRecup.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()),
-						demandeRecup.getType().getGroupe());
-				break;
-			case AS:
-				DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
-				if (null == demandeAsa) {
-					return demandeDto;
-				}
-
-				demandeDto = new DemandeDto(demandeAsa, sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
-				demandeDto.updateEtat(demandeAsa.getLatestEtatDemande(),
-						sirhWSConsumer.getAgentService(demandeAsa.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()),
-						demandeAsa.getType().getGroupe());
-				break;
-			case CONGES_EXCEP:
-				DemandeCongesExceptionnels demandeCongesExcep = demandeRepository.getEntity(DemandeCongesExceptionnels.class, idDemande);
-				if (null == demandeCongesExcep) {
-					return demandeDto;
-				}
-				demandeDto = new DemandeDto(demandeCongesExcep, sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
-				demandeDto.updateEtat(demandeCongesExcep.getLatestEtatDemande(),
-						sirhWSConsumer.getAgentService(demandeCongesExcep.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()),
-						demandeCongesExcep.getType().getGroupe());
-				break;
-			case CONGES_ANNUELS:
-				DemandeCongesAnnuels demandeCongesAnnuels = demandeRepository.getEntity(DemandeCongesAnnuels.class, idDemande);
-				if (null == demandeCongesAnnuels) {
-					return demandeDto;
-				}
-				demandeDto = new DemandeDto(demandeCongesAnnuels, sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
-				demandeDto.updateEtat(demandeCongesAnnuels.getLatestEtatDemande(),
-						sirhWSConsumer.getAgentService(demandeCongesAnnuels.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()),
-						demandeCongesAnnuels.getType().getGroupe());
-				break;
-			case MALADIES:
-				DemandeMaladies demandeMaladies = demandeRepository.getEntity(DemandeMaladies.class, idDemande);
-				if (null == demandeMaladies) {
-					return demandeDto;
-				}
-				demandeDto = new DemandeDto(demandeMaladies, sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
-				demandeDto.updateEtat(demandeMaladies.getLatestEtatDemande(),
-						sirhWSConsumer.getAgentService(demandeMaladies.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()),
-						demandeMaladies.getType().getGroupe());
-				break;
-			default:
+			DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, idDemande);
+			if (null == demandeReposComp) {
 				return demandeDto;
+			}
+
+			demandeDto = new DemandeDto(demandeReposComp,
+					sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
+			demandeDto.updateEtat(demandeReposComp.getLatestEtatDemande(),
+					sirhWSConsumer.getAgentService(demandeReposComp.getLatestEtatDemande().getIdAgent(),
+							helperService.getCurrentDate()),
+					demandeReposComp.getType().getGroupe());
+			break;
+		case RECUP:
+
+			DemandeRecup demandeRecup = demandeRepository.getEntity(DemandeRecup.class, idDemande);
+			if (null == demandeRecup) {
+				return demandeDto;
+			}
+
+			demandeDto = new DemandeDto(demandeRecup,
+					sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
+			demandeDto.updateEtat(demandeRecup.getLatestEtatDemande(), sirhWSConsumer
+					.getAgentService(demandeRecup.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()),
+					demandeRecup.getType().getGroupe());
+			break;
+		case AS:
+			DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
+			if (null == demandeAsa) {
+				return demandeDto;
+			}
+
+			demandeDto = new DemandeDto(demandeAsa,
+					sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
+			demandeDto.updateEtat(demandeAsa.getLatestEtatDemande(), sirhWSConsumer
+					.getAgentService(demandeAsa.getLatestEtatDemande().getIdAgent(), helperService.getCurrentDate()),
+					demandeAsa.getType().getGroupe());
+			break;
+		case CONGES_EXCEP:
+			DemandeCongesExceptionnels demandeCongesExcep = demandeRepository
+					.getEntity(DemandeCongesExceptionnels.class, idDemande);
+			if (null == demandeCongesExcep) {
+				return demandeDto;
+			}
+			demandeDto = new DemandeDto(demandeCongesExcep,
+					sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
+			demandeDto.updateEtat(demandeCongesExcep.getLatestEtatDemande(),
+					sirhWSConsumer.getAgentService(demandeCongesExcep.getLatestEtatDemande().getIdAgent(),
+							helperService.getCurrentDate()),
+					demandeCongesExcep.getType().getGroupe());
+			break;
+		case CONGES_ANNUELS:
+			DemandeCongesAnnuels demandeCongesAnnuels = demandeRepository.getEntity(DemandeCongesAnnuels.class,
+					idDemande);
+			if (null == demandeCongesAnnuels) {
+				return demandeDto;
+			}
+			demandeDto = new DemandeDto(demandeCongesAnnuels,
+					sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
+			demandeDto.updateEtat(demandeCongesAnnuels.getLatestEtatDemande(),
+					sirhWSConsumer.getAgentService(demandeCongesAnnuels.getLatestEtatDemande().getIdAgent(),
+							helperService.getCurrentDate()),
+					demandeCongesAnnuels.getType().getGroupe());
+			break;
+		case MALADIES:
+			DemandeMaladies demandeMaladies = demandeRepository.getEntity(DemandeMaladies.class, idDemande);
+			if (null == demandeMaladies) {
+				return demandeDto;
+			}
+			demandeDto = new DemandeDto(demandeMaladies,
+					sirhWSConsumer.getAgentService(demande.getIdAgent(), helperService.getCurrentDate()), true);
+			demandeDto.updateEtat(demandeMaladies.getLatestEtatDemande(),
+					sirhWSConsumer.getAgentService(demandeMaladies.getLatestEtatDemande().getIdAgent(),
+							helperService.getCurrentDate()),
+					demandeMaladies.getType().getGroupe());
+			break;
+		default:
+			return demandeDto;
 		}
 
 		return demandeDto;
@@ -432,8 +489,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne, String ongletDemande, Date fromDate, Date toDate,
-			Date dateDemande, String listIdRefEtat, Integer idRefType, Integer idRefGroupeAbsence, boolean isAgent) {
+	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne,
+			String ongletDemande, Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat, Integer idRefType,
+			Integer idRefGroupeAbsence, boolean isAgent) {
 
 		// si date de debut et de fin nulles, alors on filtre sur 12 mois
 		// glissants
@@ -441,7 +499,8 @@ public class AbsenceService implements IAbsenceService {
 			fromDate = helperService.getCurrentDateMoinsUnAn();
 		}
 
-		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence);
+		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
+				idRefType, idRefGroupeAbsence);
 
 		List<Integer> etatIds = new ArrayList<Integer>();
 		if (listIdRefEtat != null) {
@@ -452,17 +511,19 @@ public class AbsenceService implements IAbsenceService {
 
 		List<RefEtat> listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, etatIds);
 
-		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre, listEtats, dateDemande, false);
+		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
+				listEtats, dateDemande, false);
 
 		// si idAgentConnecte == idAgentConcerne, alors nous sommes dans le cas
 		// du WS listeDemandesAgent
 		// donc inutile de recuperer les droits en bdd
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
-		if (null != idAgentConnecte && null != idAgentConcerne
-				&& (1 < idAgentConcerne.size() || (1 == idAgentConcerne.size() && !idAgentConnecte.equals(idAgentConcerne.get(0))))) {
+		if (null != idAgentConnecte && null != idAgentConcerne && (1 < idAgentConcerne.size()
+				|| (1 == idAgentConcerne.size() && !idAgentConnecte.equals(idAgentConcerne.get(0))))) {
 
 			// redmine #14201 : on cherche si l'agent est délégataire
-			List<Integer> idsApprobateurOfDelegataire = accessRightsService.getIdApprobateurOfDelegataire(idAgentConnecte, null);
+			List<Integer> idsApprobateurOfDelegataire = accessRightsService
+					.getIdApprobateurOfDelegataire(idAgentConnecte, null);
 
 			List<Integer> idsUserForAllDroits = new ArrayList<Integer>();
 			idsUserForAllDroits.add(idAgentConnecte);
@@ -477,23 +538,26 @@ public class AbsenceService implements IAbsenceService {
 		List<DemandeDto> listDemandeDtoCA = new ArrayList<DemandeDto>();
 
 		for (DemandeDto demandeDto : listeDto) {
-			if (demandeDto.getGroupeAbsence().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
+			if (demandeDto.getGroupeAbsence().getIdRefGroupeAbsence()
+					.equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
 				listDemandeDtoCA.add(demandeDto);
 			}
 		}
 
 		HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo = null;
 		if (null != listDemandeDtoCA && !listDemandeDtoCA.isEmpty()) {
-			mapCheckCompteurAgentVo = absCongesAnnuelsDataConsistencyRulesImpl.checkDepassementCompteurForListAgentsOrDemandes(listDemandeDtoCA,
-					mapCheckCompteurAgentVo);
+			mapCheckCompteurAgentVo = absCongesAnnuelsDataConsistencyRulesImpl
+					.checkDepassementCompteurForListAgentsOrDemandes(listDemandeDtoCA, mapCheckCompteurAgentVo);
 		}
 
 		// #30788 utilisation de multithread pour booster le traitement
-		DemandeRecursiveTask multiTask = new DemandeRecursiveTask(mapCheckCompteurAgentVo, listeDto, idAgentConnecte, listDroitAgent, isAgent);
+		DemandeRecursiveTask multiTask = new DemandeRecursiveTask(mapCheckCompteurAgentVo, listeDto, idAgentConnecte,
+				listDroitAgent, isAgent);
 		ForkJoinPool pool = new ForkJoinPool();
 		listeDto = pool.invoke(multiTask);
 
-		if (!FiltreService.ONGLET_EN_COURS.equals(ongletDemande) && !FiltreService.ONGLET_NON_PRISES.equals(ongletDemande)) {
+		if (!FiltreService.ONGLET_EN_COURS.equals(ongletDemande)
+				&& !FiltreService.ONGLET_NON_PRISES.equals(ongletDemande)) {
 			// on recupere tous les idAgents
 			List<Integer> listIdAgents = new ArrayList<Integer>();
 			if (!listDroitAgent.isEmpty()) {
@@ -502,8 +566,8 @@ public class AbsenceService implements IAbsenceService {
 				}
 			}
 			// #15586
-			listeDto.addAll(
-					getListRestitutionMassiveByIdAgent(listIdAgents.isEmpty() ? idAgentConcerne : listIdAgents, fromDate, toDate, idRefGroupeAbsence, etatIds));
+			listeDto.addAll(getListRestitutionMassiveByIdAgent(listIdAgents.isEmpty() ? idAgentConcerne : listIdAgents,
+					fromDate, toDate, idRefGroupeAbsence, etatIds));
 		}
 
 		Collections.sort(listeDto, new DemandeDtoComparator());
@@ -511,8 +575,8 @@ public class AbsenceService implements IAbsenceService {
 		return listeDto;
 	}
 
-	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne, Date fromDate, Date toDate, Integer idRefType,
-			Integer idRefGroupeAbsence) {
+	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne,
+			Date fromDate, Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
 
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
@@ -527,20 +591,21 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		if (idAgentConcerne != null) {
-			listeSansFiltre
-					.addAll(demandeRepository.listeDemandesForListAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence));
+			listeSansFiltre.addAll(demandeRepository.listeDemandesForListAgent(idAgentConnecte, idAgentConcerne,
+					fromDate, toDate, idRefType, idRefGroupeAbsence));
 			if (null != idsApprobateurOfDelegataire) {
 				for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-					listeSansFiltredelegataire
-							.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire, null, fromDate, toDate, idRefType, idRefGroupeAbsence));
+					listeSansFiltredelegataire.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
+							null, fromDate, toDate, idRefType, idRefGroupeAbsence));
 				}
 			}
 		} else {
-			listeSansFiltre.addAll(demandeRepository.listeDemandesAgent(idAgentConnecte, null, fromDate, toDate, idRefType, idRefGroupeAbsence));
+			listeSansFiltre.addAll(demandeRepository.listeDemandesAgent(idAgentConnecte, null, fromDate, toDate,
+					idRefType, idRefGroupeAbsence));
 			if (null != idsApprobateurOfDelegataire) {
 				for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
-					listeSansFiltredelegataire
-							.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire, null, fromDate, toDate, idRefType, idRefGroupeAbsence));
+					listeSansFiltredelegataire.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
+							null, fromDate, toDate, idRefType, idRefGroupeAbsence));
 				}
 			}
 		}
@@ -579,7 +644,8 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		if (null != demande.getLatestEtatDemande() && demandeEtatChangeDto.getIdRefEtat().equals(demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
+		if (null != demande.getLatestEtatDemande()
+				&& demandeEtatChangeDto.getIdRefEtat().equals(demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
 			logger.warn(ETAT_DEMANDE_INCHANGE);
 			result.getErrors().add(String.format(ETAT_DEMANDE_INCHANGE));
 			return result;
@@ -610,12 +676,14 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 
-	protected ReturnMessageDto setDemandeEtatVisa(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result) {
+	protected ReturnMessageDto setDemandeEtatVisa(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
+			Demande demande, ReturnMessageDto result) {
 
 		// on verifie les droits
 		if (!accessRightsRepository.isViseurOfAgent(idAgent, demande.getIdAgent())) {
 			logger.warn("L'agent Viseur n'est pas habilité pour viser la demande de cet agent.");
-			result.getErrors().add(String.format("L'agent Viseur n'est pas habilité pour viser la demande de cet agent."));
+			result.getErrors()
+					.add(String.format("L'agent Viseur n'est pas habilité pour viser la demande de cet agent."));
 			return result;
 		}
 
@@ -623,9 +691,11 @@ public class AbsenceService implements IAbsenceService {
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
 				Arrays.asList(RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE));
 
-		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
+		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
+				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
-		result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(), false);
+		result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(),
+				false);
 
 		if (0 < result.getErrors().size()) {
 			return result;
@@ -644,22 +714,27 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 
-	protected ReturnMessageDto setDemandeEtatApprouve(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result) {
+	protected ReturnMessageDto setDemandeEtatApprouve(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
+			Demande demande, ReturnMessageDto result) {
 
 		// on verifie les droits
 		if (!accessRightsRepository.isApprobateurOrDelegataireOfAgent(idAgent, demande.getIdAgent())) {
 			logger.warn("L'agent Approbateur n'est pas habilité à approuver la demande de cet agent.");
-			result.getErrors().add(String.format("L'agent Approbateur n'est pas habilité à approuver la demande de cet agent."));
+			result.getErrors()
+					.add(String.format("L'agent Approbateur n'est pas habilité à approuver la demande de cet agent."));
 			return result;
 		}
 
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande,
-				Arrays.asList(RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.REFUSEE));
+				Arrays.asList(RefEtatEnum.SAISIE, RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE,
+						RefEtatEnum.APPROUVEE, RefEtatEnum.REFUSEE));
 
-		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
+		result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
+				demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
 		if (demande.getType().getTypeSaisi() != null) {
-			result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result, demande.getType().getTypeSaisi(), false);
+			result = absenceDataConsistencyRulesImpl.checkSaisieKiosqueAutorisee(result,
+					demande.getType().getTypeSaisi(), false);
 		}
 
 		if (0 < result.getErrors().size()) {
@@ -676,19 +751,20 @@ public class AbsenceService implements IAbsenceService {
 
 		// #13362 dans le cadre des congés annuels, on regarde si le samedi
 		// offert n est pas offert une autre demande
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
-				.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		absenceDataConsistencyRulesImpl.checkSamediOffertToujoursOk(demandeEtatChangeDto, demande);
 
 		ReturnMessageDto srmIsDepassementCompteurCA = new ReturnMessageDto();
-		srmIsDepassementCompteurCA = absenceDataConsistencyRulesImpl.checkDepassementDroitsAcquis(srmIsDepassementCompteurCA, demande, null);
+		srmIsDepassementCompteurCA = absenceDataConsistencyRulesImpl
+				.checkDepassementDroitsAcquis(srmIsDepassementCompteurCA, demande, null);
 		boolean isDepassementCA = false;
 		if (0 < srmIsDepassementCompteurCA.getInfos().size()) {
 			isDepassementCA = true;
 		}
 
-		ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(),
-				demande.getType().getIdRefTypeAbsence());
+		ICounterService counterService = counterServiceFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 		result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 		if (0 < result.getErrors().size()) {
@@ -711,34 +787,40 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 
-	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result, boolean isFromSIRH) {
+	protected ReturnMessageDto setDemandeEtatAnnule(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto,
+			Demande demande, ReturnMessageDto result, boolean isFromSIRH) {
 
 		// redmine #12994 : bloque ce job si une paye est en cours pour les
 		// congés annuels
 		ReturnMessageDto paieEnCours = sirhWSConsumer.isPaieEnCours();
-		if (demande.getType().getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue() && paieEnCours.getErrors().size() > 0) {
-			result.getErrors().add("Vous ne pouvez annuler cette demande car un calcul de salaire est en cours. Merci de réessayer ultérieurement.");
+		if (demande.getType().getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()
+				&& paieEnCours.getErrors().size() > 0) {
+			result.getErrors().add(
+					"Vous ne pouvez annuler cette demande car un calcul de salaire est en cours. Merci de réessayer ultérieurement.");
 		} else {
-			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
-					.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+					demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 
 			List<RefEtatEnum> etatsAutorises = Lists.newArrayList();
-			etatsAutorises.addAll(Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE, RefEtatEnum.APPROUVEE, RefEtatEnum.A_VALIDER));
-			
-			// #39326 : On peut supprimer les demandes de maladies à l'état 'prise'.
+			etatsAutorises.addAll(Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE,
+					RefEtatEnum.APPROUVEE, RefEtatEnum.A_VALIDER));
+
+			// #39326 : On peut supprimer les demandes de maladies à l'état
+			// 'prise'.
 			if (isFromSIRH)
 				etatsAutorises.add(RefEtatEnum.PRISE);
-			
+
 			result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande, etatsAutorises);
 
-			result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result, demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
+			result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,
+					demandeEtatChangeDto.getIdRefEtat(), demandeEtatChangeDto.getMotif());
 
 			if (0 < result.getErrors().size()) {
 				return result;
 			}
 
-			ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(),
-					demande.getType().getIdRefTypeAbsence());
+			ICounterService counterService = counterServiceFactory.getFactory(
+					demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 			result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 			if (0 < result.getErrors().size()) {
@@ -758,14 +840,17 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 
-	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, boolean isDepassementCA) {
+	private void majEtatDemande(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
+			boolean isDepassementCA) {
 
-		if (demande.getType() != null && demande.getType().getTypeSaisi() == null && demande.getType().getTypeSaisiCongeAnnuel() != null) {
+		if (demande.getType() != null && demande.getType().getTypeSaisi() == null
+				&& demande.getType().getTypeSaisiCongeAnnuel() != null) {
 			// cas des congés annuels
 			if (isDepassementCA && demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())) {
 				EtatDemande etatDemande = new EtatDemande();
 
-				etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, new ReturnMessageDto(), demande.getType().getGroupe().getIdRefGroupeAbsence());
+				etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, new ReturnMessageDto(),
+						demande.getType().getGroupe().getIdRefGroupeAbsence());
 				etatDemande.setDate(new Date());
 				etatDemande.setMotif(demandeEtatChangeDto.getMotif());
 				etatDemande.setEtat(RefEtatEnum.A_VALIDER);
@@ -774,7 +859,8 @@ public class AbsenceService implements IAbsenceService {
 				demande.addEtatDemande(etatDemande);
 			} else {
 				EtatDemande etatDemande = new EtatDemande();
-				etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, new ReturnMessageDto(), demande.getType().getGroupe().getIdRefGroupeAbsence());
+				etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, new ReturnMessageDto(),
+						demande.getType().getGroupe().getIdRefGroupeAbsence());
 				etatDemande.setDate(new Date());
 				etatDemande.setMotif(demandeEtatChangeDto.getMotif());
 				etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
@@ -783,7 +869,8 @@ public class AbsenceService implements IAbsenceService {
 			}
 		} else {
 			EtatDemande etatDemande = new EtatDemande();
-			etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, new ReturnMessageDto(), demande.getType().getGroupe().getIdRefGroupeAbsence());
+			etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, new ReturnMessageDto(),
+					demande.getType().getGroupe().getIdRefGroupeAbsence());
 			etatDemande.setDate(new Date());
 			etatDemande.setMotif(demandeEtatChangeDto.getMotif());
 			etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
@@ -808,57 +895,63 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum((demande.getType().getGroupe().getIdRefGroupeAbsence()))) {
-			case REPOS_COMP:
-			case RECUP:
-				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
-					result.getErrors().add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande, RefEtatEnum.APPROUVEE.toString(),
-							demande.getLatestEtatDemande().getEtat().toString()));
-					logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande, RefEtatEnum.APPROUVEE.toString(),
-							demande.getLatestEtatDemande().getEtat().toString());
-					return result;
-				}
-				break;
-			case CONGES_EXCEP:
-			case AS:
-				if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.VALIDEE) {
-					result.getErrors().add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande, RefEtatEnum.VALIDEE.toString(),
-							demande.getLatestEtatDemande().getEtat().toString()));
-					logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande, RefEtatEnum.VALIDEE.toString(),
-							demande.getLatestEtatDemande().getEtat().toString());
-					return result;
-				}
-				break;
-			case CONGES_ANNUELS:
-				if (!(demande.getLatestEtatDemande().getEtat() == RefEtatEnum.VALIDEE || demande.getLatestEtatDemande().getEtat() == RefEtatEnum.APPROUVEE)) {
-					result.getErrors().add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
-							RefEtatEnum.VALIDEE.toString() + " ou " + RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat().toString()));
-					logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
-							RefEtatEnum.VALIDEE.toString() + " ou " + RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
-					return result;
-				}
+		switch (RefTypeGroupeAbsenceEnum
+				.getRefTypeGroupeAbsenceEnum((demande.getType().getGroupe().getIdRefGroupeAbsence()))) {
+		case REPOS_COMP:
+		case RECUP:
+			if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.APPROUVEE) {
+				result.getErrors().add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
+						RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat().toString()));
+				logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
+						RefEtatEnum.APPROUVEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
+				return result;
+			}
+			break;
+		case CONGES_EXCEP:
+		case AS:
+			if (demande.getLatestEtatDemande().getEtat() != RefEtatEnum.VALIDEE) {
+				result.getErrors().add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
+						RefEtatEnum.VALIDEE.toString(), demande.getLatestEtatDemande().getEtat().toString()));
+				logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
+						RefEtatEnum.VALIDEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
+				return result;
+			}
+			break;
+		case CONGES_ANNUELS:
+			if (!(demande.getLatestEtatDemande().getEtat() == RefEtatEnum.VALIDEE
+					|| demande.getLatestEtatDemande().getEtat() == RefEtatEnum.APPROUVEE)) {
+				result.getErrors()
+						.add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
+								RefEtatEnum.VALIDEE.toString() + " ou " + RefEtatEnum.APPROUVEE.toString(),
+								demande.getLatestEtatDemande().getEtat().toString()));
+				logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
+						RefEtatEnum.VALIDEE.toString() + " ou " + RefEtatEnum.APPROUVEE.toString(),
+						demande.getLatestEtatDemande().getEtat().toString());
+				return result;
+			}
 
-				result = traiteIncidencePaie(demande, result);
-				if (result.getErrors().size() > 0) {
-					return result;
-				}
+			result = traiteIncidencePaie(demande, result);
+			if (result.getErrors().size() > 0) {
+				return result;
+			}
 
-				break;
-			case MALADIES:
-				if (!demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE)) {
-					result.getErrors().add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande, RefEtatEnum.VALIDEE.toString(),
-							demande.getLatestEtatDemande().getEtat().toString()));
-					logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande, RefEtatEnum.VALIDEE.toString(),
-							demande.getLatestEtatDemande().getEtat().toString());
-					return result;
-				}
-				break;
-			default:
-				break;
+			break;
+		case MALADIES:
+			if (!demande.getLatestEtatDemande().getEtat().equals(RefEtatEnum.VALIDEE)) {
+				result.getErrors().add(String.format("La demande %s n'est pas à l'état %s mais %s.", idDemande,
+						RefEtatEnum.VALIDEE.toString(), demande.getLatestEtatDemande().getEtat().toString()));
+				logger.error("Demande id {} is not in state [{}] but [{}]. Stopping process.", idDemande,
+						RefEtatEnum.VALIDEE.toString(), demande.getLatestEtatDemande().getEtat().toString());
+				return result;
+			}
+			break;
+		default:
+			break;
 		}
 		ReturnMessageDto returnDto = new ReturnMessageDto();
 		EtatDemande epNew = new EtatDemande();
-		epNew = mappingEtatDemandeSpecifique(epNew, demande, returnDto, demande.getType().getGroupe().getIdRefGroupeAbsence());
+		epNew = mappingEtatDemandeSpecifique(epNew, demande, returnDto,
+				demande.getType().getGroupe().getIdRefGroupeAbsence());
 		epNew.setDemande(demande);
 		epNew.setDate(helperService.getCurrentDate());
 		epNew.setEtat(RefEtatEnum.PRISE);
@@ -879,13 +972,16 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	/**
-	 * Pour les contractuels et CC uniquement : Les demandes à l’état « prise » ont déjà été injectées dans la paye. Les demandes annulées doivent être
-	 * supprimées de SPCC : supprimer toutes les lignes concernées par le congé annulé. Une ligne doit être créée dans SPMATR.
+	 * Pour les contractuels et CC uniquement : Les demandes à l’état « prise »
+	 * ont déjà été injectées dans la paye. Les demandes annulées doivent être
+	 * supprimées de SPCC : supprimer toutes les lignes concernées par le congé
+	 * annulé. Une ligne doit être créée dans SPMATR.
 	 */
 	protected void supprimeIncidencePaie(Demande demande) {
 
 		// uniquement pour les conges annuels
-		if (!demande.getType().getGroupe().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
+		if (!demande.getType().getGroupe().getIdRefGroupeAbsence()
+				.equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
 			return;
 		}
 
@@ -920,7 +1016,8 @@ public class AbsenceService implements IAbsenceService {
 			// on traite le reste
 			while (dateTimeDebut.isBefore(dateTimeFin)) {
 
-				supprimeSpcc(demande, dateTimeDebut.toDate(), new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), false);
+				supprimeSpcc(demande, dateTimeDebut.toDate(),
+						new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), false);
 
 				dateTimeDebut = dateTimeDebut.plusDays(1);
 			}
@@ -937,7 +1034,8 @@ public class AbsenceService implements IAbsenceService {
 		// congé annuel
 
 		// uniquement pour les conges annuels
-		if (!demande.getType().getGroupe().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
+		if (!demande.getType().getGroupe().getIdRefGroupeAbsence()
+				.equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())) {
 			return result;
 		}
 
@@ -951,7 +1049,8 @@ public class AbsenceService implements IAbsenceService {
 		// ///////////////////////////////
 		// bug #29188
 		if (dateTimeDebut.getDayOfYear() == dateTimeFin.getDayOfYear()) {
-			result = creeSpcc(result, demande, dateTimeDebut.toDate(), new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())),
+			result = creeSpcc(result, demande, dateTimeDebut.toDate(),
+					new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())),
 					isDemiJourneeForSpcc(dateTimeDebut.toDate(), dateTimeFin.toDate()));
 
 			if (!result.getErrors().isEmpty())
@@ -963,7 +1062,8 @@ public class AbsenceService implements IAbsenceService {
 			// ////////////////////////////////
 
 			// on traite le premier jour
-			result = creeSpcc(result, demande, demande.getDateDebut(), new Integer(sdfMairiePerrap.format(demande.getDateDebut())),
+			result = creeSpcc(result, demande, demande.getDateDebut(),
+					new Integer(sdfMairiePerrap.format(demande.getDateDebut())),
 					isDemiJourneeForSpcc(demande.getDateDebut(), null));
 
 			if (!result.getErrors().isEmpty())
@@ -973,7 +1073,8 @@ public class AbsenceService implements IAbsenceService {
 
 			// ///////////////////////////
 			// on traite le dernier jour
-			result = creeSpcc(result, demande, demande.getDateFin(), new Integer(sdfMairiePerrap.format(demande.getDateFin())),
+			result = creeSpcc(result, demande, demande.getDateFin(),
+					new Integer(sdfMairiePerrap.format(demande.getDateFin())),
 					isDemiJourneeForSpcc(null, demande.getDateFin()));
 
 			if (!result.getErrors().isEmpty())
@@ -985,7 +1086,8 @@ public class AbsenceService implements IAbsenceService {
 			// on traite le reste
 			while (dateTimeDebut.isBefore(dateTimeFin)) {
 
-				result = creeSpcc(result, demande, dateTimeDebut.toDate(), new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), false);
+				result = creeSpcc(result, demande, dateTimeDebut.toDate(),
+						new Integer(sdfMairiePerrap.format(dateTimeDebut.toDate())), false);
 
 				if (!result.getErrors().isEmpty())
 					return result;
@@ -1020,14 +1122,17 @@ public class AbsenceService implements IAbsenceService {
 	/**
 	 * log les erreurs
 	 */
-	private ReturnMessageDto setErrorIncidencePaie(ReturnMessageDto result, Integer idDemande, Integer idAgent, Date date) {
+	private ReturnMessageDto setErrorIncidencePaie(ReturnMessageDto result, Integer idDemande, Integer idAgent,
+			Date date) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		result.getErrors()
-				.add(String.format("La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
+				.add(String.format(
+						"La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
 						idDemande, idAgent, sdf.format(date)));
-		logger.error("Demande id {} de l'agent {} ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date {}. Stopping process.",
+		logger.error(
+				"Demande id {} de l'agent {} ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date {}. Stopping process.",
 				idDemande, idAgent, sdf.format(date));
 
 		return result;
@@ -1036,16 +1141,23 @@ public class AbsenceService implements IAbsenceService {
 	/**
 	 * Cree SPCC et met a jour SPMATR pour un unique jour donne
 	 * 
-	 * @param result ReturnMessageDto
-	 * @param demande Demande
-	 * @param datjou Date
-	 * @param perrap Integer
-	 * @param isDemijournee boolean
+	 * @param result
+	 *            ReturnMessageDto
+	 * @param demande
+	 *            Demande
+	 * @param datjou
+	 *            Date
+	 * @param perrap
+	 *            Integer
+	 * @param isDemijournee
+	 *            boolean
 	 * @return ReturnMessageDto
 	 */
-	private ReturnMessageDto creeSpcc(ReturnMessageDto result, Demande demande, Date datjou, Integer perrap, boolean isDemijournee) {
+	private ReturnMessageDto creeSpcc(ReturnMessageDto result, Demande demande, Date datjou, Integer perrap,
+			boolean isDemijournee) {
 
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou);
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou);
 
 		if (carr == null) {
 			return setErrorIncidencePaie(result, demande.getIdDemande(), demande.getIdAgent(), datjou);
@@ -1053,7 +1165,8 @@ public class AbsenceService implements IAbsenceService {
 
 			SimpleDateFormat sdfMairie = new SimpleDateFormat("yyyyMMdd");
 
-			Spcc spcc = sirhRepository.getSpcc(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou);
+			Spcc spcc = sirhRepository.getSpcc(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+					datjou);
 
 			if (null == spcc) {
 				SpccId spccId = new SpccId();
@@ -1067,7 +1180,8 @@ public class AbsenceService implements IAbsenceService {
 			// demi journee, code = 2
 			spcc.setCode(isDemijournee ? 2 : 1);
 			// on met à jour SPMATR
-			Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), perrap, carr);
+			Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+					perrap, carr);
 
 			sirhRepository.persistEntity(spcc);
 			sirhRepository.persistEntity(matr);
@@ -1077,7 +1191,8 @@ public class AbsenceService implements IAbsenceService {
 
 	private void supprimeSpcc(Demande demande, Date datjou, Integer perrap, boolean isDemijournee) {
 
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou);
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou);
 
 		if (carr == null) {
 			return;
@@ -1085,12 +1200,14 @@ public class AbsenceService implements IAbsenceService {
 
 		Integer code = isDemijournee ? 2 : 1;
 
-		Spcc spcc = sirhRepository.getSpcc(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), datjou, code);
+		Spcc spcc = sirhRepository.getSpcc(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+				datjou, code);
 
 		if (null != spcc) {
 			sirhRepository.removeEntity(spcc);
 			// on met à jour SPMATR
-			Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()), perrap, carr);
+			Spmatr matr = miseAjourSpmatr(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(demande.getIdAgent()),
+					perrap, carr);
 			sirhRepository.persistEntity(matr);
 		}
 	}
@@ -1098,9 +1215,12 @@ public class AbsenceService implements IAbsenceService {
 	/**
 	 * Met a jour SPMATR
 	 * 
-	 * @param nomatr Integer
-	 * @param perrap Integer
-	 * @param carr Spcarr
+	 * @param nomatr
+	 *            Integer
+	 * @param perrap
+	 *            Integer
+	 * @param carr
+	 *            Spcarr
 	 * @return Spmatr
 	 */
 	private Spmatr miseAjourSpmatr(Integer nomatr, Integer perrap, Spcarr carr) {
@@ -1122,110 +1242,111 @@ public class AbsenceService implements IAbsenceService {
 		return matr;
 	}
 
-	private EtatDemande mappingEtatDemandeSpecifique(EtatDemande etatDemande, Demande demande, ReturnMessageDto returnDto, Integer idRefGroupeAbsence) {
+	private EtatDemande mappingEtatDemandeSpecifique(EtatDemande etatDemande, Demande demande,
+			ReturnMessageDto returnDto, Integer idRefGroupeAbsence) {
 		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence)) {
 
-			case REPOS_COMP:
-				DemandeReposComp demandeReposComp = (DemandeReposComp) demande;
-				EtatDemandeReposComp etatDemandeReposComp = new EtatDemandeReposComp();
-				etatDemande = (EtatDemande) etatDemandeReposComp;
-				etatDemandeReposComp.setDateDebut(demandeReposComp.getDateDebut());
-				etatDemandeReposComp.setDateFin(demandeReposComp.getDateFin());
-				etatDemandeReposComp.setDuree(demandeReposComp.getDuree());
-				etatDemandeReposComp.setDureeAnneeN1(demandeReposComp.getDureeAnneeN1());
-				etatDemandeReposComp.setTotalMinutesAnneeN1Old(demandeReposComp.getTotalMinutesAnneeN1Old());
-				etatDemandeReposComp.setTotalMinutesAnneeN1New(demandeReposComp.getTotalMinutesAnneeN1New());
-				etatDemandeReposComp.setTotalMinutesOld(demandeReposComp.getTotalMinutesOld());
-				etatDemandeReposComp.setTotalMinutesNew(demandeReposComp.getTotalMinutesNew());
-				break;
-			case RECUP:
-				DemandeRecup demandeRecup = (DemandeRecup) demande;
-				EtatDemandeRecup etatDemandeRecup = new EtatDemandeRecup();
-				etatDemande = (EtatDemande) etatDemandeRecup;
-				etatDemandeRecup.setDateDebut(demandeRecup.getDateDebut());
-				etatDemandeRecup.setDateFin(demandeRecup.getDateFin());
-				etatDemandeRecup.setDuree(demandeRecup.getDuree());
-				etatDemandeRecup.setTotalMinutesOld(demandeRecup.getTotalMinutesOld());
-				etatDemandeRecup.setTotalMinutesNew(demandeRecup.getTotalMinutesNew());
-				break;
-			case AS:
-				DemandeAsa demandeAsa = (DemandeAsa) demande;
-				EtatDemandeAsa etatDemandeAsa = new EtatDemandeAsa();
-				etatDemande = (EtatDemande) etatDemandeAsa;
-				etatDemandeAsa.setDateDebut(demandeAsa.getDateDebut());
-				etatDemandeAsa.setDateFin(demandeAsa.getDateFin());
-				etatDemandeAsa.setDuree(demandeAsa.getDuree());
-				etatDemandeAsa.setDateDebutAM(demandeAsa.isDateDebutAM());
-				etatDemandeAsa.setDateDebutPM(demandeAsa.isDateDebutPM());
-				etatDemandeAsa.setDateFinAM(demandeAsa.isDateFinAM());
-				etatDemandeAsa.setDateFinPM(demandeAsa.isDateFinPM());
-				if (demandeAsa.getOrganisationSyndicale() != null)
-					etatDemandeAsa.setOrganisationSyndicale(demandeAsa.getOrganisationSyndicale());
+		case REPOS_COMP:
+			DemandeReposComp demandeReposComp = (DemandeReposComp) demande;
+			EtatDemandeReposComp etatDemandeReposComp = new EtatDemandeReposComp();
+			etatDemande = (EtatDemande) etatDemandeReposComp;
+			etatDemandeReposComp.setDateDebut(demandeReposComp.getDateDebut());
+			etatDemandeReposComp.setDateFin(demandeReposComp.getDateFin());
+			etatDemandeReposComp.setDuree(demandeReposComp.getDuree());
+			etatDemandeReposComp.setDureeAnneeN1(demandeReposComp.getDureeAnneeN1());
+			etatDemandeReposComp.setTotalMinutesAnneeN1Old(demandeReposComp.getTotalMinutesAnneeN1Old());
+			etatDemandeReposComp.setTotalMinutesAnneeN1New(demandeReposComp.getTotalMinutesAnneeN1New());
+			etatDemandeReposComp.setTotalMinutesOld(demandeReposComp.getTotalMinutesOld());
+			etatDemandeReposComp.setTotalMinutesNew(demandeReposComp.getTotalMinutesNew());
+			break;
+		case RECUP:
+			DemandeRecup demandeRecup = (DemandeRecup) demande;
+			EtatDemandeRecup etatDemandeRecup = new EtatDemandeRecup();
+			etatDemande = (EtatDemande) etatDemandeRecup;
+			etatDemandeRecup.setDateDebut(demandeRecup.getDateDebut());
+			etatDemandeRecup.setDateFin(demandeRecup.getDateFin());
+			etatDemandeRecup.setDuree(demandeRecup.getDuree());
+			etatDemandeRecup.setTotalMinutesOld(demandeRecup.getTotalMinutesOld());
+			etatDemandeRecup.setTotalMinutesNew(demandeRecup.getTotalMinutesNew());
+			break;
+		case AS:
+			DemandeAsa demandeAsa = (DemandeAsa) demande;
+			EtatDemandeAsa etatDemandeAsa = new EtatDemandeAsa();
+			etatDemande = (EtatDemande) etatDemandeAsa;
+			etatDemandeAsa.setDateDebut(demandeAsa.getDateDebut());
+			etatDemandeAsa.setDateFin(demandeAsa.getDateFin());
+			etatDemandeAsa.setDuree(demandeAsa.getDuree());
+			etatDemandeAsa.setDateDebutAM(demandeAsa.isDateDebutAM());
+			etatDemandeAsa.setDateDebutPM(demandeAsa.isDateDebutPM());
+			etatDemandeAsa.setDateFinAM(demandeAsa.isDateFinAM());
+			etatDemandeAsa.setDateFinPM(demandeAsa.isDateFinPM());
+			if (demandeAsa.getOrganisationSyndicale() != null)
+				etatDemandeAsa.setOrganisationSyndicale(demandeAsa.getOrganisationSyndicale());
 
-				etatDemandeAsa.setTotalMinutesOld(demandeAsa.getTotalMinutesOld());
-				etatDemandeAsa.setTotalMinutesNew(demandeAsa.getTotalMinutesNew());
-				etatDemandeAsa.setTotalJoursOld(demandeAsa.getTotalJoursOld());
-				etatDemandeAsa.setTotalJoursNew(demandeAsa.getTotalJoursNew());
-				break;
-			case CONGES_EXCEP:
-				DemandeCongesExceptionnels demandeCongeExcep = (DemandeCongesExceptionnels) demande;
-				EtatDemandeCongesExceptionnels etatDemandeCongeExcep = new EtatDemandeCongesExceptionnels();
-				etatDemande = (EtatDemande) etatDemandeCongeExcep;
-				etatDemandeCongeExcep.setDateDebut(demandeCongeExcep.getDateDebut());
-				etatDemandeCongeExcep.setDateFin(demandeCongeExcep.getDateFin());
-				etatDemandeCongeExcep.setDuree(demandeCongeExcep.getDuree());
-				etatDemandeCongeExcep.setDateDebutAM(demandeCongeExcep.isDateDebutAM());
-				etatDemandeCongeExcep.setDateDebutPM(demandeCongeExcep.isDateDebutPM());
-				etatDemandeCongeExcep.setDateFinAM(demandeCongeExcep.isDateFinAM());
-				etatDemandeCongeExcep.setDateFinPM(demandeCongeExcep.isDateFinPM());
-				etatDemandeCongeExcep.setCommentaire(demandeCongeExcep.getCommentaire());
-				break;
-			case CONGES_ANNUELS:
-				DemandeCongesAnnuels demandeCongeAnnuel = (DemandeCongesAnnuels) demande;
-				EtatDemandeCongesAnnuels etatDemandeCongeAnnuel = new EtatDemandeCongesAnnuels();
-				etatDemande = (EtatDemande) etatDemandeCongeAnnuel;
-				etatDemandeCongeAnnuel.setDateDebut(demandeCongeAnnuel.getDateDebut());
-				etatDemandeCongeAnnuel.setDateFin(demandeCongeAnnuel.getDateFin());
-				etatDemandeCongeAnnuel.setDuree(demandeCongeAnnuel.getDuree());
-				etatDemandeCongeAnnuel.setDureeAnneeN1(demandeCongeAnnuel.getDureeAnneeN1());
-				etatDemandeCongeAnnuel.setDateDebutAM(demandeCongeAnnuel.isDateDebutAM());
-				etatDemandeCongeAnnuel.setDateDebutPM(demandeCongeAnnuel.isDateDebutPM());
-				etatDemandeCongeAnnuel.setDateFinAM(demandeCongeAnnuel.isDateFinAM());
-				etatDemandeCongeAnnuel.setDateFinPM(demandeCongeAnnuel.isDateFinPM());
-				etatDemandeCongeAnnuel.setNbSamediDecompte(demandeCongeAnnuel.getNbSamediDecompte());
-				etatDemandeCongeAnnuel.setNbSamediOffert(demandeCongeAnnuel.getNbSamediOffert());
-				etatDemandeCongeAnnuel.setCommentaire(demandeCongeAnnuel.getCommentaire());
-				etatDemandeCongeAnnuel.setTypeSaisiCongeAnnuel(demandeCongeAnnuel.getTypeSaisiCongeAnnuel());
-				etatDemandeCongeAnnuel.setTotalJoursAnneeN1Old(demandeCongeAnnuel.getTotalJoursAnneeN1Old());
-				etatDemandeCongeAnnuel.setTotalJoursAnneeN1New(demandeCongeAnnuel.getTotalJoursAnneeN1New());
-				etatDemandeCongeAnnuel.setTotalJoursOld(demandeCongeAnnuel.getTotalJoursOld());
-				etatDemandeCongeAnnuel.setTotalJoursNew(demandeCongeAnnuel.getTotalJoursNew());
-				break;
-			case MALADIES:
-				DemandeMaladies demandeMaladie = (DemandeMaladies) demande;
-				EtatDemandeMaladies etatDemandeMaladie = new EtatDemandeMaladies();
-				etatDemande = (EtatDemande) etatDemandeMaladie;
-				etatDemandeMaladie.setDateDebut(demandeMaladie.getDateDebut());
-				etatDemandeMaladie.setDateFin(demandeMaladie.getDateFin());
-				etatDemandeMaladie.setDuree(demandeMaladie.getDuree());
-				etatDemandeMaladie.setDateDeclaration(demandeMaladie.getDateDeclaration());
-				etatDemandeMaladie.setAccidentTravailReference(demandeMaladie.getAccidentTravailReference());
-				etatDemandeMaladie.setNombreITT(demandeMaladie.getNombreITT());
-				etatDemandeMaladie.setNomEnfant(demandeMaladie.getNomEnfant());
-				etatDemandeMaladie.setPrescripteur(demandeMaladie.getPrescripteur());
-				etatDemandeMaladie.setProlongation(demandeMaladie.isProlongation());
-				etatDemandeMaladie.setTypeAccidentTravail(demandeMaladie.getTypeAccidentTravail());
-				etatDemandeMaladie.setTypeMaladiePro(demandeMaladie.getTypeMaladiePro());
-				etatDemandeMaladie.setTypeSiegeLesion(demandeMaladie.getTypeSiegeLesion());
-				etatDemandeMaladie.setDateTransmissionCafat(demandeMaladie.getDateTransmissionCafat());
-				etatDemandeMaladie.setDateDecisionCafat(demandeMaladie.getDateDecisionCafat());
-				etatDemandeMaladie.setDateCommissionAptitude(demandeMaladie.getDateCommissionAptitude());
-				etatDemandeMaladie.setAvisCommissionAptitude(demandeMaladie.isAvisCommissionAptitude());
-				etatDemandeMaladie.setTauxCafat(demandeMaladie.getTauxCafat());
+			etatDemandeAsa.setTotalMinutesOld(demandeAsa.getTotalMinutesOld());
+			etatDemandeAsa.setTotalMinutesNew(demandeAsa.getTotalMinutesNew());
+			etatDemandeAsa.setTotalJoursOld(demandeAsa.getTotalJoursOld());
+			etatDemandeAsa.setTotalJoursNew(demandeAsa.getTotalJoursNew());
+			break;
+		case CONGES_EXCEP:
+			DemandeCongesExceptionnels demandeCongeExcep = (DemandeCongesExceptionnels) demande;
+			EtatDemandeCongesExceptionnels etatDemandeCongeExcep = new EtatDemandeCongesExceptionnels();
+			etatDemande = (EtatDemande) etatDemandeCongeExcep;
+			etatDemandeCongeExcep.setDateDebut(demandeCongeExcep.getDateDebut());
+			etatDemandeCongeExcep.setDateFin(demandeCongeExcep.getDateFin());
+			etatDemandeCongeExcep.setDuree(demandeCongeExcep.getDuree());
+			etatDemandeCongeExcep.setDateDebutAM(demandeCongeExcep.isDateDebutAM());
+			etatDemandeCongeExcep.setDateDebutPM(demandeCongeExcep.isDateDebutPM());
+			etatDemandeCongeExcep.setDateFinAM(demandeCongeExcep.isDateFinAM());
+			etatDemandeCongeExcep.setDateFinPM(demandeCongeExcep.isDateFinPM());
+			etatDemandeCongeExcep.setCommentaire(demandeCongeExcep.getCommentaire());
+			break;
+		case CONGES_ANNUELS:
+			DemandeCongesAnnuels demandeCongeAnnuel = (DemandeCongesAnnuels) demande;
+			EtatDemandeCongesAnnuels etatDemandeCongeAnnuel = new EtatDemandeCongesAnnuels();
+			etatDemande = (EtatDemande) etatDemandeCongeAnnuel;
+			etatDemandeCongeAnnuel.setDateDebut(demandeCongeAnnuel.getDateDebut());
+			etatDemandeCongeAnnuel.setDateFin(demandeCongeAnnuel.getDateFin());
+			etatDemandeCongeAnnuel.setDuree(demandeCongeAnnuel.getDuree());
+			etatDemandeCongeAnnuel.setDureeAnneeN1(demandeCongeAnnuel.getDureeAnneeN1());
+			etatDemandeCongeAnnuel.setDateDebutAM(demandeCongeAnnuel.isDateDebutAM());
+			etatDemandeCongeAnnuel.setDateDebutPM(demandeCongeAnnuel.isDateDebutPM());
+			etatDemandeCongeAnnuel.setDateFinAM(demandeCongeAnnuel.isDateFinAM());
+			etatDemandeCongeAnnuel.setDateFinPM(demandeCongeAnnuel.isDateFinPM());
+			etatDemandeCongeAnnuel.setNbSamediDecompte(demandeCongeAnnuel.getNbSamediDecompte());
+			etatDemandeCongeAnnuel.setNbSamediOffert(demandeCongeAnnuel.getNbSamediOffert());
+			etatDemandeCongeAnnuel.setCommentaire(demandeCongeAnnuel.getCommentaire());
+			etatDemandeCongeAnnuel.setTypeSaisiCongeAnnuel(demandeCongeAnnuel.getTypeSaisiCongeAnnuel());
+			etatDemandeCongeAnnuel.setTotalJoursAnneeN1Old(demandeCongeAnnuel.getTotalJoursAnneeN1Old());
+			etatDemandeCongeAnnuel.setTotalJoursAnneeN1New(demandeCongeAnnuel.getTotalJoursAnneeN1New());
+			etatDemandeCongeAnnuel.setTotalJoursOld(demandeCongeAnnuel.getTotalJoursOld());
+			etatDemandeCongeAnnuel.setTotalJoursNew(demandeCongeAnnuel.getTotalJoursNew());
+			break;
+		case MALADIES:
+			DemandeMaladies demandeMaladie = (DemandeMaladies) demande;
+			EtatDemandeMaladies etatDemandeMaladie = new EtatDemandeMaladies();
+			etatDemande = (EtatDemande) etatDemandeMaladie;
+			etatDemandeMaladie.setDateDebut(demandeMaladie.getDateDebut());
+			etatDemandeMaladie.setDateFin(demandeMaladie.getDateFin());
+			etatDemandeMaladie.setDuree(demandeMaladie.getDuree());
+			etatDemandeMaladie.setDateDeclaration(demandeMaladie.getDateDeclaration());
+			etatDemandeMaladie.setAccidentTravailReference(demandeMaladie.getAccidentTravailReference());
+			etatDemandeMaladie.setNombreITT(demandeMaladie.getNombreITT());
+			etatDemandeMaladie.setNomEnfant(demandeMaladie.getNomEnfant());
+			etatDemandeMaladie.setPrescripteur(demandeMaladie.getPrescripteur());
+			etatDemandeMaladie.setProlongation(demandeMaladie.isProlongation());
+			etatDemandeMaladie.setTypeAccidentTravail(demandeMaladie.getTypeAccidentTravail());
+			etatDemandeMaladie.setTypeMaladiePro(demandeMaladie.getTypeMaladiePro());
+			etatDemandeMaladie.setTypeSiegeLesion(demandeMaladie.getTypeSiegeLesion());
+			etatDemandeMaladie.setDateTransmissionCafat(demandeMaladie.getDateTransmissionCafat());
+			etatDemandeMaladie.setDateDecisionCafat(demandeMaladie.getDateDecisionCafat());
+			etatDemandeMaladie.setDateCommissionAptitude(demandeMaladie.getDateCommissionAptitude());
+			etatDemandeMaladie.setAvisCommissionAptitude(demandeMaladie.isAvisCommissionAptitude());
+			etatDemandeMaladie.setTauxCafat(demandeMaladie.getTauxCafat());
 
-				break;
-			default:
-				break;
+			break;
+		default:
+			break;
 		}
 		return etatDemande;
 	}
@@ -1245,23 +1366,26 @@ public class AbsenceService implements IAbsenceService {
 			throw new ReturnMessageDtoException(returnDto);
 		}
 
-		// on a besoin de recupere la demande initiale pour les maladies pour l'envoi du mail
+		// on a besoin de recupere la demande initiale pour les maladies pour
+		// l'envoi du mail
 		DemandeMaladies demandeInitiale = null;
-		if (demandeDto.getIdDemande() != null && demandeDto.getGroupeAbsence() != null && demandeDto.getGroupeAbsence().getIdRefGroupeAbsence() != null) {
-			switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
-				case MALADIES:
-					DemandeMaladies demandeTemp = getDemande(DemandeMaladies.class, demandeDto.getIdDemande());
-					demandeInitiale = (DemandeMaladies) demandeTemp.clone();
-					break;
-				default:
-					break;
+		if (demandeDto.getIdDemande() != null && demandeDto.getGroupeAbsence() != null
+				&& demandeDto.getGroupeAbsence().getIdRefGroupeAbsence() != null) {
+			switch (RefTypeGroupeAbsenceEnum
+					.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
+			case MALADIES:
+				DemandeMaladies demandeTemp = getDemande(DemandeMaladies.class, demandeDto.getIdDemande());
+				demandeInitiale = (DemandeMaladies) demandeTemp.clone();
+				break;
+			default:
+				break;
 			}
 		}
 		Demande demande = null;
 		Date dateJour = new Date();
 
 		demande = mappingDemandeSpecifique(demandeDto, demande, idAgent, dateJour, returnDto);
-		
+
 		boolean isCreation = demande.getIdDemande() == null;
 
 		if (returnDto.getErrors().size() != 0) {
@@ -1282,11 +1406,13 @@ public class AbsenceService implements IAbsenceService {
 				demandeEtatChangeDto.setIdRefEtat(demandeDto.getEtatDto().getIdRefEtat());
 			}
 			demandeEtatChangeDto.setMotif(null);
-			// dans le cas des maladies, on va mettre à jour le compteur des maladies si coté DRH on a choisi validation
-			if (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence()) == RefTypeGroupeAbsenceEnum.MALADIES
+			// dans le cas des maladies, on va mettre à jour le compteur des
+			// maladies si coté DRH on a choisi validation
+			if (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(
+					demandeDto.getGroupeAbsence().getIdRefGroupeAbsence()) == RefTypeGroupeAbsenceEnum.MALADIES
 					&& demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat())) {
-				ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(),
-						demande.getType().getIdRefTypeAbsence());
+				ICounterService counterService = counterServiceFactory.getFactory(
+						demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 				returnDto = counterService.majCompteurToAgent(returnDto, demande, demandeEtatChangeDto);
 
 				if (returnDto.getErrors().size() != 0) {
@@ -1329,7 +1455,7 @@ public class AbsenceService implements IAbsenceService {
 		demandeRepository.persistEntity(demande);
 		demandeRepository.flush();
 		demandeRepository.clear();
-		
+
 		if (isCreation) {
 			try {
 				// #31759
@@ -1398,11 +1524,13 @@ public class AbsenceService implements IAbsenceService {
 						StringBuilder text = new StringBuilder();
 						text.append("Bonjour, <br> ");
 						text.append("La commission a donné son verdict pour l'AT de l'agent " + nomAgent + " du "
-								+ (dem.getDateDeclaration() == null ? "NC" : sdf.format(dem.getDateDeclaration())) + " <br>");
-						text.append(
-								"AVIS : " + (dem.isAvisCommissionAptitude() == null ? "NC" : dem.isAvisCommissionAptitude() ? "Accepté" : "Refusé") + " <br>");
+								+ (dem.getDateDeclaration() == null ? "NC" : sdf.format(dem.getDateDeclaration()))
+								+ " <br>");
+						text.append("AVIS : " + (dem.isAvisCommissionAptitude() == null ? "NC"
+								: dem.isAvisCommissionAptitude() ? "Accepté" : "Refusé") + " <br>");
 						if (dem.isAvisCommissionAptitude() != null && !dem.isAvisCommissionAptitude()) {
-							text.append("N'oublier pas de faire le nécessaire pour transformer l'accident de travail en maladie ordinaire dans SIRH <br>");
+							text.append(
+									"N'oublier pas de faire le nécessaire pour transformer l'accident de travail en maladie ordinaire dans SIRH <br>");
 						}
 						text.append("<br><br>");
 
@@ -1429,15 +1557,17 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType, Integer idAgentRecherche,
-			Integer idRefGroupeAbsence, List<Integer> agentIds, String listIdRefEtat, String ongletDemande) {
+	public List<DemandeDto> getListeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
+			Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds, String listIdRefEtat,
+			String ongletDemande) {
 
 		if (null != idAgentRecherche && 0 != idAgentRecherche) {
 			agentIds = new ArrayList<Integer>();
 			agentIds.add(idAgentRecherche);
 		}
 
-		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType, agentIds, idRefGroupeAbsence);
+		List<Demande> listeSansFiltre = demandeRepository.listeDemandesSIRH(fromDate, toDate, idRefEtat, idRefType,
+				agentIds, idRefGroupeAbsence);
 
 		List<RefEtat> listEtats = null;
 		if (idRefEtat != null) {
@@ -1452,20 +1582,23 @@ public class AbsenceService implements IAbsenceService {
 			listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, etatIds);
 		}
 
-		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre, listEtats, null, true);
+		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
+				listEtats, null, true);
 
 		HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo = new HashMap<Integer, CheckCompteurAgentVo>();
 		for (DemandeDto dto : listeDto) {
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
 					.getFactory(dto.getGroupeAbsence().getIdRefGroupeAbsence(), dto.getIdTypeDemande());
 
-			CheckCompteurAgentVo checkCompteurAgentVo = mapCheckCompteurAgentVo.get(dto.getAgentWithServiceDto().getIdAgent());
+			CheckCompteurAgentVo checkCompteurAgentVo = mapCheckCompteurAgentVo
+					.get(dto.getAgentWithServiceDto().getIdAgent());
 
 			if (null == checkCompteurAgentVo)
 				checkCompteurAgentVo = new CheckCompteurAgentVo();
 
 			dto = absenceDataConsistencyRulesImpl.filtreDroitOfDemandeSIRH(dto);
-			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto, checkCompteurAgentVo));
+			dto.setDepassementCompteur(
+					absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto, checkCompteurAgentVo));
 			dto.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(dto));
 			dto.setDepassementITT(absenceDataConsistencyRulesImpl.checkDepassementITT(dto));
 
@@ -1476,8 +1609,8 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// #15586
-		listeDto.addAll(
-				getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate, idRefGroupeAbsence, null != idRefEtat ? Arrays.asList(idRefEtat) : null));
+		listeDto.addAll(getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate, idRefGroupeAbsence,
+				null != idRefEtat ? Arrays.asList(idRefEtat) : null));
 
 		Collections.sort(listeDto, new DemandeDtoComparator());
 
@@ -1487,30 +1620,34 @@ public class AbsenceService implements IAbsenceService {
 	/**
 	 * #15586 Retourne la liste des restitutions massives
 	 * 
-	 * @param agentIds liste des agents a rechercher
-	 * @param fromDate date de debut
-	 * @param toDate date de fin
+	 * @param agentIds
+	 *            liste des agents a rechercher
+	 * @param fromDate
+	 *            date de debut
+	 * @param toDate
+	 *            date de fin
 	 * @return liste de DemandeDto
 	 */
-	protected List<DemandeDto> getListRestitutionMassiveByIdAgent(List<Integer> agentIds, Date fromDate, Date toDate, Integer idRefGroupeAbsence,
-			List<Integer> listEtats) {
+	protected List<DemandeDto> getListRestitutionMassiveByIdAgent(List<Integer> agentIds, Date fromDate, Date toDate,
+			Integer idRefGroupeAbsence, List<Integer> listEtats) {
 
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 
-		if ((null == idRefGroupeAbsence
-				|| RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.equals(RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence)))
+		if ((null == idRefGroupeAbsence || RefTypeGroupeAbsenceEnum.CONGES_ANNUELS
+				.equals(RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(idRefGroupeAbsence)))
 				&& (null == listEtats || listEtats.isEmpty() || listEtats.contains(RefEtatEnum.APPROUVEE.getCodeEtat())
-						|| listEtats.contains(RefEtatEnum.VALIDEE.getCodeEtat()) || listEtats.contains(RefEtatEnum.PRISE.getCodeEtat()))) {
+						|| listEtats.contains(RefEtatEnum.VALIDEE.getCodeEtat())
+						|| listEtats.contains(RefEtatEnum.PRISE.getCodeEtat()))) {
 
-			List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassiveCA = congeAnnuelRepository.getListRestitutionMassiveByIdAgent(agentIds, fromDate,
-					toDate);
+			List<CongeAnnuelRestitutionMassiveHisto> listRestitutionMassiveCA = congeAnnuelRepository
+					.getListRestitutionMassiveByIdAgent(agentIds, fromDate, toDate);
 
 			if (null != listRestitutionMassiveCA) {
 				List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 
 				for (CongeAnnuelRestitutionMassiveHisto restitution : listRestitutionMassiveCA) {
-					AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants, restitution.getIdAgent(),
-							restitution.getRestitutionMassive().getDateRestitution());
+					AgentWithServiceDto agentOptimise = agentService.getAgentOptimise(listAgentsExistants,
+							restitution.getIdAgent(), restitution.getRestitutionMassive().getDateRestitution());
 
 					DemandeDto dto = new DemandeDto(restitution, agentOptimise);
 					result.add(dto);
@@ -1531,10 +1668,10 @@ public class AbsenceService implements IAbsenceService {
 		List<AgentWithServiceDto> listAgentsExistants = new ArrayList<AgentWithServiceDto>();
 		for (EtatDemande etat : dem.getEtatsDemande()) {
 			// bug #30042
-			DemandeDto dto = new DemandeDto(dem, etat, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(), helperService.getCurrentDate()),
-					true);
-			dto.updateEtat(etat, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(), helperService.getCurrentDate()),
-					dem.getType().getGroupe());
+			DemandeDto dto = new DemandeDto(dem, etat, agentService.getAgentOptimise(listAgentsExistants,
+					etat.getIdAgent(), helperService.getCurrentDate()), true);
+			dto.updateEtat(etat, agentService.getAgentOptimise(listAgentsExistants, etat.getIdAgent(),
+					helperService.getCurrentDate()), dem.getType().getGroupe());
 			result.add(dto);
 		}
 
@@ -1551,7 +1688,8 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
 		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
 			logger.warn("L'agent n'est pas habilité à valider ou rejeter la demande de cet agent.");
-			result.getErrors().add(String.format("L'agent n'est pas habilité à valider ou rejeter la demande de cet agent."));
+			result.getErrors()
+					.add(String.format("L'agent n'est pas habilité à valider ou rejeter la demande de cet agent."));
 			return result;
 		}
 
@@ -1575,7 +1713,8 @@ public class AbsenceService implements IAbsenceService {
 				continue;
 			}
 
-			if (null != demande.getLatestEtatDemande() && demandeEtatChangeDto.getIdRefEtat().equals(demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
+			if (null != demande.getLatestEtatDemande() && demandeEtatChangeDto.getIdRefEtat()
+					.equals(demande.getLatestEtatDemande().getEtat().getCodeEtat())) {
 				logger.warn(ETAT_DEMANDE_INCHANGE);
 				result.getErrors().add(String.format(ETAT_DEMANDE_INCHANGE));
 				continue;
@@ -1601,15 +1740,16 @@ public class AbsenceService implements IAbsenceService {
 		return result;
 	}
 
-	protected void setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result,
-			boolean isProvenanceSIRH) {
+	protected void setDemandeEtatValide(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
+			ReturnMessageDto result, boolean isProvenanceSIRH) {
 
 		// #15224 : on ajoute de nouveaux états pour les congés annuels
 		List<RefEtatEnum> listEtat = new ArrayList<RefEtatEnum>();
 		listEtat.add(RefEtatEnum.APPROUVEE);
 		listEtat.add(RefEtatEnum.EN_ATTENTE);
 		listEtat.add(RefEtatEnum.A_VALIDER);
-		if (demande.getType().getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
+		if (demande.getType().getGroupe().getIdRefGroupeAbsence() == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS
+				.getValue()) {
 			listEtat.add(RefEtatEnum.SAISIE);
 			listEtat.add(RefEtatEnum.VISEE_FAVORABLE);
 			listEtat.add(RefEtatEnum.VISEE_DEFAVORABLE);
@@ -1621,21 +1761,21 @@ public class AbsenceService implements IAbsenceService {
 			return;
 		}
 
-		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
-				.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory.getFactory(
+				demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 
 		// #12664
 		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, isProvenanceSIRH);
-
 
 		if (0 < result.getErrors().size()) {
 			return;
 		}
 
-		if (demande.getType() != null && demande.getType().getTypeSaisi() == null && demande.getType().getTypeSaisiCongeAnnuel() != null) {
+		if (demande.getType() != null && demande.getType().getTypeSaisi() == null
+				&& demande.getType().getTypeSaisiCongeAnnuel() != null) {
 
-			ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(),
-					demande.getType().getIdRefTypeAbsence());
+			ICounterService counterService = counterServiceFactory.getFactory(
+					demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 			result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 			if (0 < result.getErrors().size()) {
@@ -1645,8 +1785,8 @@ public class AbsenceService implements IAbsenceService {
 			// maj de la demande
 			majEtatDemande(idAgent, demandeEtatChangeDto, demande, false);
 		} else {
-			ICounterService counterService = counterServiceFactory.getFactory(demande.getType().getGroupe().getIdRefGroupeAbsence(),
-					demande.getType().getIdRefTypeAbsence());
+			ICounterService counterService = counterServiceFactory.getFactory(
+					demande.getType().getGroupe().getIdRefGroupeAbsence(), demande.getType().getIdRefTypeAbsence());
 			result = counterService.majCompteurToAgent(result, demande, demandeEtatChangeDto);
 
 			if (0 < result.getErrors().size()) {
@@ -1665,10 +1805,12 @@ public class AbsenceService implements IAbsenceService {
 		}
 	}
 
-	protected void setDemandeEtatEnAttente(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande, ReturnMessageDto result) {
+	protected void setDemandeEtatEnAttente(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto, Demande demande,
+			ReturnMessageDto result) {
 
 		List<RefEtatEnum> listeEtats = new ArrayList<>();
-		if (demande.getType() != null && demande.getType().getIdRefTypeAbsence() == RefTypeAbsenceEnum.CONGE_ANNUEL.getValue()) {
+		if (demande.getType() != null
+				&& demande.getType().getIdRefTypeAbsence() == RefTypeAbsenceEnum.CONGE_ANNUEL.getValue()) {
 			listeEtats.add(RefEtatEnum.A_VALIDER);
 
 		} else {
@@ -1694,213 +1836,252 @@ public class AbsenceService implements IAbsenceService {
 	/**
 	 * Mapping des saisies (creation/modif) de demande depuis kiosque et SIRH
 	 * 
-	 * @param demandeDto DTO
-	 * @param demande objet Demande
-	 * @param idAgent agent connecte
-	 * @param dateJour date du jour
-	 * @param returnDto ReturnMessageDto
+	 * @param demandeDto
+	 *            DTO
+	 * @param demande
+	 *            objet Demande
+	 * @param idAgent
+	 *            agent connecte
+	 * @param dateJour
+	 *            date du jour
+	 * @param returnDto
+	 *            ReturnMessageDto
 	 * @return la demande a enregistrer
 	 */
-	private Demande mappingDemandeSpecifique(DemandeDto demandeDto, Demande demande, Integer idAgent, Date dateJour, ReturnMessageDto returnDto) {
+	private Demande mappingDemandeSpecifique(DemandeDto demandeDto, Demande demande, Integer idAgent, Date dateJour,
+			ReturnMessageDto returnDto) {
 		// selon le type de demande, on mappe les donnees specifiques de la
 		// demande
 		// et on effectue les verifications appropriees
-		RefGroupeAbsence groupe = demandeRepository.getEntity(RefGroupeAbsence.class, demandeDto.getGroupeAbsence().getIdRefGroupeAbsence());
-		switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
-			case REPOS_COMP:
-				DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
+		RefGroupeAbsence groupe = demandeRepository.getEntity(RefGroupeAbsence.class,
+				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence());
+		switch (RefTypeGroupeAbsenceEnum
+				.getRefTypeGroupeAbsenceEnum(demandeDto.getGroupeAbsence().getIdRefGroupeAbsence())) {
+		case REPOS_COMP:
+			DemandeReposComp demandeReposComp = getDemande(DemandeReposComp.class, demandeDto.getIdDemande());
 
-				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp);
+			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeReposComp);
 
-				if (null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+			if (null == demande.getType().getTypeSaisi())
+				demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				demandeReposComp.setDuree(helperService
-						.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()).intValue());
+			demandeReposComp.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
+					demande.getDateFin(), demandeDto.getDuree()).intValue());
 
-				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(), demandeDto.getDateDebut(),
-						demandeDto.getDuree(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM()));
-				break;
-			case RECUP:
-				DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
+			demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+					demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
+					demandeDto.isDateFinPM()));
+			break;
+		case RECUP:
+			DemandeRecup demandeRecup = getDemande(DemandeRecup.class, demandeDto.getIdDemande());
 
-				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup);
+			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeRecup);
 
-				if (null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+			if (null == demande.getType().getTypeSaisi())
+				demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				demandeRecup.setDuree(helperService
-						.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()).intValue());
+			demandeRecup.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
+					demande.getDateFin(), demandeDto.getDuree()).intValue());
 
-				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(), demandeDto.getDateDebut(),
-						demandeDto.getDuree(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM()));
-				break;
-			case AS:
-				DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
-				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa);
+			demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+					demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),
+					demandeDto.isDateFinPM()));
+			break;
+		case AS:
+			DemandeAsa demandeAsa = getDemande(DemandeAsa.class, demandeDto.getIdDemande());
+			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeAsa);
 
-				if (null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+			if (null == demande.getType().getTypeSaisi())
+				demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
-				// fin, 3 - calcul duree
-				// car dependance entre ces 3 donnees pour les calculs
-				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(), demandeDto.getDateDebut(), demandeDto.isDateDebutAM(),
-						demandeDto.isDateDebutPM()));
-				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(), demande.getDateDebut(),
-						demandeDto.getDuree(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM()));
+			// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
+			// fin, 3 - calcul duree
+			// car dependance entre ces 3 donnees pour les calculs
+			demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(), demandeDto.getDateDebut(),
+					demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+			demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+					demande.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM()));
 
-				demandeAsa = (DemandeAsa) demande;
-				demandeAsa.setDuree(
-						helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()));
-				demandeAsa.setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
-				demandeAsa.setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
-				demandeAsa.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM() : false);
-				demandeAsa.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM() : false);
+			demandeAsa = (DemandeAsa) demande;
+			demandeAsa.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
+					demande.getDateFin(), demandeDto.getDuree()));
+			demandeAsa.setDateDebutAM(
+					demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
+			demandeAsa.setDateDebutPM(
+					demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
+			demandeAsa.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM() : false);
+			demandeAsa.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM() : false);
 
-				if (null != demandeDto.getOrganisationSyndicale() && null != demandeDto.getOrganisationSyndicale().getIdOrganisation()) {
-					demandeAsa.setOrganisationSyndicale(
-							OSRepository.getEntity(OrganisationSyndicale.class, demandeDto.getOrganisationSyndicale().getIdOrganisation()));
-				}
-				break;
-			case CONGES_EXCEP:
-				DemandeCongesExceptionnels demandeCongesExcep = getDemande(DemandeCongesExceptionnels.class, demandeDto.getIdDemande());
-				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeCongesExcep);
+			if (null != demandeDto.getOrganisationSyndicale()
+					&& null != demandeDto.getOrganisationSyndicale().getIdOrganisation()) {
+				demandeAsa.setOrganisationSyndicale(OSRepository.getEntity(OrganisationSyndicale.class,
+						demandeDto.getOrganisationSyndicale().getIdOrganisation()));
+			}
+			break;
+		case CONGES_EXCEP:
+			DemandeCongesExceptionnels demandeCongesExcep = getDemande(DemandeCongesExceptionnels.class,
+					demandeDto.getIdDemande());
+			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeCongesExcep);
 
-				if (null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+			if (null == demande.getType().getTypeSaisi())
+				demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
-				// fin, 3 - calcul duree
-				// car dependance entre ces 3 donnees pour les calculs
-				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(), demandeDto.getDateDebut(), demandeDto.isDateDebutAM(),
-						demandeDto.isDateDebutPM()));
-				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(), demande.getDateDebut(),
-						demandeDto.getDuree(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM()));
+			// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
+			// fin, 3 - calcul duree
+			// car dependance entre ces 3 donnees pour les calculs
+			demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(), demandeDto.getDateDebut(),
+					demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+			demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+					demande.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM()));
 
-				demandeCongesExcep = (DemandeCongesExceptionnels) demande;
-				demandeCongesExcep.setDuree(
-						helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()));
-				demandeCongesExcep.setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
-				demandeCongesExcep.setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
-				demandeCongesExcep.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM() : false);
-				demandeCongesExcep.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM() : false);
-				demandeCongesExcep.setCommentaire(demande.getType().getTypeSaisi().isMotif() ? demandeDto.getCommentaire() : null);
-				break;
-			case CONGES_ANNUELS:
-				DemandeCongesAnnuels demandeCongesAnnuels = getDemande(DemandeCongesAnnuels.class, demandeDto.getIdDemande());
-				demandeCongesAnnuels.setTypeSaisiCongeAnnuel(
-						filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class, demandeDto.getTypeSaisiCongeAnnuel().getIdRefTypeSaisiCongeAnnuel()));
-				demande = demandeCongesAnnuels;
-				demande.setType(filtreRepository.getEntity(RefTypeAbsence.class, demandeDto.getIdTypeDemande()));
+			demandeCongesExcep = (DemandeCongesExceptionnels) demande;
+			demandeCongesExcep.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
+					demande.getDateFin(), demandeDto.getDuree()));
+			demandeCongesExcep.setDateDebutAM(
+					demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
+			demandeCongesExcep.setDateDebutPM(
+					demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
+			demandeCongesExcep
+					.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM() : false);
+			demandeCongesExcep
+					.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM() : false);
+			demandeCongesExcep
+					.setCommentaire(demande.getType().getTypeSaisi().isMotif() ? demandeDto.getCommentaire() : null);
+			break;
+		case CONGES_ANNUELS:
+			DemandeCongesAnnuels demandeCongesAnnuels = getDemande(DemandeCongesAnnuels.class,
+					demandeDto.getIdDemande());
+			demandeCongesAnnuels.setTypeSaisiCongeAnnuel(filtreRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+					demandeDto.getTypeSaisiCongeAnnuel().getIdRefTypeSaisiCongeAnnuel()));
+			demande = demandeCongesAnnuels;
+			demande.setType(filtreRepository.getEntity(RefTypeAbsence.class, demandeDto.getIdTypeDemande()));
 
-				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeCongesAnnuels);
+			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeCongesAnnuels);
 
-				// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
-				// fin, 3 - calcul duree
-				// car dependance entre ces 3 donnees pour les calculs
-				demande.setDateDebut(helperService.getDateDebutCongeAnnuel(
-						demande.getType().getTypeSaisiCongeAnnuel() == null ? null : demande.getType().getTypeSaisiCongeAnnuel(), demandeDto.getDateDebut(),
-						demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
-				demande.setDateFin(helperService.getDateFinCongeAnnuel(
-						demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? null : demandeCongesAnnuels.getTypeSaisiCongeAnnuel(), demandeDto.getDateFin(),
-						demande.getDateDebut(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM(), demandeDto.getDateReprise()));
+			// dans l ordre, 1 - calcul date de debut, 2 - calcul date de
+			// fin, 3 - calcul duree
+			// car dependance entre ces 3 donnees pour les calculs
+			demande.setDateDebut(helperService.getDateDebutCongeAnnuel(
+					demande.getType().getTypeSaisiCongeAnnuel() == null ? null
+							: demande.getType().getTypeSaisiCongeAnnuel(),
+					demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+			demande.setDateFin(helperService.getDateFinCongeAnnuel(
+					demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? null
+							: demandeCongesAnnuels.getTypeSaisiCongeAnnuel(),
+					demandeDto.getDateFin(), demande.getDateDebut(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM(),
+					demandeDto.getDateReprise()));
 
-				demandeCongesAnnuels = (DemandeCongesAnnuels) demande;
+			demandeCongesAnnuels = (DemandeCongesAnnuels) demande;
 
-				Double duree = helperService.getDureeCongeAnnuel(demandeCongesAnnuels, demandeDto.getDateReprise(), demandeDto.isForceSaisieManuelleDuree(),
-						demandeDto.getDuree());
-				demandeCongesAnnuels.setDuree(null == duree || duree < 0 ? 0.0 : duree);
-				demandeCongesAnnuels.setDureeAnneeN1(0.0);
-				demandeCongesAnnuels.setNbSamediOffert(helperService.getNombreSamediOffert(demandeCongesAnnuels));
-				demandeCongesAnnuels.setNbSamediDecompte(helperService.getNombreSamediDecompte(demandeCongesAnnuels));
-				demandeCongesAnnuels.setDateDebutAM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false
-						: demandeCongesAnnuels.getTypeSaisiCongeAnnuel().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
-				demandeCongesAnnuels.setDateDebutPM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false
-						: demandeCongesAnnuels.getTypeSaisiCongeAnnuel().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
-				demandeCongesAnnuels.setDateFinAM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false
-						: demandeCongesAnnuels.getTypeSaisiCongeAnnuel().isChkDateFin() ? demandeDto.isDateFinAM() : false);
-				demandeCongesAnnuels.setDateFinPM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false
-						: demandeCongesAnnuels.getTypeSaisiCongeAnnuel().isChkDateFin() ? demandeDto.isDateFinPM() : false);
-				demandeCongesAnnuels.setCommentaire(demandeDto.getCommentaire());
-				break;
-			case MALADIES:
-				DemandeMaladies demandeMaladie = getDemande(DemandeMaladies.class, demandeDto.getIdDemande());
-				demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeMaladie);
+			Double duree = helperService.getDureeCongeAnnuel(demandeCongesAnnuels, demandeDto.getDateReprise(),
+					demandeDto.isForceSaisieManuelleDuree(), demandeDto.getDuree());
+			demandeCongesAnnuels.setDuree(null == duree || duree < 0 ? 0.0 : duree);
+			demandeCongesAnnuels.setDureeAnneeN1(0.0);
+			demandeCongesAnnuels.setNbSamediOffert(helperService.getNombreSamediOffert(demandeCongesAnnuels));
+			demandeCongesAnnuels.setNbSamediDecompte(helperService.getNombreSamediDecompte(demandeCongesAnnuels));
+			demandeCongesAnnuels.setDateDebutAM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false
+					: demandeCongesAnnuels.getTypeSaisiCongeAnnuel().isChkDateDebut() ? demandeDto.isDateDebutAM()
+							: false);
+			demandeCongesAnnuels.setDateDebutPM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false
+					: demandeCongesAnnuels.getTypeSaisiCongeAnnuel().isChkDateDebut() ? demandeDto.isDateDebutPM()
+							: false);
+			demandeCongesAnnuels.setDateFinAM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false
+					: demandeCongesAnnuels.getTypeSaisiCongeAnnuel().isChkDateFin() ? demandeDto.isDateFinAM() : false);
+			demandeCongesAnnuels.setDateFinPM(demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? false
+					: demandeCongesAnnuels.getTypeSaisiCongeAnnuel().isChkDateFin() ? demandeDto.isDateFinPM() : false);
+			demandeCongesAnnuels.setCommentaire(demandeDto.getCommentaire());
+			break;
+		case MALADIES:
+			DemandeMaladies demandeMaladie = getDemande(DemandeMaladies.class, demandeDto.getIdDemande());
+			demande = Demande.mappingDemandeDtoToDemande(demandeDto, demandeMaladie);
 
-				if (null == demande.getType().getTypeSaisi())
-					demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
+			if (null == demande.getType().getTypeSaisi())
+				demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-				demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(), demandeDto.getDateDebut(), demandeDto.isDateDebutAM(),
-						demandeDto.isDateDebutPM()));
-				demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(), demande.getDateDebut(),
-						demandeDto.getDuree(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM()));
+			demande.setDateDebut(helperService.getDateDebut(demande.getType().getTypeSaisi(), demandeDto.getDateDebut(),
+					demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
+			demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
+					demande.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(), demandeDto.isDateFinPM()));
 
-				demandeMaladie = (DemandeMaladies) demande;
-				demandeMaladie.setDuree(helperService.calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin()));
-				demandeMaladie.setNombreITT(demandeDto.getNombreITT());
-				demandeMaladie.setPrescripteur(demandeDto.getPrescripteur());
-				demandeMaladie.setNomEnfant(demandeDto.getNomEnfant());
-				demandeMaladie.setDateDeclaration(demandeDto.getDateDeclaration());
-				demandeMaladie.setProlongation(demandeDto.isProlongation());
-				// #32371 maladie enfant - saisie possible à la demi-journée
-				demandeMaladie.setDateDebutAM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
-				demandeMaladie.setDateDebutPM(demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
-				demandeMaladie.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM() : false);
-				demandeMaladie.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM() : false);
+			demandeMaladie = (DemandeMaladies) demande;
+			demandeMaladie.setDuree(
+					helperService.calculNombreJoursArrondiDemiJournee(demande.getDateDebut(), demande.getDateFin()));
+			demandeMaladie.setNombreITT(demandeDto.getNombreITT());
+			demandeMaladie.setPrescripteur(demandeDto.getPrescripteur());
+			demandeMaladie.setNomEnfant(demandeDto.getNomEnfant());
+			demandeMaladie.setDateDeclaration(demandeDto.getDateDeclaration());
+			demandeMaladie.setProlongation(demandeDto.isProlongation());
+			// #32371 maladie enfant - saisie possible à la demi-journée
+			demandeMaladie.setDateDebutAM(
+					demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutAM() : false);
+			demandeMaladie.setDateDebutPM(
+					demande.getType().getTypeSaisi().isChkDateDebut() ? demandeDto.isDateDebutPM() : false);
+			demandeMaladie
+					.setDateFinAM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinAM() : false);
+			demandeMaladie
+					.setDateFinPM(demande.getType().getTypeSaisi().isChkDateFin() ? demandeDto.isDateFinPM() : false);
 
-				if (null != demandeDto.getTypeAccidentTravail() && null != demandeDto.getTypeAccidentTravail().getIdRefType()) {
-					demandeMaladie.setTypeAccidentTravail(filtreRepository.findRefTypeAccidentTravail(demandeDto.getTypeAccidentTravail().getIdRefType()));
-				}
+			if (null != demandeDto.getTypeAccidentTravail()
+					&& null != demandeDto.getTypeAccidentTravail().getIdRefType()) {
+				demandeMaladie.setTypeAccidentTravail(filtreRepository
+						.findRefTypeAccidentTravail(demandeDto.getTypeAccidentTravail().getIdRefType()));
+			}
 
-				if (null != demandeDto.getTypeSiegeLesion() && null != demandeDto.getTypeSiegeLesion().getIdRefType()) {
-					demandeMaladie.setTypeSiegeLesion(filtreRepository.findRefTypeSiegeLesion(demandeDto.getTypeSiegeLesion().getIdRefType()));
-				}
+			if (null != demandeDto.getTypeSiegeLesion() && null != demandeDto.getTypeSiegeLesion().getIdRefType()) {
+				demandeMaladie.setTypeSiegeLesion(
+						filtreRepository.findRefTypeSiegeLesion(demandeDto.getTypeSiegeLesion().getIdRefType()));
+			}
 
-				if (null != demandeDto.getTypeMaladiePro() && null != demandeDto.getTypeMaladiePro().getIdRefType()) {
-					demandeMaladie.setTypeMaladiePro(filtreRepository.findRefTypeMaladiePro(demandeDto.getTypeMaladiePro().getIdRefType()));
-				}
+			if (null != demandeDto.getTypeMaladiePro() && null != demandeDto.getTypeMaladiePro().getIdRefType()) {
+				demandeMaladie.setTypeMaladiePro(
+						filtreRepository.findRefTypeMaladiePro(demandeDto.getTypeMaladiePro().getIdRefType()));
+			}
 
-				if (null != demandeDto.getAccidentTravailReference() && null != demandeDto.getAccidentTravailReference().getIdDemande()) {
+			if (null != demandeDto.getAccidentTravailReference()
+					&& null != demandeDto.getAccidentTravailReference().getIdDemande()) {
 
-					demandeMaladie.setAccidentTravailReference(
-							demandeRepository.getEntity(DemandeMaladies.class, demandeDto.getAccidentTravailReference().getIdDemande()));
-				}
+				demandeMaladie.setAccidentTravailReference(demandeRepository.getEntity(DemandeMaladies.class,
+						demandeDto.getAccidentTravailReference().getIdDemande()));
+			}
 
-				demandeMaladie.setCommentaire(demandeDto.getCommentaire());
+			demandeMaladie.setCommentaire(demandeDto.getCommentaire());
 
-				demandeMaladie.setDateTransmissionCafat(demandeDto.getDateTransmissionCafat());
-				demandeMaladie.setDateDecisionCafat(demandeDto.getDateDecisionCafat());
-				demandeMaladie.setDateCommissionAptitude(demandeDto.getDateCommissionAptitude());
-				demandeMaladie.setAvisCommissionAptitude(demandeDto.getAvisCommissionAptitude());
-				demandeMaladie.setTauxCafat(demandeDto.getTauxCafat());
-				
-				// #39417 : Si c'est une prolongation, on va vérifier qu'il y a bien une maladie existatne qui précède cette demande.
-				if (demandeDto.isProlongation()) {
-					if (!demandeRepository.initialDemandeForProlongationExists(demandeDto))
-						returnDto.getErrors().add(String.format("Aucune demande de maladie ne précède cette prolongation."));
-				}
-				break;
-			default:
-				returnDto.getErrors()
-						.add(String.format("Le groupe [%d] de la demande n'est pas reconnu.", demandeDto.getGroupeAbsence().getIdRefGroupeAbsence()));
+			demandeMaladie.setDateTransmissionCafat(demandeDto.getDateTransmissionCafat());
+			demandeMaladie.setDateDecisionCafat(demandeDto.getDateDecisionCafat());
+			demandeMaladie.setDateCommissionAptitude(demandeDto.getDateCommissionAptitude());
+			demandeMaladie.setAvisCommissionAptitude(demandeDto.getAvisCommissionAptitude());
+			demandeMaladie.setTauxCafat(demandeDto.getTauxCafat());
+
+			// #39417 : Si c'est une prolongation, on va vérifier qu'il y a bien
+			// une maladie existatne qui précède cette demande.
+			if (demandeDto.isProlongation()) {
+				if (!demandeRepository.initialDemandeForProlongationExists(demandeDto))
+					returnDto.getErrors()
+							.add(String.format("Aucune demande de maladie ne précède cette prolongation."));
+			}
+			break;
+		default:
+			returnDto.getErrors().add(String.format("Le groupe [%d] de la demande n'est pas reconnu.",
+					demandeDto.getGroupeAbsence().getIdRefGroupeAbsence()));
 		}
 		demande.getType().setGroupe(groupe);
 
 		// ON TRAITE l'ETAT
 		EtatDemande etatDemande = new EtatDemande();
-		etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, returnDto, demandeDto.getGroupeAbsence().getIdRefGroupeAbsence());
+		etatDemande = mappingEtatDemandeSpecifique(etatDemande, demande, returnDto,
+				demandeDto.getGroupeAbsence().getIdRefGroupeAbsence());
 		etatDemande.setDate(dateJour);
 		etatDemande.setIdAgent(idAgent);
 		etatDemande.setCommentaire(demandeDto.getCommentaire());
 		etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeDto.getIdRefEtat()));
 		demande.addEtatDemande(etatDemande);
 
-		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
-				&& demandeDto.getGroupeAbsence().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.MALADIES.getValue())) {
+		if (demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat()) && demandeDto.getGroupeAbsence()
+				.getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.MALADIES.getValue())) {
 			// ON TRAITE l'ETAT
 			EtatDemande etatDemandeAValider = new EtatDemande();
-			etatDemandeAValider = mappingEtatDemandeSpecifique(etatDemande, demande, returnDto, demandeDto.getGroupeAbsence().getIdRefGroupeAbsence());
+			etatDemandeAValider = mappingEtatDemandeSpecifique(etatDemande, demande, returnDto,
+					demandeDto.getGroupeAbsence().getIdRefGroupeAbsence());
 			etatDemandeAValider.setDate(dateJour);
 			etatDemandeAValider.setIdAgent(idAgent);
 			etatDemandeAValider.setCommentaire(demandeDto.getCommentaire());
@@ -1913,8 +2094,8 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DemandeDto> getListeDemandesSIRHAValider(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType, Integer idAgentRecherche,
-			Integer idRefGroupeAbsence, List<Integer> agentIds) {
+	public List<DemandeDto> getListeDemandesSIRHAValider(Date fromDate, Date toDate, Integer idRefEtat,
+			Integer idRefType, Integer idAgentRecherche, Integer idRefGroupeAbsence, List<Integer> agentIds) {
 
 		if (null != idAgentRecherche && 0 != idAgentRecherche) {
 			agentIds = new ArrayList<Integer>();
@@ -1927,11 +2108,13 @@ public class AbsenceService implements IAbsenceService {
 		listGroupe.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 		listGroupe.add(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
 		if (idRefGroupeAbsence != null) {
-			if (idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.AS.getValue() || idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue()
+			if (idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.AS.getValue()
+					|| idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue()
 					|| idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.MALADIES.getValue()) {
 				listGroupe = new ArrayList<Integer>();
 				listGroupe.add(idRefGroupeAbsence);
-				listeSansFiltre = demandeRepository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(fromDate, toDate, listGroupe, idRefType, agentIds);
+				listeSansFiltre = demandeRepository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(fromDate,
+						toDate, listGroupe, idRefType, agentIds);
 
 			} else if (idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
 				listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds);
@@ -1940,7 +2123,8 @@ public class AbsenceService implements IAbsenceService {
 			}
 		} else {
 			listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds);
-			listeSansFiltre.addAll(demandeRepository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(fromDate, toDate, listGroupe, idRefType, agentIds));
+			listeSansFiltre.addAll(demandeRepository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(fromDate,
+					toDate, listGroupe, idRefType, agentIds));
 		}
 
 		List<RefEtat> listEtats = null;
@@ -1958,18 +2142,21 @@ public class AbsenceService implements IAbsenceService {
 			listEtats = filtreRepository.findRefEtatAValider();
 		}
 
-		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre, listEtats, null, true);
+		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
+				listEtats, null, true);
 		HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo = new HashMap<Integer, CheckCompteurAgentVo>();
 		for (DemandeDto dto : listeDto) {
 			IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = dataConsistencyRulesFactory
 					.getFactory(dto.getGroupeAbsence().getIdRefGroupeAbsence(), dto.getIdTypeDemande());
 
-			CheckCompteurAgentVo checkCompteurAgentVo = mapCheckCompteurAgentVo.get(dto.getAgentWithServiceDto().getIdAgent());
+			CheckCompteurAgentVo checkCompteurAgentVo = mapCheckCompteurAgentVo
+					.get(dto.getAgentWithServiceDto().getIdAgent());
 			if (null == checkCompteurAgentVo)
 				checkCompteurAgentVo = new CheckCompteurAgentVo();
 
 			dto = absenceDataConsistencyRulesImpl.filtreDroitOfDemandeSIRH(dto);
-			dto.setDepassementCompteur(absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto, checkCompteurAgentVo));
+			dto.setDepassementCompteur(
+					absenceDataConsistencyRulesImpl.checkDepassementCompteurAgent(dto, checkCompteurAgentVo));
 			dto.setDepassementMultiple(absenceDataConsistencyRulesImpl.checkDepassementMultipleAgent(dto));
 			dto.setDepassementITT(absenceDataConsistencyRulesImpl.checkDepassementITT(dto));
 
@@ -1988,8 +2175,8 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de recup de l'agent entre les dates
 
-		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate, toDate,
-				RefTypeGroupeAbsenceEnum.RECUP.getValue());
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
 		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 		for (Demande d : listeDemande) {
@@ -1997,11 +2184,14 @@ public class AbsenceService implements IAbsenceService {
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.APPROUVEE.equals(demandeRecup.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.PRISE.equals(demandeRecup.getLatestEtatDemande().getEtat())) {
-				String msg = String.format(RECUP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"), agent.getNomUsage() + " " + agent.getPrenomUsage());
+				String msg = String.format(RECUP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
-				result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demandeRecup.getDateDebut()).toString("dd/MM/yyyy"), "récupération",
-						agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				result.getInfos()
+						.add(String.format(AVERT_MESSAGE_ABS,
+								new DateTime(demandeRecup.getDateDebut()).toString("dd/MM/yyyy"), "récupération",
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -2015,8 +2205,8 @@ public class AbsenceService implements IAbsenceService {
 		// on cherche toutes les demandes de repos comp de l'agent entre les
 		// dates
 
-		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate, toDate,
-				RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
 		for (Demande d : listeDemande) {
 			DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, d.getIdDemande());
 
@@ -2028,8 +2218,10 @@ public class AbsenceService implements IAbsenceService {
 						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
-				result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demandeReposComp.getDateDebut()).toString("dd/MM/yyyy"),
-						"repos compensateur", agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				result.getInfos()
+						.add(String.format(AVERT_MESSAGE_ABS,
+								new DateTime(demandeReposComp.getDateDebut()).toString("dd/MM/yyyy"),
+								"repos compensateur", agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -2042,8 +2234,8 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes d'ASA de l'agent entre les dates
 
-		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate, toDate,
-				RefTypeGroupeAbsenceEnum.AS.getValue());
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeGroupeAbsenceEnum.AS.getValue());
 		for (Demande d : listeDemande) {
 			DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, d.getIdDemande());
 
@@ -2051,11 +2243,14 @@ public class AbsenceService implements IAbsenceService {
 			// si la demande est dans un bon etat
 			if (RefEtatEnum.VALIDEE.equals(demandeAsa.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.PRISE.equals(demandeAsa.getLatestEtatDemande().getEtat())) {
-				String msg = String.format(ASA_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"), agent.getNomUsage() + " " + agent.getPrenomUsage());
+				String msg = String.format(ASA_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
-				result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demandeAsa.getDateDebut()).toString("dd/MM/yyyy"), "absence syndicale",
-						agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				result.getInfos()
+						.add(String.format(AVERT_MESSAGE_ABS,
+								new DateTime(demandeAsa.getDateDebut()).toString("dd/MM/yyyy"), "absence syndicale",
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -2068,10 +2263,11 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de congés exceptionnels de l'agent
 		// entre les dates
-		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate, toDate,
-				RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 		for (Demande d : listeDemande) {
-			DemandeCongesExceptionnels demandeExcep = demandeRepository.getEntity(DemandeCongesExceptionnels.class, d.getIdDemande());
+			DemandeCongesExceptionnels demandeExcep = demandeRepository.getEntity(DemandeCongesExceptionnels.class,
+					d.getIdDemande());
 
 			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
@@ -2081,8 +2277,10 @@ public class AbsenceService implements IAbsenceService {
 						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
-				result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demandeExcep.getDateDebut()).toString("dd/MM/yyyy"), "congé exceptionnel",
-						agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				result.getInfos()
+						.add(String.format(AVERT_MESSAGE_ABS,
+								new DateTime(demandeExcep.getDateDebut()).toString("dd/MM/yyyy"), "congé exceptionnel",
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -2095,10 +2293,11 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de congés annuels de l'agent
 		// entre les dates
-		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate, toDate,
-				RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
 		for (Demande d : listeDemande) {
-			DemandeCongesAnnuels demandeCongeAnnuel = demandeRepository.getEntity(DemandeCongesAnnuels.class, d.getIdDemande());
+			DemandeCongesAnnuels demandeCongeAnnuel = demandeRepository.getEntity(DemandeCongesAnnuels.class,
+					d.getIdDemande());
 
 			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
 			// si la demande est dans un bon etat
@@ -2109,8 +2308,10 @@ public class AbsenceService implements IAbsenceService {
 						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
-				result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demandeCongeAnnuel.getDateDebut()).toString("dd/MM/yyyy"), "congé annuel",
-						agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				result.getInfos()
+						.add(String.format(AVERT_MESSAGE_ABS,
+								new DateTime(demandeCongeAnnuel.getDateDebut()).toString("dd/MM/yyyy"), "congé annuel",
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -2123,8 +2324,8 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de maladies de l'agent
 		// entre les dates
-		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate, toDate,
-				RefTypeGroupeAbsenceEnum.MALADIES.getValue());
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, RefTypeGroupeAbsenceEnum.MALADIES.getValue());
 		for (Demande d : listeDemande) {
 			DemandeMaladies demandeMaladie = demandeRepository.getEntity(DemandeMaladies.class, d.getIdDemande());
 
@@ -2134,12 +2335,15 @@ public class AbsenceService implements IAbsenceService {
 					|| RefEtatEnum.A_VALIDER.equals(demandeMaladie.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.VALIDEE.equals(demandeMaladie.getLatestEtatDemande().getEtat())
 					|| RefEtatEnum.PRISE.equals(demandeMaladie.getLatestEtatDemande().getEtat())) {
-				String msg = String.format(MALADIE_MSG, new DateTime(demandeMaladie.getDateDebut()).toString("dd/MM/yyyy HH:mm"),
+				String msg = String.format(MALADIE_MSG,
+						new DateTime(demandeMaladie.getDateDebut()).toString("dd/MM/yyyy HH:mm"),
 						agent.getNomUsage() + " " + agent.getPrenomUsage());
 				result.getErrors().add(msg);
 			} else {
-				result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demandeMaladie.getDateDebut()).toString("dd/MM/yyyy"), "maladie",
-						agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				result.getInfos()
+						.add(String.format(AVERT_MESSAGE_ABS,
+								new DateTime(demandeMaladie.getDateDebut()).toString("dd/MM/yyyy"), "maladie",
+								agent.getNomUsage() + " " + agent.getPrenomUsage()));
 			}
 		}
 
@@ -2152,91 +2356,107 @@ public class AbsenceService implements IAbsenceService {
 		ReturnMessageDto result = new ReturnMessageDto();
 		// on cherche toutes les demandes de tout type de l'agent
 		// entre les dates
-		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate, toDate, null);
+		List<Demande> listeDemande = demandeRepository.listeDemandesAgentVerification(convertedIdAgent, fromDate,
+				toDate, null);
 		for (Demande demande : listeDemande) {
 
 			AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
-			switch (RefTypeGroupeAbsenceEnum.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
-				case AS:
-					// si la demande est dans un bon etat
-					if (RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat())
-							|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
-						String msg = String.format(ASA_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
-								agent.getNomUsage() + " " + agent.getPrenomUsage());
-						result.getErrors().add(msg);
-					} else {
-						result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "absence syndicale",
-								agent.getNomUsage() + " " + agent.getPrenomUsage()));
-					}
-					break;
-				case CONGES_ANNUELS:
-					// si la demande est dans un bon etat
-					if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat())
-							|| RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat())
-							|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
-						String msg = String.format(CONGE_ANNUEL_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
-								agent.getNomUsage() + " " + agent.getPrenomUsage());
-						result.getErrors().add(msg);
-					} else {
-						result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "congé annuel",
-								agent.getNomUsage() + " " + agent.getPrenomUsage()));
-					}
-					break;
-				case CONGES_EXCEP:
-					// si la demande est dans un bon etat
-					if (RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat())
-							|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
-						String msg = String.format(CONGE_EXCEP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
-								agent.getNomUsage() + " " + agent.getPrenomUsage());
-						result.getErrors().add(msg);
-					} else {
-						result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"),
-								"congé exceptionnel", agent.getNomUsage() + " " + agent.getPrenomUsage()));
-					}
-					break;
-				case MALADIES:
-					// #31896 ajout de blocage pour les maladies saisies en attente de validation DRH
-					// si la demande est dans un bon etat
-					if (RefEtatEnum.SAISIE.equals(demande.getLatestEtatDemande().getEtat())
-							|| RefEtatEnum.A_VALIDER.equals(demande.getLatestEtatDemande().getEtat())
-							|| RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat())
-							|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
-						String msg = String.format(MALADIE_MSG, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy HH:mm"),
-								agent.getNomUsage() + " " + agent.getPrenomUsage());
-						result.getErrors().add(msg);
-					} else {
-						result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "maladie",
-								agent.getNomUsage() + " " + agent.getPrenomUsage()));
-					}
-					break;
-				case RECUP:
-					// si la demande est dans un bon etat
-					if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat())
-							|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
-						String msg = String.format(RECUP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
-								agent.getNomUsage() + " " + agent.getPrenomUsage());
-						result.getErrors().add(msg);
-					} else {
-						result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "récupération",
-								agent.getNomUsage() + " " + agent.getPrenomUsage()));
-					}
-					break;
-				case REPOS_COMP:
-					// si la demande est dans un bon etat
-					if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat())
-							|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
-						String msg = String.format(REPOS_COMP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
-								agent.getNomUsage() + " " + agent.getPrenomUsage());
-						result.getErrors().add(msg);
-					} else {
-						result.getInfos().add(String.format(AVERT_MESSAGE_ABS, new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"),
-								"repos compensateur", agent.getNomUsage() + " " + agent.getPrenomUsage()));
-					}
-					break;
-				case NOT_EXIST:
-					break;
-				default:
-					break;
+			switch (RefTypeGroupeAbsenceEnum
+					.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
+			case AS:
+				// si la demande est dans un bon etat
+				if (RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat())
+						|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+					String msg = String.format(ASA_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+							agent.getNomUsage() + " " + agent.getPrenomUsage());
+					result.getErrors().add(msg);
+				} else {
+					result.getInfos()
+							.add(String.format(AVERT_MESSAGE_ABS,
+									new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "absence syndicale",
+									agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				}
+				break;
+			case CONGES_ANNUELS:
+				// si la demande est dans un bon etat
+				if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat())
+						|| RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat())
+						|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+					String msg = String.format(CONGE_ANNUEL_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+							agent.getNomUsage() + " " + agent.getPrenomUsage());
+					result.getErrors().add(msg);
+				} else {
+					result.getInfos()
+							.add(String.format(AVERT_MESSAGE_ABS,
+									new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "congé annuel",
+									agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				}
+				break;
+			case CONGES_EXCEP:
+				// si la demande est dans un bon etat
+				if (RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat())
+						|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+					String msg = String.format(CONGE_EXCEP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+							agent.getNomUsage() + " " + agent.getPrenomUsage());
+					result.getErrors().add(msg);
+				} else {
+					result.getInfos()
+							.add(String.format(AVERT_MESSAGE_ABS,
+									new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "congé exceptionnel",
+									agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				}
+				break;
+			case MALADIES:
+				// #31896 ajout de blocage pour les maladies saisies en attente
+				// de validation DRH
+				// si la demande est dans un bon etat
+				if (RefEtatEnum.SAISIE.equals(demande.getLatestEtatDemande().getEtat())
+						|| RefEtatEnum.A_VALIDER.equals(demande.getLatestEtatDemande().getEtat())
+						|| RefEtatEnum.VALIDEE.equals(demande.getLatestEtatDemande().getEtat())
+						|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+					String msg = String.format(MALADIE_MSG,
+							new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy HH:mm"),
+							agent.getNomUsage() + " " + agent.getPrenomUsage());
+					result.getErrors().add(msg);
+				} else {
+					result.getInfos()
+							.add(String.format(AVERT_MESSAGE_ABS,
+									new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "maladie",
+									agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				}
+				break;
+			case RECUP:
+				// si la demande est dans un bon etat
+				if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat())
+						|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+					String msg = String.format(RECUP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+							agent.getNomUsage() + " " + agent.getPrenomUsage());
+					result.getErrors().add(msg);
+				} else {
+					result.getInfos()
+							.add(String.format(AVERT_MESSAGE_ABS,
+									new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "récupération",
+									agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				}
+				break;
+			case REPOS_COMP:
+				// si la demande est dans un bon etat
+				if (RefEtatEnum.APPROUVEE.equals(demande.getLatestEtatDemande().getEtat())
+						|| RefEtatEnum.PRISE.equals(demande.getLatestEtatDemande().getEtat())) {
+					String msg = String.format(REPOS_COMP_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"),
+							agent.getNomUsage() + " " + agent.getPrenomUsage());
+					result.getErrors().add(msg);
+				} else {
+					result.getInfos()
+							.add(String.format(AVERT_MESSAGE_ABS,
+									new DateTime(demande.getDateDebut()).toString("dd/MM/yyyy"), "repos compensateur",
+									agent.getNomUsage() + " " + agent.getPrenomUsage()));
+				}
+				break;
+			case NOT_EXIST:
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -2258,7 +2478,8 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<MoisAlimAutoCongesAnnuelsDto> getListeAlimAutoCongeAnnuelByMois(Date dateMois, boolean onlyErreur) {
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
-		for (CongeAnnuelAlimAutoHisto histo : congeAnnuelRepository.getListeAlimAutoCongeAnnuelByMois(dateMois, onlyErreur)) {
+		for (CongeAnnuelAlimAutoHisto histo : congeAnnuelRepository.getListeAlimAutoCongeAnnuelByMois(dateMois,
+				onlyErreur)) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
 			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
 			AgentDto agDto = new AgentDto();
@@ -2291,7 +2512,8 @@ public class AbsenceService implements IAbsenceService {
 			mois.setStatus(histo.getStatus());
 			mois.setInfos(histo.getMessageInfos());
 			mois.setDateMois(histo.getDateMonth());
-			AgentWeekCongeAnnuel weekConge = congeAnnuelRepository.getWeekHistoForAgentAndDate(idAgent, mois.getDateMois());
+			AgentWeekCongeAnnuel weekConge = congeAnnuelRepository.getWeekHistoForAgentAndDate(idAgent,
+					mois.getDateMois());
 			mois.setNbJours(weekConge == null ? 0 : weekConge.getJours());
 			result.add(mois);
 		}
@@ -2303,14 +2525,19 @@ public class AbsenceService implements IAbsenceService {
 	public List<Integer> getListeIdAgentConcerneRestitutionMassive(RestitutionMassiveDto dto) {
 		List<Integer> result = new ArrayList<>();
 		// on cherche tous les agents en congés pour cette date
-		List<Integer> listIdAgentConge = congeAnnuelRepository.getListeDemandesCongesAnnuelsPrisesForDate(dto.getDateRestitution());
+		List<Integer> listIdAgentConge = congeAnnuelRepository
+				.getListeDemandesCongesAnnuelsPrisesForDate(dto.getDateRestitution());
 		for (Integer idAgent : listIdAgentConge) {
 			// on cherche sa base horaire
-			RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(idAgent, dto.getDateRestitution());
+			RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(idAgent,
+					dto.getDateRestitution());
 			if (null != dtoBase && null != dtoBase.getIdRefTypeSaisiCongeAnnuel()) {
-				RefTypeSaisiCongeAnnuel typeConge = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, dtoBase.getIdRefTypeSaisiCongeAnnuel());
-				if (null == typeConge || null == typeConge.getCodeBaseHoraireAbsence() || (!"A".equals(typeConge.getCodeBaseHoraireAbsence().trim())
-						&& !"D".equals(typeConge.getCodeBaseHoraireAbsence().trim()) && !"S".equals(typeConge.getCodeBaseHoraireAbsence().trim()))) {
+				RefTypeSaisiCongeAnnuel typeConge = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+						dtoBase.getIdRefTypeSaisiCongeAnnuel());
+				if (null == typeConge || null == typeConge.getCodeBaseHoraireAbsence()
+						|| (!"A".equals(typeConge.getCodeBaseHoraireAbsence().trim())
+								&& !"D".equals(typeConge.getCodeBaseHoraireAbsence().trim())
+								&& !"S".equals(typeConge.getCodeBaseHoraireAbsence().trim()))) {
 					logger.debug(String.format(MAUVAIS_BASE_CA, idAgent));
 				} else {
 					if (!result.contains(idAgent))
@@ -2326,7 +2553,8 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<RefAlimCongesAnnuelsDto> getListeRefAlimCongeAnnuelByBaseConge(Integer idRefTypeSaisiCongeAnnuel) {
 		List<RefAlimCongesAnnuelsDto> result = new ArrayList<RefAlimCongesAnnuelsDto>();
-		for (RefAlimCongeAnnuel ref : congeAnnuelRepository.getListeRefAlimCongeAnnuelByBaseConge(idRefTypeSaisiCongeAnnuel)) {
+		for (RefAlimCongeAnnuel ref : congeAnnuelRepository
+				.getListeRefAlimCongeAnnuelByBaseConge(idRefTypeSaisiCongeAnnuel)) {
 			RefAlimCongesAnnuelsDto dto = new RefAlimCongesAnnuelsDto(ref);
 			result.add(dto);
 		}
@@ -2335,7 +2563,8 @@ public class AbsenceService implements IAbsenceService {
 
 	@Override
 	@Transactional(value = "chainedTransactionManager")
-	public ReturnMessageDto setRefAlimCongeAnnuel(Integer convertedIdAgent, RefAlimCongesAnnuelsDto refAlimCongesAnnuelsDto) {
+	public ReturnMessageDto setRefAlimCongeAnnuel(Integer convertedIdAgent,
+			RefAlimCongesAnnuelsDto refAlimCongesAnnuelsDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -2347,8 +2576,8 @@ public class AbsenceService implements IAbsenceService {
 			return result;
 		}
 
-		RefAlimCongeAnnuel refAlim = congeAnnuelRepository.getRefAlimCongeAnnuel(refAlimCongesAnnuelsDto.getIdRefTypeSaisiCongeAnnuel(),
-				refAlimCongesAnnuelsDto.getAnnee());
+		RefAlimCongeAnnuel refAlim = congeAnnuelRepository.getRefAlimCongeAnnuel(
+				refAlimCongesAnnuelsDto.getIdRefTypeSaisiCongeAnnuel(), refAlimCongesAnnuelsDto.getAnnee());
 
 		if (null == refAlim) {
 			refAlim = new RefAlimCongeAnnuel();
@@ -2406,7 +2635,8 @@ public class AbsenceService implements IAbsenceService {
 		soldeConge.setSoldeAnneeEnCours(soldeCongeAgent.getTotalJours());
 		soldeConge.setSoldeAnneePrec(soldeCongeAgent.getTotalJoursAnneeN1());
 
-		Integer nombreSamediDejaOffert = demandeRepository.getNombreSamediOffertSurAnnee(idAgent, new DateTime(new Date()).getYear(), null);
+		Integer nombreSamediDejaOffert = demandeRepository.getNombreSamediOffertSurAnnee(idAgent,
+				new DateTime(new Date()).getYear(), null);
 
 		soldeConge.setSoldeSamediOffert(nombreSamediDejaOffert > 0 ? 0 : 1);
 
@@ -2423,7 +2653,8 @@ public class AbsenceService implements IAbsenceService {
 
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent), helperService.getCurrentDate());
 		if (!(carr.getCdcate() == 4 || carr.getCdcate() == 7)) {
 			logger.debug(String.format(STATUT_AGENT, idAgent));
 			result.getInfos().add(String.format(STATUT_AGENT, idAgent));
@@ -2464,17 +2695,20 @@ public class AbsenceService implements IAbsenceService {
 		// cf #15284
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		List<RefAlimCongeAnnuel> listRefAlimAnneePrecedente = congeAnnuelRepository.getListeRefAlimCongeAnnuelByYear(anneeCreation - 1);
+		List<RefAlimCongeAnnuel> listRefAlimAnneePrecedente = congeAnnuelRepository
+				.getListeRefAlimCongeAnnuelByYear(anneeCreation - 1);
 
 		if (null == listRefAlimAnneePrecedente || listRefAlimAnneePrecedente.size() == 0
 				|| listRefAlimAnneePrecedente.size() != typeAbsenceRepository.getListeTypeSaisiCongeAnnuel().size()) {
-			result.getErrors().add("Aucun paramétrage trouvé pour l'année précédente. Merci de contacter le responsable du projet.");
+			result.getErrors().add(
+					"Aucun paramétrage trouvé pour l'année précédente. Merci de contacter le responsable du projet.");
 			return result;
 		}
 		for (RefAlimCongeAnnuel oldRefAlim : listRefAlimAnneePrecedente) {
 			// #32360 : on verifie si l'année existe deja --> si oui on ne fais
 			// rien
-			RefAlimCongeAnnuel nouvelleRefAlim = congeAnnuelRepository.getRefAlimCongeAnnuel(oldRefAlim.getId().getIdRefTypeSaisiCongeAnnuel(), anneeCreation);
+			RefAlimCongeAnnuel nouvelleRefAlim = congeAnnuelRepository
+					.getRefAlimCongeAnnuel(oldRefAlim.getId().getIdRefTypeSaisiCongeAnnuel(), anneeCreation);
 			if (nouvelleRefAlim != null) {
 				continue;
 			}
@@ -2543,7 +2777,8 @@ public class AbsenceService implements IAbsenceService {
 	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoReposComp(Integer convertedIdAgent) {
 
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
-		for (AgentWeekReposComp histo : reposCompensateurRepository.getListeAlimAutoReposCompByAgent(convertedIdAgent)) {
+		for (AgentWeekReposComp histo : reposCompensateurRepository
+				.getListeAlimAutoReposCompByAgent(convertedIdAgent)) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
 			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
 			AgentDto agDto = new AgentDto();
@@ -2561,8 +2796,9 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	/**
-	 * Retourne la liste des demandes au moment de leur etat soit Approuve, soit Valide, soit Annule : cela permet de tracer les operations sur le compteur d un
-	 * agent.
+	 * Retourne la liste des demandes au moment de leur etat soit Approuve, soit
+	 * Valide, soit Annule : cela permet de tracer les operations sur le
+	 * compteur d un agent.
 	 */
 	@Override
 	public List<DemandeDto> getListDemandesCAToAddOrRemoveOnAgentCounter(Integer idAgent, Integer idAgentConcerne) {
@@ -2576,7 +2812,8 @@ public class AbsenceService implements IAbsenceService {
 
 		List<DemandeDto> result = new ArrayList<DemandeDto>();
 
-		List<EtatDemandeCongesAnnuels> listEtatDemande = congeAnnuelRepository.getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent(idAgentConcerne);
+		List<EtatDemandeCongesAnnuels> listEtatDemande = congeAnnuelRepository
+				.getListEtatDemandeCongesAnnuelsApprouveValideAndAnnuleByIdAgent(idAgentConcerne);
 
 		for (EtatDemandeCongesAnnuels etatCA : listEtatDemande) {
 
@@ -2605,7 +2842,8 @@ public class AbsenceService implements IAbsenceService {
 
 		for (Demande dem : listDemandeRejetVeille) {
 
-			DemandeDto demandeDto = new DemandeDto(dem, sirhWSConsumer.getAgentService(dem.getIdAgent(), helperService.getCurrentDate()), true);
+			DemandeDto demandeDto = new DemandeDto(dem,
+					sirhWSConsumer.getAgentService(dem.getIdAgent(), helperService.getCurrentDate()), true);
 			result.add(demandeDto);
 		}
 
@@ -2708,16 +2946,21 @@ public class AbsenceService implements IAbsenceService {
 
 		StringBuilder text = new StringBuilder();
 		text.append("Bonjour, <br><br> ");
-		text.append("Une demande de contrôle médical vient d'être faite pour l'agent " + agentConcerne.getDisplayPrenom() + " " + agentConcerne.getDisplayNom()
-				+ "<br>");
-		text.append("Concerant une maladie allant du " + sdf.format(demande.getDateDebut()) + " au " + sdf.format(demande.getDateFin()) + " <br> <br>");
-		text.append("Opérateur ayant fait la demande : " + agentDemandeur.getDisplayPrenom() + " " + agentDemandeur.getDisplayNom().toUpperCase() + "<br>");
-		text.append("Date de la demande de contrôle médical : " + (dto.getDate() == null ? "NC" : sdf.format(dto.getDate())) + "<br>");
+		text.append("Une demande de contrôle médical vient d'être faite pour l'agent "
+				+ agentConcerne.getDisplayPrenom() + " " + agentConcerne.getDisplayNom() + "<br>");
+		text.append("Concerant une maladie allant du " + sdf.format(demande.getDateDebut()) + " au "
+				+ sdf.format(demande.getDateFin()) + " <br> <br>");
+		text.append("Opérateur ayant fait la demande : " + agentDemandeur.getDisplayPrenom() + " "
+				+ agentDemandeur.getDisplayNom().toUpperCase() + "<br>");
+		text.append("Date de la demande de contrôle médical : "
+				+ (dto.getDate() == null ? "NC" : sdf.format(dto.getDate())) + "<br>");
 		text.append("Commentaire : " + dto.getCommentaire() + "<br><br>");
-		text.append("Vous pouvez obtenir plus d'informations concernant cette demande en allant voir cette dernière dans SIRH.<br><br>");
+		text.append(
+				"Vous pouvez obtenir plus d'informations concernant cette demande en allant voir cette dernière dans SIRH.<br><br>");
 		text.append("Cordialement, <br>L'équipe SIRH.");
 
-		String subject = "Demande de contrôle médical pour l'agent " + agentConcerne.getDisplayPrenom() + " " + agentConcerne.getDisplayNom();
+		String subject = "Demande de contrôle médical pour l'agent " + agentConcerne.getDisplayPrenom() + " "
+				+ agentConcerne.getDisplayNom();
 
 		result = sendMailToMaladieRecipients(text.toString(), subject);
 
@@ -2729,7 +2972,8 @@ public class AbsenceService implements IAbsenceService {
 
 	private ReturnMessageDto sendMailToMaladieRecipients(String text, String subject) {
 		ReturnMessageDto result = new ReturnMessageDto();
-		// Les variables doivent être final pour être disponible dans le mailPreparator.
+		// Les variables doivent être final pour être disponible dans le
+		// mailPreparator.
 		final String finalText = text;
 		final String finalSubject;
 
@@ -2743,7 +2987,8 @@ public class AbsenceService implements IAbsenceService {
 		// on recupere les destinataires du mail
 		List<LightUser> listeEmailDestinataireDto = sirhWSConsumer.getEmailDestinataire();
 		if (listeEmailDestinataireDto == null || listeEmailDestinataireDto.isEmpty()) {
-			result.getErrors().add("Envoi de mail impossible, la liste des destinataires est vide. Merci de contacter votre gestionnaire RH");
+			result.getErrors().add(
+					"Envoi de mail impossible, la liste des destinataires est vide. Merci de contacter votre gestionnaire RH");
 			return result;
 		}
 		final List<String> listeEmailDestinataire = new ArrayList<>();

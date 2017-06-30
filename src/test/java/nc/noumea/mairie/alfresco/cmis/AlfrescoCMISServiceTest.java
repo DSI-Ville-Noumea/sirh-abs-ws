@@ -4,19 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 
-import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.PieceJointe;
-import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
-import nc.noumea.mairie.abs.domain.RefTypeAbsence;
-import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
-import nc.noumea.mairie.abs.domain.RefTypeSaisi;
-import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
-import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
-import nc.noumea.mairie.abs.dto.DemandeDto;
-import nc.noumea.mairie.abs.dto.PieceJointeDto;
-import nc.noumea.mairie.abs.dto.ReturnMessageDto;
-import nc.noumea.mairie.ws.ISirhWSConsumer;
-
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -29,6 +16,19 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.staticmock.MockStaticEntityMethods;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import nc.noumea.mairie.abs.domain.Demande;
+import nc.noumea.mairie.abs.domain.PieceJointe;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.AgentWithServiceDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.PieceJointeDto;
+import nc.noumea.mairie.abs.dto.ReturnMessageDto;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 @MockStaticEntityMethods
 public class AlfrescoCMISServiceTest {
@@ -126,9 +126,6 @@ public class AlfrescoCMISServiceTest {
 		CreateSession createSession = Mockito.mock(CreateSession.class);
 		Mockito.when(createSession.getSession(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(session);
 		
-		CmisService cmisService = Mockito.mock(CmisService.class);
-		Mockito.when(cmisService.getIdObjectCmis(Mockito.anyString(), Mockito.any(Session.class))).thenReturn(idFolder);
-		
 		AgentGeneriqueDto agentDto = new AgentGeneriqueDto();
 		agentDto.setIdAgent(idAgent);
 		agentDto.setNomUsage("nomUsage");
@@ -139,7 +136,6 @@ public class AlfrescoCMISServiceTest {
 		
 		AlfrescoCMISService service = new AlfrescoCMISService();
 		ReflectionTestUtils.setField(service, "createSession", createSession);
-		ReflectionTestUtils.setField(service, "cmisService", cmisService);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		
 		returnDto = service.uploadDocument(idAgentOperateur, demandeDto, demande, returnDto, false, false);
