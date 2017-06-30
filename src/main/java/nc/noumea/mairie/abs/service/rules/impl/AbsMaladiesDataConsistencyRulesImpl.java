@@ -177,12 +177,13 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 
 		// #36518 : si enfant malade, l'agent a droit à 3 jours par année civile
 		if (demandeDto.getIdTypeDemande() != null && demandeDto.getIdTypeDemande() == RefTypeAbsenceEnum.ENFANT_MALADE.getValue()) {
+			// #40182 : On n'affiche pas le dépassement pour les premières demandes
 			List<DemandeMaladies> listMaladiesEnfantSurAnneeCivile = maladiesRepository.getListEnfantMaladeAnneeCivileByAgent(
 					demandeDto.getAgentWithServiceDto().getIdAgent(), helperService.getDateDebutAnneeForOneDate(demandeDto.getDateDebut(), 1),
-					helperService.getDateFinAnneeForOneDate(demandeDto.getDateDebut(), 1));
+					demandeDto.getDateFin());
 			Integer duree = maladieCounterServiceImpl.getNombeJourMaladies(demandeDto.getAgentWithServiceDto().getIdAgent(),
 					helperService.getDateDebutAnneeForOneDate(demandeDto.getDateDebut(), 1),
-					helperService.getDateFinAnneeForOneDate(demandeDto.getDateDebut(), 1), listMaladiesEnfantSurAnneeCivile);
+					demandeDto.getDateFin(), listMaladiesEnfantSurAnneeCivile);
 			// #39320 : Pour une demande créée, si elle dépasse le quota, on en informe l'utilisateur.
 			if (demandeDto.getIdDemande() == null) {
 				if (demandeDto.getDuree() + duree > SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE)

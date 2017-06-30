@@ -308,6 +308,18 @@ public class DemandeController {
 
 		return result;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/listeATReferenceForAgent", produces = "application/json; charset=utf-8", method = RequestMethod.GET)
+	public List<DemandeDto> getListeATReferenceForAgent(@RequestParam("idAgent") int idAgent,
+			HttpServletResponse response) {
+
+		logger.debug("entered GET [demandes/listeATReferenceForAgent] => setATReference with parameters idAgent = {}", idAgent);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		return absenceService.getListeATReferenceForAgent(convertedIdAgent);
+	}
 
 	/**
 	 * Modifier l etat d une demande pour le PRISE --> utile à SIRH-JOBS

@@ -52,4 +52,6 @@ public interface IDemandeRepository {
 
 	boolean initialDemandeForProlongationExists(DemandeDto demande);
 
+	List<Demande> getListeATReferenceForAgent(Integer idAgent);
+
 }

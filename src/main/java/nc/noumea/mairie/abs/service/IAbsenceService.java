@@ -90,4 +90,6 @@ public interface IAbsenceService {
 	ControleMedicalDto getDemandeControleMedical(Integer idDemandeMaladie);
 	
 	ReturnMessageDto savePieceJointesWithStream(InputStream stream, Integer idAgent, Integer idAgentOperateur, Integer idDemande, String typeFile);
+
+	List<DemandeDto> getListeATReferenceForAgent(Integer idAgent);
 }

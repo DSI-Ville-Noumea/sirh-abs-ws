@@ -3043,4 +3043,18 @@ public class AbsenceService implements IAbsenceService {
 		controleMedicalRepository.clear();
 		return new ControleMedicalDto(controleMedical);
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<DemandeDto> getListeATReferenceForAgent(Integer idAgent) {
+		List<Demande> list = demandeRepository.getListeATReferenceForAgent(idAgent);
+		List<DemandeDto> result = Lists.newArrayList();
+
+		for (Demande dem : list) {
+			DemandeDto demandeDto = new DemandeDto(dem, sirhWSConsumer.getAgentService(dem.getIdAgent(), helperService.getCurrentDate()), true);
+			result.add(demandeDto);
+		}
+
+		return result;
+	}
 }
