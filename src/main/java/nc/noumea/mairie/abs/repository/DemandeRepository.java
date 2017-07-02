@@ -615,7 +615,7 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("where d.type.idRefTypeAbsence = :TYPE_MALADIE ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :EN_ATTENTE, :PRISE, :SAISIE, :VALIDEE) ");
-		sb.append("and d.dateFin = :dateFin ");
+		sb.append("and d.dateFin between :dateFin1 and :dateFin2 ");
 		sb.append("and d.idAgent = :idAgent ");
 		
 		TypedQuery<Demande> q = absEntityManager.createQuery(sb.toString(), Demande.class);
@@ -628,8 +628,12 @@ public class DemandeRepository implements IDemandeRepository {
 		q.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
 
 		DateTime veilleProlongation = new DateTime(demande.getDateDebut());
-		veilleProlongation = veilleProlongation.minusDays(1).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
-		q.setParameter("dateFin", veilleProlongation.toDate());
+		
+		// #40396 : On encadre la date de fin sur toute la journée, entre minuit et minuit
+		veilleProlongation = veilleProlongation.minusDays(1).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
+		q.setParameter("dateFin1", veilleProlongation.toDate());
+		veilleProlongation = veilleProlongation.withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
+		q.setParameter("dateFin2", veilleProlongation.toDate());
 		q.setParameter("idAgent", demande.getAgentWithServiceDto().getIdAgent());
 		
 		return q.getResultList().isEmpty() ? false : true;
