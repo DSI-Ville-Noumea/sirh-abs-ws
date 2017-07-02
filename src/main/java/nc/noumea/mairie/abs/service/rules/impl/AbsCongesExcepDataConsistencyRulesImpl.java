@@ -28,7 +28,8 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, 
 			boolean isProvenanceSIRH) {
-		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+		// #40350 : Validation des congés exceptionnels.
+		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE, RefEtatEnum.APPROUVEE));
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		checkMessageAlerteDepassementDroit(srm, (DemandeCongesExceptionnels) demande);
 	}
