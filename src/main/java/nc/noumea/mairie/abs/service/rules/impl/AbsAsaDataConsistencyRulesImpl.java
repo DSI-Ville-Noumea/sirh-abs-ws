@@ -28,7 +28,8 @@ public class AbsAsaDataConsistencyRulesImpl extends AbstractAbsenceDataConsisten
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, 
 			boolean isProvenanceSIRH) {
-		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+		// #40416 : Validation des "Absences Syndicales" impossible à l'état approuvé
+		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE, RefEtatEnum.APPROUVEE));
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 	}
 
