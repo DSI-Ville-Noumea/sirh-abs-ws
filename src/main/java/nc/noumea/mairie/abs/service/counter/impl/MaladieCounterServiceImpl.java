@@ -128,10 +128,10 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
 				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent),
 				dateFinAnneeGlissante);
-		// on teste si l agent est en periode d essai
-		// si oui, aucun droit pour lui
-		if (!helperService.isFonctionnaire(carr)
-				&& isAgentPeriodeEssai(idAgent, dateFinAnneeGlissante)) {
+		// on teste si l agent est en periode d essai si oui, aucun droit pour lui
+		// #40519 : Gérer le cas d'un agent sans carrière
+		if (carr == null || (!helperService.isFonctionnaire(carr)
+				&& isAgentPeriodeEssai(idAgent, dateFinAnneeGlissante))) {
 			result.setDroitsDemiSalaire(0);
 			result.setDroitsPleinSalaire(0);
 			result.setNombreJoursCoupeDemiSalaire(0);
