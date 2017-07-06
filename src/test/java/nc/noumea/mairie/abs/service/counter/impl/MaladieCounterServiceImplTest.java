@@ -69,7 +69,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 		Spcarr carr = new Spcarr();
 		Mockito.when(
 				sirhRepository.getAgentCurrentCarriere(agentMatriculeService
-						.fromIdAgentToSIRHNomatrAgent(noMatr),
+						.fromIdAgentToSIRHNomatrAgent(idAgent),
 						dateFinAnneeGlissante)).thenReturn(carr);
 
 		Mockito.when(
