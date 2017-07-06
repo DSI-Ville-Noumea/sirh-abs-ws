@@ -33,4 +33,18 @@ public class EmailController {
 
 		return result;
 	}
+
+	/**
+	 * Liste des destinataires pour l envoi d'emails d information aux approbateurs
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/listApprobateursEmailMaladie", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public EmailInfoDto getListIdApprobateursEmailMaladie() {
+
+		logger.debug("entered GET [email/listApprobateursEmailMaladie] => getListApprobateursEmailMaladie");
+
+		EmailInfoDto result = emailService.getListIdApprobateursEmailMaladie();
+
+		return result;
+	}
 }

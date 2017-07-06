@@ -28,6 +28,8 @@ public interface IDemandeRepository {
 	List<Integer> getListViseursDemandesSaisiesJourDonne(List<Integer> listeTypesGroupe);
 
 	List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(List<Integer> listeTypesGroupe);
+	
+	List<Integer> getListApprobateursMaladiesSaisiesViseesVeille(List<Integer> listeTypesGroupe);
 
 	List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence);

@@ -38,4 +38,18 @@ public class EmailService implements IEmailService {
 		return dto;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public EmailInfoDto getListIdApprobateursEmailMaladie() {
+
+		EmailInfoDto dto = new EmailInfoDto();
+
+		List<Integer> listeTypes = new ArrayList<Integer>();
+		listeTypes.add(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
+
+		dto.setListApprobateurs(demandeRepository.getListApprobateursMaladiesSaisiesViseesVeille(listeTypes));
+
+		return dto;
+	}
+
 }
