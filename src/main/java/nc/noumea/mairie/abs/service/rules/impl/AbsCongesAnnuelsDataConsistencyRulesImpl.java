@@ -37,8 +37,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 	@Override
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande,
 			boolean isProvenanceSIRH) {
-		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
-		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE, RefEtatEnum.EN_ATTENTE, RefEtatEnum.A_VALIDER));
+		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE, RefEtatEnum.A_VALIDER));
 		checkBaseHoraireAbsenceAgent(srm, demande.getIdAgent(), demande.getDateDebut());
 		checkDepassementDroitsAcquis(srm, demande, null);
 		checkDuree(srm, (DemandeCongesAnnuels) demande);
