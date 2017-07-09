@@ -10,7 +10,12 @@ import nc.noumea.mairie.abs.domain.AgentReposCompCount;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeReposComp;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsence;
+import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.domain.RefTypeSaisi;
+import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
@@ -22,6 +27,7 @@ import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.abs.service.impl.HelperService;
 import nc.noumea.mairie.domain.Spcarr;
 
+import org.apache.xml.resolver.apps.resolver;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -279,6 +285,59 @@ public class AbsReposCompensateurDataConsistencyRulesImplTest extends DefaultAbs
 		ReflectionTestUtils.setField(impl, "counterRepository", counterRepository);
 
 		srm = impl.checkDepassementDroitsAcquis(srm, demande, null);
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void validationReposComp_ko() {
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		
+		typeSaisi.setMotif(true);
+		typeSaisiCongeAnnuel.setMotif(false);
+		
+		type.setTypeSaisi(typeSaisi);
+		type.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		type.setGroupe(groupe);
+		
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		srm = impl.checkChampMotif(srm, demande);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals("Le champ Commentaire est obligatoire.", srm.getErrors().get(0).toString());
+	}
+
+	@Test
+	public void validationReposComp_ok() {
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		
+		RefTypeAbsence type = new RefTypeAbsence();
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		RefTypeSaisiCongeAnnuel typeSaisiCongeAnnuel = new RefTypeSaisiCongeAnnuel();
+		
+		typeSaisi.setMotif(false);
+		typeSaisiCongeAnnuel.setMotif(true);
+		
+		type.setTypeSaisi(typeSaisi);
+		type.setTypeSaisiCongeAnnuel(typeSaisiCongeAnnuel);
+		RefGroupeAbsence groupe = new RefGroupeAbsence();
+		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.REPOS_COMP.getValue());
+		type.setGroupe(groupe);
+		
+		demande.setIdAgent(9005138);
+		demande.setType(type);
+
+		srm = impl.checkChampMotif(srm, demande);
 
 		assertEquals(0, srm.getErrors().size());
 	}

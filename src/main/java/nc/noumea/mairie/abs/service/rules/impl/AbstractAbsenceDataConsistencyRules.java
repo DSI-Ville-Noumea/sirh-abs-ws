@@ -22,6 +22,7 @@ import nc.noumea.mairie.abs.domain.DroitsAgent;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
+import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
@@ -129,7 +130,9 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	protected ReturnMessageDto checkChampMotif(ReturnMessageDto srm, Demande demande) {
-		if (null != demande.getType().getTypeSaisiCongeAnnuel()) {
+		if (demande.getType().getGroupe() != null 
+				&& demande.getType().getGroupe().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue())
+				&& null != demande.getType().getTypeSaisiCongeAnnuel()) {
 
 			if ((null == demande.getCommentaire() || "".equals(demande.getCommentaire().trim())) && demande.getType().getTypeSaisiCongeAnnuel().isMotif()) {
 				logger.warn(String.format(CHAMP_COMMENTAIRE_OBLIGATOIRE, demande.getIdAgent()));
