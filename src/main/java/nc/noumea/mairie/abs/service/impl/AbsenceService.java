@@ -334,9 +334,9 @@ public class AbsenceService implements IAbsenceService {
 			final DemandeMaladies dem = (DemandeMaladies) demande;
 			final String type;
 			if (demande.getType().getIdRefTypeAbsence() == RefTypeAbsenceEnum.MALADIE_AT.getValue()) {
-				type = "AT";
+				type = "Un AT";
 			} else {
-				type = "Rechute AT";
+				type = "Une Rechute AT";
 			}
 			final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			String nomOpe = null;
@@ -357,22 +357,30 @@ public class AbsenceService implements IAbsenceService {
 
 			StringBuilder text = new StringBuilder();
 			text.append("URGENT <br> ");
-			text.append("Un " + type + "  vient d'être déclaré(e) pour l'agent " + nomAgent + " (" + dem.getIdAgent()
-					+ ") <br>");
-			text.append("Opérateur : " + (nomOpe == null ? "NC" : nomOpe) + "<br>");
-			text.append("Date de déclaration : "
-					+ (dem.getDateDeclaration() == null ? "NC" : sdf.format(dem.getDateDeclaration())) + "<br>");
-			text.append("Prescripteur : " + (dem.getPrescripteur() == null ? "NC" : dem.getPrescripteur()) + "<br>");
-			text.append("Siège des lésions : "
-					+ (dem.getTypeSiegeLesion() == null ? "NC" : dem.getTypeSiegeLesion().getLibelle()) + "<br>");
-			text.append("Nombre ITT : " + (dem.getNombreITT() == null ? "NC" : dem.getNombreITT()) + "<br>");
-			text.append(
-					"Date de début : " + (dem.getDateDebut() == null ? "NC" : sdf.format(dem.getDateDebut())) + "<br>");
-			text.append("Date de fin : " + (dem.getDateFin() == null ? "NC" : sdf.format(dem.getDateFin())) + "<br>");
-			text.append("Commentaire : " + dem.getCommentaire() + "<br><br>");
+			text.append(type + "  vient d'être déclaré(e) pour l'agent " + nomAgent + " (" + dem.getIdAgent() + ") <br />");
+			text.append("Opérateur : " + (nomOpe == null ? "NC" : nomOpe) + "<br />");
+			text.append("Date de déclaration : " + (dem.getDateDeclaration() == null ? "NC" : sdf.format(dem.getDateDeclaration())) + "<br />");
+			text.append("Prescripteur : " + (dem.getPrescripteur() == null ? "NC" : dem.getPrescripteur()) + "<br />");
+			text.append("Siège des lésions : " + (dem.getTypeSiegeLesion() == null ? "NC" : dem.getTypeSiegeLesion().getLibelle()) + "<br />");
+			text.append("Nombre ITT : " + (dem.getNombreITT() == null ? "NC" : dem.getNombreITT()) + "<br />");
+			text.append("Date de début : " + (dem.getDateDebut() == null ? "NC" : sdf.format(dem.getDateDebut())) + "<br />");
+			text.append("Date de fin : " + (dem.getDateFin() == null ? "NC" : sdf.format(dem.getDateFin())) + "<br />");
+			text.append("Commentaire : " + dem.getCommentaire() + "<br /><br />");
+			
+			if (demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT_RECHUTE.getValue()) && dem.getAccidentTravailReference() != null) {
+				DemandeMaladies at = dem.getAccidentTravailReference();
+				text.append("Informations concernant l'accident de travail de référence : <br />");
+				text.append("Date de déclaration : " + (at.getDateDeclaration() == null ? "NC" : sdf.format(at.getDateDeclaration())) + "<br />");
+				text.append("Prescripteur : " + (at.getPrescripteur() == null ? "NC" : at.getPrescripteur()) + "<br />");
+				text.append("Siège des lésions : " + (at.getTypeSiegeLesion() == null ? "NC" : at.getTypeSiegeLesion().getLibelle()) + "<br />");
+				text.append("Nombre ITT : " + (at.getNombreITT() == null ? "NC" : at.getNombreITT()) + "<br />");
+				text.append("Date de début : " + (at.getDateDebut() == null ? "NC" : sdf.format(at.getDateDebut())) + "<br />");
+				text.append("Date de fin : " + (at.getDateFin() == null ? "NC" : sdf.format(at.getDateFin())) + "<br />");
+				text.append("Commentaire : " + at.getCommentaire() + "<br /><br />");
+			}
 
 			// Set the subject
-			String sujetMail = type + " déclaré pour l'agent " + dem.getIdAgent();
+			String sujetMail = type + " déclaré(e) pour l'agent " + dem.getIdAgent();
 
 			sendMailToMaladieRecipients(text.toString(), sujetMail);
 		}
