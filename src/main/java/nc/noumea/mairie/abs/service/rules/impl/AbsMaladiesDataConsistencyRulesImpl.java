@@ -55,38 +55,24 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 		checkNombreJoursITT(srm, (DemandeMaladies) demande);
 		// #31605 puis #39427 : on ne permet aucune date dans le futur
 		checkDateFutur(srm, (DemandeMaladies) demande);
-
 		
-		Integer idTypeRef = demande.getType().getIdRefTypeAbsence();
-		// un agent peut avoir fait des heures supp le matin et avoir un AT à 12h
-		// on ne check pas sa PA, car il peut avoir une PA AT le meme jour qu un AT
+		// un agent peut avoir fait des heures supp le matin et avoir un AT à 12h => on ne check pas les pointages
+		checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
+		checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
+		if (srm.getErrors().size() == 0)
+			checkDemandeDejaSaisieSurMemePeriode(srm, demande);
+		checkStatutAgent(srm, demande);
+		// #39402 : On vérifie que la PA de l'agent se situe parmi celles autorisées (AuthorizedPAForMaladieEnum.java), pour toutes les maladies.
+		checkPAAgentForMaladie(srm, demande);
+		super.checkChampMotif(srm, demande);
 		
-		// La demande #39402 augment le périmètre à 4 autres maladies : Congé longue durée, congée longue maladie, maladie professionnelle et hospitalisation.
-		if (idTypeRef.equals(RefTypeAbsenceEnum.MALADIE_AT.getValue())
-				|| idTypeRef.equals(RefTypeAbsenceEnum.MALADIE_AT_RECHUTE.getValue())
-				|| idTypeRef.equals(RefTypeAbsenceEnum.MALADIE.getValue())
-				|| idTypeRef.equals(RefTypeAbsenceEnum.MALADIE_PROFESSIONNELLE.getValue())
-				|| idTypeRef.equals(RefTypeAbsenceEnum.MALADIE_HOSPITALISATION.getValue()))
-		{
-			checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
-			checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
-			if (srm.getErrors().size() == 0)
-				checkDemandeDejaSaisieSurMemePeriode(srm, demande);
-			checkStatutAgent(srm, demande);
-			// #39402 : On vérifie que sa PA se situe parmi celles autorisées.
-			checkPAAgentForMaladie(srm, demande);
-			super.checkChampMotif(srm, demande);
 		// #39320 : Pour les enfants malades, on affiche une alerte si le solde est dépassé
-		} else if (idTypeRef.equals(RefTypeAbsenceEnum.ENFANT_MALADE.getValue())) {
-			super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
+		if (demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.ENFANT_MALADE.getValue())) {
 			DemandeDto dto = new DemandeDto(demande, false);
 			if (checkDepassementCompteurAgent(dto, null)) {
 				logger.warn(DEPASSEMENT_QUOTA_ENFANT_MALADE);
 				srm.getInfos().add(DEPASSEMENT_QUOTA_ENFANT_MALADE);
 			}
-		}
-		else {
-			super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		}
 	}
 
