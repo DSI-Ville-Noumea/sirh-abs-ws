@@ -19,6 +19,7 @@ import nc.noumea.mairie.abs.domain.ProfilEnum;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 
 @Repository
@@ -207,6 +208,28 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
+	public List<Integer> getListApprobateursForAgent(Integer idAgent) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(droit.id_agent) as idAgent from abs_droit droit ");
+		sb.append("inner join abs_droit_profil dp on droit.id_droit = dp.id_droit ");
+		sb.append("inner join abs_profil p on dp.id_profil = p.id_profil ");
+		sb.append("inner join abs_droit_droits_agent dda on dp.id_droit_profil = dda.id_droit_profil ");
+		sb.append("inner join abs_droits_agent da on dda.id_droits_agent = da.id_droits_agent ");
+		sb.append("where p.libelle = :LIBELLE ");
+		sb.append("and da.id_agent = :idAgent GROUP BY idAgent ");
+
+		@SuppressWarnings("unchecked")
+		List<Integer> result = absEntityManager
+		.createNativeQuery(sb.toString())
+				.setParameter("LIBELLE", ProfilEnum.APPROBATEUR.toString())
+				.setParameter("idAgent", idAgent)
+				.getResultList();
+
+		return result;
+	}
+
+	@Override
 	public List<Integer> getListApprobateursDemandesSaisiesViseesJourDonne(List<Integer> listeTypesGroupe) {
 
 		StringBuilder sb = new StringBuilder();
@@ -239,6 +262,28 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
+	public List<Integer> getAllMaladiesSaisiesVeille() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct d.id_agent from abs_demande d ");
+		sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
+		sb.append("inner join abs_ref_type_absence rta on d.id_type_demande = rta.id_ref_type_absence "
+				+ "and rta.id_ref_groupe_absence in ( :TYPE ) ");
+		sb.append("left outer join abs_ref_type_saisi rts on rta.id_ref_type_absence = rts.id_ref_type_absence "
+				+ "and rts.saisie_kiosque is true ");
+		sb.append("where ed.id_ref_etat = :SAISIE ");
+		sb.append("and date_trunc('day', ed.date) = date_trunc('day', current_date - interval '1 day') ");
+
+		@SuppressWarnings("unchecked")
+		List<Integer> result = absEntityManager.createNativeQuery(sb.toString())
+				.setParameter("SAISIE", RefEtatEnum.SAISIE.getCodeEtat())
+				.setParameter("TYPE", RefTypeGroupeAbsenceEnum.MALADIES.getValue())
+				.getResultList();
+
+		return result;
+	}
+
+	@Override
 	public List<Integer> getListApprobateursMaladiesSaisiesViseesVeille(List<Integer> listeTypesGroupe) {
 
 		StringBuilder sb = new StringBuilder();
@@ -249,7 +294,7 @@ public class DemandeRepository implements IDemandeRepository {
 		sb.append("inner join abs_droits_agent da on dda.id_droits_agent = da.id_droits_agent ");
 		sb.append("where p.libelle = :LIBELLE ");
 		sb.append("and da.id_agent in ( ");
-		sb.append("select d.id_agent from abs_demande d ");
+		sb.append("select distinct d.id_agent from abs_demande d ");
 		sb.append("inner join abs_etat_demande ed on d.id_demande = ed.id_demande ");
 		sb.append("inner join abs_ref_type_absence rta on d.id_type_demande = rta.id_ref_type_absence "
 				+ "and rta.id_ref_groupe_absence in ( :TYPE ) ");
