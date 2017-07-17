@@ -864,6 +864,7 @@ public class AbsenceService implements IAbsenceService {
 				etatDemande.setEtat(RefEtatEnum.A_VALIDER);
 				demandeEtatChangeDto.setIdRefEtat(RefEtatEnum.A_VALIDER.getCodeEtat());
 				etatDemande.setIdAgent(idAgent);
+				etatDemande.setCommentaire(demande.getCommentaire());
 				demande.addEtatDemande(etatDemande);
 			} else {
 				EtatDemande etatDemande = new EtatDemande();
@@ -873,6 +874,7 @@ public class AbsenceService implements IAbsenceService {
 				etatDemande.setMotif(demandeEtatChangeDto.getMotif());
 				etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
 				etatDemande.setIdAgent(idAgent);
+				etatDemande.setCommentaire(demande.getCommentaire());
 				demande.addEtatDemande(etatDemande);
 			}
 		} else {
@@ -882,6 +884,7 @@ public class AbsenceService implements IAbsenceService {
 			etatDemande.setDate(new Date());
 			etatDemande.setMotif(demandeEtatChangeDto.getMotif());
 			etatDemande.setEtat(RefEtatEnum.getRefEtatEnum(demandeEtatChangeDto.getIdRefEtat()));
+			etatDemande.setCommentaire(demande.getCommentaire());
 			etatDemande.setIdAgent(idAgent);
 			demande.addEtatDemande(etatDemande);
 		}
@@ -964,6 +967,7 @@ public class AbsenceService implements IAbsenceService {
 		epNew.setDate(helperService.getCurrentDate());
 		epNew.setEtat(RefEtatEnum.PRISE);
 		epNew.setIdAgent(demande.getIdAgent());
+		epNew.setCommentaire(demande.getCommentaire());
 
 		if (returnDto.getErrors().size() != 0) {
 			demandeRepository.clear();
