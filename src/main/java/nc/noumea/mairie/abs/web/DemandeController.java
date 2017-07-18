@@ -400,10 +400,6 @@ public class DemandeController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		// DemandeDto demandeDto = new JSONDeserializer<DemandeDto>()
-		// .use(Date.class, new MSDateTransformer())
-		// .deserializeInto(json, new DemandeDto());
-
 		ReturnMessageDto result = null;
 		try {
 			result = absenceService.saveDemandeSIRH(convertedIdAgent, demandeDto);
