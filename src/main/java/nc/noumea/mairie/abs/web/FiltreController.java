@@ -49,7 +49,7 @@ public class FiltreController {
 	private IAccessRightsService accessRightsService;
 
 	/**
-	 * Liste des etats possibles selon l onglet selectionne
+	 * Liste des etats possibles selon longlet selectionne
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getEtats", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
