@@ -47,4 +47,6 @@ public interface IFiltreService {
 			Class<? extends RefTypeGenerique> T, RefTypeDto dto);
 
 	ReturnMessageDto setTypeMaladiePro(Integer idAgentConnecte, RefTypeDto dto);
+
+	List<RefTypeAbsenceDto> getAllRefTypesAbsenceFiltre(Integer idRefGroupeAbsence, Integer idAgent);
 }

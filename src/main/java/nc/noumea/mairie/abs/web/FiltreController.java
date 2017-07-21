@@ -49,7 +49,7 @@ public class FiltreController {
 	private IAccessRightsService accessRightsService;
 
 	/**
-	 * Liste des etats possibles selon l onglet selectionne
+	 * Liste des etats possibles selon longlet selectionne
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getEtats", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -232,6 +232,22 @@ public class FiltreController {
 		logger.debug("entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter  idRefGroupeAbsence = {} and  idAgent = {}", idRefGroupeAbsence, idAgent);
 
 		List<RefTypeAbsenceDto> types = filtresService.getRefTypesAbsenceSaisieKiosque(idRefGroupeAbsence, idAgent);
+
+		return types;
+	}
+
+	/**
+	 * Liste des types d absence saisissable dans le kiosque RH pour un agent
+	 * donné et un groupe donné
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getTypeAbsenceForFilterKiosque", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefTypeAbsenceDto> getTypeAbsenceForFilterKiosque(@RequestParam(value = "idRefGroupeAbsence", required = false) Integer idRefGroupeAbsence,
+			@RequestParam(value = "idAgent", required = false) Integer idAgent) {
+
+		logger.debug("entered GET [filtres/getTypeAbsenceKiosque] => getTypeAbsenceKiosque with parameter  idRefGroupeAbsence = {} and  idAgent = {}", idRefGroupeAbsence, idAgent);
+
+		List<RefTypeAbsenceDto> types = filtresService.getAllRefTypesAbsenceFiltre(idRefGroupeAbsence, idAgent);
 
 		return types;
 	}
