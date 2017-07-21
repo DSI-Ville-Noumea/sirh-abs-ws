@@ -248,6 +248,23 @@ public class FiltreService implements IFiltreService {
 	}
 
 	@Override
+	public List<RefTypeAbsenceDto> getAllRefTypesAbsenceFiltre(Integer idRefGroupeAbsence, Integer idAgent) {
+		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
+		List<RefTypeAbsence> refTypeAbs = new ArrayList<RefTypeAbsence>();
+		if (idRefGroupeAbsence == null) {
+			refTypeAbs = filtreRepository.findAllRefTypeAbsences();
+		} else {
+			refTypeAbs = filtreRepository.findAllRefTypeAbsencesWithGroup(idRefGroupeAbsence);
+		}
+
+		for (RefTypeAbsence type : refTypeAbs) {
+			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type, type.getTypeSaisi(), null);
+			res.add(dto);
+		}
+		return res;
+	}
+
+	@Override
 	public List<RefTypeAbsenceDto> getRefTypesAbsenceSaisieKiosque(Integer idRefGroupeAbsence, Integer idAgent) {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
 		List<RefTypeAbsence> refTypeAbsTemp = new ArrayList<RefTypeAbsence>();
