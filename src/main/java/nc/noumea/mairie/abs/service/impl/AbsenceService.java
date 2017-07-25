@@ -408,11 +408,13 @@ public class AbsenceService implements IAbsenceService {
 		if (null == demande) {
 			return demandeDto;
 		}
+		
+		logger.debug("Récupération de la demande id " + demande.getIdDemande());
 
 		switch (RefTypeGroupeAbsenceEnum
 				.getRefTypeGroupeAbsenceEnum(demande.getType().getGroupe().getIdRefGroupeAbsence())) {
 		case REPOS_COMP:
-
+			logger.debug("Mapping d'un repos compensateur - Demande id " + demande.getIdDemande());
 			DemandeReposComp demandeReposComp = demandeRepository.getEntity(DemandeReposComp.class, idDemande);
 			if (null == demandeReposComp) {
 				return demandeDto;
@@ -426,7 +428,7 @@ public class AbsenceService implements IAbsenceService {
 					demandeReposComp.getType().getGroupe());
 			break;
 		case RECUP:
-
+			logger.debug("Mapping d'une récupération - Demande id " + demande.getIdDemande());
 			DemandeRecup demandeRecup = demandeRepository.getEntity(DemandeRecup.class, idDemande);
 			if (null == demandeRecup) {
 				return demandeDto;
@@ -439,6 +441,7 @@ public class AbsenceService implements IAbsenceService {
 					demandeRecup.getType().getGroupe());
 			break;
 		case AS:
+			logger.debug("Mapping d'une Abs. syndicale - Demande id " + demande.getIdDemande());
 			DemandeAsa demandeAsa = demandeRepository.getEntity(DemandeAsa.class, idDemande);
 			if (null == demandeAsa) {
 				return demandeDto;
@@ -451,6 +454,7 @@ public class AbsenceService implements IAbsenceService {
 					demandeAsa.getType().getGroupe());
 			break;
 		case CONGES_EXCEP:
+			logger.debug("Mapping d'un congé exceptionnel - Demande id " + demande.getIdDemande());
 			DemandeCongesExceptionnels demandeCongesExcep = demandeRepository
 					.getEntity(DemandeCongesExceptionnels.class, idDemande);
 			if (null == demandeCongesExcep) {
@@ -464,6 +468,7 @@ public class AbsenceService implements IAbsenceService {
 					demandeCongesExcep.getType().getGroupe());
 			break;
 		case CONGES_ANNUELS:
+			logger.debug("Mapping d'un congé annuel - Demande id " + demande.getIdDemande());
 			DemandeCongesAnnuels demandeCongesAnnuels = demandeRepository.getEntity(DemandeCongesAnnuels.class,
 					idDemande);
 			if (null == demandeCongesAnnuels) {
@@ -477,6 +482,7 @@ public class AbsenceService implements IAbsenceService {
 					demandeCongesAnnuels.getType().getGroupe());
 			break;
 		case MALADIES:
+			logger.debug("Mapping d'une maladie - Demande id " + demande.getIdDemande());
 			DemandeMaladies demandeMaladies = demandeRepository.getEntity(DemandeMaladies.class, idDemande);
 			if (null == demandeMaladies) {
 				return demandeDto;
@@ -489,6 +495,7 @@ public class AbsenceService implements IAbsenceService {
 					demandeMaladies.getType().getGroupe());
 			break;
 		default:
+			logger.info("Mapping d'une Absence non déterminée - Demande id " + demande.getIdDemande());
 			return demandeDto;
 		}
 
