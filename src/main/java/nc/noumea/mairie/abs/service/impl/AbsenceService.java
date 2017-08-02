@@ -2072,16 +2072,14 @@ public class AbsenceService implements IAbsenceService {
 			demandeMaladie.setTauxCafat(demandeDto.getTauxCafat());
 
 			// #39417 : Si c'est une prolongation, on va vérifier qu'il y a bien
-			// une maladie existatne qui précède cette demande.
+			// une maladie existante qui précède cette demande.
 			if (demandeDto.isProlongation()) {
 				if (!demandeRepository.initialDemandeForProlongationExists(demandeDto))
-					returnDto.getErrors()
-							.add(String.format("Aucune demande de maladie ne précède cette prolongation."));
+					returnDto.getErrors().add(String.format("Aucune maladie à l'état [Prise, Validée, En attente ou Saisie] ne précède cette prolongation."));
 			}
 			break;
 		default:
-			returnDto.getErrors().add(String.format("Le groupe [%d] de la demande n'est pas reconnu.",
-					demandeDto.getGroupeAbsence().getIdRefGroupeAbsence()));
+			returnDto.getErrors().add(String.format("Le groupe [%d] de la demande n'est pas reconnu.", demandeDto.getGroupeAbsence().getIdRefGroupeAbsence()));
 		}
 		demande.getType().setGroupe(groupe);
 
