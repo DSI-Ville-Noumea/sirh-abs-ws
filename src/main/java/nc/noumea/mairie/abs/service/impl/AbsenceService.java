@@ -225,9 +225,9 @@ public class AbsenceService implements IAbsenceService {
 
 		ReturnMessageDemandeDto returnDto = new ReturnMessageDemandeDto();
 
-		Demande demande = persistDemande(idAgent, demandeDto, returnDto);
+		boolean isCreation = demandeDto.getIdDemande() == null;
 
-		boolean isCreation = demande.getIdDemande() == null;
+		Demande demande = persistDemande(idAgent, demandeDto, returnDto);
 
 		if (isCreation) {
 			try {
