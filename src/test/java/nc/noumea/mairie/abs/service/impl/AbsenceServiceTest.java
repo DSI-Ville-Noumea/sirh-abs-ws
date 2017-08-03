@@ -12994,7 +12994,8 @@ public class AbsenceServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(Demande.class));
-		verify(mailSender, times(1)).send(Mockito.isA(MimeMessagePreparator.class));
+		// Le mail ne doit pas être envoyé, car la demande possède un id => c'est une modification
+		verify(mailSender, times(0)).send(Mockito.isA(MimeMessagePreparator.class));
 	}
 
 }
