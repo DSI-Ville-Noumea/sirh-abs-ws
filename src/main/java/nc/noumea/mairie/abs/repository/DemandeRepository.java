@@ -11,6 +11,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import nc.noumea.mairie.abs.domain.Demande;
@@ -21,9 +23,12 @@ import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.service.impl.AbsenceService;
 
 @Repository
 public class DemandeRepository implements IDemandeRepository {
+	
+	private Logger logger =  LoggerFactory.getLogger(AbsenceService.class);
 
 	@PersistenceContext(unitName = "absPersistenceUnit")
 	private EntityManager absEntityManager;
@@ -697,20 +702,23 @@ public class DemandeRepository implements IDemandeRepository {
 		TypedQuery<Demande> q = absEntityManager.createQuery(sb.toString(), Demande.class);
 		
 		// Liste des états possible : #39417
-		q.setParameter("TYPE_MALADIE", RefTypeAbsenceEnum.MALADIE.getValue());
+		// Le type doit simplement être le même que celui de la demande.
+		q.setParameter("TYPE_MALADIE", demande.getIdTypeDemande());
 		q.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
 		q.setParameter("PRISE", RefEtatEnum.PRISE);
 		q.setParameter("SAISIE", RefEtatEnum.SAISIE);
 		q.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
 
-		DateTime veilleProlongation = new DateTime(demande.getDateDebut());
+		DateTime veilleProlongationStart = new DateTime(demande.getDateDebut());
 		
 		// #40396 : On encadre la date de fin sur toute la journée, entre minuit et minuit
-		veilleProlongation = veilleProlongation.minusDays(1).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-		q.setParameter("dateFin1", veilleProlongation.toDate());
-		veilleProlongation = veilleProlongation.withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59);
-		q.setParameter("dateFin2", veilleProlongation.toDate());
+		veilleProlongationStart = veilleProlongationStart.minusDays(1).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
+		q.setParameter("dateFin1", veilleProlongationStart.toDate());
+		DateTime veilleProlongationEnd = veilleProlongationStart.withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999);
+		q.setParameter("dateFin2", veilleProlongationEnd.toDate());
 		q.setParameter("idAgent", demande.getAgentWithServiceDto().getIdAgent());
+		
+		logger.debug("Recherche de maladie pour l'agent id {} entre le {} et le {} pour une demande de prolongation.", demande.getAgentWithServiceDto().getIdAgent(), veilleProlongationStart, veilleProlongationEnd);
 		
 		return q.getResultList().isEmpty() ? false : true;
 	}
