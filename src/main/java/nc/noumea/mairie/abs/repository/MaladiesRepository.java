@@ -51,7 +51,7 @@ public class MaladiesRepository implements IMaladiesRepository {
 		q.setParameter("PRISE", RefEtatEnum.PRISE);
 		q.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
 		
-		if(null != dateDebutAnneeGlissante) 		
+		if(null != dateDebutAnneeGlissante)
 			q.setParameter("dateDebut", dateDebutAnneeGlissante);
 		
 		q.setParameter("dateFin", dateFinAnneeGlissante);

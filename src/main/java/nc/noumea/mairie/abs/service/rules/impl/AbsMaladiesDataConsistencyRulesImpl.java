@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.abs.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.AuthorizedPAForMaladieEnum;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -22,11 +26,6 @@ import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.vo.CalculDroitsMaladiesVo;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.domain.Spadmn;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
 @Service("AbsMaladiesDataConsistencyRulesImpl")
 public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataConsistencyRules {
