@@ -1772,7 +1772,6 @@ public class AbsenceService implements IAbsenceService {
 			listEtat.add(RefEtatEnum.SAISIE);
 			listEtat.add(RefEtatEnum.VISEE_FAVORABLE);
 			listEtat.add(RefEtatEnum.VISEE_DEFAVORABLE);
-			listEtat.add(RefEtatEnum.REFUSEE);
 		}
 		result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAcceptes(result, demande, listEtat);
 
