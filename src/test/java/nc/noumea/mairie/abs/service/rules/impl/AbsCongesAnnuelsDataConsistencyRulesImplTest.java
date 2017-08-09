@@ -229,7 +229,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		assertFalse(result3.isAffichageEnAttente());
 		
 		// REFUSEE
-		assertTrue(result4.isAffichageValidation());
+		assertFalse(result4.isAffichageValidation());
 		
 		// VISEE FAVORABLE
 		assertTrue(result5.isAffichageValidation());

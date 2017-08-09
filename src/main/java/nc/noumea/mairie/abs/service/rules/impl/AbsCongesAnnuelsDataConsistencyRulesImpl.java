@@ -290,7 +290,6 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		demandeDto.setAffichageValidation(demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_FAVORABLE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat())
-				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.REFUSEE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()));
 		demandeDto.setAffichageBoutonRejeter(demandeDto.getIdRefEtat().equals(RefEtatEnum.SAISIE.getCodeEtat())
