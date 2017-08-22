@@ -32,6 +32,7 @@ public class RefTypeSaisiDto {
 	// MALADIES
 	private boolean prescripteur;
 	private boolean dateDeclaration;
+	private boolean dateAccidentTravail;
 	private boolean prolongation;
 	private boolean nomEnfant;
 	private boolean nombreITT;
@@ -77,6 +78,7 @@ public class RefTypeSaisiDto {
 		// MALADIES
 		this.prescripteur = typeSaisi.isPrescripteur();
 		this.dateDeclaration = typeSaisi.isDateDeclaration();
+		this.dateAccidentTravail = typeSaisi.isDateAccidentTravail();
 		this.prolongation = typeSaisi.isProlongation();
 		this.nomEnfant = typeSaisi.isNomEnfant();
 		this.nombreITT = typeSaisi.isNombreITT();
@@ -331,6 +333,14 @@ public class RefTypeSaisiDto {
 
 	public void setMaladiePro(boolean maladiePro) {
 		this.maladiePro = maladiePro;
+	}
+
+	public boolean isDateAccidentTravail() {
+		return dateAccidentTravail;
+	}
+
+	public void setDateAccidentTravail(boolean dateAccidentTravail) {
+		this.dateAccidentTravail = dateAccidentTravail;
 	}
 	
 }
