@@ -1062,6 +1062,8 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 
 		RefTypeSaisiDto typeSaisi = new RefTypeSaisiDto();
 		typeSaisi.setNombreITT(true);
+		// AT
+		typeSaisi.setIdRefTypeDemande(77);
 
 		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
 		agentWithServiceDto.setIdAgent(9005138);
@@ -1070,11 +1072,11 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 		demandeDto.setAgentWithServiceDto(agentWithServiceDto);
 		demandeDto.setDateDebut(new DateTime(2010, 01, 01, 0, 0, 0).toDate());
 		demandeDto.setDateFin(new DateTime(2010, 01, 02, 23, 59, 59).toDate());
-		demandeDto.setNombreITT(2.0);
+		demandeDto.setNombreITT(1.0);
 		demandeDto.setTypeSaisi(typeSaisi);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.calculNombreJours(demandeDto.getDateDebut(), demandeDto.getDateFin())).thenReturn(2.0);
+		Mockito.when(helperService.calculNombreJoursITT(demandeDto)).thenReturn(1.0);
 
 		ReflectionTestUtils.setField(impl, "helperService", helperService);
 
@@ -1082,10 +1084,65 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 	}
 
 	@Test
-	public void checkDepassementITT_OK() {
+	public void checkDepassementITT_Prolongation_KO() {
 
 		RefTypeSaisiDto typeSaisi = new RefTypeSaisiDto();
 		typeSaisi.setNombreITT(true);
+		// AT
+		typeSaisi.setIdRefTypeDemande(77);
+
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setAgentWithServiceDto(agentWithServiceDto);
+		demandeDto.setDateDebut(new DateTime(2010, 01, 01, 0, 0, 0).toDate());
+		demandeDto.setDateFin(new DateTime(2010, 01, 02, 23, 59, 59).toDate());
+		demandeDto.setProlongation(true);
+		demandeDto.setNombreITT(2.0);
+		demandeDto.setTypeSaisi(typeSaisi);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJoursITT(demandeDto)).thenReturn(2.0);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+
+		assertFalse(impl.checkDepassementITT(demandeDto));
+	}
+
+	@Test
+	public void checkDepassementITT_OK_AT() {
+
+		RefTypeSaisiDto typeSaisi = new RefTypeSaisiDto();
+		typeSaisi.setNombreITT(true);
+		// AT
+		typeSaisi.setIdRefTypeDemande(77);
+
+		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
+		agentWithServiceDto.setIdAgent(9005138);
+
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setAgentWithServiceDto(agentWithServiceDto);
+		demandeDto.setDateDebut(new DateTime(2010, 01, 01, 0, 0, 0).toDate());
+		demandeDto.setDateFin(new DateTime(2010, 01, 01, 23, 59, 59).toDate());
+		demandeDto.setNombreITT(2.0);
+		demandeDto.setTypeSaisi(typeSaisi);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculNombreJours(demandeDto.getDateDebut(), demandeDto.getDateFin())).thenReturn(1.0);
+
+		ReflectionTestUtils.setField(impl, "helperService", helperService);
+
+		assertTrue(impl.checkDepassementITT(demandeDto));
+	}
+
+	@Test
+	public void checkDepassementITT_OK_Rechute() {
+
+		RefTypeSaisiDto typeSaisi = new RefTypeSaisiDto();
+		typeSaisi.setNombreITT(true);
+		// Rechute AT
+		typeSaisi.setIdRefTypeDemande(78);
 
 		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
 		agentWithServiceDto.setIdAgent(9005138);

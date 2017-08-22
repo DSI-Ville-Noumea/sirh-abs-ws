@@ -54,6 +54,10 @@ public class DemandeMaladies extends Demande implements Cloneable {
 	@Temporal(TemporalType.DATE)
 	private Date					dateDeclaration;
 
+	@Column(name = "DATE_ACCIDENT_TRAVAIL")
+	@Temporal(TemporalType.DATE)
+	private Date					dateAccidentTravail;
+
 	@Column(name = "PROLONGATION")
 	private boolean					prolongation;
 
@@ -301,6 +305,14 @@ public class DemandeMaladies extends Demande implements Cloneable {
 
 	public void setDateFinPM(boolean dateFinPM) {
 		this.dateFinPM = dateFinPM;
+	}
+
+	public Date getDateAccidentTravail() {
+		return dateAccidentTravail;
+	}
+
+	public void setDateAccidentTravail(Date dateAccidentTravail) {
+		this.dateAccidentTravail = dateAccidentTravail;
 	}
 
 	public Object clone() {

@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service.impl;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -12,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
 import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
+import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.domain.Spcarr;
@@ -244,6 +247,35 @@ public class HelperService {
 		// calcul nombre jour
 		double nbrJour = diff / MILLISECONDS_PER_DAY;
 		return Math.ceil(nbrJour);
+	}
+
+	public double calculNombreJoursITT(DemandeMaladies demande) {
+		return calculNombreJoursITT(new DemandeDto(demande, true));
+	}
+
+	public double calculNombreJoursITT(DemandeDto demande) {
+		Long nbITT = null;
+	    
+		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getTypeSaisi().getIdRefTypeDemande())) {
+			case MALADIE_AT :
+				nbITT = ChronoUnit.DAYS.between(demande.getDateDebut().toInstant(), demande.getDateFin().toInstant());
+				// #40134 : Une prolongation fonctionne comme une rechute
+				// Il faut donc ajouter une journée supplémentaire.
+				if (demande.isProlongation())
+					++nbITT;
+				break;
+			case MALADIE_AT_RECHUTE :
+				nbITT = ChronoUnit.DAYS.between(demande.getDateDebut().toInstant(), demande.getDateFin().toInstant()) + 1;
+				break;
+			default:
+				break;
+		}
+		
+		// On n'autorise pas un nombre de jour négatif (dans le cas d'un AT sur une journée)
+		if (nbITT != null) {
+			nbITT = nbITT > 0 ? nbITT : 0;
+		}
+		return nbITT;
 	}
 
 	public int calculNombreMinutes(Date dateDebut, Date dateFin) {
