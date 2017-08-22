@@ -33,6 +33,10 @@ public class EtatDemandeMaladies extends EtatDemande {
 	@Column(name = "NOM_ENFANT")
 	private String nomEnfant;
 
+	@Column(name = "DATE_ACCIDENT_TRAVAIL")
+	@Temporal(TemporalType.DATE)
+	private Date dateAccidentTravail;
+
 	@Column(name = "DATE_DECLARATION")
 	@Temporal(TemporalType.DATE)
 	private Date dateDeclaration;
@@ -254,6 +258,14 @@ public class EtatDemandeMaladies extends EtatDemande {
 	public void setNombreJoursResteAPrendrePleinSalaire(
 			Integer nombreJoursResteAPrendrePleinSalaire) {
 		this.nombreJoursResteAPrendrePleinSalaire = nombreJoursResteAPrendrePleinSalaire;
+	}
+
+	public Date getDateAccidentTravail() {
+		return dateAccidentTravail;
+	}
+
+	public void setDateAccidentTravail(Date dateAccidentTravail) {
+		this.dateAccidentTravail = dateAccidentTravail;
 	}
 	
 }

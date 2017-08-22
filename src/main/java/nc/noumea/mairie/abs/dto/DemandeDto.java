@@ -116,6 +116,9 @@ public class DemandeDto {
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateDeclaration;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
+	private Date dateAccidentTravail;
 	private boolean prolongation;
 	private RefTypeDto typeAccidentTravail;
 	private RefTypeDto typeSiegeLesion;
@@ -300,6 +303,7 @@ public class DemandeDto {
 				this.prescripteur = ((DemandeMaladies) d).getPrescripteur();
 				this.nomEnfant = ((DemandeMaladies) d).getNomEnfant();
 				this.dateDeclaration = ((DemandeMaladies) d).getDateDeclaration();
+				this.dateAccidentTravail = ((DemandeMaladies) d).getDateAccidentTravail();
 				this.prolongation = ((DemandeMaladies) d).isProlongation();
 				
 				if(null != ((DemandeMaladies) d).getTypeAccidentTravail()) 
@@ -1018,6 +1022,14 @@ public class DemandeDto {
 
 	public void setControleMedical(ControleMedicalDto controleMedical) {
 		this.controleMedical = controleMedical;
+	}
+
+	public Date getDateAccidentTravail() {
+		return dateAccidentTravail;
+	}
+
+	public void setDateAccidentTravail(Date dateAccidentTravail) {
+		this.dateAccidentTravail = dateAccidentTravail;
 	}
 	
 }
