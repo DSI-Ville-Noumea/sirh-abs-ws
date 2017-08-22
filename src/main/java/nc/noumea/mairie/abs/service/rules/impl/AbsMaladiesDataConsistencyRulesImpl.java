@@ -87,7 +87,7 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 	protected ReturnMessageDto checkNombreJoursITT(ReturnMessageDto srm, DemandeMaladies demande) {
 		if (null != demande.getType().getTypeSaisi() && demande.getType().getTypeSaisi().isNombreITT() && demande.getDateDebut() != null
 				&& demande.getDateFin() != null && demande.getNombreITT() != null) {
-			double nbJour = helperService.calculNombreJours(demande.getDateDebut(), demande.getDateFin());
+			double nbJour = helperService.calculNombreJoursITT(demande);
 			if (nbJour > demande.getNombreITT()) {
 				logger.info(NB_JOURS_ITT_INCOHERENT);
 				srm.getInfos().add(NB_JOURS_ITT_INCOHERENT);
@@ -193,7 +193,7 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 	public boolean checkDepassementITT(DemandeDto demandeDto) {
 		if (demandeDto.getDateDebut() != null && demandeDto.getDateFin() != null && demandeDto.getNombreITT() != null
 				&& demandeDto.getTypeSaisi().isNombreITT()) {
-			double nbJour = helperService.calculNombreJours(demandeDto.getDateDebut(), demandeDto.getDateFin());
+			double nbJour = helperService.calculNombreJoursITT(demandeDto);
 			if (nbJour != demandeDto.getNombreITT()) {
 				return true;
 			}

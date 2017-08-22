@@ -144,6 +144,11 @@ public class RefTypeSaisi {
 	private boolean dateDeclaration;
 
 	@NotNull
+	@Column(name = "DATE_ACCIDENT_TRAVAIL", nullable = false)
+	@Type(type = "boolean")
+	private boolean dateAccidentTravail;
+
+	@NotNull
 	@Column(name = "PROLONGATION", nullable = false)
 	@Type(type = "boolean")
 	private boolean prolongation;
@@ -375,6 +380,14 @@ public class RefTypeSaisi {
 
 	public void setDateDeclaration(boolean dateDeclaration) {
 		this.dateDeclaration = dateDeclaration;
+	}
+
+	public boolean isDateAccidentTravail() {
+		return dateAccidentTravail;
+	}
+
+	public void setDateAccidentTravail(boolean dateAccidentTravail) {
+		this.dateAccidentTravail = dateAccidentTravail;
 	}
 
 	public boolean isProlongation() {

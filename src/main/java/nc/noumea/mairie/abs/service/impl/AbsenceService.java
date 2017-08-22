@@ -359,6 +359,7 @@ public class AbsenceService implements IAbsenceService {
 			text.append("URGENT <br> ");
 			text.append(type + "  vient d'être déclaré(e) pour l'agent " + nomAgent + " (" + dem.getIdAgent() + ") <br />");
 			text.append("Opérateur : " + (nomOpe == null ? "NC" : nomOpe) + "<br />");
+			text.append("Date de l'accident du travail : " + (dem.getDateAccidentTravail() == null ? "NC" : sdf.format(dem.getDateAccidentTravail())) + "<br />");
 			text.append("Date de déclaration : " + (dem.getDateDeclaration() == null ? "NC" : sdf.format(dem.getDateDeclaration())) + "<br />");
 			text.append("Prescripteur : " + (dem.getPrescripteur() == null ? "NC" : dem.getPrescripteur()) + "<br />");
 			text.append("Siège des lésions : " + (dem.getTypeSiegeLesion() == null ? "NC" : dem.getTypeSiegeLesion().getLibelle()) + "<br />");
@@ -370,6 +371,7 @@ public class AbsenceService implements IAbsenceService {
 			if (demande.getType().getIdRefTypeAbsence().equals(RefTypeAbsenceEnum.MALADIE_AT_RECHUTE.getValue()) && dem.getAccidentTravailReference() != null) {
 				DemandeMaladies at = dem.getAccidentTravailReference();
 				text.append("Informations concernant l'accident de travail de référence : <br />");
+				text.append("Date de l'accident du travail : " + (at.getDateAccidentTravail() == null ? "NC" : sdf.format(at.getDateAccidentTravail())) + "<br />");
 				text.append("Date de déclaration : " + (at.getDateDeclaration() == null ? "NC" : sdf.format(at.getDateDeclaration())) + "<br />");
 				text.append("Prescripteur : " + (at.getPrescripteur() == null ? "NC" : at.getPrescripteur()) + "<br />");
 				text.append("Siège des lésions : " + (at.getTypeSiegeLesion() == null ? "NC" : at.getTypeSiegeLesion().getLibelle()) + "<br />");
@@ -1348,6 +1350,7 @@ public class AbsenceService implements IAbsenceService {
 			etatDemandeMaladie.setDateDebut(demandeMaladie.getDateDebut());
 			etatDemandeMaladie.setDateFin(demandeMaladie.getDateFin());
 			etatDemandeMaladie.setDuree(demandeMaladie.getDuree());
+			etatDemandeMaladie.setDateAccidentTravail(demandeMaladie.getDateAccidentTravail());
 			etatDemandeMaladie.setDateDeclaration(demandeMaladie.getDateDeclaration());
 			etatDemandeMaladie.setAccidentTravailReference(demandeMaladie.getAccidentTravailReference());
 			etatDemandeMaladie.setNombreITT(demandeMaladie.getNombreITT());
@@ -1542,9 +1545,11 @@ public class AbsenceService implements IAbsenceService {
 
 						StringBuilder text = new StringBuilder();
 						text.append("Bonjour, <br> ");
-						text.append("La commission a donné son verdict pour l'AT de l'agent " + nomAgent + " du "
+						text.append("La commission a donné son verdict pour l'AT de l'agent " + nomAgent + ", ayant une date de déclaration au "
 								+ (dem.getDateDeclaration() == null ? "NC" : sdf.format(dem.getDateDeclaration()))
-								+ " <br>");
+								+ " et une date d'accident du travail au " 
+								+  (dem.getDateAccidentTravail() == null ? "NC" : sdf.format(dem.getDateAccidentTravail()))
+								+ "<br>");
 						text.append("AVIS : " + (dem.isAvisCommissionAptitude() == null ? "NC"
 								: dem.isAvisCommissionAptitude() ? "Accepté" : "Refusé") + " <br>");
 						if (dem.isAvisCommissionAptitude() != null && !dem.isAvisCommissionAptitude()) {
@@ -2028,6 +2033,7 @@ public class AbsenceService implements IAbsenceService {
 			demandeMaladie.setPrescripteur(demandeDto.getPrescripteur());
 			demandeMaladie.setNomEnfant(demandeDto.getNomEnfant());
 			demandeMaladie.setDateDeclaration(demandeDto.getDateDeclaration());
+			demandeMaladie.setDateAccidentTravail(demandeDto.getDateAccidentTravail());
 			demandeMaladie.setProlongation(demandeDto.isProlongation());
 			// #32371 maladie enfant - saisie possible à la demi-journée
 			demandeMaladie.setDateDebutAM(
