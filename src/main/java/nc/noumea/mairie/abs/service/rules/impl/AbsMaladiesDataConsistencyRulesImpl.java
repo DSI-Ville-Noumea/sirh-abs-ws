@@ -55,6 +55,9 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 		// #31605 puis #39427 : on ne permet aucune date dans le futur
 		checkDateFutur(srm, (DemandeMaladies) demande);
 		
+		// Pour les AT, on empêche la création si une demande existe avec la même date d'accident
+		checkDateAccidentTravailUnique(srm, (DemandeMaladies) demande);
+		
 		// un agent peut avoir fait des heures supp le matin et avoir un AT à 12h => on ne check pas les pointages
 		checkDateDebutInferieurDateFin(srm, demande.getDateDebut(), demande.getDateFin());
 		checkSaisieKiosqueAutorisee(srm, demande.getType().getTypeSaisi(), isProvenanceSIRH);
@@ -79,6 +82,27 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 		if (demande.getDateDebut() != null && demande.getDateDebut().compareTo(new Date()) > 0) {
 			logger.warn(DEMANDE_DATE_FUTUR_MSG);
 			srm.getErrors().add(DEMANDE_DATE_FUTUR_MSG);
+		}
+		if (demande.getDateAccidentTravail() != null && demande.getDateAccidentTravail().compareTo(new Date()) > 0) {
+			logger.warn(DEMANDE_DATE_AT_FUTUR_MSG);
+			srm.getErrors().add(DEMANDE_DATE_AT_FUTUR_MSG);
+		}
+		if (demande.getDateAccidentTravail() != null && demande.getDateDebut() != null && demande.getDateAccidentTravail().after(demande.getDateDebut())) {
+			logger.warn(DEMANDE_DATE_AT_APRES_DATE_DEBUT);
+			srm.getErrors().add(DEMANDE_DATE_AT_APRES_DATE_DEBUT);
+		}
+
+		return srm;
+	}
+
+	protected ReturnMessageDto checkDateAccidentTravailUnique(ReturnMessageDto srm, DemandeMaladies demande) {
+		
+		// Si la demande est nouvelle, on vérifie que la date de l'accident du travail n'existe pas pour une autre demande.
+		if (demande.getIdDemande() == null && demande.getDateAccidentTravail() != null && !demande.isProlongation()) {
+			if (maladiesRepository.getInitialATByAgent(demande.getIdAgent(), demande.getDateAccidentTravail())) {
+				logger.warn(DATE_ACCIDENT_TRAVAIL_EXISTANTE);
+				srm.getErrors().add(DATE_ACCIDENT_TRAVAIL_EXISTANTE);
+			}
 		}
 
 		return srm;

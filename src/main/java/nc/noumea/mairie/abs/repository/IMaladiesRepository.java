@@ -35,4 +35,8 @@ public interface IMaladiesRepository {
 			boolean isContractuel, boolean isConvColl, Integer anneeAnciennete);
 
 	List<DemandeMaladies> getListEnfantMaladeAnneeCivileByAgent(Integer idAgent, Date dateDebutAnneeForOneDate, Date dateFinAnneeForOneDate);
+
+	boolean getInitialATByAgent(Integer idAgent, Date dateAT);
+	
+	List<DemandeMaladies> getAllATByDateATAndAgentId(Date dateAT, Integer idAgent);
 }

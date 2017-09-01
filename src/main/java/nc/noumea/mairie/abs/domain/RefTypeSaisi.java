@@ -149,6 +149,11 @@ public class RefTypeSaisi {
 	private boolean dateAccidentTravail;
 
 	@NotNull
+	@Column(name = "SANS_AT", nullable = false)
+	@Type(type = "boolean")
+	private boolean sansArretTravail;
+
+	@NotNull
 	@Column(name = "PROLONGATION", nullable = false)
 	@Type(type = "boolean")
 	private boolean prolongation;
@@ -444,6 +449,14 @@ public class RefTypeSaisi {
 
 	public void setInfosPieceJointe(String infosPieceJointe) {
 		this.infosPieceJointe = infosPieceJointe;
+	}
+
+	public boolean isSansArretTravail() {
+		return sansArretTravail;
+	}
+
+	public void setSansArretTravail(boolean sansArretTravail) {
+		this.sansArretTravail = sansArretTravail;
 	}
 	
 }

@@ -80,6 +80,7 @@ import nc.noumea.mairie.abs.repository.IControleMedicalRepository;
 import nc.noumea.mairie.abs.repository.ICounterRepository;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
 import nc.noumea.mairie.abs.repository.IFiltreRepository;
+import nc.noumea.mairie.abs.repository.IMaladiesRepository;
 import nc.noumea.mairie.abs.repository.IOrganisationSyndicaleRepository;
 import nc.noumea.mairie.abs.repository.IRecuperationRepository;
 import nc.noumea.mairie.abs.repository.IReposCompensateurRepository;
@@ -115,6 +116,9 @@ public class AbsenceService implements IAbsenceService {
 
 	@Autowired
 	private IDemandeRepository demandeRepository;
+
+	@Autowired
+	private IMaladiesRepository maladiesRepository;
 
 	@Autowired
 	private IControleMedicalRepository controleMedicalRepository;
@@ -1350,6 +1354,7 @@ public class AbsenceService implements IAbsenceService {
 			etatDemandeMaladie.setDateDebut(demandeMaladie.getDateDebut());
 			etatDemandeMaladie.setDateFin(demandeMaladie.getDateFin());
 			etatDemandeMaladie.setDuree(demandeMaladie.getDuree());
+			etatDemandeMaladie.setSansArretTravail(demandeMaladie.isSansArretTravail());
 			etatDemandeMaladie.setDateAccidentTravail(demandeMaladie.getDateAccidentTravail());
 			etatDemandeMaladie.setDateDeclaration(demandeMaladie.getDateDeclaration());
 			etatDemandeMaladie.setAccidentTravailReference(demandeMaladie.getAccidentTravailReference());
@@ -1477,6 +1482,13 @@ public class AbsenceService implements IAbsenceService {
 		demandeRepository.persistEntity(demande);
 		demandeRepository.flush();
 		demandeRepository.clear();
+		
+		if (demandeDto.getIdDemande() != null && demandeDto.getTypeSaisi() != null 
+				&& demandeDto.getTypeSaisi().getIdRefTypeDemande().equals(RefTypeAbsenceEnum.MALADIE_AT.getValue())
+				&& demandeInitiale.getDateAccidentTravail() != null
+				&& demandeDto.getDateAccidentTravail().compareTo(demandeInitiale.getDateAccidentTravail()) != 0) {
+			updateDateAccidentTravailForProlongations(returnDto, demandeDto, demandeInitiale.getDateAccidentTravail());
+		}
 
 		if (isCreation) {
 			try {
@@ -1499,6 +1511,19 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		return returnDto;
+	}
+
+	@Transactional(value = "absTransactionManager")
+	private void updateDateAccidentTravailForProlongations(ReturnMessageDto returnDto, DemandeDto dto, Date ancienneDate) {
+		List<DemandeMaladies> demandesAModifier = maladiesRepository.getAllATByDateATAndAgentId(ancienneDate, dto.getAgentWithServiceDto().getIdAgent());
+		for (DemandeMaladies demande : demandesAModifier) {
+			demande.setDateAccidentTravail(dto.getDateAccidentTravail());
+			demandeRepository.persistEntity(demande);
+		}
+		if (demandesAModifier.size() == 1)
+			returnDto.getInfos().add("La date de l'accident du travail a aussi été mis à jour pour la prolongation de cet AT.");
+		else if (demandesAModifier.size() > 1)
+			returnDto.getInfos().add(demandesAModifier.size() + " prolongations associées à cet AT ont vu leur date de l'accident du travail mis à jour.");
 	}
 
 	private void sendEmailAvisCommission(Demande demande, DemandeMaladies demandeInitiale, ReturnMessageDto returnDto) {
@@ -2034,6 +2059,7 @@ public class AbsenceService implements IAbsenceService {
 			demandeMaladie.setNomEnfant(demandeDto.getNomEnfant());
 			demandeMaladie.setDateDeclaration(demandeDto.getDateDeclaration());
 			demandeMaladie.setDateAccidentTravail(demandeDto.getDateAccidentTravail());
+			demandeMaladie.setSansArretTravail(demandeDto.isSansArretTravail());
 			demandeMaladie.setProlongation(demandeDto.isProlongation());
 			// #32371 maladie enfant - saisie possible à la demi-journée
 			demandeMaladie.setDateDebutAM(

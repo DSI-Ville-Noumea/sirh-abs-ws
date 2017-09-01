@@ -58,6 +58,9 @@ public class DemandeMaladies extends Demande implements Cloneable {
 	@Temporal(TemporalType.DATE)
 	private Date					dateAccidentTravail;
 
+	@Column(name = "SANS_AT")
+	private boolean					sansArretTravail;
+
 	@Column(name = "PROLONGATION")
 	private boolean					prolongation;
 
@@ -313,6 +316,14 @@ public class DemandeMaladies extends Demande implements Cloneable {
 
 	public void setDateAccidentTravail(Date dateAccidentTravail) {
 		this.dateAccidentTravail = dateAccidentTravail;
+	}
+
+	public boolean isSansArretTravail() {
+		return sansArretTravail;
+	}
+
+	public void setSansArretTravail(boolean sansArretTravail) {
+		this.sansArretTravail = sansArretTravail;
 	}
 
 	public Object clone() {
