@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -7,12 +8,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Repository;
+
 import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.RefDroitsMaladies;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
-
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class MaladiesRepository implements IMaladiesRepository {
@@ -123,6 +124,53 @@ public class MaladiesRepository implements IMaladiesRepository {
 		q.setParameter("ENFANT_MALADE", RefTypeAbsenceEnum.ENFANT_MALADE.getValue());
 
 		return q.getResultList();
+	}
+
+	@Override
+	public boolean getInitialATByAgent(Integer idAgent, Date dateAT) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from DemandeMaladies d inner join d.etatsDemande ed where d.idAgent = :idAgent");
+		sb.append(" and d.type.idRefTypeAbsence in ( :AT ) ");
+		sb.append(" and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 " + "inner join ed2.demande d2 where d2.idAgent = :idAgent ");
+		sb.append("group by ed2.demande ) ");
+		sb.append("and ed.etat not in ( :REFUSEE, :REJETE , :ANNULEE ) ");
+		sb.append("and d.prolongation is false ");
+		sb.append("and d.dateAccidentTravail = :dateAT ");
+		sb.append("order by d.dateDebut asc ");
+
+		TypedQuery<DemandeMaladies> q = absEntityManager.createQuery(sb.toString(), DemandeMaladies.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("REFUSEE", RefEtatEnum.REFUSEE);
+		q.setParameter("REJETE", RefEtatEnum.REJETE);
+		q.setParameter("ANNULEE", RefEtatEnum.ANNULEE);
+		q.setParameter("dateAT", dateAT);
+		q.setParameter("AT", RefTypeAbsenceEnum.MALADIE_AT.getValue());
+		
+		return !q.getResultList().isEmpty();
+	}
+
+	@Override
+	public List<DemandeMaladies> getAllATByDateATAndAgentId(Date dateAT, Integer idAgent) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from DemandeMaladies d inner join fetch d.etatsDemande ed ");
+		sb.append("where d.idAgent = :idAgentConcerne ");
+		sb.append("and d.type.idRefTypeAbsence = :idAT ");
+		sb.append("and d.dateAccidentTravail = :dateAT ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
+		sb.append("and ed.etat not in ( :REJETE, :REFUSEE, :ANNULEE ) ");
+
+		TypedQuery<DemandeMaladies> query = absEntityManager.createQuery(sb.toString(), DemandeMaladies.class);
+		query.setParameter("idAgentConcerne", idAgent);
+		query.setParameter("idAT", RefTypeAbsenceEnum.MALADIE_AT.getValue());
+		query.setParameter("dateAT", dateAT);
+		query.setParameter("ANNULEE", RefEtatEnum.ANNULEE);
+		query.setParameter("REFUSEE", RefEtatEnum.REFUSEE);
+		query.setParameter("REJETE", RefEtatEnum.REJETE);
+
+		return query.getResultList();
 	}
 
 }

@@ -33,6 +33,7 @@ public class RefTypeSaisiDto {
 	private boolean prescripteur;
 	private boolean dateDeclaration;
 	private boolean dateAccidentTravail;
+	private boolean sansArretTravail;
 	private boolean prolongation;
 	private boolean nomEnfant;
 	private boolean nombreITT;
@@ -79,6 +80,7 @@ public class RefTypeSaisiDto {
 		this.prescripteur = typeSaisi.isPrescripteur();
 		this.dateDeclaration = typeSaisi.isDateDeclaration();
 		this.dateAccidentTravail = typeSaisi.isDateAccidentTravail();
+		this.sansArretTravail = typeSaisi.isSansArretTravail();
 		this.prolongation = typeSaisi.isProlongation();
 		this.nomEnfant = typeSaisi.isNomEnfant();
 		this.nombreITT = typeSaisi.isNombreITT();
@@ -341,6 +343,14 @@ public class RefTypeSaisiDto {
 
 	public void setDateAccidentTravail(boolean dateAccidentTravail) {
 		this.dateAccidentTravail = dateAccidentTravail;
+	}
+
+	public boolean isSansArretTravail() {
+		return sansArretTravail;
+	}
+
+	public void setSansArretTravail(boolean sansArretTravail) {
+		this.sansArretTravail = sansArretTravail;
 	}
 	
 }

@@ -256,6 +256,10 @@ public class HelperService {
 	public double calculNombreJoursITT(DemandeDto demande) {
 		Long nbITT = null;
 	    
+		// #41504 : Si la case "Sans arrêt de travail" est cochée, alors le nombre d'ITT doit être 0
+		if (demande.isSansArretTravail())
+			return 0;
+		
 		switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(demande.getTypeSaisi().getIdRefTypeDemande())) {
 			case MALADIE_AT :
 				nbITT = ChronoUnit.DAYS.between(demande.getDateDebut().toInstant(), demande.getDateFin().toInstant());

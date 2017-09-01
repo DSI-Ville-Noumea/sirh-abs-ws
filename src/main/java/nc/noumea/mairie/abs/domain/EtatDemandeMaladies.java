@@ -37,6 +37,9 @@ public class EtatDemandeMaladies extends EtatDemande {
 	@Temporal(TemporalType.DATE)
 	private Date dateAccidentTravail;
 
+	@Column(name = "SANS_AT")
+	private boolean sansArretTravail;
+
 	@Column(name = "DATE_DECLARATION")
 	@Temporal(TemporalType.DATE)
 	private Date dateDeclaration;
@@ -266,6 +269,14 @@ public class EtatDemandeMaladies extends EtatDemande {
 
 	public void setDateAccidentTravail(Date dateAccidentTravail) {
 		this.dateAccidentTravail = dateAccidentTravail;
+	}
+
+	public boolean isSansArretTravail() {
+		return sansArretTravail;
+	}
+
+	public void setSansArretTravail(boolean sansArretTravail) {
+		this.sansArretTravail = sansArretTravail;
 	}
 	
 }

@@ -119,6 +119,7 @@ public class DemandeDto {
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateAccidentTravail;
+	private boolean sansArretTravail;
 	private boolean prolongation;
 	private RefTypeDto typeAccidentTravail;
 	private RefTypeDto typeSiegeLesion;
@@ -304,6 +305,7 @@ public class DemandeDto {
 				this.nomEnfant = ((DemandeMaladies) d).getNomEnfant();
 				this.dateDeclaration = ((DemandeMaladies) d).getDateDeclaration();
 				this.dateAccidentTravail = ((DemandeMaladies) d).getDateAccidentTravail();
+				this.sansArretTravail = ((DemandeMaladies) d).isSansArretTravail();
 				this.prolongation = ((DemandeMaladies) d).isProlongation();
 				
 				if(null != ((DemandeMaladies) d).getTypeAccidentTravail()) 
@@ -1030,6 +1032,14 @@ public class DemandeDto {
 
 	public void setDateAccidentTravail(Date dateAccidentTravail) {
 		this.dateAccidentTravail = dateAccidentTravail;
+	}
+
+	public boolean isSansArretTravail() {
+		return sansArretTravail;
+	}
+
+	public void setSansArretTravail(boolean sansArretTravail) {
+		this.sansArretTravail = sansArretTravail;
 	}
 	
 }

@@ -105,9 +105,12 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	public static final String					STATUT_AGENT_NON_ELIGIBLE_CONGE_ANNUEL	= "Ce type de demande ne peut pas être saisi par les adjoints, conseillers municipaux et le maire.";
 	public static final String					NB_JOURS_ITT_INCOHERENT					= "Le nombre de jours d'ITT est incohérent avec la date de début/fin de la demande.";
 	public static final String					DEMANDE_DATE_FUTUR_MSG					= "La date de début ne peut pas être dans le futur.";
+	public static final String					DEMANDE_DATE_AT_FUTUR_MSG				= "La date de l'accident du travail ne peut pas être dans le futur.";
+	public static final String					DEMANDE_DATE_AT_APRES_DATE_DEBUT		= "La date de l'accident du travail ne peut pas être postérieure à la date de début.";
 	public static final String					NB_JOURS_ITT_TROP_ELEVE					= "Vous ne pouvez renseigner un nombre de jours d'ITT dépassant la période couverte par l'absence.";
 	public static final String					DEPASSEMENT_QUOTA_ENFANT_MALADE						= "Le quota de maladie 'Enfant malade' est dépassé pour cet agent.";
 	public static final String					DEPASSEMENT_QUOTA_ENFANT_MALADE_COMMENTAIRE			= "Merci d'ajouter un commentaire à cette demande.";
+	public static final String					DATE_ACCIDENT_TRAVAIL_EXISTANTE			= "Cet agent possède déjà un accident du travail à cette date. Vous ne pouvez renseigner qu'une prolongation avec cette même date.";
 
 	public static final List<String>			ACTIVITE_CODES							= Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62",
 			"63", "64", "65", "66");
