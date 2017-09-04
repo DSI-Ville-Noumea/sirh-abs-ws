@@ -338,9 +338,12 @@ public class AbsenceService implements IAbsenceService {
 			final DemandeMaladies dem = (DemandeMaladies) demande;
 			final String type;
 			if (demande.getType().getIdRefTypeAbsence() == RefTypeAbsenceEnum.MALADIE_AT.getValue()) {
-				type = "Un AT";
+				if (dem.isProlongation())
+					type = "Une prolongation d'AT";
+				else
+					type = "UN AT";
 			} else {
-				type = "Une Rechute AT";
+				type = "Une rechute AT";
 			}
 			final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			String nomOpe = null;
