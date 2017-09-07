@@ -96,10 +96,10 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee, Integer pageSize, Integer pageNumber) {
 		List<CompteurDto> result = new ArrayList<>();
 		if (idOrganisation == null) {
-			List<AgentAsaA48Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA48Count.class, annee);
+			List<AgentAsaA48Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA48Count.class, annee, pageSize, pageNumber);
 			for (AgentAsaA48Count arc : listeArc) {
 				List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
 				// on regarde si il y a une saisie OS
@@ -143,6 +143,15 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 			}
 		}
 		return srm;
+	}
+	
+	/**
+	 * Retourne le nombre total d'enregistrement par année si spécifiée, pour la pagination des données.
+	 */
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public Integer countAllByYear(String annee, Integer idOS) {
+		return counterRepository.countAllByYearAndOS(AgentAsaA48Count.class, annee, idOS);
 	}
 
 	/**

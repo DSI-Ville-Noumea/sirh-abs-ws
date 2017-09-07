@@ -21,6 +21,8 @@ public interface ICounterRepository {
 	<T> T getAgentCounter(Class<T> T, Integer idAgent);
 
 	<T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date date);
+	
+	<T> Integer countAllByYearAndOS(Class<T> T, String annee, Integer idOS);
 
 	<T> T getWeekHistoForAgentAndDate(Class<T> T, Integer idAgent, Date dateMonday);
 
@@ -47,6 +49,8 @@ public interface ICounterRepository {
 	<T> List<T> getListCounterByOrganisation(Class<T> T, Integer idOrganisation);
 
 	<T> List<T> getListCounterByAnnee(Class<T> T, Integer annee);
+
+	<T> List<T> getListCounterByAnnee(Class<T> T, Integer annee, Integer pageSize, Integer pageNumber);
 
 	List<AgentCongeAnnuelCount> getListAgentCongeAnnuelCountWithListAgents(List<Integer> listIdsAgent);
 

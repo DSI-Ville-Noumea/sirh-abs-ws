@@ -245,6 +245,16 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
+	public Integer countAllByYear(String annee, Integer idOS) {
+		return null;
+	}
+	
+	@Override
+	public List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale, Integer annee, Integer pageSize, Integer pageNumber) {
+		return null;
+	}
+
+	@Override
 	public List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin) {
 		return null;
 	}

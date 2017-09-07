@@ -54,6 +54,16 @@ public class AsaA55Controller {
 
 		return srm;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/countAllByYear", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public Integer countAllByYear(@RequestParam(value = "year", required = false) String annee, 
+			@RequestParam(value = "idOS", required = false) Integer idOS, HttpServletResponse response) {
+
+		logger.debug("entered GET [asaA48/countAll]");
+
+		return counterService.countAllByYear(annee, idOS);
+	}
 
 	/**
 	 * Liste des compteurs ASA A55 ResponseBody : Format du type timestamp :
@@ -61,11 +71,12 @@ public class AsaA55Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurA55", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<CompteurDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur(@RequestParam(value = "pageSize", required = false) Integer pageSize, 
+			@RequestParam(value = "pageNumber", required = false) Integer pageNumber) {
 
 		logger.debug("entered GET [asaA55/listeCompteurA55] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur(null, null);
+		List<CompteurDto> result = counterService.getListeCompteur(null, null, pageSize, pageNumber);
 
 		if (result.size() == 0)
 			throw new NoContentException();

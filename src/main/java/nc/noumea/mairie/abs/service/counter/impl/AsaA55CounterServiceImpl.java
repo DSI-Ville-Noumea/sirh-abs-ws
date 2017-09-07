@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -39,6 +40,15 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update recuperation counters :", e);
 		}
+	}
+	
+	/**
+	 * Retourne le nombre total d'enregistrement par année si spécifiée, pour la pagination des données.
+	 */
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public Integer countAllByYear(String annee, Integer idOS) {
+		return counterRepository.countAllByYearAndOS(AgentAsaA55Count.class, annee, idOS);
 	}
 
 	/**
@@ -98,6 +108,20 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		List<CompteurDto> result = new ArrayList<>();
 
 		List<AgentAsaA55Count> listeArc = counterRepository.getListCounter(AgentAsaA55Count.class);
+		for (AgentAsaA55Count arc : listeArc) {
+			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
+			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
+			result.add(dto);
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee, Integer pageSize, Integer pageNumber) {
+		List<CompteurDto> result = new ArrayList<>();
+
+		List<AgentAsaA55Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA55Count.class, null, pageSize, pageNumber);
 		for (AgentAsaA55Count arc : listeArc) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
 			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);

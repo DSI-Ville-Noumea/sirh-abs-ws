@@ -286,7 +286,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(OSRepository.getAgentA54Organisation(e.getIdAgent())).thenReturn(null);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, null)).thenReturn(list);
+		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, null, null, null)).thenReturn(list);
 
 		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
@@ -315,7 +315,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(OSRepository.getAgentA54Organisation(e.getIdAgent())).thenReturn(null);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, 2015)).thenReturn(list);
+		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, 2015, null, null)).thenReturn(list);
 
 		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);

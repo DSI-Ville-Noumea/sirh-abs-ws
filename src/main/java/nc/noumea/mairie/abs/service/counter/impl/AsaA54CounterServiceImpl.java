@@ -8,7 +8,9 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import nc.noumea.mairie.abs.domain.AgentA48OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentA54OrganisationSyndicale;
+import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -42,6 +44,15 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update ASA A54 counters :", e);
 		}
+	}
+	
+	/**
+	 * Retourne le nombre total d'enregistrement par année si spécifiée, pour la pagination des données.
+	 */
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public Integer countAllByYear(String annee, Integer idOS) {
+		return counterRepository.countAllByYearAndOS(AgentAsaA48Count.class, annee, idOS);
 	}
 
 	/**
@@ -104,10 +115,12 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee, Integer pageSize, Integer pageNumber) {
 		List<CompteurDto> result = new ArrayList<>();
+
+		logger.debug("entered getListeCompteur() with pageSize = {} and offset = {}", pageSize, pageNumber);
 		if (idOrganisation == null) {
-			List<AgentAsaA54Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, annee);
+			List<AgentAsaA54Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, annee, pageSize, pageNumber);
 			for (AgentAsaA54Count arc : listeArc) {
 				List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
 				// on regarde si il y a une saisie OS
@@ -132,6 +145,12 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
+		return getListeCompteur(idOrganisation, annee, null, null);
 	}
 
 	/**

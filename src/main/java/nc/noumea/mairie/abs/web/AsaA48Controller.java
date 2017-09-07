@@ -61,16 +61,29 @@ public class AsaA48Controller {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurA48", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<CompteurDto> getListeCompteur(@RequestParam(value = "annee", required = false) Integer annee,@RequestParam(value = "idOrganisation", required = false) Integer idOrganisation) {
+	public List<CompteurDto> getListeCompteur(@RequestParam(value = "annee", required = false) Integer annee,
+			@RequestParam(value = "idOrganisation", required = false) Integer idOrganisation,
+			@RequestParam(value = "pageSize", required = false) Integer pageSize,
+			@RequestParam(value = "pageNumber", required = false) Integer pageNumber ) {
 
 		logger.debug("entered GET [asaA48/listeCompteurA48] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur(idOrganisation, annee);
+		List<CompteurDto> result = counterService.getListeCompteur(idOrganisation, annee, pageSize, pageNumber);
 
 		if (result.size() == 0)
 			throw new NoContentException();
 
 		return result;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/countAllByYear", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public Integer countAllByYear(@RequestParam(value = "year", required = false) String annee, 
+			@RequestParam(value = "idOS", required = false) Integer idOS, HttpServletResponse response) {
+
+		logger.debug("entered GET [asaA48/countAll]");
+
+		return counterService.countAllByYear(annee, idOS);
 	}
 
 	/**
