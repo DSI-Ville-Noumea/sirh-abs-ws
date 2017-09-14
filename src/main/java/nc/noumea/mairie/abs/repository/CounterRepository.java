@@ -134,7 +134,7 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public <T> Integer countAllByYearAndOS(Class<T> T, String annee, Integer idOS) {
+	public <T> Integer countAllByYear(Class<T> T, Integer annee) {
 		// Build query criteria
 		StringBuilder sb = new StringBuilder();
 		sb.append("select c from " + T.getSimpleName() + " c ");
@@ -146,7 +146,7 @@ public class CounterRepository implements ICounterRepository {
 		TypedQuery<T> query = absEntityManager.createQuery(sb.toString(), T);
 		
 		if(annee!=null){
-			query.setParameter("annee", Integer.valueOf(annee));
+			query.setParameter("annee", annee);
 		}
 
 		return query.getResultList().size();

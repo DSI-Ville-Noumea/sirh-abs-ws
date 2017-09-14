@@ -110,17 +110,19 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 				result.add(dto);
 			}
 		} else {
-			List<AgentA48OrganisationSyndicale> listAg = OSRepository.getAgentA48OrganisationByOS(idOrganisation);
+			List<AgentA48OrganisationSyndicale> listAg = OSRepository.getAgentA48OrganisationByOS(idOrganisation, pageSize, pageNumber, annee);
 			for (AgentA48OrganisationSyndicale agOrga : listAg) {
 				AgentAsaA48Count compteurAg = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, agOrga.getIdAgent(),
 						new DateTime(annee, 1, 1, 0, 0, 0).toDate());
-				List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(compteurAg.getIdAgent(), compteurAg);
-				// on regarde si il y a une saisie OS
-				List<AgentA48OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA48Organisation(compteurAg.getIdAgent());
-				CompteurDto dto = new CompteurDto(compteurAg, list.size() > 0 ? list.get(0) : null,
-						listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null
-								: listeAgentOrganisationSyndicale.get(0));
-					result.add(dto);
+				if (compteurAg != null) {
+					List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(compteurAg.getIdAgent(), compteurAg);
+					// on regarde si il y a une saisie OS
+					List<AgentA48OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA48Organisation(compteurAg.getIdAgent());
+					CompteurDto dto = new CompteurDto(compteurAg, list.size() > 0 ? list.get(0) : null,
+							listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null
+									: listeAgentOrganisationSyndicale.get(0));
+						result.add(dto);
+				}
 			}
 		}
 		return result;
@@ -150,8 +152,11 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public Integer countAllByYear(String annee, Integer idOS) {
-		return counterRepository.countAllByYearAndOS(AgentAsaA48Count.class, annee, idOS);
+	public Integer countAllByYear(Integer annee, Integer idOS) {
+		if (idOS == null)
+			return counterRepository.countAllByYear(AgentAsaA48Count.class, annee);
+		else 
+			return OSRepository.countAllByidOSAndYear(AgentA48OrganisationSyndicale.class, AgentAsaA48Count.class, idOS, annee);
 	}
 
 	/**

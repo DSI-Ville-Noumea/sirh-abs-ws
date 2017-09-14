@@ -4,7 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.noumea.mairie.abs.domain.AgentA54OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
+import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -47,8 +49,8 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public Integer countAllByYear(String annee, Integer idOS) {
-		return counterRepository.countAllByYearAndOS(AgentAsaA55Count.class, annee, idOS);
+	public Integer countAllByYear(Integer annee, Integer idOS) {
+		return counterRepository.countAllByYear(AgentAsaA55Count.class, annee);
 	}
 
 	/**

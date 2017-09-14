@@ -57,7 +57,7 @@ public class AsaA55Controller {
 	
 	@ResponseBody
 	@RequestMapping(value = "/countAllByYear", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public Integer countAllByYear(@RequestParam(value = "year", required = false) String annee, 
+	public Integer countAllByYear(@RequestParam(value = "year", required = false) Integer annee, 
 			@RequestParam(value = "idOS", required = false) Integer idOS, HttpServletResponse response) {
 
 		logger.debug("entered GET [asaA48/countAll]");

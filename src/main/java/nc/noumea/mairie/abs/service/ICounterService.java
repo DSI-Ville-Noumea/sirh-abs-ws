@@ -38,7 +38,7 @@ public interface ICounterService {
 
 	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee, Integer pageSize, Integer pageNumber);
 
-	Integer countAllByYear(String annee, Integer idOS);
+	Integer countAllByYear(Integer annee, Integer idOS);
 
 	List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin);
 

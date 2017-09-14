@@ -22,7 +22,7 @@ public interface ICounterRepository {
 
 	<T> T getAgentCounterByDate(Class<T> T, Integer idAgent, Date date);
 	
-	<T> Integer countAllByYearAndOS(Class<T> T, String annee, Integer idOS);
+	<T> Integer countAllByYear(Class<T> T, Integer annee);
 
 	<T> T getWeekHistoForAgentAndDate(Class<T> T, Integer idAgent, Date dateMonday);
 

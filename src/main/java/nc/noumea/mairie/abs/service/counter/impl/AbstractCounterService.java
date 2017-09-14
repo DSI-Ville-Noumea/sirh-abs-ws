@@ -245,7 +245,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public Integer countAllByYear(String annee, Integer idOS) {
+	public Integer countAllByYear(Integer annee, Integer idOS) {
 		return null;
 	}
 	

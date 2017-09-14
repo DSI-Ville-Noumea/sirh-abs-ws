@@ -51,8 +51,11 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public Integer countAllByYear(String annee, Integer idOS) {
-		return counterRepository.countAllByYearAndOS(AgentAsaA48Count.class, annee, idOS);
+	public Integer countAllByYear(Integer annee, Integer idOS) {
+		if (idOS == null)
+			return counterRepository.countAllByYear(AgentAsaA54Count.class, annee);
+		else 
+			return OSRepository.countAllByidOSAndYear(AgentA54OrganisationSyndicale.class, AgentAsaA54Count.class, idOS, annee);
 	}
 
 	/**
@@ -131,17 +134,19 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 				result.add(dto);
 			}
 		} else {
-			List<AgentA54OrganisationSyndicale> listAg = OSRepository.getAgentA54OrganisationByOS(idOrganisation);
+			List<AgentA54OrganisationSyndicale> listAg = OSRepository.getAgentA54OrganisationByOS(idOrganisation, pageSize, pageNumber, annee);
 			for (AgentA54OrganisationSyndicale agOrga : listAg) {
 				AgentAsaA54Count compteurAg = counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, agOrga.getIdAgent(),
 						new DateTime(annee, 1, 1, 0, 0, 0).toDate());
-				List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(compteurAg.getIdAgent(), compteurAg);
-				// on regarde si il y a une saisie OS
-				List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(compteurAg.getIdAgent());
-				CompteurDto dto = new CompteurDto(compteurAg, list.size() > 0 ? list.get(0) : null,
-						listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null
-								: listeAgentOrganisationSyndicale.get(0));
-				result.add(dto);
+				if (compteurAg != null) {
+					List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(compteurAg.getIdAgent(), compteurAg);
+					// on regarde si il y a une saisie OS
+					List<AgentA54OrganisationSyndicale> listeAgentOrganisationSyndicale = OSRepository.getAgentA54Organisation(compteurAg.getIdAgent());
+					CompteurDto dto = new CompteurDto(compteurAg, list.size() > 0 ? list.get(0) : null,
+							listeAgentOrganisationSyndicale == null || listeAgentOrganisationSyndicale.size() == 0 ? null
+									: listeAgentOrganisationSyndicale.get(0));
+					result.add(dto);
+				}
 			}
 		}
 		return result;

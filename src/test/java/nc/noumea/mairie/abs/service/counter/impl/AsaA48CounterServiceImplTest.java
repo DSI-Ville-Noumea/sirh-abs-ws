@@ -259,6 +259,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		List<CompteurDto> result = new ArrayList<CompteurDto>();
 		AgentAsaA48Count e = new AgentAsaA48Count();
+		e.setDateDebut(new DateTime(2015, 1, 1, 0, 0, 0).toDate());
 		e.setIdAgent(9005138);
 		e.setTotalJours(12.0);
 		List<AgentAsaA48Count> list = new ArrayList<AgentAsaA48Count>();
@@ -275,7 +276,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(OSRepository.getAgentA48Organisation(e.getIdAgent())).thenReturn(null);
-		Mockito.when(OSRepository.getAgentA48OrganisationByOS(1)).thenReturn(orga.getAgentsA48());
+		Mockito.when(OSRepository.getAgentA48OrganisationByOS(1, null, null, 2015)).thenReturn(orga.getAgentsA48());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, agOrga.getIdAgent(), new DateTime(2015, 1, 1, 0, 0, 0).toDate()))
