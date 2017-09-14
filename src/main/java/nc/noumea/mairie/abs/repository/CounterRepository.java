@@ -134,6 +134,25 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
+	public <T> Integer countAllByYear(Class<T> T, Integer annee) {
+		// Build query criteria
+		StringBuilder sb = new StringBuilder();
+		sb.append("select c from " + T.getSimpleName() + " c ");
+		
+		if(annee != null){
+			sb.append("where year(dateDebut) = :annee ");
+		}
+
+		TypedQuery<T> query = absEntityManager.createQuery(sb.toString(), T);
+		
+		if(annee!=null){
+			query.setParameter("annee", annee);
+		}
+
+		return query.getResultList().size();
+	}
+
+	@Override
 	public <T> T getOSCounterByDate(Class<T> T, Integer idOrganisationSyndicale, Date date) {
 
 		// Build query criteria
@@ -307,6 +326,30 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
+	public <T> List<T> getListCounterByAnnee(Class<T> T, Integer annee, Integer pageSize, Integer pageNumber) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select c from "+T.getSimpleName()+" c ");
+		if(annee!=null){
+		sb.append("where year(dateDebut) = :annee ");
+		}
+		sb.append("order by c.idAgent asc, c.dateDebut desc");
+
+		TypedQuery<T> query = absEntityManager.createQuery(sb.toString(), T);
+		
+		if (pageSize != null)
+			query.setMaxResults(pageSize);
+		
+		if (pageNumber != null && pageSize != null) {
+			query.setFirstResult(pageSize * (pageNumber - 1));
+		}
+		
+		if(annee!=null){
+			query.setParameter("annee", annee);
+		}
+		return query.getResultList();
+	}
+
+	@Override
 	public <T> List<T> getListCounterByAnnee(Class<T> T, Integer annee) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select c from "+T.getSimpleName()+" c ");
@@ -321,47 +364,6 @@ public class CounterRepository implements ICounterRepository {
 			query.setParameter("annee", annee);
 		}
 		return query.getResultList();
-//
-//		// Build query criteria
-//		CriteriaBuilder cb = absEntityManager.getCriteriaBuilder();
-//		CriteriaQuery<T> cq = cb.createQuery(T);
-//		Root<T> c = cq.from(T);
-//		cq.select(c);
-//		Expre
-//		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idAgent");
-//		cq.where(cb.equal(c.get("idAgent"), p));
-//		ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateMonday");
-//		cq.orderBy(cb.asc(c.get("idAgent")), cb.desc(c.get("dateDebut")));
-//
-//		// Build query
-//		TypedQuery<T> q = absEntityManager.createQuery(cq);
-//
-//		// Exec query
-//		List<T> r = q.getResultList();fsd
-//
-//		return r;
-		
-		
-		
-
-
-//		// Build query criteria
-//		CriteriaBuilder cb = absEntityManager.getCriteriaBuilder();
-//		CriteriaQuery<T> cq = cb.createQuery(T);
-//		Root<T> c = cq.from(T);
-//		cq.select(c);
-//		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idAgent");
-//		cq.where(cb.equal(c.get("idAgent"), p));
-//
-//		// Build query
-//		TypedQuery<T> q = absEntityManager.createQuery(cq);
-//		q.setParameter("idAgent", idAgent);
-//		q.setMaxResults(1);
-//
-//		// Exec query
-//		List<T> r = q.getResultList();
-//
-//		return (r.size() == 1 ? r.get(0) : null);
 	}
 
 }

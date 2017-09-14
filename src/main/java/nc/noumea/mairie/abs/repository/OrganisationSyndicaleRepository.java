@@ -107,10 +107,29 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 	}
 
 	@Override
-	public List<AgentA54OrganisationSyndicale> getAgentA54OrganisationByOS(Integer idOrganisationSyndicale) {
-		TypedQuery<AgentA54OrganisationSyndicale> query = absEntityManager
-				.createQuery("SELECT o FROM AgentA54OrganisationSyndicale o where o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale", AgentA54OrganisationSyndicale.class);
-		query.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
+	public List<AgentA54OrganisationSyndicale> getAgentA54OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer annee) {
+
+		String sb = "SELECT os FROM AgentAsaA54Count asa, AgentA54OrganisationSyndicale os ";
+		sb += "WHERE os.idAgent = asa.idAgent AND os.organisationSyndicale.idOrganisationSyndicale = :idOS ";
+		if (annee != null) {
+			sb += "AND extract(year from asa.dateDebut) = :annee ";
+		}
+		sb += "order by asa.idAgent desc ";
+		
+		TypedQuery<AgentA54OrganisationSyndicale> query = absEntityManager.createQuery(sb, AgentA54OrganisationSyndicale.class);
+		
+		if (pageSize != null)
+			query.setMaxResults(pageSize);
+		
+		if (pageNumber != null && pageSize != null) {
+            query.setFirstResult(pageSize * (pageNumber - 1));
+        }
+		
+		query.setParameter("idOS", idOrganisationSyndicale);
+		
+		if (annee != null) {
+			query.setParameter("annee", annee);
+		}
 
 		return query.getResultList();
 	}
@@ -125,11 +144,51 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 	}
 
 	@Override
-	public List<AgentA48OrganisationSyndicale> getAgentA48OrganisationByOS(Integer idOrganisationSyndicale) {
-		TypedQuery<AgentA48OrganisationSyndicale> query = absEntityManager
-				.createQuery("SELECT o FROM AgentA48OrganisationSyndicale o where o.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale", AgentA48OrganisationSyndicale.class);
-		query.setParameter("idOrganisationSyndicale", idOrganisationSyndicale);
+	public List<AgentA48OrganisationSyndicale> getAgentA48OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer annee) {
+
+		String sb = "SELECT os FROM AgentAsaA48Count asa, AgentA48OrganisationSyndicale os ";
+		sb += "WHERE os.idAgent = asa.idAgent AND os.organisationSyndicale.idOrganisationSyndicale = :idOS ";
+		if (annee != null) {
+			sb += "AND extract(year from asa.dateDebut) = :annee ";
+		}
+		sb += "order by asa.idAgent desc ";
+		
+		TypedQuery<AgentA48OrganisationSyndicale> query = absEntityManager.createQuery(sb, AgentA48OrganisationSyndicale.class);
+		
+		if (pageSize != null)
+			query.setMaxResults(pageSize);
+		
+		if (pageNumber != null && pageSize != null) {
+            query.setFirstResult(pageSize * (pageNumber - 1));
+        }
+		
+		if (annee != null) {
+			query.setParameter("annee", annee);
+		}
+		
+		query.setParameter("idOS", idOrganisationSyndicale);
 
 		return query.getResultList();
+	}
+
+	@Override
+	public <T, U> Integer countAllByidOSAndYear(Class<T> T, Class<U> U, Integer idOS, Integer annee) {
+
+		String sb = "SELECT os FROM " + U.getSimpleName() + " asa, " + T.getSimpleName() + " os ";
+		sb += "WHERE os.idAgent = asa.idAgent AND os.organisationSyndicale.idOrganisationSyndicale = :idOS ";
+		if (annee != null) {
+			sb += "AND extract(year from asa.dateDebut) = :annee ";
+		}
+		sb += "order by asa.idAgent desc ";
+		
+		TypedQuery<T> query = absEntityManager.createQuery(sb, T);
+		
+		if (annee != null) {
+			query.setParameter("annee", annee);
+		}
+		
+		query.setParameter("idOS", idOS);
+
+		return query.getResultList().size();
 	}
 }
