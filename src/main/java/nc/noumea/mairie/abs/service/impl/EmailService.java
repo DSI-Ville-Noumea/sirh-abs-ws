@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.AgentDto;
-import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.ApprobateurWithAgentDto;
 import nc.noumea.mairie.abs.dto.EmailInfoDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
-import nc.noumea.mairie.abs.service.IAccessRightsService;
 import nc.noumea.mairie.abs.service.IEmailService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
