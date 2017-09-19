@@ -523,8 +523,6 @@ public class AbsenceService implements IAbsenceService {
 			fromDate = helperService.getCurrentDateMoinsUnAn();
 		}
 
-		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
-				idRefType, idRefGroupeAbsence);
 
 		List<Integer> etatIds = new ArrayList<Integer>();
 		if (listIdRefEtat != null) {
@@ -532,8 +530,12 @@ public class AbsenceService implements IAbsenceService {
 				etatIds.add(Integer.valueOf(id));
 			}
 		}
-
+		
 		List<RefEtat> listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, etatIds);
+
+		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
+				idRefType, idRefGroupeAbsence, listEtats);
+
 
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				listEtats, dateDemande, false);
@@ -600,7 +602,7 @@ public class AbsenceService implements IAbsenceService {
 	}
 
 	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne,
-			Date fromDate, Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
+			Date fromDate, Date toDate, Integer idRefType, Integer idRefGroupeAbsence, List<RefEtat> listEtats) {
 
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
@@ -616,7 +618,7 @@ public class AbsenceService implements IAbsenceService {
 
 		if (idAgentConcerne != null) {
 			listeSansFiltre.addAll(demandeRepository.listeDemandesForListAgent(idAgentConnecte, idAgentConcerne,
-					fromDate, toDate, idRefType, idRefGroupeAbsence));
+					fromDate, toDate, idRefType, idRefGroupeAbsence, listEtats));
 			if (null != idsApprobateurOfDelegataire) {
 				for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
 					listeSansFiltredelegataire.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,

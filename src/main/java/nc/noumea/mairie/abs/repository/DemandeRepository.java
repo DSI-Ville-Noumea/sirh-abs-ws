@@ -17,8 +17,8 @@ import org.springframework.stereotype.Repository;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
-import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
+import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
@@ -124,7 +124,7 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@Override
 	public List<Demande> listeDemandesForListAgent(Integer idAgentConnecte, List<Integer> idAgentConcerne, Date fromDate,
-			Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
+			Date toDate, Integer idRefType, Integer idRefGroupeAbsence, List<RefEtat> listEtats) {
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
@@ -134,6 +134,21 @@ public class DemandeRepository implements IDemandeRepository {
 			sb.append("and d.idAgent in :idAgentConcerne ");
 		} else {
 			sb.append("and d.idAgent in ( select da.idAgent from DroitsAgent da inner join da.droitDroitsAgent dda inner join dda.droit d where d.idAgent = :idAgentConnecte ) ");
+		}
+		
+		if(null != listEtats && !listEtats.isEmpty()) {
+			sb.append("and ed.idEtatDemande in ( ");
+			sb.append("select max(ed2.idEtatDemande) from EtatDemande ed2 ");
+			sb.append(" inner join ed2.demande d2 ");
+					
+			if (idAgentConcerne != null) {
+				sb.append("where d2.idAgent in :idAgentConcerne ");
+			} else {
+				sb.append("where d2.idAgent in ( select da2.idAgent from DroitsAgent da2 inner join da2.droitDroitsAgent dda2 inner join dda2.droit d2 where d2.idAgent = :idAgentConnecte ) ");
+			}
+					
+			sb.append("group by ed2.demande ) ");
+			sb.append(" and ed.etat in :listRefEtatEnum ");
 		}
 
 		if (idRefType != null) {
@@ -160,6 +175,15 @@ public class DemandeRepository implements IDemandeRepository {
 			query.setParameter("idAgentConcerne", idAgentConcerne);
 		} else {
 			query.setParameter("idAgentConnecte", idAgentConnecte);
+		}
+		
+		if(null != listEtats && !listEtats.isEmpty()) {
+			List<RefEtatEnum> listRefEtatEnum = new ArrayList<RefEtatEnum>();
+			for(RefEtat refEtat : listEtats) {
+				listRefEtatEnum.add(RefEtatEnum.getRefEtatEnum(refEtat.getIdRefEtat()));
+			}
+			
+			query.setParameter("listRefEtatEnum", listRefEtatEnum);
 		}
 
 		if (idRefType != null) {

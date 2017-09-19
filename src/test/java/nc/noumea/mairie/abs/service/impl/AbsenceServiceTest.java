@@ -138,7 +138,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
-		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null, RefTypeAbsenceEnum.RECUP.getValue(), null);
+		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null, RefTypeAbsenceEnum.RECUP.getValue(), null, null);
 
 		assertEquals(1, listResult.size());
 	}
@@ -187,7 +187,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
-		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null, RefTypeAbsenceEnum.RECUP.getValue(), null);
+		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null, RefTypeAbsenceEnum.RECUP.getValue(), null, null);
 
 		assertEquals(2, listResult.size());
 	}
@@ -8362,7 +8362,7 @@ public class AbsenceServiceTest {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null, null)).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null, false)).thenReturn(listdemandeDto);
@@ -9938,7 +9938,7 @@ public class AbsenceServiceTest {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null, null)).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null, false)).thenReturn(listdemandeDto);

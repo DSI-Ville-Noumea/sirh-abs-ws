@@ -6,7 +6,7 @@ import java.util.List;
 import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.DemandeMaladies;
+import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 
 public interface IDemandeRepository {
@@ -53,7 +53,7 @@ public interface IDemandeRepository {
 
 	List<Demande> listeDemandesForListAgent(Integer idAgentConnecte,
 			List<Integer> idAgentConcerne, Date fromDate, Date toDate,
-			Integer idRefType, Integer idRefGroupeAbsence);
+			Integer idRefType, Integer idRefGroupeAbsence, List<RefEtat> listEtats);
 
 	List<Demande> getListDemandeRejetDRHStatutVeille(List<Integer> listeTypes);
 
