@@ -558,7 +558,7 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
 
-		assertEquals(1, srm.getErrors().size());
+		assertEquals(0, srm.getErrors().size());
 	}
 
 	@Test
@@ -571,6 +571,23 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 		demande.setDateDebut(new DateTime(2010, 01, 01, 0, 0, 0).toDate());
 		EtatDemande etat = new EtatDemande();
 		etat.setEtat(RefEtatEnum.PRISE);
+		demande.getEtatsDemande().add(etat);
+
+		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkEtatsDemandeAnnulee_isEnAttente() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+		Demande demande = new Demande();
+		demande.setIdDemande(1);
+		demande.setIdAgent(21);
+		demande.setDateDebut(new DateTime(2010, 01, 01, 0, 0, 0).toDate());
+		EtatDemande etat = new EtatDemande();
+		etat.setEtat(RefEtatEnum.EN_ATTENTE);
 		demande.getEtatsDemande().add(etat);
 
 		srm = impl.checkEtatsDemandeAnnulee(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE));
@@ -624,7 +641,7 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 		assertFalse(result11.isAffichageEnAttente());
 
 		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
+		assertTrue(result12.isAffichageBoutonAnnuler());
 		assertTrue(result12.isAffichageValidation());
 		assertFalse(result12.isAffichageEnAttente());
 	}
