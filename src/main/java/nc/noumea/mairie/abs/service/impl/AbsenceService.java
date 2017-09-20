@@ -829,11 +829,6 @@ public class AbsenceService implements IAbsenceService {
 			etatsAutorises.addAll(Arrays.asList(RefEtatEnum.VISEE_FAVORABLE, RefEtatEnum.VISEE_DEFAVORABLE,
 					RefEtatEnum.APPROUVEE, RefEtatEnum.A_VALIDER));
 
-			// #39326 : On peut supprimer les demandes de maladies à l'état
-			// 'prise'.
-			if (isFromSIRH)
-				etatsAutorises.add(RefEtatEnum.PRISE);
-
 			result = absenceDataConsistencyRulesImpl.checkEtatsDemandeAnnulee(result, demande, etatsAutorises);
 
 			result = absenceDataConsistencyRulesImpl.checkChampMotifPourEtatDonne(result,

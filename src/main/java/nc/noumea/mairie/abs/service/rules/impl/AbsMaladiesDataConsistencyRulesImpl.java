@@ -137,7 +137,8 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 
 	protected boolean isAfficherBoutonAnnuler(DemandeDto demandeDto, boolean isOperateur, boolean isFromSIRH) {
 		return (isFromSIRH && (demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(
-				RefEtatEnum.REJETE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat())));
+				RefEtatEnum.REJETE.getCodeEtat()) || demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()) 
+				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat())));
 	}
 
 	@Override
@@ -145,7 +146,8 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 
 		List<RefEtatEnum> listEtats = new ArrayList<RefEtatEnum>();
 		listEtats.addAll(listEtatsAcceptes);
-		listEtats.addAll(Arrays.asList(RefEtatEnum.VALIDEE, RefEtatEnum.REJETE));
+		// #39326 : On peut annuler les demandes de maladies à l'état 'prise'.
+		listEtats.addAll(Arrays.asList(RefEtatEnum.VALIDEE, RefEtatEnum.REJETE, RefEtatEnum.PRISE));
 		return super.checkEtatsDemandeAnnulee(srm, demande, listEtats);
 	}
 

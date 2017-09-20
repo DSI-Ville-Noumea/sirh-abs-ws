@@ -106,7 +106,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		// EN ATTENTE
 		assertTrue(result11.isAffichageBoutonAnnuler());
 		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
+		assertTrue(result12.isAffichageBoutonAnnuler());
 	}
 	
 	@Test
@@ -139,7 +139,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		// EN ATTENTE
 		assertTrue(result11.isAffichageBoutonAnnuler());
 		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
+		assertTrue(result12.isAffichageBoutonAnnuler());
 	}
 	
 	@Test
@@ -172,7 +172,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		// EN ATTENTE
 		assertTrue(result11.isAffichageBoutonAnnuler());
 		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
+		assertTrue(result12.isAffichageBoutonAnnuler());
 	}
 	
 	@Test
@@ -205,7 +205,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		// EN ATTENTE
 		assertTrue(result11.isAffichageBoutonAnnuler());
 		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
+		assertTrue(result12.isAffichageBoutonAnnuler());
 	}
 
 	@Test
@@ -554,7 +554,7 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		assertFalse(result11.isAffichageEnAttente());
 
 		// A VALIDER
-		assertFalse(result12.isAffichageBoutonAnnuler());
+		assertTrue(result12.isAffichageBoutonAnnuler());
 		assertTrue(result12.isAffichageValidation());
 		assertTrue(result12.isAffichageEnAttente());
 	}

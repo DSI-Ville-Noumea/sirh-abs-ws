@@ -40,6 +40,7 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat()))
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.VALIDEE.getCodeEtat()))
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.EN_ATTENTE.getCodeEtat()))
+				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()))
 				|| (isOperateur && demandeDto.getIdRefEtat().equals(RefEtatEnum.PRISE.getCodeEtat()));
 	}
 
