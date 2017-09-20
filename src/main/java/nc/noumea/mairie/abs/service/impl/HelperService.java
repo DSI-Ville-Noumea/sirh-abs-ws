@@ -232,6 +232,13 @@ public class HelperService {
 		return calStr1.getTime();
 	}
 
+	public Date getCurrentDateMoinsXMois(int mois) {
+		GregorianCalendar calStr1 = new GregorianCalendar();
+		calStr1.setTime(new Date());
+		calStr1.add(GregorianCalendar.MONTH, -mois);
+		return calStr1.getTime();
+	}
+
 	public double calculNombreJoursArrondiDemiJournee(Date dateDebut, Date dateFin) {
 
 		double diff = dateFin.getTime() - dateDebut.getTime();

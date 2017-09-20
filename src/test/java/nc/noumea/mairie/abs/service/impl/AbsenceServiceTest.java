@@ -78,6 +78,7 @@ import nc.noumea.mairie.abs.dto.RefEtatDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
+import nc.noumea.mairie.abs.dto.ResultListDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
 import nc.noumea.mairie.abs.repository.IAccessRightsRepository;
@@ -138,7 +139,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
-		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null, RefTypeAbsenceEnum.RECUP.getValue(), null, null);
+		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null, RefTypeAbsenceEnum.RECUP.getValue(), null, null, null);
 
 		assertEquals(1, listResult.size());
 	}
@@ -187,7 +188,7 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 
-		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null, RefTypeAbsenceEnum.RECUP.getValue(), null, null);
+		List<Demande> listResult = service.getListeNonFiltreeDemandes(idAgentConnecte, null, null, null, RefTypeAbsenceEnum.RECUP.getValue(), null, null, null);
 
 		assertEquals(2, listResult.size());
 	}
@@ -8362,7 +8363,8 @@ public class AbsenceServiceTest {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeIdsDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null, null, null)).thenReturn(Arrays.asList(1,2));
+		Mockito.when(demandeRepository.listeDemandesByListIdsDemande(Arrays.asList(1,2))).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null, false)).thenReturn(listdemandeDto);
@@ -8396,7 +8398,7 @@ public class AbsenceServiceTest {
 		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
 		Mockito.when(pool.invoke(multiTask)).thenReturn(listdemandeDto);
 
-		AbsenceService service = new AbsenceService();
+		AbsenceService service = new AbsenceService("2");
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
@@ -8406,11 +8408,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null, null, null, null, null, false);
+		ResultListDemandeDto listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null, null, null, null, null, false);
 
-		assertEquals(1, listResult.size());
-		assertFalse(listResult.get(0).isDepassementCompteur());
-		assertFalse(listResult.get(0).isDepassementMultiple());
+		assertEquals(1, listResult.getListDemandesDto().size());
+		assertFalse(listResult.getListDemandesDto().get(0).isDepassementCompteur());
+		assertFalse(listResult.getListDemandesDto().get(0).isDepassementMultiple());
 	}
 
 	@Test
@@ -8458,7 +8460,7 @@ public class AbsenceServiceTest {
 		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
 		Mockito.when(pool.invoke(multiTask)).thenReturn(listdemandeDto);
 
-		AbsenceService service = new AbsenceService();
+		AbsenceService service = new AbsenceService("2");
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -8467,9 +8469,9 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
 		ReflectionTestUtils.setField(service, "congeAnnuelRepository", congeAnnuelRepository);
 
-		List<DemandeDto> listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null, null, null, null, null, false);
+		ResultListDemandeDto listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null, null, null, null, null, false);
 
-		assertEquals(0, listResult.size());
+		assertEquals(0, listResult.getListDemandesDto().size());
 	}
 
 	@Test
@@ -9938,7 +9940,8 @@ public class AbsenceServiceTest {
 		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeIdsDemandesForListAgent(9005138, Arrays.asList(9005131), dat, null, null, null, null, null)).thenReturn(Arrays.asList(1,2));
+		Mockito.when(demandeRepository.listeDemandesByListIdsDemande(Arrays.asList(1,2))).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null, false)).thenReturn(listdemandeDto);
@@ -9989,7 +9992,7 @@ public class AbsenceServiceTest {
 
 		AbsCongesAnnuelsDataConsistencyRulesImpl absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
 
-		AbsenceService service = new AbsenceService();
+		AbsenceService service = new AbsenceService("2");
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
@@ -10001,11 +10004,11 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "absCongesAnnuelsDataConsistencyRulesImpl", absCongesAnnuelsDataConsistencyRulesImpl);
 
-		List<DemandeDto> listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null, null, null, null, null, false);
+		ResultListDemandeDto listResult = service.getListeDemandes(9005138, Arrays.asList(9005131), "TOUTES", null, null, null, null, null, null, false);
 
-		assertEquals(1, listResult.size());
-		assertFalse(listResult.get(0).isDepassementCompteur());
-		assertTrue(listResult.get(0).isDepassementMultiple());
+		assertEquals(1, listResult.getListDemandesDto().size());
+		assertFalse(listResult.getListDemandesDto().get(0).isDepassementCompteur());
+		assertTrue(listResult.getListDemandesDto().get(0).isDepassementMultiple());
 	}
 
 	@SuppressWarnings("unchecked")

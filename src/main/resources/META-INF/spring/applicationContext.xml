@@ -125,4 +125,7 @@
 	<!-- Type environnement pour envoie de mail -->
 	<jee:jndi-lookup id="typeEnvironnement" jndi-name="TYPE_ENV" expected-type="java.lang.String" />
 	
+	<!-- Nombre de mois dans le passé pour l'affichage par defaut de la liste des demandes dans le kiosque #42015 -->
+	<jee:jndi-lookup id="nbMoisPasseListeDemandes" jndi-name="NB_MOIS_PASSE_LISTE_DEMANDES" expected-type="java.lang.String"/>
+	
 </beans>

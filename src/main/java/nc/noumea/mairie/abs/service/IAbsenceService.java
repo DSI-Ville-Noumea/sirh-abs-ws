@@ -11,6 +11,7 @@ import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefAlimCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
+import nc.noumea.mairie.abs.dto.ResultListDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 
@@ -20,7 +21,7 @@ public interface IAbsenceService {
 
 	DemandeDto getDemandeDto(Integer idDemande);
 
-	List<DemandeDto> getListeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne, String ongletDemande, Date fromDate, Date toDate,
+	ResultListDemandeDto getListeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne, String ongletDemande, Date fromDate, Date toDate,
 			Date dateDemande, String listIdRefEtat, Integer idRefType, Integer idRefGroupeAbsence, boolean isAgent);
 
 	ReturnMessageDto setDemandeEtat(Integer idAgent, DemandeEtatChangeDto demandeEtatChangeDto);

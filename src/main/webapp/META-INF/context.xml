@@ -83,4 +83,9 @@
 		mail.debug="false" mail.user="SIRH EAEs" mail.from="noreply@ville-noumea.nc"
 		mail.transport.protocol="smtp" mail.smtp.host="smtp" mail.smtp.auth="false"
 		mail.smtp.port="25" mail.smtp.starttls.enable="false" description="Global E-Mail Resource" />
+		
+	<!-- Nombre de mois dans le passé pour l'affichage par defaut de la liste des demandes dans le kiosque  -->
+	<Environment description="Nombre mois liste demandes" name="NB_MOIS_PASSE_LISTE_DEMANDES"
+		type="java.lang.String" override="false" value="2" />
+		
 </Context>
