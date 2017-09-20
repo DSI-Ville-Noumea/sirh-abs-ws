@@ -8398,7 +8398,7 @@ public class AbsenceServiceTest {
 		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
 		Mockito.when(pool.invoke(multiTask)).thenReturn(listdemandeDto);
 
-		AbsenceService service = new AbsenceService("2");
+		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
@@ -8460,7 +8460,7 @@ public class AbsenceServiceTest {
 		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
 		Mockito.when(pool.invoke(multiTask)).thenReturn(listdemandeDto);
 
-		AbsenceService service = new AbsenceService("2");
+		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -9992,7 +9992,7 @@ public class AbsenceServiceTest {
 
 		AbsCongesAnnuelsDataConsistencyRulesImpl absCongesAnnuelsDataConsistencyRulesImpl = Mockito.mock(AbsCongesAnnuelsDataConsistencyRulesImpl.class);
 
-		AbsenceService service = new AbsenceService("2");
+		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
