@@ -205,18 +205,6 @@ public class AbsenceService implements IAbsenceService {
 	@Autowired
 	@Qualifier("typeEnvironnement")
 	private String typeEnvironnement;
-	
-	@Autowired
-	@Qualifier("nbMoisPasseListeDemandes")
-	private String				nbMoisPasseListeDemandes;
-	
-	public AbsenceService() {
-		
-	}
-	
-	public AbsenceService(String nbMoisPasseListeDemandes) {
-		this.nbMoisPasseListeDemandes = nbMoisPasseListeDemandes;
-	}
 
 	private static final String ETAT_DEMANDE_INCHANGE = "L'état de la demande est inchangé.";
 	private static final String DEMANDE_INEXISTANTE = "La demande n'existe pas.";
@@ -535,6 +523,7 @@ public class AbsenceService implements IAbsenceService {
 
 		ResultListDemandeDto resultListDemandeDto = new ResultListDemandeDto();
 		
+		// filtres sur les états selon le role de l agent
 		List<RefEtat> listEtats = new ArrayList<RefEtat>();
 		
 		if(viseur) {
@@ -546,11 +535,12 @@ public class AbsenceService implements IAbsenceService {
 			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()));
 			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()));
 		}
-
+		
+		// recupere les demandes
 		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, null, null,
 				null, null, listEtats, resultListDemandeDto);
 
-
+		// on filtre
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				listEtats, null, false);
 
@@ -576,6 +566,7 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		// #30788 utilisation de multithread pour booster le traitement
+		// application de droits (modif, suppression, etc) sur les DemandeDto
 		DemandeRecursiveTaskSimple multiTask = new DemandeRecursiveTaskSimple(listeDto, idAgentConnecte,
 				listDroitAgent, false);
 		ForkJoinPool pool = new ForkJoinPool();
@@ -608,12 +599,6 @@ public class AbsenceService implements IAbsenceService {
 			Integer idRefGroupeAbsence, boolean isAgent) {
 
 		ResultListDemandeDto result = new ResultListDemandeDto();
-		
-		// si date de debut et de fin nulles, alors on filtre sur 12 mois
-		// glissants
-		if (null == fromDate && null == toDate) {
-			fromDate = helperService.getCurrentDateMoinsXMois(Integer.valueOf(nbMoisPasseListeDemandes));
-		}
 
 		List<Integer> etatIds = new ArrayList<Integer>();
 		if (listIdRefEtat != null) {

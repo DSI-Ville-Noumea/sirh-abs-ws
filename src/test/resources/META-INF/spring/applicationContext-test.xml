@@ -107,7 +107,4 @@
     <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender"/>
 	<bean class="java.lang.String" id="typeEnvironnement" />
 	
-	<!-- Nombre de mois dans le passé pour l'affichage par defaut de la liste des demandes dans le kiosque #42015 -->
-	<bean class="java.lang.String" id="nbMoisPasseListeDemandes" />
-	
 </beans>
