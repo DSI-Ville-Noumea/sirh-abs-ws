@@ -93,4 +93,16 @@ public interface IAbsenceService {
 	ReturnMessageDto savePieceJointesWithStream(InputStream stream, Integer idAgent, Integer idAgentOperateur, Integer idDemande, String typeFile);
 
 	List<DemandeDto> getListeATReferenceForAgent(Integer idAgent);
+
+	/**
+	 * Service qui compte le nombre de demandes à valider ou viser selon les parametres passés.
+	 * 
+	 * @param idAgentConnecte
+	 * @param idAgentConcerne
+	 * @param viseur TRUE si viseur
+	 * @param approbateur TRUE si approbateur
+	 * @return Le nombre de demandes à valider ou viser
+	 */
+	Integer countDemandesAViserOuApprouver(Integer idAgentConnecte, List<Integer> idAgentConcerne,
+			boolean viseur, boolean approbateur);
 }

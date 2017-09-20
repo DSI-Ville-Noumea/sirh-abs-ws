@@ -96,6 +96,7 @@ import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
+import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTaskSimple;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.abs.web.AccessForbiddenException;
@@ -526,6 +527,79 @@ public class AbsenceService implements IAbsenceService {
 
 		return demandeDto;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Integer countDemandesAViserOuApprouver(Integer idAgentConnecte, List<Integer> idAgentConcerne,
+			boolean viseur, boolean approbateur) {
+
+		ResultListDemandeDto resultListDemandeDto = new ResultListDemandeDto();
+		
+		List<RefEtat> listEtats = new ArrayList<RefEtat>();
+		
+		if(viseur) {
+			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat()));
+		}
+		
+		if(approbateur) {
+			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat()));
+			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()));
+			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()));
+		}
+
+		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, null, null,
+				null, null, listEtats, resultListDemandeDto);
+
+
+		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
+				listEtats, null, false);
+
+		// si idAgentConnecte == idAgentConcerne, alors nous sommes dans le cas
+		// du WS listeDemandesAgent
+		// donc inutile de recuperer les droits en bdd
+		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
+		if (null != idAgentConnecte && null != idAgentConcerne && (1 < idAgentConcerne.size()
+				|| (1 == idAgentConcerne.size() && !idAgentConnecte.equals(idAgentConcerne.get(0))))) {
+
+			// redmine #14201 : on cherche si l'agent est délégataire
+			List<Integer> idsApprobateurOfDelegataire = accessRightsService
+					.getIdApprobateurOfDelegataire(idAgentConnecte, null);
+
+			List<Integer> idsUserForAllDroits = new ArrayList<Integer>();
+			idsUserForAllDroits.add(idAgentConnecte);
+
+			if (idsApprobateurOfDelegataire != null) {
+				idsUserForAllDroits.addAll(idsApprobateurOfDelegataire);
+			}
+
+			listDroitAgent.addAll(accessRightsRepository.getListOfAgentsForListDemandes(idsUserForAllDroits));
+		}
+
+		// #30788 utilisation de multithread pour booster le traitement
+		DemandeRecursiveTaskSimple multiTask = new DemandeRecursiveTaskSimple(listeDto, idAgentConnecte,
+				listDroitAgent, false);
+		ForkJoinPool pool = new ForkJoinPool();
+		listeDto = pool.invoke(multiTask);
+		
+		Integer nbResult = 0;
+		if(approbateur) {
+			for(DemandeDto dto : listeDto) {
+				if(dto.isModifierApprobation()) {
+					nbResult++;
+				}
+			}
+		}
+		
+		if(viseur) {
+			for(DemandeDto dto : listeDto) {
+				if(dto.isModifierVisa()) {
+					nbResult++;
+				}
+			}
+		}
+		
+		return nbResult;
+	}
 
 	@Override
 	@Transactional(readOnly = true)
@@ -681,7 +755,8 @@ public class AbsenceService implements IAbsenceService {
 		
 		int nbResults = demandeRepository.countListeDemandesForListAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence, listEtats);
 		
-		if(nbResults > NOMBRE_RESULTATS_MAX_LISTE_DEMANDE) {
+		if(null != resultListDemandeDto 
+				&& nbResults > NOMBRE_RESULTATS_MAX_LISTE_DEMANDE) {
 			resultListDemandeDto.setResultatsLimites(true);
 			resultListDemandeDto.setMessageInfoResultatsLimites(MESSAGE_INFO_RESULTAT_LIMITE);
 		}

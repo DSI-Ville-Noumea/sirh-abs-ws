@@ -287,6 +287,41 @@ public class DemandeController {
 	}
 
 	/**
+	 * Renvoie le nombre de demandes NON PRISES à approuver ou viser pour la page d accueil du Kiosque RH <br />
+	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 * 
+	 * Ce WS est appelé depuis le KiosqueRH page accueil uniquement
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/countDemandesAViserOuApprouver", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public Integer countDemandesAViserOuApprouver(@RequestParam("idAgent") int idAgent,
+			@RequestParam(value = "viseur") boolean viseur, @RequestParam(value = "approbateur") boolean approbateur) {
+
+		logger.debug(
+				"entered GET [demandes/countDemandesAViserOuApprouver] => countDemandesAViserOuApprouver with parameters idAgent = {}, viseur = {}, approbateur = {}",
+				idAgent, viseur, approbateur);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+		if (agent == null || agent.getIdAgent() == null)
+			throw new NotFoundException();
+
+		List<Integer> listAgents = new ArrayList<Integer>();
+		
+		for (AgentDto da : accessRightService.getAgentsToApproveOrInputByService(convertedIdAgent, null)) {
+			if (!listAgents.contains(da.getIdAgent()))
+				listAgents.add(da.getIdAgent());
+		}
+
+		Integer result = absenceService.countDemandesAViserOuApprouver(
+				convertedIdAgent, listAgents.isEmpty() ? null : listAgents, viseur, approbateur);
+		
+		return result;
+	}
+
+	/**
 	 * changer l etat d une demande depuis le kiosque pour le VISA et
 	 * l'APPROBATION et l'ANNULATION <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
