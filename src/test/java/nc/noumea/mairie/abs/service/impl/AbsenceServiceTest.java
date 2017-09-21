@@ -99,7 +99,6 @@ import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTaskSimple;
-import nc.noumea.mairie.abs.service.multiThread.SpringContext;
 import nc.noumea.mairie.abs.service.rules.impl.AbsCongesAnnuelsDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;

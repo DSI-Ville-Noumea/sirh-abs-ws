@@ -226,7 +226,7 @@ public class AbsenceService implements IAbsenceService {
 	public static final String MALADIE_MSG = "%s : L'agent %s est en maladie sur cette période.";
 	
 	private static final Integer NOMBRE_RESULTATS_MAX_LISTE_DEMANDE = 500;
-	private static final String MESSAGE_INFO_RESULTAT_LIMITE = "Nombre de résultats limité à " + NOMBRE_RESULTATS_MAX_LISTE_DEMANDE + " demandes. Merci filtrer la recherche.";
+	private static final String MESSAGE_INFO_RESULTAT_LIMITE = "Nombre de résultats limité à " + NOMBRE_RESULTATS_MAX_LISTE_DEMANDE + " demandes. Merci de filtrer la recherche.";
 
 	@Override
 	@Transactional(value = "absTransactionManager")
