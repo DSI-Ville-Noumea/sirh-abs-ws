@@ -30,6 +30,7 @@ import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.ControleMedicalDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
+import nc.noumea.mairie.abs.dto.ResultListDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
@@ -189,10 +190,12 @@ public class DemandeController {
 	 * Liste des demandes d un agent <br />
 	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 * 
+	 * Ce WS est appelé depuis SIRH et KiosqueRH
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<DemandeDto> getListeDemandesAbsenceAgent(@RequestParam("idAgent") int idAgent,
+	public ResultListDemandeDto getListeDemandesAbsenceAgent(@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
@@ -211,11 +214,8 @@ public class DemandeController {
 		if (agent == null || agent.getIdAgent() == null)
 			throw new NotFoundException();
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent, Arrays.asList(convertedIdAgent),
+		ResultListDemandeDto result = absenceService.getListeDemandes(convertedIdAgent, Arrays.asList(convertedIdAgent),
 				ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat, idRefType, idRefGroupeAbsence, true);
-
-		if (result.size() == 0)
-			throw new NoContentException();
 
 		return result;
 	}
@@ -224,10 +224,12 @@ public class DemandeController {
 	 * Gestion des demandes <br />
 	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 * 
+	 * Ce WS est appelé depuis le KiosqueRH uniquement
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<DemandeDto> getListeDemandesAbsence(@RequestParam("idAgent") int idAgent,
+	public ResultListDemandeDto getListeDemandesAbsence(@RequestParam("idAgent") int idAgent,
 			@RequestParam(value = "ongletDemande", required = true) String ongletDemande,
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
@@ -277,13 +279,45 @@ public class DemandeController {
 
 		}
 
-		List<DemandeDto> result = absenceService.getListeDemandes(convertedIdAgent,
+		ResultListDemandeDto result = absenceService.getListeDemandes(convertedIdAgent,
 				listAgents.size() == 0 ? null : listAgents, ongletDemande, fromDate, toDate, dateDemande, listIdRefEtat,
 				idRefType, idRefGroupeAbsence, false);
+		
+		return result;
+	}
 
-		if (result.size() == 0)
-			throw new NoContentException();
+	/**
+	 * Renvoie le nombre de demandes NON PRISES à approuver ou viser pour la page d accueil du Kiosque RH <br />
+	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
+	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 * 
+	 * Ce WS est appelé depuis le KiosqueRH page accueil uniquement
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/countDemandesAViserOuApprouver", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public Integer countDemandesAViserOuApprouver(@RequestParam("idAgent") int idAgent,
+			@RequestParam(value = "viseur") boolean viseur, @RequestParam(value = "approbateur") boolean approbateur) {
 
+		logger.debug(
+				"entered GET [demandes/countDemandesAViserOuApprouver] => countDemandesAViserOuApprouver with parameters idAgent = {}, viseur = {}, approbateur = {}",
+				idAgent, viseur, approbateur);
+
+		Integer convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		AgentGeneriqueDto agent = sirhWSConsumer.getAgent(convertedIdAgent);
+		if (agent == null || agent.getIdAgent() == null)
+			throw new NotFoundException();
+
+		List<Integer> listAgents = new ArrayList<Integer>();
+		
+		for (AgentDto da : accessRightService.getAgentsToApproveOrInputByService(convertedIdAgent, null)) {
+			if (!listAgents.contains(da.getIdAgent()))
+				listAgents.add(da.getIdAgent());
+		}
+
+		Integer result = absenceService.countDemandesAViserOuApprouver(
+				convertedIdAgent, listAgents.isEmpty() ? null : listAgents, viseur, approbateur);
+		
 		return result;
 	}
 
@@ -417,6 +451,8 @@ public class DemandeController {
 	 * Liste des demandes pour SIRH <br />
 	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
+	 * 
+	 * Ce WS est appelé depuis SIRH et PTG
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeDemandesSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -459,7 +495,7 @@ public class DemandeController {
 	}
 
 	/**
-	 * Liste des demandes pour SIRH <br />
+	 * Liste des demandes pour le planning du KiosqueRH <br />
 	 * Parametres en entree : format du type timestamp : yyyyMMdd <br />
 	 * ResponseBody : Format du type timestamp : "/Date(1396306800000+1100)/"
 	 */

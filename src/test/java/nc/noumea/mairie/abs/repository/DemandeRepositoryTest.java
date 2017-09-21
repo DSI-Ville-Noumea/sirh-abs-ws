@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -25,6 +26,7 @@ import nc.noumea.mairie.abs.domain.EtatDemande;
 import nc.noumea.mairie.abs.domain.EtatDemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.Profil;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
+import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefGroupeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
@@ -2493,6 +2495,708 @@ public class DemandeRepositoryTest {
 				assertEquals(0, result.size());
 			}
 		}
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void countListeDemandesForListAgent_DateFilter_Return2Demande() throws ParseException {
+		// Given
+		EtatDemande etat = new EtatDemande();
+		etat.setIdAgent(9005138);
+		etat.setDate(new Date());
+		etat.setDateDebut(new Date());
+		etat.setDateFin(new Date());
+		etat.setMotif("motif");
+		etat.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/06/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.addEtatDemande(etat);
+		absEntityManager.persist(d);
+
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setIdAgent(9005138);
+		etat2.setDate(new Date());
+		etat2.setDateDebut(new Date());
+		etat2.setDateFin(new Date());
+		etat2.setMotif("motif");
+		etat2.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/05/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.addEtatDemande(etat2);
+		absEntityManager.persist(d2);
+
+		EtatDemande etatrp = new EtatDemande();
+		etatrp.setIdAgent(9005138);
+		etatrp.setDate(new Date());
+		etatrp.setDateDebut(new Date());
+		etatrp.setDateFin(new Date());
+		etatrp.setMotif("motif");
+		etatrp.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("02/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.addEtatDemande(etatrp);
+		absEntityManager.persist(drp);
+
+		EtatDemande etatrp2 = new EtatDemande();
+		etatrp2.setIdAgent(9005138);
+		etatrp2.setDate(new Date());
+		etatrp2.setDateDebut(new Date());
+		etatrp2.setDateFin(new Date());
+		etatrp2.setMotif("motif");
+		etatrp2.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.addEtatDemande(etatrp2);
+		absEntityManager.persist(drp2);
+
+		RefEtat refEtatApprouve = new RefEtat();
+		refEtatApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		
+		// When
+		int result = repository.countListeDemandesForListAgent(
+				null, Arrays.asList(9005138), sdf.parse("01/06/2013"), null, null, null, Arrays.asList(refEtatApprouve));
+
+		// Then
+		assertEquals(2, result);
+		
+		// When
+		result = repository.countListeDemandesForListAgent(
+				null, Arrays.asList(9005138), sdf.parse("01/06/2015"), null, null, null, Arrays.asList(refEtatApprouve));
+
+		// Then
+		assertEquals(0, result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void countListeDemandesForListAgent_EtatFilter_Return1Demande() throws ParseException {
+		// Given
+		EtatDemande etat = new EtatDemande();
+		etat.setIdAgent(9005138);
+		etat.setDate(new Date());
+		etat.setDateDebut(new Date());
+		etat.setDateFin(new Date());
+		etat.setMotif("motif");
+		etat.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/06/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.addEtatDemande(etat);
+		absEntityManager.persist(d);
+
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setIdAgent(9005138);
+		etat2.setDate(new Date());
+		etat2.setDateDebut(new Date());
+		etat2.setDateFin(new Date());
+		etat2.setMotif("motif");
+		etat2.setEtat(RefEtatEnum.APPROUVEE);
+
+		EtatDemande etat2_2 = new EtatDemande();
+		etat2_2.setIdAgent(9005138);
+		etat2_2.setDate(new Date());
+		etat2_2.setDateDebut(new Date());
+		etat2_2.setDateFin(new Date());
+		etat2_2.setMotif("motif");
+		etat2_2.setEtat(RefEtatEnum.ANNULEE);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/07/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.addEtatDemande(etat2);
+		d2.addEtatDemande(etat2_2);
+		absEntityManager.persist(d2);
+
+		EtatDemande etatrp = new EtatDemande();
+		etatrp.setIdAgent(9005138);
+		etatrp.setDate(new Date());
+		etatrp.setDateDebut(new Date());
+		etatrp.setDateFin(new Date());
+		etatrp.setMotif("motif");
+		etatrp.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("02/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.addEtatDemande(etatrp);
+		absEntityManager.persist(drp);
+
+		EtatDemande etatrp2 = new EtatDemande();
+		etatrp2.setIdAgent(9005138);
+		etatrp2.setDate(new Date());
+		etatrp2.setDateDebut(new Date());
+		etatrp2.setDateFin(new Date());
+		etatrp2.setMotif("motif");
+		etatrp2.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.addEtatDemande(etatrp2);
+		absEntityManager.persist(drp2);
+
+		RefEtat refEtatANNULEE = new RefEtat();
+		refEtatANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		
+		// When
+		int result = repository.countListeDemandesForListAgent(
+				null, Arrays.asList(9005138), sdf.parse("01/06/2013"), null, null, null, Arrays.asList(refEtatANNULEE));
+
+		// Then
+		assertEquals(1, result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void countListeDemandesForListAgent_Delegataire_Return1Demande() throws ParseException {
+		
+		
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+		
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroitsAgent(da);
+		
+		da.setDroitDroitsAgent(new HashSet<DroitDroitsAgent>(Arrays.asList(dda)));
+		
+		Droit droit = new Droit();
+		droit.setIdAgent(9005100);
+		droit.setDroitDroitsAgent(new HashSet<DroitDroitsAgent>(Arrays.asList(dda)));
+		
+		dda.setDroit(droit);
+		absEntityManager.persist(droit);
+		absEntityManager.persist(da);
+		absEntityManager.persist(dda);
+		
+		// Given
+		EtatDemande etat = new EtatDemande();
+		etat.setIdAgent(9005138);
+		etat.setDate(new Date());
+		etat.setDateDebut(new Date());
+		etat.setDateFin(new Date());
+		etat.setMotif("motif");
+		etat.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/06/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.addEtatDemande(etat);
+		absEntityManager.persist(d);
+
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setIdAgent(9005138);
+		etat2.setDate(new Date());
+		etat2.setDateDebut(new Date());
+		etat2.setDateFin(new Date());
+		etat2.setMotif("motif");
+		etat2.setEtat(RefEtatEnum.APPROUVEE);
+
+		EtatDemande etat2_2 = new EtatDemande();
+		etat2_2.setIdAgent(9005138);
+		etat2_2.setDate(new Date());
+		etat2_2.setDateDebut(new Date());
+		etat2_2.setDateFin(new Date());
+		etat2_2.setMotif("motif");
+		etat2_2.setEtat(RefEtatEnum.ANNULEE);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/07/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.addEtatDemande(etat2);
+		d2.addEtatDemande(etat2_2);
+		absEntityManager.persist(d2);
+
+		EtatDemande etatrp = new EtatDemande();
+		etatrp.setIdAgent(9005138);
+		etatrp.setDate(new Date());
+		etatrp.setDateDebut(new Date());
+		etatrp.setDateFin(new Date());
+		etatrp.setMotif("motif");
+		etatrp.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("02/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.addEtatDemande(etatrp);
+		absEntityManager.persist(drp);
+
+		EtatDemande etatrp2 = new EtatDemande();
+		etatrp2.setIdAgent(9005138);
+		etatrp2.setDate(new Date());
+		etatrp2.setDateDebut(new Date());
+		etatrp2.setDateFin(new Date());
+		etatrp2.setMotif("motif");
+		etatrp2.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.addEtatDemande(etatrp2);
+		absEntityManager.persist(drp2);
+
+		RefEtat refEtatANNULEE = new RefEtat();
+		refEtatANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		
+		// When
+		int result = repository.countListeDemandesForListAgent(
+				9005100, null, sdf.parse("01/06/2013"), null, null, null, Arrays.asList(refEtatANNULEE));
+
+		// Then
+		assertEquals(1, result);
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeIdsDemandesForListAgent_DateFilter_Return2Demande() throws ParseException {
+		// Given
+		EtatDemande etat = new EtatDemande();
+		etat.setIdAgent(9005138);
+		etat.setDate(new Date());
+		etat.setDateDebut(new Date());
+		etat.setDateFin(new Date());
+		etat.setMotif("motif");
+		etat.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/06/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.addEtatDemande(etat);
+		absEntityManager.persist(d);
+
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setIdAgent(9005138);
+		etat2.setDate(new Date());
+		etat2.setDateDebut(new Date());
+		etat2.setDateFin(new Date());
+		etat2.setMotif("motif");
+		etat2.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/05/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.addEtatDemande(etat2);
+		absEntityManager.persist(d2);
+
+		EtatDemande etatrp = new EtatDemande();
+		etatrp.setIdAgent(9005138);
+		etatrp.setDate(new Date());
+		etatrp.setDateDebut(new Date());
+		etatrp.setDateFin(new Date());
+		etatrp.setMotif("motif");
+		etatrp.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("02/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.addEtatDemande(etatrp);
+		absEntityManager.persist(drp);
+
+		EtatDemande etatrp2 = new EtatDemande();
+		etatrp2.setIdAgent(9005138);
+		etatrp2.setDate(new Date());
+		etatrp2.setDateDebut(new Date());
+		etatrp2.setDateFin(new Date());
+		etatrp2.setMotif("motif");
+		etatrp2.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.addEtatDemande(etatrp2);
+		absEntityManager.persist(drp2);
+
+		RefEtat refEtatApprouve = new RefEtat();
+		refEtatApprouve.setIdRefEtat(RefEtatEnum.APPROUVEE.getCodeEtat());
+		
+		// When
+		List<Integer> result = repository.listeIdsDemandesForListAgent(
+				null, Arrays.asList(9005138), sdf.parse("01/06/2013"), null, null, null, Arrays.asList(refEtatApprouve), null);
+
+		// Then
+		assertEquals(2, result.size());
+		
+		// When
+		result = repository.listeIdsDemandesForListAgent(
+				null, Arrays.asList(9005138), sdf.parse("01/06/2015"), null, null, null, Arrays.asList(refEtatApprouve), null);
+
+		// Then
+		assertEquals(0, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeIdsDemandesForListAgent_EtatFilter_Return1Demande() throws ParseException {
+		// Given
+		EtatDemande etat = new EtatDemande();
+		etat.setIdAgent(9005138);
+		etat.setDate(new Date());
+		etat.setDateDebut(new Date());
+		etat.setDateFin(new Date());
+		etat.setMotif("motif");
+		etat.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/06/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.addEtatDemande(etat);
+		absEntityManager.persist(d);
+
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setIdAgent(9005138);
+		etat2.setDate(new Date());
+		etat2.setDateDebut(new Date());
+		etat2.setDateFin(new Date());
+		etat2.setMotif("motif");
+		etat2.setEtat(RefEtatEnum.APPROUVEE);
+
+		EtatDemande etat2_2 = new EtatDemande();
+		etat2_2.setIdAgent(9005138);
+		etat2_2.setDate(new Date());
+		etat2_2.setDateDebut(new Date());
+		etat2_2.setDateFin(new Date());
+		etat2_2.setMotif("motif");
+		etat2_2.setEtat(RefEtatEnum.ANNULEE);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/07/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.addEtatDemande(etat2);
+		d2.addEtatDemande(etat2_2);
+		absEntityManager.persist(d2);
+
+		EtatDemande etatrp = new EtatDemande();
+		etatrp.setIdAgent(9005138);
+		etatrp.setDate(new Date());
+		etatrp.setDateDebut(new Date());
+		etatrp.setDateFin(new Date());
+		etatrp.setMotif("motif");
+		etatrp.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("02/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.addEtatDemande(etatrp);
+		absEntityManager.persist(drp);
+
+		EtatDemande etatrp2 = new EtatDemande();
+		etatrp2.setIdAgent(9005138);
+		etatrp2.setDate(new Date());
+		etatrp2.setDateDebut(new Date());
+		etatrp2.setDateFin(new Date());
+		etatrp2.setMotif("motif");
+		etatrp2.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.addEtatDemande(etatrp2);
+		absEntityManager.persist(drp2);
+
+		RefEtat refEtatANNULEE = new RefEtat();
+		refEtatANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		
+		// When
+		List<Integer> result = repository.listeIdsDemandesForListAgent(
+				null, Arrays.asList(9005138), sdf.parse("01/06/2013"), null, null, null, Arrays.asList(refEtatANNULEE), null);
+
+		// Then
+		assertEquals(1, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeIdsDemandesForListAgent_Delegataire_Return1Demande() throws ParseException {
+		
+		
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+		
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroitsAgent(da);
+		
+		da.setDroitDroitsAgent(new HashSet<DroitDroitsAgent>(Arrays.asList(dda)));
+		
+		Droit droit = new Droit();
+		droit.setIdAgent(9005100);
+		droit.setDroitDroitsAgent(new HashSet<DroitDroitsAgent>(Arrays.asList(dda)));
+		
+		dda.setDroit(droit);
+		absEntityManager.persist(droit);
+		absEntityManager.persist(da);
+		absEntityManager.persist(dda);
+		
+		// Given
+		EtatDemande etat = new EtatDemande();
+		etat.setIdAgent(9005138);
+		etat.setDate(new Date());
+		etat.setDateDebut(new Date());
+		etat.setDateFin(new Date());
+		etat.setMotif("motif");
+		etat.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/06/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.addEtatDemande(etat);
+		absEntityManager.persist(d);
+
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setIdAgent(9005138);
+		etat2.setDate(new Date());
+		etat2.setDateDebut(new Date());
+		etat2.setDateFin(new Date());
+		etat2.setMotif("motif");
+		etat2.setEtat(RefEtatEnum.APPROUVEE);
+
+		EtatDemande etat2_2 = new EtatDemande();
+		etat2_2.setIdAgent(9005138);
+		etat2_2.setDate(new Date());
+		etat2_2.setDateDebut(new Date());
+		etat2_2.setDateFin(new Date());
+		etat2_2.setMotif("motif");
+		etat2_2.setEtat(RefEtatEnum.ANNULEE);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/07/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.addEtatDemande(etat2);
+		d2.addEtatDemande(etat2_2);
+		absEntityManager.persist(d2);
+
+		EtatDemande etatrp = new EtatDemande();
+		etatrp.setIdAgent(9005138);
+		etatrp.setDate(new Date());
+		etatrp.setDateDebut(new Date());
+		etatrp.setDateFin(new Date());
+		etatrp.setMotif("motif");
+		etatrp.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("02/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.addEtatDemande(etatrp);
+		absEntityManager.persist(drp);
+
+		EtatDemande etatrp2 = new EtatDemande();
+		etatrp2.setIdAgent(9005138);
+		etatrp2.setDate(new Date());
+		etatrp2.setDateDebut(new Date());
+		etatrp2.setDateFin(new Date());
+		etatrp2.setMotif("motif");
+		etatrp2.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.addEtatDemande(etatrp2);
+		absEntityManager.persist(drp2);
+
+		RefEtat refEtatANNULEE = new RefEtat();
+		refEtatANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		
+		// When
+		List<Integer> result = repository.listeIdsDemandesForListAgent(
+				9005100, null, sdf.parse("01/06/2013"), null, null, null, Arrays.asList(refEtatANNULEE), null);
+
+		// Then
+		assertEquals(1, result.size());
+
+		absEntityManager.flush();
+		absEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("absTransactionManager")
+	public void listeDemandesByListIdsDemande_Return1Demande() throws ParseException {
+		
+		
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+		
+		DroitDroitsAgent dda = new DroitDroitsAgent();
+		dda.setDroitsAgent(da);
+		
+		da.setDroitDroitsAgent(new HashSet<DroitDroitsAgent>(Arrays.asList(dda)));
+		
+		Droit droit = new Droit();
+		droit.setIdAgent(9005100);
+		droit.setDroitDroitsAgent(new HashSet<DroitDroitsAgent>(Arrays.asList(dda)));
+		
+		dda.setDroit(droit);
+		absEntityManager.persist(droit);
+		absEntityManager.persist(da);
+		absEntityManager.persist(dda);
+		
+		// Given
+		EtatDemande etat = new EtatDemande();
+		etat.setIdAgent(9005138);
+		etat.setDate(new Date());
+		etat.setDateDebut(new Date());
+		etat.setDateFin(new Date());
+		etat.setMotif("motif");
+		etat.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeRecup d = new DemandeRecup();
+		d.setIdAgent(9005138);
+		d.setDateDebut(sdf.parse("15/06/2013"));
+		d.setDateFin(null);
+		d.setDuree(30);
+		d.addEtatDemande(etat);
+		absEntityManager.persist(d);
+
+		EtatDemande etat2 = new EtatDemande();
+		etat2.setIdAgent(9005138);
+		etat2.setDate(new Date());
+		etat2.setDateDebut(new Date());
+		etat2.setDateFin(new Date());
+		etat2.setMotif("motif");
+		etat2.setEtat(RefEtatEnum.APPROUVEE);
+
+		EtatDemande etat2_2 = new EtatDemande();
+		etat2_2.setIdAgent(9005138);
+		etat2_2.setDate(new Date());
+		etat2_2.setDateDebut(new Date());
+		etat2_2.setDateFin(new Date());
+		etat2_2.setMotif("motif");
+		etat2_2.setEtat(RefEtatEnum.ANNULEE);
+
+		DemandeRecup d2 = new DemandeRecup();
+		d2.setIdAgent(9005138);
+		d2.setDateDebut(sdf.parse("15/07/2013"));
+		d2.setDateFin(null);
+		d2.setDuree(40);
+		d2.addEtatDemande(etat2);
+		d2.addEtatDemande(etat2_2);
+		absEntityManager.persist(d2);
+
+		EtatDemande etatrp = new EtatDemande();
+		etatrp.setIdAgent(9005138);
+		etatrp.setDate(new Date());
+		etatrp.setDateDebut(new Date());
+		etatrp.setDateFin(new Date());
+		etatrp.setMotif("motif");
+		etatrp.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp = new DemandeReposComp();
+		drp.setIdAgent(9005138);
+		drp.setDateDebut(sdf.parse("02/05/2013"));
+		drp.setDateFin(null);
+		drp.setDuree(15);
+		drp.setDureeAnneeN1(10);
+		drp.addEtatDemande(etatrp);
+		absEntityManager.persist(drp);
+
+		EtatDemande etatrp2 = new EtatDemande();
+		etatrp2.setIdAgent(9005138);
+		etatrp2.setDate(new Date());
+		etatrp2.setDateDebut(new Date());
+		etatrp2.setDateFin(new Date());
+		etatrp2.setMotif("motif");
+		etatrp2.setEtat(RefEtatEnum.APPROUVEE);
+
+		DemandeReposComp drp2 = new DemandeReposComp();
+		drp2.setIdAgent(9005138);
+		drp2.setDateDebut(sdf.parse("15/06/2013"));
+		drp2.setDateFin(null);
+		drp2.setDuree(20);
+		drp2.setDureeAnneeN1(10);
+		drp2.addEtatDemande(etatrp2);
+		absEntityManager.persist(drp2);
+
+		RefEtat refEtatANNULEE = new RefEtat();
+		refEtatANNULEE.setIdRefEtat(RefEtatEnum.ANNULEE.getCodeEtat());
+		
+		// When
+		List<Demande> result = repository.listeDemandesByListIdsDemande(Arrays.asList(d2.getIdDemande()));
+
+		// Then
+		assertEquals(1, result.size());
 
 		absEntityManager.flush();
 		absEntityManager.clear();

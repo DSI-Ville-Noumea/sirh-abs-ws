@@ -103,7 +103,6 @@
 	<bean class="java.lang.String" id="alfrescoPassword" />
 	<!-- ALFRESCO -->
 	
-	
 
     <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender"/>
 	<bean class="java.lang.String" id="typeEnvironnement" />

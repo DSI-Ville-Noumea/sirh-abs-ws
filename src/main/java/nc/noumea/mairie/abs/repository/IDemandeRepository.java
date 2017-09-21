@@ -6,7 +6,7 @@ import java.util.List;
 import javax.persistence.FlushModeType;
 
 import nc.noumea.mairie.abs.domain.Demande;
-import nc.noumea.mairie.abs.domain.DemandeMaladies;
+import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 
 public interface IDemandeRepository {
@@ -50,15 +50,57 @@ public interface IDemandeRepository {
 	List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche);
 
 	List<Demande> listerDemandeCongeUnique(Integer idAgent, Integer annee);
-
-	List<Demande> listeDemandesForListAgent(Integer idAgentConnecte,
-			List<Integer> idAgentConcerne, Date fromDate, Date toDate,
-			Integer idRefType, Integer idRefGroupeAbsence);
-
+	
 	List<Demande> getListDemandeRejetDRHStatutVeille(List<Integer> listeTypes);
 
 	boolean initialDemandeForProlongationExists(DemandeDto demande);
 
 	List<Demande> getListeATReferenceForAgent(Integer idAgent);
+
+	/**
+	 * Compte le nombre de résultats pour la liste des demandes d un liste d agents
+	 * Si trop de résultats, on litmitera les résultats a retourner au KiosqueRH
+	 * #42015
+	 * 
+	 * @param idAgentConnecte
+	 * @param idAgentConcerne
+	 * @param fromDate
+	 * @param toDate
+	 * @param idRefType
+	 * @param idRefGroupeAbsence
+	 * @param listEtats
+	 * @return le nombre de resultats
+	 */
+	int countListeDemandesForListAgent(Integer idAgentConnecte, List<Integer> idAgentConcerne, Date fromDate,
+			Date toDate, Integer idRefType, Integer idRefGroupeAbsence, List<RefEtat> listEtats);
+
+	/**
+	 * Retourne une liste d ID de demande qui sera utilisée ensuite par la méthode ci-dessous listeDemandesByListIdsDemande()
+	 * 
+	 * Optimisation : #42015
+	 * 
+	 * @param idAgentConnecte
+	 * @param idAgentConcerne
+	 * @param fromDate
+	 * @param toDate
+	 * @param idRefType
+	 * @param idRefGroupeAbsence
+	 * @param listEtats
+	 * @param limitResultMax
+	 * @return Une liste d ID
+	 */
+	List<Integer> listeIdsDemandesForListAgent(Integer idAgentConnecte, List<Integer> idAgentConcerne, Date fromDate,
+			Date toDate, Integer idRefType, Integer idRefGroupeAbsence, List<RefEtat> listEtats,
+			Integer limitResultMax);
+
+	/**
+	 * Retourne une liste de demandes via une liste d ID
+	 * 
+	 * Optimisation : #42015
+	 * 
+	 * @param listIdsDemande
+	 * @return Liste de demandes
+	 */
+	List<Demande> listeDemandesByListIdsDemande(List<Integer> listIdsDemande);
 
 }
