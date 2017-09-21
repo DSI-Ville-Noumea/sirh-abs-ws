@@ -98,6 +98,8 @@ import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
+import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTaskSimple;
+import nc.noumea.mairie.abs.service.multiThread.SpringContext;
 import nc.noumea.mairie.abs.service.rules.impl.AbsCongesAnnuelsDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
@@ -12999,6 +13001,154 @@ public class AbsenceServiceTest {
 		Mockito.verify(demandeRepository, Mockito.times(1)).persistEntity(Mockito.isA(Demande.class));
 		// Le mail ne doit pas être envoyé, car la demande possède un id => c'est une modification
 		verify(mailSender, times(0)).send(Mockito.isA(MimeMessagePreparator.class));
+	}
+	
+	@Test
+	public void countDemandesAViserOuApprouver_approbateur_1result() throws Exception {
+		
+		Integer idAgent = 9005138;
+		List<Integer> idAgentConcerne = Arrays.asList(9005000);
+		
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setModifierApprobation(true);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.countListeDemandesForListAgent(idAgent, idAgentConcerne, null, null, null, null, null)).thenReturn(1);
+		
+		DemandeRecursiveTaskSimple multiTaskSimple = PowerMockito.mock(DemandeRecursiveTaskSimple.class);
+		PowerMockito.whenNew(DemandeRecursiveTaskSimple.class)
+				.withArguments(Mockito.anyList(), Mockito.anyInt(), Mockito.anyList(), Mockito.anyBoolean()).thenReturn(multiTaskSimple);
+
+		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
+		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
+		PowerMockito.when(pool.invoke(multiTaskSimple)).thenReturn(Arrays.asList(demandeDto));
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		int result = service.countDemandesAViserOuApprouver(idAgent, idAgentConcerne, false, true);
+		
+		assertEquals(result, 1);
+	}
+	
+	@Test
+	public void countDemandesAViserOuApprouver_approbateur_0result() throws Exception {
+		
+		Integer idAgent = 9005138;
+		List<Integer> idAgentConcerne = Arrays.asList(9005000);
+		
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setModifierApprobation(false);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.countListeDemandesForListAgent(idAgent, idAgentConcerne, null, null, null, null, null)).thenReturn(1);
+		
+		DemandeRecursiveTaskSimple multiTaskSimple = PowerMockito.mock(DemandeRecursiveTaskSimple.class);
+		PowerMockito.whenNew(DemandeRecursiveTaskSimple.class)
+				.withArguments(Mockito.anyList(), Mockito.anyInt(), Mockito.anyList(), Mockito.anyBoolean()).thenReturn(multiTaskSimple);
+
+		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
+		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
+		PowerMockito.when(pool.invoke(multiTaskSimple)).thenReturn(Arrays.asList(demandeDto));
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		int result = service.countDemandesAViserOuApprouver(idAgent, idAgentConcerne, false, true);
+		
+		assertEquals(result, 0);
+	}
+	
+	@Test
+	public void countDemandesAViserOuApprouver_viseur_1result() throws Exception {
+		
+		Integer idAgent = 9005138;
+		List<Integer> idAgentConcerne = Arrays.asList(9005000);
+		
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setModifierVisa(true);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.countListeDemandesForListAgent(idAgent, idAgentConcerne, null, null, null, null, null)).thenReturn(1);
+		
+		DemandeRecursiveTaskSimple multiTaskSimple = PowerMockito.mock(DemandeRecursiveTaskSimple.class);
+		PowerMockito.whenNew(DemandeRecursiveTaskSimple.class)
+				.withArguments(Mockito.anyList(), Mockito.anyInt(), Mockito.anyList(), Mockito.anyBoolean()).thenReturn(multiTaskSimple);
+
+		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
+		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
+		PowerMockito.when(pool.invoke(multiTaskSimple)).thenReturn(Arrays.asList(demandeDto));
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		int result = service.countDemandesAViserOuApprouver(idAgent, idAgentConcerne, true, false);
+		
+		assertEquals(result, 1);
+	}
+	
+	@Test
+	public void countDemandesAViserOuApprouver_viseur_0result() throws Exception {
+		
+		Integer idAgent = 9005138;
+		List<Integer> idAgentConcerne = Arrays.asList(9005000);
+		
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setModifierVisa(false);
+
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
+		IAbsenceDataConsistencyRules absenceDataConsistencyRulesImpl = Mockito.mock(IAbsenceDataConsistencyRules.class);
+		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		Mockito.when(demandeRepository.countListeDemandesForListAgent(idAgent, idAgentConcerne, null, null, null, null, null)).thenReturn(1);
+		
+		DemandeRecursiveTaskSimple multiTaskSimple = PowerMockito.mock(DemandeRecursiveTaskSimple.class);
+		PowerMockito.whenNew(DemandeRecursiveTaskSimple.class)
+				.withArguments(Mockito.anyList(), Mockito.anyInt(), Mockito.anyList(), Mockito.anyBoolean()).thenReturn(multiTaskSimple);
+
+		ForkJoinPool pool = PowerMockito.mock(ForkJoinPool.class);
+		PowerMockito.whenNew(ForkJoinPool.class).withNoArguments().thenReturn(pool);
+		PowerMockito.when(pool.invoke(multiTaskSimple)).thenReturn(Arrays.asList(demandeDto));
+
+		AbsenceService service = new AbsenceService();
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absenceDataConsistencyRulesImpl);
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", accessRightsRepository);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+
+		int result = service.countDemandesAViserOuApprouver(idAgent, idAgentConcerne, true, false);
+		
+		assertEquals(result, 0);
 	}
 
 }
