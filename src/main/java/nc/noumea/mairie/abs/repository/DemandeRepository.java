@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.joda.time.DateTime;
@@ -17,8 +19,8 @@ import org.springframework.stereotype.Repository;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
-import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
+import nc.noumea.mairie.abs.domain.RefEtat;
 import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
@@ -122,44 +124,85 @@ public class DemandeRepository implements IDemandeRepository {
 		return query.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Demande> listeDemandesForListAgent(Integer idAgentConnecte, List<Integer> idAgentConcerne, Date fromDate,
-			Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
+	public List<Integer> listeIdsDemandesForListAgent(Integer idAgentConnecte, List<Integer> idAgentConcerne, Date fromDate,
+			Date toDate, Integer idRefType, Integer idRefGroupeAbsence, List<RefEtat> listEtats, Integer limitResultMax) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
-		sb.append("where 1=1 ");
+		sb.append(" select distinct(d.id_demande) from abs_demande d ");
+		sb.append(" inner join abs_etat_demande ed on d.id_demande=ed.id_demande ");
+		sb.append(" where 1=1 ");
 
 		if (idAgentConcerne != null) {
-			sb.append("and d.idAgent in :idAgentConcerne ");
+			sb.append("and d.id_agent in ( :idAgentConcerne ) ");
 		} else {
-			sb.append("and d.idAgent in ( select da.idAgent from DroitsAgent da inner join da.droitDroitsAgent dda inner join dda.droit d where d.idAgent = :idAgentConnecte ) ");
+			sb.append("and d.id_agent in ( ");
+				sb.append("select da.id_agent ");
+				sb.append("from abs_droits_agent da ");
+				sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent ");
+				sb.append("inner join abs_droit d on dda.id_droit=d.id_droit ");
+				sb.append("where d.id_agent = :idAgentConnecte ");
+			sb.append(") ");
+		}
+		
+		if(null != listEtats && !listEtats.isEmpty()) {
+			sb.append("and ed.id_etat_demande in ( ");
+			sb.append("select max(ed2.id_etat_demande) from abs_etat_demande ed2 ");
+			sb.append(" inner join abs_demande d2 on ed2.id_demande=d2.id_demande ");
+					
+			if (idAgentConcerne != null) {
+				sb.append("where d2.id_agent in ( :idAgentConcerne ) ");
+			} else {
+				sb.append("where d2.id_agent in ( ");
+					sb.append("select da2.id_agent ");
+					sb.append("from abs_droits_agent da2 ");
+					sb.append("inner join abs_droit_droits_agent dda2 on da2.id_droits_agent=dda2.id_droits_agent ");
+					sb.append("inner join abs_droit d2 on dda2.id_droit=d2.id_droit ");
+					sb.append("where d2.id_agent = :idAgentConnecte ");
+				sb.append(") ");
+			}
+					
+			sb.append("group by ed2.id_demande ) ");
+			sb.append(" and ed.id_ref_etat in :listRefEtat ");
 		}
 
 		if (idRefType != null) {
-			sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
+			sb.append("and d.id_type_demande = :idRefTypeAbsence ");
 		}
 
 		if (idRefGroupeAbsence != null) {
-			sb.append("and d.type.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");
+			sb.append("and d.id_type_demande in ( select id_ref_type_absence from abs_ref_type_absence where id_ref_groupe_absence = :idRefGroupeAbsence ) ");
 		}
 
 		if (fromDate != null && toDate == null) {
-			sb.append("and d.dateDebut >= :fromDate ");
+			sb.append("and d.date_debut >= :fromDate ");
 		} else if (fromDate == null && toDate != null) {
-			sb.append("and d.dateDebut <= :toDate ");
+			sb.append("and d.date_debut <= :toDate ");
 		} else if (fromDate != null && toDate != null) {
-			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
+			sb.append("and d.date_debut >= :fromDate and d.date_debut <= :toDate ");
 		}
 
-		sb.append("order by d.dateDebut desc ");
-
-		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
+		Query query = absEntityManager.createNativeQuery(sb.toString());
+		
+		if(null != limitResultMax) {
+			query.setFirstResult(0);
+			query.setMaxResults(limitResultMax);
+		}
 
 		if (idAgentConcerne != null) {
 			query.setParameter("idAgentConcerne", idAgentConcerne);
 		} else {
 			query.setParameter("idAgentConnecte", idAgentConnecte);
+		}
+		
+		if(null != listEtats && !listEtats.isEmpty()) {
+			List<Integer> listRefEtatEnum = new ArrayList<Integer>();
+			for(RefEtat refEtat : listEtats) {
+				listRefEtatEnum.add(refEtat.getIdRefEtat());
+			}
+			
+			query.setParameter("listRefEtat", listRefEtatEnum);
 		}
 
 		if (idRefType != null) {
@@ -179,7 +222,118 @@ public class DemandeRepository implements IDemandeRepository {
 			query.setParameter("toDate", toDate);
 		}
 
+		return (List<Integer>) query.getResultList();
+	}
+	
+	@Override
+	public List<Demande> listeDemandesByListIdsDemande(List<Integer> listIdsDemande) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct d from Demande d inner join fetch d.etatsDemande ed ");
+		sb.append("where d.idDemande in :listIdsDemande ");		
+		sb.append("order by d.dateDebut desc ");
+
+		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
+
+		query.setParameter("listIdsDemande", listIdsDemande);
+
 		return query.getResultList();
+	}
+
+	@Override
+	public int countListeDemandesForListAgent(Integer idAgentConnecte, List<Integer> idAgentConcerne, Date fromDate,
+			Date toDate, Integer idRefType, Integer idRefGroupeAbsence, List<RefEtat> listEtats) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(" select count(d.id_demande) from abs_demande d ");
+		sb.append(" inner join abs_etat_demande ed on d.id_demande=ed.id_demande ");
+		sb.append(" where 1=1 ");
+
+		if (idAgentConcerne != null) {
+			sb.append("and d.id_agent in ( :idAgentConcerne ) ");
+		} else {
+			sb.append("and d.id_agent in ( ");
+				sb.append("select da.id_agent ");
+				sb.append("from abs_droits_agent da ");
+				sb.append("inner join abs_droit_droits_agent dda on da.id_droits_agent=dda.id_droits_agent ");
+				sb.append("inner join abs_droit d on dda.id_droit=d.id_droit ");
+				sb.append("where d.id_agent = :idAgentConnecte ");
+			sb.append(") ");
+		}
+		
+		if(null != listEtats && !listEtats.isEmpty()) {
+			sb.append("and ed.id_etat_demande in ( ");
+			sb.append("select max(ed2.id_etat_demande) from abs_etat_demande ed2 ");
+			sb.append(" inner join abs_demande d2 on ed2.id_demande=d2.id_demande ");
+					
+			if (idAgentConcerne != null) {
+				sb.append("where d2.id_agent in ( :idAgentConcerne ) ");
+			} else {
+				sb.append("where d2.id_agent in ( ");
+					sb.append("select da2.id_agent ");
+					sb.append("from abs_droits_agent da2 ");
+					sb.append("inner join abs_droit_droits_agent dda2 on da2.id_droits_agent=dda2.id_droits_agent ");
+					sb.append("inner join abs_droit d2 on dda2.id_droit=d2.id_droit ");
+					sb.append("where d2.id_agent = :idAgentConnecte ");
+				sb.append(") ");
+			}
+					
+			sb.append("group by ed2.id_demande ) ");
+			sb.append(" and ed.id_ref_etat in :listRefEtat ");
+		}
+
+		if (idRefType != null) {
+			sb.append("and d.id_type_demande = :idRefTypeAbsence ");
+		}
+
+		if (idRefGroupeAbsence != null) {
+			sb.append("and d.id_type_demande in ( select id_ref_type_absence from abs_ref_type_absence where id_ref_groupe_absence = :idRefGroupeAbsence ) ");
+		}
+
+		if (fromDate != null && toDate == null) {
+			sb.append("and d.date_debut >= :fromDate ");
+		} else if (fromDate == null && toDate != null) {
+			sb.append("and d.date_debut <= :toDate ");
+		} else if (fromDate != null && toDate != null) {
+			sb.append("and d.date_debut >= :fromDate and d.date_debut <= :toDate ");
+		}
+
+		Query query = absEntityManager.createNativeQuery(sb.toString());
+
+		if (idAgentConcerne != null) {
+			query.setParameter("idAgentConcerne", idAgentConcerne);
+		} else {
+			query.setParameter("idAgentConnecte", idAgentConnecte);
+		}
+		
+		if(null != listEtats && !listEtats.isEmpty()) {
+			List<Integer> listRefEtatEnum = new ArrayList<Integer>();
+			for(RefEtat refEtat : listEtats) {
+				listRefEtatEnum.add(refEtat.getIdRefEtat());
+			}
+			
+			query.setParameter("listRefEtat", listRefEtatEnum);
+		}
+
+		if (idRefType != null) {
+			query.setParameter("idRefTypeAbsence", idRefType);
+		}
+
+		if (idRefGroupeAbsence != null) {
+			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
+		}
+
+		if (fromDate != null && toDate == null) {
+			query.setParameter("fromDate", fromDate);
+		} else if (fromDate == null && toDate != null) {
+			query.setParameter("toDate", toDate);
+		} else if (fromDate != null && toDate != null) {
+			query.setParameter("fromDate", fromDate);
+			query.setParameter("toDate", toDate);
+		}
+
+		BigInteger nbResults = (BigInteger) query.getSingleResult();
+		return nbResults.intValue();
 	}
 
 	@Override

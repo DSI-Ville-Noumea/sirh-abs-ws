@@ -71,6 +71,7 @@ import nc.noumea.mairie.abs.dto.MoisAlimAutoCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefAlimCongesAnnuelsDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.abs.dto.RestitutionMassiveDto;
+import nc.noumea.mairie.abs.dto.ResultListDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDemandeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDtoException;
@@ -95,6 +96,7 @@ import nc.noumea.mairie.abs.service.ICounterService;
 import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
+import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTaskSimple;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.abs.web.AccessForbiddenException;
@@ -222,6 +224,9 @@ public class AbsenceService implements IAbsenceService {
 	public static final String CONGE_EXCEP_MSG = "%s : L'agent %s est en congé exceptionnel sur cette période.";
 	public static final String CONGE_ANNUEL_MSG = "%s : L'agent %s est en congé annuel sur cette période.";
 	public static final String MALADIE_MSG = "%s : L'agent %s est en maladie sur cette période.";
+	
+	private static final Integer NOMBRE_RESULTATS_MAX_LISTE_DEMANDE = 500;
+	private static final String MESSAGE_INFO_RESULTAT_LIMITE = "Nombre de résultats limité à " + NOMBRE_RESULTATS_MAX_LISTE_DEMANDE + " demandes. Merci de filtrer la recherche.";
 
 	@Override
 	@Transactional(value = "absTransactionManager")
@@ -510,21 +515,90 @@ public class AbsenceService implements IAbsenceService {
 
 		return demandeDto;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Integer countDemandesAViserOuApprouver(Integer idAgentConnecte, List<Integer> idAgentConcerne,
+			boolean viseur, boolean approbateur) {
+
+		ResultListDemandeDto resultListDemandeDto = new ResultListDemandeDto();
+		
+		// filtres sur les états selon le role de l agent
+		List<RefEtat> listEtats = new ArrayList<RefEtat>();
+		
+		if(viseur) {
+			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat()));
+		}
+		
+		if(approbateur) {
+			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.SAISIE.getCodeEtat()));
+			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.VISEE_FAVORABLE.getCodeEtat()));
+			listEtats.add(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.VISEE_DEFAVORABLE.getCodeEtat()));
+		}
+		
+		// recupere les demandes
+		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, null, null,
+				null, null, listEtats, resultListDemandeDto);
+
+		// on filtre
+		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
+				listEtats, null, false);
+
+		// si idAgentConnecte == idAgentConcerne, alors nous sommes dans le cas
+		// du WS listeDemandesAgent
+		// donc inutile de recuperer les droits en bdd
+		List<DroitsAgent> listDroitAgent = new ArrayList<DroitsAgent>();
+		if (null != idAgentConnecte && null != idAgentConcerne && (1 < idAgentConcerne.size()
+				|| (1 == idAgentConcerne.size() && !idAgentConnecte.equals(idAgentConcerne.get(0))))) {
+
+			// redmine #14201 : on cherche si l'agent est délégataire
+			List<Integer> idsApprobateurOfDelegataire = accessRightsService
+					.getIdApprobateurOfDelegataire(idAgentConnecte, null);
+
+			List<Integer> idsUserForAllDroits = new ArrayList<Integer>();
+			idsUserForAllDroits.add(idAgentConnecte);
+
+			if (idsApprobateurOfDelegataire != null) {
+				idsUserForAllDroits.addAll(idsApprobateurOfDelegataire);
+			}
+
+			listDroitAgent.addAll(accessRightsRepository.getListOfAgentsForListDemandes(idsUserForAllDroits));
+		}
+
+		// #30788 utilisation de multithread pour booster le traitement
+		// application de droits (modif, suppression, etc) sur les DemandeDto
+		DemandeRecursiveTaskSimple multiTask = new DemandeRecursiveTaskSimple(listeDto, idAgentConnecte,
+				listDroitAgent, false);
+		ForkJoinPool pool = new ForkJoinPool();
+		listeDto = pool.invoke(multiTask);
+		
+		Integer nbResult = 0;
+		if(approbateur) {
+			for(DemandeDto dto : listeDto) {
+				if(dto.isModifierApprobation()) {
+					nbResult++;
+				}
+			}
+		}
+		
+		if(viseur) {
+			for(DemandeDto dto : listeDto) {
+				if(dto.isModifierVisa()) {
+					nbResult++;
+				}
+			}
+		}
+		
+		return nbResult;
+	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DemandeDto> getListeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne,
+	public ResultListDemandeDto getListeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne,
 			String ongletDemande, Date fromDate, Date toDate, Date dateDemande, String listIdRefEtat, Integer idRefType,
 			Integer idRefGroupeAbsence, boolean isAgent) {
 
-		// si date de debut et de fin nulles, alors on filtre sur 12 mois
-		// glissants
-		if (null == fromDate && null == toDate) {
-			fromDate = helperService.getCurrentDateMoinsUnAn();
-		}
-
-		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
-				idRefType, idRefGroupeAbsence);
+		ResultListDemandeDto result = new ResultListDemandeDto();
 
 		List<Integer> etatIds = new ArrayList<Integer>();
 		if (listIdRefEtat != null) {
@@ -532,8 +606,12 @@ public class AbsenceService implements IAbsenceService {
 				etatIds.add(Integer.valueOf(id));
 			}
 		}
-
+		
 		List<RefEtat> listEtats = filtresService.getListeEtatsByOnglet(ongletDemande, etatIds);
+
+		List<Demande> listeSansFiltre = getListeNonFiltreeDemandes(idAgentConnecte, idAgentConcerne, fromDate, toDate,
+				idRefType, idRefGroupeAbsence, listEtats, result);
+
 
 		List<DemandeDto> listeDto = absenceDataConsistencyRulesImpl.filtreDateAndEtatDemandeFromList(listeSansFiltre,
 				listEtats, dateDemande, false);
@@ -596,11 +674,14 @@ public class AbsenceService implements IAbsenceService {
 
 		Collections.sort(listeDto, new DemandeDtoComparator());
 
-		return listeDto;
+		result.setListDemandesDto(listeDto);
+		
+		return result;
 	}
 
 	protected List<Demande> getListeNonFiltreeDemandes(Integer idAgentConnecte, List<Integer> idAgentConcerne,
-			Date fromDate, Date toDate, Integer idRefType, Integer idRefGroupeAbsence) {
+			Date fromDate, Date toDate, Integer idRefType, Integer idRefGroupeAbsence, List<RefEtat> listEtats, 
+			ResultListDemandeDto resultListDemandeDto) {
 
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Demande> listeSansFiltredelegataire = new ArrayList<Demande>();
@@ -615,8 +696,18 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		if (idAgentConcerne != null) {
-			listeSansFiltre.addAll(demandeRepository.listeDemandesForListAgent(idAgentConnecte, idAgentConcerne,
-					fromDate, toDate, idRefType, idRefGroupeAbsence));
+			
+			// on compte le nombre de resultat pour limiter si besoin
+			int nbResults = countNombreDemandesForListAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence, listEtats, resultListDemandeDto);
+			
+			if(0 < nbResults) {
+				List<Integer> listIdsDemande = demandeRepository.listeIdsDemandesForListAgent(
+						idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence, 
+						listEtats, NOMBRE_RESULTATS_MAX_LISTE_DEMANDE);
+			
+				listeSansFiltre.addAll(demandeRepository.listeDemandesByListIdsDemande(listIdsDemande));
+			}
+			
 			if (null != idsApprobateurOfDelegataire) {
 				for (Integer idApprobateurOfDelegataire : idsApprobateurOfDelegataire) {
 					listeSansFiltredelegataire.addAll(demandeRepository.listeDemandesAgent(idApprobateurOfDelegataire,
@@ -641,6 +732,21 @@ public class AbsenceService implements IAbsenceService {
 		}
 
 		return listeSansFiltre;
+	}
+	
+	private int countNombreDemandesForListAgent(Integer idAgentConnecte, List<Integer> idAgentConcerne,
+			Date fromDate, Date toDate, Integer idRefType, Integer idRefGroupeAbsence, List<RefEtat> listEtats, 
+			ResultListDemandeDto resultListDemandeDto) {
+		
+		int nbResults = demandeRepository.countListeDemandesForListAgent(idAgentConnecte, idAgentConcerne, fromDate, toDate, idRefType, idRefGroupeAbsence, listEtats);
+		
+		if(null != resultListDemandeDto 
+				&& nbResults > NOMBRE_RESULTATS_MAX_LISTE_DEMANDE) {
+			resultListDemandeDto.setResultatsLimites(true);
+			resultListDemandeDto.setMessageInfoResultatsLimites(MESSAGE_INFO_RESULTAT_LIMITE);
+		}
+		
+		return nbResults;
 	}
 
 	@Override

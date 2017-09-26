@@ -8,9 +8,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import nc.noumea.mairie.abs.domain.AgentA48OrganisationSyndicale;
 import nc.noumea.mairie.abs.domain.AgentA54OrganisationSyndicale;
-import nc.noumea.mairie.abs.domain.AgentAsaA48Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA54Count;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;

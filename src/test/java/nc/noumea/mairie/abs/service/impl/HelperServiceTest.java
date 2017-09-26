@@ -373,6 +373,17 @@ public class HelperServiceTest {
 	}
 
 	@Test
+	public void getCurrentDateMoinsXMois() {
+		
+		DateTime dateTime = DateTime.now().minusMonths(2);
+
+		HelperService service = new HelperService();
+		Date result = service.getCurrentDateMoinsXMois(2);
+
+		assertEquals(sdf.format(result), sdf.format(dateTime.toDate()));
+	}
+
+	@Test
 	public void calculNombreJourEntre2Dates_entier() {
 
 		Date dateJ = new Date();
