@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.collect.Lists;
+
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.ProfilEnum;
@@ -621,107 +623,37 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@Override
 	public List<Demande> listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(Date fromDate, Date toDate,
-			List<Integer> listIdRefGroupe, Integer idRefTypeFamille, List<Integer> listIdAgentRecherche) {
-		// pour le moment la DRH ne doit valider que les congés excep, congé
-		// annuel et les ASA
+			List<Integer> listIdRefGroupe, Integer idRefTypeFamille, List<Integer> listIdAgentRecherche, Integer maxResult) {
+		// Récupérer la liste des Id limités pour faire ensuite le fetch
+		List<Integer> listIds = listeIdDemandesASAAndCongesExcepAndMaladiesSIRHAValider(fromDate, toDate, listIdRefGroupe, idRefTypeFamille, listIdAgentRecherche, maxResult);
+		if (listIds.isEmpty())
+			return Lists.newArrayList();
+		
+		// pour le moment la DRH ne doit valider que les congés excep, congé annuel et les ASA
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
-		sb.append("where d.type.groupe.idRefGroupeAbsence in( :LISTREFGROUPE ) ");
-		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
-		sb.append("and ed.etat in ( :APPROUVEE, :EN_ATTENTE, :A_VALIDER ) ");
-
-		// type famille
-		if (idRefTypeFamille != null) {
-			sb.append("and d.type.idRefTypeAbsence = :idRefType ");
-		}
-
-		// date
-		if (fromDate != null && toDate == null) {
-			sb.append("and d.dateDebut >= :fromDate ");
-		} else if (fromDate == null && toDate != null) {
-			sb.append("and d.dateDebut <= :toDate ");
-		} else if (fromDate != null && toDate != null) {
-			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
-		}
-
-		// agent
-		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
-			sb.append("and d.idAgent in :idAgentRecherche ");
-		}
+		sb.append("where d.idDemande in ( :LIST_ID_DEMANDE ) ");
 		sb.append("order by d.dateDebut desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
-		query.setParameter("LISTREFGROUPE", listIdRefGroupe);
-		query.setParameter("APPROUVEE", RefEtatEnum.APPROUVEE);
-		query.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
-		query.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER);
-
-		// type famille
-		if (idRefTypeFamille != null) {
-			query.setParameter("idRefType", idRefTypeFamille);
-		}
-
-		// date
-		if (fromDate != null && toDate == null) {
-			query.setParameter("fromDate", fromDate);
-		} else if (fromDate == null && toDate != null) {
-			query.setParameter("toDate", toDate);
-		} else if (fromDate != null && toDate != null) {
-			query.setParameter("fromDate", fromDate);
-			query.setParameter("toDate", toDate);
-		}
-		// agent
-		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
-			query.setParameter("idAgentRecherche", listIdAgentRecherche);
-		}
+		query.setParameter("LIST_ID_DEMANDE", listIds);
 
 		return query.getResultList();
 	}
 
 	@Override
-	public List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate,
-			List<Integer> listIdAgentRecherche) {
-		// pour le moment la DRH ne doit valider que les congés excep, congé
-		// annuel et les ASA
+	public List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche, Integer maxResult) {
+		List<Integer> listIds = listeIdDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, listIdAgentRecherche, maxResult);
+		if (listIds.isEmpty())
+			return Lists.newArrayList();
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
-		sb.append("where d.type.groupe.idRefGroupeAbsence in( :CONGE_ANNUEL ) ");
-		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
-		sb.append("and ed.etat in ( :EN_ATTENTE, :A_VALIDER ) ");
-
-		// date
-		if (fromDate != null && toDate == null) {
-			sb.append("and d.dateDebut >= :fromDate ");
-		} else if (fromDate == null && toDate != null) {
-			sb.append("and d.dateDebut <= :toDate ");
-		} else if (fromDate != null && toDate != null) {
-			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
-		}
-
-		// agent
-		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
-			sb.append("and d.idAgent in :idAgentRecherche ");
-		}
+		sb.append("where d.idDemande in :LIST_ID_DEMANDE ");
 		sb.append("order by d.dateDebut desc ");
 
 		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
-		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
-		query.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
-		query.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER);
-
-		// date
-		if (fromDate != null && toDate == null) {
-			query.setParameter("fromDate", fromDate);
-		} else if (fromDate == null && toDate != null) {
-			query.setParameter("toDate", toDate);
-		} else if (fromDate != null && toDate != null) {
-			query.setParameter("fromDate", fromDate);
-			query.setParameter("toDate", toDate);
-		}
-		// agent
-		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
-			query.setParameter("idAgentRecherche", listIdAgentRecherche);
-		}
+		query.setParameter("LIST_ID_DEMANDE", listIds);
 
 		return query.getResultList();
 	}
@@ -895,5 +827,113 @@ public class DemandeRepository implements IDemandeRepository {
 		query.setParameter("PRISE", RefEtatEnum.PRISE);
 
 		return query.getResultList();
+	}
+
+	@Override
+	public List<Integer> listeIdDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate,
+			List<Integer> listIdAgentRecherche, Integer maxResult) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select d.id_demande from abs_demande d ");
+		sql.append(" inner join abs_etat_demande ed on d.id_demande=ed.id_demande ");
+		sql.append(" inner join abs_ref_type_absence ref on d.id_type_demande=ref.id_ref_type_absence ");
+		sql.append(" where ed.id_etat_demande in ( ");
+		sql.append("select max(ed2.id_etat_demande) from abs_etat_demande ed2 ");
+		sql.append(" inner join abs_demande d2 on ed2.id_demande=d2.id_demande ");
+		sql.append("group by ed2.id_demande ) ");
+		sql.append(" and ed.id_ref_etat in ( :EN_ATTENTE, :A_VALIDER ) ");
+		sql.append(" and ref.id_ref_groupe_absence = :CONGE_ANNUEL ");
+
+		// date
+		if (fromDate != null && toDate == null) {
+			sql.append("and d.date_Debut >= :fromDate ");
+		} else if (fromDate == null && toDate != null) {
+			sql.append("and d.date_Debut <= :toDate ");
+		} else if (fromDate != null && toDate != null) {
+			sql.append("and d.date_Debut >= :fromDate and d.date_Debut <= :toDate ");
+		}
+
+		// agent
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
+			sql.append("and d.id_Agent in :idAgentRecherche ");
+		}
+		sql.append("order by d.date_Debut desc limit :LIMIT");
+		Query query = absEntityManager.createNativeQuery(sql.toString());
+
+		query.setParameter("CONGE_ANNUEL", RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue());
+		query.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		query.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER.getCodeEtat());
+		query.setParameter("LIMIT", maxResult);
+
+		// date
+		if (fromDate != null && toDate == null) {
+			query.setParameter("fromDate", fromDate);
+		} else if (fromDate == null && toDate != null) {
+			query.setParameter("toDate", toDate);
+		} else if (fromDate != null && toDate != null) {
+			query.setParameter("fromDate", fromDate);
+			query.setParameter("toDate", toDate);
+		}
+		// agent
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
+			query.setParameter("idAgentRecherche", listIdAgentRecherche);
+		}
+
+		return (List<Integer>) query.getResultList();
+	}
+
+	@Override
+	public List<Integer> listeIdDemandesASAAndCongesExcepAndMaladiesSIRHAValider(Date fromDate, Date toDate,
+			List<Integer> listIdRefGroupe, Integer idRefTypeFamille, List<Integer> listIdAgentRecherche,
+			Integer maxResult) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select d.id_demande from abs_demande d ");
+		sql.append(" inner join abs_etat_demande ed on d.id_demande=ed.id_demande ");
+		sql.append(" inner join abs_ref_type_absence ref on d.id_type_demande=ref.id_ref_type_absence ");
+		sql.append(" where ed.id_etat_demande in ( ");
+		sql.append("select max(ed2.id_etat_demande) from abs_etat_demande ed2 ");
+		sql.append(" inner join abs_demande d2 on ed2.id_demande=d2.id_demande ");
+		sql.append("group by ed2.id_demande ) ");
+		sql.append(" and ed.id_ref_etat in ( :APPROUVEE, :EN_ATTENTE, :A_VALIDER ) ");
+		sql.append(" and ref.id_ref_groupe_absence in ( :LIST_ID_REF_GROUP ) ");
+
+		// date
+		if (fromDate != null && toDate == null) {
+			sql.append("and d.date_Debut >= :fromDate ");
+		} else if (fromDate == null && toDate != null) {
+			sql.append("and d.date_Debut <= :toDate ");
+		} else if (fromDate != null && toDate != null) {
+			sql.append("and d.date_Debut >= :fromDate and d.date_Debut <= :toDate ");
+		}
+
+		// agent
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
+			sql.append("and d.id_Agent in :idAgentRecherche ");
+		}
+		sql.append("order by d.date_Debut desc limit :LIMIT");
+		Query query = absEntityManager.createNativeQuery(sql.toString());
+
+		query.setParameter("LIST_ID_REF_GROUP", listIdRefGroupe);
+		query.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE.getCodeEtat());
+		query.setParameter("A_VALIDER", RefEtatEnum.A_VALIDER.getCodeEtat());
+		query.setParameter("APPROUVEE", RefEtatEnum.APPROUVEE.getCodeEtat());
+		query.setParameter("LIMIT", maxResult);
+
+		// date
+		if (fromDate != null && toDate == null) {
+			query.setParameter("fromDate", fromDate);
+		} else if (fromDate == null && toDate != null) {
+			query.setParameter("toDate", toDate);
+		} else if (fromDate != null && toDate != null) {
+			query.setParameter("fromDate", fromDate);
+			query.setParameter("toDate", toDate);
+		}
+		// agent
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
+			query.setParameter("idAgentRecherche", listIdAgentRecherche);
+		}
+
+		return (List<Integer>) query.getResultList();
 	}
 }

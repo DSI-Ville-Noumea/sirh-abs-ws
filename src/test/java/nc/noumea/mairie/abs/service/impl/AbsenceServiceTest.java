@@ -9004,7 +9004,7 @@ public class AbsenceServiceTest {
 		listEtat.add(refAppro);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(null, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(null, null, null, 50)).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null, true)).thenReturn(listdemandeDto);
@@ -10330,7 +10330,7 @@ public class AbsenceServiceTest {
 		listEtat.add(refAppro);
 
 		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
-		Mockito.when(demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(null, null, null)).thenReturn(listdemande);
+		Mockito.when(demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(null, null, null, 50)).thenReturn(listdemande);
 
 		IAbsenceDataConsistencyRules absDataConsistencyRules = Mockito.mock(IAbsenceDataConsistencyRules.class);
 		Mockito.when(absDataConsistencyRules.filtreDateAndEtatDemandeFromList(listdemande, listEtat, null, true)).thenReturn(listdemandeDto);

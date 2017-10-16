@@ -1688,7 +1688,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, null, null, null);
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, null, null, null, 50);
 
 		// Then
 		assertEquals(0, result.size());
@@ -1741,7 +1741,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(drp2);
 
 		// When
-		List<Demande> result = repository.listeDemandesCongesAnnuelsSIRHAValider(null, null, null);
+		List<Demande> result = repository.listeDemandesCongesAnnuelsSIRHAValider(null, null, null, 50);
 
 		// Then
 		assertEquals(0, result.size());
@@ -1838,7 +1838,7 @@ public class DemandeRepositoryTest {
 		listGroupe.add(RefTypeGroupeAbsenceEnum.CONGES_EXCEP.getValue());
 
 		// When
-		List<Demande> result = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, listGroupe, null, null);
+		List<Demande> result = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, listGroupe, null, null, 50);
 
 		// Then
 		assertEquals(1, result.size());
@@ -1932,7 +1932,7 @@ public class DemandeRepositoryTest {
 		absEntityManager.persist(etatDemandeAttente);
 
 		// When
-		List<Demande> result = repository.listeDemandesCongesAnnuelsSIRHAValider(null, null, null);
+		List<Demande> result = repository.listeDemandesCongesAnnuelsSIRHAValider(null, null, null, 50);
 
 		// Then
 		assertEquals(1, result.size());
@@ -2032,7 +2032,7 @@ public class DemandeRepositoryTest {
 
 		// When
 		List<Demande> result = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, listGroupe, null,
-				Arrays.asList(9005138, 9005139, 9005131));
+				Arrays.asList(9005138, 9005139, 9005131), 50);
 
 		// Then
 		assertEquals(2, result.size());
@@ -2041,7 +2041,7 @@ public class DemandeRepositoryTest {
 
 		// When
 		List<Demande> result2 = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, listGroupe, null,
-				Arrays.asList(9005139, 9005131));
+				Arrays.asList(9005139, 9005131), 50);
 
 		// Then
 		assertEquals(1, result2.size());
@@ -2049,7 +2049,7 @@ public class DemandeRepositoryTest {
 
 		// When
 		List<Demande> result3 = repository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(null, null, listGroupe, null,
-				Arrays.asList(9005138, 9005139));
+				Arrays.asList(9005138, 9005139), 50);
 
 		// Then
 		assertEquals(2, result3.size());
@@ -2147,7 +2147,7 @@ public class DemandeRepositoryTest {
 
 		// When
 		List<Demande> result = repository.listeDemandesCongesAnnuelsSIRHAValider(null, null,
-				Arrays.asList(9005138, 9005139, 9005131));
+				Arrays.asList(9005138, 9005139, 9005131), 50);
 
 		// Then
 		assertEquals(1, result.size());
@@ -2155,7 +2155,7 @@ public class DemandeRepositoryTest {
 
 		// When
 		List<Demande> result2 = repository.listeDemandesCongesAnnuelsSIRHAValider(null, null,
-				Arrays.asList(9005139, 9005131));
+				Arrays.asList(9005139, 9005131), null);
 
 		// Then
 		assertEquals(1, result2.size());
@@ -2163,7 +2163,7 @@ public class DemandeRepositoryTest {
 
 		// When
 		List<Demande> result3 = repository.listeDemandesCongesAnnuelsSIRHAValider(null, null,
-				Arrays.asList(9005138, 9005139));
+				Arrays.asList(9005138, 9005139), null);
 
 		// Then
 		assertEquals(0, result3.size());
