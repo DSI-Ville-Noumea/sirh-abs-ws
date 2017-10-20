@@ -18,4 +18,6 @@ public interface ITypeAbsenceService {
 	ReturnMessageDto inactiveTypeAbsence(Integer idAgent, Integer idRefTypeAbsence);
 
 	RefTypeAbsenceDto getTypeAbsenceByBaseHoraire(Integer idBaseHoraireAbsence);
+	
+	RefTypeAbsenceDto getTypeAbsenceById(Integer idTypeAbsence);
 }

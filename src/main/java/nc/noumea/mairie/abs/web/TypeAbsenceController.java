@@ -121,4 +121,18 @@ public class TypeAbsenceController {
 		return typeAbsenceService.getTypeAbsenceByBaseHoraire(idBaseHoraireAbsence);
 
 	}
+
+	/**
+	 * Retourne une type d absence
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getTypeAbsenceById", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public RefTypeAbsenceDto getTypeAbsenceById(
+			@RequestParam(value = "idTypeAbsence", required = true) Integer idTypeAbsence) {
+
+		logger.debug("entered GET [typeAbsence/idTypeAbsence] => getTypeAbsence with parameters idTypeAbsence = {}", idTypeAbsence);
+
+		return typeAbsenceService.getTypeAbsenceById(idTypeAbsence);
+
+	}
 }

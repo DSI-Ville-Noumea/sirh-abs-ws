@@ -167,7 +167,7 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto, CheckCompteurAgentVo checkCompteurAgentVo) {
 
 		// on verifie d abord l etat de la demande
-		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur
+		// si PROVISOIRE, REJETE, PRISE ou ANNULE, on n affiche pas d alerte de depassement de compteur
 		if (!checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
 
