@@ -194,7 +194,7 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 					demandeDto.getDateFin());
 			Integer duree = maladieCounterServiceImpl.getNombeJourMaladies(demandeDto.getAgentWithServiceDto().getIdAgent(),
 					helperService.getDateDebutAnneeForOneDate(demandeDto.getDateDebut(), 1),
-					demandeDto.getDateFin(), listMaladiesEnfantSurAnneeCivile);
+					demandeDto.getDateFin(), listMaladiesEnfantSurAnneeCivile, null);
 			// #39320 : Pour une demande créée, si elle dépasse le quota, on en informe l'utilisateur.
 			if (demandeDto.getIdDemande() == null) {
 				if (demandeDto.getDuree() + duree > SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE)

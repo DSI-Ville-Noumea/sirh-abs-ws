@@ -1140,7 +1140,7 @@ public class DemandeRepositoryTest {
 		DemandeRecup d = new DemandeRecup();
 		d.setIdAgent(9005138);
 		d.setDateDebut(sdf.parse("15/05/2013"));
-		d.setDateFin(null);
+		d.setDateFin(sdf.parse("16/05/2013"));
 		d.setDuree(30);
 		d.setType(typeMaladie);
 		absEntityManager.persist(d);
@@ -1148,7 +1148,7 @@ public class DemandeRepositoryTest {
 		DemandeRecup d2 = new DemandeRecup();
 		d2.setIdAgent(9005138);
 		d2.setDateDebut(sdf.parse("15/06/2013"));
-		d2.setDateFin(null);
+		d2.setDateFin(sdf.parse("16/06/2013"));
 		d2.setDuree(40);
 		d2.setType(typeMaladie);
 		absEntityManager.persist(d2);
@@ -1156,7 +1156,7 @@ public class DemandeRepositoryTest {
 		DemandeReposComp drp = new DemandeReposComp();
 		drp.setIdAgent(9005138);
 		drp.setDateDebut(sdf.parse("15/05/2013"));
-		drp.setDateFin(null);
+		drp.setDateFin(sdf.parse("16/05/2013"));
 		drp.setDuree(15);
 		drp.setDureeAnneeN1(10);
 		drp.setType(typeMaladie);
@@ -1165,7 +1165,7 @@ public class DemandeRepositoryTest {
 		DemandeReposComp drp2 = new DemandeReposComp();
 		drp2.setIdAgent(9005138);
 		drp2.setDateDebut(sdf.parse("15/06/2013"));
-		drp2.setDateFin(null);
+		drp2.setDateFin(sdf.parse("16/06/2013"));
 		drp2.setDuree(20);
 		drp2.setDureeAnneeN1(10);
 		drp2.setType(typeMaladie);
@@ -1390,7 +1390,7 @@ public class DemandeRepositoryTest {
 		DemandeRecup d2 = new DemandeRecup();
 		d2.setIdAgent(9005138);
 		d2.setDateDebut(sdf.parse("15/06/2013"));
-		d2.setDateFin(null);
+		d2.setDateFin(sdf.parse("15/07/2013"));
 		d2.setDuree(40);
 		d2.addEtatDemande(etat2);
 		absEntityManager.persist(d2);
@@ -1406,7 +1406,7 @@ public class DemandeRepositoryTest {
 		DemandeReposComp drp = new DemandeReposComp();
 		drp.setIdAgent(9005138);
 		drp.setDateDebut(sdf.parse("15/05/2013"));
-		drp.setDateFin(null);
+		drp.setDateFin(sdf.parse("30/05/2013"));
 		drp.setDuree(15);
 		drp.setDureeAnneeN1(10);
 		drp.addEtatDemande(etatdrp);
@@ -1423,7 +1423,7 @@ public class DemandeRepositoryTest {
 		DemandeReposComp drp2 = new DemandeReposComp();
 		drp2.setIdAgent(9005138);
 		drp2.setDateDebut(sdf.parse("15/06/2013"));
-		drp2.setDateFin(null);
+		drp2.setDateFin(sdf.parse("15/07/2013"));
 		drp2.setDuree(20);
 		drp2.setDureeAnneeN1(10);
 		drp2.addEtatDemande(etatdrp2);
