@@ -178,11 +178,11 @@ public class DemandeRepository implements IDemandeRepository {
 		}
 
 		if (fromDate != null && toDate == null) {
-			sb.append("and d.date_debut >= :fromDate ");
+			sb.append("and d.date_fin >= :fromDate ");
 		} else if (fromDate == null && toDate != null) {
 			sb.append("and d.date_debut <= :toDate ");
 		} else if (fromDate != null && toDate != null) {
-			sb.append("and d.date_debut >= :fromDate and d.date_debut <= :toDate ");
+			sb.append("and d.date_fin >= :fromDate and d.date_debut <= :toDate ");
 		}
 
 		Query query = absEntityManager.createNativeQuery(sb.toString());
@@ -293,11 +293,11 @@ public class DemandeRepository implements IDemandeRepository {
 		}
 
 		if (fromDate != null && toDate == null) {
-			sb.append("and d.date_debut >= :fromDate ");
+			sb.append("and d.date_fin >= :fromDate ");
 		} else if (fromDate == null && toDate != null) {
 			sb.append("and d.date_debut <= :toDate ");
 		} else if (fromDate != null && toDate != null) {
-			sb.append("and d.date_debut >= :fromDate and d.date_debut <= :toDate ");
+			sb.append("and d.date_fin >= :fromDate and d.date_debut <= :toDate ");
 		}
 
 		Query query = absEntityManager.createNativeQuery(sb.toString());
@@ -476,59 +476,71 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	/**
-	 * #30120 
+	 * #30120
 	 * 
 	 */
 	@Override
 	public List<Demande> listeDemandesSIRH(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence) {
 		
-		List<Demande> listDemande = listeDemandesSIRHWithtouEtatDemandeFetch(
+		List<Integer> listDemandeIds = listeDemandesSIRHIdsWithtouEtatDemandeFetch(
 				fromDate, toDate, idRefEtat, idRefType, listIdAgentRecherche, idRefGroupeAbsence);
 		
-		if(null == listDemande
-				|| listDemande.isEmpty()) {
-			return listDemande;
-		}
-		
-		List<Integer> listIdDemande = new ArrayList<Integer>();
-		for(Demande demande : listDemande) {
-			listIdDemande.add(demande.getIdDemande());
-		}
-		
-		return listeDemandesSIRHWithEtatDemandeFetch(fromDate, toDate, idRefEtat, idRefType, listIdAgentRecherche, idRefGroupeAbsence, listIdDemande);
+		return listeDemandesSIRHWithEtatDemandeFetch(listDemandeIds);
 	}
 
-	private List<Demande> listeDemandesSIRHWithtouEtatDemandeFetch(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
+	private List<Integer> listeDemandesSIRHIdsWithtouEtatDemandeFetch(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
 			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence) {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append("select d from Demande d ");
-		sb.append("where 1=1 ");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select d.id_demande from abs_demande d ");
+		
+		if (idRefEtat != null)
+			sql.append(" inner join abs_etat_demande ed on d.id_demande=ed.id_demande ");
+		if (idRefGroupeAbsence != null)
+			sql.append(" inner join abs_ref_type_absence ref on d.id_type_demande=ref.id_ref_type_absence ");
+
+		sql.append(" where 1=1 ");
+
+		if (idRefEtat != null) {
+			sql.append(" and ed.id_etat_demande in ( ");
+			sql.append("select max(ed2.id_etat_demande) from abs_etat_demande ed2 ");
+			sql.append(" inner join abs_demande d2 on ed2.id_demande=d2.id_demande ");
+			sql.append("group by ed2.id_demande ) ");
+			sql.append(" and ed.id_ref_etat = :ID_REF_ETAT ");
+		}
+		
+		if (idRefType != null)
+			sql.append(" and d.id_type_demande = :ID_REF_TYPE ");
+		if (idRefGroupeAbsence != null)
+			sql.append(" and ref.id_ref_groupe_absence = :ID_REF_GROUP ");
+		
 		// date
 		if (fromDate != null && toDate == null) {
-			sb.append("and d.dateDebut >= :fromDate ");
+			sql.append("and d.date_fin >= :fromDate ");
 		} else if (fromDate == null && toDate != null) {
-			sb.append("and d.dateDebut <= :toDate ");
+			sql.append("and d.date_Debut <= :toDate ");
 		} else if (fromDate != null && toDate != null) {
-			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
+			sql.append("and d.date_fin >= :fromDate and d.date_Debut <= :toDate ");
 		}
+
 		// agent
 		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
-			sb.append("and d.idAgent in :idAgentRecherche ");
+			sql.append("and d.id_Agent in :idAgentRecherche ");
 		}
-		// type
-		if (idRefType != null) {
-			sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
-		}
-		// groupe
-		if (idRefGroupeAbsence != null) {
-			sb.append("and d.type.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");
-		}
+		sql.append("order by d.date_Debut desc limit :LIMIT");
+		
+		Query query = absEntityManager.createNativeQuery(sql.toString());
 
-		sb.append("order by d.dateDebut desc ");
-
-		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
+		// Parameters
+		if (idRefType != null)
+			query.setParameter("ID_REF_TYPE", idRefType);
+		if (idRefEtat != null)
+			query.setParameter("ID_REF_ETAT", idRefEtat);
+		if (idRefGroupeAbsence != null)
+			query.setParameter("ID_REF_GROUP", idRefGroupeAbsence);
+		
+		query.setParameter("LIMIT", 300);
 
 		// date
 		if (fromDate != null && toDate == null) {
@@ -543,82 +555,25 @@ public class DemandeRepository implements IDemandeRepository {
 		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
 			query.setParameter("idAgentRecherche", listIdAgentRecherche);
 		}
-		// type
-		if (idRefType != null) {
-			query.setParameter("idRefTypeAbsence", idRefType);
-		}
-		// groupe
-		if (idRefGroupeAbsence != null) {
-			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
-		}
-		query.setFirstResult(0);
-		query.setMaxResults(300);
-		return query.getResultList();
+
+		return (List<Integer>) query.getResultList();
 	}
 	
-	private List<Demande> listeDemandesSIRHWithEtatDemandeFetch(Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType,
-			List<Integer> listIdAgentRecherche, Integer idRefGroupeAbsence, List<Integer> listIdDemande) {
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
-		sb.append("where 1=1 ");
-		// id demande recupere de la 1er requete
-		if(null != listIdDemande) {
-			sb.append("and d.idDemande in :listIdDemande ");
-		}
-		// date
-		if (fromDate != null && toDate == null) {
-			sb.append("and d.dateDebut >= :fromDate ");
-		} else if (fromDate == null && toDate != null) {
-			sb.append("and d.dateDebut <= :toDate ");
-		} else if (fromDate != null && toDate != null) {
-			sb.append("and d.dateDebut >= :fromDate and d.dateDebut <= :toDate ");
-		}
-		// agent
-		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
-			sb.append("and d.idAgent in :idAgentRecherche ");
-		}
-		// type
-		if (idRefType != null) {
-			sb.append("and d.type.idRefTypeAbsence = :idRefTypeAbsence ");
-		}
-		// groupe
-		if (idRefGroupeAbsence != null) {
-			sb.append("and d.type.groupe.idRefGroupeAbsence = :idRefGroupeAbsence ");
-		}
-
-		sb.append("order by d.dateDebut desc ");
-
-		TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
-
-		// date
-		if (fromDate != null && toDate == null) {
-			query.setParameter("fromDate", fromDate);
-		} else if (fromDate == null && toDate != null) {
-			query.setParameter("toDate", toDate);
-		} else if (fromDate != null && toDate != null) {
-			query.setParameter("fromDate", fromDate);
-			query.setParameter("toDate", toDate);
-		}
-		// agent
-		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
-			query.setParameter("idAgentRecherche", listIdAgentRecherche);
-		}
-		// type
-		if (idRefType != null) {
-			query.setParameter("idRefTypeAbsence", idRefType);
-		}
-		// groupe
-		if (idRefGroupeAbsence != null) {
-			query.setParameter("idRefGroupeAbsence", idRefGroupeAbsence);
-		}
-		if(null != listIdDemande) {
-			query.setParameter("listIdDemande", listIdDemande);
-		}
-		// ne fonctionne pas avec un inner join FETCH dans la requete
-		// query.setMaxResults(300);
+	private List<Demande> listeDemandesSIRHWithEtatDemandeFetch(List<Integer> listIdDemande) {
 		
-		return query.getResultList();
+		if(null != listIdDemande && !listIdDemande.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
+			sb.append("where d.idDemande in :listIdDemande ");
+			sb.append("order by d.dateDebut desc ");
+			
+			TypedQuery<Demande> query = absEntityManager.createQuery(sb.toString(), Demande.class);
+
+			query.setParameter("listIdDemande", listIdDemande);
+			
+			return query.getResultList();
+		}
+		return Lists.newArrayList();
 	}
 
 	@Override
@@ -846,11 +801,11 @@ public class DemandeRepository implements IDemandeRepository {
 
 		// date
 		if (fromDate != null && toDate == null) {
-			sql.append("and d.date_Debut >= :fromDate ");
+			sql.append("and d.date_fin >= :fromDate ");
 		} else if (fromDate == null && toDate != null) {
 			sql.append("and d.date_Debut <= :toDate ");
 		} else if (fromDate != null && toDate != null) {
-			sql.append("and d.date_Debut >= :fromDate and d.date_Debut <= :toDate ");
+			sql.append("and d.date_fin >= :fromDate and d.date_Debut <= :toDate ");
 		}
 
 		// agent
@@ -900,11 +855,11 @@ public class DemandeRepository implements IDemandeRepository {
 
 		// date
 		if (fromDate != null && toDate == null) {
-			sql.append("and d.date_Debut >= :fromDate ");
+			sql.append("and d.date_fin >= :fromDate ");
 		} else if (fromDate == null && toDate != null) {
 			sql.append("and d.date_Debut <= :toDate ");
 		} else if (fromDate != null && toDate != null) {
-			sql.append("and d.date_Debut >= :fromDate and d.date_Debut <= :toDate ");
+			sql.append("and d.date_fin >= :fromDate and d.date_Debut <= :toDate ");
 		}
 
 		// agent
