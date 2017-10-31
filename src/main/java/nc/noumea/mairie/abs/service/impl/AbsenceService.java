@@ -2270,12 +2270,12 @@ public class AbsenceService implements IAbsenceService {
 						toDate, listGroupe, idRefType, agentIds, 300);
 
 			} else if (idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
-				listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds, 300);
+				listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds, idRefType, 300);
 			} else {
 				return new ArrayList<DemandeDto>();
 			}
 		} else {
-			listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds, 150);
+			listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds, null, 150);
 			listeSansFiltre.addAll(demandeRepository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(fromDate,
 					toDate, listGroupe, idRefType, agentIds, (300-listeSansFiltre.size())));
 		}

@@ -495,10 +495,13 @@ public class DemandeRepository implements IDemandeRepository {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select d.id_demande from abs_demande d ");
 		
+		if (idRefGroupeAbsence != null) {
+			sql.append(" inner join abs_ref_type_absence ref on d.id_type_demande=ref.id_ref_type_absence ");
+			if (idRefGroupeAbsence.equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()))
+				sql.append(" inner join abs_demande_conges_annuels ca on d.id_demande=ca.id_demande ");
+		}
 		if (idRefEtat != null)
 			sql.append(" inner join abs_etat_demande ed on d.id_demande=ed.id_demande ");
-		if (idRefGroupeAbsence != null)
-			sql.append(" inner join abs_ref_type_absence ref on d.id_type_demande=ref.id_ref_type_absence ");
 
 		sql.append(" where 1=1 ");
 
@@ -510,10 +513,14 @@ public class DemandeRepository implements IDemandeRepository {
 			sql.append(" and ed.id_ref_etat = :ID_REF_ETAT ");
 		}
 		
-		if (idRefType != null)
-			sql.append(" and d.id_type_demande = :ID_REF_TYPE ");
 		if (idRefGroupeAbsence != null)
 			sql.append(" and ref.id_ref_groupe_absence = :ID_REF_GROUP ");
+		if (idRefType != null) {
+			if (idRefGroupeAbsence == null || !idRefGroupeAbsence.equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()))
+				sql.append(" and d.id_type_demande = :ID_REF_TYPE ");
+			else if (idRefGroupeAbsence.equals(RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()))
+				sql.append(" and ca.id_ref_type_saisi_conge_annuel = :ID_REF_TYPE ");
+		}
 		
 		// date
 		if (fromDate != null && toDate == null) {
@@ -597,8 +604,8 @@ public class DemandeRepository implements IDemandeRepository {
 	}
 
 	@Override
-	public List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche, Integer maxResult) {
-		List<Integer> listIds = listeIdDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, listIdAgentRecherche, maxResult);
+	public List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche, Integer idTypeCA, Integer maxResult) {
+		List<Integer> listIds = listeIdDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, listIdAgentRecherche, idTypeCA, maxResult);
 		if (listIds.isEmpty())
 			return Lists.newArrayList();
 		
@@ -786,11 +793,13 @@ public class DemandeRepository implements IDemandeRepository {
 
 	@Override
 	public List<Integer> listeIdDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate,
-			List<Integer> listIdAgentRecherche, Integer maxResult) {
+			List<Integer> listIdAgentRecherche, Integer idTypeCA, Integer maxResult) {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select d.id_demande from abs_demande d ");
 		sql.append(" inner join abs_etat_demande ed on d.id_demande=ed.id_demande ");
+		if (idTypeCA != null)
+			sql.append(" inner join abs_demande_conges_annuels ca on d.id_demande=ca.id_demande ");
 		sql.append(" inner join abs_ref_type_absence ref on d.id_type_demande=ref.id_ref_type_absence ");
 		sql.append(" where ed.id_etat_demande in ( ");
 		sql.append("select max(ed2.id_etat_demande) from abs_etat_demande ed2 ");
@@ -807,11 +816,13 @@ public class DemandeRepository implements IDemandeRepository {
 		} else if (fromDate != null && toDate != null) {
 			sql.append("and d.date_fin >= :fromDate and d.date_Debut <= :toDate ");
 		}
+		if (idTypeCA != null)
+			sql.append("and ca.id_ref_type_saisi_conge_annuel = :idTypeCA ");
 
 		// agent
-		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
+		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty())
 			sql.append("and d.id_Agent in :idAgentRecherche ");
-		}
+
 		sql.append("order by d.date_Debut desc limit :LIMIT");
 		Query query = absEntityManager.createNativeQuery(sql.toString());
 
@@ -829,6 +840,8 @@ public class DemandeRepository implements IDemandeRepository {
 			query.setParameter("fromDate", fromDate);
 			query.setParameter("toDate", toDate);
 		}
+		if (idTypeCA != null)
+			query.setParameter("idTypeCA", idTypeCA);
 		// agent
 		if (listIdAgentRecherche != null && !listIdAgentRecherche.isEmpty()) {
 			query.setParameter("idAgentRecherche", listIdAgentRecherche);

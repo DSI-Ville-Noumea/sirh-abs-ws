@@ -50,9 +50,9 @@ public interface IDemandeRepository {
 	List<Integer> listeIdDemandesASAAndCongesExcepAndMaladiesSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdRefGroupe,Integer idRefTypeFamille,
 			List<Integer> listIdAgentRecherche, Integer maxResult);
 
-	List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche, Integer maxResult);
+	List<Demande> listeDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche, Integer idTypeCA, Integer maxResult);
 	
-	List<Integer> listeIdDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche, Integer maxResult);
+	List<Integer> listeIdDemandesCongesAnnuelsSIRHAValider(Date fromDate, Date toDate, List<Integer> listIdAgentRecherche, Integer idTypeCA, Integer maxResult);
 
 	List<Demande> listerDemandeCongeUnique(Integer idAgent, Integer annee);
 	
