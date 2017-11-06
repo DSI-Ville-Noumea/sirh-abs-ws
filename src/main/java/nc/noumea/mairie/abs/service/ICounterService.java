@@ -81,7 +81,7 @@ public interface ICounterService {
 
 	CalculDroitsMaladiesVo calculDroitsMaladiesForDemandeMaladies(Integer idAgent, DemandeDto demandeMaladie);
 
-	Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies);
+	Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies, Integer idDemande);
 
 	List<DemandeMaladies> getHistoriqueMaladiesWithDroits(Integer idAgent, Date date);
 }

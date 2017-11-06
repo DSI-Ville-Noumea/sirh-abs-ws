@@ -147,7 +147,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 
 		CalculDroitsMaladiesVo result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie1.getDateFin(), agentDto,
-				demandeMaladie1.getDuree());
+				demandeMaladie1.getDuree(), demandeMaladie1.getIdDemande());
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -176,7 +176,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie2.getDateFin(), agentDto,
-				demandeMaladie2.getDuree());
+				demandeMaladie2.getDuree(), demandeMaladie2.getIdDemande());
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -205,7 +205,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie3.getDateFin(), agentDto,
-				demandeMaladie3.getDuree());
+				demandeMaladie3.getDuree(), demandeMaladie3.getIdDemande());
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -234,7 +234,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie4.getDateFin(), agentDto,
-				demandeMaladie4.getDuree());
+				demandeMaladie4.getDuree(), demandeMaladie4.getIdDemande());
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -263,7 +263,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie5.getDateFin(), agentDto,
-				demandeMaladie5.getDuree());
+				demandeMaladie5.getDuree(), demandeMaladie5.getIdDemande());
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -292,7 +292,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie6.getDateFin(), agentDto,
-				demandeMaladie6.getDuree());
+				demandeMaladie6.getDuree(), demandeMaladie6.getIdDemande());
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -321,7 +321,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie7.getDateFin(), agentDto,
-				demandeMaladie7.getDuree());
+				demandeMaladie7.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -350,7 +350,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie8.getDateFin(), agentDto,
-				demandeMaladie8.getDuree());
+				demandeMaladie8.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -379,7 +379,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie9.getDateFin(), agentDto,
-				demandeMaladie9.getDuree());
+				demandeMaladie9.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -406,7 +406,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie10.getDateFin(), agentDto,
-				demandeMaladie10.getDuree());
+				demandeMaladie10.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -455,7 +455,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		CalculDroitsMaladiesVo result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie1.getDateFin(), agentDto,
-				demandeMaladie1.getDuree());
+				demandeMaladie1.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -484,7 +484,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie2.getDateFin(), agentDto,
-				demandeMaladie2.getDuree());
+				demandeMaladie2.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -513,7 +513,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie3.getDateFin(), agentDto,
-				demandeMaladie3.getDuree());
+				demandeMaladie3.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -542,7 +542,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie4.getDateFin(), agentDto,
-				demandeMaladie4.getDuree());
+				demandeMaladie4.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -569,7 +569,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie5.getDateFin(), agentDto,
-				demandeMaladie5.getDuree());
+				demandeMaladie5.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -651,7 +651,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 
 		CalculDroitsMaladiesVo result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie1.getDateFin(), agentDto,
-				demandeMaladie1.getDuree());
+				demandeMaladie1.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 0);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -879,7 +879,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		CalculDroitsMaladiesVo result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie14.getDateFin(), agentDto,
-				demandeMaladie14.getDuree());
+				demandeMaladie14.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 45);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 75);
@@ -954,7 +954,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		CalculDroitsMaladiesVo result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie2.getDateFin(), agentDto,
-				demandeMaladie2.getDuree());
+				demandeMaladie2.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 60);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -983,7 +983,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie3.getDateFin(), agentDto,
-				demandeMaladie3.getDuree());
+				demandeMaladie3.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 60);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -1012,7 +1012,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie4.getDateFin(), agentDto,
-				demandeMaladie4.getDuree());
+				demandeMaladie4.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 60);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -1041,7 +1041,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie5.getDateFin(), agentDto,
-				demandeMaladie5.getDuree());
+				demandeMaladie5.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 60);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -1068,7 +1068,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie6.getDateFin(), agentDto,
-				demandeMaladie6.getDuree());
+				demandeMaladie6.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 60);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 90);
@@ -1117,7 +1117,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		CalculDroitsMaladiesVo result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie0.getDateFin(), agentDto,
-				demandeMaladie0.getDuree());
+				demandeMaladie0.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -1146,7 +1146,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie1.getDateFin(), agentDto,
-				demandeMaladie1.getDuree());
+				demandeMaladie1.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -1175,7 +1175,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie2.getDateFin(), agentDto,
-				demandeMaladie2.getDuree());
+				demandeMaladie2.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -1204,7 +1204,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie3.getDateFin(), agentDto,
-				demandeMaladie3.getDuree());
+				demandeMaladie3.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -1231,7 +1231,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie4.getDateFin(), agentDto,
-				demandeMaladie4.getDuree());
+				demandeMaladie4.getDuree(), demandeMaladie4.getIdDemande());
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 15);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 0);
@@ -1280,7 +1280,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		CalculDroitsMaladiesVo result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie0.getDateFin(), agentDto,
-				demandeMaladie0.getDuree());
+				demandeMaladie0.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1309,7 +1309,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie1.getDateFin(), agentDto,
-				demandeMaladie1.getDuree());
+				demandeMaladie1.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1338,7 +1338,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie2.getDateFin(), agentDto,
-				demandeMaladie2.getDuree());
+				demandeMaladie2.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1367,7 +1367,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie3.getDateFin(), agentDto,
-				demandeMaladie3.getDuree());
+				demandeMaladie3.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1396,7 +1396,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie4.getDateFin(), agentDto,
-				demandeMaladie4.getDuree());
+				demandeMaladie4.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1425,7 +1425,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie5.getDateFin(), agentDto,
-				demandeMaladie5.getDuree());
+				demandeMaladie5.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1454,7 +1454,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie6.getDateFin(), agentDto,
-				demandeMaladie6.getDuree());
+				demandeMaladie6.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1483,7 +1483,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie7.getDateFin(), agentDto,
-				demandeMaladie7.getDuree());
+				demandeMaladie7.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1512,7 +1512,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie8.getDateFin(), agentDto,
-				demandeMaladie8.getDuree());
+				demandeMaladie8.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1539,7 +1539,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				listMaladies);
 		result = service.calculDroitsMaladies(idAgent,
 				demandeMaladie9.getDateFin(), agentDto,
-				demandeMaladie9.getDuree());
+				demandeMaladie9.getDuree(), null);
 
 		assertEquals(result.getDroitsPleinSalaire().intValue(), 90);
 		assertEquals(result.getDroitsDemiSalaire().intValue(), 270);
@@ -1696,7 +1696,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 		listMaladies.add(demande3);
 
 		Integer result = service.getNombeJourMaladies(idAgent,
-				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies);
+				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies, null);
 
 		assertEquals(result.intValue(), 32);
 	}
@@ -1721,7 +1721,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 		listMaladies.add(demande1);
 
 		Integer result = service.getNombeJourMaladies(idAgent,
-				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies);
+				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies, null);
 
 		assertEquals(result.intValue(), 0);
 	}
@@ -1762,7 +1762,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 		listMaladies.add(demande3);
 
 		Integer result = service.getNombeJourMaladiesCoupesDemiSalaire(idAgent,
-				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies);
+				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies, null);
 
 		assertEquals(result.intValue(), 9);
 	}
@@ -1804,7 +1804,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 
 		Integer result = service.getNombeJourMaladiesCoupesPleinSalaire(
 				idAgent, dateDebutAnneeGlissante, dateFinAnneeGlissante,
-				listMaladies);
+				listMaladies, null);
 
 		assertEquals(result.intValue(), 12);
 	}

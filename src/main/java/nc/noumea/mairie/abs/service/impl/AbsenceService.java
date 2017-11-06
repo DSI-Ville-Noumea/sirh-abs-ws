@@ -2254,6 +2254,7 @@ public class AbsenceService implements IAbsenceService {
 			agentIds.add(idAgentRecherche);
 		}
 
+		// 42022 : Limiter le nombre de résultats à 300
 		List<Demande> listeSansFiltre = new ArrayList<Demande>();
 		List<Integer> listGroupe = new ArrayList<Integer>();
 		listGroupe.add(RefTypeGroupeAbsenceEnum.AS.getValue());
@@ -2266,17 +2267,17 @@ public class AbsenceService implements IAbsenceService {
 				listGroupe = new ArrayList<Integer>();
 				listGroupe.add(idRefGroupeAbsence);
 				listeSansFiltre = demandeRepository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(fromDate,
-						toDate, listGroupe, idRefType, agentIds);
+						toDate, listGroupe, idRefType, agentIds, 300);
 
 			} else if (idRefGroupeAbsence == RefTypeGroupeAbsenceEnum.CONGES_ANNUELS.getValue()) {
-				listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds);
+				listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds, idRefType, 300);
 			} else {
 				return new ArrayList<DemandeDto>();
 			}
 		} else {
-			listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds);
+			listeSansFiltre = demandeRepository.listeDemandesCongesAnnuelsSIRHAValider(fromDate, toDate, agentIds, null, 150);
 			listeSansFiltre.addAll(demandeRepository.listeDemandesASAAndCongesExcepAndMaladiesSIRHAValider(fromDate,
-					toDate, listGroupe, idRefType, agentIds));
+					toDate, listGroupe, idRefType, agentIds, (300-listeSansFiltre.size())));
 		}
 
 		List<RefEtat> listEtats = null;

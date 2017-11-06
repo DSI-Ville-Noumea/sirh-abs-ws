@@ -167,7 +167,7 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 	public boolean checkDepassementCompteurAgent(DemandeDto demandeDto, CheckCompteurAgentVo checkCompteurAgentVo) {
 
 		// on verifie d abord l etat de la demande
-		// si ANNULE PRIS VALIDE ou REFUSE, on n affiche pas d alerte de depassement de compteur
+		// si PROVISOIRE, REJETE, PRISE ou ANNULE, on n affiche pas d alerte de depassement de compteur
 		if (!checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
 
@@ -194,7 +194,7 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 					demandeDto.getDateFin());
 			Integer duree = maladieCounterServiceImpl.getNombeJourMaladies(demandeDto.getAgentWithServiceDto().getIdAgent(),
 					helperService.getDateDebutAnneeForOneDate(demandeDto.getDateDebut(), 1),
-					demandeDto.getDateFin(), listMaladiesEnfantSurAnneeCivile);
+					demandeDto.getDateFin(), listMaladiesEnfantSurAnneeCivile, null);
 			// #39320 : Pour une demande créée, si elle dépasse le quota, on en informe l'utilisateur.
 			if (demandeDto.getIdDemande() == null) {
 				if (demandeDto.getDuree() + duree > SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE)
