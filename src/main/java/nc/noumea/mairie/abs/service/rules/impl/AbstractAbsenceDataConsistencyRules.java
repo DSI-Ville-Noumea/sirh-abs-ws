@@ -430,8 +430,7 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 				}
 			}
 
-			List<AgentWithServiceDto> listAgentsExistantsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation,
-					false);
+			List<AgentWithServiceDto> listAgentsExistantsSansAffectation = sirhWSConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation, false);
 
 			if (null != listAgentsExistantsSansAffectation) {
 				listAgentsExistants.addAll(listAgentsExistantsSansAffectation);
@@ -449,6 +448,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 					if (!listeDemandeDto.contains(dto)) {
 						listeDemandeDto.add(dto);
 					}
+				} else {
+					logger.debug("Aucune affectation n'a été trouvée pour l'agent matricule {}.", d.getIdAgent());
 				}
 			}
 			return listeDemandeDto;
@@ -470,6 +471,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 						if (!listeDemandeDto.contains(dto)) {
 							listeDemandeDto.add(dto);
 						}
+					} else {
+						logger.debug("Aucune affectation n'a été trouvée pour l'agent matricule {}.", d.getIdAgent());
 					}
 				}
 				isfiltreDateDemande = true;
@@ -491,6 +494,8 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 						if (listeDemandeDto.contains(dto))
 							listeDemandeDto.remove(dto);
 					}
+				} else {
+					logger.debug("Aucune affectation n'a été trouvée pour l'agent matricule {}.", d.getIdAgent());
 				}
 			}
 		}
