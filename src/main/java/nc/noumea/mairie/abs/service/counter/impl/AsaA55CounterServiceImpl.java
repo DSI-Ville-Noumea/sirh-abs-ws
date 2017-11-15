@@ -1,7 +1,9 @@
 package nc.noumea.mairie.abs.service.counter.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("AsaA55CounterServiceImpl")
 public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	/**
 	 * appeler depuis Kiosque ou SIRH l historique ABS_AGENT_WEEK_ALIM_MANUELLE
 	 * mise a jour
@@ -46,8 +49,8 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public Integer countAllByYear(Integer annee, Integer idOS) {
-		return counterRepository.countAllByYear(AgentAsaA55Count.class, annee);
+	public Integer countAllByYear(Integer annee, Integer idOS, Integer idAgentRecherche, Date dateMin, Date dateMax) {
+		return counterRepository.countAllByYear(AgentAsaA55Count.class, annee, idAgentRecherche, dateMin, dateMax);
 	}
 
 	/**
@@ -121,6 +124,23 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 		List<CompteurDto> result = new ArrayList<>();
 
 		List<AgentAsaA55Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA55Count.class, null, pageSize, pageNumber);
+		for (AgentAsaA55Count arc : listeArc) {
+			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
+			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
+			result.add(dto);
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<CompteurDto> getListeCompteur(Integer pageSize, Integer pageNumber, Integer idAgentRecherche, String dateMin, String dateMax) throws ParseException {
+		List<CompteurDto> result = new ArrayList<>();
+		
+		Date dateDeb = dateMin != null ? sdf.parse(dateMin) : null;
+		Date dateFin = dateMax != null ? sdf.parse(dateMax) : null;
+
+		List<AgentAsaA55Count> listeArc = counterRepository.getListCounterByDate(AgentAsaA55Count.class, pageSize, pageNumber, idAgentRecherche, dateDeb, dateFin);
 		for (AgentAsaA55Count arc : listeArc) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
 			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);

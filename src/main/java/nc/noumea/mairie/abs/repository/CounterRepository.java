@@ -134,19 +134,41 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public <T> Integer countAllByYear(Class<T> T, Integer annee) {
+	public <T> Integer countAllByYear(Class<T> T, Integer annee, Integer idAgentRecherche, Date dateMin, Date dateMax) {
 		// Build query criteria
 		StringBuilder sb = new StringBuilder();
 		sb.append("select c from " + T.getSimpleName() + " c ");
+		sb.append("where 1=1 ");
 		
 		if(annee != null){
-			sb.append("where year(dateDebut) = :annee ");
+			sb.append("and year(dateDebut) = :annee ");
+		}
+		else if (dateMin != null && dateMax != null) {
+			sb.append("and dateDebut between :dateMin and :dateMax ");
+		} else if (dateMin != null) {
+			sb.append("and dateDebut >= :dateMin ");
+		} else if (dateMax != null) {
+			sb.append("and dateDebut <= :dateMax ");
+		}
+		if(idAgentRecherche != null){
+			sb.append("and idAgent = :idAgentRecherche ");
 		}
 
 		TypedQuery<T> query = absEntityManager.createQuery(sb.toString(), T);
 		
 		if(annee!=null){
 			query.setParameter("annee", annee);
+		}
+		else if (dateMin != null && dateMax != null) {
+			query.setParameter("dateMin", dateMin);
+			query.setParameter("dateMax", dateMax);
+		} else if (dateMin != null) {
+			query.setParameter("dateMin", dateMin);
+		} else if (dateMax != null) {
+			query.setParameter("dateMax", dateMax);
+		}
+		if(idAgentRecherche != null){
+			query.setParameter("idAgentRecherche", idAgentRecherche);
 		}
 
 		return query.getResultList().size();
@@ -346,6 +368,49 @@ public class CounterRepository implements ICounterRepository {
 		if(annee!=null){
 			query.setParameter("annee", annee);
 		}
+		return query.getResultList();
+	}
+
+	@Override
+	public <T> List<T> getListCounterByDate(Class<T> T, Integer pageSize, Integer pageNumber, Integer idAgentRecherche, Date dateMin, Date dateMax) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select c from "+T.getSimpleName()+" c ");
+		sb.append("where 1=1 ");
+		
+		if(dateMin != null && dateMax != null){
+			sb.append("and dateDebut between :dateMin and :dateMax ");
+		} else if (dateMin != null) {
+			sb.append("and dateDebut >= :dateMin ");
+		}else if (dateMax != null) {
+			sb.append("and dateDebut <= :dateMax ");
+		}
+		
+		if (idAgentRecherche != null)
+			sb.append("and c.idAgent = :idAgentRecherche ");
+		
+		sb.append("order by c.idAgent asc, c.dateDebut desc ");
+
+		TypedQuery<T> query = absEntityManager.createQuery(sb.toString(), T);
+		
+		if (pageSize != null)
+			query.setMaxResults(pageSize);
+		
+		if (pageNumber != null && pageSize != null) {
+			query.setFirstResult(pageSize * (pageNumber - 1));
+		}
+
+		if(dateMin != null && dateMax != null){
+			query.setParameter("dateMin", dateMin);
+			query.setParameter("dateMax", dateMax);
+		} else if (dateMin != null) {
+			query.setParameter("dateMin", dateMin);
+		}else if (dateMax != null) {
+			query.setParameter("dateMax", dateMax);
+		}
+		
+		if (idAgentRecherche != null)
+			query.setParameter("idAgentRecherche", idAgentRecherche);
+		
 		return query.getResultList();
 	}
 

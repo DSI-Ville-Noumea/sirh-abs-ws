@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +38,10 @@ public interface ICounterService {
 	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee);
 
 	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee, Integer pageSize, Integer pageNumber);
+	
+	List<CompteurDto> getListeCompteur(Integer pageSize, Integer pageNumber, Integer idAgentRecherche, String dateMin, String dateMax) throws ParseException;
+
+	Integer countAllByYear(Integer annee, Integer idOS, Integer idAgentRecherche, Date dateMin, Date dateMax);
 
 	Integer countAllByYear(Integer annee, Integer idOS);
 

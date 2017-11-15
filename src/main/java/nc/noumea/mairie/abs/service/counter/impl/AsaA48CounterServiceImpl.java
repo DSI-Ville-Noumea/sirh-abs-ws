@@ -154,7 +154,7 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	@Transactional(value = "absTransactionManager")
 	public Integer countAllByYear(Integer annee, Integer idOS) {
 		if (idOS == null)
-			return counterRepository.countAllByYear(AgentAsaA48Count.class, annee);
+			return counterRepository.countAllByYear(AgentAsaA48Count.class, annee, null, null, null);
 		else 
 			return OSRepository.countAllByidOSAndYear(AgentA48OrganisationSyndicale.class, AgentAsaA48Count.class, idOS, annee);
 	}
