@@ -246,6 +246,11 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
+	public List<CompteurDto> getListeCompteurAmicale(Integer idAgentRecherche, Integer annee, Boolean actif) {
+		return null;
+	}
+
+	@Override
 	public Integer countAllByYear(Integer annee, Integer idOS, Integer idAgentRecherche, Date dateMin, Date dateMax) {
 		return null;
 	}

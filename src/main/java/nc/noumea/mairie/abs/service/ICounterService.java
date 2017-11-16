@@ -35,7 +35,9 @@ public interface ICounterService {
 
 	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
 
-	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee);
+	List<CompteurDto> getListeCompteurAmicale(Integer idAgentRecherche, Integer annee, Boolean actif);
+
+	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale, Integer annee);
 
 	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee, Integer pageSize, Integer pageNumber);
 	

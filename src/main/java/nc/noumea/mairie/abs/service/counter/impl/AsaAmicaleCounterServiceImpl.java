@@ -38,6 +38,19 @@ public class AsaAmicaleCounterServiceImpl extends AsaCounterServiceImpl {
 			throw new RuntimeException("An error occured while trying to update asa amicale counters :", e);
 		}
 	}
+	
+	@Override
+	public List<CompteurDto> getListeCompteurAmicale(Integer idAgentRecherche, Integer annee, Boolean actif) {
+		List<CompteurDto> result = new ArrayList<>();
+
+		List<AgentAsaAmicaleCount> listeArc = counterRepository.getListCounter(AgentAsaAmicaleCount.class, idAgentRecherche, annee, actif);
+		for (AgentAsaAmicaleCount arc : listeArc) {
+			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
+			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
+			result.add(dto);
+		}
+		return result;
+	}
 
 	/**
 	 * Mise à jour manuelle du compteur de ASA AMICALE
@@ -87,20 +100,6 @@ public class AsaAmicaleCounterServiceImpl extends AsaCounterServiceImpl {
 		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
 
 		return srm;
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
-		List<CompteurDto> result = new ArrayList<>();
-
-		List<AgentAsaAmicaleCount> listeArc = counterRepository.getListCounter(AgentAsaAmicaleCount.class);
-		for (AgentAsaAmicaleCount arc : listeArc) {
-			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
-			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
-			result.add(dto);
-		}
-		return result;
 	}
 
 	/**

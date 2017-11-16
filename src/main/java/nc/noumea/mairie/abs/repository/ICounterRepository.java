@@ -31,6 +31,8 @@ public interface ICounterRepository {
 	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
 
 	<T> List<T> getListCounter(Class<T> T);
+	
+	<T> List<T> getListCounter(Class<T> T, Integer idAgentRecherche, Integer annee, Boolean actif);
 
 	List<AgentHistoAlimManuelle> getListHisto(Integer idAgent, AgentCount compteurAgent);
 

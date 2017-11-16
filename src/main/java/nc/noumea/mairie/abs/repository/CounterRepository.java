@@ -220,6 +220,38 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
+	public <T> List<T> getListCounter(Class<T> T, Integer idAgentRecherche, Integer annee, Boolean actif) {
+		// Build query criteria
+		StringBuilder sb = new StringBuilder();
+		sb.append("select c from " + T.getSimpleName() + " c ");
+		sb.append("where 1=1 ");
+		
+		if(annee != null){
+			sb.append("and year(dateDebut) = :annee ");
+		}
+		if(idAgentRecherche != null){
+			sb.append("and idAgent = :idAgentRecherche ");
+		}
+		if(actif != null){
+			sb.append("and actif = :actif ");
+		}
+
+		TypedQuery<T> query = absEntityManager.createQuery(sb.toString(), T);
+		
+		if(annee!=null){
+			query.setParameter("annee", annee);
+		}
+		if(idAgentRecherche != null){
+			query.setParameter("idAgentRecherche", idAgentRecherche);
+		}
+		if(actif!=null){
+			query.setParameter("actif", actif);
+		}
+
+		return query.getResultList();
+	}
+
+	@Override
 	public List<AgentHistoAlimManuelle> getListHisto(Integer idAgent, AgentCount compteurAgent) {
 		TypedQuery<AgentHistoAlimManuelle> q = absEntityManager
 				.createQuery(
