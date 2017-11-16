@@ -38,7 +38,7 @@ public class AbsAsaAmicaleDataConsistencyRulesImpl extends AbsAsaDataConsistency
 		// ne bloque pas la demande
 		if (0 > soldeAsaAmicale.getTotalMinutes() - sommeDemandeEnCours - ((DemandeAsa) demande).getDuree()) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ASA_MSG));
-			srm.getErrors().add(DEPASSEMENT_DROITS_ASA_MSG);
+			srm.getInfos().add(DEPASSEMENT_DROITS_ASA_MSG);
 		}
 
 		return srm;
