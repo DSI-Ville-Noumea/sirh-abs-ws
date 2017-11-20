@@ -1,11 +1,7 @@
 package nc.noumea.mairie.abs.repository;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -70,7 +66,7 @@ public class MaladiesRepository implements IMaladiesRepository {
 
 	@Override
 	public List<DemandeMaladies> getListMaladiesAnneGlissanteRetroactiveByAgent(
-			Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, Integer idDemande) {
+			Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, Integer idDemande, boolean isCancel) {
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from DemandeMaladies d "
@@ -90,13 +86,20 @@ public class MaladiesRepository implements IMaladiesRepository {
 			sb.append("and d2.dateFin >= :dateDebut ");
 		
 		sb.append("group by ed2.demande ) ");
-		sb.append("and (ed.etat in ( :PRISE, :VALIDEE ) OR d.idDemande = :idDemande) ");
+		sb.append("and (ed.etat in ( :PRISE, :VALIDEE ) ");
+		
+		if (isCancel)
+			sb.append("AND d.idDemande != :idDemande) ");
+		else
+			sb.append("OR d.idDemande = :idDemande) ");
+		
+		sb.append(") ");
 		sb.append("order by d.dateDebut asc ");
 
 		TypedQuery<DemandeMaladies> q = absEntityManager.createQuery(sb.toString(), DemandeMaladies.class);
 
-		q.setParameter("idAgent", idAgent);
 		q.setParameter("idDemande", idDemande);
+		q.setParameter("idAgent", idAgent);
 		q.setParameter("PRISE", RefEtatEnum.PRISE);
 		q.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
 		
@@ -228,7 +231,7 @@ public class MaladiesRepository implements IMaladiesRepository {
 		sb.append("select d from DemandeMaladies d inner join fetch d.etatsDemande ed ");
 		sb.append("where d.idAgent = :idAgentConcerne ");
 		sb.append(" and d.type.idRefTypeAbsence in ( :MALADIE , :MALADIE_ENFANT , :MALADIE_CONVALESCENCE , :MALADIE_EVASAN , :MALADIE_HOSPITALISATION ) ");
-		sb.append("and d.dateDebut >= :dateDebut ");
+		sb.append("and d.dateDebut > :dateDebut ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :PRISE, :VALIDEE )) ");
 

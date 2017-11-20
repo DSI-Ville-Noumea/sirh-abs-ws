@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.RefDroitsMaladies;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -90,11 +91,11 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 	@Override
 	public CalculDroitsMaladiesVo calculDroitsMaladiesForDemandeMaladies(
 			Integer idAgent, DemandeDto demandeMaladie) {
-		return calculDroitsMaladies(idAgent, demandeMaladie.getDateFin(), null, demandeMaladie.getDuree(), demandeMaladie.getIdDemande());
+		return calculDroitsMaladies(idAgent, demandeMaladie.getDateDebut(), null, demandeMaladie.getDuree(), demandeMaladie.getIdDemande());
 	}
 
 	protected CalculDroitsMaladiesVo calculDroitsMaladiesRetroactivement(Integer idAgent,
-			Date dateFinAnneeGlissante, Integer idDemandeRetro, Integer idCurrentDemande) {
+			Date dateFinAnneeGlissante, Integer idDemandeRetro, Integer idCurrentDemande, boolean isCancel) {
 
 		logger.info("MaladieCounterServiceImpl calculDroitsMaladiesRetroactivement for agent {}, demande id {} ", idAgent, idDemandeRetro);
 
@@ -106,7 +107,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		
 		// b. on calcul le nombre de jours maladies a l'état 'PRISE' ou 'VALIDEE PAR LA DRH' sur une année glissantes
 		List<DemandeMaladies> listMaladies = maladiesRepository.getListMaladiesAnneGlissanteRetroactiveByAgent(idAgent,
-						dateDebutAnneeGlissante, dateFinAnneeGlissante, idDemandeRetro);
+						dateDebutAnneeGlissante, dateFinAnneeGlissante, idDemandeRetro, isCancel);
 
 		Integer nombreJoursMaladies = getNombeJourMaladies(idAgent,
 				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies, null);
@@ -469,15 +470,26 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm,
 			Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
 		
-		CalculDroitsMaladiesVo vo = calculDroitsMaladies(demande.getIdAgent(),
-				demande.getDateFin(), null,
-				((DemandeMaladies) demande).getDuree(), null);
-
-		updateDemandeWithNewSolde((DemandeMaladies) demande,
-				vo.getTotalPris(), vo.getNombreJoursCoupeDemiSalaire(),
-				vo.getNombreJoursCoupePleinSalaire(),
-				vo.getNombreJoursResteAPrendreDemiSalaire(),
-				vo.getNombreJoursResteAPrendrePleinSalaire());
+		boolean isCancel = false;
+		// Si c'est une annulation de demande, on met à zéro les compteurs de cette demande.
+		if (demandeEtatChangeDto.getIdRefEtat() != null &&
+				demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+			updateDemandeWithNewSolde((DemandeMaladies) demande,
+					null, null,
+					null, null, null);
+			// Pour une annulation, il ne faut pas que la demande soit prise en compte dans le recalcul des soldes.
+			isCancel = true;
+		} else {
+			CalculDroitsMaladiesVo vo = calculDroitsMaladies(demande.getIdAgent(),
+					demande.getDateDebut(), null,
+					((DemandeMaladies) demande).getDuree(), null);
+	
+			updateDemandeWithNewSolde((DemandeMaladies) demande,
+					vo.getTotalPris(), vo.getNombreJoursCoupeDemiSalaire(),
+					vo.getNombreJoursCoupePleinSalaire(),
+					vo.getNombreJoursResteAPrendreDemiSalaire(),
+					vo.getNombreJoursResteAPrendrePleinSalaire());
+		}
 
 		// #43076 : Mise à jour rétroactive des soldes des maladies futures
 		List<DemandeMaladies> listDemandesFutures = maladiesRepository.getListMaladiesFuturesForDemande(demande.getIdAgent(), demande.getDateDebut());
@@ -487,7 +499,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		if (listDemandesFutures != null && !listDemandesFutures.isEmpty()) {
 			for(DemandeMaladies mal : listDemandesFutures) {
 				CalculDroitsMaladiesVo dm = calculDroitsMaladiesRetroactivement(mal.getIdAgent(),
-						mal.getDateFin(), demande.getIdDemande(), mal.getIdDemande());
+						mal.getDateDebut(), demande.getIdDemande(), mal.getIdDemande(), isCancel);
 
 				updateDemandeWithNewSolde((DemandeMaladies) mal,
 						dm.getTotalPris(), dm.getNombreJoursCoupeDemiSalaire(),
