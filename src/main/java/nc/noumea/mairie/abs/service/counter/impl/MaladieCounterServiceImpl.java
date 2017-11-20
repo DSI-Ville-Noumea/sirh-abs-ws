@@ -4,12 +4,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Period;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.RefDroitsMaladies;
-import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
@@ -18,15 +26,10 @@ import nc.noumea.mairie.abs.dto.SoldeEnfantMaladeDto;
 import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.repository.IMaladiesRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.transformer.DemandeComparator;
 import nc.noumea.mairie.abs.vo.CalculDroitsMaladiesVo;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
-
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.Period;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service("MaladieCounterServiceImpl")
 public class MaladieCounterServiceImpl extends AbstractCounterService {
@@ -90,6 +93,85 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		return calculDroitsMaladies(idAgent, demandeMaladie.getDateFin(), null, demandeMaladie.getDuree(), demandeMaladie.getIdDemande());
 	}
 
+	protected CalculDroitsMaladiesVo calculDroitsMaladiesRetroactivement(Integer idAgent,
+			Date dateFinAnneeGlissante, Integer idDemandeRetro, Integer idCurrentDemande) {
+
+		logger.info("MaladieCounterServiceImpl calculDroitsMaladiesRetroactivement for agent {}, demande id {} ", idAgent, idDemandeRetro);
+
+		CalculDroitsMaladiesVo result = new CalculDroitsMaladiesVo();
+
+		// a. calcul periode de reference
+		Date dateDebutAnneeGlissante = new DateTime(dateFinAnneeGlissante)
+				.minusYears(1).plusDays(1).withMillisOfDay(0).toDate();
+		
+		// b. on calcul le nombre de jours maladies a l'état 'PRISE' ou 'VALIDEE PAR LA DRH' sur une année glissantes
+		List<DemandeMaladies> listMaladies = maladiesRepository.getListMaladiesAnneGlissanteRetroactiveByAgent(idAgent,
+						dateDebutAnneeGlissante, dateFinAnneeGlissante, idDemandeRetro);
+
+		Integer nombreJoursMaladies = getNombeJourMaladies(idAgent,
+				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies, null);
+
+		Integer nombreJoursMaladiesCoupesDemiSalaire = getNombeJourMaladiesCoupesDemiSalaire(
+				idAgent, dateDebutAnneeGlissante, dateFinAnneeGlissante,
+				listMaladies, idCurrentDemande);
+		Integer nombreJoursMaladiesCoupesPleinSalaire = getNombeJourMaladiesCoupesPleinSalaire(
+				idAgent, dateDebutAnneeGlissante, dateFinAnneeGlissante,
+				listMaladies, idCurrentDemande);
+
+		// on recupere le statut de l agent
+		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
+		// contractuel, convention coll
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent),
+				dateFinAnneeGlissante);
+
+		// on recupere les droits de l agent
+		RefDroitsMaladies droitsMaladies = getDroitsAgent(idAgent,
+				dateFinAnneeGlissante, null, carr);
+
+		// c. calcul le nombre de jour pris en PS
+		Integer nombreJoursMaladiesPrisEnPS = nombreJoursMaladies
+				- nombreJoursMaladiesCoupesPleinSalaire
+				- nombreJoursMaladiesCoupesDemiSalaire;
+
+		// e. recalculer le nombre de jours coupes en DS
+		Integer nombreJoursCoupesDS = 0;
+		if (droitsMaladies.getNombreJoursPleinSalaire() < nombreJoursMaladiesPrisEnPS) {
+			Integer nombreJoursRestantACouper = nombreJoursMaladiesPrisEnPS - droitsMaladies.getNombreJoursPleinSalaire();
+			
+			nombreJoursCoupesDS = nombreJoursRestantACouper > droitsMaladies.getNombreJoursDemiSalaire() - nombreJoursMaladiesCoupesDemiSalaire
+					? droitsMaladies.getNombreJoursDemiSalaire() - nombreJoursMaladiesCoupesDemiSalaire
+					: nombreJoursRestantACouper;
+		}
+
+		// f. calcul le nombre de jours coupes en PS
+		Integer nombreJoursCoupesPS = nombreJoursMaladiesPrisEnPS - droitsMaladies.getNombreJoursPleinSalaire() - nombreJoursCoupesDS > 0 
+				? nombreJoursMaladiesPrisEnPS - droitsMaladies.getNombreJoursPleinSalaire() - nombreJoursCoupesDS
+				: 0;
+
+		// g. calcul du nombre de jour reste a prendre en PS
+		Integer nombreJoursRapPS = droitsMaladies.getNombreJoursPleinSalaire() > nombreJoursMaladiesPrisEnPS ? 
+				droitsMaladies.getNombreJoursPleinSalaire() - nombreJoursMaladiesPrisEnPS
+				: 0;
+
+		// h. calcul du nombre de jour reste a prendre en DS
+		Integer nombreJoursRapDS = droitsMaladies.getNombreJoursPleinSalaire() > nombreJoursMaladiesPrisEnPS ? 
+				droitsMaladies.getNombreJoursDemiSalaire() : 
+				(nombreJoursCoupesDS + nombreJoursMaladiesCoupesDemiSalaire < droitsMaladies.getNombreJoursDemiSalaire()) ? 
+				droitsMaladies.getNombreJoursDemiSalaire() - (nombreJoursCoupesDS + nombreJoursMaladiesCoupesDemiSalaire)
+				: 0;
+
+		result.setDroitsDemiSalaire(droitsMaladies.getNombreJoursDemiSalaire());
+		result.setDroitsPleinSalaire(droitsMaladies.getNombreJoursPleinSalaire());
+		result.setNombreJoursCoupeDemiSalaire(nombreJoursCoupesDS);
+		result.setNombreJoursCoupePleinSalaire(nombreJoursCoupesPS);
+		result.setNombreJoursResteAPrendreDemiSalaire(nombreJoursRapDS);
+		result.setNombreJoursResteAPrendrePleinSalaire(nombreJoursRapPS);
+		result.setTotalPris(nombreJoursMaladies);
+
+		return result;
+	}
+
 	protected CalculDroitsMaladiesVo calculDroitsMaladies(Integer idAgent,
 			Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto, Double duree, Integer idDemande) {
 
@@ -100,7 +182,8 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		// a. calcul periode de reference
 		Date dateDebutAnneeGlissante = new DateTime(dateFinAnneeGlissante)
 				.minusYears(1).plusDays(1).withMillisOfDay(0).toDate();
-
+		
+		
 		// b. on calcul le nombre de jours maladies a l'état 'PRISE' ou 'VALIDEE PAR LA DRH' sur une année glissantes
 		List<DemandeMaladies> listMaladies = maladiesRepository.getListMaladiesAnneGlissanteByAgent(idAgent,
 						dateDebutAnneeGlissante, dateFinAnneeGlissante);
@@ -385,7 +468,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 	@Override
 	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm,
 			Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
-
+		
 		CalculDroitsMaladiesVo vo = calculDroitsMaladies(demande.getIdAgent(),
 				demande.getDateFin(), null,
 				((DemandeMaladies) demande).getDuree(), null);
@@ -395,6 +478,24 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 				vo.getNombreJoursCoupePleinSalaire(),
 				vo.getNombreJoursResteAPrendreDemiSalaire(),
 				vo.getNombreJoursResteAPrendrePleinSalaire());
+
+		// #43076 : Mise à jour rétroactive des soldes des maladies futures
+		List<DemandeMaladies> listDemandesFutures = maladiesRepository.getListMaladiesFuturesForDemande(demande.getIdAgent(), demande.getDateDebut());
+		// Les soldes des demandes doivent être mises à jour par ordre chronologique sur les dates de début !
+		listDemandesFutures.sort(new DemandeComparator());
+		
+		if (listDemandesFutures != null && !listDemandesFutures.isEmpty()) {
+			for(DemandeMaladies mal : listDemandesFutures) {
+				CalculDroitsMaladiesVo dm = calculDroitsMaladiesRetroactivement(mal.getIdAgent(),
+						mal.getDateFin(), demande.getIdDemande(), mal.getIdDemande());
+
+				updateDemandeWithNewSolde((DemandeMaladies) mal,
+						dm.getTotalPris(), dm.getNombreJoursCoupeDemiSalaire(),
+						dm.getNombreJoursCoupePleinSalaire(),
+						dm.getNombreJoursResteAPrendreDemiSalaire(),
+						dm.getNombreJoursResteAPrendrePleinSalaire());
+			}
+		}
 
 		return srm;
 	}

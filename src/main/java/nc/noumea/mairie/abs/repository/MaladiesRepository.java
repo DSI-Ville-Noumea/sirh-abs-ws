@@ -1,7 +1,11 @@
 package nc.noumea.mairie.abs.repository;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -48,6 +52,51 @@ public class MaladiesRepository implements IMaladiesRepository {
 		TypedQuery<DemandeMaladies> q = absEntityManager.createQuery(sb.toString(), DemandeMaladies.class);
 
 		q.setParameter("idAgent", idAgent);
+		q.setParameter("PRISE", RefEtatEnum.PRISE);
+		q.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
+		
+		if(null != dateDebutAnneeGlissante)
+			q.setParameter("dateDebut", dateDebutAnneeGlissante);
+		
+		q.setParameter("dateFin", dateFinAnneeGlissante);
+		q.setParameter("MALADIE", RefTypeAbsenceEnum.MALADIE.getValue());
+		q.setParameter("MALADIE_ENFANT", RefTypeAbsenceEnum.MALADIE_ENFANT_MALADE.getValue());
+		q.setParameter("MALADIE_CONVALESCENCE", RefTypeAbsenceEnum.MALADIE_CONVALESCENCE.getValue());
+		q.setParameter("MALADIE_EVASAN", RefTypeAbsenceEnum.MALADIE_EVASAN.getValue());
+		q.setParameter("MALADIE_HOSPITALISATION", RefTypeAbsenceEnum.MALADIE_HOSPITALISATION.getValue());
+
+		return q.getResultList();
+	}
+
+	@Override
+	public List<DemandeMaladies> getListMaladiesAnneGlissanteRetroactiveByAgent(
+			Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, Integer idDemande) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from DemandeMaladies d "
+				+ "inner join d.etatsDemande ed "
+				+ "where d.idAgent = :idAgent ");
+		sb.append(" and d.type.idRefTypeAbsence in ( :MALADIE , :MALADIE_ENFANT , :MALADIE_CONVALESCENCE , :MALADIE_EVASAN , :MALADIE_HOSPITALISATION ) ");
+		sb.append(" and d.dateDebut <= :dateFin ");
+		
+		if(null != dateDebutAnneeGlissante) 
+			sb.append(" and d.dateFin >= :dateDebut ");
+				
+		sb.append(" and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 "
+				+ "inner join ed2.demande d2 where d2.idAgent = :idAgent ");
+		sb.append("and d2.dateDebut <= :dateFin ");
+		
+		if(null != dateDebutAnneeGlissante) 
+			sb.append("and d2.dateFin >= :dateDebut ");
+		
+		sb.append("group by ed2.demande ) ");
+		sb.append("and (ed.etat in ( :PRISE, :VALIDEE ) OR d.idDemande = :idDemande) ");
+		sb.append("order by d.dateDebut asc ");
+
+		TypedQuery<DemandeMaladies> q = absEntityManager.createQuery(sb.toString(), DemandeMaladies.class);
+
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("idDemande", idDemande);
 		q.setParameter("PRISE", RefEtatEnum.PRISE);
 		q.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
 		
@@ -168,6 +217,33 @@ public class MaladiesRepository implements IMaladiesRepository {
 		query.setParameter("ANNULEE", RefEtatEnum.ANNULEE);
 		query.setParameter("REFUSEE", RefEtatEnum.REFUSEE);
 		query.setParameter("REJETE", RefEtatEnum.REJETE);
+
+		return query.getResultList();
+	}
+
+	@Override
+	public List<DemandeMaladies> getListMaladiesFuturesForDemande(Integer idAgent, Date dateDebut) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select d from DemandeMaladies d inner join fetch d.etatsDemande ed ");
+		sb.append("where d.idAgent = :idAgentConcerne ");
+		sb.append(" and d.type.idRefTypeAbsence in ( :MALADIE , :MALADIE_ENFANT , :MALADIE_CONVALESCENCE , :MALADIE_EVASAN , :MALADIE_HOSPITALISATION ) ");
+		sb.append("and d.dateDebut >= :dateDebut ");
+		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
+		sb.append("and ed.etat in ( :PRISE, :VALIDEE )) ");
+
+		TypedQuery<DemandeMaladies> query = absEntityManager.createQuery(sb.toString(), DemandeMaladies.class);
+		query.setParameter("idAgentConcerne", idAgent);
+		query.setParameter("dateDebut", dateDebut);
+		
+		query.setParameter("PRISE", RefEtatEnum.PRISE);
+		query.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
+
+		query.setParameter("MALADIE", RefTypeAbsenceEnum.MALADIE.getValue());
+		query.setParameter("MALADIE_ENFANT", RefTypeAbsenceEnum.MALADIE_ENFANT_MALADE.getValue());
+		query.setParameter("MALADIE_CONVALESCENCE", RefTypeAbsenceEnum.MALADIE_CONVALESCENCE.getValue());
+		query.setParameter("MALADIE_EVASAN", RefTypeAbsenceEnum.MALADIE_EVASAN.getValue());
+		query.setParameter("MALADIE_HOSPITALISATION", RefTypeAbsenceEnum.MALADIE_HOSPITALISATION.getValue());
 
 		return query.getResultList();
 	}
