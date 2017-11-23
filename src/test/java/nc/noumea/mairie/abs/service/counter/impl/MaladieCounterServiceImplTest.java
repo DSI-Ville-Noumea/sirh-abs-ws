@@ -477,7 +477,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 
 		prepareTestsRecursif(idAgent, demandeMaladie1.getDateFin(), droitsMaladies, listMaladies, 123);
 		CalculDroitsMaladiesVo result = service.calculDroitsMaladiesRetroactivement(idAgent,
-				demandeMaladie1.getDateFin(), 123, 123, false);
+				demandeMaladie1.getDateFin(), 123, 123, 9, false);
 
 		assertEquals(20, result.getDroitsPleinSalaire().intValue());
 		assertEquals(15, result.getDroitsDemiSalaire().intValue());
@@ -503,7 +503,7 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 		prepareTestsRecursif(idAgent, demandeMaladie2.getDateFin(), droitsMaladies,
 				listMaladies, 124);
 		result = service.calculDroitsMaladiesRetroactivement(idAgent,
-				demandeMaladie2.getDateFin(), 124, 124, false);
+				demandeMaladie2.getDateFin(), 124, 124, 2, false);
 
 		assertEquals(20, result.getDroitsPleinSalaire().intValue());
 		assertEquals(15, result.getDroitsDemiSalaire().intValue());
