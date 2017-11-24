@@ -42,14 +42,13 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 	protected IMaladiesRepository maladiesRepository;
 
 	@Override
-	public SoldeMaladiesDto getSoldeByAgent(Integer idAgent,
-			Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto) {
+	public SoldeMaladiesDto getSoldeByAgent(Integer idAgent, Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto) {
 
 		logger.info("MaladieCounterServiceImpl getSoldeByAgent : " + idAgent);
 
 		SoldeMaladiesDto dto = new SoldeMaladiesDto();
 
-		CalculDroitsMaladiesVo vo = calculDroitsMaladiesRetroactivement(idAgent, dateFinAnneeGlissante, null, null, 0, false);
+		CalculDroitsMaladiesVo vo = calculDroitsMaladiesRetroactivement(idAgent, dateFinAnneeGlissante, null, 0, false);
 
 		dto.setDroitsDemiSalaire(vo.getDroitsDemiSalaire());
 		dto.setDroitsPleinSalaire(vo.getDroitsPleinSalaire());
@@ -171,9 +170,9 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 	}*/
 
 	protected CalculDroitsMaladiesVo calculDroitsMaladiesRetroactivement(Integer idAgent,
-			Date dateFinAnneeGlissante, Integer idDemandeRetro, Integer idCurrentDemande, Integer duree, boolean isCancel) {
+			Date dateFinAnneeGlissante, Integer idDemandeRetro, Integer duree, boolean isCancel) {
 
-		logger.info("MaladieCounterServiceImpl calculDroitsMaladiesRetroactivement for agent {}, demande id {}. Retro demande is id {} ", idAgent, idCurrentDemande, idDemandeRetro);
+		logger.info("MaladieCounterServiceImpl calculDroitsMaladiesRetroactivement for agent {}, demande id {}. Retro demande is id {} ", idAgent, idDemandeRetro);
 
 		CalculDroitsMaladiesVo result = new CalculDroitsMaladiesVo();
 
@@ -185,22 +184,33 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		List<DemandeMaladies> listMaladies = maladiesRepository.getListMaladiesAnneGlissanteRetroactiveByAgent(idAgent,
 						dateDebutAnneeGlissante, dateFinAnneeGlissante, idDemandeRetro, isCancel);
 
-		Integer totalPris = getNombeJourMaladies(idAgent,
-				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies, null);
+		Integer totalPris = getNombeJourMaladies(idAgent, dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies, null);
 
-		// on recupere le statut de l agent
-		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
-		// contractuel, convention coll
+		// on recupere le statut de l agent on recherche sa carriere pour 
+		// avoir son statut (Fonctionnaire, contractuel, convention coll)
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
 				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent),
 				dateFinAnneeGlissante);
 
 		// on recupere les droits de l agent
-		RefDroitsMaladies droitsMaladies = getDroitsAgent(idAgent,
-				dateFinAnneeGlissante, null, carr);
+		RefDroitsMaladies droitsMaladies = getDroitsAgent(idAgent, dateFinAnneeGlissante, null, carr);
 		
 		Integer droitPS = droitsMaladies.getNombreJoursPleinSalaire();
 		Integer droitDS = droitsMaladies.getNombreJoursDemiSalaire();
+
+		// CAS PARTICULIER : si nombre de jours MALADIES >= 364 (malade toute
+		// une année), l'agent ne percoit aucun salaire sur la totalite de la
+		// maladie posee
+		if (totalPris >= QUOTA_ABSENCES_ANNUEL) {
+			result.setDroitsDemiSalaire(droitDS);
+			result.setDroitsPleinSalaire(droitPS);
+			result.setNombreJoursCoupeDemiSalaire(0);
+			result.setNombreJoursCoupePleinSalaire(duree);
+			result.setNombreJoursResteAPrendreDemiSalaire(0);
+			result.setNombreJoursResteAPrendrePleinSalaire(0);
+			result.setTotalPris(totalPris);
+			return result;
+		}
 		
 		// Reste à prendre
 		Integer rapPS = droitPS - totalPris;
@@ -237,8 +247,8 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 			}
 		}
 
-		result.setDroitsDemiSalaire(droitPS);
-		result.setDroitsPleinSalaire(droitDS);
+		result.setDroitsDemiSalaire(droitDS);
+		result.setDroitsPleinSalaire(droitPS);
 		result.setNombreJoursCoupeDemiSalaire(coupeDS);
 		result.setNombreJoursCoupePleinSalaire(coupePS);
 		result.setNombreJoursResteAPrendreDemiSalaire(rapDS);
@@ -576,7 +586,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 			for(DemandeMaladies mal : listDemandesFutures) {
 				logger.debug("Mise à jour du solde de la demande {}, pour l'agent matricule {}", mal.getIdDemande(), demande.getIdAgent());
 				CalculDroitsMaladiesVo dm = calculDroitsMaladiesRetroactivement(mal.getIdAgent(),
-						mal.getDateDebut(), demande.getIdDemande(), mal.getIdDemande(), mal.getDuree().intValue(), isCancel);
+						mal.getDateDebut(), demande.getIdDemande(), mal.getDuree().intValue(), isCancel);
 
 				updateDemandeWithNewSolde((DemandeMaladies) mal,
 						dm.getTotalPris(), dm.getNombreJoursCoupeDemiSalaire(),
@@ -621,7 +631,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 //	@Transactional
 //	public boolean updateSoldesMaladies() {
 //		// 1 : Récupérer la liste des agents actifs
-//		List<Integer> listIdAgentsActifs = sirhWSConsumer.getListAgentActiviteAnnuaire(); //listAgentActiviteAnnuaire();
+//		List<Integer> listIdAgentsActifs = sirhWSConsumer.getListAgentActiviteAnnuaire();
 //		
 //		for (Integer idAgent : listIdAgentsActifs) {
 //			List<DemandeMaladies> listDemandes =  maladiesRepository.getListMaladiesAnneGlissanteByAgent(9002252, new DateTime(2016, 1, 1, 0, 0, 0).toDate(), new Date());
@@ -630,7 +640,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 //			for (DemandeMaladies maladie : listDemandes) {
 //				// 3 : Mettre à jour les soldes
 //				CalculDroitsMaladiesVo dm = calculDroitsMaladiesRetroactivement(maladie.getIdAgent(),
-//						maladie.getDateDebut(), null, null, maladie.getDuree().intValue(), false);
+//						maladie.getDateDebut(), null, maladie.getDuree().intValue(), false);
 //
 //				updateDemandeWithNewSolde((DemandeMaladies) maladie,
 //						dm.getTotalPris(), dm.getNombreJoursCoupeDemiSalaire(),

@@ -36,10 +36,8 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 
 	private RefTypeAbsence type;
 
-	IAgentMatriculeConverterService agentMatriculeService = Mockito
-			.mock(IAgentMatriculeConverterService.class);
-	IMaladiesRepository maladiesRepository = Mockito
-			.mock(IMaladiesRepository.class);
+	IAgentMatriculeConverterService agentMatriculeService = Mockito.mock(IAgentMatriculeConverterService.class);
+	IMaladiesRepository maladiesRepository = Mockito.mock(IMaladiesRepository.class);
 	ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
 	HelperService helperService = Mockito.mock(HelperService.class);
 	ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
@@ -431,7 +429,6 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 		assertEquals(result.getTotalPris().intValue(), 122);
 	}
 
-	// contractuels et conventions coll.
 	@Test
 	public void getSoldeAgent_withCalculRetroactif() {
 
@@ -475,9 +472,9 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 		
 		listMaladies.add(demandeMaladie1);
 
-		prepareTestsRecursif(idAgent, demandeMaladie1.getDateFin(), droitsMaladies, listMaladies, 123);
+		prepareTestsRecursif(idAgent, demandeMaladie1.getDateFin(), droitsMaladies, listMaladies, demandeMaladie1.getIdDemande());
 		CalculDroitsMaladiesVo result = service.calculDroitsMaladiesRetroactivement(idAgent,
-				demandeMaladie1.getDateFin(), 123, 123, 9, false);
+				demandeMaladie1.getDateFin(), demandeMaladie1.getIdDemande(), demandeMaladie1.getDuree().intValue(), false);
 
 		assertEquals(20, result.getDroitsPleinSalaire().intValue());
 		assertEquals(15, result.getDroitsDemiSalaire().intValue());
@@ -501,9 +498,9 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 		listMaladies.add(demandeMaladie2);
 		
 		prepareTestsRecursif(idAgent, demandeMaladie2.getDateFin(), droitsMaladies,
-				listMaladies, 124);
+				listMaladies, demandeMaladie2.getIdDemande());
 		result = service.calculDroitsMaladiesRetroactivement(idAgent,
-				demandeMaladie2.getDateFin(), 124, 124, 2, false);
+				demandeMaladie2.getDateFin(), demandeMaladie2.getIdDemande(), demandeMaladie2.getDuree().intValue(), false);
 
 		assertEquals(20, result.getDroitsPleinSalaire().intValue());
 		assertEquals(15, result.getDroitsDemiSalaire().intValue());
@@ -512,6 +509,128 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 		assertEquals(0, result.getNombreJoursCoupePleinSalaire().intValue());
 		assertEquals(0, result.getNombreJoursCoupeDemiSalaire().intValue());
 		assertEquals(11, result.getTotalPris().intValue());
+	}
+
+	@Test
+	public void getSoldeRetroactif() {
+
+		Integer idAgent = 9003309;
+
+		AgentGeneriqueDto agentDto = new AgentGeneriqueDto();
+		agentDto.setIdAgent(idAgent);
+		agentDto.setNomatr(idAgent - 9000000);
+		agentDto.setDateDerniereEmbauche(new DateTime(2013, 10, 1, 0, 0, 0).toDate());
+
+		RefDroitsMaladies droitsMaladies = new RefDroitsMaladies();
+		droitsMaladies.setAnneeAnciennete(10);
+		droitsMaladies.setFonctionnaire(true);
+		droitsMaladies.setNombreJoursPleinSalaire(15);
+		droitsMaladies.setNombreJoursDemiSalaire(10);
+
+		List<DemandeMaladies> listMaladies = new ArrayList<DemandeMaladies>();
+
+		// ligne DE1
+		DemandeMaladies demandeMaladie1 = new DemandeMaladies();
+		demandeMaladie1.setType(type);
+		demandeMaladie1.setDateDebut(new DateTime(2014, 2, 20, 0, 0, 0).toDate());
+		demandeMaladie1.setDateFin(new DateTime(2014, 2, 28, 23, 59, 59).toDate());
+		demandeMaladie1.setDuree(8.0);
+		demandeMaladie1.setIdAgent(idAgent);
+		
+		listMaladies.add(demandeMaladie1);
+
+		Date dateDebutAnneeGlissante = new DateTime(demandeMaladie1.getDateDebut()).minusYears(1).plusDays(1)
+				.withMillisOfDay(0).toDate();
+
+		Integer noMatr = idAgent - 9000000;
+		Mockito.when(agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent)).thenReturn(noMatr);
+		Spcarr carr = new Spcarr();
+		
+		Mockito.when(sirhRepository.getAgentCurrentCarriere(agentMatriculeService
+						.fromIdAgentToSIRHNomatrAgent(noMatr), demandeMaladie1.getDateFin())).thenReturn(carr);
+
+		Mockito.when(maladiesRepository.getListMaladiesAnneGlissanteRetroactiveByAgent(idAgent,
+						dateDebutAnneeGlissante, demandeMaladie1.getDateDebut(), demandeMaladie1.getIdDemande(), false)).thenReturn(listMaladies);
+		
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(agentDto);
+
+		Mockito.when(
+				maladiesRepository.getDroitsMaladies(Mockito.anyBoolean(),
+						Mockito.anyBoolean(), Mockito.anyBoolean(),
+						Mockito.anyInt())).thenReturn(droitsMaladies);
+
+		ReflectionTestUtils.setField(service, "maladiesRepository", maladiesRepository);
+		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "agentMatriculeService", agentMatriculeService);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		CalculDroitsMaladiesVo result = service.calculDroitsMaladiesRetroactivement(idAgent, demandeMaladie1.getDateDebut(), 
+				demandeMaladie1.getIdDemande(), demandeMaladie1.getDuree().intValue(), false);
+
+		assertEquals(15, result.getDroitsPleinSalaire().intValue());
+		assertEquals(10, result.getDroitsDemiSalaire().intValue());
+		assertEquals(7, result.getNombreJoursResteAPrendrePleinSalaire().intValue());
+		assertEquals(10, result.getNombreJoursResteAPrendreDemiSalaire().intValue());
+		assertEquals(0, result.getNombreJoursCoupePleinSalaire().intValue());
+		assertEquals(0, result.getNombreJoursCoupeDemiSalaire().intValue());
+		assertEquals(8, result.getTotalPris().intValue());
+		
+		
+		// 2e saisie
+		DemandeMaladies demandeMaladie2 = new DemandeMaladies();
+		demandeMaladie2.setType(type);
+		demandeMaladie2.setDateDebut(new DateTime(2014, 3, 10, 0, 0, 0).toDate());
+		demandeMaladie2.setDateFin(new DateTime(2014, 3, 20, 23, 59, 59).toDate());
+		demandeMaladie2.setDuree(10.0);
+		demandeMaladie2.setIdAgent(idAgent);
+		
+		listMaladies.add(demandeMaladie2);
+
+		dateDebutAnneeGlissante = new DateTime(demandeMaladie2.getDateDebut()).minusYears(1).plusDays(1)
+				.withMillisOfDay(0).toDate();
+
+		Mockito.when(maladiesRepository.getListMaladiesAnneGlissanteRetroactiveByAgent(idAgent,
+						dateDebutAnneeGlissante, demandeMaladie2.getDateDebut(), demandeMaladie2.getIdDemande(), false)).thenReturn(listMaladies);
+		
+		result = service.calculDroitsMaladiesRetroactivement(idAgent, demandeMaladie2.getDateDebut(), 
+				demandeMaladie2.getIdDemande(), demandeMaladie2.getDuree().intValue(), false);
+
+		assertEquals(15, result.getDroitsPleinSalaire().intValue());
+		assertEquals(10, result.getDroitsDemiSalaire().intValue());
+		assertEquals(0, result.getNombreJoursResteAPrendrePleinSalaire().intValue());
+		assertEquals(7, result.getNombreJoursResteAPrendreDemiSalaire().intValue());
+		assertEquals(0, result.getNombreJoursCoupePleinSalaire().intValue());
+		assertEquals(3, result.getNombreJoursCoupeDemiSalaire().intValue());
+		assertEquals(18, result.getTotalPris().intValue());
+		
+		
+		// 3e saisie
+		DemandeMaladies demandeMaladie3 = new DemandeMaladies();
+		demandeMaladie3.setType(type);
+		demandeMaladie3.setDateDebut(new DateTime(2014, 4, 10, 0, 0, 0).toDate());
+		demandeMaladie3.setDateFin(new DateTime(2014, 2, 22, 23, 59, 59).toDate());
+		demandeMaladie3.setDuree(12.0);
+		demandeMaladie3.setIdAgent(idAgent);
+		
+		listMaladies.add(demandeMaladie3);
+
+		dateDebutAnneeGlissante = new DateTime(demandeMaladie3.getDateDebut()).minusYears(1).plusDays(1)
+				.withMillisOfDay(0).toDate();
+
+		Mockito.when(maladiesRepository.getListMaladiesAnneGlissanteRetroactiveByAgent(idAgent,
+						dateDebutAnneeGlissante, demandeMaladie3.getDateDebut(), demandeMaladie3.getIdDemande(), false)).thenReturn(listMaladies);
+		
+		result = service.calculDroitsMaladiesRetroactivement(idAgent, demandeMaladie3.getDateDebut(), 
+				demandeMaladie3.getIdDemande(), demandeMaladie3.getDuree().intValue(), false);
+
+		assertEquals(15, result.getDroitsPleinSalaire().intValue());
+		assertEquals(10, result.getDroitsDemiSalaire().intValue());
+		assertEquals(0, result.getNombreJoursResteAPrendrePleinSalaire().intValue());
+		assertEquals(0, result.getNombreJoursResteAPrendreDemiSalaire().intValue());
+		assertEquals(5, result.getNombreJoursCoupePleinSalaire().intValue());
+		assertEquals(7, result.getNombreJoursCoupeDemiSalaire().intValue());
+		assertEquals(30, result.getTotalPris().intValue());
 	}
 
 	// contractuels et conventions coll.
@@ -732,9 +851,6 @@ public class MaladieCounterServiceImplTest extends AbstractCounterServiceTest {
 				maladiesRepository.getListMaladiesAnneGlissanteByAgent(idAgent,
 						dateDebutAnneeGlissante, demandeMaladie1.getDateFin()))
 				.thenReturn(listMaladies);
-		Mockito.when(
-				sirhWSConsumer.isPeriodeEssai(idAgent,
-						demandeMaladie1.getDateFin())).thenReturn(true);
 
 		ReflectionTestUtils.setField(service, "maladiesRepository",
 				maladiesRepository);

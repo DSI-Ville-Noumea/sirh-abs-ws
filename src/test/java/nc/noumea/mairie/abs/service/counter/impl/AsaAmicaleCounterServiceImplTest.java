@@ -265,7 +265,7 @@ public class AsaAmicaleCounterServiceImplTest extends AsaCounterServiceImplTest 
 		list.add(e);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListCounter(AgentAsaAmicaleCount.class)).thenReturn(list);
+		Mockito.when(counterRepository.getListCounter(AgentAsaAmicaleCount.class, null, null, null)).thenReturn(list);
 
 		AsaAmicaleCounterServiceImpl service = new AsaAmicaleCounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);

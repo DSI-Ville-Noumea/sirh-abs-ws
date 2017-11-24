@@ -1040,7 +1040,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	private void deleteDroitDroitsAgent(DroitDroitsAgent agToDelete,Integer idAgentConnecte) {
-		logger.warn("Suppression des droits de l'agent matricule {}, effectué par l'agent matricule {}.", idAgentConnecte, agToDelete.getDroit().getIdAgent());
+		logger.warn("Suppression des droits de l'agent matricule {}, effectué par l'agent matricule {}.", idAgentConnecte, agToDelete.getDroit() != null ? agToDelete.getDroit().getIdAgent() : "Inconnu");
 		DroitsAgent droitAgent = agToDelete.getDroitsAgent();
 		droitAgent.getDroitDroitsAgent().remove(agToDelete);
 		agToDelete.setIdAgentModification(idAgentConnecte);
