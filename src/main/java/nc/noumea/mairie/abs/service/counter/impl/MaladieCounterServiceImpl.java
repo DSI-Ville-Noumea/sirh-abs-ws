@@ -49,8 +49,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 
 		SoldeMaladiesDto dto = new SoldeMaladiesDto();
 
-		CalculDroitsMaladiesVo vo = calculDroitsMaladies(idAgent,
-				dateFinAnneeGlissante, agentDto, null, null);
+		CalculDroitsMaladiesVo vo = calculDroitsMaladiesRetroactivement(idAgent, dateFinAnneeGlissante, null, null, 0, false);
 
 		dto.setDroitsDemiSalaire(vo.getDroitsDemiSalaire());
 		dto.setDroitsPleinSalaire(vo.getDroitsPleinSalaire());
