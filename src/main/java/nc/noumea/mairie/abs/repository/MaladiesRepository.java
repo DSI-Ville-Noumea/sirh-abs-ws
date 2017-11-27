@@ -66,7 +66,7 @@ public class MaladiesRepository implements IMaladiesRepository {
 
 	@Override
 	public List<DemandeMaladies> getListMaladiesAnneGlissanteRetroactiveByAgent(
-			Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, Integer idDemande, boolean isCancel) {
+			Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, Integer idDemande, boolean isCancel, boolean isRetroactif) {
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from DemandeMaladies d "
@@ -88,23 +88,26 @@ public class MaladiesRepository implements IMaladiesRepository {
 		sb.append("group by ed2.demande ) ");
 		sb.append("and (ed.etat in ( :PRISE, :VALIDEE ) ");
 		
-		if (isCancel)
-			sb.append("AND d.idDemande != :idDemande) ");
-		else
-			sb.append("OR d.idDemande = :idDemande) ");
+		if (idDemande != null && isRetroactif) {
+			if (isCancel)
+				sb.append("AND d.idDemande != :idDemande) ");
+			else
+				sb.append("OR d.idDemande = :idDemande) ");
+		}
 		
 		sb.append(") ");
 		sb.append("order by d.dateDebut asc ");
 
 		TypedQuery<DemandeMaladies> q = absEntityManager.createQuery(sb.toString(), DemandeMaladies.class);
-
-		q.setParameter("idDemande", idDemande);
+		
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("PRISE", RefEtatEnum.PRISE);
 		q.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
 		
 		if(null != dateDebutAnneeGlissante)
 			q.setParameter("dateDebut", dateDebutAnneeGlissante);
+		if (idDemande != null && isRetroactif)
+			q.setParameter("idDemande", idDemande);
 		
 		q.setParameter("dateFin", dateFinAnneeGlissante);
 		q.setParameter("MALADIE", RefTypeAbsenceEnum.MALADIE.getValue());

@@ -66,5 +66,17 @@ public class CalculDroitsMaladiesVo implements Serializable {
 	public void setDroitsDemiSalaire(Integer droitsDemiSalaire) {
 		this.droitsDemiSalaire = droitsDemiSalaire;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		CalculDroitsMaladiesVo o = (CalculDroitsMaladiesVo) obj;
+		return o.getDroitsDemiSalaire().equals(droitsDemiSalaire) &&
+				o.getDroitsPleinSalaire().equals(droitsPleinSalaire) &&
+				o.getNombreJoursCoupeDemiSalaire().equals(nombreJoursCoupeDemiSalaire) &&
+				o.getNombreJoursCoupePleinSalaire().equals(nombreJoursCoupePleinSalaire) &&
+				o.getNombreJoursResteAPrendrePleinSalaire().equals(nombreJoursResteAPrendrePleinSalaire) &&
+				o.getNombreJoursResteAPrendreDemiSalaire().equals(nombreJoursResteAPrendreDemiSalaire) &&
+				o.getTotalPris().equals(totalPris);
+	}
 
 }
