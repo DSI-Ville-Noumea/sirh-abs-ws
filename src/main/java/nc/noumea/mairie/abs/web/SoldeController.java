@@ -3,23 +3,25 @@ package nc.noumea.mairie.abs.web;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
-import nc.noumea.mairie.abs.dto.FiltreSoldeDto;
-import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
-import nc.noumea.mairie.abs.dto.SoldeDto;
-import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.abs.service.ISoldeService;
-import nc.noumea.mairie.ws.ISirhWSConsumer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nc.noumea.mairie.abs.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.abs.dto.FiltreSoldeDto;
+import nc.noumea.mairie.abs.dto.HistoriqueSoldeDto;
+import nc.noumea.mairie.abs.dto.SoldeDto;
+import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.service.ICounterService;
+import nc.noumea.mairie.abs.service.ISoldeService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 @Controller
 @RequestMapping("/solde")
@@ -32,6 +34,10 @@ public class SoldeController {
 
 	@Autowired
 	private ISoldeService soldeService;
+
+	@Autowired
+	@Qualifier("MaladieCounterServiceImpl")
+	private ICounterService maladieCounterService;
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
@@ -82,5 +88,12 @@ public class SoldeController {
 				filtreSoldeDto.getDateDebut(), filtreSoldeDto.getDateFin(), isSIRH);
 
 		return result;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "updateSoldesMaladies", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public boolean updateSoldesMaladies(@RequestParam(value = "idAgent", required = false) Integer idAgent) {
+
+		return maladieCounterService.updateSoldesMaladies(idAgent);
 	}
 }
