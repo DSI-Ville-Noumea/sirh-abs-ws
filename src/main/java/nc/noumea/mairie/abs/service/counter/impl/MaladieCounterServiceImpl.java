@@ -460,34 +460,34 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		demande.setNombreJoursResteAPrendrePleinSalaire(nombreJoursResteAPrendrePleinSalaire);
 	}
 
-//	@Override
-//	@Transactional
-//	public boolean updateSoldesMaladies(Integer idAgent) {
-//		List<Integer> listIdAgentsActifs = Lists.newArrayList();
-//		// 1 : Récupérer la liste des agents actifs
-//		if (idAgent == null)
-//			listIdAgentsActifs = sirhWSConsumer.getListAgentActiviteAnnuaire();
-//		else
-//			listIdAgentsActifs.add(idAgent);
-//		
-//		for (Integer matrAgent : listIdAgentsActifs) {
-//			// 2 : Récupérer la liste des maladies à l'état 'Prise' et 'Validée par la DRH' de chacun des agent depuis le 1e janvier 2016
-//			List<DemandeMaladies> listDemandes =  maladiesRepository.getListMaladiesAnneGlissanteByAgent(matrAgent, new DateTime(2016, 1, 1, 0, 0, 0).toDate(), new Date());
-//			listDemandes.sort(new DemandeComparator());
-//			for (DemandeMaladies maladie : listDemandes) {
-//				// 3 : Mettre à jour les soldes
-//				CalculDroitsMaladiesVo dm = calculDroitsMaladies(maladie.getIdAgent(),
-//						maladie.getDateFin(), null, maladie.getDuree(), false, false);
-//	
-//				updateDemandeWithNewSolde((DemandeMaladies) maladie,
-//						dm.getTotalPris(), dm.getNombreJoursCoupeDemiSalaire(),
-//						dm.getNombreJoursCoupePleinSalaire(),
-//						dm.getNombreJoursResteAPrendreDemiSalaire(),
-//						dm.getNombreJoursResteAPrendrePleinSalaire());
-//			}
-//			logger.info("Soldes mis à jour pour l'agent matricule {}", matrAgent);
-//		}
-//		
-//		return true;
-//	}
+	@Override
+	@Transactional
+	public boolean updateSoldesMaladies(Integer idAgent) {
+		List<Integer> listIdAgentsActifs = Lists.newArrayList();
+		// 1 : Récupérer la liste des agents actifs
+		if (idAgent == null)
+			listIdAgentsActifs = sirhWSConsumer.getListAgentActiviteAnnuaire();
+		else
+			listIdAgentsActifs.add(idAgent);
+		
+		for (Integer matrAgent : listIdAgentsActifs) {
+			// 2 : Récupérer la liste des maladies à l'état 'Prise' et 'Validée par la DRH' de chacun des agent depuis le 1e janvier 2016
+			List<DemandeMaladies> listDemandes =  maladiesRepository.getListMaladiesAnneGlissanteByAgent(matrAgent, new DateTime(2016, 1, 1, 0, 0, 0).toDate(), new Date());
+			listDemandes.sort(new DemandeComparator());
+			for (DemandeMaladies maladie : listDemandes) {
+				// 3 : Mettre à jour les soldes
+				CalculDroitsMaladiesVo dm = calculDroitsMaladies(maladie.getIdAgent(),
+						maladie.getDateFin(), null, maladie.getDuree(), false, false);
+	
+				updateDemandeWithNewSolde((DemandeMaladies) maladie,
+						dm.getTotalPris(), dm.getNombreJoursCoupeDemiSalaire(),
+						dm.getNombreJoursCoupePleinSalaire(),
+						dm.getNombreJoursResteAPrendreDemiSalaire(),
+						dm.getNombreJoursResteAPrendrePleinSalaire());
+			}
+			logger.info("Soldes mis à jour pour l'agent matricule {}", matrAgent);
+		}
+		
+		return true;
+	}
 }
