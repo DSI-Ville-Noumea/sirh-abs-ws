@@ -215,14 +215,17 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 
 		if (null != listMaladies && !listMaladies.isEmpty()) {
 			for (DemandeMaladies demande : listMaladies) {
-				if (demande.getDateFin().after(dateDebutAnneeGlissante) && (demande.getIdDemande() == null 
-						|| (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
+				if (demande.getDateFin().after(dateDebutAnneeGlissante) && (demande.getIdDemande() == null || (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
 					if (demande.getDateDebut().before(dateDebutAnneeGlissante)) {
-						Date dateFin = new DateTime(demande.getDateFin())
-								.withMillisOfDay(0).plusDays(1).toDate();
+						Date dateFin = new DateTime(demande.getDateFin()).withMillisOfDay(0).plusDays(1).toDate();
 						Duration period = new Duration(
 								dateDebutAnneeGlissante.getTime(),
 								dateFin.getTime());
+						result += new Long(period.getStandardDays()).intValue();
+					} else if (demande.getDateFin().after(dateFinAnneeGlissante) && (demande.getIdDemande() == null || (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
+						Date dateDebut = new DateTime(demande.getDateDebut()).withMillisOfDay(0).toDate();
+						Duration period = new Duration(dateDebut.getTime(),
+								dateFinAnneeGlissante.getTime());
 						result += new Long(period.getStandardDays()).intValue();
 					} else {
 						result += demande.getDuree().intValue();
@@ -232,50 +235,6 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		}
 
 		logger.debug("MaladieCounterServiceImpl getNombeJourMaladies for Agent "
-				+ idAgent + ": " + result);
-
-		return result;
-	}
-
-	protected Integer getNombeJourMaladiesCoupesDemiSalaire(Integer idAgent,
-			Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante,
-			List<DemandeMaladies> listMaladies, Integer idDemande) {
-
-		Integer result = 0;
-
-		if (null != listMaladies && !listMaladies.isEmpty()) {
-			for (DemandeMaladies demande : listMaladies) {
-				if (demande.getDateFin().after(dateDebutAnneeGlissante) && (demande.getIdDemande() == null 
-						|| (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
-					result += null != demande.getNombreJoursCoupeDemiSalaire() ? demande
-							.getNombreJoursCoupeDemiSalaire() : 0;
-				}
-			}
-		}
-
-		logger.debug("MaladieCounterServiceImpl getNombeJourMaladiesCoupesDemiSalaire for Agent "
-				+ idAgent + ": " + result);
-
-		return result;
-	}
-
-	protected Integer getNombeJourMaladiesCoupesPleinSalaire(Integer idAgent,
-			Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante,
-			List<DemandeMaladies> listMaladies, Integer idDemande) {
-
-		Integer result = 0;
-
-		if (null != listMaladies && !listMaladies.isEmpty()) {
-			for (DemandeMaladies demande : listMaladies) {
-				if (demande.getDateFin().after(dateDebutAnneeGlissante) && (demande.getIdDemande() == null 
-						|| (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
-					result += null != demande.getNombreJoursCoupePleinSalaire() ? demande
-							.getNombreJoursCoupePleinSalaire() : 0;
-				}
-			}
-		}
-
-		logger.debug("MaladieCounterServiceImpl getNombeJourMaladiesCoupesPleinSalaire for Agent "
 				+ idAgent + ": " + result);
 
 		return result;
