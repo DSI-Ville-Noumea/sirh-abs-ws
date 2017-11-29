@@ -417,7 +417,7 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies, Integer idDemande) {
+	public Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies) {
 		return null;
 	}
 	

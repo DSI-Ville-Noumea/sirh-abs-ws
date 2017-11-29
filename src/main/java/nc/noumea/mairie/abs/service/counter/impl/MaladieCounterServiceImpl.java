@@ -78,7 +78,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		Date firstDayOfYear = c.getTime();
 		
 		List<DemandeMaladies> listMaladiesEnfantSurAnneeCivile = maladiesRepository.getListEnfantMaladeAnneeCivileByAgent(idAgent, firstDayOfYear, today);
-		Integer totalPris = getNombeJourMaladies(idAgent, firstDayOfYear, today, listMaladiesEnfantSurAnneeCivile, null);
+		Integer totalPris = getNombeJourMaladies(idAgent, firstDayOfYear, today, listMaladiesEnfantSurAnneeCivile);
 		
 		dto.setTotalPris(totalPris);
 		dto.setTotalRestant(SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE - totalPris);
@@ -88,7 +88,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 
 	@Override
 	public CalculDroitsMaladiesVo calculDroitsMaladiesForDemandeMaladies(Integer idAgent, DemandeDto demandeMaladie) {
-		return calculDroitsMaladies(idAgent, demandeMaladie.getDateFin(), demandeMaladie.getIdDemande(), demandeMaladie.getDuree(), false, true);
+		return calculDroitsMaladies(idAgent, demandeMaladie.getDateDebut(), demandeMaladie.getIdDemande(), demandeMaladie.getDuree(), false, true);
 	}
 
 	/**
@@ -115,9 +115,12 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		List<DemandeMaladies> listMaladies = maladiesRepository.getListMaladiesAnneGlissanteRetroactiveByAgent(idAgent,
 						dateDebutAnneeGlissante, dateFinAnneeGlissante, idDemande, isCancel, isRetroactif);
 
-		Integer totalPris = getNombeJourMaladies(idAgent, dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies, null);
+		Integer totalPris = getNombeJourMaladies(idAgent, dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies);
 
 		Integer nombreJoursMaladiesDemandeEnCours = null != duree ? duree.intValue() : 0;
+		
+		// #43334 : La période glissante est sur la date de début, il faut donc ajouter la durée de la demande en cours
+		totalPris += nombreJoursMaladiesDemandeEnCours;
 
 		// on recupere le statut de l agent on recherche sa carriere pour 
 		// avoir son statut (Fonctionnaire, contractuel, convention coll)
@@ -134,7 +137,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 			result.setNombreJoursCoupePleinSalaire(nombreJoursMaladiesDemandeEnCours);
 			result.setNombreJoursResteAPrendreDemiSalaire(0);
 			result.setNombreJoursResteAPrendrePleinSalaire(0);
-			result.setTotalPris(totalPris + nombreJoursMaladiesDemandeEnCours);
+			result.setTotalPris(totalPris);
 			return result;
 		}
 
@@ -209,20 +212,20 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 	}
 
 	@Override
-	public Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies, Integer idDemande) {
+	public Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies) {
 
 		Integer result = 0;
 
 		if (null != listMaladies && !listMaladies.isEmpty()) {
 			for (DemandeMaladies demande : listMaladies) {
-				if (demande.getDateFin().after(dateDebutAnneeGlissante) && (demande.getIdDemande() == null || (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
+				if (demande.getDateFin().after(dateDebutAnneeGlissante)) {
 					if (demande.getDateDebut().before(dateDebutAnneeGlissante)) {
 						Date dateFin = new DateTime(demande.getDateFin()).withMillisOfDay(0).plusDays(1).toDate();
 						Duration period = new Duration(
 								dateDebutAnneeGlissante.getTime(),
 								dateFin.getTime());
 						result += new Long(period.getStandardDays()).intValue();
-					} else if (demande.getDateFin().after(dateFinAnneeGlissante) && (demande.getIdDemande() == null || (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
+					} else if (demande.getDateFin().after(dateFinAnneeGlissante)) {
 						Date dateDebut = new DateTime(demande.getDateDebut()).withMillisOfDay(0).toDate();
 						Duration period = new Duration(dateDebut.getTime(),
 								dateFinAnneeGlissante.getTime());
@@ -360,7 +363,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 			isCancel = true;
 		} else {			
 			CalculDroitsMaladiesVo vo = calculDroitsMaladies(demande.getIdAgent(),
-					demande.getDateFin(), demande.getIdDemande(), ((DemandeMaladies) (demande)).getDuree(), isCancel, true);
+					demande.getDateDebut(), demande.getIdDemande(), ((DemandeMaladies) (demande)).getDuree(), isCancel, true);
 	
 			updateDemandeWithNewSolde((DemandeMaladies) demande,
 					vo.getTotalPris(), vo.getNombreJoursCoupeDemiSalaire(),
@@ -378,7 +381,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 			for(DemandeMaladies mal : listDemandesFutures) {
 				logger.debug("Mise à jour du solde de la demande {}, pour l'agent matricule {}", mal.getIdDemande(), demande.getIdAgent());
 				CalculDroitsMaladiesVo dm = calculDroitsMaladies(mal.getIdAgent(),
-						mal.getDateFin(), demande.getIdDemande(), mal.getDuree(), isCancel, true);
+						mal.getDateDebut(), demande.getIdDemande(), mal.getDuree(), isCancel, true);
 
 				updateDemandeWithNewSolde((DemandeMaladies) mal,
 						dm.getTotalPris(), dm.getNombreJoursCoupeDemiSalaire(),
