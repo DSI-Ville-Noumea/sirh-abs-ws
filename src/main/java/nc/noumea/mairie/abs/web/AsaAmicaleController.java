@@ -60,11 +60,13 @@ public class AsaAmicaleController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/listeCompteurAmicale", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public List<CompteurDto> getListeCompteur() {
+	public List<CompteurDto> getListeCompteur(@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche, 
+			@RequestParam(value = "annee", required = false) Integer annee, 
+			@RequestParam(value = "actif", required = false) Boolean actif) {
 
 		logger.debug("entered GET [asaAmicale/listeCompteurAmicale] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur(null, null);
+		List<CompteurDto> result = counterService.getListeCompteurAmicale(idAgentRecherche, annee, actif);
 
 		if (result.size() == 0)
 			throw new NoContentException();

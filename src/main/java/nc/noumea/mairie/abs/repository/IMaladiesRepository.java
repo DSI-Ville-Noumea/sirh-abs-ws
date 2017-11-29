@@ -20,6 +20,18 @@ public interface IMaladiesRepository {
 	 * @return List<DemandeMaladies> la liste des demandes de maladies
 	 */
 	List<DemandeMaladies> getListMaladiesAnneGlissanteByAgent(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante);
+	
+
+	List<DemandeMaladies> getListMaladiesAnneGlissanteRetroactiveByAgent(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, Integer idDemande, boolean isCancel, boolean isRetroactif);
+
+	/**
+	 * Retourne la liste des demandes de maladies ayant une date de début supérieure à la demande en cours.
+	 * 
+	 * @param idAgent Integer L agent
+	 * @param dateDebut Date de départ
+	 * @return List<DemandeMaladies> la liste des demandes de maladies
+	 */
+	List<DemandeMaladies> getListMaladiesFuturesForDemande(Integer idAgent, Date dateDebut);
 
 	/**
 	 * Retourne les droits maladies qu un agent possède

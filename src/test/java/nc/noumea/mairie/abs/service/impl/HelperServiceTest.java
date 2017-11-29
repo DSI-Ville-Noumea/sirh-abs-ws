@@ -41,7 +41,7 @@ public class HelperServiceTest {
 	public void getCurrentDate() {
 		HelperService service = new HelperService();
 
-		assertEquals(new Date(), service.getCurrentDate());
+		assertEquals(new DateTime(new Date()), new DateTime(service.getCurrentDate()));
 	}
 
 	@Test

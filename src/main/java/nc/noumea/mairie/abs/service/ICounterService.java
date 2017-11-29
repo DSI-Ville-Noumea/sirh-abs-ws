@@ -1,5 +1,6 @@
 package nc.noumea.mairie.abs.service;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -34,9 +35,15 @@ public interface ICounterService {
 
 	List<Integer> getListAgentReposCompCountForResetAnneeEnCours();
 
-	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee);
+	List<CompteurDto> getListeCompteurAmicale(Integer idAgentRecherche, Integer annee, Boolean actif);
+
+	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale, Integer annee);
 
 	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee, Integer pageSize, Integer pageNumber);
+	
+	List<CompteurDto> getListeCompteur(Integer pageSize, Integer pageNumber, Integer idAgentRecherche, String dateMin, String dateMax) throws ParseException;
+
+	Integer countAllByYear(Integer annee, Integer idOS, Integer idAgentRecherche, Date dateMin, Date dateMax);
 
 	Integer countAllByYear(Integer annee, Integer idOS);
 
@@ -81,7 +88,7 @@ public interface ICounterService {
 
 	CalculDroitsMaladiesVo calculDroitsMaladiesForDemandeMaladies(Integer idAgent, DemandeDto demandeMaladie);
 
-	Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies, Integer idDemande);
+	Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies);
 
 	List<DemandeMaladies> getHistoriqueMaladiesWithDroits(Integer idAgent, Date date);
 }

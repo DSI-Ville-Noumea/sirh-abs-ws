@@ -48,8 +48,8 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 			return srm;
 		}
 
-		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demande.getIdDemande(), demande.getIdAgent(),
-				soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin());
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCoursByOs(demande.getIdDemande(), demande.getIdAgent(),
+				soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin(), soldeAsaA52.getOrganisationSyndicale().getIdOrganisationSyndicale());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande
@@ -62,9 +62,9 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	}
 
 	@Override
-	public double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin) {
+	public double getSommeDureeDemandeAsaEnCoursByOs(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin, Integer idOs) {
 
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByOS(idAgent, idDemande, dateDebut, dateFin,
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByOS(idOs, idDemande, dateDebut, dateFin,
 				RefTypeAbsenceEnum.ASA_A52.getValue());
 
 		double somme = 0.0;

@@ -137,16 +137,18 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 	@Test
 	public void checkDroitCompteurAsaA52_compteurNegatif() {
 
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
 		Date dateDebut = new Date();
 		AgentAsaA52Count soldeAsaA52 = new AgentAsaA52Count();
 		soldeAsaA52.setTotalMinutes(0);
-
-		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-		organisationSyndicale.setIdOrganisationSyndicale(1);
+		soldeAsaA52.setOrganisationSyndicale(organisationSyndicale);
 
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
 		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateDebut);
 		demande.setOrganisationSyndicale(organisationSyndicale);
 		demande.setDuree(10.0);
 
@@ -187,12 +189,13 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 	@Test
 	public void checkDroitCompteurAsaA52_compteurNegatifBis() {
 
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
 		Date dateDebut = new Date();
 		AgentAsaA52Count soldeAsaA52 = new AgentAsaA52Count();
 		soldeAsaA52.setTotalMinutes(9);
-
-		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-		organisationSyndicale.setIdOrganisationSyndicale(1);
+		soldeAsaA52.setOrganisationSyndicale(organisationSyndicale);
 
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
@@ -246,16 +249,18 @@ public class AbsAsaA52DataConsistencyRulesImplTest extends AbsAsaDataConsistency
 	@Test
 	public void checkDroitCompteurAsaA52_ok() {
 
+		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
+		organisationSyndicale.setIdOrganisationSyndicale(1);
+
 		Date dateDebut = new Date();
 		AgentAsaA52Count soldeAsaA52 = new AgentAsaA52Count();
 		soldeAsaA52.setTotalMinutes(10);
-
-		OrganisationSyndicale organisationSyndicale = new OrganisationSyndicale();
-		organisationSyndicale.setIdOrganisationSyndicale(1);
+		soldeAsaA52.setOrganisationSyndicale(organisationSyndicale);
 
 		DemandeAsa demande = new DemandeAsa();
 		demande.setIdAgent(9005138);
 		demande.setDateDebut(dateDebut);
+		demande.setDateFin(dateDebut);
 		demande.setOrganisationSyndicale(organisationSyndicale);
 		demande.setDuree(5.0);
 

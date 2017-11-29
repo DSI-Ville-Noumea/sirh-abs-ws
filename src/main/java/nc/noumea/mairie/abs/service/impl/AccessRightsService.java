@@ -802,7 +802,6 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	private void deleteDroitProfil(DroitProfil droitProfil,Integer idAgentConnecte) {
-
 		// on supprime les droits agent associes au droit profil
 		for (DroitDroitsAgent agToDelete : droitProfil.getDroitDroitsAgent()) {
 			deleteDroitDroitsAgent(agToDelete,idAgentConnecte);
@@ -1041,7 +1040,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	private void deleteDroitDroitsAgent(DroitDroitsAgent agToDelete,Integer idAgentConnecte) {
-
+		logger.warn("Suppression des droits de l'agent matricule {}, effectué par l'agent matricule {}.", idAgentConnecte, agToDelete.getDroit() != null ? agToDelete.getDroit().getIdAgent() : "Inconnu");
 		DroitsAgent droitAgent = agToDelete.getDroitsAgent();
 		droitAgent.getDroitDroitsAgent().remove(agToDelete);
 		agToDelete.setIdAgentModification(idAgentConnecte);

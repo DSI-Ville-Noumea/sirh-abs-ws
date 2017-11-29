@@ -6,6 +6,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Period;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
+
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.RefDroitsMaladies;
@@ -18,15 +27,10 @@ import nc.noumea.mairie.abs.dto.SoldeEnfantMaladeDto;
 import nc.noumea.mairie.abs.dto.SoldeMaladiesDto;
 import nc.noumea.mairie.abs.repository.IMaladiesRepository;
 import nc.noumea.mairie.abs.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.abs.transformer.DemandeComparator;
 import nc.noumea.mairie.abs.vo.CalculDroitsMaladiesVo;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
-
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.Period;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service("MaladieCounterServiceImpl")
 public class MaladieCounterServiceImpl extends AbstractCounterService {
@@ -40,15 +44,13 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 	protected IMaladiesRepository maladiesRepository;
 
 	@Override
-	public SoldeMaladiesDto getSoldeByAgent(Integer idAgent,
-			Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto) {
+	public SoldeMaladiesDto getSoldeByAgent(Integer idAgent, Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto) {
 
 		logger.info("MaladieCounterServiceImpl getSoldeByAgent : " + idAgent);
 
 		SoldeMaladiesDto dto = new SoldeMaladiesDto();
-
-		CalculDroitsMaladiesVo vo = calculDroitsMaladies(idAgent,
-				dateFinAnneeGlissante, agentDto, null, null);
+		
+		CalculDroitsMaladiesVo vo = calculDroitsMaladies(idAgent, dateFinAnneeGlissante, null, null, false, false);
 
 		dto.setDroitsDemiSalaire(vo.getDroitsDemiSalaire());
 		dto.setDroitsPleinSalaire(vo.getDroitsPleinSalaire());
@@ -76,7 +78,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		Date firstDayOfYear = c.getTime();
 		
 		List<DemandeMaladies> listMaladiesEnfantSurAnneeCivile = maladiesRepository.getListEnfantMaladeAnneeCivileByAgent(idAgent, firstDayOfYear, today);
-		Integer totalPris = getNombeJourMaladies(idAgent, firstDayOfYear, today, listMaladiesEnfantSurAnneeCivile, null);
+		Integer totalPris = getNombeJourMaladies(idAgent, firstDayOfYear, today, listMaladiesEnfantSurAnneeCivile);
 		
 		dto.setTotalPris(totalPris);
 		dto.setTotalRestant(SoldeEnfantMaladeDto.QUOTA_ENFANT_MALADE - totalPris);
@@ -85,141 +87,148 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 	}
 
 	@Override
-	public CalculDroitsMaladiesVo calculDroitsMaladiesForDemandeMaladies(
-			Integer idAgent, DemandeDto demandeMaladie) {
-		return calculDroitsMaladies(idAgent, demandeMaladie.getDateFin(), null, demandeMaladie.getDuree(), demandeMaladie.getIdDemande());
+	public CalculDroitsMaladiesVo calculDroitsMaladiesForDemandeMaladies(Integer idAgent, DemandeDto demandeMaladie) {
+		return calculDroitsMaladies(idAgent, demandeMaladie.getDateDebut(), demandeMaladie.getIdDemande(), demandeMaladie.getDuree(), false, true);
 	}
 
-	protected CalculDroitsMaladiesVo calculDroitsMaladies(Integer idAgent,
-			Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto, Double duree, Integer idDemande) {
+	/**
+	 * Calcul les compteurs maladies
+	 * 
+	 * @param idAgent
+	 * @param dateFinAnneeGlissante
+	 * @param idDemande
+	 * @param duree
+	 * @param isCancel : true means that the current demande (idDemande param) will be removed from the list of demandes
+	 * @param isRetroactif : true means that the current demande (idDemande param) will be added to the list of demandes, anyway (regardless of its state)
+	 * @return
+	 */
+	protected CalculDroitsMaladiesVo calculDroitsMaladies(Integer idAgent, Date dateFinAnneeGlissante, Integer idDemande, Double duree, boolean isCancel, boolean isRetroactif) {
 
-		logger.info("MaladieCounterServiceImpl calculDroitsMaladies for agent {}, demande id {} ", idAgent, idDemande);
+		logger.info("MaladieCounterServiceImpl calculDroitsMaladiesRetroactivement for agent {}, demande id {}", idAgent, idDemande);
 
 		CalculDroitsMaladiesVo result = new CalculDroitsMaladiesVo();
 
 		// a. calcul periode de reference
-		Date dateDebutAnneeGlissante = new DateTime(dateFinAnneeGlissante)
-				.minusYears(1).plusDays(1).withMillisOfDay(0).toDate();
-
+		Date dateDebutAnneeGlissante = new DateTime(dateFinAnneeGlissante).minusYears(1).plusDays(1).withMillisOfDay(0).toDate();
+		
 		// b. on calcul le nombre de jours maladies a l'état 'PRISE' ou 'VALIDEE PAR LA DRH' sur une année glissantes
-		List<DemandeMaladies> listMaladies = maladiesRepository.getListMaladiesAnneGlissanteByAgent(idAgent,
-						dateDebutAnneeGlissante, dateFinAnneeGlissante);
+		List<DemandeMaladies> listMaladies = maladiesRepository.getListMaladiesAnneGlissanteRetroactiveByAgent(idAgent,
+						dateDebutAnneeGlissante, dateFinAnneeGlissante, idDemande, isCancel, isRetroactif);
 
-		Integer nombreJoursMaladies = getNombeJourMaladies(idAgent,
-				dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies, idDemande);
-
-		Integer nombreJoursMaladiesCoupesDemiSalaire = getNombeJourMaladiesCoupesDemiSalaire(
-				idAgent, dateDebutAnneeGlissante, dateFinAnneeGlissante,
-				listMaladies, idDemande);
-		Integer nombreJoursMaladiesCoupesPleinSalaire = getNombeJourMaladiesCoupesPleinSalaire(
-				idAgent, dateDebutAnneeGlissante, dateFinAnneeGlissante,
-				listMaladies, idDemande);
+		Integer totalPris = getNombeJourMaladies(idAgent, dateDebutAnneeGlissante, dateFinAnneeGlissante, listMaladies);
 
 		Integer nombreJoursMaladiesDemandeEnCours = null != duree ? duree.intValue() : 0;
+		
+		// #43334 : La période glissante est sur la date de début, il faut donc ajouter la durée de la demande en cours
+		totalPris += nombreJoursMaladiesDemandeEnCours;
 
-		// on recupere le statut de l agent
-		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
-		// contractuel, convention coll
+		// on recupere le statut de l agent on recherche sa carriere pour 
+		// avoir son statut (Fonctionnaire, contractuel, convention coll)
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
 				agentMatriculeService.fromIdAgentToSIRHNomatrAgent(idAgent),
 				dateFinAnneeGlissante);
+		
 		// on teste si l agent est en periode d essai si oui, aucun droit pour lui
 		// #40519 : Gérer le cas d'un agent sans carrière
-		if (carr == null || (!helperService.isFonctionnaire(carr)
-				&& isAgentPeriodeEssai(idAgent, dateFinAnneeGlissante))) {
+		if (carr == null || (!helperService.isFonctionnaire(carr) && isAgentPeriodeEssai(idAgent, dateFinAnneeGlissante))) {
 			result.setDroitsDemiSalaire(0);
 			result.setDroitsPleinSalaire(0);
 			result.setNombreJoursCoupeDemiSalaire(0);
 			result.setNombreJoursCoupePleinSalaire(nombreJoursMaladiesDemandeEnCours);
 			result.setNombreJoursResteAPrendreDemiSalaire(0);
 			result.setNombreJoursResteAPrendrePleinSalaire(0);
-			result.setTotalPris(nombreJoursMaladies
-					+ nombreJoursMaladiesDemandeEnCours);
+			result.setTotalPris(totalPris);
 			return result;
 		}
 
 		// on recupere les droits de l agent
-		RefDroitsMaladies droitsMaladies = getDroitsAgent(idAgent,
-				dateFinAnneeGlissante, agentDto, carr);
+		RefDroitsMaladies droitsMaladies = getDroitsAgent(idAgent, dateFinAnneeGlissante, null, carr);
+		
+		Integer droitPS = droitsMaladies.getNombreJoursPleinSalaire();
+		Integer droitDS = droitsMaladies.getNombreJoursDemiSalaire();
 
-		// c. calcul le nombre de jour pris en PS
-		Integer nombreJoursMaladiesPrisEnPS = nombreJoursMaladies
-				+ nombreJoursMaladiesDemandeEnCours
-				- nombreJoursMaladiesCoupesPleinSalaire
-				- nombreJoursMaladiesCoupesDemiSalaire;
-
-		// CAS PARTICULIER : si nombre de jours MALADIES >= 364 (malade toute
-		// une année), l'agent ne percoit aucun salaire sur la totalite de la
-		// maladie posee
-		if (nombreJoursMaladies + nombreJoursMaladiesDemandeEnCours >= QUOTA_ABSENCES_ANNUEL) {
-			result.setDroitsDemiSalaire(droitsMaladies.getNombreJoursDemiSalaire());
-			result.setDroitsPleinSalaire(droitsMaladies.getNombreJoursPleinSalaire());
+		// CAS PARTICULIER : si nombre de jours MALADIES >= 364 (malade toute une année), 
+		// l'agent ne percoit aucun salaire sur la totalite de la maladie posee
+		if (totalPris >= QUOTA_ABSENCES_ANNUEL) {
+			result.setDroitsDemiSalaire(droitDS);
+			result.setDroitsPleinSalaire(droitPS);
 			result.setNombreJoursCoupeDemiSalaire(0);
 			result.setNombreJoursCoupePleinSalaire(nombreJoursMaladiesDemandeEnCours);
 			result.setNombreJoursResteAPrendreDemiSalaire(0);
 			result.setNombreJoursResteAPrendrePleinSalaire(0);
-			result.setTotalPris(nombreJoursMaladies
-					+ nombreJoursMaladiesDemandeEnCours);
+			result.setTotalPris(totalPris);
 			return result;
 		}
-
-		// d. droits restant en PS
-		// Integer nombreJoursRestantPS = droitsMaladies.getNombreJoursPleinSalaire() > nombreJoursMaladiesPrisEnPS
-		// ? droitsMaladies.getNombreJoursPleinSalaire() - nombreJoursMaladiesPrisEnPS : 0;
-
-		// e. recalculer le nombre de jours coupes en DS
-		Integer nombreJoursCoupesDS = 0;
-		if (droitsMaladies.getNombreJoursPleinSalaire() < nombreJoursMaladiesPrisEnPS) {
-			Integer nombreJoursRestantACouper = nombreJoursMaladiesPrisEnPS - droitsMaladies.getNombreJoursPleinSalaire();
-			
-			nombreJoursCoupesDS = nombreJoursRestantACouper > droitsMaladies.getNombreJoursDemiSalaire() - nombreJoursMaladiesCoupesDemiSalaire
-					? droitsMaladies.getNombreJoursDemiSalaire() - nombreJoursMaladiesCoupesDemiSalaire
-					: nombreJoursRestantACouper;
+		
+		// Reste à prendre
+		Integer rapPS = droitPS - totalPris;
+		if (rapPS < 0)
+			rapPS = 0;
+		
+		Integer joursSansDroitPS = totalPris - droitPS;
+		Integer rapDS = droitDS;
+		if (joursSansDroitPS >= 0)
+			rapDS = droitDS - joursSansDroitPS;
+		if (rapDS < 0)
+			rapDS = 0;
+		// Fin du reste à prendre
+		
+		// Nombre de jours coupés
+		Integer coupeDS = 0;
+		Integer coupePS = 0;
+		
+		// On ne calcul les jours coupés uniquement s'il n'y a plus de reste à prendre plein salaire
+		if (rapPS == 0) {
+			// Il n'y a que des jours coupés demi-salaire si le total pris moins les droits est négatif
+			if (totalPris - droitPS <= droitDS) {
+				coupeDS = totalPris - droitPS;
+				coupeDS = (duree != null && coupeDS > nombreJoursMaladiesDemandeEnCours) ? nombreJoursMaladiesDemandeEnCours : coupeDS;
+			// Sinon il faut aussi calculer les jours coupés plein salaire
+			} else {
+				if (duree != null) {
+					if (totalPris - droitDS - droitPS >= nombreJoursMaladiesDemandeEnCours)
+						coupePS = nombreJoursMaladiesDemandeEnCours;
+					else {
+						coupePS = (totalPris - droitDS - droitPS);
+						coupeDS = nombreJoursMaladiesDemandeEnCours - coupePS;
+						if (coupeDS > droitDS)
+							coupeDS = droitDS;
+					}
+				} else {
+					coupePS = totalPris - droitDS - droitPS;
+				}
+			}
 		}
 
-		// f. calcul le nombre de jours coupes en PS
-		Integer nombreJoursCoupesPS = nombreJoursMaladiesPrisEnPS - droitsMaladies.getNombreJoursPleinSalaire() - nombreJoursCoupesDS > 0 
-				? nombreJoursMaladiesPrisEnPS - droitsMaladies.getNombreJoursPleinSalaire() - nombreJoursCoupesDS
-				: 0;
-
-		// g. calcul du nombre de jour reste a prendre en PS
-		Integer nombreJoursRapPS = droitsMaladies.getNombreJoursPleinSalaire() > nombreJoursMaladiesPrisEnPS ? 
-				droitsMaladies.getNombreJoursPleinSalaire() - nombreJoursMaladiesPrisEnPS
-				: 0;
-
-		// h. calcul du nombre de jour reste a prendre en DS
-		Integer nombreJoursRapDS = droitsMaladies.getNombreJoursPleinSalaire() > nombreJoursMaladiesPrisEnPS ? 
-				droitsMaladies.getNombreJoursDemiSalaire() : 
-				(nombreJoursCoupesDS + nombreJoursMaladiesCoupesDemiSalaire < droitsMaladies.getNombreJoursDemiSalaire()) ? 
-				droitsMaladies.getNombreJoursDemiSalaire() - (nombreJoursCoupesDS + nombreJoursMaladiesCoupesDemiSalaire)
-				: 0;
-
-		result.setDroitsDemiSalaire(droitsMaladies.getNombreJoursDemiSalaire());
-		result.setDroitsPleinSalaire(droitsMaladies.getNombreJoursPleinSalaire());
-		result.setNombreJoursCoupeDemiSalaire(nombreJoursCoupesDS);
-		result.setNombreJoursCoupePleinSalaire(nombreJoursCoupesPS);
-		result.setNombreJoursResteAPrendreDemiSalaire(nombreJoursRapDS);
-		result.setNombreJoursResteAPrendrePleinSalaire(nombreJoursRapPS);
-		result.setTotalPris(nombreJoursMaladies + nombreJoursMaladiesDemandeEnCours);
+		result.setDroitsDemiSalaire(droitDS);
+		result.setDroitsPleinSalaire(droitPS);
+		result.setNombreJoursCoupeDemiSalaire(coupeDS);
+		result.setNombreJoursCoupePleinSalaire(coupePS);
+		result.setNombreJoursResteAPrendreDemiSalaire(rapDS);
+		result.setNombreJoursResteAPrendrePleinSalaire(rapPS);
+		result.setTotalPris(totalPris);
 
 		return result;
 	}
 
 	@Override
-	public Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies, Integer idDemande) {
+	public Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies) {
 
 		Integer result = 0;
 
 		if (null != listMaladies && !listMaladies.isEmpty()) {
 			for (DemandeMaladies demande : listMaladies) {
-				if (demande.getDateFin().after(dateDebutAnneeGlissante) && (demande.getIdDemande() == null 
-						|| (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
+				if (demande.getDateFin().after(dateDebutAnneeGlissante)) {
 					if (demande.getDateDebut().before(dateDebutAnneeGlissante)) {
-						Date dateFin = new DateTime(demande.getDateFin())
-								.withMillisOfDay(0).plusDays(1).toDate();
+						Date dateFin = new DateTime(demande.getDateFin()).withMillisOfDay(0).plusDays(1).toDate();
 						Duration period = new Duration(
 								dateDebutAnneeGlissante.getTime(),
 								dateFin.getTime());
+						result += new Long(period.getStandardDays()).intValue();
+					} else if (demande.getDateFin().after(dateFinAnneeGlissante)) {
+						Date dateDebut = new DateTime(demande.getDateDebut()).withMillisOfDay(0).toDate();
+						Duration period = new Duration(dateDebut.getTime(),
+								dateFinAnneeGlissante.getTime());
 						result += new Long(period.getStandardDays()).intValue();
 					} else {
 						result += demande.getDuree().intValue();
@@ -229,50 +238,6 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		}
 
 		logger.debug("MaladieCounterServiceImpl getNombeJourMaladies for Agent "
-				+ idAgent + ": " + result);
-
-		return result;
-	}
-
-	protected Integer getNombeJourMaladiesCoupesDemiSalaire(Integer idAgent,
-			Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante,
-			List<DemandeMaladies> listMaladies, Integer idDemande) {
-
-		Integer result = 0;
-
-		if (null != listMaladies && !listMaladies.isEmpty()) {
-			for (DemandeMaladies demande : listMaladies) {
-				if (demande.getDateFin().after(dateDebutAnneeGlissante) && (demande.getIdDemande() == null 
-						|| (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
-					result += null != demande.getNombreJoursCoupeDemiSalaire() ? demande
-							.getNombreJoursCoupeDemiSalaire() : 0;
-				}
-			}
-		}
-
-		logger.debug("MaladieCounterServiceImpl getNombeJourMaladiesCoupesDemiSalaire for Agent "
-				+ idAgent + ": " + result);
-
-		return result;
-	}
-
-	protected Integer getNombeJourMaladiesCoupesPleinSalaire(Integer idAgent,
-			Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante,
-			List<DemandeMaladies> listMaladies, Integer idDemande) {
-
-		Integer result = 0;
-
-		if (null != listMaladies && !listMaladies.isEmpty()) {
-			for (DemandeMaladies demande : listMaladies) {
-				if (demande.getDateFin().after(dateDebutAnneeGlissante) && (demande.getIdDemande() == null 
-						|| (demande.getIdDemande() != null && !demande.getIdDemande().equals(idDemande)))) {
-					result += null != demande.getNombreJoursCoupePleinSalaire() ? demande
-							.getNombreJoursCoupePleinSalaire() : 0;
-				}
-			}
-		}
-
-		logger.debug("MaladieCounterServiceImpl getNombeJourMaladiesCoupesPleinSalaire for Agent "
 				+ idAgent + ": " + result);
 
 		return result;
@@ -383,18 +348,48 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 	}
 
 	@Override
+	@Transactional
 	public ReturnMessageDto majCompteurToAgent(ReturnMessageDto srm,
 			Demande demande, DemandeEtatChangeDto demandeEtatChangeDto) {
+		
+		boolean isCancel = false;
+		// Si c'est une annulation de demande, on met à zéro les compteurs de cette demande.
+		if (demandeEtatChangeDto.getIdRefEtat() != null &&
+				demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat())) {
+			updateDemandeWithNewSolde((DemandeMaladies) demande,
+					null, null,
+					null, null, null);
+			// Pour une annulation, il ne faut pas que la demande soit prise en compte dans le recalcul des soldes.
+			isCancel = true;
+		} else {			
+			CalculDroitsMaladiesVo vo = calculDroitsMaladies(demande.getIdAgent(),
+					demande.getDateDebut(), demande.getIdDemande(), ((DemandeMaladies) (demande)).getDuree(), isCancel, true);
+	
+			updateDemandeWithNewSolde((DemandeMaladies) demande,
+					vo.getTotalPris(), vo.getNombreJoursCoupeDemiSalaire(),
+					vo.getNombreJoursCoupePleinSalaire(),
+					vo.getNombreJoursResteAPrendreDemiSalaire(),
+					vo.getNombreJoursResteAPrendrePleinSalaire());
+		}
 
-		CalculDroitsMaladiesVo vo = calculDroitsMaladies(demande.getIdAgent(),
-				demande.getDateFin(), null,
-				((DemandeMaladies) demande).getDuree(), null);
+		// #43076 : Mise à jour rétroactive des soldes des maladies futures
+		List<DemandeMaladies> listDemandesFutures = maladiesRepository.getListMaladiesFuturesForDemande(demande.getIdAgent(), demande.getDateDebut());
+		// Les soldes des demandes doivent être mises à jour par ordre chronologique sur les dates de début !
+		listDemandesFutures.sort(new DemandeComparator());
+		
+		if (listDemandesFutures != null && !listDemandesFutures.isEmpty()) {
+			for(DemandeMaladies mal : listDemandesFutures) {
+				logger.debug("Mise à jour du solde de la demande {}, pour l'agent matricule {}", mal.getIdDemande(), demande.getIdAgent());
+				CalculDroitsMaladiesVo dm = calculDroitsMaladies(mal.getIdAgent(),
+						mal.getDateDebut(), demande.getIdDemande(), mal.getDuree(), isCancel, true);
 
-		updateDemandeWithNewSolde((DemandeMaladies) demande,
-				vo.getTotalPris(), vo.getNombreJoursCoupeDemiSalaire(),
-				vo.getNombreJoursCoupePleinSalaire(),
-				vo.getNombreJoursResteAPrendreDemiSalaire(),
-				vo.getNombreJoursResteAPrendrePleinSalaire());
+				updateDemandeWithNewSolde((DemandeMaladies) mal,
+						dm.getTotalPris(), dm.getNombreJoursCoupeDemiSalaire(),
+						dm.getNombreJoursCoupePleinSalaire(),
+						dm.getNombreJoursResteAPrendreDemiSalaire(),
+						dm.getNombreJoursResteAPrendrePleinSalaire());
+			}
+		}
 
 		return srm;
 	}

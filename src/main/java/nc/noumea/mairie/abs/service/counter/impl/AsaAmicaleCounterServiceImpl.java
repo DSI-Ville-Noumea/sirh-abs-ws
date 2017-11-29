@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.abs.domain.AgentAsaAmicaleCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.Demande;
@@ -14,9 +16,6 @@ import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("AsaAmicaleCounterServiceImpl")
 public class AsaAmicaleCounterServiceImpl extends AsaCounterServiceImpl {
@@ -37,6 +36,19 @@ public class AsaAmicaleCounterServiceImpl extends AsaCounterServiceImpl {
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("An error occured while trying to update asa amicale counters :", e);
 		}
+	}
+	
+	@Override
+	public List<CompteurDto> getListeCompteurAmicale(Integer idAgentRecherche, Integer annee, Boolean actif) {
+		List<CompteurDto> result = new ArrayList<>();
+
+		List<AgentAsaAmicaleCount> listeArc = counterRepository.getListCounter(AgentAsaAmicaleCount.class, idAgentRecherche, annee, actif);
+		for (AgentAsaAmicaleCount arc : listeArc) {
+			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
+			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
+			result.add(dto);
+		}
+		return result;
 	}
 
 	/**
@@ -87,20 +99,6 @@ public class AsaAmicaleCounterServiceImpl extends AsaCounterServiceImpl {
 		majAgentHistoAlimManuelle(idAgentOperateur, compteurDto.getIdAgent(), motifCompteur, textLog, arc, idRefTypeAbsence);
 
 		return srm;
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
-		List<CompteurDto> result = new ArrayList<>();
-
-		List<AgentAsaAmicaleCount> listeArc = counterRepository.getListCounter(AgentAsaAmicaleCount.class);
-		for (AgentAsaAmicaleCount arc : listeArc) {
-			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
-			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
-			result.add(dto);
-		}
-		return result;
 	}
 
 	/**
