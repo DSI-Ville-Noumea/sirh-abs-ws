@@ -51,6 +51,4 @@ public interface ISirhWSConsumer {
 	boolean isPeriodeEssai(Integer idAgent, Date date);
 
 	List<LightUser> getEmailDestinataire();
-	
-	List<Integer> getListAgentActiviteAnnuaire();
 }

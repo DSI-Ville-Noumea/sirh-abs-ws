@@ -91,6 +91,4 @@ public interface ICounterService {
 	Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies, Integer idDemande);
 
 	List<DemandeMaladies> getHistoriqueMaladiesWithDroits(Integer idAgent, Date date);
-
-	boolean updateSoldesMaladies(Integer idAgent);
 }

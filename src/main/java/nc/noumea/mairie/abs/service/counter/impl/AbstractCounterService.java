@@ -93,12 +93,6 @@ public abstract class AbstractCounterService implements ICounterService {
 	public SoldeEnfantMaladeDto getSoldeEnfantMalade(Integer idAgent) {
 		return null;
 	}
-	
-
-	@Override
-	public boolean updateSoldesMaladies(Integer idAgent) {
-		return false;
-	}
 
 	/**
 	 * appeler par PTG exclusivement l historique utilise a pour seul but de
