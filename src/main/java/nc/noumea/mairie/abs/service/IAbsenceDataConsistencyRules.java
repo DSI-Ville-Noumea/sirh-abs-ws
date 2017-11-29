@@ -58,6 +58,9 @@ public interface IAbsenceDataConsistencyRules {
 	double getSommeDureeDemandeAsaEnCours(Integer idDemande, Integer idAgent,
 			Date dateDebut, Date dateFin);
 
+	double getSommeDureeDemandeAsaEnCoursByOs(Integer idDemande, Integer idAgent,
+			Date dateDebut, Date dateFin, Integer idOs);
+
 	HashMap<Integer, CheckCompteurAgentVo> checkDepassementCompteurForListAgentsOrDemandes(
 			List<DemandeDto> listDemande, 
 			HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo);

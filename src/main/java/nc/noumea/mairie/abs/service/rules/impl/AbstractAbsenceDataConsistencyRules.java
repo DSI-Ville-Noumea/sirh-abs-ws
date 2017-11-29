@@ -587,6 +587,11 @@ public abstract class AbstractAbsenceDataConsistencyRules implements IAbsenceDat
 	}
 
 	@Override
+	public double getSommeDureeDemandeAsaEnCoursByOs(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin, Integer idOs) {
+		return 0.0;
+	}
+
+	@Override
 	public HashMap<Integer, CheckCompteurAgentVo> checkDepassementCompteurForListAgentsOrDemandes(List<DemandeDto> listDemande,
 			HashMap<Integer, CheckCompteurAgentVo> mapCheckCompteurAgentVo) {
 		return mapCheckCompteurAgentVo;
