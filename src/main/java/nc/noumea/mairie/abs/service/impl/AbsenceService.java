@@ -97,6 +97,7 @@ import nc.noumea.mairie.abs.service.IFiltreService;
 import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTaskSimple;
+import nc.noumea.mairie.abs.service.rules.impl.AbsAsaDataConsistencyRulesImpl;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.abs.web.AccessForbiddenException;
@@ -1918,6 +1919,13 @@ public class AbsenceService implements IAbsenceService {
 
 		// #12664
 		absenceDataConsistencyRulesImpl.processDataConsistencyDemande(result, idAgent, demande, isProvenanceSIRH);
+		
+		// #42709 : On ne vérifie pas les compteurs pour les demandes rejetées.
+		// Il faut par contre garder les autres contrôles !
+		if (demandeEtatChangeDto.getIdRefEtat().equals(RefEtatEnum.REJETE.getCodeEtat()) && 
+				result.getErrors().contains(AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG)) {
+			result.getErrors().remove(AbsAsaDataConsistencyRulesImpl.DEPASSEMENT_DROITS_ASA_MSG);
+		}
 
 		if (0 < result.getErrors().size()) {
 			return;
@@ -2032,8 +2040,12 @@ public class AbsenceService implements IAbsenceService {
 			if (null == demande.getType().getTypeSaisi())
 				demande.getType().setTypeSaisi(filtreRepository.findRefTypeSaisi(demandeDto.getIdTypeDemande()));
 
-			demandeRecup.setDuree(helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(),
-					demande.getDateFin(), demandeDto.getDuree()).intValue());
+			int dureeRecup = helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()).intValue();
+			
+			if (dureeRecup > 600)
+				returnDto.getErrors().add("La durée d'une récupération ne doit pas excéder 10h.");
+			
+			demandeRecup.setDuree(dureeRecup);
 
 			demande.setDateFin(helperService.getDateFin(demande.getType().getTypeSaisi(), demandeDto.getDateFin(),
 					demandeDto.getDateDebut(), demandeDto.getDuree(), demandeDto.isDateFinAM(),

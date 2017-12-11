@@ -844,6 +844,7 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setAgentWithServiceDto(agentWithServiceDto);
 		demandeDto.setIdDemande(1);
+		demandeDto.setIdTypeDemande(RefTypeAbsenceEnum.MALADIE.getValue());
 		CheckCompteurAgentVo checkCompteurAgentVo = new CheckCompteurAgentVo();
 
 		CalculDroitsMaladiesVo vo = new CalculDroitsMaladiesVo();
@@ -883,6 +884,7 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setAgentWithServiceDto(agentWithServiceDto);
+		demandeDto.setIdTypeDemande(RefTypeAbsenceEnum.MALADIE.getValue());
 		CheckCompteurAgentVo checkCompteurAgentVo = new CheckCompteurAgentVo();
 
 		CalculDroitsMaladiesVo vo = new CalculDroitsMaladiesVo();

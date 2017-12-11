@@ -96,7 +96,7 @@ public class AsaRepository implements IAsaRepository {
 		sb.append("where da.organisationSyndicale.idOrganisationSyndicale = :idOrganisationSyndicale ");
 		sb.append(" and da.type.idRefTypeAbsence = :type ");
 		sb.append(" and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
-		sb.append("and ed.etat in ( :SAISIE, :VISEE_F, :VISEE_D, :APPROUVE, :EN_ATTENTE ) ");
+		sb.append("and ed.etat in ( :SAISIE, :VISEE_F, :VISEE_D, :APPROUVE, :EN_ATTENTE, :PRISE, :VALIDEE ) ");
 		sb.append("and da.dateDebut BETWEEN :dateDebut and :dateFin ");
 		if (null != idDemande) {
 			sb.append("and da.idDemande <> :idDemande ");
@@ -109,6 +109,8 @@ public class AsaRepository implements IAsaRepository {
 		q.setParameter("VISEE_F", RefEtatEnum.VISEE_FAVORABLE);
 		q.setParameter("VISEE_D", RefEtatEnum.VISEE_DEFAVORABLE);
 		q.setParameter("APPROUVE", RefEtatEnum.APPROUVEE);
+		q.setParameter("PRISE", RefEtatEnum.PRISE);
+		q.setParameter("VALIDEE", RefEtatEnum.VALIDEE);
 		q.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
 		q.setParameter("dateDebut", dateDebut);
 		q.setParameter("dateFin", dateFin);

@@ -51,8 +51,7 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCoursByOs(demande.getIdDemande(), demande.getIdAgent(),
 				soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin(), soldeAsaA52.getOrganisationSyndicale().getIdOrganisationSyndicale());
 
-		// on signale par un message d info que le compteur est epuise, mais on
-		// ne bloque pas la demande
+		// on signale par un message d'info que le compteur est epuise, et on bloque la demande
 		if (0 > soldeAsaA52.getTotalMinutes() - sommeDemandeEnCours - ((DemandeAsa) demande).getDuree()) {
 			logger.warn(String.format(DEPASSEMENT_DROITS_ASA_MSG));
 			srm.getErrors().add(DEPASSEMENT_DROITS_ASA_MSG);
@@ -64,14 +63,13 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 	@Override
 	public double getSommeDureeDemandeAsaEnCoursByOs(Integer idDemande, Integer idAgent, Date dateDebut, Date dateFin, Integer idOs) {
 
-		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByOS(idOs, idDemande, dateDebut, dateFin,
-				RefTypeAbsenceEnum.ASA_A52.getValue());
+		List<DemandeAsa> listAsa = asaRepository.getListDemandeAsaPourMoisByOS(idOs, idDemande, dateDebut, dateFin, RefTypeAbsenceEnum.ASA_A52.getValue());
 
 		double somme = 0.0;
 
 		if (null != listAsa) {
 			for (DemandeAsa asa : listAsa) {
-				somme += (double)helperService.calculNombreMinutes(asa.getDateDebut(), asa.getDateFin());
+				somme += (double) helperService.calculNombreMinutes(asa.getDateDebut(), asa.getDateFin());
 			}
 		}
 		return somme;

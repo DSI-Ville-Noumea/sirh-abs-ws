@@ -170,8 +170,25 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 		// si PROVISOIRE, REJETE, PRISE ou ANNULE, on n affiche pas d alerte de depassement de compteur
 		if (!checkEtatDemandePourDepassementCompteurAgent(demandeDto))
 			return false;
+		
+		if (!checkTypeDemandePourDepassementCompteurAgent(demandeDto))
+			return false;
 
 		return checkDepassementCompteurAgent(demandeDto.getAgentWithServiceDto().getIdAgent(), demandeDto);
+	}
+
+	/**
+	 *  le compteur maladie ne doit être affiché que pour ces 5 types maladies : 
+	 *  MALADIE, MALADIE_ENFANT_MALADE, MALADIE_CONVALESCENCE, MALADIE_EVASAN, MALADIE_HOSPITALISATION
+	 */
+	protected boolean checkTypeDemandePourDepassementCompteurAgent(DemandeDto demandeDto) {
+		if ((demandeDto.getIdTypeDemande().equals(RefTypeAbsenceEnum.MALADIE.getValue()) || demandeDto.getIdTypeDemande().equals(RefTypeAbsenceEnum.MALADIE_ENFANT_MALADE.getValue())
+				|| demandeDto.getIdTypeDemande().equals(RefTypeAbsenceEnum.MALADIE_CONVALESCENCE.getValue()) || demandeDto.getIdTypeDemande().equals(RefTypeAbsenceEnum.MALADIE_EVASAN.getValue())
+				|| demandeDto.getIdTypeDemande().equals(RefTypeAbsenceEnum.MALADIE_HOSPITALISATION.getValue()))) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected boolean checkEtatDemandePourDepassementCompteurAgent(DemandeDto demandeDto) {
