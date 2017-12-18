@@ -717,7 +717,7 @@ public class DemandeRepository implements IDemandeRepository {
 	public List<Demande> getListDemandeRejetDRHStatutVeille(List<Integer> listeTypesGroupe) {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
+		sb.append("select d from Demande d inner join d.etatsDemande ed ");
 		sb.append("where d.type.groupe.idRefGroupeAbsence in ( :TYPE ) ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :REJET_DRH ) ");
