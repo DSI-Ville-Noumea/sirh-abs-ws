@@ -2126,8 +2126,8 @@ public class AbsenceService implements IAbsenceService {
 			// fin, 3 - calcul duree
 			// car dependance entre ces 3 donnees pour les calculs
 			demande.setDateDebut(helperService.getDateDebutCongeAnnuel(
-					demande.getType().getTypeSaisiCongeAnnuel() == null ? null
-							: demande.getType().getTypeSaisiCongeAnnuel(),
+					demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? null
+							: demandeCongesAnnuels.getTypeSaisiCongeAnnuel(),
 					demandeDto.getDateDebut(), demandeDto.isDateDebutAM(), demandeDto.isDateDebutPM()));
 			demande.setDateFin(helperService.getDateFinCongeAnnuel(
 					demandeCongesAnnuels.getTypeSaisiCongeAnnuel() == null ? null
