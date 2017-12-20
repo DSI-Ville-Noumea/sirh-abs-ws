@@ -2191,16 +2191,22 @@ public class AbsenceService implements IAbsenceService {
 					&& null != demandeDto.getTypeAccidentTravail().getIdRefType()) {
 				demandeMaladie.setTypeAccidentTravail(filtreRepository
 						.findRefTypeAccidentTravail(demandeDto.getTypeAccidentTravail().getIdRefType()));
+			} else {
+				demandeMaladie.setTypeAccidentTravail(null);
 			}
 
 			if (null != demandeDto.getTypeSiegeLesion() && null != demandeDto.getTypeSiegeLesion().getIdRefType()) {
 				demandeMaladie.setTypeSiegeLesion(
 						filtreRepository.findRefTypeSiegeLesion(demandeDto.getTypeSiegeLesion().getIdRefType()));
+			} else {
+				demandeMaladie.setTypeSiegeLesion(null);
 			}
 
 			if (null != demandeDto.getTypeMaladiePro() && null != demandeDto.getTypeMaladiePro().getIdRefType()) {
 				demandeMaladie.setTypeMaladiePro(
 						filtreRepository.findRefTypeMaladiePro(demandeDto.getTypeMaladiePro().getIdRefType()));
+			} else {
+				demandeMaladie.setTypeMaladiePro(null);
 			}
 
 			if (null != demandeDto.getAccidentTravailReference()
@@ -2208,6 +2214,8 @@ public class AbsenceService implements IAbsenceService {
 
 				demandeMaladie.setAccidentTravailReference(demandeRepository.getEntity(DemandeMaladies.class,
 						demandeDto.getAccidentTravailReference().getIdDemande()));
+			} else {
+				demandeMaladie.setAccidentTravailReference(null);
 			}
 
 			demandeMaladie.setCommentaire(demandeDto.getCommentaire());

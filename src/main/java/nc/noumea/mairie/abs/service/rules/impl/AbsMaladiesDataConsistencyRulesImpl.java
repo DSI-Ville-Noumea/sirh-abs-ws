@@ -159,6 +159,8 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 		demandeDto.setAffichageBoutonRejeter(demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
 		demandeDto.setAffichageEnAttente(false);
 		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()));
+		// #43462
+		demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
 
 		return demandeDto;
 	}

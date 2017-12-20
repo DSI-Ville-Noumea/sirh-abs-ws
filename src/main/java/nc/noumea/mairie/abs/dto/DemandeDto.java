@@ -139,6 +139,8 @@ public class DemandeDto {
 	
 	// pieces jointes
 	private List<PieceJointeDto> piecesJointes;
+	// pour le mail de rejet
+	private Integer 			idAgentSaisie;
 	
 	// provient ou non de HSCT : les PJ doivent etre traitees differemment
 	private boolean isFromHSCT;
@@ -191,6 +193,8 @@ public class DemandeDto {
 		if (null != d.getType().getGroupe()) {
 			this.groupeAbsence = new RefGroupeAbsenceDto(d.getType().getGroupe());
 		}
+		// #43645 : sirh-jobs a besoin d'envoyer un mail à l'agent de saisie de la demande
+		this.idAgentSaisie = d.getEtatsDemande().get(d.getEtatsDemande().size()-1).getIdAgent();
 		if (d.getLatestEtatDemande().getEtat() != null)
 			this.idRefEtat = d.getLatestEtatDemande().getEtat().getCodeEtat();
 		this.dateDebut = d.getDateDebut();
@@ -1041,5 +1045,12 @@ public class DemandeDto {
 	public void setSansArretTravail(boolean sansArretTravail) {
 		this.sansArretTravail = sansArretTravail;
 	}
-	
+
+	public Integer getIdAgentSaisie() {
+		return idAgentSaisie;
+	}
+
+	public void setIdAgentSaisie(Integer idAgentSaisie) {
+		this.idAgentSaisie = idAgentSaisie;
+	}	
 }

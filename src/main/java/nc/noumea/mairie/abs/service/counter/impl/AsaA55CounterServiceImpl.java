@@ -17,6 +17,7 @@ import nc.noumea.mairie.abs.dto.DemandeEtatChangeDto;
 import nc.noumea.mairie.abs.dto.ReturnMessageDto;
 import nc.noumea.mairie.abs.service.AgentNotFoundException;
 
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +52,72 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 	@Transactional(value = "absTransactionManager")
 	public Integer countAllByYear(Integer annee, Integer idOS, Integer idAgentRecherche, Date dateMin, Date dateMax) {
 		return counterRepository.countAllByYear(AgentAsaA55Count.class, annee, idAgentRecherche, dateMin, dateMax);
+	}
+
+	/**
+	 * Override car création multiple
+	 */
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto majManuelleCompteurToAgent(Integer idAgent, CompteurDto compteurDto, boolean compteurExistantBloquant) {
+
+		logger.info("Trying to update manually counters for Agent {} ...", compteurDto.getIdAgent());
+
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		// tester si agent est un utilisateur SIRH
+		ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgent);
+		if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+			// seul l operateur peut mettre a jour les compteurs de ses agents
+			if (!accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())) {
+				logger.warn(OPERATEUR_INEXISTANT);
+				result.getErrors().add(String.format(OPERATEUR_INEXISTANT));
+				return result;
+			}
+		}
+
+		controlSaisieAlimManuelleCompteur(compteurDto, result);
+
+		MotifCompteur motifCompteur = null;
+		if (compteurDto.getMotifCompteurDto() != null) {
+			motifCompteur = counterRepository.getEntity(MotifCompteur.class, compteurDto.getMotifCompteurDto().getIdMotifCompteur());
+		}
+		if (null == motifCompteur) {
+			logger.warn(MOTIF_COMPTEUR_INEXISTANT);
+			result.getErrors().add(String.format(MOTIF_COMPTEUR_INEXISTANT));
+		}
+
+		if (!result.getErrors().isEmpty()) {
+			return result;
+		}
+		
+		// #43463 : On peut créer plusieurs enregistrement en fonction de la période
+		Date firstDay = new DateTime(compteurDto.getDateDebut()).withDayOfMonth(01).toDate();
+		Date currentDay = firstDay;
+		
+		// Si on est sur une seule période (un même mois), on ne créé/modifie qu'un seul enregistrement
+		if (new DateTime(compteurDto.getDateDebut()).getMonthOfYear() == new DateTime(compteurDto.getDateFin()).getMonthOfYear()
+				&& new DateTime(compteurDto.getDateDebut()).getYear() == new DateTime(compteurDto.getDateFin()).getYear()) {
+			majManuelleCompteurToAgent(idAgent, compteurDto, result, motifCompteur, compteurExistantBloquant);
+			return result;
+		}
+		
+		// Sinon, on boucle pour en créer plusieurs
+		while (currentDay.before(new DateTime(compteurDto.getDateFin()).minusDays(1).toDate())) {
+			if (currentDay != firstDay)
+				currentDay = new DateTime(currentDay).plusDays(1).toDate();
+			CompteurDto compteur = new CompteurDto();
+			compteur.setDateDebut(currentDay);
+			currentDay = new DateTime(currentDay).plusMonths(1).minusDays(1).toDate();
+			compteur.setDateFin(currentDay);
+			compteur.setDureeAAjouter(compteurDto.getDureeAAjouter());
+			compteur.setMotifCompteurDto(compteurDto.getMotifCompteurDto());
+			compteur.setIdAgent(compteurDto.getIdAgent());
+
+			majManuelleCompteurToAgent(idAgent, compteur, result, motifCompteur, compteurExistantBloquant);
+		}
+
+		return result;
 	}
 
 	/**

@@ -1614,7 +1614,6 @@ public class DefaultAbsenceDataConsistencyRulesImplTest {
 		assertEquals(RefEtatEnum.A_VALIDER.getCodeEtat(), result12.getIdRefEtat().intValue());
 		assertEquals(9005141, result12.getAgentWithServiceDto().getIdAgent().intValue());
 		assertFalse(result12.isAffichageBoutonImprimer());
-		assertFalse(result12.isAffichageBoutonModifier());
 		assertFalse(result12.isAffichageBoutonSupprimer());
 		assertFalse(result12.isAffichageBoutonDupliquer());
 		assertFalse(result12.isModifierApprobation());

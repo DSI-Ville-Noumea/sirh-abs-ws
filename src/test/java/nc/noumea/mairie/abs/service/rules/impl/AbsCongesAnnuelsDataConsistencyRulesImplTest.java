@@ -263,6 +263,7 @@ public class AbsCongesAnnuelsDataConsistencyRulesImplTest extends DefaultAbsence
 		assertTrue(result12.isAffichageBoutonAnnuler());
 		assertTrue(result12.isAffichageValidation());
 		assertTrue(result12.isAffichageEnAttente());
+		assertFalse(result12.isAffichageBoutonModifier());
 	}
 
 	@Test

@@ -241,6 +241,7 @@ public class AbsRecuperationDataConsistencyRulesImplTest extends DefaultAbsenceD
 		assertTrue(result12.isAffichageBoutonAnnuler());
 		assertFalse(result12.isAffichageValidation());
 		assertFalse(result12.isAffichageEnAttente());
+		assertFalse(result12.isAffichageBoutonModifier());
 	}
 
 	@Test
