@@ -29,7 +29,15 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 	public void processDataConsistencyDemande(ReturnMessageDto srm, Integer idAgent, Demande demande, 
 			boolean isProvenanceSIRH) {
 		// #40350 : Validation des congés exceptionnels.
-		checkEtatsDemandeAcceptes(srm, demande, Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE, RefEtatEnum.APPROUVEE));
+		List<RefEtatEnum> listEtatsAcceptes;
+		
+		// #43462 : On peut valider une demande en attente de validation DRH. Le list.add(RefEtatEnum.A_VALIDER) ne fonctionne pas !! (UnsupportedOperationException)
+		if (isProvenanceSIRH)
+			listEtatsAcceptes = Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE, RefEtatEnum.APPROUVEE, RefEtatEnum.A_VALIDER);
+		else
+			listEtatsAcceptes = Arrays.asList(RefEtatEnum.PROVISOIRE, RefEtatEnum.SAISIE, RefEtatEnum.APPROUVEE);
+		
+		checkEtatsDemandeAcceptes(srm, demande, listEtatsAcceptes);
 		super.processDataConsistencyDemande(srm, idAgent, demande, isProvenanceSIRH);
 		checkMessageAlerteDepassementDroit(srm, (DemandeCongesExceptionnels) demande);
 	}
@@ -69,6 +77,8 @@ public class AbsCongesExcepDataConsistencyRulesImpl extends AbstractAbsenceDataC
 		demandeDto.setAffichageEnAttente(demandeDto.getIdRefEtat().equals(RefEtatEnum.APPROUVEE.getCodeEtat())
 				|| demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
 		demandeDto.setAffichageBoutonDupliquer(demandeDto.getIdRefEtat().equals(RefEtatEnum.ANNULEE.getCodeEtat()));
+		// #43462
+		demandeDto.setAffichageBoutonModifier(demandeDto.getIdRefEtat().equals(RefEtatEnum.A_VALIDER.getCodeEtat()));
 
 		return demandeDto;
 	}

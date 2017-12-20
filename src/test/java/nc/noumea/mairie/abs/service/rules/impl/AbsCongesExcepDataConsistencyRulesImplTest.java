@@ -557,6 +557,8 @@ public class AbsCongesExcepDataConsistencyRulesImplTest extends DefaultAbsenceDa
 		assertTrue(result12.isAffichageBoutonAnnuler());
 		assertTrue(result12.isAffichageValidation());
 		assertTrue(result12.isAffichageEnAttente());
+		assertTrue(result12.isAffichageBoutonModifier());
+		assertTrue(result12.isAffichageBoutonModifier());
 	}
 
 	@Test
