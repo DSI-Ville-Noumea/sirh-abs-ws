@@ -326,7 +326,7 @@ public class SoldeService implements ISoldeService {
 			//#35721 : erreur si soldeAsaA52 est null
 			double dureeAsaA52NonValide = 0.0;
 			if(soldeAsaA52!=null){
-				 dureeAsaA52NonValide = absAsaA52DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCours(null, idAgent, soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin());
+				 dureeAsaA52NonValide = absAsaA52DataConsistencyRulesImpl.getSommeDureeDemandeAsaEnCoursByOs(null, idAgent, soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin(), dtoOrga.getIdOrganisation());
 			}
 			dto.setDureeAsaA52NonValide(dureeAsaA52NonValide);
 		}

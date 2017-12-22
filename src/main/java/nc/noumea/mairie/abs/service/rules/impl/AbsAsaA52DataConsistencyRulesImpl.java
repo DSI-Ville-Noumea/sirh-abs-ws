@@ -91,8 +91,8 @@ public class AbsAsaA52DataConsistencyRulesImpl extends AbsAsaDataConsistencyRule
 			return true;
 		}
 
-		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCours(demandeDto.getIdDemande(), demandeDto
-				.getAgentWithServiceDto().getIdAgent(), soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin());
+		double sommeDemandeEnCours = getSommeDureeDemandeAsaEnCoursByOs(demandeDto.getIdDemande(), demandeDto.getAgentWithServiceDto().getIdAgent(),
+				soldeAsaA52.getDateDebut(), soldeAsaA52.getDateFin(), soldeAsaA52.getOrganisationSyndicale().getIdOrganisationSyndicale());
 
 		// on signale par un message d info que le compteur est epuise, mais on
 		// ne bloque pas la demande
