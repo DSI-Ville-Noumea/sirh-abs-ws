@@ -379,7 +379,7 @@ public class MaladieCounterServiceImpl extends AbstractCounterService {
 		
 		if (listDemandesFutures != null && !listDemandesFutures.isEmpty()) {
 			for(DemandeMaladies mal : listDemandesFutures) {
-				logger.debug("Mise à jour du solde de la demande {}, pour l'agent matricule {}", mal.getIdDemande(), demande.getIdAgent());
+				logger.debug("Mise à jour rétroactive du solde de la demande {}, pour l'agent matricule {}", mal.getIdDemande(), demande.getIdAgent());
 				CalculDroitsMaladiesVo dm = calculDroitsMaladies(mal.getIdAgent(),
 						mal.getDateDebut(), demande.getIdDemande(), mal.getDuree(), isCancel, true);
 
