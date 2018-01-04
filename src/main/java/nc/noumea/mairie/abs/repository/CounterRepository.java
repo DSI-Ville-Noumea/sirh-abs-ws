@@ -117,14 +117,19 @@ public class CounterRepository implements ICounterRepository {
 		Root<T> c = cq.from(T);
 		cq.select(c);
 		ParameterExpression<Integer> p = cb.parameter(Integer.class, "idAgent");
-		ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateDebut");
-		cq.where(cb.and(cb.equal(c.get("idAgent"), p),
-				cb.between(p2, c.<Date> get("dateDebut"), c.<Date> get("dateFin"))));
+		if (date != null) {
+			ParameterExpression<Date> p2 = cb.parameter(Date.class, "dateDebut");
+			cq.where(cb.and(cb.equal(c.get("idAgent"), p),
+					cb.between(p2, c.<Date>get("dateDebut"), c.<Date>get("dateFin"))));
+		}else {
+			cq.where(cb.and(cb.equal(c.get("idAgent"), p)));
+		}
 
 		// Build query
 		TypedQuery<T> q = absEntityManager.createQuery(cq);
 		q.setParameter("idAgent", idAgent);
-		q.setParameter("dateDebut", date);
+		if (date != null)
+			q.setParameter("dateDebut", date);
 		q.setMaxResults(1);
 
 		// Exec query
@@ -380,12 +385,16 @@ public class CounterRepository implements ICounterRepository {
 	}
 
 	@Override
-	public <T> List<T> getListCounterByAnnee(Class<T> T, Integer annee, Integer pageSize, Integer pageNumber) {
+	public <T> List<T> getListCounterByAnneeAndAgent(Class<T> T, Integer annee, Integer pageSize, Integer pageNumber,
+			Integer idAgentRecherche) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select c from "+T.getSimpleName()+" c ");
-		if(annee!=null){
-		sb.append("where year(dateDebut) = :annee ");
+		sb.append("select c from " + T.getSimpleName() + " c ");
+		sb.append("where 1=1 ");
+		if (annee != null) {
+			sb.append("and year(dateDebut) = :annee ");
 		}
+		if (idAgentRecherche != null)
+			sb.append("and c.idAgent = :idAgentRecherche ");
 		sb.append("order by c.idAgent asc, c.dateDebut desc");
 
 		TypedQuery<T> query = absEntityManager.createQuery(sb.toString(), T);
@@ -400,6 +409,10 @@ public class CounterRepository implements ICounterRepository {
 		if(annee!=null){
 			query.setParameter("annee", annee);
 		}
+
+		if (idAgentRecherche != null)
+			query.setParameter("idAgentRecherche", idAgentRecherche);
+
 		return query.getResultList();
 	}
 

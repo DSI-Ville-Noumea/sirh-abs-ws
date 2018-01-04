@@ -64,11 +64,12 @@ public class AsaA48Controller {
 	public List<CompteurDto> getListeCompteur(@RequestParam(value = "annee", required = false) Integer annee,
 			@RequestParam(value = "idOrganisation", required = false) Integer idOrganisation,
 			@RequestParam(value = "pageSize", required = false) Integer pageSize,
-			@RequestParam(value = "pageNumber", required = false) Integer pageNumber ) {
+			@RequestParam(value = "pageNumber", required = false) Integer pageNumber, 
+			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche ) {
 
 		logger.debug("entered GET [asaA48/listeCompteurA48] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur(idOrganisation, annee, pageSize, pageNumber);
+		List<CompteurDto> result = counterService.getListeCompteur(idOrganisation, annee, pageSize, pageNumber,idAgentRecherche);
 
 		if (result.size() == 0)
 			throw new NoContentException();
@@ -79,11 +80,12 @@ public class AsaA48Controller {
 	@ResponseBody
 	@RequestMapping(value = "/countAllByYear", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public Integer countAllByYear(@RequestParam(value = "year", required = false) Integer annee, 
-			@RequestParam(value = "idOS", required = false) Integer idOS, HttpServletResponse response) {
+			@RequestParam(value = "idOS", required = false) Integer idOS, 
+			@RequestParam(value = "idAgentRecherche", required = false) Integer idAgentRecherche, HttpServletResponse response) {
 
 		logger.debug("entered GET [asaA48/countAll]");
 
-		return counterService.countAllByYear(annee, idOS);
+		return counterService.countAllByYear(annee, idOS, idAgentRecherche, null, null);
 	}
 
 	/**

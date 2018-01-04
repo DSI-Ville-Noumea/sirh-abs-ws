@@ -91,7 +91,7 @@ public class AsaA55Controller {
 
 		logger.debug("entered GET [asaA55/listeCompteurA55] => getListeCompteur ");
 
-		List<CompteurDto> result = counterService.getListeCompteur(pageSize, pageNumber, idAgentRecherche, dateMin, dateMax);
+		List<CompteurDto> result = counterService.getListeCompteurWithDate(pageSize, pageNumber, idAgentRecherche, dateMin, dateMax);
 
 		if (result.size() == 0)
 			throw new NoContentException();

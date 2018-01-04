@@ -212,12 +212,12 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		List<CompteurDto> result = new ArrayList<CompteurDto>();
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA48Count.class, null, null, null)).thenReturn(new ArrayList<AgentAsaA48Count>());
+		Mockito.when(counterRepository.getListCounterByAnneeAndAgent(AgentAsaA48Count.class, null, null, null,null)).thenReturn(new ArrayList<AgentAsaA48Count>());
 
 		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 
-		result = service.getListeCompteur(null, null, null, null);
+		result = service.getListeCompteur(null, null, null, null,null);
 
 		assertEquals(0, result.size());
 
@@ -239,13 +239,13 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(OSRepository.getAgentA48Organisation(e.getIdAgent())).thenReturn(null);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA48Count.class, 2015, null, null)).thenReturn(list);
+		Mockito.when(counterRepository.getListCounterByAnneeAndAgent(AgentAsaA48Count.class, 2015, null, null,null)).thenReturn(list);
 
 		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 
-		result = service.getListeCompteur(null, 2015, null, null);
+		result = service.getListeCompteur(null, 2015, null, null,null);
 
 		assertEquals(1, result.size());
 		assertEquals(12, result.get(0).getDureeAAjouter().intValue());
@@ -276,7 +276,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(OSRepository.getAgentA48Organisation(e.getIdAgent())).thenReturn(null);
-		Mockito.when(OSRepository.getAgentA48OrganisationByOS(1, null, null, 2015)).thenReturn(orga.getAgentsA48());
+		Mockito.when(OSRepository.getAgentA48OrganisationByOS(1, null, null, 2015,null)).thenReturn(orga.getAgentsA48());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, agOrga.getIdAgent(), new DateTime(2015, 1, 1, 0, 0, 0).toDate()))
@@ -286,7 +286,7 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 
-		result = service.getListeCompteur(1, 2015, null, null);
+		result = service.getListeCompteur(1, 2015, null, null,null);
 
 		assertEquals(1, result.size());
 		assertEquals(12, result.get(0).getDureeAAjouter().intValue());
@@ -309,13 +309,13 @@ public class AsaA48CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(OSRepository.getAgentA48Organisation(e.getIdAgent())).thenReturn(null);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA48Count.class, null, null, null)).thenReturn(list);
+		Mockito.when(counterRepository.getListCounterByAnneeAndAgent(AgentAsaA48Count.class, null, null, null,null)).thenReturn(list);
 
 		AsaA48CounterServiceImpl service = new AsaA48CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
 		ReflectionTestUtils.setField(service, "OSRepository", OSRepository);
 
-		result = service.getListeCompteur(null, null, null, null);
+		result = service.getListeCompteur(null, null, null, null,null);
 
 		assertEquals(1, result.size());
 		assertEquals(12, result.get(0).getDureeAAjouter().intValue());
