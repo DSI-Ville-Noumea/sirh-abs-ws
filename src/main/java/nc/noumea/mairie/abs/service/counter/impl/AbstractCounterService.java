@@ -256,17 +256,12 @@ public abstract class AbstractCounterService implements ICounterService {
 	}
 
 	@Override
-	public Integer countAllByYear(Integer annee, Integer idOS) {
+	public List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale, Integer annee, Integer pageSize, Integer pageNumber,Integer idAgentRecherche) {
 		return null;
 	}
 	
 	@Override
-	public List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale, Integer annee, Integer pageSize, Integer pageNumber) {
-		return null;
-	}
-	
-	@Override
-	public List<CompteurDto> getListeCompteur(Integer pageSize, Integer pageNumber, Integer idAgentRecherche, String dateMin, String dateMax) throws ParseException {
+	public List<CompteurDto> getListeCompteurWithDate(Integer pageSize, Integer pageNumber, Integer idAgentRecherche, String dateMin, String dateMax) throws ParseException {
 		return null;
 	}
 

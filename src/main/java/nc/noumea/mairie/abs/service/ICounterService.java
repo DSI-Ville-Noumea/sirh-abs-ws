@@ -39,13 +39,11 @@ public interface ICounterService {
 
 	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale, Integer annee);
 
-	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee, Integer pageSize, Integer pageNumber);
+	List<CompteurDto> getListeCompteur(Integer idOrganisationSyndicale,Integer annee, Integer pageSize, Integer pageNumber, Integer idAgentRecherche);
 	
-	List<CompteurDto> getListeCompteur(Integer pageSize, Integer pageNumber, Integer idAgentRecherche, String dateMin, String dateMax) throws ParseException;
+	List<CompteurDto> getListeCompteurWithDate(Integer pageSize, Integer pageNumber, Integer idAgentRecherche, String dateMin, String dateMax) throws ParseException;
 
 	Integer countAllByYear(Integer annee, Integer idOS, Integer idAgentRecherche, Date dateMin, Date dateMax);
-
-	Integer countAllByYear(Integer annee, Integer idOS);
 
 	List<SoldeSpecifiqueDto> getListAgentCounterByDate(Integer idAgent, Date dateDebut, Date dateFin);
 

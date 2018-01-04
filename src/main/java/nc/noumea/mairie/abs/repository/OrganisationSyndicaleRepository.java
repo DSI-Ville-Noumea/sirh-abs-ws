@@ -107,12 +107,15 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 	}
 
 	@Override
-	public List<AgentA54OrganisationSyndicale> getAgentA54OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer annee) {
+	public List<AgentA54OrganisationSyndicale> getAgentA54OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer annee, Integer idAgentRecherche) {
 
 		String sb = "SELECT os FROM AgentAsaA54Count asa, AgentA54OrganisationSyndicale os ";
 		sb += "WHERE os.idAgent = asa.idAgent AND os.organisationSyndicale.idOrganisationSyndicale = :idOS ";
 		if (annee != null) {
 			sb += "AND extract(year from asa.dateDebut) = :annee ";
+		}
+		if (idAgentRecherche != null) {
+			sb += "AND os.idAgent = :idAgentRecherche ";
 		}
 		sb += "order by asa.idAgent desc ";
 		
@@ -129,6 +132,9 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 		
 		if (annee != null) {
 			query.setParameter("annee", annee);
+		}		
+		if (idAgentRecherche != null) {
+			query.setParameter("idAgentRecherche", idAgentRecherche);
 		}
 
 		return query.getResultList();
@@ -144,12 +150,15 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 	}
 
 	@Override
-	public List<AgentA48OrganisationSyndicale> getAgentA48OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer annee) {
+	public List<AgentA48OrganisationSyndicale> getAgentA48OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer annee, Integer idAgentRecherche) {
 
 		String sb = "SELECT os FROM AgentAsaA48Count asa, AgentA48OrganisationSyndicale os ";
 		sb += "WHERE os.idAgent = asa.idAgent AND os.organisationSyndicale.idOrganisationSyndicale = :idOS ";
 		if (annee != null) {
 			sb += "AND extract(year from asa.dateDebut) = :annee ";
+		}
+		if (idAgentRecherche != null) {
+			sb += "AND os.idAgent = :idAgentRecherche ";
 		}
 		sb += "order by asa.idAgent desc ";
 		
@@ -164,6 +173,9 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 		
 		if (annee != null) {
 			query.setParameter("annee", annee);
+		}	
+		if (idAgentRecherche != null) {
+			query.setParameter("idAgentRecherche", idAgentRecherche);
 		}
 		
 		query.setParameter("idOS", idOrganisationSyndicale);
@@ -172,12 +184,15 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 	}
 
 	@Override
-	public <T, U> Integer countAllByidOSAndYear(Class<T> T, Class<U> U, Integer idOS, Integer annee) {
+	public <T, U> Integer countAllByidOSAndYear(Class<T> T, Class<U> U, Integer idOS, Integer annee,Integer idAgentRecherche) {
 
 		String sb = "SELECT os FROM " + U.getSimpleName() + " asa, " + T.getSimpleName() + " os ";
 		sb += "WHERE os.idAgent = asa.idAgent AND os.organisationSyndicale.idOrganisationSyndicale = :idOS ";
 		if (annee != null) {
 			sb += "AND extract(year from asa.dateDebut) = :annee ";
+		}
+		if (idAgentRecherche != null) {
+			sb += "AND os.idAgent = :idAgentRecherche ";
 		}
 		sb += "order by asa.idAgent desc ";
 		
@@ -185,6 +200,10 @@ public class OrganisationSyndicaleRepository implements IOrganisationSyndicaleRe
 		
 		if (annee != null) {
 			query.setParameter("annee", annee);
+		}
+		
+		if (idAgentRecherche != null) {
+			query.setParameter("idAgentRecherche", idAgentRecherche);
 		}
 		
 		query.setParameter("idOS", idOS);

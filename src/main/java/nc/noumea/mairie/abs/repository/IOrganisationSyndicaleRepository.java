@@ -29,11 +29,11 @@ public interface IOrganisationSyndicaleRepository {
 
 	List<AgentA54OrganisationSyndicale> getAgentA54Organisation(Integer idAgent);
 
-	List<AgentA54OrganisationSyndicale> getAgentA54OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer year);
+	List<AgentA54OrganisationSyndicale> getAgentA54OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer year, Integer idAgentRecherche);
 
 	List<AgentA48OrganisationSyndicale> getAgentA48Organisation(Integer idAgent);
 	
-	<T, U> Integer countAllByidOSAndYear(Class<T> T, Class<U> U, Integer idOS, Integer annee);
+	<T, U> Integer countAllByidOSAndYear(Class<T> T, Class<U> U, Integer idOS, Integer annee,Integer idAgentRecherche);
 
-	List<AgentA48OrganisationSyndicale> getAgentA48OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer year);
+	List<AgentA48OrganisationSyndicale> getAgentA48OrganisationByOS(Integer idOrganisationSyndicale, Integer pageSize, Integer pageNumber, Integer year, Integer idAgentRecherche);
 }
