@@ -1258,7 +1258,6 @@ public class AbsenceService implements IAbsenceService {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		result.getErrors()
-				.add(String.format(
 						"La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
 						idDemande, idAgent, sdf.format(date)));
 		logger.error(
