@@ -98,6 +98,7 @@ import nc.noumea.mairie.abs.service.counter.impl.CounterServiceFactory;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTask;
 import nc.noumea.mairie.abs.service.multiThread.DemandeRecursiveTaskSimple;
 import nc.noumea.mairie.abs.service.rules.impl.AbsAsaDataConsistencyRulesImpl;
+import nc.noumea.mairie.abs.service.rules.impl.AbstractAbsenceDataConsistencyRules;
 import nc.noumea.mairie.abs.service.rules.impl.DataConsistencyRulesFactory;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.abs.web.AccessForbiddenException;
@@ -1258,6 +1259,7 @@ public class AbsenceService implements IAbsenceService {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		result.getErrors()
+				.add(String.format(
 						"La demande %s de l'agent %s ne peut pas passer à l'état pris car celui-ci n'a pas de carrière en cours à la date %s.",
 						idDemande, idAgent, sdf.format(date)));
 		logger.error(
@@ -2041,8 +2043,20 @@ public class AbsenceService implements IAbsenceService {
 
 			int dureeRecup = helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()).intValue();
 			
-			if (dureeRecup > 600)
-				returnDto.getErrors().add("La durée d'une récupération ne doit pas excéder 10h.");
+			// #44179 : on controle la durée qui ne peut pas éxéder 10H par jour sauf pour
+			// les pomiers (base F des congés)
+			// on cherche sa base horaire à la date de la demande
+			RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(demande.getIdAgent(),
+					demande.getDateDebut());
+			if (dtoBase == null || dtoBase.getIdRefTypeSaisiCongeAnnuel() == null) {
+				returnDto.getErrors().add(
+						String.format(AbstractAbsenceDataConsistencyRules.BASE_HORAIRE_AGENT, demande.getIdAgent()));
+			} else {
+				RefTypeSaisiCongeAnnuel typeConge = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
+						dtoBase.getIdRefTypeSaisiCongeAnnuel());
+				if (!typeConge.getCodeBaseHoraireAbsence().equals("F") && dureeRecup > 600)
+					returnDto.getErrors().add("La durée d'une récupération ne doit pas excéder 10h.");
+			}
 			
 			demandeRecup.setDuree(dureeRecup);
 
