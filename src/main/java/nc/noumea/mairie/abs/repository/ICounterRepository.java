@@ -52,7 +52,7 @@ public interface ICounterRepository {
 
 	<T> List<T> getListCounterByAnnee(Class<T> T, Integer annee);
 
-	<T> List<T> getListCounterByAnnee(Class<T> T, Integer annee, Integer pageSize, Integer pageNumber);
+	<T> List<T> getListCounterByAnneeAndAgent(Class<T> T, Integer annee, Integer pageSize, Integer pageNumber, Integer idAgentRecherche);
 	
 	<T> List<T> getListCounterByDate(Class<T> T, Integer pageSize, Integer pageNumber, Integer idAgentRecherche, Date dateMin, Date dateMax);
 

@@ -187,10 +187,10 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee, Integer pageSize, Integer pageNumber) {
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee, Integer pageSize, Integer pageNumber,Integer idAgentRecherche) {
 		List<CompteurDto> result = new ArrayList<>();
 
-		List<AgentAsaA55Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA55Count.class, null, pageSize, pageNumber);
+		List<AgentAsaA55Count> listeArc = counterRepository.getListCounterByAnneeAndAgent(AgentAsaA55Count.class, null, pageSize, pageNumber,idAgentRecherche);
 		for (AgentAsaA55Count arc : listeArc) {
 			List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
 			CompteurDto dto = new CompteurDto(arc, list.size() > 0 ? list.get(0) : null);
@@ -201,7 +201,7 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurDto> getListeCompteur(Integer pageSize, Integer pageNumber, Integer idAgentRecherche, String dateMin, String dateMax) throws ParseException {
+	public List<CompteurDto> getListeCompteurWithDate(Integer pageSize, Integer pageNumber, Integer idAgentRecherche, String dateMin, String dateMax) throws ParseException {
 		List<CompteurDto> result = new ArrayList<>();
 		
 		Date dateDeb = dateMin != null ? sdf.parse(dateMin) : null;

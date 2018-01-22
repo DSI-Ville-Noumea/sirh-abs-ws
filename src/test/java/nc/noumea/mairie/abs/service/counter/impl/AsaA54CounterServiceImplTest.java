@@ -286,7 +286,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(OSRepository.getAgentA54Organisation(e.getIdAgent())).thenReturn(null);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, null, null, null)).thenReturn(list);
+		Mockito.when(counterRepository.getListCounterByAnneeAndAgent(AgentAsaA54Count.class, null, null, null,null)).thenReturn(list);
 
 		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
@@ -315,7 +315,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 		Mockito.when(OSRepository.getAgentA54Organisation(e.getIdAgent())).thenReturn(null);
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
-		Mockito.when(counterRepository.getListCounterByAnnee(AgentAsaA54Count.class, 2015, null, null)).thenReturn(list);
+		Mockito.when(counterRepository.getListCounterByAnneeAndAgent(AgentAsaA54Count.class, 2015, null, null,null)).thenReturn(list);
 
 		AsaA54CounterServiceImpl service = new AsaA54CounterServiceImpl();
 		ReflectionTestUtils.setField(service, "counterRepository", counterRepository);
@@ -352,7 +352,7 @@ public class AsaA54CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		IOrganisationSyndicaleRepository OSRepository = Mockito.mock(IOrganisationSyndicaleRepository.class);
 		Mockito.when(OSRepository.getAgentA54Organisation(e.getIdAgent())).thenReturn(null);
-		Mockito.when(OSRepository.getAgentA54OrganisationByOS(1, null, null, 2015)).thenReturn(orga.getAgentsA54());
+		Mockito.when(OSRepository.getAgentA54OrganisationByOS(1, null, null, 2015,null)).thenReturn(orga.getAgentsA54());
 
 		ICounterRepository counterRepository = Mockito.mock(ICounterRepository.class);
 		Mockito.when(counterRepository.getAgentCounterByDate(AgentAsaA54Count.class, agOrga.getIdAgent(), new DateTime(2015, 1, 1, 0, 0, 0).toDate()))

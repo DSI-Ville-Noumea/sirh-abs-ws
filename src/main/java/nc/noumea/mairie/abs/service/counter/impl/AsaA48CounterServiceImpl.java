@@ -2,6 +2,7 @@ package nc.noumea.mairie.abs.service.counter.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -96,10 +97,10 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee, Integer pageSize, Integer pageNumber) {
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee, Integer pageSize, Integer pageNumber,Integer idAgentRecherche) {
 		List<CompteurDto> result = new ArrayList<>();
 		if (idOrganisation == null) {
-			List<AgentAsaA48Count> listeArc = counterRepository.getListCounterByAnnee(AgentAsaA48Count.class, annee, pageSize, pageNumber);
+			List<AgentAsaA48Count> listeArc = counterRepository.getListCounterByAnneeAndAgent(AgentAsaA48Count.class, annee, pageSize, pageNumber,idAgentRecherche);
 			for (AgentAsaA48Count arc : listeArc) {
 				List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(arc.getIdAgent(), arc);
 				// on regarde si il y a une saisie OS
@@ -110,9 +111,9 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 				result.add(dto);
 			}
 		} else {
-			List<AgentA48OrganisationSyndicale> listAg = OSRepository.getAgentA48OrganisationByOS(idOrganisation, pageSize, pageNumber, annee);
+			List<AgentA48OrganisationSyndicale> listAg = OSRepository.getAgentA48OrganisationByOS(idOrganisation, pageSize, pageNumber, annee,idAgentRecherche);
 			for (AgentA48OrganisationSyndicale agOrga : listAg) {
-				AgentAsaA48Count compteurAg = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, agOrga.getIdAgent(),
+				AgentAsaA48Count compteurAg = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, agOrga.getIdAgent(),annee==null?null:
 						new DateTime(annee, 1, 1, 0, 0, 0).toDate());
 				if (compteurAg != null) {
 					List<AgentHistoAlimManuelle> list = counterRepository.getListHisto(compteurAg.getIdAgent(), compteurAg);
@@ -152,11 +153,11 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 	 */
 	@Override
 	@Transactional(value = "absTransactionManager")
-	public Integer countAllByYear(Integer annee, Integer idOS) {
+	public Integer countAllByYear(Integer annee, Integer idOS, Integer idAgentRecherche, Date dateMin, Date dateMax) {
 		if (idOS == null)
-			return counterRepository.countAllByYear(AgentAsaA48Count.class, annee, null, null, null);
+			return counterRepository.countAllByYear(AgentAsaA48Count.class, annee, idAgentRecherche, dateMin, dateMax);
 		else 
-			return OSRepository.countAllByidOSAndYear(AgentA48OrganisationSyndicale.class, AgentAsaA48Count.class, idOS, annee);
+			return OSRepository.countAllByidOSAndYear(AgentA48OrganisationSyndicale.class, AgentAsaA48Count.class, idOS, annee,idAgentRecherche);
 	}
 
 	/**
