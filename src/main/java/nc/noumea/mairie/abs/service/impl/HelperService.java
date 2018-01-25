@@ -565,24 +565,9 @@ public class HelperService {
 
 	protected Double getNombreDimanche(Date dateDebut, Date dateFin) {
 
-		int compteur = 0;
+		double compteur = 0;
 		// on calcule le nombre de vendredi
-		DateTime startDate = new DateTime(dateDebut).withHourOfDay(0).withMinuteOfHour(0); // on
-																							// met
-																							// les
-																							// heures
-																							// et
-																							// minutes
-																							// a
-																							// zero
-																							// afin
-																							// de
-																							// bien
-																							// comptabiliser
-																							// dans
-																							// la
-																							// boucle
-																							// while
+		DateTime startDate = new DateTime(dateDebut).withHourOfDay(0).withMinuteOfHour(0); // on met les heures et minutes à zéro afin de bien comptabiliser dans la boucle while
 		DateTime endDate = new DateTime(dateFin);
 
 		DateTime thisMonday = startDate.withDayOfWeek(DateTimeConstants.SUNDAY);
@@ -593,10 +578,15 @@ public class HelperService {
 			startDate = thisMonday; // start on this SUNDAY
 		}
 		while (startDate.isBefore(endDate)) {
+			// #43822 : On gère le cas des demi-journées
+			if ((startDate.getDayOfYear() == new DateTime(dateDebut).getDayOfYear() && HEURE_JOUR_DEBUT_PM == new DateTime(dateDebut).getHourOfDay())
+					|| (startDate.getDayOfYear() == new DateTime(dateFin).getDayOfYear() && HEURE_JOUR_FIN_AM == new DateTime(dateFin).getHourOfDay()))
+				compteur += 0.5;
+			else
+				compteur++;
 			startDate = startDate.plusWeeks(1);
-			compteur++;
 		}
-		return (double) compteur;
+		return compteur;
 	}
 
 	protected Double getNombreJourSemaineWithoutFerie(Date dateDebut, Date dateFin, int jourDonne, List<JourDto> listJoursFeries) {
@@ -618,9 +608,10 @@ public class HelperService {
 		}
 		while (startDate.isBefore(endDate)) {
 			if (!isJourHoliday(listJoursFeries, startDate.toDate())) {
-
-				if (startDate.getDayOfYear() == new DateTime(dateDebut).getDayOfYear()
-						&& HEURE_JOUR_DEBUT_PM == new DateTime(dateDebut).getHourOfDay()) {
+				// #43822 : On gère le cas des demi-journées
+				if (startDate.getDayOfYear() == new DateTime(dateDebut).getDayOfYear() && HEURE_JOUR_DEBUT_PM == new DateTime(dateDebut).getHourOfDay()) {
+					compteur = compteur + 0.5;
+				} else if (startDate.getDayOfYear() == new DateTime(dateFin).getDayOfYear() && HEURE_JOUR_FIN_AM == new DateTime(dateFin).getHourOfDay()) {
 					compteur = compteur + 0.5;
 				} else {
 					compteur++;

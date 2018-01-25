@@ -2119,7 +2119,7 @@ public class HelperServiceTest {
 	@Test
 	public void getNombreDimanche_3Dimanche_DebutDimancheMidi() {
 
-		Double duree = 3.0;
+		Double duree = 2.5;
 
 		Date dateDebut = new DateTime(2015, 1, 4, 12, 0, 0).toDate();
 		Date dateFin = new DateTime(2015, 1, 19, 11, 59, 59).toDate();
@@ -2133,7 +2133,7 @@ public class HelperServiceTest {
 	@Test
 	public void getNombreDimanche_3Dimanche_FinDimancheMidi() {
 
-		Double duree = 3.0;
+		Double duree = 2.0;
 
 		Date dateDebut = new DateTime(2015, 1, 4, 12, 0, 0).toDate();
 		Date dateFin = new DateTime(2015, 1, 18, 11, 59, 59).toDate();
@@ -2147,7 +2147,7 @@ public class HelperServiceTest {
 	@Test
 	public void getNombreDimanche_1Dimanche_DebutDimanche_FinDimancheMidi() {
 
-		Double duree = 1.0;
+		Double duree = 0.5;
 
 		Date dateDebut = new DateTime(2015, 1, 18, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2015, 1, 18, 11, 59, 59).toDate();
@@ -2161,7 +2161,7 @@ public class HelperServiceTest {
 	@Test
 	public void getNombreDimanche_1Dimanche_DebutDimancheMidi_FinDimancheSoir() {
 
-		Double duree = 1.0;
+		Double duree = 0.5;
 
 		Date dateDebut = new DateTime(2015, 1, 18, 12, 0, 0).toDate();
 		Date dateFin = new DateTime(2015, 1, 18, 23, 59, 59).toDate();
