@@ -2043,8 +2043,7 @@ public class AbsenceService implements IAbsenceService {
 
 			int dureeRecup = helperService.getDuree(demande.getType().getTypeSaisi(), demande.getDateDebut(), demande.getDateFin(), demandeDto.getDuree()).intValue();
 			
-			// #44179 : on controle la durée qui ne peut pas éxéder 10H par jour sauf pour
-			// les pomiers (base F des congés)
+			// #44179 : on controle la durée qui ne peut pas éxéder 10H par jour sauf pour les pomiers (base F des congés)
 			// on cherche sa base horaire à la date de la demande
 			RefTypeSaisiCongeAnnuelDto dtoBase = sirhWSConsumer.getBaseHoraireAbsence(demande.getIdAgent(),
 					demande.getDateDebut());
@@ -2052,8 +2051,7 @@ public class AbsenceService implements IAbsenceService {
 				returnDto.getErrors().add(
 						String.format(AbstractAbsenceDataConsistencyRules.BASE_HORAIRE_AGENT, demande.getIdAgent()));
 			} else {
-				RefTypeSaisiCongeAnnuel typeConge = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class,
-						dtoBase.getIdRefTypeSaisiCongeAnnuel());
+				RefTypeSaisiCongeAnnuel typeConge = typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, dtoBase.getIdRefTypeSaisiCongeAnnuel());
 				if (!typeConge.getCodeBaseHoraireAbsence().equals("F") && dureeRecup > 600)
 					returnDto.getErrors().add("La durée d'une récupération ne doit pas excéder 10h.");
 			}

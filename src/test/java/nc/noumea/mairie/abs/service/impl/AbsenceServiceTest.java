@@ -368,6 +368,16 @@ public class AbsenceServiceTest {
 		dto.setIdTypeDemande(RefTypeAbsenceEnum.RECUP.getValue());
 		dto.setGroupeAbsence(groupeAbsence);
 
+		RefTypeSaisiCongeAnnuelDto dtoBase = new RefTypeSaisiCongeAnnuelDto();
+		dtoBase.setIdRefTypeSaisiCongeAnnuel(2);
+		RefTypeSaisiCongeAnnuel refTypeCA = new RefTypeSaisiCongeAnnuel();
+		refTypeCA.setCodeBaseHoraireAbsence("F");
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), (Date) Mockito.anyObject())).thenReturn(dtoBase);
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, 2)).thenReturn(refTypeCA);
+
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(idAgent);
 		dto.setAgentWithServiceDto(agDto);
@@ -452,6 +462,8 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 		ReflectionTestUtils.setField(service, "alfrescoCMISService", alfrescoCMISService);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 
 		result = service.saveDemande(idAgent, dto);
 
@@ -548,6 +560,16 @@ public class AbsenceServiceTest {
 
 		IAlfrescoCMISService alfrescoCMISService = Mockito.mock(IAlfrescoCMISService.class);
 
+		RefTypeSaisiCongeAnnuelDto dtoBase = new RefTypeSaisiCongeAnnuelDto();
+		dtoBase.setIdRefTypeSaisiCongeAnnuel(2);
+		RefTypeSaisiCongeAnnuel refTypeCA = new RefTypeSaisiCongeAnnuel();
+		refTypeCA.setCodeBaseHoraireAbsence("F");
+		
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), (Date) Mockito.anyObject())).thenReturn(dtoBase);
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, 2)).thenReturn(refTypeCA);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
@@ -557,6 +579,8 @@ public class AbsenceServiceTest {
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
 		ReflectionTestUtils.setField(service, "dataConsistencyRulesFactory", dataConsistencyRulesFactory);
 		ReflectionTestUtils.setField(service, "alfrescoCMISService", alfrescoCMISService);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 
 		result = service.saveDemande(idAgent, dto);
 
@@ -4435,6 +4459,11 @@ public class AbsenceServiceTest {
 		droitDroitsAgent.add(droitDroitAgent);
 		droitOperateur.setDroitDroitsAgent(droitDroitsAgent);
 
+		RefTypeSaisiCongeAnnuelDto dtoBase = new RefTypeSaisiCongeAnnuelDto();
+		dtoBase.setIdRefTypeSaisiCongeAnnuel(2);
+		RefTypeSaisiCongeAnnuel refTypeCA = new RefTypeSaisiCongeAnnuel();
+		refTypeCA.setCodeBaseHoraireAbsence("D");
+
 		RefGroupeAbsence groupe = new RefGroupeAbsence();
 		groupe.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.RECUP.getValue());
 
@@ -4486,10 +4515,15 @@ public class AbsenceServiceTest {
 		Mockito.when(filtreRepository.findRefTypeSaisi(dto.getIdTypeDemande())).thenReturn(new RefTypeSaisi());
 
 		IAlfrescoCMISService alfrescoCMISService = Mockito.mock(IAlfrescoCMISService.class);
+		
+		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), (Date) Mockito.anyObject())).thenReturn(dtoBase);
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, 2)).thenReturn(refTypeCA);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);
@@ -4587,9 +4621,19 @@ public class AbsenceServiceTest {
 
 		IAlfrescoCMISService alfrescoCMISService = Mockito.mock(IAlfrescoCMISService.class);
 
+		RefTypeSaisiCongeAnnuelDto dtoBase = new RefTypeSaisiCongeAnnuelDto();
+		dtoBase.setIdRefTypeSaisiCongeAnnuel(2);
+		RefTypeSaisiCongeAnnuel refTypeCA = new RefTypeSaisiCongeAnnuel();
+		refTypeCA.setCodeBaseHoraireAbsence("F");
+		
+		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), (Date) Mockito.anyObject())).thenReturn(dtoBase);
+		ITypeAbsenceRepository typeAbsenceRepository = Mockito.mock(ITypeAbsenceRepository.class);
+		Mockito.when(typeAbsenceRepository.getEntity(RefTypeSaisiCongeAnnuel.class, 2)).thenReturn(refTypeCA);
+
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "typeAbsenceRepository", typeAbsenceRepository);
 		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absenceDataConsistencyRulesImpl", absDataConsistencyRules);

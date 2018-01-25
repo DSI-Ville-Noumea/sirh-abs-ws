@@ -45,6 +45,12 @@ public class AsaA54CounterServiceImpl extends AsaCounterServiceImpl {
 		}
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public List<CompteurDto> getListeCompteur(Integer idOrganisation, Integer annee) {
+		return getListeCompteur(idOrganisation, annee, null, null, null);
+	}
+	
 	/**
 	 * Retourne le nombre total d'enregistrement par année si spécifiée, pour la pagination des données.
 	 */
