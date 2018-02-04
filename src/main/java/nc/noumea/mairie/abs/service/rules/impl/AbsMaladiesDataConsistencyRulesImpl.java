@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -52,8 +53,9 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 		checkATReferencePourTypeRechute(srm, (DemandeMaladies) demande);
 		// #31607 : on verifie la cohérence date debut/date fin ave le nombre de jours ITT
 		checkNombreJoursITT(srm, (DemandeMaladies) demande);
-		// #31605 puis #39427 : on ne permet aucune date dans le futur
-		checkDateFutur(srm, (DemandeMaladies) demande);
+		// #31605 puis #39427 : on ne permet aucune date dans le futur.
+		// #43666 : On autorise une saisie par anticipation de 2 mois si saisie depuis SIRH.
+		checkDateFutur(srm, (DemandeMaladies) demande, isProvenanceSIRH);
 		
 		// Pour les AT, on empêche la création si une demande existe avec la même date d'accident
 		checkDateAccidentTravailUnique(srm, (DemandeMaladies) demande);
@@ -78,10 +80,15 @@ public class AbsMaladiesDataConsistencyRulesImpl extends AbstractAbsenceDataCons
 		}
 	}
 
-	protected ReturnMessageDto checkDateFutur(ReturnMessageDto srm, DemandeMaladies demande) {
-		if (demande.getDateDebut() != null && demande.getDateDebut().compareTo(new Date()) > 0) {
-			logger.warn(DEMANDE_DATE_FUTUR_MSG);
-			srm.getErrors().add(DEMANDE_DATE_FUTUR_MSG);
+	protected ReturnMessageDto checkDateFutur(ReturnMessageDto srm, DemandeMaladies demande, boolean isFromSIRH) {
+
+		// #43666 : Si l'on vient de SIRH, on autorise une saisie anticipée de 2 mois.
+		Date compareDate = isFromSIRH ? new DateTime().plusMonths(2).toDate() : new DateTime().toDate();
+		String warningMessage = isFromSIRH ? DEMANDE_DATE_FUTUR_SIRH_MSG : DEMANDE_DATE_FUTUR_KIOSQUE_MSG;
+		
+		if (demande.getDateDebut() != null && demande.getDateDebut().compareTo(compareDate) > 0) {
+			logger.warn(warningMessage);
+			srm.getErrors().add(warningMessage);
 		}
 		if (demande.getDateAccidentTravail() != null && demande.getDateAccidentTravail().compareTo(new Date()) > 0) {
 			logger.warn(DEMANDE_DATE_AT_FUTUR_MSG);

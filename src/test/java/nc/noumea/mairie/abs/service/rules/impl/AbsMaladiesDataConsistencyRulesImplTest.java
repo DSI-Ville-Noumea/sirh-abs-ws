@@ -10,6 +10,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.mock.staticmock.MockStaticEntityMethods;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import nc.noumea.mairie.abs.domain.Demande;
 import nc.noumea.mairie.abs.domain.DemandeMaladies;
 import nc.noumea.mairie.abs.domain.EtatDemande;
@@ -33,12 +39,6 @@ import nc.noumea.mairie.abs.vo.CalculDroitsMaladiesVo;
 import nc.noumea.mairie.abs.vo.CheckCompteurAgentVo;
 import nc.noumea.mairie.ws.IPtgWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.mock.staticmock.MockStaticEntityMethods;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @MockStaticEntityMethods
 public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataConsistencyRulesImplTest {
@@ -1200,10 +1200,10 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 		demande.setDateDebut(new DateTime(2050, 01, 01, 0, 0, 0).toDate());
 		demande.setDateFin(new DateTime(2050, 01, 01, 23, 59, 59).toDate());
 
-		srm = impl.checkDateFutur(srm, demande);
+		srm = impl.checkDateFutur(srm, demande, false);
 
 		assertEquals(1, srm.getErrors().size());
-		assertEquals(srm.getErrors().get(0), AbsMaladiesDataConsistencyRulesImpl.DEMANDE_DATE_FUTUR_MSG);
+		assertEquals(srm.getErrors().get(0), AbsMaladiesDataConsistencyRulesImpl.DEMANDE_DATE_FUTUR_KIOSQUE_MSG);
 	}
 
 	@Test
@@ -1224,7 +1224,7 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 		demande.setDateDebut(new DateTime(2010, 01, 01, 0, 0, 0).toDate());
 		demande.setDateFin(new DateTime(2010, 01, 02, 23, 59, 59).toDate());
 
-		srm = impl.checkDateFutur(srm, demande);
+		srm = impl.checkDateFutur(srm, demande, true);
 
 		assertEquals(0, srm.getErrors().size());
 	}
@@ -1250,8 +1250,61 @@ public class AbsMaladiesDataConsistencyRulesImplTest extends DefaultAbsenceDataC
 		demande.setDateDebut(dateDeb.toDate());
 		demande.setDateFin(new DateTime(2050, 01, 02, 23, 59, 59).toDate());
 
-		srm = impl.checkDateFutur(srm, demande);
+		srm = impl.checkDateFutur(srm, demande, false);
 
 		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkDateFutur_ok_through_SIRH() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		typeSaisi.setNombreITT(true);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisi(typeSaisi);
+
+		DemandeMaladies demande = new DemandeMaladies();
+		demande.setCommentaire(null);
+		demande.setType(type);
+		demande.setNombreITT(2.0);
+		DateTime dateDeb = new DateTime().plusMonths(1).plusDays(10);
+		dateDeb = dateDeb.hourOfDay().setCopy(0);
+		dateDeb = dateDeb.minuteOfHour().setCopy(0);
+		demande.setDateDebut(dateDeb.toDate());
+		demande.setDateFin(new DateTime(2050, 01, 02, 23, 59, 59).toDate());
+
+		srm = impl.checkDateFutur(srm, demande, true);
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkDateFutur_ko_through_SIRH() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		RefTypeSaisi typeSaisi = new RefTypeSaisi();
+		typeSaisi.setNombreITT(true);
+
+		RefTypeAbsence type = new RefTypeAbsence();
+		type.setTypeSaisi(typeSaisi);
+
+		DemandeMaladies demande = new DemandeMaladies();
+		demande.setCommentaire(null);
+		demande.setType(type);
+		demande.setNombreITT(2.0);
+		DateTime dateDeb = new DateTime().plusMonths(2).plusDays(1);
+		dateDeb = dateDeb.hourOfDay().setCopy(0);
+		dateDeb = dateDeb.minuteOfHour().setCopy(0);
+		demande.setDateDebut(dateDeb.toDate());
+		demande.setDateFin(new DateTime(2050, 01, 02, 23, 59, 59).toDate());
+
+		srm = impl.checkDateFutur(srm, demande, true);
+
+		assertEquals(1, srm.getErrors().size());
+		assertEquals(srm.getErrors().get(0), AbsMaladiesDataConsistencyRulesImpl.DEMANDE_DATE_FUTUR_SIRH_MSG);
 	}
 }
