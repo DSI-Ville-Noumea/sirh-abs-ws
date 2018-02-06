@@ -195,8 +195,8 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		assertEquals(0, result.getErrors().size());
 
-		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
-		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentAsaA55Count.class));
+		Mockito.verify(counterRepository, Mockito.times(12)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(12)).persistEntity(Mockito.isA(AgentAsaA55Count.class));
 	}
 
 	@Test
@@ -211,7 +211,7 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 		motifDto.setIdMotifCompteur(1);
 		compteurDto.setMotifCompteurDto(motifDto);
 		compteurDto.setDateDebut(new DateTime(2013, 1, 1, 0, 0, 0).toDate());
-		compteurDto.setDateFin(new DateTime(2013, 12, 31, 0, 0, 0).toDate());
+		compteurDto.setDateFin(new DateTime(2013, 10, 31, 0, 0, 0).toDate());
 
 		IAccessRightsRepository accessRightsRepository = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(accessRightsRepository.isOperateurOfAgent(idAgent, compteurDto.getIdAgent())).thenReturn(false);
@@ -241,8 +241,8 @@ public class AsaA55CounterServiceImplTest extends AsaCounterServiceImplTest {
 
 		assertEquals(0, result.getErrors().size());
 
-		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
-		Mockito.verify(counterRepository, Mockito.times(1)).persistEntity(Mockito.isA(AgentAsaA55Count.class));
+		Mockito.verify(counterRepository, Mockito.times(10)).persistEntity(Mockito.isA(AgentHistoAlimManuelle.class));
+		Mockito.verify(counterRepository, Mockito.times(10)).persistEntity(Mockito.isA(AgentAsaA55Count.class));
 	}
 
 	@Test
