@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.envers.configuration.internal.metadata.reader.AuditedPropertiesHolder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.enums.AuthorizedMaladiesForProlongationEnum;
 import nc.noumea.mairie.abs.service.impl.AbsenceService;
 
 @Repository
@@ -737,11 +739,29 @@ public class DemandeRepository implements IDemandeRepository {
 		return q.getResultList();
 	}
 	
+	/**
+	 * #44736 : Il doit être possible de saisir une prolongation "inter-types" pour certaines maladies.
+	 * @param demande
+	 * @return
+	 */
+	private List<Integer> getListOfAuthorizedProlongation(DemandeDto demande) {
+		List<Integer> resultList = Lists.newArrayList();
+		boolean isAuthorized = false;
+		
+		for (AuthorizedMaladiesForProlongationEnum e: AuthorizedMaladiesForProlongationEnum.values()) {
+			resultList.add(e.getCode());
+			if (e.getCode().equals(demande.getIdTypeDemande()))
+				isAuthorized = true;
+		}
+		
+		return isAuthorized ? resultList : Arrays.asList(demande.getIdTypeDemande());
+	}
+	
 	@Override
 	public boolean initialDemandeForProlongationExists(DemandeDto demande) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select d from Demande d inner join fetch d.etatsDemande ed ");
-		sb.append("where d.type.idRefTypeAbsence = :TYPE_MALADIE ");
+		sb.append("where d.type.idRefTypeAbsence in (:TYPES_MALADIES) ");
 		sb.append("and ed.idEtatDemande in ( select max(ed2.idEtatDemande) from EtatDemande ed2 inner join ed2.demande d2 group by ed2.demande ) ");
 		sb.append("and ed.etat in ( :EN_ATTENTE, :PRISE, :SAISIE, :VALIDEE) ");
 		sb.append("and d.dateFin between :dateFin1 and :dateFin2 ");
@@ -749,9 +769,10 @@ public class DemandeRepository implements IDemandeRepository {
 		
 		TypedQuery<Demande> q = absEntityManager.createQuery(sb.toString(), Demande.class);
 		
+		// #44736 : On va chercher les types de maladies pris en compte.
+		q.setParameter("TYPES_MALADIES", getListOfAuthorizedProlongation(demande));
+		
 		// Liste des états possible : #39417
-		// Le type doit simplement être le même que celui de la demande.
-		q.setParameter("TYPE_MALADIE", demande.getIdTypeDemande());
 		q.setParameter("EN_ATTENTE", RefEtatEnum.EN_ATTENTE);
 		q.setParameter("PRISE", RefEtatEnum.PRISE);
 		q.setParameter("SAISIE", RefEtatEnum.SAISIE);
