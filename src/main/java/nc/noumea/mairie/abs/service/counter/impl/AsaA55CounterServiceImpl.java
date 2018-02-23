@@ -107,8 +107,11 @@ public class AsaA55CounterServiceImpl extends AsaCounterServiceImpl {
 			if (currentDay != firstDay)
 				currentDay = new DateTime(currentDay).plusDays(1).toDate();
 			CompteurDto compteur = new CompteurDto();
+			// #44882 : Il faut repasser l'heure de la date de début à 00h00.
+			currentDay = new DateTime(currentDay).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).toDate();
 			compteur.setDateDebut(currentDay);
-			currentDay = new DateTime(currentDay).plusMonths(1).minusDays(1).toDate();
+			// #44882 : Le dernier jour de chaque mois ne pouvait être saisi, puisque l'heure de fin était à 00h00.
+			currentDay = new DateTime(currentDay).plusMonths(1).minusDays(1).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).toDate();
 			compteur.setDateFin(currentDay);
 			compteur.setDureeAAjouter(compteurDto.getDureeAAjouter());
 			compteur.setMotifCompteurDto(compteurDto.getMotifCompteurDto());
