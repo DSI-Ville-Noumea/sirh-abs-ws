@@ -338,6 +338,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		String url = String.format(sirhWsBaseUrl + sirhListEmailDestinataireUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("isForJob", "false");
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
