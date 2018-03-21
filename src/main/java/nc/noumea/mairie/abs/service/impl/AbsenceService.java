@@ -2960,15 +2960,17 @@ public class AbsenceService implements IAbsenceService {
 	@Override
 	public List<MoisAlimAutoCongesAnnuelsDto> getHistoAlimAutoReposComp(Integer convertedIdAgent) {
 
+		AgentGeneriqueDto ag = sirhWSConsumer.getAgent(convertedIdAgent);
+		AgentDto agDto;
+		if (ag != null && ag.getIdAgent() != null) {
+			agDto = new AgentDto(ag);
+		} else {
+			agDto = new AgentDto();
+		}
+		
 		List<MoisAlimAutoCongesAnnuelsDto> result = new ArrayList<MoisAlimAutoCongesAnnuelsDto>();
-		for (AgentWeekReposComp histo : reposCompensateurRepository
-				.getListeAlimAutoReposCompByAgent(convertedIdAgent)) {
+		for (AgentWeekReposComp histo : reposCompensateurRepository.getListeAlimAutoReposCompByAgent(convertedIdAgent)) {
 			MoisAlimAutoCongesAnnuelsDto mois = new MoisAlimAutoCongesAnnuelsDto();
-			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(histo.getIdAgent());
-			AgentDto agDto = new AgentDto();
-			if (ag != null && ag.getIdAgent() != null) {
-				agDto = new AgentDto(ag);
-			}
 			mois.setAgent(agDto);
 			mois.setDateModification(histo.getLastModification());
 			mois.setDateMois(histo.getDateMonday());

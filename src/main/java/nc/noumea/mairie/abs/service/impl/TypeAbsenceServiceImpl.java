@@ -126,14 +126,17 @@ public class TypeAbsenceServiceImpl implements ITypeAbsenceService {
 			result.getErrors().add(TYPE_GROUPE_INEXISTANT);
 			return result;
 		}
-		// #37350 : on check que le libellé n'est pas null
-		if (typeAbsenceDto.getLibelle() == null || typeAbsenceDto.getLibelle().trim().equals("")) {
-			logger.debug("Le libellé est obligatoire.");
-			result.getErrors().add("Le libellé est obligatoire.");
-			return result;
+		
+		// #37350 + #45162 : on check que le libellé n'est pas null
+		if (typeAbsence.getLabel() == null || typeAbsence.getLabel().trim().equals("")) {
+			if ((typeAbsenceDto.getLibelle() == null || typeAbsenceDto.getLibelle().trim().equals(""))) {
+				logger.debug("Le libellé est obligatoire.");
+				result.getErrors().add("Le libellé est obligatoire.");
+				return result;
+			} else {
+				typeAbsence.setLabel(typeAbsenceDto.getLibelle());
+			}
 		}
-
-		typeAbsence.setLabel(typeAbsenceDto.getLibelle());
 
 		if (null != typeAbsenceDto.getTypeSaisiDto()) {
 

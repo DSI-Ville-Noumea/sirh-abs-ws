@@ -70,6 +70,7 @@ public class RefTypeSaisiCongeAnnuel {
 	@Type(type = "boolean")
 	private boolean decompteSamedi;
 
+	// #45163 : This field seems not used...
 	@NotNull
 	@Column(name = "CONSECUTIF", nullable = false)
 	@Type(type = "boolean")

@@ -207,12 +207,6 @@ public class AbsCongesAnnuelsDataConsistencyRulesImpl extends AbstractAbsenceDat
 		if (!typeSaisiCongeAnnuel.isCalendarDateFin() && !typeSaisiCongeAnnuel.isCalendarDateReprise())
 			srm.getErrors().add(String.format("Si date de reprise est à non, alors date de fin doit être à oui."));
 
-		if (typeSaisiCongeAnnuel.isDecompteSamedi() && typeSaisiCongeAnnuel.isConsecutif())
-			srm.getErrors().add(String.format("Si consécutif est à oui, alors décompte du samedi doit être à non."));
-
-		if (!typeSaisiCongeAnnuel.isDecompteSamedi() && !typeSaisiCongeAnnuel.isConsecutif())
-			srm.getErrors().add(String.format("Si consécutif est à non, alors décompte du samedi doit être à oui."));
-
 		return srm;
 	}
 
