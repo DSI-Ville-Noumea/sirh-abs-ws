@@ -391,6 +391,7 @@ public class TypeAbsenceServiceImplTest {
 		RefTypeAbsenceDto typeAbsenceDto = new RefTypeAbsenceDto();
 		typeAbsenceDto.setGroupeAbsence(groupeDto);
 		typeAbsenceDto.setTypeSaisiDto(typeSaisiDto);
+		typeAbsenceDto.setIdRefTypeAbsence(1);
 
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
 		typeAbsence.setLabel("labelAbs");
@@ -436,7 +437,8 @@ public class TypeAbsenceServiceImplTest {
 		Mockito.verify(typeAbsenceRepository, Mockito.times(1)).persistEntity(Mockito.isA(RefTypeAbsence.class));
 
 		assertEquals(result.getErrors().size(), 0);
-		assertEquals(typeAbsenceDto.getLibelle(), "labelAbs");
+		assertEquals(typeAbsence.getLabel(), "labelAbs");
+		assertEquals(typeAbsenceDto.getLibelle(), null);
 	}
 
 	@Test

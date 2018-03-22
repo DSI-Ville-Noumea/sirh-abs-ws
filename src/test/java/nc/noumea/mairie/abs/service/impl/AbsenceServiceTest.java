@@ -12475,10 +12475,15 @@ public class AbsenceServiceTest {
 
 		IReposCompensateurRepository reposCompensateurRepository = Mockito.mock(IReposCompensateurRepository.class);
 		Mockito.when(reposCompensateurRepository.getListeAlimAutoReposCompByAgent(idAgent)).thenReturn(new ArrayList<AgentWeekReposComp>());
+		
+
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getAgent(idAgent)).thenReturn(null);
 
 		AbsenceService service = new AbsenceService();
 		ReflectionTestUtils.setField(service, "reposCompensateurRepository", reposCompensateurRepository);
-
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		
 		List<MoisAlimAutoCongesAnnuelsDto> result = service.getHistoAlimAutoReposComp(idAgent);
 
 		assertEquals(0, result.size());
