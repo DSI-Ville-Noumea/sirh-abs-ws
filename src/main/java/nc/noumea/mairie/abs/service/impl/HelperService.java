@@ -1,6 +1,7 @@
 package nc.noumea.mairie.abs.service.impl;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -9,11 +10,17 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
+
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
 import nc.noumea.mairie.abs.domain.DemandeMaladies;
+import nc.noumea.mairie.abs.domain.RefEtat;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
@@ -22,18 +29,24 @@ import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 @Service
 public class HelperService {
+	
+	private Logger logger = LoggerFactory.getLogger(HelperService.class);
 
 	@Autowired
 	private ISirhWSConsumer		sirhWSConsumer;
 
 	@Autowired
 	private IDemandeRepository	demandeRepository;
+
+	@Autowired
+	private IFiltreRepository filtreRepository;
 
 	private static int			HEURE_JOUR_DEBUT_AM						= 0;
 	private static int			HEURE_JOUR_FIN_AM						= 11;
@@ -54,7 +67,9 @@ public class HelperService {
 	public static String		UNITE_DECOMPTE_MINUTES					= "minutes";
 
 	private static int			NOMBRE_SAMEDI_OFFERT_PAR_AN_PAR_AGENT	= 1;
-
+	
+	private static List<RefEtat> ETATS_VALIDES = Lists.newArrayList();
+	
 	public Date getCurrentDate() {
 		return new Date();
 	}
@@ -500,8 +515,9 @@ public class HelperService {
 						- calculJoursNonComptesDimancheFerieChome(demande.getDateDebut(), demande.getDateFin(), listJoursFeries)
 						- getNombreJourSemaineWithoutFerie(demande.getDateDebut(), demande.getDateFin(), DateTimeConstants.SATURDAY, listJoursFeries)
 						// on retire le nombre de samedi
-						+ getNombreSamediDecompte(demande, listJoursFeries) - getNombreSamediOffert(demande, listJoursFeries);
-				// puis on calcule le nombre de samedi decompte selon les RG
+						+ getNombreSamediDecompte(demande, listJoursFeries)
+						// puis on calcule le nombre de samedi decompte selon les RG
+						 - getNombreSamediOffert(demande, listJoursFeries);
 				break;
 
 			case "E":
@@ -626,21 +642,30 @@ public class HelperService {
 		List<JourDto> listJoursFeries = sirhWSConsumer.getListeJoursFeries(demande.getDateDebut(), demande.getDateFin());
 		return getNombreSamediDecompte(demande, listJoursFeries);
 	}
+	
+	public boolean isSaturdayEmpty(Date dateSamedi, Integer idAgent) {
+		
+		if (ETATS_VALIDES.isEmpty()) {
+			ETATS_VALIDES = Arrays.asList(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.VALIDEE.getCodeEtat()),
+				filtreRepository.getEntity(RefEtat.class, RefEtatEnum.PRISE.getCodeEtat()));
+		}
+		
+		return demandeRepository.listeIdsDemandesForListAgent(null, Arrays.asList(idAgent), dateSamedi, dateSamedi, null, null, ETATS_VALIDES, 10).isEmpty();
+	}
 
 	public Double getNombreSamediDecompte(DemandeCongesAnnuels demande, List<JourDto> listJoursFeries) {
 
 		Double compteur = 0.0;
-
+		
 		if (demande.getTypeSaisiCongeAnnuel() != null && demande.getTypeSaisiCongeAnnuel().isDecompteSamedi()) {
 
 			// on calcule le nombre de vendredi
 			DateTime startDate = new DateTime(demande.getDateDebut()).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0); 
 			// on met les heures et minutes a zero afin de bien comptabiliser le nombre de vendredi dans la boucle while
 			DateTime endDate = new DateTime(demande.getDateFin());
-
 			// on boucle sur tous les jours de la periode
 			while (startDate.isBefore(endDate)) {
-
+				
 				// si jeudi
 				if (startDate.getDayOfWeek() == DateTimeConstants.THURSDAY) {
 					// est ce que vendredi ferie
@@ -657,7 +682,13 @@ public class HelperService {
 				if (startDate.getDayOfWeek() == DateTimeConstants.FRIDAY && !isJourHoliday(listJoursFeries, startDate.toDate())) {
 					// est ce que samedi non chome
 					if (!isJourHoliday(listJoursFeries, startDate.plusDays(1).toDate())) {
-						compteur += 1;
+						// #45352 : S'il n'existe pas de demande posée sur le samedi, on le décompte
+						if (isSaturdayEmpty(startDate.plusDays(1).toDate(), demande.getIdAgent())) {
+							compteur += 1;
+						} else {
+							logger.debug("Une demande est posée sur la journée du samedi. Le samedi {} n'est pas décompté pour l'agent matricule {}", 
+									startDate.plusDays(1).toDate(), demande.getIdAgent());
+						}
 					}
 				}
 
@@ -669,8 +700,10 @@ public class HelperService {
 			DateTime dateDebut = new DateTime(demande.getDateDebut());
 			if (dateDebut.getDayOfWeek() == DateTimeConstants.FRIDAY && !isJourHoliday(listJoursFeries, dateDebut.plusDays(1).toDate())) {
 				if (dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
-					compteur -= 0.5; // si commence l apres-midi, on ne decompte
-										// qu un demi-samedi
+					if (isSaturdayEmpty(dateDebut.plusDays(1).toDate(), demande.getIdAgent()))
+						compteur -= 0.5; // si commence l apres-midi, on ne decompte qu un demi-samedi
+					else
+						logger.debug("Le samedi {} (date de début) n'est pas recrédité pour l'agent matricule {}, car il n'avait pas été décompté.", dateDebut.plusDays(1).toDate(), demande.getIdAgent());
 				}
 				// cas ou le 1er jour est un jeudi
 			} else if (dateDebut.getDayOfWeek() == DateTimeConstants.THURSDAY) {
@@ -678,8 +711,7 @@ public class HelperService {
 				if (isJourHoliday(listJoursFeries, dateDebut.plusDays(1).toDate())
 						&& !isJourHoliday(listJoursFeries, dateDebut.plusDays(2).toDate())) {
 					if (dateDebut.getHourOfDay() == HEURE_JOUR_DEBUT_PM) {
-						compteur -= 0.5; // si commence l apres-midi, on ne
-											// decompte qu un demi-samedi
+						compteur -= 0.5; // si commence l apres-midi, on ne decompte qu un demi-samedi
 					}
 				}
 			}
@@ -688,19 +720,19 @@ public class HelperService {
 			// on gere le cas ou l agent a pose que le matin ou que l apres-midi
 			DateTime dateFin = new DateTime(demande.getDateFin());
 			if (dateFin.getDayOfWeek() == DateTimeConstants.FRIDAY && !isJourHoliday(listJoursFeries, dateFin.plusDays(1).toDate())) {
+				// #45352 : S'il n'existe pas de demande posée sur le samedi, on le décompte
 				if (dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
-					compteur -= 1; // si la personne revient travailler le
-									// vendredi apres-midi, on ne decompte pas
-									// le samedi
+					if (isSaturdayEmpty(dateFin.plusDays(1).toDate(), demande.getIdAgent()))
+						compteur -= 1; // si la personne revient travailler le vendredi apres-midi, on ne decompte pas le samedi
+					else
+						logger.debug("Le samedi {} (date de fin) n'est pas recrédité pour l'agent matricule {}, car il n'avait pas été décompté.", dateFin.plusDays(1).toDate(), demande.getIdAgent());
 				}
 				// cas ou le dernier jour est un jeudi ET vendredi ferie
 			} else if (dateFin.getDayOfWeek() == DateTimeConstants.THURSDAY) {
 				// et vendredi ferie et samedi non chome
 				if (isJourHoliday(listJoursFeries, dateFin.plusDays(1).toDate()) && !isJourHoliday(listJoursFeries, dateFin.plusDays(2).toDate())) {
 					if (dateFin.getHourOfDay() == HEURE_JOUR_FIN_AM) {
-						compteur -= 1; // si la personne revient travailler le
-										// jeudi apres-midi, on ne decompte pas
-										// le samedi
+						compteur -= 1; // si la personne revient travailler le jeudi apres-midi, on ne decompte pas le samedi
 					}
 				}
 			}
