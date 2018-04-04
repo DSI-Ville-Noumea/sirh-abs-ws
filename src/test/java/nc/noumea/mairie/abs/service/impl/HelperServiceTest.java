@@ -16,6 +16,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import nc.noumea.mairie.abs.domain.DemandeCongesAnnuels;
+import nc.noumea.mairie.abs.domain.RefEtat;
+import nc.noumea.mairie.abs.domain.RefEtatEnum;
 import nc.noumea.mairie.abs.domain.RefTypeAbsence;
 import nc.noumea.mairie.abs.domain.RefTypeSaisi;
 import nc.noumea.mairie.abs.domain.RefTypeSaisiCongeAnnuel;
@@ -23,6 +25,7 @@ import nc.noumea.mairie.abs.domain.RefUnitePeriodeQuota;
 import nc.noumea.mairie.abs.dto.CompteurDto;
 import nc.noumea.mairie.abs.dto.JourDto;
 import nc.noumea.mairie.abs.repository.IDemandeRepository;
+import nc.noumea.mairie.abs.repository.IFiltreRepository;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -1634,6 +1637,8 @@ public class HelperServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
@@ -1705,6 +1710,8 @@ public class HelperServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
@@ -1736,6 +1743,8 @@ public class HelperServiceTest {
 		Mockito.when(sirhWSConsumer.getListeJoursFeries(dateDebut, dateFin)).thenReturn(listJoursFeries);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
@@ -1746,6 +1755,11 @@ public class HelperServiceTest {
 	@Test
 	public void getNombreSamediDecompte_1SamediEtDemi() {
 		Double duree = 1.5;
+		
+		RefEtat etatValide = new RefEtat();
+		etatValide.setIdRefEtat(8);
+		RefEtat etatPrise = new RefEtat();
+		etatPrise.setIdRefEtat(6);
 
 		Date dateDebut = new DateTime(2014, 12, 5, 12, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 12, 15, 23, 59, 59).toDate();
@@ -1759,9 +1773,17 @@ public class HelperServiceTest {
 		demande.setDateFin(dateFin);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		IFiltreRepository filtreRepository = Mockito.mock(IFiltreRepository.class);
 
 		HelperService service = new HelperService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
+		ReflectionTestUtils.setField(service, "filtreRepository", filtreRepository);
+
+		// On initialise la liste dans le premier appel. Ensuite, c'est gardé en mémoire, pas besoin de le refaire pour les autres tests
+		Mockito.when(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.VALIDEE.getCodeEtat())).thenReturn(etatValide);
+		Mockito.when(filtreRepository.getEntity(RefEtat.class, RefEtatEnum.PRISE.getCodeEtat())).thenReturn(etatPrise);
 
 		Double result = service.getNombreSamediDecompte(demande);
 
@@ -1786,6 +1808,8 @@ public class HelperServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
@@ -1811,6 +1835,8 @@ public class HelperServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
@@ -1839,6 +1865,8 @@ public class HelperServiceTest {
 		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
@@ -1865,6 +1893,8 @@ public class HelperServiceTest {
 		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
@@ -1891,6 +1921,8 @@ public class HelperServiceTest {
 		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
@@ -1917,6 +1949,8 @@ public class HelperServiceTest {
 		listJoursFeries.add(jourFerie);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		Double result = service.getNombreSamediDecompte(demande, listJoursFeries);
 
 		assertEquals(duree, result);
@@ -1969,6 +2003,8 @@ public class HelperServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
@@ -1994,6 +2030,8 @@ public class HelperServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
@@ -2019,6 +2057,8 @@ public class HelperServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
@@ -2044,6 +2084,8 @@ public class HelperServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
@@ -2069,6 +2111,8 @@ public class HelperServiceTest {
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
 
 		HelperService service = new HelperService();
+		IDemandeRepository demandeRepository = Mockito.mock(IDemandeRepository.class);
+		ReflectionTestUtils.setField(service, "demandeRepository", demandeRepository);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		Double result = service.getNombreSamediDecompte(demande);
