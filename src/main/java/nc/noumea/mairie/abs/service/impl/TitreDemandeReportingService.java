@@ -94,7 +94,10 @@ public class TitreDemandeReportingService extends AbstractReporting implements I
 		listDate.add(new CellVo(titreValidation, false, 1, null, Element.ALIGN_RIGHT, false, fontNormal10));
 		writeLine(table, 3, listDate, false);
 
-		String titrePar = "par " + getNomPrenom(dto.getApprobateur());
+		// #46945 : On affiche pas l'approbateur si on a pas l'info
+		String nomPrenom = getNomPrenom(dto.getApprobateur());
+		String titrePar = nomPrenom != null ? "par " + nomPrenom : "";
+		
 		List<CellVo> listPar = new ArrayList<CellVo>();
 		listPar.add(new CellVo(titrePar, false, 1, null, Element.ALIGN_RIGHT, false, fontNormal10));
 		writeLine(table, 3, listPar, false);
@@ -170,44 +173,11 @@ public class TitreDemandeReportingService extends AbstractReporting implements I
 					+ (dto.getDemande().isDateDebutAM() ? " (Matin)" : dto.getDemande().isDateDebutPM() ? " (Après-midi)" : ""), false, 1, null, Element.ALIGN_LEFT, false, fontNormal10));
 			writeLine(table, 3, listValuesDetailConge2, false);
 
-			// Présent dans le BIRT mais avec Bug à priori car en prod sur
-			// formation syndicale rien ne s'affiche
-			// if (dto.getDemande().isDateDebutAM() ||
-			// dto.getDemande().isDateDebutPM()) {
-			// List<CellVo> listValuesDetailCongeApartir = new
-			// ArrayList<CellVo>();
-			// listValuesDetailCongeApartir.add(new CellVo("", false, 1, null,
-			// Element.ALIGN_LEFT, false, fontNormal10));
-			// listValuesDetailCongeApartir.add(new CellVo("A partir de : "
-			// + (dto.getDemande().isDateDebutAM() ? "Matin" :
-			// dto.getDemande().isDateDebutPM() ? "Après-Midi" : new
-			// SimpleDateFormat("HH:mm").format(dto.getDemande().getDateDebut())
-			// .replace(":", "h")), false, 1, null, Element.ALIGN_LEFT, false,
-			// fontNormal10));
-			// writeLine(table, 3, listValuesDetailCongeApartir, false);
-			// }
-
 			List<CellVo> listValuesDetailConge3 = new ArrayList<CellVo>();
 			listValuesDetailConge3.add(new CellVo("", false, 1, null, Element.ALIGN_LEFT, false, fontNormal10));
 			listValuesDetailConge3.add(new CellVo("Au : " + new SimpleDateFormat("d MMMM yyyy").format(dto.getDemande().getDateFin())
 					+ (dto.getDemande().isDateFinAM() ? " (Matin)" : dto.getDemande().isDateFinPM() ? " (Après-midi)" : ""), false, 1, null, Element.ALIGN_LEFT, false, fontNormal10));
 			writeLine(table, 3, listValuesDetailConge3, false);
-
-			// Présent dans le BIRT mais avec Bug à priori car en prod sur
-			// formation syndicale rien ne s'affiche
-			// if (dto.getDemande().isDateFinAM() ||
-			// dto.getDemande().isDateFinPM()) {
-			// List<CellVo> listValuesDetailCongeJusque = new
-			// ArrayList<CellVo>();
-			// listValuesDetailCongeJusque.add(new CellVo("", false, 1, null,
-			// Element.ALIGN_LEFT, false, fontNormal10));
-			// listValuesDetailCongeJusque.add(new CellVo("Jusqu'à : "
-			// + (dto.getDemande().isDateFinAM() ? "Matin" :
-			// dto.getDemande().isDateFinPM() ? "Après-Midi" : new
-			// SimpleDateFormat("HH:mm").format(dto.getDemande().getDateFin()).replace(":",
-			// "h")), false, 1, null, Element.ALIGN_LEFT, false, fontNormal10));
-			// writeLine(table, 3, listValuesDetailCongeJusque, false);
-			// }
 
 			document.add(table);
 		} else {
@@ -328,7 +298,6 @@ public class TitreDemandeReportingService extends AbstractReporting implements I
 			case 8:
 				return (dto.getDemande().getTotalJoursNew() + "j").replace(".", ",");
 			case 1:
-
 				return ((dto.getDemande().getTotalJoursNew() + dto.getDemande().getTotalJoursAnneeN1New()) + "j").replace(".", ",");
 
 			default:
@@ -348,6 +317,7 @@ public class TitreDemandeReportingService extends AbstractReporting implements I
 
 	private String getTitreReliquatJour(EditionDemandeDto dto) {
 		String nbJours = "";
+		
 		if (dto.getDemande().getIdTypeDemande() == 1) {
 			nbJours = ((dto.getDemande().getTotalJoursOld() + dto.getDemande().getTotalJoursAnneeN1Old()) + "j").replace(".", ",");
 		} else if (dto.getDemande().getIdTypeDemande() == 7 || dto.getDemande().getIdTypeDemande() == 8) {
@@ -357,6 +327,8 @@ public class TitreDemandeReportingService extends AbstractReporting implements I
 	}
 
 	private String getNomPrenom(AgentWithServiceDto agentWithServiceDto) {
+		if (agentWithServiceDto == null)
+			return null;
 		return agentWithServiceDto.getPrenom().substring(0, 1).toUpperCase() + agentWithServiceDto.getPrenom().substring(1, agentWithServiceDto.getPrenom().length()).toLowerCase() + " "
 				+ agentWithServiceDto.getNom().toUpperCase();
 	}
