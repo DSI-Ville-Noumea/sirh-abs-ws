@@ -89,4 +89,8 @@ public interface ICounterService {
 	Integer getNombeJourMaladies(Integer idAgent, Date dateDebutAnneeGlissante, Date dateFinAnneeGlissante, List<DemandeMaladies> listMaladies);
 
 	List<DemandeMaladies> getHistoriqueMaladiesWithDroits(Integer idAgent, Date date);
+	
+	ReturnMessageDto dupliqueCompteursA48(Integer idOS, Integer idAgent, Integer annee);
+	
+	ReturnMessageDto dupliqueCompteursA54(Integer idOS, Integer idAgent, Integer annee);
 }

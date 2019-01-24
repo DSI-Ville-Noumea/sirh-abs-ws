@@ -277,4 +277,45 @@ public class AsaA48CounterServiceImpl extends AsaCounterServiceImpl {
 			return srm;
 		}
 	}
+	
+	@Override
+	@Transactional(value = "absTransactionManager")
+	public ReturnMessageDto dupliqueCompteursA48(Integer idOS, Integer idAgentOperateur, Integer annee) {
+		List<Integer> listIdsAgentADupliquer = counterRepository.getListMatriculesA48ADupliquer(idOS, annee);
+		Date dateDebut = new DateTime(new Integer(annee) + 1, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(new Integer(annee) + 1, 12, 31, 23, 59, 0).toDate();
+		
+		MotifCompteur motifCompteur = counterRepository.getEntity(MotifCompteur.class, 8); // 8 => 'Reprise de données' pour le bureau du directeur.
+		if (motifCompteur == null || motifCompteur.getRefTypeAbsence() == null) {
+			return null;
+		}
+		
+		for (Integer matr : listIdsAgentADupliquer) {
+			// Récupération du compteur 
+			AgentAsaA48Count existantCount = counterRepository.getAgentCounterByDate(AgentAsaA48Count.class, matr, dateDebut);
+			if (existantCount != null) {
+				logger.debug("Compteur déjà existant pour l'agent matricule {}.", matr);
+				continue;
+			}
+			
+			// Création du compteur
+			AgentAsaA48Count agentCount = new AgentAsaA48Count();
+			agentCount.setActif(true);
+			agentCount.setDateDebut(dateDebut);
+			agentCount.setDateFin(dateFin);
+			agentCount.setIdAgent(matr);
+			agentCount.setLastModification(new Date());
+			agentCount.setTotalJours(10.0);
+
+			counterRepository.persistEntity(agentCount);
+			
+			logger.debug("Agent à traiter : " + matr);
+
+			// Création de l'historique
+			String textLog = "Mise en place de 10 jours pour l'année " + new Integer(annee+1) + ".";
+			majAgentHistoAlimManuelle(idAgentOperateur, matr, motifCompteur, textLog, agentCount, motifCompteur.getRefTypeAbsence().getIdRefTypeAbsence());
+		}
+		
+		return new ReturnMessageDto();
+	}
 }

@@ -128,4 +128,19 @@ public class AsaA54Controller {
 
 		return srm;
 	}
+	
+
+	@ResponseBody
+	@RequestMapping(value = "/dupliqueCompteurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public ReturnMessageDto dupliqueCompteurs(@RequestParam("idOS") int idOS, 
+			@RequestParam("idAgent") int idAgent,
+			@RequestParam("annee") int annee) {
+
+		logger.debug("entered GET [asaA48/dupliqueCompteurs] => dupliqueCompteurs with parameters idOrganisationSyndicale = {},idAgent = {}, annee = {}",
+				idOS, idAgent, annee);
+
+		ReturnMessageDto srm = counterService.dupliqueCompteursA54(idOS, idAgent, annee);
+
+		return srm;
+	}
 }
