@@ -58,4 +58,8 @@ public interface ICounterRepository {
 
 	List<AgentCongeAnnuelCount> getListAgentCongeAnnuelCountWithListAgents(List<Integer> listIdsAgent);
 
+	List<Integer> getListMatriculesA48ADupliquer(Integer idOS, Integer annee);
+
+	List<Integer> getListMatriculesA54ADupliquer(Integer idOS, Integer annee);
+
 }

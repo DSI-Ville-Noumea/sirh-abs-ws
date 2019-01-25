@@ -400,7 +400,7 @@ public abstract class AbstractCounterService implements ICounterService {
 		return srm;
 	}
 
-@Override
+	@Override
 	public SoldeMaladiesDto getSoldeByAgent(Integer idAgent, Date dateFinAnneeGlissante, AgentGeneriqueDto agentDto) {
 		return null;
 
@@ -418,6 +418,16 @@ public abstract class AbstractCounterService implements ICounterService {
 	
 	@Override
 	public List<DemandeMaladies> getHistoriqueMaladiesWithDroits(Integer idAgent, Date date) {
+		return null;
+	}
+	
+	@Override
+	public ReturnMessageDto dupliqueCompteursA48(Integer idOS, Integer idAgent, Integer annee) {
+		return null;
+	}
+	
+	@Override
+	public ReturnMessageDto dupliqueCompteursA54(Integer idOS, Integer idAgent, Integer annee) {
 		return null;
 	}
 }

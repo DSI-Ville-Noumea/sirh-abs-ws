@@ -5,12 +5,15 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
+
+import org.springframework.stereotype.Repository;
 
 import nc.noumea.mairie.abs.domain.AgentAsaA52Count;
 import nc.noumea.mairie.abs.domain.AgentAsaA55Count;
@@ -19,8 +22,6 @@ import nc.noumea.mairie.abs.domain.AgentCount;
 import nc.noumea.mairie.abs.domain.AgentHistoAlimManuelle;
 import nc.noumea.mairie.abs.domain.AgentWeekRecup;
 import nc.noumea.mairie.abs.domain.OrganisationSyndicale;
-
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class CounterRepository implements ICounterRepository {
@@ -474,6 +475,42 @@ public class CounterRepository implements ICounterRepository {
 			query.setParameter("annee", annee);
 		}
 		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Integer> getListMatriculesA48ADupliquer(Integer idOS, Integer annee) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT b.id_agent ");
+		sb.append("FROM abs_adm.abs_agent_asa_a48_count a ");
+		sb.append("INNER JOIN abs_adm.abs_agent_count b ON a.id_agent_count = b.id_agent_count ");
+		sb.append("INNER JOIN abs_adm.abs_a48_agent_organisation_syndicale c ON b.id_agent = c.id_agent AND c.id_organisation_syndicale = :idOS ");
+		sb.append("WHERE date_part('year', a.date_debut) = :annee AND actif is true ");
+
+		Query q = absEntityManager.createNativeQuery(sb.toString());
+		q.setParameter("idOS", idOS);
+		q.setParameter("annee", annee);
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Integer> getListMatriculesA54ADupliquer(Integer idOS, Integer annee) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT b.id_agent ");
+		sb.append("FROM abs_adm.abs_agent_asa_a54_count a ");
+		sb.append("INNER JOIN abs_adm.abs_agent_count b ON a.id_agent_count = b.id_agent_count ");
+		sb.append("INNER JOIN abs_adm.abs_a54_agent_organisation_syndicale c ON b.id_agent = c.id_agent AND c.id_organisation_syndicale = :idOS ");
+		sb.append("WHERE date_part('year', a.date_debut) = :annee AND actif is true ");
+
+		Query q = absEntityManager.createNativeQuery(sb.toString());
+		q.setParameter("idOS", idOS);
+		q.setParameter("annee", annee);
+
+		return q.getResultList();
 	}
 
 }
